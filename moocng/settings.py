@@ -1,5 +1,8 @@
 # Django settings for moocng project.
 
+import os
+BASEDIR = os.path.abspath(os.path.dirname(__file__))
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -70,6 +73,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    os.path.join(BASEDIR, 'static'),
 )
 
 # List of finder classes that know how to find static files in
@@ -109,6 +113,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    os.path.join(BASEDIR, 'templates'),
 )
 
 INSTALLED_APPS = (
@@ -152,6 +157,30 @@ LOGGING = {
         },
     }
 }
+
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+#    'django.core.context_processors.request',
+    'django.contrib.messages.context_processors.messages',
+    'moocng.context_processors.site',
+    'moocng.context_processors.theme',
+)
+
+
+
+GOOGLE_ANALYTICS_CODE = ''
+
+MOOCNG_THEME = {
+#    'subtitle': u'',
+#    'top_banner': u'',
+#    'right_banner': u'',
+    }
 
 try:
     from local_settings import *

@@ -7,6 +7,7 @@ class Course(models.Model):
 
     name = models.CharField(verbose_name=_(u'Name'), max_length=200)
     slug = models.SlugField(verbose_name=_(u'Slug'))
+    description = models.TextField(verbose_name=_(u'Description'))
     teachers = models.ManyToManyField(User, verbose_name=_(u'Teachers'),
                                       related_name='course_teachers')
     students = models.ManyToManyField(User, verbose_name=_(u'Students'),
