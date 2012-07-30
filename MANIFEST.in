@@ -1,0 +1,5 @@
+include COPYING
+include README
+include CHANGES
+recursive-include moocng *.py *.html *.js *.txt *.css *.png *.ico *.wsgi
+recursive-include doc *.py Makefile *.rst
