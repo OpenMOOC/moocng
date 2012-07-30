@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="top-banner">
+  <a href="#">
+    <img src="{{ STATIC_URL}}img/{{ theme.top_banner }}" alt="" />
+  </a>
+</div>
+
+<div class="row">
+  <section class="span8">
+    <h1 class="content-title">Courses</h1>
+
+    {% for course in courses %}
+    <div class="box">
+      <h2>{{ course.name }}</h2>
+      {{ course.description|safe }}
+      <p class="box-footer"><a href="{{ course.get_absolute_url }}">More information about this course</a></p>
+    </div>
+    {% endfor %}
+
+  </section>
+  <div class="span4">
+    <img src="{{ STATIC_URL }}img/{{ theme.right_banner }}" alt="" />
+  </div>
+</div>
+{% endblock %}
+
