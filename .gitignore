@@ -1,3 +1,8 @@
+build/
+dist/
+moocng/local_settings.py
 docs/build
+
 *.pyc
 *.egg-info
+*~
