@@ -21,11 +21,11 @@ compiles a couple of Python modules.
 .. code-block:: bash
 
   # Fedora example:
-  $ yum install python-devel postgresql-devel
+  $ yum install python-devel postgresql-devel libjpeg-turbo-devel libpng-devel
   $ yum groupinstall "Development Tools"
 
   # Debian/Ubuntu example:
-  $ apt-get install build-essential python-dev libpq-dev
+  $ apt-get install build-essential python-dev libpq-dev libjpeg-turbo8-dev libpng12-dev
 
 
 Creating a virtualenv
