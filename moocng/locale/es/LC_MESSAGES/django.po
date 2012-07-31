@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-31 17:23+0200\n"
-"PO-Revision-Date: 2012-07-31 17:23+0200\n"
+"POT-Creation-Date: 2012-07-31 23:57+0200\n"
+"PO-Revision-Date: 2012-07-31 23:59+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
 "Language: es_ES\n"
@@ -20,7 +20,7 @@ msgstr ""
 msgid "Name"
 msgstr "Nombre"
 
-#: courses/models.py:17 courses/models.py:50
+#: courses/models.py:17 courses/models.py:54
 msgid "Slug"
 msgstr "Slug"
 
@@ -48,49 +48,101 @@ msgstr "Alumnos"
 msgid "Promotion video"
 msgstr "Video promocional"
 
-#: courses/models.py:49 courses/models.py:60 courses/models.py:78
+#: courses/models.py:32
+msgid "course"
+msgstr "asignatura"
+
+#: courses/models.py:33
+msgid "courses"
+msgstr "asignaturas"
+
+#: courses/models.py:53 courses/models.py:68 courses/models.py:91
 msgid "Title"
 msgstr "Título"
 
-#: courses/models.py:51
+#: courses/models.py:55
 msgid "Content"
 msgstr "Contenido"
 
-#: courses/models.py:52 courses/models.py:61
+#: courses/models.py:56 courses/models.py:69
 msgid "Course"
 msgstr "Asignatura"
 
-#: courses/models.py:53
+#: courses/models.py:57
 msgid "Datetime"
 msgstr "Fecha y hora"
 
-#: courses/models.py:68 courses/models.py:128
+#: courses/models.py:60
+msgid "announcement"
+msgstr "comunicado"
+
+#: courses/models.py:61
+msgid "announcements"
+msgstr "comunicados"
+
+#: courses/models.py:76 courses/models.py:149
 msgid "Type"
 msgstr "Tipo"
 
-#: courses/models.py:79
+#: courses/models.py:78
+msgid "Deadline"
+msgstr "Fecha límite"
+
+#: courses/models.py:82
+msgid "unit"
+msgstr "unidad"
+
+#: courses/models.py:83
+msgid "units"
+msgstr "unidades"
+
+#: courses/models.py:92
 msgid "Unit"
 msgstr "Unidad"
 
-#: courses/models.py:80
+#: courses/models.py:93
 msgid "Video"
 msgstr "Video"
 
-#: courses/models.py:101
+#: courses/models.py:96
+msgid "knowledge quantum"
+msgstr "cuantum de conocimiento"
+
+#: courses/models.py:97
+msgid "knowledge quantums"
+msgstr "cuantums de conocimiento"
+
+#: courses/models.py:118
 msgid "Knowledge Quantum"
 msgstr "Cuantum de conocimiento"
 
-#: courses/models.py:102
+#: courses/models.py:119
 msgid "Solution video"
 msgstr "Video con la solución"
 
-#: courses/models.py:103
+#: courses/models.py:120
 msgid "Last frame of the question video"
 msgstr "Última imágen del video de la pregunta"
 
-#: courses/models.py:119
+#: courses/models.py:125
+msgid "question"
+msgstr "pregunta"
+
+#: courses/models.py:126
+msgid "questions"
+msgstr "preguntas"
+
+#: courses/models.py:140
 msgid "Question"
 msgstr "Pregunta"
+
+#: courses/models.py:154
+msgid "option"
+msgstr "opción"
+
+#: courses/models.py:155
+msgid "options"
+msgstr "opciones"
 
 #: courses/templates/courses/home.html:14
 msgid "Courses"

@@ -28,6 +28,10 @@ class Course(models.Model):
     promotion_video = models.URLField(verbose_name=_(u'Promotion video'),
                                       blank=True)
 
+    class Meta:
+        verbose_name = _(u'course')
+        verbose_name_plural = _(u'courses')
+
     def __unicode__(self):
         return self.name
 
@@ -52,6 +56,10 @@ class Announcement(models.Model):
     course = models.ForeignKey(Course, verbose_name=_(u'Course'))
     datetime = models.DateTimeField(verbose_name=_(u'Datetime'))
 
+    class Meta:
+        verbose_name = _(u'announcement')
+        verbose_name_plural = _(u'announcements')
+
     def __unicode__(self):
         return self.title
 
@@ -67,7 +75,12 @@ class Unit(Sortable):
     )
     unittype = models.CharField(verbose_name=_(u'Type'), choices=UNIT_TYPES,
                                 max_length=1)
-    deadline = models.DateTimeField(null=True, blank=True)
+    deadline = models.DateTimeField(verbose_name=_(u'Deadline'),
+                                    null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u'unit')
+        verbose_name_plural = _(u'units')
 
     def __unicode__(self):
         return u'%s (%s)' % (self.title, self.unittype)
@@ -78,6 +91,10 @@ class KnowledgeQuantum(models.Model):
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
     unit = models.ForeignKey(Unit, verbose_name=_(u'Unit'))
     video = models.URLField(verbose_name=_(u'Video'))
+
+    class Meta:
+        verbose_name = _(u'knowledge quantum')
+        verbose_name_plural = _(u'knowledge quantums')
 
     def __unicode__(self):
         return self.title
@@ -104,6 +121,10 @@ class Question(models.Model):
                                    upload_to='questions', blank=True,
                                    editable=False)
 
+    class Meta:
+        verbose_name = _(u'question')
+        verbose_name_plural = _(u'questions')
+
 
 def handle_question_post_save(sender, instance, created, **kwargs):
     # TODO Use Celery to process the video asynchronously
@@ -128,6 +149,10 @@ class Option(models.Model):
     optiontype = models.CharField(verbose_name=_(u'Type'), max_length=1,
                                   choices=OPTION_TYPES,
                                   default=OPTION_TYPES[0][0])
+
+    class Meta:
+        verbose_name = _(u'option')
+        verbose_name_plural = _(u'options')
 
     def __unicode__(self):
         return u'%s at %s x %s' % (self.optiontype, self.x, self.y)
