@@ -48,8 +48,9 @@ setup(
     zip_safe=False,
     install_requires=[
         'Django>=1.4.1',
-        'django-gravatar==0.1.0',
         'django-admin-sortable==1.3.3',
+        'django-gravatar==0.1.0',
+        'django-tinymce==1.5.1b2',
 #        'South==0.7.3',
         'psycopg2==2.4.2',
 #        'djangosaml2==0.4.2',

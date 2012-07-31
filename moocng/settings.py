@@ -124,8 +124,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-    'gravatar',
     'adminsortable',
+    'gravatar',
+    'tinymce',
     'moocng.courses',
     'moocng.videos',
     # Uncomment the next line to enable admin documentation:
@@ -175,6 +176,14 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'moocng.context_processors.theme',
 )
 
+
+TINYMCE_DEFAULT_CONFIG = {
+    'theme': 'advanced',
+    'theme_advanced_toolbar_location': 'top',
+    'theme_advanced_buttons1': 'bold,italic,underline,strikethrough,separator,undo,redo,separator,cleanup,separator,bullist,numlist',
+    'theme_advanced_buttons2' : '',
+    'theme_advanced_buttons3' : '',
+    }
 
 
 GOOGLE_ANALYTICS_CODE = ''

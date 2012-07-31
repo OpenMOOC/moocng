@@ -6,6 +6,7 @@ from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
 
 from adminsortable.models import Sortable
+from tinymce.models import HTMLField
 
 from moocng.videos.download import process_video
 
@@ -14,11 +15,11 @@ class Course(models.Model):
 
     name = models.CharField(verbose_name=_(u'Name'), max_length=200)
     slug = models.SlugField(verbose_name=_(u'Slug'))
-    description = models.TextField(verbose_name=_(u'Description'))
-    requirements = models.TextField(verbose_name=_(u'Requirements'),
-                                    blank=True, null=False)
-    learning_goals = models.TextField(verbose_name=_(u'Learning goals'),
-                                      blank=True, null=False)
+    description = HTMLField(verbose_name=_(u'Description'))
+    requirements = HTMLField(verbose_name=_(u'Requirements'),
+                             blank=True, null=False)
+    learning_goals = HTMLField(verbose_name=_(u'Learning goals'),
+                               blank=True, null=False)
     teachers = models.ManyToManyField(User, verbose_name=_(u'Teachers'),
                                       related_name='course_teachers')
     students = models.ManyToManyField(User, verbose_name=_(u'Students'),
@@ -47,7 +48,7 @@ class Announcement(models.Model):
 
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
     slug = models.SlugField(verbose_name=_(u'Slug'))
-    content = models.TextField(verbose_name=_(u'Content'))
+    content = HTMLField(verbose_name=_(u'Content'))
     course = models.ForeignKey(Course, verbose_name=_(u'Course'))
     datetime = models.DateTimeField(verbose_name=_(u'Datetime'))
 
