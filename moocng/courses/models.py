@@ -1,3 +1,6 @@
+from os import path
+
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -66,6 +69,9 @@ class Question(models.Model):
     kq = models.ForeignKey(KnowledgeQuantum,
                            verbose_name=_(u'Knowledge Quantum'))
     solution = models.URLField(verbose_name=_(u'Solution video'))
+    last_frame = models.ImageField(verbose_name=_(u'Question Last Frame'),
+                                   upload_to=path.join(settings.MEDIA_ROOT,
+                                                       'questions'))
 
 
 class Option(models.Model):

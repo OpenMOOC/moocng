@@ -7,7 +7,7 @@ import shutil
 import subprocess
 import tempfile
 
-from django.code.files import File
+from django.core.files import File
 
 from youtube import YouTube
 
@@ -66,22 +66,26 @@ def last_frame(filename, time):
     return "%s.png" % filename
 
 
-def process_video(video_id, model):
-    url = "https://www.youtube.com/watch?v=%s" % video_id
-    tempdir, filename = download(url)
-    filename = path.join(tempdir, filename)
-    time = duration(filename)
+def process_video(video_id, question):
+    try:
+        url = "https://www.youtube.com/watch?v=%s" % video_id
+        tempdir, filename = download(url)
+        filename = path.join(tempdir, filename)
+        time = duration(filename)
 
-    # Get the time position of the last second of the video
-    time = time.split(':')
-    dt = datetime.datetime(2012, 01, 01, int(time[0]), int(time[1]),
-                           int(time[2]))
-    dt = dt - second
-    time = "%s.500" % dt.strftime("%H:%M:%S")
+        # Get the time position of the last second of the video
+        time = time.split(':')
+        dt = datetime.datetime(2012, 01, 01, int(time[0]), int(time[1]),
+                            int(time[2]))
+        dt = dt - second
+        time = "%s.500" % dt.strftime("%H:%M:%S")
 
-    frame = last_frame(filename, video_id, time)
+        frame = last_frame(filename, time)
 
-    model.image_field.save("%s.png" % video_id, File(open(frame)))  # TODO names
-    model.save()
-
-    shutil.rmtree(tempdir)  # Remove temporal directory and contents
+        question.last_frame.save("%s.png" % video_id, File(open(frame)))
+        question.save()
+    except:
+        raise
+    finally:
+        if tempdir:
+            shutil.rmtree(tempdir)  # Remove temporal directory and contents

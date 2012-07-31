@@ -51,5 +51,6 @@ setup(
 #        'South==0.7.3',
         'psycopg2==2.4.2',
 #        'djangosaml2==0.4.2',
+        'PIL>=1.1.7'
         ],
 )
