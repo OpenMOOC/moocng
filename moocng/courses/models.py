@@ -98,8 +98,17 @@ class Question(models.Model):
                            verbose_name=_(u'Knowledge Quantum'))
     solution = models.URLField(verbose_name=_(u'Solution video'))
     last_frame = models.ImageField(verbose_name=_(u'Question Last Frame'),
-                                   upload_to='questions',
-                                   blank=True)
+                                   upload_to='questions', blank=True,
+                                   editable=False)
+
+
+def handle_question_post_save(sender, instance, created, **kwargs):
+    # TODO Use Celery to process the video asynchronously
+    if created:
+        process_video(instance)
+
+
+signals.post_save.connect(handle_question_post_save, sender=Question)
 
 
 class Option(models.Model):
