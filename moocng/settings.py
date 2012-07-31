@@ -125,6 +125,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'gravatar',
+    'adminsortable',
     'moocng.courses',
     'moocng.videos',
     # Uncomment the next line to enable admin documentation:

@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from adminsortable.admin import SortableAdmin
+
 from moocng.courses.models import Course, Announcement, Unit, KnowledgeQuantum
 from moocng.courses.models import Question, Option
 
@@ -15,7 +17,7 @@ class AnnouncementAdmin(admin.ModelAdmin):
     list_display = ('course', 'title', 'datetime')
 
 
-class UnitAdmin(admin.ModelAdmin):
+class UnitAdmin(SortableAdmin):
 
     list_display = ('course', 'title', 'unittype', 'deadline')
 

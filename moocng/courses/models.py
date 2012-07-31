@@ -5,6 +5,8 @@ from django.db import models
 from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
 
+from adminsortable.models import Sortable
+
 from moocng.videos.download import process_video
 
 
@@ -53,7 +55,7 @@ class Announcement(models.Model):
         return self.title
 
 
-class Unit(models.Model):
+class Unit(Sortable):
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
     course = models.ForeignKey(Course, verbose_name=_(u'Course'))
 
