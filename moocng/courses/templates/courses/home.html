@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div id="top-banner">
+<div class="media-box">
   <a href="#">
     <img src="{{ STATIC_URL}}img/{{ theme.top_banner }}" alt="" />
   </a>
@@ -13,7 +13,7 @@
 
     {% for course in courses %}
     <div class="box">
-      <h2>{{ course.name }}</h2>
+      <h2><a href="{{ course.get_absolute_url }}">{{ course.name }}</a></h2>
       {{ course.description|safe }}
       <p class="box-footer"><a href="{{ course.get_absolute_url }}">More information about this course</a></p>
     </div>

@@ -37,7 +37,7 @@ header ul li, footer ul li {
     padding-right: 1em;
 }
 
-#top-banner {
+.media-box {
     margin-bottom: 1em;
 }
 
@@ -51,18 +51,18 @@ header ul li, footer ul li {
 .box {
     background-color: #ffffff;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-    padding: 0 15px;
+    padding: 15px;
     margin-bottom: 20px;
 }
 
 .box h2 {
     border-bottom: 1px solid #dddddd;
     margin-bottom: 0.5em;
-    padding: 0.5em 0;
+    padding: 0;
 }
 
 .box-footer {
     margin-top: 1em;
-    padding: 1em 0;
+    padding: 1em 0 0 0;
     border-top: 1px solid #dddddd;
 }

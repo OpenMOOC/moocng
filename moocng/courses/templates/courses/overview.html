@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Courses</h1>
+
+<div class="media-box">
+  <iframe width="1170" height="600" src="http://www.youtube.com/embed/XUJ0IYZKLvE" frameborder="0" allowfullscreen></iframe>
+</div>
+
+<div class="row">
+  <section class="span8">
+
+    <div class="box">
+      <h2>Course summary</h2>
+      {{ course.description|safe }}
+    </div>
+
+    <div class="box">
+      <h2>Recommended requirements</h2>
+      {{ course.description|safe }}
+    </div>
+
+    <div class="box">
+      <h2>Expected experience</h2>
+      {{ course.description|safe }}
+    </div>
+
+  </section>
+  <div class="span4">
+
+    <div class="box">
+      <h2>Teachers</h2>
+      {{ course.description|safe }}
+    </div>
+
+    <div class="box">
+      <h2>Syllabus</h2>
+      {{ course.description|safe }}
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
