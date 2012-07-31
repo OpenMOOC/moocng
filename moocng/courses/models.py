@@ -1,10 +1,11 @@
 import urlparse
-from os import path
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
+
+from moocng.videos.download import process_video
 
 
 class Course(models.Model):
@@ -56,7 +57,7 @@ class Unit(models.Model):
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
     course = models.ForeignKey(Course, verbose_name=_(u'Course'))
 
-    UNIT_TYPES=(
+    UNIT_TYPES = (
         ('n', u'Normal'),
         ('h', u'Homeworks'),
         ('e', u'Exam'),
@@ -85,8 +86,16 @@ class Question(models.Model):
                            verbose_name=_(u'Knowledge Quantum'))
     solution = models.URLField(verbose_name=_(u'Solution video'))
     last_frame = models.ImageField(verbose_name=_(u'Question Last Frame'),
-                                   upload_to=path.join(settings.MEDIA_ROOT,
-                                                       'questions'))
+                                   upload_to='questions',
+                                   blank=True)
+
+
+def handle_question_post_save(sender, instance, created, **kwargs):
+    # TODO Use Celery to process the video asynchronously
+    process_video(instance)
+
+
+signals.post_save.connect(handle_question_post_save, sender=Question)
 
 
 class Option(models.Model):

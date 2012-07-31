@@ -2,10 +2,12 @@
 
 from os import path
 import datetime
+import hashlib
 import re
 import shutil
 import subprocess
 import tempfile
+import urlparse
 
 from django.core.files import File
 
@@ -46,8 +48,13 @@ def download(url):
     else:
         video = yt.videos[-1]  # Best resolution
 
-    tempdir = tempfile.mkdtemp()
-    video.download(tempdir)
+    try:
+        tempdir = tempfile.mkdtemp()
+        video.download(tempdir)
+    except:
+        # Remove temp files only if something goes awry
+        shutil.rmtree(tempdir)
+        raise
 
     return tempdir, video.filename
 
@@ -66,9 +73,12 @@ def last_frame(filename, time):
     return "%s.png" % filename
 
 
-def process_video(video_id, question):
+def process_video(question):
     try:
-        url = "https://www.youtube.com/watch?v=%s" % video_id
+        url = question.kq.video
+        parsed_url = urlparse.urlparse(url)
+        video_id = urlparse.parse_qs(parsed_url.query)
+        video_id = video_id['v'][0]
         tempdir, filename = download(url)
         filename = path.join(tempdir, filename)
         time = duration(filename)
@@ -76,16 +86,31 @@ def process_video(video_id, question):
         # Get the time position of the last second of the video
         time = time.split(':')
         dt = datetime.datetime(2012, 01, 01, int(time[0]), int(time[1]),
-                            int(time[2]))
+                               int(time[2]))
         dt = dt - second
-        time = "%s.500" % dt.strftime("%H:%M:%S")
+        time = "%s.900" % dt.strftime("%H:%M:%S")
 
         frame = last_frame(filename, time)
 
-        question.last_frame.save("%s.png" % video_id, File(open(frame)))
-        question.save()
+        do_save = True
+        if question.last_frame != '':
+            f = open(question.last_frame.path, 'r')
+            h1 = hashlib.sha1(f.read()).hexdigest()
+            f.close()
+            f = open(frame, 'r')
+            h2 = hashlib.sha1(f.read()).hexdigest()
+            f.close()
+            do_save = h1 != h2
+
+        # Make sure first the image is a different one, so we don't end up in a
+        # infinite loop because of the post_save signal
+        if do_save:
+            question.last_frame.save("%s.png" % video_id, File(open(frame)))
     except:
         raise
     finally:
-        if tempdir:
+        try:
             shutil.rmtree(tempdir)  # Remove temporal directory and contents
+        except NameError:
+            # No temporal files were created, so there is nothing to delete
+            pass
