@@ -1,0 +1,130 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-07-31 17:06+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: courses/models.py:16
+msgid "Name"
+msgstr ""
+
+#: courses/models.py:17 courses/models.py:50
+msgid "Slug"
+msgstr ""
+
+#: courses/models.py:18
+msgid "Description"
+msgstr ""
+
+#: courses/models.py:19
+msgid "Requirements"
+msgstr ""
+
+#: courses/models.py:21 courses/templates/courses/overview.html:32
+msgid "Learning goals"
+msgstr ""
+
+#: courses/models.py:23 courses/templates/courses/overview.html:41
+msgid "Teachers"
+msgstr ""
+
+#: courses/models.py:25
+msgid "Students"
+msgstr ""
+
+#: courses/models.py:28
+msgid "Promotion video"
+msgstr ""
+
+#: courses/models.py:49 courses/models.py:60 courses/models.py:78
+msgid "Title"
+msgstr ""
+
+#: courses/models.py:51
+msgid "Content"
+msgstr ""
+
+#: courses/models.py:52 courses/models.py:61
+msgid "Course"
+msgstr ""
+
+#: courses/models.py:53
+msgid "Datetime"
+msgstr ""
+
+#: courses/models.py:68 courses/models.py:128
+msgid "Type"
+msgstr ""
+
+#: courses/models.py:79
+msgid "Unit"
+msgstr ""
+
+#: courses/models.py:80
+msgid "Video"
+msgstr ""
+
+#: courses/models.py:101
+msgid "Knowledge Quantum"
+msgstr ""
+
+#: courses/models.py:102
+msgid "Solution video"
+msgstr ""
+
+#: courses/models.py:103
+msgid "Question Last Frame"
+msgstr ""
+
+#: courses/models.py:119
+msgid "Question"
+msgstr ""
+
+#: courses/templates/courses/home.html:14
+msgid "Courses"
+msgstr ""
+
+#: courses/templates/courses/home.html:20
+msgid "More information about this course"
+msgstr ""
+
+#: courses/templates/courses/overview.html:19
+msgid "Course summary"
+msgstr ""
+
+#: courses/templates/courses/overview.html:25
+msgid "Recommended requirements"
+msgstr ""
+
+#: courses/templates/courses/overview.html:49
+msgid "Syllabus"
+msgstr ""
+
+#: templates/base.html:29
+msgid "Register"
+msgstr ""
+
+#: templates/base.html:30
+msgid "Log in"
+msgstr ""
+
+#: templates/base.html:40
+msgid "Legal"
+msgstr ""
+
+#: templates/base.html:42
+msgid "Terms of Use"
+msgstr ""

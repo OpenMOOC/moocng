@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load i18n %}
+
 {% block content %}
 <div class="media-box">
   <a href="#">
@@ -9,13 +11,13 @@
 
 <div class="row">
   <section class="span8">
-    <h1 class="content-title">Courses</h1>
+    <h1 class="content-title">{% trans "Courses" %}</h1>
 
     {% for course in courses %}
     <div class="box">
       <h2><a href="{{ course.get_absolute_url }}">{{ course.name }}</a></h2>
       {{ course.description|safe }}
-      <p class="box-footer"><a href="{{ course.get_absolute_url }}">More information about this course</a></p>
+      <p class="box-footer"><a href="{{ course.get_absolute_url }}">{% trans "More information about this course" %}</a></p>
     </div>
     {% endfor %}
 

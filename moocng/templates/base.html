@@ -1,4 +1,4 @@
-<!doctype html>
+{% load i18n %}<!doctype html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
 <!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
 <!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
@@ -26,8 +26,8 @@
     <h2 class="small">{{ theme.subtitle }}</h2>
   </hgroup>
   <ul>
-    <li><a href="#">Register</a></li>
-    <li><a href="#">Log in</a></li>
+    <li><a href="#">{% trans "Register" %}</a></li>
+    <li><a href="#">{% trans "Log in" %}</a></li>
   </ul>
 </header>
 <div role="main">
@@ -37,9 +37,9 @@
 </div>
 <footer>
   <ul>
-    <li><a href="#">Legal</a></li>
+    <li><a href="#">{% trans "Legal" %}</a></li>
     <li><a href="#">{{ site.name }} Copyright {% now "Y" %}</a></li>
-    <li><a href="#">Terms of Use</a></li>
+    <li><a href="#">{% trans "Terms of Use" %}</a></li>
   </ul>
 </footer>
 

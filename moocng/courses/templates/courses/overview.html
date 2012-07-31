@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load gravatar %}
+{% load gravatar i18n %}
 
 {% block content %}
 
@@ -16,20 +16,20 @@
   <section class="span8">
 
     <div class="box">
-      <h2>Course summary</h2>
+      <h2>{% trans "Course summary" %}</h2>
       {{ course.description|safe }}
     </div>
 
     {% if course.requirements %}
     <div class="box">
-      <h2>Recommended requirements</h2>
+      <h2>{% trans "Recommended requirements" %}</h2>
       {{ course.requirements|safe }}
     </div>
     {% endif %}
 
     {% if course.learning_goals %}
     <div class="box">
-      <h2>Learning goals</h2>
+      <h2>{% trans "Learning goals" %}</h2>
       {{ course.learning_goals|safe }}
     </div>
     {% endif %}
@@ -38,7 +38,7 @@
   <div class="span4">
 
     <div class="box">
-      <h2>Teachers</h2>
+      <h2>{% trans "Teachers" %}</h2>
       {% for teacher in course.teachers.all %}
       <h3>{% firstof teacher.get_full_name teacher.username %}</h3>
       {% gravatar_img_for_user teacher %}
@@ -46,7 +46,7 @@
     </div>
 
     <div class="box">
-      <h2>Syllabus</h2>
+      <h2>{% trans "Syllabus" %}</h2>
       <ol>
         {% for unit in course.unit_set.all %}
         <li>{{ unit.title }}</li>
