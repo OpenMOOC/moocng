@@ -1,0 +1,46 @@
+This is the customization we have done to Bootstrap.
+
+See http://twitter.github.com/bootstrap/download.html
+
+1. Choose components:
+
+Scaffolding:
+  - Normalize and reset
+  - Body type and links
+  - Grid system
+  - Layouts
+
+Base CSS:
+  - Headings, body, etc
+  - Buttons
+
+Components:
+  - Buttons groups and dropdowns
+  - Nav, tabs and pills
+  - Alerts
+  - Progress bars
+
+JS Components:
+  - Dropdowns
+  - Collapse
+  - Carousel
+
+Miscellaneous
+  - Close icon
+  - Utilities
+  - Component animations
+
+Responsive:
+  - Visible/hidden classes
+  - Narrow tablets and below
+  - Tablets to desktop
+  - Large desktops
+
+2. Select jQuery Plugins
+
+- Transitions
+- Dropdowns
+- Togglable tabs
+- Alert messages
+- Buttons
+- Collapse
