@@ -2,7 +2,6 @@
 
 from os import path
 import datetime
-import hashlib
 import re
 import shutil
 import subprocess
@@ -92,20 +91,7 @@ def process_video(question):
 
         frame = last_frame(filename, time)
 
-        do_save = True
-        if question.last_frame != '':
-            f = open(question.last_frame.path, 'r')
-            h1 = hashlib.sha1(f.read()).hexdigest()
-            f.close()
-            f = open(frame, 'r')
-            h2 = hashlib.sha1(f.read()).hexdigest()
-            f.close()
-            do_save = h1 != h2
-
-        # Make sure first the image is a different one, so we don't end up in a
-        # infinite loop because of the post_save signal
-        if do_save:
-            question.last_frame.save("%s.png" % video_id, File(open(frame)))
+        question.last_frame.save("%s.png" % video_id, File(open(frame)))
     except:
         raise
     finally:

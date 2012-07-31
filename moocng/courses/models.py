@@ -80,6 +80,18 @@ class KnowledgeQuantum(models.Model):
         return self.title
 
 
+def handle_kq_post_save(sender, instance, created, **kwargs):
+    # TODO Use Celery to process the video asynchronously
+    try:
+        question = Question.objects.get(kq=instance)
+        process_video(question)
+    except Question.DoesNotExist:
+        pass
+
+
+signals.post_save.connect(handle_kq_post_save, sender=KnowledgeQuantum)
+
+
 class Question(models.Model):
 
     kq = models.ForeignKey(KnowledgeQuantum,
@@ -88,14 +100,6 @@ class Question(models.Model):
     last_frame = models.ImageField(verbose_name=_(u'Question Last Frame'),
                                    upload_to='questions',
                                    blank=True)
-
-
-def handle_question_post_save(sender, instance, created, **kwargs):
-    # TODO Use Celery to process the video asynchronously
-    process_video(instance)
-
-
-signals.post_save.connect(handle_question_post_save, sender=Question)
 
 
 class Option(models.Model):
