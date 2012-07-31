@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load gravatar %}
+
 {% block content %}
 
 <h1>{{ course.name }}</h1>
@@ -38,7 +40,8 @@
     <div class="box">
       <h2>Teachers</h2>
       {% for teacher in course.teachers.all %}
-      <h3>{{ teacher }}</h3>
+      <h3>{% firstof teacher.get_full_name teacher.username %}</h3>
+      {% gravatar_img_for_user teacher %}
       {% endfor %}
     </div>
 

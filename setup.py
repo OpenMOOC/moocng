@@ -48,6 +48,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'Django>=1.4.1',
+        'django-gravatar',
 #        'South==0.7.3',
         'psycopg2==2.4.2',
 #        'djangosaml2==0.4.2',
