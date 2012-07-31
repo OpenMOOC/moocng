@@ -2,11 +2,13 @@
 
 {% block content %}
 
-<h1>Courses</h1>
+<h1>{{ course.name }}</h1>
 
+{% if course.promotion_video %}
 <div class="media-box">
-  <iframe width="1170" height="600" src="http://www.youtube.com/embed/XUJ0IYZKLvE" frameborder="0" allowfullscreen></iframe>
+  <iframe width="1170" height="600" src="http://www.youtube.com/embed/{{ course.get_embeded_code_for_promotion_video }}" frameborder="0" allowfullscreen></iframe>
 </div>
+{% endif %}
 
 <div class="row">
   <section class="span8">
@@ -16,27 +18,37 @@
       {{ course.description|safe }}
     </div>
 
+    {% if course.requirements %}
     <div class="box">
       <h2>Recommended requirements</h2>
-      {{ course.description|safe }}
+      {{ course.requirements|safe }}
     </div>
+    {% endif %}
 
+    {% if course.learning_goals %}
     <div class="box">
-      <h2>Expected experience</h2>
-      {{ course.description|safe }}
+      <h2>Learning goals</h2>
+      {{ course.learning_goals|safe }}
     </div>
+    {% endif %}
 
   </section>
   <div class="span4">
 
     <div class="box">
       <h2>Teachers</h2>
-      {{ course.description|safe }}
+      {% for teacher in course.teachers.all %}
+      <h3>{{ teacher }}</h3>
+      {% endfor %}
     </div>
 
     <div class="box">
       <h2>Syllabus</h2>
-      {{ course.description|safe }}
+      <ol>
+        {% for unit in course.unit_set.all %}
+        <li>{{ unit.title }}</li>
+        {% endfor %}
+      </ol>
     </div>
 
   </div>

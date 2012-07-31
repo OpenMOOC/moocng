@@ -1,3 +1,4 @@
+import urlparse
 from os import path
 
 from django.conf import settings
@@ -11,10 +12,17 @@ class Course(models.Model):
     name = models.CharField(verbose_name=_(u'Name'), max_length=200)
     slug = models.SlugField(verbose_name=_(u'Slug'))
     description = models.TextField(verbose_name=_(u'Description'))
+    requirements = models.TextField(verbose_name=_(u'Requirements'),
+                                    blank=True, null=False)
+    learning_goals = models.TextField(verbose_name=_(u'Learning goals'),
+                                      blank=True, null=False)
     teachers = models.ManyToManyField(User, verbose_name=_(u'Teachers'),
                                       related_name='course_teachers')
     students = models.ManyToManyField(User, verbose_name=_(u'Students'),
-                                      related_name='course_students')
+                                      related_name='course_students',
+                                      blank=True)
+    promotion_video = models.URLField(verbose_name=_(u'Promotion video'),
+                                      blank=True)
 
     def __unicode__(self):
         return self.name
@@ -22,6 +30,14 @@ class Course(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('course_overview', [self.slug])
+
+    def get_embeded_code_for_promotion_video(self):
+        if self.promotion_video:
+            parts = urlparse.urlparse(self.promotion_video)
+            if parts.query:
+                params = urlparse.parse_qs(parts.query)
+                if params and 'v' in params:
+                    return params['v'][0]
 
 
 class Announcement(models.Model):
@@ -37,7 +53,6 @@ class Announcement(models.Model):
 
 
 class Unit(models.Model):
-
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
     course = models.ForeignKey(Course, verbose_name=_(u'Course'))
 
