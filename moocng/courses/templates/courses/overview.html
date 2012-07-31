@@ -54,6 +54,20 @@
       </ol>
     </div>
 
+    {% if is_enrolled %}
+    <p>{% trans "You are enrolled in this course" %}</p>
+    {% else %}
+    <div style="text-align: center">
+      {% if user.is_authenticated %}
+      <form method="post" action="{% url course_overview course.slug %}">{% csrf_token %}
+        <input type="submit" class="btn btn-large btn-primary" value="{% trans "Enroll me in this course" %}" />
+      </form>
+      {% else %}
+      <a href="#" class="btn btn-large btn-primary">{% blocktrans with site_name=site.name %}Register in {{ site_name }} to enroll in this course{% endblocktrans %}</a>
+      {% endif %}
+    </div>
+    {% endif %}
+
   </div>
 </div>
 {% endblock %}
