@@ -51,9 +51,10 @@ setup(
         'django-admin-sortable==1.3.3',
         'django-gravatar==0.1.0',
         'django-tinymce==1.5.1b2',
+        'django-tastypie==0.9.11',
 #        'South==0.7.3',
         'psycopg2==2.4.2',
 #        'djangosaml2==0.4.2',
-        'PIL>=1.1.7'
+        'PIL>=1.1.7',
         ],
 )

@@ -132,6 +132,7 @@ INSTALLED_APPS = (
     'adminsortable',
     'gravatar',
     'tinymce',
+    'tastypie',
     'moocng.courses',
     'moocng.videos',
     # Uncomment the next line to enable admin documentation:
