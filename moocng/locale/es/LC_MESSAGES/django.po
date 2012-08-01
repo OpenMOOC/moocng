@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-01 01:01+0200\n"
-"PO-Revision-Date: 2012-08-01 01:03+0200\n"
+"POT-Creation-Date: 2012-08-01 14:23+0200\n"
+"PO-Revision-Date: 2012-08-01 14:24+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
 "Language: es_ES\n"
@@ -32,11 +32,11 @@ msgstr "Descripción"
 msgid "Requirements"
 msgstr "Requisitos"
 
-#: courses/models.py:21 courses/templates/courses/overview.html:32
+#: courses/models.py:21 courses/templates/courses/overview.html:34
 msgid "Learning goals"
 msgstr "Objetivos formativos"
 
-#: courses/models.py:23 courses/templates/courses/overview.html:41
+#: courses/models.py:23 courses/templates/courses/overview.html:43
 msgid "Teachers"
 msgstr "Profesores"
 
@@ -147,54 +147,99 @@ msgstr "opciones"
 #: courses/views.py:30
 #, python-format
 msgid "Congratulations, you have successfully enroll in the course %(course)s"
-msgstr "Enhorabuena, te has matriculado correctamente en la asignatura %(course)s"
+msgstr ""
+"Enhorabuena, te has matriculado correctamente en la asignatura %(course)s"
 
-#: courses/templates/courses/home.html:14
+#: courses/templates/courses/base_course.html:10
+msgid "Overview"
+msgstr "General"
+
+#: courses/templates/courses/base_course.html:13
+msgid "Classes"
+msgstr "Clases"
+
+#: courses/templates/courses/base_course.html:16
+msgid "Discussion"
+msgstr "Debates"
+
+#: courses/templates/courses/base_course.html:19
+msgid "Progress"
+msgstr "Progreso"
+
+#: courses/templates/courses/home.html:16
 msgid "Courses"
 msgstr "Asignaturas"
 
-#: courses/templates/courses/home.html:20
+#: courses/templates/courses/home.html:22
 msgid "More information about this course"
 msgstr "Más información sobre esta asignatura"
 
-#: courses/templates/courses/overview.html:19
+#: courses/templates/courses/include.useractions.html:5
+msgid "My courses"
+msgstr "Mis clases"
+
+#: courses/templates/courses/include.useractions.html:11
+msgid "See all courses"
+msgstr "Ver todas las asignaturas"
+
+#: courses/templates/courses/include.useractions.html:16
+msgid "Welcome"
+msgstr "Bienvenido"
+
+#: courses/templates/courses/include.useractions.html:20
+msgid "My transcript"
+msgstr "Mis notas"
+
+#: courses/templates/courses/include.useractions.html:21
+msgid "Account settings"
+msgstr "Preferencias de la cuenta"
+
+#: courses/templates/courses/include.useractions.html:22
+msgid "Profile settings"
+msgstr "Preferencias del perfil"
+
+#: courses/templates/courses/include.useractions.html:24
+msgid "Log out"
+msgstr "Terminar sesión"
+
+#: courses/templates/courses/overview.html:21
 msgid "Course summary"
 msgstr "Resumen de la asignatura"
 
-#: courses/templates/courses/overview.html:25
+#: courses/templates/courses/overview.html:27
 msgid "Recommended requirements"
 msgstr "Requisitos recomendados"
 
-#: courses/templates/courses/overview.html:49
+#: courses/templates/courses/overview.html:51
 msgid "Syllabus"
 msgstr "Temario"
 
-#: courses/templates/courses/overview.html:58
+#: courses/templates/courses/overview.html:60
 msgid "You are enrolled in this course"
 msgstr "Estás matriculado en esta asignatura"
 
-#: courses/templates/courses/overview.html:63
+#: courses/templates/courses/overview.html:65
 msgid "Enroll me in this course"
 msgstr "Matricúlame en esta asignatura"
 
-#: courses/templates/courses/overview.html:66
+#: courses/templates/courses/overview.html:68
 #, python-format
 msgid "Register in %(site_name)s to enroll in this course"
 msgstr "Registrarme en %(site_name)s para matricularme en esta asignatura"
 
-#: templates/base.html:29
+#: templates/base.html:32
 msgid "Register"
 msgstr "Registrar"
 
-#: templates/base.html:30
+#: templates/base.html:33
 msgid "Log in"
 msgstr "Entrar"
 
-#: templates/base.html:50
+#: templates/base.html:52
 msgid "Legal"
 msgstr "Condiciones legales"
 
-#: templates/base.html:52
+#: templates/base.html:54
 msgid "Terms of Use"
 msgstr "Términos de uso"
 

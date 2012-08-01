@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
+
+{% block nav %}
+<ul class="nav nav-pills">
+  <li {% block nav-course-overview %}{% endblock %}>
+    <a href="{% url course_overview course.slug %}">{% trans "Overview" %}</a>
+  </li>
+  <li {% block nav-course-classroom %}{% endblock %}>
+    <a href="{% url course_classroom course.slug %}">{% trans "Classes" %}</a>
+  </li>
+  {% block nav-course-discussion %}
+  <li><a href="#">{% trans "Discussion" %}</a></li>
+  {% endblock %}
+  {% block nav-course-progress %}
+  <li><a href="#">{% trans "Progress" %}</a></li>
+  {% endblock %}
+</ul>
+{% endblock %}
