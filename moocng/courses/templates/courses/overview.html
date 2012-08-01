@@ -2,6 +2,8 @@
 
 {% load gravatar i18n %}
 
+{% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
+
 {% block content %}
 
 <h1>{{ course.name }}</h1>

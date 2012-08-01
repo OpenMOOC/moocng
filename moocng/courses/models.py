@@ -21,9 +21,9 @@ class Course(models.Model):
     learning_goals = HTMLField(verbose_name=_(u'Learning goals'),
                                blank=True, null=False)
     teachers = models.ManyToManyField(User, verbose_name=_(u'Teachers'),
-                                      related_name='course_teachers')
+                                      related_name='courses_as_teacher')
     students = models.ManyToManyField(User, verbose_name=_(u'Students'),
-                                      related_name='course_students',
+                                      related_name='courses_as_student',
                                       blank=True)
     promotion_video = models.URLField(verbose_name=_(u'Promotion video'),
                                       blank=True)

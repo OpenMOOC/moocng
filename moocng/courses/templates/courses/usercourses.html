@@ -1,0 +1,3 @@
+{% for course in courses %}
+<li><a href="{% url course_classroom course.slug %}">{{ course }}</a></li>
+{% endfor %}

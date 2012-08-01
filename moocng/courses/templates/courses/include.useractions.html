@@ -1,0 +1,27 @@
+{% load i18n usercourses %}
+<div class="btn-toolbar pull-right">
+  <div class="btn-group">
+    <a class="btn dropdown-toggle" data-toggle="dropdown">
+      {% trans "My courses" %}
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      {% usercourses %}
+      <li class="divider"></li>
+      <li><a href="{% url home %}">{% trans "See all courses" %}</a></li>
+    </ul>
+  </div>
+  <div class="btn-group">
+    <a class="btn dropdown-toggle" data-toggle="dropdown">
+      {% trans "Welcome" %}, {% firstof user.get_full_name user.username %}
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      <li><a href="#">{% trans "My transcript" %}</a></li>
+      <li><a href="#">{% trans "Account settings" %}</a></li>
+      <li><a href="#">{% trans "Profile settings" %}</a></li>
+      <li class="divider"></li>
+      <li><a href="#">{% trans "Log out" %}</a></li>
+    </ul>
+  </div>
+</div>

@@ -9,16 +9,8 @@ header {
 }
 
 header h2 {
+    padding-top: 0.5em;
     font-size: 12pt;
-}
-
-header ul {
-    position: absolute;
-    bottom: 0px;
-    right: 0px;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
 }
 
 footer {
@@ -32,7 +24,7 @@ footer ul {
     padding: 0;
 }
 
-header ul li, footer ul li {
+footer ul li {
     display: inline;
     padding-right: 1em;
 }
