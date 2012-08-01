@@ -12,11 +12,11 @@
   <li {% block nav-course-classroom %}{% endblock %}>
     <a href="{% url course_classroom course.slug %}">{% trans "Classes" %}</a>
   </li>
-  {% block nav-course-discussion %}
-  <li><a href="#">{% trans "Discussion" %}</a></li>
-  {% endblock %}
-  {% block nav-course-progress %}
-  <li><a href="#">{% trans "Progress" %}</a></li>
-  {% endblock %}
+  <li {% block nav-course-discussion %}{% endblock %}>
+    <a href="#">{% trans "Discussion" %}</a>
+  </li>
+  <li {% block nav-course-progress %}{% endblock %}>
+    <a href="#">{% trans "Progress" %}</a>
+  </li>
 </ul>
 {% endblock %}
