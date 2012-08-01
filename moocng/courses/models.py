@@ -81,6 +81,7 @@ class Unit(Sortable):
     class Meta:
         verbose_name = _(u'unit')
         verbose_name_plural = _(u'units')
+        ordering = ['order']  # this is lost from Sortable.Meta
 
     def __unicode__(self):
         return u'%s (%s)' % (self.title, self.unittype)
