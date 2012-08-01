@@ -4,69 +4,63 @@
 <!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-	<title>{{ site.name }}</title>
-	<meta name="description" content="">
-	<meta name="author" content="">
+    <title>{{ site.name }}</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-	<meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width">
 
-	<link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css">
-	<link rel="stylesheet" href="{{ STATIC_URL }}css/moocng.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/moocng.css">
 
-	<script src="{{ STATIC_URL }}js/libs/modernizr-2.5.3.min.js"></script>
+    <script src="{{ STATIC_URL }}js/libs/modernizr-2.5.3.min.js"></script>
 </head>
 <body>
-<div class="container">
-<header>
-  <hgroup>
-    <h1><a href="{% url home %}" class="hide-text"><img src="{{ STATIC_URL }}img/logo.png" alt="{{ site.name }}" />{{ site.name }}</a></h1>
-    <h2 class="small">{{ theme.subtitle }}</h2>
-  </hgroup>
-  <ul>
-    <li><a href="#">{% trans "Register" %}</a></li>
-    <li><a href="#">{% trans "Log in" %}</a></li>
-  </ul>
-</header>
-<div role="main">
+    <div class="container">
+        <header>
+            <hgroup>
+                <h1><a href="{% url home %}" class="hide-text"><img src="{{ STATIC_URL }}img/logo.png" alt="{{ site.name }}" />{{ site.name }}</a></h1>
+                <h2 class="small">{{ theme.subtitle }}</h2>
+            </hgroup>
+            <ul>
+                <li><a href="#">{% trans "Register" %}</a></li>
+                <li><a href="#">{% trans "Log in" %}</a></li>
+            </ul>
+        </header>
+        <div role="main">
+            {% if messages %}{% for message in messages %}
+            <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
+                <button class="close" data-dismiss="alert">×</button>
+                {{ message }}
+            </div>
+            {% endfor %}{% endif %}
 
-  {% if messages %}
-  {% for message in messages %}
-  <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
-    <button class="close" data-dismiss="alert">×</button>
-    {{ message }}
-  </div>
-    {% endfor %}
-  {% endif %}
+            {% block content %}{% endblock %}
+        </div>
+        <footer>
+            <ul>
+                <li><a href="#">{% trans "Legal" %}</a></li>
+                <li><a href="#">{{ site.name }} Copyright {% now "Y" %}</a></li>
+                <li><a href="#">{% trans "Terms of Use" %}</a></li>
+            </ul>
+        </footer>
+    </div>
 
-{% block content %}
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-1.7.2.min.js"><\/script>')</script>
+    <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
+    {% block extrajs %}{% endblock %}
 
-{% endblock %}
-</div>
-<footer>
-  <ul>
-    <li><a href="#">{% trans "Legal" %}</a></li>
-    <li><a href="#">{{ site.name }} Copyright {% now "Y" %}</a></li>
-    <li><a href="#">{% trans "Terms of Use" %}</a></li>
-  </ul>
-</footer>
-
-</div>
-
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-1.7.2.min.js"><\/script>')</script>
-<script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
-
-{% if GOOGLE_ANALYTICS_CODE %}
-<script>
-	var _gaq=[['_setAccount','{{ GOOGLE_ANALYTICS_CODE }}}'],['_trackPageview']];
-	(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-	g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-	s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-{% endif %}
-
+    {% if GOOGLE_ANALYTICS_CODE %}
+    <script>
+        var _gaq=[['_setAccount','{{ GOOGLE_ANALYTICS_CODE }}}'],['_trackPageview']];
+        (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+        g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+        s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+    {% endif %}
 </body>
 </html>
