@@ -78,10 +78,9 @@ class Unit(Sortable):
     deadline = models.DateTimeField(verbose_name=_(u'Deadline'),
                                     null=True, blank=True)
 
-    class Meta:
+    class Meta(Sortable.Meta):
         verbose_name = _(u'unit')
         verbose_name_plural = _(u'units')
-        ordering = ['order']  # this is lost from Sortable.Meta
 
     def __unicode__(self):
         return u'%s (%s)' % (self.title, self.unittype)
