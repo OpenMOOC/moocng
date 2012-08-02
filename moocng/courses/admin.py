@@ -15,21 +15,25 @@ class AnnouncementAdmin(admin.ModelAdmin):
 
     prepopulated_fields = {'slug': ('title', )}
     list_display = ('course', 'title', 'datetime')
+    list_filter = ('course', )
 
 
 class UnitAdmin(SortableAdmin):
 
     list_display = ('course', 'title', 'unittype', 'deadline')
+    list_filter = ('course', )
 
 
 class KnowledgeQuantumAdmin(admin.ModelAdmin):
 
     list_display = ('unit', 'title', 'video')
+    list_filter = ('course', 'unit')
 
 
 class QuestionAdmin(admin.ModelAdmin):
 
     list_display = ('kq', 'solution')
+    list_filter = ('course', 'unit', 'kg')
 
 
 class OptionAdmin(admin.ModelAdmin):
