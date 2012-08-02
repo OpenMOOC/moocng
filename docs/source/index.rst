@@ -44,7 +44,7 @@ To check out the repository with ``git`` use this command:
 
 .. code-block:: bash
 
- git clone git@github.com:OpenMOOC/moocng.git
+ git clone git://github.com/OpenMOOC/moocng.git
 
 
 Indices and tables
