@@ -14,7 +14,15 @@ MOOC.App = Backbone.Router.extend({
     unit: function (unit) {
         "use strict";
         unit = parseInt(unit, 10);
-        var unitObj = MOOC.models.course.get(unit);
+        var unitObj = MOOC.models.course.get(unit),
+            navigateToFirstKQ;
+
+        navigateToFirstKQ = function () {
+            var kqObj = unitObj.get("knowledgeQuantumList").find(function (kq) {
+                return kq.get("order") === 0;
+            });
+            MOOC.router.navigate("unit" + unitObj.get("id") + "/kq" + kqObj.get("id"), { trigger: true });
+        };
 
         if (unitObj.get("knowledgeQuantumList") === null) {
             unitObj.set("knowledgeQuantumList", new MOOC.models.KnowledgeQuantumList());
@@ -24,6 +32,7 @@ MOOC.App = Backbone.Router.extend({
 
                 unitObj.get("knowledgeQuantumList").reset(_.map(data.objects, function (kq) {
                     var data = _.pick(kq, "id", "title", "videoID");
+                    // TODO order
                     data.id = parseInt(data.id, 10);
                     return data;
                 }));
@@ -39,13 +48,11 @@ MOOC.App = Backbone.Router.extend({
                 }
                 unitView.render();
 
-                // TODO navigate to first kq
-
+                navigateToFirstKQ();
                 $("#unit" + unit).collapse("show");
             });
         } else {
-            // TODO navigate to first kq
-
+            navigateToFirstKQ();
             $("#unit" + unit).collapse("show");
         }
     },
@@ -54,7 +61,20 @@ MOOC.App = Backbone.Router.extend({
         "use strict";
         unit = parseInt(unit, 10);
         kq = parseInt(kq, 10);
-        // TODO
+        // TODO what if unit is not loaded?
+        var unitObj = MOOC.models.course.get(unit),
+            kqObj = unitObj.get("knowledgeQuantumList").get(kq),
+            kqView = MOOC.views.kqViews[kq];
+
+        if (typeof kqView === "undefined") {
+            kqView = new MOOC.views.KnowledgeQuantum({
+                model: kqObj,
+                id: "kq" + kq,
+                el: MOOC.views.unitViews[unit].$("#kq" + kq)[0]
+            });
+            MOOC.views.kqViews[kq] = kqView;
+        }
+        kqView.render();
     }
 });
 

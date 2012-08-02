@@ -11,6 +11,7 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
     defaults: function () {
         "use strict";
         return {
+            order: 0, // TODO switch to -1 when this order is implemented in backend
             title: null,
             videoID: null
         };

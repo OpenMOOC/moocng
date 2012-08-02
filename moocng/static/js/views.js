@@ -25,15 +25,26 @@ MOOC.views.Unit = Backbone.View.extend({
 
     showKQ: function (evt) {
         "use strict";
-        // TODO
+        var kq = evt.target.id.split("kq")[1];
+        MOOC.router.navigate(this.id + "/kq" + kq, { trigger: true });
     }
 });
 
 MOOC.views.unitViews = {};
 
 MOOC.views.KnowledgeQuantum = Backbone.View.extend({
-//         html = '<iframe width="770" height="433" src="';
-//         html += 'http://www.youtube.com/embed/' + kq.get("videoID");
-//         html += '" frameborder="0" allowfullscreen></iframe>';
-//         $("#kq-video").html(html);
+    render: function () {
+        "use strict";
+        var html = '<iframe width="770" height="433" src="';
+        html += 'http://www.youtube.com/embed/' + this.model.get("videoID");
+        html += '" frameborder="0" allowfullscreen></iframe>';
+        $("#kq-video").html(html);
+
+        this.$el.parent().children().removeClass("active");
+        this.$el.addClass("active");
+
+        return this;
+    }
 });
+
+MOOC.views.kqViews = {};
