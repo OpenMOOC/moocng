@@ -4,12 +4,14 @@ from django.contrib import admin
 admin.autodiscover()
 
 from tastypie.api import Api
-from moocng.api.resources import UnitResource, KnowledgeQuantumResource
+from moocng.api.resources import (UnitResource, KnowledgeQuantumResource,
+                                  QuestionResource)
 
 
 v1_api = Api(api_name='v1')
 v1_api.register(UnitResource())
 v1_api.register(KnowledgeQuantumResource())
+v1_api.register(QuestionResource())
 
 urlpatterns = patterns(
     '',

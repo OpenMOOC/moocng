@@ -21,7 +21,9 @@ class UnitResource(ModelResource):
 
 
 class KnowledgeQuantumResource(ModelResource):
-    unit = fields.ForeignKey(UnitResource, 'unit')
+    unit = fields.ToOneField(UnitResource, 'unit')
+    question = fields.RelatedField('moocng.api.resources.QuestionResource',
+                                   'question_set')
     videoID = fields.CharField(readonly=True)
 
     class Meta:
@@ -34,6 +36,14 @@ class KnowledgeQuantumResource(ModelResource):
             "unit": ('exact'),
         }
 
+    def dehydrate_question(self, bundle):
+        question = bundle.data['question']
+        if question.count() == 0:
+            return None
+        else:
+            return "/api/v1/question/%d/" % question.all()[0].id
+        # TODO improve url
+
     def dehydrate_videoID(self, bundle):
         parsed_url = urlparse.urlparse(bundle.obj.video)
         video_id = urlparse.parse_qs(parsed_url.query)
@@ -42,7 +52,7 @@ class KnowledgeQuantumResource(ModelResource):
 
 
 class QuestionResource(ModelResource):
-    kq = fields.ForeignKey(KnowledgeQuantumResource, 'kq')
+    kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
 
     class Meta:
         queryset = Question.objects.all()
@@ -50,3 +60,6 @@ class QuestionResource(ModelResource):
         allowed_methods = ['get']
         authentication = DjangoAuthentication()
         authorization = DjangoAuthorization()
+        filtering = {
+            "kq": ('exact'),
+        }
