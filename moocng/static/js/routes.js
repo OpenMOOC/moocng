@@ -25,35 +25,11 @@ MOOC.App = Backbone.Router.extend({
         };
 
         if (unitObj.get("knowledgeQuantumList") === null) {
-            unitObj.set("knowledgeQuantumList", new MOOC.models.KnowledgeQuantumList());
-
-            MOOC.ajax.getKQsByUnit(unit, function (data, textStatus, jqXHR) {
-                var unitView;
-
-                unitObj.get("knowledgeQuantumList").reset(_.map(data.objects, function (kq) {
-                    var data = _.pick(kq, "id", "title", "videoID");
-                    // TODO order
-                    data.id = parseInt(data.id, 10);
-                    return data;
-                }));
-
-                unitView = MOOC.views.unitViews[unit];
-                if (typeof unitView === "undefined") {
-                    unitView = new MOOC.views.Unit({
-                        model: unitObj,
-                        id: "unit" + unit,
-                        el: $("#unit" + unit)[0]
-                    });
-                    MOOC.views.unitViews[unit] = unitView;
-                }
-                unitView.render();
-
+            MOOC.router.loadUnitData(unit, function () {
                 navigateToFirstKQ();
-                $("#unit" + unit).collapse("show");
             });
         } else {
             navigateToFirstKQ();
-            $("#unit" + unit).collapse("show");
         }
     },
 
@@ -61,20 +37,63 @@ MOOC.App = Backbone.Router.extend({
         "use strict";
         unit = parseInt(unit, 10);
         kq = parseInt(kq, 10);
-        // TODO what if unit is not loaded?
         var unitObj = MOOC.models.course.get(unit),
-            kqObj = unitObj.get("knowledgeQuantumList").get(kq),
-            kqView = MOOC.views.kqViews[kq];
+            kqView = MOOC.views.kqViews[kq],
+            renderKQ;
 
-        if (typeof kqView === "undefined") {
-            kqView = new MOOC.views.KnowledgeQuantum({
-                model: kqObj,
-                id: "kq" + kq,
-                el: MOOC.views.unitViews[unit].$("#kq" + kq)[0]
+        renderKQ = function () {
+            var kqObj = unitObj.get("knowledgeQuantumList").get(kq);
+
+            if (typeof kqView === "undefined") {
+                kqView = new MOOC.views.KnowledgeQuantum({
+                    model: kqObj,
+                    id: "kq" + kq,
+                    el: MOOC.views.unitViews[unit].$("#kq" + kq)[0]
+                });
+                MOOC.views.kqViews[kq] = kqView;
+            }
+            kqView.render();
+        };
+
+        if (unitObj.get("knowledgeQuantumList") === null) {
+            MOOC.router.loadUnitData(unit, function () {
+                $("#unit" + unit).collapse("show");
+                renderKQ();
             });
-            MOOC.views.kqViews[kq] = kqView;
+        } else {
+            $("#unit" + unit).collapse("show");
+            renderKQ();
         }
-        kqView.render();
+    },
+
+    loadUnitData: function (unit, callback) {
+        "use strict";
+        var unitObj = MOOC.models.course.get(unit);
+        unitObj.set("knowledgeQuantumList", new MOOC.models.KnowledgeQuantumList());
+
+        MOOC.ajax.getKQsByUnit(unit, function (data, textStatus, jqXHR) {
+            var unitView;
+
+            unitObj.get("knowledgeQuantumList").reset(_.map(data.objects, function (kq) {
+                var data = _.pick(kq, "id", "title", "videoID");
+                // TODO order
+                data.id = parseInt(data.id, 10);
+                return data;
+            }));
+
+            unitView = MOOC.views.unitViews[unit];
+            if (typeof unitView === "undefined") {
+                unitView = new MOOC.views.Unit({
+                    model: unitObj,
+                    id: "unit" + unit,
+                    el: $("#unit" + unit)[0]
+                });
+                MOOC.views.unitViews[unit] = unitView;
+            }
+            unitView.render();
+
+            callback();
+        });
     }
 });
 
@@ -91,8 +110,13 @@ MOOC.init = function () {
     }
     Backbone.history.start({ root: path });
 
-    unit = MOOC.models.course.find(function (unit) {
-        return unit.get("order") === 0;
-    });
-    MOOC.router.navigate("unit" + unit.get("id"), { trigger: true });
+    if (window.location.hash.length > 1) {
+        path = window.location.hash.substring(1); // Remove #
+        MOOC.router.navigate(path, { trigger: true });
+    } else {
+        unit = MOOC.models.course.find(function (unit) {
+            return unit.get("order") === 0;
+        });
+        MOOC.router.navigate("unit" + unit.get("id"), { trigger: true });
+    }
 };
