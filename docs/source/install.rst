@@ -338,8 +338,8 @@ So, first you clone the repository:
 
 .. code-block:: bash
 
- cd /var/www
- git clone git@github.com:OpenMOOC/moocng.git
+  $ cd /var/www
+  $ git clone git://github.com/OpenMOOC/moocng.git
 
 Then you activate the virtualenv if you have not already done so:
 
@@ -351,5 +351,5 @@ Finally, you install the moocng package in development mode:
 
 .. code-block:: bash
 
- cd /var/www/moocng
- python setup.py develop
+  $ cd /var/www/moocng
+  $ python setup.py develop
