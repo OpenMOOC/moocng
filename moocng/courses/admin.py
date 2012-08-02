@@ -20,20 +20,20 @@ class AnnouncementAdmin(admin.ModelAdmin):
 
 class UnitAdmin(SortableAdmin):
 
-    list_display = ('course', 'title', 'unittype', 'deadline')
+    list_display = ('__unicode__', 'unittype', 'deadline')
     list_filter = ('course', )
 
 
-class KnowledgeQuantumAdmin(admin.ModelAdmin):
+class KnowledgeQuantumAdmin(SortableAdmin):
 
-    list_display = ('unit', 'title', 'video')
-    list_filter = ('course', 'unit')
+    list_display = ('__unicode__', 'title', 'video')
+    list_filter = ('unit', )
 
 
 class QuestionAdmin(admin.ModelAdmin):
 
     list_display = ('kq', 'solution')
-    list_filter = ('course', 'unit', 'kg')
+    list_filter = ('kq', )
 
 
 class OptionAdmin(admin.ModelAdmin):

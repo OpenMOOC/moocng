@@ -6,6 +6,7 @@ from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
 
 from adminsortable.models import Sortable
+from adminsortable.fields import SortableForeignKey
 from tinymce.models import HTMLField
 
 from moocng.videos.download import process_video
@@ -66,7 +67,7 @@ class Announcement(models.Model):
 
 class Unit(Sortable):
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
-    course = models.ForeignKey(Course, verbose_name=_(u'Course'))
+    course = SortableForeignKey(Course, verbose_name=_(u'Course'))
 
     UNIT_TYPES = (
         ('n', u'Normal'),
@@ -74,7 +75,7 @@ class Unit(Sortable):
         ('e', u'Exam'),
     )
     unittype = models.CharField(verbose_name=_(u'Type'), choices=UNIT_TYPES,
-                                max_length=1)
+                                max_length=1, default=UNIT_TYPES[0][0])
     deadline = models.DateTimeField(verbose_name=_(u'Deadline'),
                                     null=True, blank=True)
 
@@ -83,21 +84,21 @@ class Unit(Sortable):
         verbose_name_plural = _(u'units')
 
     def __unicode__(self):
-        return u'%s (%s)' % (self.title, self.unittype)
+        return u'%s - %s (%s)' % (self.course, self.title, self.unittype)
 
 
-class KnowledgeQuantum(models.Model):
+class KnowledgeQuantum(Sortable):
 
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
-    unit = models.ForeignKey(Unit, verbose_name=_(u'Unit'))
+    unit = SortableForeignKey(Unit, verbose_name=_(u'Unit'))
     video = models.URLField(verbose_name=_(u'Video'))
 
-    class Meta:
+    class Meta(Sortable.Meta):
         verbose_name = _(u'knowledge quantum')
         verbose_name_plural = _(u'knowledge quantums')
 
     def __unicode__(self):
-        return self.title
+        return u'%s - %s' % (self.unit, self.title)
 
 
 def handle_kq_post_save(sender, instance, created, **kwargs):
