@@ -11,7 +11,8 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
     defaults: function () {
         "use strict";
         return {
-            title: ""
+            title: null,
+            videoID: null
         };
     }
 });

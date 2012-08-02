@@ -14,11 +14,46 @@ MOOC.App = Backbone.Router.extend({
     unit: function (unit) {
         "use strict";
         unit = parseInt(unit, 10);
-        $("#unit" + unit).collapse("show");
+        var unitObj = MOOC.models.course.get(unit);
+
+        if (unitObj.get("knowledgeQuantumList") === null) {
+            unitObj.set("knowledgeQuantumList", new MOOC.models.KnowledgeQuantumList());
+
+            MOOC.ajax.getKQsByUnit(unit, function (data, textStatus, jqXHR) {
+                var unitView;
+
+                unitObj.get("knowledgeQuantumList").reset(_.map(data.objects, function (kq) {
+                    var data = _.pick(kq, "id", "title", "videoID");
+                    data.id = parseInt(data.id, 10);
+                    return data;
+                }));
+
+                unitView = MOOC.views.unitViews[unit];
+                if (typeof unitView === "undefined") {
+                    unitView = new MOOC.views.Unit({
+                        model: unitObj,
+                        id: "unit" + unit,
+                        el: $("#unit" + unit)[0]
+                    });
+                    MOOC.views.unitViews[unit] = unitView;
+                }
+                unitView.render();
+
+                // TODO navigate to first kq
+
+                $("#unit" + unit).collapse("show");
+            });
+        } else {
+            // TODO navigate to first kq
+
+            $("#unit" + unit).collapse("show");
+        }
     },
 
     kq: function (unit, kq) {
         "use strict";
+        unit = parseInt(unit, 10);
+        kq = parseInt(kq, 10);
         // TODO
     }
 });
