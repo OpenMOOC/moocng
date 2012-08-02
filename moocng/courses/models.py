@@ -9,7 +9,7 @@ from adminsortable.models import Sortable
 from adminsortable.fields import SortableForeignKey
 from tinymce.models import HTMLField
 
-from moocng.videos.download import process_video
+from moocng.videos.tasks import process_video_task
 
 
 class Course(models.Model):
@@ -102,10 +102,8 @@ class KnowledgeQuantum(Sortable):
 
 
 def handle_kq_post_save(sender, instance, created, **kwargs):
-    # TODO Use Celery to process the video asynchronously
     try:
-        question = Question.objects.get(kq=instance)
-        process_video(question)
+        process_video_task.delay(instance.question)
     except Question.DoesNotExist:
         pass
 
@@ -128,9 +126,8 @@ class Question(models.Model):
 
 
 def handle_question_post_save(sender, instance, created, **kwargs):
-    # TODO Use Celery to process the video asynchronously
     if created:
-        process_video(instance)
+        process_video_task.delay(instance)
 
 
 signals.post_save.connect(handle_question_post_save, sender=Question)

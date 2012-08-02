@@ -47,8 +47,10 @@ setup(
         },
     zip_safe=False,
     install_requires=[
+        'celery==3.0.5',
         'Django>=1.4.1',
         'django-admin-sortable==1.3.3',
+        'django-celery==3.0.4',
         'django-gravatar==0.1.0',
         'django-tinymce==1.5.1b2',
         'django-tastypie==0.9.11',

@@ -130,6 +130,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'adminsortable',
+    'djcelery',
     'gravatar',
     'tinymce',
     'tastypie',
@@ -203,6 +204,13 @@ MOOCNG_THEME = {
 #    'top_banner': u'',
 #    'right_banner': u'',
     }
+
+# Celery settings
+import djcelery
+djcelery.setup_loader()
+
+BROKER_URL = 'amqp://moocng:moocngpassword@localhost:5672/moocng'
+
 
 try:
     from local_settings import *

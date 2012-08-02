@@ -249,6 +249,35 @@ And run the Django syncdb command to create the database schema:
   name. You can create more administrators in the future with other names.
 
 
+Installing the message broker
+-----------------------------
+
+moocng uses a message queu to process the videos. You can use several
+different message broker for handling the message queue but RabbitMQ is
+the recommended option because it is easy to setup and has very good
+performance.
+
+So, first we need to install the RabbitMQ packages for your operating
+system:
+
+.. code-block:: bash
+
+  # Fedora example:
+  $ yum install rabbitmq-server
+
+  # Debian/Ubuntu example:
+  $ apt-get install rabbitmq-server
+
+A RabbitMQ user and a virtual host need to be created. Then the user
+needs to have permissions to access to that virtual host:
+
+.. code-block:: bash
+
+  $ service rabbitmq-server start
+  $ rabbitmqctl add_user moocng moocngpassword
+  $ rabbitmqctl add_vhost moocng
+  $ rabbitmqctl set_permissions -p moocng moocng ".*" ".*" ".*"
+
 Collecting static files
 -----------------------
 
