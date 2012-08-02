@@ -115,8 +115,8 @@ signals.post_save.connect(handle_kq_post_save, sender=KnowledgeQuantum)
 
 class Question(models.Model):
 
-    kq = models.ForeignKey(KnowledgeQuantum,
-                           verbose_name=_(u'Knowledge Quantum'))
+    kq = models.OneToOneField(KnowledgeQuantum,
+                              verbose_name=_(u'Knowledge Quantum'))
     solution = models.URLField(verbose_name=_(u'Solution video'))
     last_frame = models.ImageField(verbose_name=_(u'Last frame of the question video'),
                                    upload_to='questions', blank=True,
