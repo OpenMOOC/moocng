@@ -18,15 +18,7 @@ MOOC.App = Backbone.Router.extend({
             navigateToFirstKQ;
 
         navigateToFirstKQ = function () {
-            var min = Infinity,
-                kqObj;
-            unitObj.get("knowledgeQuantumList").each(function (kq) {
-                var order = kq.get("order");
-                if (order < min) {
-                    min = order;
-                    kqObj = kq;
-                }
-            });
+            var kqObj = unitObj.get("knowledgeQuantumList").first();
             MOOC.router.navigate("unit" + unitObj.get("id") + "/kq" + kqObj.get("id"), { trigger: true });
         };
 
@@ -82,7 +74,6 @@ MOOC.App = Backbone.Router.extend({
 
             unitObj.get("knowledgeQuantumList").reset(_.map(data.objects, function (kq) {
                 var data = _.pick(kq, "id", "title", "videoID", "question", "order");
-                // TODO order
                 data.id = parseInt(data.id, 10);
                 return data;
             }));
@@ -120,9 +111,7 @@ MOOC.init = function () {
         path = window.location.hash.substring(1); // Remove #
         MOOC.router.navigate(path, { trigger: true });
     } else {
-        unit = MOOC.models.course.find(function (unit) {
-            return unit.get("order") === 0;
-        });
+        unit = MOOC.models.course.first();
         MOOC.router.navigate("unit" + unit.get("id"), { trigger: true });
     }
 };
