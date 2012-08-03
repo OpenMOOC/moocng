@@ -35,16 +35,41 @@ MOOC.views.unitViews = {};
 MOOC.views.KnowledgeQuantum = Backbone.View.extend({
     render: function () {
         "use strict";
-        var html = '<iframe width="770" height="433" src="';
+        var html = '<iframe width="770" height="433" src="',
+            unit,
+            order,
+            kq;
         html += 'http://www.youtube.com/embed/' + this.model.get("videoID");
         html += '" frameborder="0" allowfullscreen></iframe>';
         $("#kq-video").html(html);
         $("#kq-title").html(this.model.get("title"));
 
+        unit = MOOC.models.course.getByKQ(this.model.get("id"));
+        order = this.model.get("order");
+        $("#kq-previous").unbind("click");
+        $("#kq-next").unbind("click");
+
+        kq = unit.get("knowledgeQuantumList").getByPosition(order - 1);
+        this.navigate("#kq-previous", unit, kq);
+        kq = unit.get("knowledgeQuantumList").getByPosition(order + 1);
+        this.navigate("#kq-next", unit, kq);
+
         this.$el.parent().children().removeClass("active");
         this.$el.addClass("active");
 
         return this;
+    },
+
+    navigate: function (selector, unit, kq) {
+        "use strict";
+        if (typeof kq === "undefined") {
+            $(selector).addClass("disabled");
+        } else {
+            $(selector).removeClass("disabled");
+            $(selector).click(function (evt) {
+                MOOC.router.navigate("unit" + unit.get("id") + "/kq" + kq.get("id"), { trigger: true });
+            });
+        }
     }
 });
 

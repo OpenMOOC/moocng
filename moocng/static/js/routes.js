@@ -18,8 +18,14 @@ MOOC.App = Backbone.Router.extend({
             navigateToFirstKQ;
 
         navigateToFirstKQ = function () {
-            var kqObj = unitObj.get("knowledgeQuantumList").find(function (kq) {
-                return kq.get("order") === 0;
+            var min = Infinity,
+                kqObj;
+            unitObj.get("knowledgeQuantumList").each(function (kq) {
+                var order = kq.get("order");
+                if (order < min) {
+                    min = order;
+                    kqObj = kq;
+                }
             });
             MOOC.router.navigate("unit" + unitObj.get("id") + "/kq" + kqObj.get("id"), { trigger: true });
         };
@@ -75,7 +81,7 @@ MOOC.App = Backbone.Router.extend({
             var unitView;
 
             unitObj.get("knowledgeQuantumList").reset(_.map(data.objects, function (kq) {
-                var data = _.pick(kq, "id", "title", "videoID");
+                var data = _.pick(kq, "id", "title", "videoID", "question", "order");
                 // TODO order
                 data.id = parseInt(data.id, 10);
                 return data;

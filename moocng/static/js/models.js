@@ -21,7 +21,7 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
     defaults: function () {
         "use strict";
         return {
-            order: 0, // TODO switch to -1 when this order is implemented in backend
+            order: -1,
             title: null,
             videoID: null,
             question: null // Optional
@@ -30,7 +30,19 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
 });
 
 MOOC.models.KnowledgeQuantumList  = Backbone.Collection.extend({
-    model: MOOC.models.KnowledgeQuantum
+    model: MOOC.models.KnowledgeQuantum,
+
+    comparator: function (kq) {
+        "use strict";
+        return kq.get("order");
+    },
+
+    getByPosition: function (position) {
+        "use strict";
+        return this.find(function (kq) {
+            return position === kq.get("order");
+        });
+    }
 });
 
 MOOC.models.Unit = Backbone.Model.extend({
@@ -44,7 +56,19 @@ MOOC.models.Unit = Backbone.Model.extend({
 });
 
 MOOC.models.UnitList = Backbone.Collection.extend({
-    model: MOOC.models.Unit
+    model: MOOC.models.Unit,
+
+    getByKQ: function (kqID) {
+        "use strict";
+        return this.find(function (unit) {
+            var kq = unit.get("knowledgeQuantumList");
+            if (kq === null) {
+                return false;
+            }
+            kq = kq.get(kqID);
+            return typeof kq !== "undefined";
+        });
+    }
 });
 
 MOOC.models.course = new MOOC.models.UnitList();
