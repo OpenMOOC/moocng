@@ -39,6 +39,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         html += 'http://www.youtube.com/embed/' + this.model.get("videoID");
         html += '" frameborder="0" allowfullscreen></iframe>';
         $("#kq-video").html(html);
+        $("#kq-title").html(this.model.get("title"));
 
         this.$el.parent().children().removeClass("active");
         this.$el.addClass("active");
