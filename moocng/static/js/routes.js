@@ -6,15 +6,11 @@ if (typeof MOOC === 'undefined') {
 }
 
 MOOC.App = Backbone.Router.extend({
-    routes: {
-        "unit:unit": "unit",
-        "unit:unit/kq:kq": "kq"
-    },
-
     unit: function (unit) {
         "use strict";
         unit = parseInt(unit, 10);
         var unitObj = MOOC.models.course.get(unit),
+            unitView,
             navigateToFirstKQ;
 
         navigateToFirstKQ = function () {
@@ -24,10 +20,18 @@ MOOC.App = Backbone.Router.extend({
 
         if (unitObj.get("knowledgeQuantumList") === null) {
             MOOC.router.loadUnitData(unit, function () {
-                navigateToFirstKQ();
+                unitView = MOOC.views.unitViews[unit];
+                unitView.render();
+                if (MOOC.router.hasHandler("unit1/kq1")) {
+                    navigateToFirstKQ();
+                }
             });
         } else {
-            navigateToFirstKQ();
+            unitView = MOOC.views.unitViews[unit];
+            unitView.render();
+            if (this.hasHandler("unit1/kq1")) {
+                navigateToFirstKQ();
+            }
         }
     },
 
@@ -85,19 +89,29 @@ MOOC.App = Backbone.Router.extend({
                 });
                 MOOC.views.unitViews[unit] = unitView;
             }
-            unitView.render();
 
             callback();
+        });
+    },
+
+    hasHandler: function (fragment) {
+        "use strict";
+        return _.any(Backbone.history.handlers, function (handler) {
+            return handler.route.test(fragment);
         });
     }
 });
 
-MOOC.init = function () {
+MOOC.init = function (KQRoute) {
     "use strict";
     var path = window.location.pathname,
         unit;
 
     MOOC.router = new MOOC.App();
+    MOOC.router.route("unit:unit", "unit");
+    if (KQRoute) {
+        MOOC.router.route("unit:unit/kq:kq", "kq");
+    }
     if (path.lastIndexOf('/') < path.length - 1) {
         path += '/';
     }
