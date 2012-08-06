@@ -16,7 +16,7 @@
     <a href="#">{% trans "Discussion" %}</a>
   </li>
   <li {% block nav-course-progress %}{% endblock %}>
-    <a href="#">{% trans "Progress" %}</a>
+    <a href="{% url course_progress course.slug %}">{% trans "Progress" %}</a>
   </li>
 </ul>
 {% endblock %}

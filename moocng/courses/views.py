@@ -48,5 +48,11 @@ def course_classroom(request, course_slug):
     }, context_instance=RequestContext(request))
 
 
-def course_progress(request):
-    pass
+def course_progress(request, course_slug):
+    course = get_object_or_404(Course, slug=course_slug)
+    unit_list = get_list_or_404(Unit, course=course)
+
+    return render_to_response('courses/progress.html', {
+        'course': course,
+        'unit_list': unit_list,
+    }, context_instance=RequestContext(request))
