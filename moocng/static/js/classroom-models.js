@@ -50,8 +50,14 @@ MOOC.models.Unit = Backbone.Model.extend({
         "use strict";
         return {
             order: -1,
-            knowledgeQuantumList: null
+            knowledgeQuantumList: null,
+            title: ""
         };
+    },
+
+    calculateProgress: function () {
+        "use strict";
+        return Math.random(100) * 100;
     }
 });
 
@@ -72,14 +78,3 @@ MOOC.models.UnitList = Backbone.Collection.extend({
 });
 
 MOOC.models.course = new MOOC.models.UnitList();
-
-MOOC.models.init = function () {
-    "use strict";
-    $("#unit-selector div.collapse").each(function (idx, node) {
-        var id = node.id.split("unit")[1];
-        MOOC.models.course.add(new MOOC.models.Unit({
-            order: idx,
-            id: parseInt(id, 10)
-        }));
-    });
-};

@@ -45,6 +45,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         $("#kq-title").html(this.model.get("title"));
 
         unit = MOOC.models.course.getByKQ(this.model.get("id"));
+        $("#unit" + unit.get("id")).collapse("show");
         order = this.model.get("order");
         $("#kq-previous").unbind("click");
         $("#kq-next").unbind("click");

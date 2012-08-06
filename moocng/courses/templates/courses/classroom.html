@@ -85,6 +85,13 @@
             parent: "#unit-selector",
             toggle: false
         });
+        $("#unit-selector div.collapse").each(function (idx, node) {
+            var id = node.id.split("unit")[1];
+            MOOC.models.course.add(new MOOC.models.Unit({
+                order: idx,
+                id: parseInt(id, 10)
+            }));
+        });
         MOOC.init();
     </script>
 {% endblock %}
