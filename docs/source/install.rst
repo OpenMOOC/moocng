@@ -106,6 +106,24 @@ Now we can install the moocng software:
 After a while you will have a bunch of new packages inside
 */var/www/moocng/lib/python2.7/site-packages/*
 
+FFmpeg
+~~~~~~
+
+FFmpeg is an extra dependence of moocng, and we'll install it through system
+package system. FFmpeg is used to extract the last frame from YouTube's videos.
+
+The FFmpeg version to install must have *webm* and *mp4* support. We recommend
+0.11.X version, but it should work with a 0.7.X version or newer. 0.6.X are no
+longer mantained by FFmpeg team and its use is discouraged.
+
+.. code-block:: bash
+
+  # Fedora example (requires an extra repository):
+  $ rpm -Uvh http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-stable.noarch.rpm http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-stable.noarch.rpm
+  $ yum install ffmpeg
+
+  # Debian/Ubuntu example:
+  $ apt-get install ffmpeg
 
 Creating the database
 ---------------------
