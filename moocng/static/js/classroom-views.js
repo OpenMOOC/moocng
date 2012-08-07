@@ -35,7 +35,7 @@ MOOC.views.unitViews = {};
 MOOC.views.KnowledgeQuantum = Backbone.View.extend({
     render: function () {
         "use strict";
-        var html = '<iframe width="770" height="433" src="',
+        var html = '<iframe width="100%" height="350" src="',
             unit,
             order,
             kq;

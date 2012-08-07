@@ -24,7 +24,9 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
             order: -1,
             title: null,
             videoID: null,
-            question: null // Optional
+            question: null, // Optional
+            completed: false,
+            correct: null
         };
     }
 });
@@ -55,9 +57,11 @@ MOOC.models.Unit = Backbone.Model.extend({
         };
     },
 
-    calculateProgress: function () {
+    calculateProgress: function (conditions) {
         "use strict";
-        return Math.random(100) * 100;
+        var kqs = this.get("knowledgeQuantumList").length,
+            progress = this.get("knowledgeQuantumList").where(conditions);
+        return (progress.length * 100) / kqs;
     }
 });
 

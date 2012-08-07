@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import random
 import urlparse
 
 from tastypie import fields
@@ -25,6 +26,8 @@ class KnowledgeQuantumResource(ModelResource):
     question = fields.RelatedField('moocng.api.resources.QuestionResource',
                                    'question_set')
     videoID = fields.CharField(readonly=True)
+    correct = fields.BooleanField()
+    completed = fields.BooleanField()
 
     class Meta:
         queryset = KnowledgeQuantum.objects.all()
@@ -49,6 +52,21 @@ class KnowledgeQuantumResource(ModelResource):
         video_id = urlparse.parse_qs(parsed_url.query)
         video_id = video_id['v'][0]
         return video_id
+
+    def dehydrate_correct(self, bundle):
+        # TODO real implementation, not random!!
+        # it has to use data from the mongodb to check if the KQ is correct
+        rand = random.Random()
+        correct = rand.randint(0, 1)
+        return correct == 1
+
+    def dehydrate_completed(self, bundle):
+        # TODO real implementation, not random!!
+        # it has to use data from the mongodb to check if the user has finished
+        # the KQ
+        rand = random.Random()
+        completed = rand.randint(0, 1)
+        return completed == 1
 
 
 class QuestionResource(ModelResource):

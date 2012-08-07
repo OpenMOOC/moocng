@@ -4,14 +4,19 @@
 
 {% block nav-course-progress %}class="active"{% endblock %}
 
+{% block mainclass %}courseprogress{% endblock %}
+
 {% block content %}
 <div class="row">
     <section class="span8">
         <div class="row"><div class="span8">
             <h2 id="unit-title"></h2>
         </div></div>
-        <div class="row"><div class="span8" id="unit-progress"></div></div>
-        <div class="row"><div class="span8">
+        <div class="row">
+            <div class="span6" id="unit-progress-bar"></div>
+            <div class="span2"><div class="well" id="unit-progress-text"></div></div>
+        </div>
+        <div class="row"><div class="span6">
             <ol id="unit-kqs"></ol>
         </div></div>
     </section>

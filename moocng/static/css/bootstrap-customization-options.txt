@@ -12,7 +12,9 @@ Scaffolding:
 
 Base CSS:
   - Headings, body, etc
+  - Labels and badges
   - Buttons
+  - Icons
 
 Components:
   - Buttons groups and dropdowns
@@ -26,6 +28,7 @@ JS Components:
   - Carousel
 
 Miscellaneous
+  - Wells
   - Close icon
   - Utilities
   - Component animations
