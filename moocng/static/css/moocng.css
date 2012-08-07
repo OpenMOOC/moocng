@@ -71,3 +71,12 @@ footer ul li {
 .courseprogress #unit-kqs li {
     margin-bottom: 5px;
 }
+
+.classroom #kq-video {
+    margin-bottom: 10px;
+}
+
+.classroom #kq-video img {
+    display: block;
+    margin: 0 auto;
+}

@@ -11,7 +11,7 @@ MOOC.ajax.host = "/api/v1/";
 
 MOOC.ajax.getResource = function (uri, callback) {
     "use strict";
-    $.ajax(uri, {
+    $.ajax(uri + "?format=json", {
         success: callback
     });
 };

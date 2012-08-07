@@ -76,12 +76,22 @@
 {% endblock %}
 
 {% block extrajs %}
-    <script src="{{ STATIC_URL }}js/libs/underscore-1.3.3.min.js"></script>
-    <script src="{{ STATIC_URL }}js/libs/backbone-0.9.2.min.js"></script>
-    <script src="{{ STATIC_URL }}js/models.js"></script>
-    <script src="{{ STATIC_URL }}js/ajax.js"></script>
-    <script src="{{ STATIC_URL }}js/classroom-views.js"></script>
-    <script src="{{ STATIC_URL }}js/routes.js"></script>
+    <script type="text/javascript">
+        function onYouTubeIframeAPIReady() {
+            "use strict";
+            if (typeof MOOC === 'undefined') {
+                window.MOOC = {};
+            }
+            MOOC.YTready = true;
+        }
+    </script>
+    <script src="//www.youtube.com/iframe_api" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/libs/underscore-1.3.3.min.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/libs/backbone-0.9.2.min.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/models.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/ajax.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/classroom-views.js"> type="text/javascript"</script>
+    <script src="{{ STATIC_URL }}js/routes.js" type="text/javascript"></script>
     <script type="text/javascript">
         $("#unit-selector .collapse").collapse({
             parent: "#unit-selector",
