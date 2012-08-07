@@ -41,6 +41,7 @@ MOOC.App = Backbone.Router.extend({
         kq = parseInt(kq, 10);
         var unitObj = MOOC.models.course.get(unit),
             kqView = MOOC.views.kqViews[kq],
+            unitView,
             renderKQ;
 
         renderKQ = function () {
@@ -59,9 +60,13 @@ MOOC.App = Backbone.Router.extend({
 
         if (unitObj.get("knowledgeQuantumList") === null) {
             MOOC.router.loadUnitData(unit, function () {
+                unitView = MOOC.views.unitViews[unit];
+                unitView.render();
                 renderKQ();
             });
         } else {
+            unitView = MOOC.views.unitViews[unit];
+            unitView.render();
             renderKQ();
         }
     },

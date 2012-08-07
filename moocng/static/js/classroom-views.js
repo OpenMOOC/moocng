@@ -35,10 +35,22 @@ MOOC.views.unitViews = {};
 MOOC.views.KnowledgeQuantum = Backbone.View.extend({
     render: function () {
         "use strict";
-        var html = '<iframe width="100%" height="350" src="',
+        var width = $("#kq-video").css("width"),
+            height,
+            html,
             unit,
             order,
             kq;
+
+        if (width.indexOf('p') > 0) {
+            width = parseInt(width.split('p')[0], 10);
+        } else {
+            width = parseInt(width, 10);
+        }
+
+        height = Math.round((width * 6) / 10);
+
+        html = '<iframe width="100%" height="' + height + '" src="';
         html += 'http://www.youtube.com/embed/' + this.model.get("videoID");
         html += '" frameborder="0" allowfullscreen></iframe>';
         $("#kq-video").html(html);
