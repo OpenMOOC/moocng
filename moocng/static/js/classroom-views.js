@@ -129,11 +129,10 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     $("#kq-video").html(html);
                 };
 
-            // TODO loading indicator
-
             if (this.model.has("questionInstance")) {
                 lq(this.model.get("questionInstance"));
             } else {
+                // TODO loading indicator
                 this.model.on("change", function (evt) {
                     if (this.has("questionInstance")) {
                         this.off("change");

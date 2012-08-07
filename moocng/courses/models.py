@@ -124,6 +124,9 @@ class Question(models.Model):
         verbose_name = _(u'question')
         verbose_name_plural = _(u'questions')
 
+    def __unicode__(self):
+        return u'%s - Question' % self.kq
+
 
 def handle_question_post_save(sender, instance, created, **kwargs):
     if created:

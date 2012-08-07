@@ -8,7 +8,7 @@ from tastypie.authorization import DjangoAuthorization
 from tastypie.resources import ModelResource
 
 from moocng.api.authentication import DjangoAuthentication
-from moocng.courses.models import Unit, KnowledgeQuantum, Question
+from moocng.courses.models import Unit, KnowledgeQuantum, Question, Option
 
 
 class UnitResource(ModelResource):
@@ -80,4 +80,17 @@ class QuestionResource(ModelResource):
         authorization = DjangoAuthorization()
         filtering = {
             "kq": ('exact'),
+        }
+
+class OptionResource(ModelResource):
+    question = fields.ToOneField(QuestionResource, 'question')
+
+    class Meta:
+        queryset = Option.objects.all()
+        resource_name = 'option'
+        allowed_methods = ['get']
+        authentication = DjangoAuthentication()
+        authorization = DjangoAuthorization()
+        filtering = {
+            "question": ('exact'),
         }

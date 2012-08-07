@@ -6,13 +6,14 @@ admin.autodiscover()
 
 from tastypie.api import Api
 from moocng.api.resources import (UnitResource, KnowledgeQuantumResource,
-                                  QuestionResource)
+                                  QuestionResource, OptionResource)
 
 
 v1_api = Api(api_name='v1')
 v1_api.register(UnitResource())
 v1_api.register(KnowledgeQuantumResource())
 v1_api.register(QuestionResource())
+v1_api.register(OptionResource())
 
 urlpatterns = patterns(
     '',

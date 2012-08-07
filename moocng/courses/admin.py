@@ -39,6 +39,7 @@ class QuestionAdmin(admin.ModelAdmin):
 class OptionAdmin(admin.ModelAdmin):
 
     list_display = ('question', 'x', 'y', 'optiontype')
+    list_filter = ('question', )
 
 
 admin.site.register(Course, CourseAdmin)
