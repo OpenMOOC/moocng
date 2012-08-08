@@ -7,12 +7,30 @@ if (typeof MOOC === 'undefined') {
 
 MOOC.models = {};
 
+MOOC.models.Option = Backbone.Model.extend({
+    defaults: function () {
+        "use strict";
+        return {
+            id: -1,
+            optiontype: null,
+            x: null,
+            y: null
+        };
+    }
+});
+
+MOOC.models.OptionList  = Backbone.Collection.extend({
+    model: MOOC.models.Option
+});
+
 MOOC.models.Question = Backbone.Model.extend({
     defaults: function () {
         "use strict";
         return {
-            last_frame: null, // of the question's video
-            solution: null
+            id: -1,
+            last_frame: null, // of the KnowledgeQuantum's video
+            solution: null,
+            optionList: null
         };
     }
 });

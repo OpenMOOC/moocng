@@ -9,6 +9,8 @@ MOOC.ajax = {};
 
 MOOC.ajax.host = "/api/v1/";
 
+// TODO errors?
+
 MOOC.ajax.getResource = function (uri, callback) {
     "use strict";
     $.ajax(uri + "?format=json", {
@@ -21,5 +23,11 @@ MOOC.ajax.getKQsByUnit = function (unit, callback) {
     $.ajax(MOOC.ajax.host + "kq/?format=json&unit=" + unit, {
         success: callback
     });
-    // TODO error?
+};
+
+MOOC.ajax.getOptionsByQuestion = function (question, callback) {
+    "use strict";
+    $.ajax(MOOC.ajax.host + "option/?format=json&question=" + question, {
+        success: callback
+    });
 };

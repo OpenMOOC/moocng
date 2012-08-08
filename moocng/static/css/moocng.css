@@ -73,10 +73,15 @@ footer ul li {
 }
 
 .classroom #kq-video {
+    position: relative;
     margin-bottom: 10px;
 }
 
 .classroom #kq-video img {
     display: block;
     margin: 0 auto;
+}
+
+.classroom #kq-video input {
+    position: absolute;
 }

@@ -61,9 +61,17 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
         if (this.model.has("question")) {
             kqObj = this.model;
+            // Load Question Data
             MOOC.ajax.getResource(kqObj.get("question"), function (data, textStatus, jqXHR) {
-                var question = new MOOC.models.Question(_.pick(data, "last_frame", "solution"));
+                var question = new MOOC.models.Question(_.pick(data, "id", "last_frame", "solution"));
                 kqObj.set("questionInstance", question);
+                // Load Options for Question
+                MOOC.ajax.getOptionsByQuestion(question.get("id"), function (data, textStatus, jqXHR) {
+                    var options = _.map(data.objects, function (opt) {
+                        return new MOOC.models.Option(_.pick(opt, "id", "optiontype", "x", "y"));
+                    });
+                    question.set("optionList", new MOOC.models.OptionList(options));
+                });
             });
             this.waitForPlayer();
         }
@@ -114,10 +122,22 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         }
     },
 
+    waitFor: function (model, property, callback) {
+        "use strict";
+        // TODO loading indicator
+        model.on("change", function (evt) {
+            if (this.has(property)) {
+                this.off("change");
+                callback(this.get(property));
+            }
+        }, model);
+    },
+
     loadQuestion: function (evt) {
         "use strict";
         if (evt.data === YT.PlayerState.ENDED) {
-            var player = this.player,
+            var view = this,
+                player = this.player,
                 title = this.model.get("title"),
                 lq = function (question) {
                     var width = $("#kq-video").children().css("width"),
@@ -127,21 +147,57 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     html += '; height: ' + height + ';" />';
                     player.destroy();
                     $("#kq-video").html(html);
-                };
+
+                    question.get("optionList").each(function (opt) {
+                        if (typeof MOOC.views.optionViews[opt.get("id")] === "undefined") {
+                            MOOC.views.optionViews[opt.get("id")] = new MOOC.views.Option({
+                                model: opt,
+                                el: $("#kq-video")[0]
+                            });
+                        }
+                        MOOC.views.optionViews[opt.get("id")].render();
+                    });
+                },
+                lo = function (question) {
+                    if (question.has("optionList")) {
+                        lq(question);
+                    } else {
+                        view.waitFor(question, "optionList", lq);
+                    }
+                },
+                question;
 
             if (this.model.has("questionInstance")) {
-                lq(this.model.get("questionInstance"));
+                lo(this.model.get("questionInstance"));
             } else {
-                // TODO loading indicator
-                this.model.on("change", function (evt) {
-                    if (this.has("questionInstance")) {
-                        this.off("change");
-                        lq(this.get("questionInstance"));
-                    }
-                }, this.model);
+                this.waitFor(this.model, "questionInstance", lo);
             }
         }
     }
 });
 
 MOOC.views.kqViews = {};
+
+MOOC.views.Option = Backbone.View.extend({
+    types: {
+        i: "text",
+        c: "checkbox",
+        r: "radio"
+    },
+
+    render: function () {
+        "use strict";
+        var html = "<input type='" + this.types[this.model.get("optiontype")] + "' ",
+            node;
+        html += "style='top: " + this.model.get("y") + "px; left: " + this.model.get("x") + "px;' ";
+        if (this.model.get("optiontype") === 'r') {
+            html += "name='radio' ";
+        }
+        html += "/>";
+        node = $(html)[0];
+        this.$el.append(node);
+        return this;
+    }
+});
+
+MOOC.views.optionViews = {};
