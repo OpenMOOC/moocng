@@ -13,10 +13,18 @@
             <h2 id="kq-title"></h2>
         </div></div>
         <div class="row"><div class="span8" id="kq-video"></div></div>
-        <div class="row"><div class="span8">
-            <button class="btn" id="kq-previous">{% trans "Previous" %}</button>
-            <button class="btn pull-right" id="kq-next">{% trans "Next" %}</button>
-        </div></div>
+        <div class="row">
+            <div class="span2">
+                <button class="btn" id="kq-previous">{% trans "Previous" %}</button>
+            </div>
+            <div class="span4 hide" id="kq-q-buttons">
+                <button class="btn" id="kq-q-showkq">{% trans "Show video" %}</button>
+                <button class="btn" id="kq-q-submit">{% trans "Submit" %}</button>
+            </div>
+            <div class="span2 offset4" id="kq-next-container">
+                <button class="btn pull-right" id="kq-next">{% trans "Next" %}</button>
+            </div>
+        </div>
     </section>
     <div class="span4" id="unit-selector">
         {% for unit in unit_list %}

@@ -85,3 +85,11 @@ footer ul li {
 .classroom #kq-video input {
     position: absolute;
 }
+
+.classroom div.kqContainer span {
+    cursor: pointer;
+}
+
+.classroom #kq-q-buttons {
+    text-align: center;
+}

@@ -1,5 +1,5 @@
 /*jslint vars: false, browser: true, nomen: true */
-/*global MOOC: true, Backbone, $, _, YT */
+/*global MOOC: true, Backbone, $, _, YT, async */
 
 if (typeof MOOC === 'undefined') {
     window.MOOC = {};
@@ -16,7 +16,7 @@ MOOC.views.Unit = Backbone.View.extend({
 
     render: function () {
         "use strict";
-        var html = '<div class="accordion-inner"><ol>';
+        var html = '<div class="accordion-inner kqContainer"><ol>';
         this.model.get("knowledgeQuantumList").each(function (kq) {
             html += '<li id="kq' + kq.get("id") + '"><span class="kq">' + kq.get("title") + '</span>';
             if (kq.has("question")) {
@@ -77,6 +77,9 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         html += '" frameborder="0" allowfullscreen></iframe>';
         $("#kq-video").html(html);
 
+        $("#kq-q-buttons").addClass("hide");
+        $("#kq-next-container").addClass("offset4");
+
         if (this.model.has("question")) {
             kqObj = this.model;
             // Load Question Data
@@ -127,7 +130,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
     player: null,
 
-    waitForPlayer: function () {
+    waitForPlayer: function (callback) {
         "use strict";
         if (MOOC.YTready) {
             this.player = new YT.Player("ytplayer", {
@@ -135,18 +138,20 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     onStateChange: _.bind(this.loadQuestion, this)
                 }
             });
+            if (!_.isUndefined(callback)) {
+                callback();
+            }
         } else {
-            setTimeout(_.bind(this.waitForPlayer, this), 500);
+            _.delay(_.bind(this.waitForPlayer, this), 500, callback);
         }
     },
 
     waitFor: function (model, property, callback) {
         "use strict";
-        // TODO loading indicator
         model.on("change", function (evt) {
             if (this.has(property)) {
                 this.off("change");
-                callback(this.get(property));
+                callback();
             }
         }, model);
     },
@@ -154,43 +159,74 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
     loadQuestion: function (evt) {
         "use strict";
         if (evt.data === YT.PlayerState.ENDED) {
-            var view = this,
-                player = this.player,
-                title = this.model.get("title"),
-                lq = function (question) {
-                    var width = $("#kq-video").children().css("width"),
-                        height = $("#kq-video").children().css("height"),
-                        html = '<img src="' + question.get("last_frame") + '" ';
-                    html += 'alt="' + title + '" style="max-width: ' + width;
-                    html += '; height: ' + height + ';" />';
-                    player.destroy();
-                    $("#kq-video").html(html);
+            var toExecute = [];
 
-                    question.get("optionList").each(function (opt) {
-                        if (typeof MOOC.views.optionViews[opt.get("id")] === "undefined") {
-                            MOOC.views.optionViews[opt.get("id")] = new MOOC.views.Option({
-                                model: opt,
-                                el: $("#kq-video")[0]
-                            });
-                        }
-                        MOOC.views.optionViews[opt.get("id")].render();
-                    });
-                },
-                lo = function (question) {
-                    if (question.has("optionList")) {
-                        lq(question);
-                    } else {
-                        view.waitFor(question, "optionList", lq);
-                    }
-                },
-                question;
-
-            if (this.model.has("questionInstance")) {
-                lo(this.model.get("questionInstance"));
-            } else {
-                this.waitFor(this.model, "questionInstance", lo);
+            if (!this.model.has("questionInstance")) {
+                toExecute.push(async.apply(this.waitFor, this.model, "questionInstance"));
             }
+
+            toExecute.push(_.bind(function (callback) {
+                var question = this.model.get("questionInstance");
+                if (!question.has("optionList")) {
+                    this.waitFor(question, "optionList", callback);
+                } else {
+                    callback();
+                }
+            }, this));
+
+            toExecute.push(_.bind(function (callback) {
+                var question = this.model.get("questionInstance"),
+                    width = $("#kq-video").children().css("width"),
+                    height = $("#kq-video").children().css("height"),
+                    path = window.location.hash,
+                    html = '<img src="' + question.get("last_frame") + '" ';
+                html += 'alt="' + this.model.get("title") + '" style="max-width: ' + width;
+                html += '; height: ' + height + ';" />';
+                this.player.destroy();
+                $("#kq-video").html(html);
+
+                if (!(/#[\w\/]+\/q/.test(path))) {
+                    path = path.substring(1) + "/q";
+                    MOOC.router.navigate(path, { trigger: false });
+                }
+
+                $("#kq-q-buttons").removeClass("hide");
+                $("#kq-q-showkq").click(function () {
+                    var path = window.location.hash,
+                        idx = path.lastIndexOf('/');
+                    if ((path[idx] + path[idx + 1]) === "/q") {
+                        path = path.substring(1, idx);
+                        MOOC.router.navigate(path, { trigger: true });
+                    }
+                });
+                $("#kq-q-submit").click(_.bind(function () {
+                    this.submitAnswer(question);
+                }, this));
+                $("#kq-next-container").removeClass("offset4");
+
+                question.get("optionList").each(function (opt) {
+                    if (typeof MOOC.views.optionViews[opt.get("id")] === "undefined") {
+                        MOOC.views.optionViews[opt.get("id")] = new MOOC.views.Option({
+                            model: opt,
+                            el: $("#kq-video")[0]
+                        });
+                    }
+                    MOOC.views.optionViews[opt.get("id")].render();
+                });
+
+                callback();
+            }, this));
+
+            async.series(toExecute);
         }
+    },
+
+    submitAnswer: function (question) {
+        "use strict";
+        question.get("optionList").each(function (opt) {
+            var view = MOOC.views.optionViews[opt.get("id")];
+            // TODO read user input and send it to backend
+        });
     }
 });
 
