@@ -11,7 +11,6 @@ MOOC.models.Option = Backbone.Model.extend({
     defaults: function () {
         "use strict";
         return {
-            id: -1,
             optiontype: null,
             x: null,
             y: null
@@ -27,7 +26,6 @@ MOOC.models.Question = Backbone.Model.extend({
     defaults: function () {
         "use strict";
         return {
-            id: -1,
             last_frame: null, // of the KnowledgeQuantum's video
             solution: null,
             optionList: null
