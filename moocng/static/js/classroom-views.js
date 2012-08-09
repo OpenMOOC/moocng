@@ -9,14 +9,20 @@ MOOC.views = {};
 
 MOOC.views.Unit = Backbone.View.extend({
     events: {
-        "click li.kq": "showKQ"
+        "click li span.kq": "showKQ",
+        "click li span.q": "showQ",
+        "click li span.a": "showA"
     },
 
     render: function () {
         "use strict";
         var html = '<div class="accordion-inner"><ol>';
         this.model.get("knowledgeQuantumList").each(function (kq) {
-            html += '<li id="kq' + kq.get("id") + '" class="kq">' + kq.get("title") + '</li>';
+            html += '<li id="kq' + kq.get("id") + '"><span class="kq">' + kq.get("title") + '</span>';
+            if (kq.has("question")) {
+                html += ' <span class="q">Q</span> / <span class="a">A</span>';
+            }
+            html += '</li>';
         });
         html += '</ol></div>';
         this.$el.html(html);
@@ -25,8 +31,20 @@ MOOC.views.Unit = Backbone.View.extend({
 
     showKQ: function (evt) {
         "use strict";
-        var kq = evt.target.id.split("kq")[1];
+        var kq = $(evt.target).parent().attr("id").split("kq")[1];
         MOOC.router.navigate(this.id + "/kq" + kq, { trigger: true });
+    },
+
+    showQ: function (evt) {
+        "use strict";
+        var kq = $(evt.target).parent().attr("id").split("kq")[1];
+        MOOC.router.navigate(this.id + "/kq" + kq + "/q", { trigger: true });
+    },
+
+    showA: function (evt) {
+        "use strict";
+        var kq = $(evt.target).parent().attr("id").split("kq")[1];
+        MOOC.router.navigate(this.id + "/kq" + kq + "/a", { trigger: true });
     }
 });
 

@@ -1,5 +1,5 @@
 /*jslint vars: false, browser: true, nomen: true */
-/*global MOOC: true, Backbone, $, _ */
+/*global MOOC: true, Backbone, $, _, async */
 
 if (typeof MOOC === 'undefined') {
     window.MOOC = {};
@@ -10,29 +10,26 @@ MOOC.App = Backbone.Router.extend({
         "use strict";
         unit = parseInt(unit, 10);
         var unitObj = MOOC.models.course.get(unit),
-            unitView,
-            navigateToFirstKQ;
-
-        navigateToFirstKQ = function () {
-            var kqObj = unitObj.get("knowledgeQuantumList").first();
-            MOOC.router.navigate("unit" + unitObj.get("id") + "/kq" + kqObj.get("id"), { trigger: true });
-        };
+            toExecute = [];
 
         if (unitObj.get("knowledgeQuantumList") === null) {
-            MOOC.router.loadUnitData(unit, function () {
-                unitView = MOOC.views.unitViews[unit];
-                unitView.render();
-                if (MOOC.router.hasHandler("unit1/kq1")) {
-                    navigateToFirstKQ();
-                }
+            toExecute.push(async.apply(MOOC.router.loadUnitData, unit));
+        }
+
+        if (MOOC.router.hasHandler("unit1/kq1")) {
+            toExecute.push(function (callback) {
+                var kqObj = unitObj.get("knowledgeQuantumList").first();
+                MOOC.router.navigate("unit" + unitObj.get("id") + "/kq" + kqObj.get("id"), { trigger: true });
+                callback();
             });
         } else {
-            unitView = MOOC.views.unitViews[unit];
-            unitView.render();
-            if (this.hasHandler("unit1/kq1")) {
-                navigateToFirstKQ();
-            }
+            toExecute.push(function (callback) {
+                MOOC.views.unitViews[unit].render();
+                callback();
+            });
         }
+
+        async.series(toExecute);
     },
 
     kq: function (unit, kq) {
@@ -41,10 +38,18 @@ MOOC.App = Backbone.Router.extend({
         kq = parseInt(kq, 10);
         var unitObj = MOOC.models.course.get(unit),
             kqView = MOOC.views.kqViews[kq],
-            unitView,
-            renderKQ;
+            toExecute = [];
 
-        renderKQ = function () {
+        if (unitObj.get("knowledgeQuantumList") === null) {
+            toExecute.push(async.apply(MOOC.router.loadUnitData, unit));
+        }
+
+        toExecute.push(function (callback) {
+            MOOC.views.unitViews[unit].render();
+            callback();
+        });
+
+        toExecute.push(function (callback) {
             var kqObj = unitObj.get("knowledgeQuantumList").get(kq);
 
             if (typeof kqView === "undefined") {
@@ -56,19 +61,26 @@ MOOC.App = Backbone.Router.extend({
                 MOOC.views.kqViews[kq] = kqView;
             }
             kqView.render();
-        };
 
-        if (unitObj.get("knowledgeQuantumList") === null) {
-            MOOC.router.loadUnitData(unit, function () {
-                unitView = MOOC.views.unitViews[unit];
-                unitView.render();
-                renderKQ();
-            });
-        } else {
-            unitView = MOOC.views.unitViews[unit];
-            unitView.render();
-            renderKQ();
-        }
+            callback();
+        });
+
+        async.series(toExecute);
+    },
+
+    kqQ: function (unit, kq) {
+        "use strict";
+        this.kq(unit, kq);
+        kq = parseInt(kq, 10);
+        var view = MOOC.views.kqViews[kq];
+        view.loadQuestion();
+    },
+
+    kqA: function (unit, kq) {
+        "use strict";
+        this.kq(unit, kq);
+        kq = parseInt(kq, 10);
+        var view = MOOC.views.kqViews[kq];
     },
 
     loadUnitData: function (unit, callback) {
@@ -116,6 +128,8 @@ MOOC.init = function (KQRoute) {
     MOOC.router.route("unit:unit", "unit");
     if (KQRoute) {
         MOOC.router.route("unit:unit/kq:kq", "kq");
+        MOOC.router.route("unit:unit/kq:kq/q", "kqQ");
+        MOOC.router.route("unit:unit/kq:kq/a", "kqA");
     }
     if (path.lastIndexOf('/') < path.length - 1) {
         path += '/';
