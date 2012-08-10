@@ -9,26 +9,41 @@ MOOC.ajax = {};
 
 MOOC.ajax.host = "/api/v1/";
 
-// TODO errors?
+MOOC.ajax.genericError = function (jqXHR, textStatus, errorThrown) {
+    "use strict";
+    var message;
+    if (!_.isNull(textStatus)) {
+        message = "Error: " + textStatus;
+    } else {
+        message = "Unknown error with ajax petition";
+    }
+    if (!_.isNull(errorThrown)) {
+        message += " - " + errorThrown;
+    }
+    MOOC.alerts.show(MOOC.alerts.ERROR, "AJAX Error", message);
+};
 
 MOOC.ajax.getResource = function (uri, callback) {
     "use strict";
     $.ajax(uri + "?format=json", {
-        success: callback
+        success: callback,
+        error: MOOC.ajax.genericError
     });
 };
 
 MOOC.ajax.getKQsByUnit = function (unit, callback) {
     "use strict";
     $.ajax(MOOC.ajax.host + "kq/?format=json&unit=" + unit, {
-        success: callback
+        success: callback,
+        error: MOOC.ajax.genericError
     });
 };
 
 MOOC.ajax.getOptionsByQuestion = function (question, callback) {
     "use strict";
     $.ajax(MOOC.ajax.host + "option/?format=json&question=" + question, {
-        success: callback
+        success: callback,
+        error: MOOC.ajax.genericError
     });
 };
 
@@ -42,8 +57,31 @@ MOOC.ajax.sendAnswers = function (put, answers, callback) {
 //         type: method,
 //         data: JSON.stringify(answers),
 //         contentType: "application/json",
-//         success: callback
+//         success: callback,
+//         error: MOOC.ajax.genericError
 //     });
 // TODO API on backend
     callback(); // to delete
+};
+
+MOOC.alerts = {};
+
+MOOC.alerts.ERROR = "error";
+MOOC.alerts.SUCCESS = "success";
+MOOC.alerts.INFO = "info";
+
+MOOC.alerts.show = function (type, title, message) {
+    "use strict";
+    var alert = $(".alert.alert-" + type);
+    alert.find("h4").text(title);
+    alert.find("p").text(message);
+    alert.removeClass("hide");
+    _.delay(function () {
+        MOOC.alerts.hide();
+    }, 5000);
+};
+
+MOOC.alerts.hide = function () {
+    "use strict";
+    $(".alert").addClass("hide");
 };

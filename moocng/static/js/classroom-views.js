@@ -268,7 +268,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         });
 
         MOOC.ajax.sendAnswers(put, answerList, function (data, textStatus, jqXHR) {
-            // TODO
+            MOOC.alerts.show(MOOC.alerts.SUCCESS, "Answers sent", "Your answers were successfully sent to the server.");
         });
     },
 

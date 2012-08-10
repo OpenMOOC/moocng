@@ -25,6 +25,22 @@
                 <button class="btn pull-right" id="kq-next">{% trans "Next" %}</button>
             </div>
         </div>
+        <div class="row alerts">
+            <div class="span4 offset2">
+                <div class="alert alert-block alert-error hide">
+                    <h4 class="alert-heading">title</h4>
+                    <p>message</p>
+                </div>
+                <div class="alert alert-block alert-success hide">
+                    <h4 class="alert-heading">title</h4>
+                    <p>message</p>
+                </div>
+                <div class="alert alert-block alert-info hide">
+                    <h4 class="alert-heading">title</h4>
+                    <p>message</p>
+                </div>
+            </div>
+        </div>
     </section>
     <div class="span4" id="unit-selector">
         {% for unit in unit_list %}

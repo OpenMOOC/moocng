@@ -63,6 +63,10 @@ footer ul li {
     margin-bottom: 20px;
 }
 
+.row.alerts {
+    margin-top: 10px;
+}
+
 .courseprogress #unit-progress-bar .progress,
 .courseprogress #unit-progress-bar .progress .bar {
     height: 30px;
