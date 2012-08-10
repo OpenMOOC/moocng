@@ -13,14 +13,14 @@ MOOC.ajax.genericError = function (jqXHR, textStatus, errorThrown) {
     "use strict";
     var message;
     if (!_.isNull(textStatus)) {
-        message = "Error: " + textStatus;
+        message = MOOC.trans.ajax.error + ": " + textStatus;
     } else {
-        message = "Unknown error with ajax petition";
+        message = MOOC.trans.ajax.unknownError;
     }
     if (!_.isNull(errorThrown)) {
         message += " - " + errorThrown;
     }
-    MOOC.alerts.show(MOOC.alerts.ERROR, "AJAX Error", message);
+    MOOC.alerts.show(MOOC.alerts.ERROR, "AJAX " + MOOC.trans.ajax.error, message);
 };
 
 MOOC.ajax.getResource = function (uri, callback) {

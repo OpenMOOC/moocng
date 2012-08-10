@@ -27,10 +27,10 @@ MOOC.views.Unit = Backbone.View.extend({
         html += '<div class="progress progress-success" title="Correct"><div class="bar correct" style="width: 0%;"></div></div>';
         $("#unit-progress-bar").html(html);
         progress = this.model.calculateProgress({ completed: true });
-        helpText = "<div><span>" + Math.round(progress) + "% completed</span></div>";
+        helpText = "<div><span>" + Math.round(progress) + "% " + MOOC.trans.progress.completed + "</span></div>";
         $("#unit-progress-bar").find("div.bar.completed").css("width", progress + "%");
         progress = this.model.calculateProgress({ completed: true, correct: true });
-        helpText += "<div><span>" + Math.round(progress) + "% correct</span></div>";
+        helpText += "<div><span>" + Math.round(progress) + "% " + MOOC.trans.progress.correct + "</span></div>";
         $("#unit-progress-bar").find("div.bar.correct").css("width", progress + "%");
         $("#unit-progress-text").html(helpText);
 
@@ -39,12 +39,12 @@ MOOC.views.Unit = Backbone.View.extend({
             html += "<li><b>" + kq.get("title") + "</b>";
             if (kq.get("completed")) {
                 if (kq.get("correct")) {
-                    html += '<span class="badge badge-success pull-right"><i class="icon-ok icon-white"></i> Correct</span>';
+                    html += '<span class="badge badge-success pull-right"><i class="icon-ok icon-white"></i> ' + MOOC.trans.progress.correct2 + '</span>';
                 } else {
-                    html += '<span class="badge badge-important pull-right"><i class="icon-remove icon-white"></i> Incorrect</span>';
+                    html += '<span class="badge badge-important pull-right"><i class="icon-remove icon-white"></i> ' + MOOC.trans.progress.incorrect + '</span>';
                 }
             } else {
-                html += '<span class="badge pull-right">Pending</span>';
+                html += '<span class="badge pull-right">' + MOOC.trans.progress.pending + '</span>';
             }
             html += "</li>";
         });

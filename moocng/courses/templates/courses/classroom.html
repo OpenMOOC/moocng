@@ -118,6 +118,18 @@
     <script src="{{ STATIC_URL }}js/classroom-views.js"> type="text/javascript"</script>
     <script src="{{ STATIC_URL }}js/routes.js" type="text/javascript"></script>
     <script type="text/javascript">
+        MOOC.trans = {
+            ajax: {
+                error: "{% trans "Error" %}",
+                unknownError: "{% trans "Unknown error with ajax petition" %}"
+            },
+            classroom: {
+                q: "{% trans "Q" %}",
+                a: "{% trans "A" %}",
+                answersSent: "{% trans "Answers sent" %}",
+                answersSentMsg: "{% trans "Your answers were successfully sent to the server." %}"
+            },
+        };
         $("#unit-selector .collapse").collapse({
             parent: "#unit-selector",
             toggle: false

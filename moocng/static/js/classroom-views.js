@@ -20,7 +20,8 @@ MOOC.views.Unit = Backbone.View.extend({
         this.model.get("knowledgeQuantumList").each(function (kq) {
             html += '<li id="kq' + kq.get("id") + '"><span class="kq label label-info">' + kq.get("title") + '</span>';
             if (kq.has("question")) {
-                html += ' <span class="q label">Q</span> / <span class="a label">A</span>';
+                html += ' <span class="q label">' + MOOC.trans.classroom.q + '</span> ';
+                html += '/ <span class="a label">' + MOOC.trans.classroom.a + '</span>';
             }
             html += '</li>';
         });
@@ -268,7 +269,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         });
 
         MOOC.ajax.sendAnswers(put, answerList, function (data, textStatus, jqXHR) {
-            MOOC.alerts.show(MOOC.alerts.SUCCESS, "Answers sent", "Your answers were successfully sent to the server.");
+            MOOC.alerts.show(MOOC.alerts.SUCCESS, MOOC.trans.classroom.answersSent, MOOC.trans.classroom.answersSentMsg);
         });
     },
 

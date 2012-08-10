@@ -53,6 +53,19 @@
     <script src="{{ STATIC_URL }}js/progress-views.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/routes.js" type="text/javascript"></script>
     <script type="text/javascript">
+        MOOC.trans = {
+            ajax: {
+                error: "{% trans "Error" %}",
+                unknownError: "{% trans "Unknown error with ajax petition" %}"
+            },
+            progress: {
+                completed: "{% trans "completed" %}",
+                correct: "{% trans "correct" %}",
+                correct2: "{% trans "Correct" %}",
+                incorrect: "{% trans "Incorrect" %}",
+                pending: "{% trans "Pending" %}"
+            },
+        };
         $("#unit-list li").each(function (idx, node) {
             var id = node.id.split("unit")[1];
             MOOC.models.course.add(new MOOC.models.Unit({
