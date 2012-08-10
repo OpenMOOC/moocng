@@ -1,7 +1,7 @@
 /*jslint vars: false, browser: true, nomen: true */
 /*global MOOC: true, Backbone, $, _ */
 
-if (typeof MOOC === 'undefined') {
+if (_.isUndefined(MOOC)) {
     window.MOOC = {};
 }
 
@@ -91,11 +91,11 @@ MOOC.models.UnitList = Backbone.Collection.extend({
         "use strict";
         return this.find(function (unit) {
             var kq = unit.get("knowledgeQuantumList");
-            if (kq === null) {
+            if (_.isNull(kq)) {
                 return false;
             }
             kq = kq.get(kqID);
-            return typeof kq !== "undefined";
+            return !_.isUndefined(kq);
         });
     }
 });

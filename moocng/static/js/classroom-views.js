@@ -1,7 +1,7 @@
 /*jslint vars: false, browser: true, nomen: true */
 /*global MOOC: true, Backbone, $, _, YT, async */
 
-if (typeof MOOC === 'undefined') {
+if (_.isUndefined(MOOC)) {
     window.MOOC = {};
 }
 
@@ -130,7 +130,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
     navigate: function (selector, unit, kq) {
         "use strict";
-        if (typeof kq === "undefined") {
+        if (_.isUndefined(kq)) {
             $(selector).addClass("disabled");
         } else {
             $(selector).removeClass("disabled");
@@ -218,7 +218,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 $("#kq-next-container").removeClass("offset4");
 
                 question.get("optionList").each(function (opt) {
-                    if (typeof MOOC.views.optionViews[opt.get("id")] === "undefined") {
+                    if (_.isUndefined(MOOC.views.optionViews[opt.get("id")])) {
                         MOOC.views.optionViews[opt.get("id")] = new MOOC.views.Option({
                             model: opt,
                             el: $("#kq-video")[0]

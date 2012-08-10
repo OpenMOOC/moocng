@@ -1,7 +1,7 @@
 /*jslint vars: false, browser: true, nomen: true */
 /*global MOOC: true, Backbone, $, _, async */
 
-if (typeof MOOC === 'undefined') {
+if (_.isUndefined(MOOC)) {
     window.MOOC = {};
 }
 
@@ -11,7 +11,7 @@ MOOC.App = Backbone.Router.extend({
         var unitObj = MOOC.models.course.get(unit),
             steps = [];
 
-        if (unitObj.get("knowledgeQuantumList") === null) {
+        if (_.isNull(unitObj.get("knowledgeQuantumList"))) {
             steps.push(async.apply(MOOC.router.loadUnitData, unitObj));
         }
         if (loadKQ) {
@@ -39,7 +39,7 @@ MOOC.App = Backbone.Router.extend({
         steps.push(function (callback) {
             var kqObj = unitObj.get("knowledgeQuantumList").get(kq);
 
-            if (typeof kqView === "undefined") {
+            if (_.isUndefined(kqView)) {
                 kqView = new MOOC.views.KnowledgeQuantum({
                     model: kqObj,
                     id: "kq" + kq,
@@ -113,7 +113,7 @@ MOOC.App = Backbone.Router.extend({
             }));
 
             unitView = MOOC.views.unitViews[unitID];
-            if (typeof unitView === "undefined") {
+            if (_.isUndefined(unitView)) {
                 unitView = new MOOC.views.Unit({
                     model: unitObj,
                     id: "unit" + unitID,
