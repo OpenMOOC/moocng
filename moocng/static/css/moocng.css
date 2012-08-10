@@ -72,6 +72,10 @@ footer ul li {
     margin-bottom: 5px;
 }
 
+.classroom #unit-selector .accordion-group {
+    background-color: #FAFAFA;
+}
+
 .classroom #kq-video {
     position: relative;
     margin-bottom: 10px;

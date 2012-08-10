@@ -1,7 +1,7 @@
 /*jslint vars: false, browser: true, nomen: true */
 /*global MOOC: true, Backbone, $, _, async */
 
-if (_.isUndefined(MOOC)) {
+if (_.isUndefined(window.MOOC)) {
     window.MOOC = {};
 }
 

@@ -1,7 +1,7 @@
 /*jslint vars: false, browser: true, nomen: true */
 /*global MOOC: true, Backbone, $, _, YT, async */
 
-if (_.isUndefined(MOOC)) {
+if (_.isUndefined(window.MOOC)) {
     window.MOOC = {};
 }
 
@@ -18,9 +18,9 @@ MOOC.views.Unit = Backbone.View.extend({
         "use strict";
         var html = '<div class="accordion-inner kqContainer"><ol>';
         this.model.get("knowledgeQuantumList").each(function (kq) {
-            html += '<li id="kq' + kq.get("id") + '"><span class="kq">' + kq.get("title") + '</span>';
+            html += '<li id="kq' + kq.get("id") + '"><span class="kq label label-info">' + kq.get("title") + '</span>';
             if (kq.has("question")) {
-                html += ' <span class="q">Q</span> / <span class="a">A</span>';
+                html += ' <span class="q label">Q</span> / <span class="a label">A</span>';
             }
             html += '</li>';
         });
