@@ -53,24 +53,13 @@ MOOC.views.unitViews = {};
 MOOC.views.KnowledgeQuantum = Backbone.View.extend({
     render: function () {
         "use strict";
-        var width = $("#kq-video").css("width"),
-            height,
+        var height = this.getVideoHeight(),
             player,
             html,
             unit,
             order,
             kq,
             kqObj;
-
-        if (width.indexOf('p') > 0) {
-            width = parseInt(width.split('p')[0], 10);
-        } else {
-            width = parseInt(width, 10);
-        }
-        height = Math.round((width * 6) / 10);
-        if (height < 200) {
-            height = 200;
-        }
 
         html = '<iframe id="ytplayer" width="100%" height="' + height + 'px" ';
         html += 'src="http://www.youtube.com/embed/' + this.model.get("videoID");
@@ -84,11 +73,11 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             kqObj = this.model;
             // Load Question Data
             MOOC.ajax.getResource(kqObj.get("question"), function (data, textStatus, jqXHR) {
-                var aux = _.pick(data, "id", "last_frame", "solution"),
+                var aux = _.pick(data, "id", "last_frame", "solutionID"),
                     question = new MOOC.models.Question({
                         id: aux.id,
                         lastFrame: aux.last_frame,
-                        solution: aux.solution
+                        solution: aux.solutionID
                     });
                 kqObj.set("questionInstance", question);
                 // Load Options for Question
@@ -119,6 +108,24 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         this.$el.addClass("active");
 
         return this;
+    },
+
+    getVideoHeight: function () {
+        "use strict";
+        var width = $("#kq-video").css("width"),
+            height;
+
+        if (width.indexOf('p') > 0) {
+            width = parseInt(width.split('p')[0], 10);
+        } else {
+            width = parseInt(width, 10);
+        }
+        height = Math.round((width * 6) / 10);
+        if (height < 200) {
+            height = 200;
+        }
+
+        return height;
     },
 
     navigate: function (selector, unit, kq) {
@@ -153,12 +160,16 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
     waitFor: function (model, property, callback) {
         "use strict";
-        model.on("change", function (evt) {
-            if (this.has(property)) {
-                this.off("change");
-                callback();
-            }
-        }, model);
+        if (model.has(property)) {
+            callback();
+        } else {
+            model.on("change", function (evt) {
+                if (this.has(property)) {
+                    this.off("change");
+                    callback();
+                }
+            }, model);
+        }
     },
 
     loadQuestion: function (evt) {
@@ -172,11 +183,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
             toExecute.push(_.bind(function (callback) {
                 var question = this.model.get("questionInstance");
-                if (!question.has("optionList")) {
-                    this.waitFor(question, "optionList", callback);
-                } else {
-                    callback();
-                }
+                this.waitFor(question, "optionList", callback);
             }, this));
 
             toExecute.push(_.bind(function (callback) {
@@ -188,6 +195,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 html += 'alt="' + this.model.get("title") + '" style="max-width: ' + width;
                 html += '; height: ' + height + ';" />';
                 this.player.destroy();
+                this.player = null;
                 $("#kq-video").html(html);
 
                 if (!(/#[\w\/]+\/q/.test(path))) {
@@ -224,6 +232,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
             async.series(toExecute);
         }
+
+        return this;
     },
 
     submitAnswer: function (question) {
@@ -260,6 +270,40 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         MOOC.ajax.sendAnswers(put, answerList, function (data, textStatus, jqXHR) {
             // TODO
         });
+    },
+
+    loadSolution: function () {
+        "use strict";
+        var toExecute = [];
+
+        toExecute.push(_.bind(this.waitForPlayer, this));
+        toExecute.push(_.bind(function (callback) {
+            this.player.destroy();
+            this.player = null;
+            callback();
+        }, this));
+
+        if (!this.model.has("questionInstance")) {
+            toExecute.push(async.apply(this.waitFor, this.model, "questionInstance"));
+        }
+
+        toExecute.push(_.bind(function (callback) {
+            var height = this.getVideoHeight(),
+                html;
+
+            html = '<iframe id="ytplayer" width="100%" height="' + height + 'px" ';
+            html += 'src="http://www.youtube.com/embed/' + this.model.get("questionInstance").get("solution");
+            html += '" frameborder="0" allowfullscreen></iframe>';
+            $("#kq-video").html(html);
+            $("#kq-q-buttons").addClass("hide");
+            $("#kq-next-container").addClass("offset4");
+
+            callback();
+        }, this));
+
+        async.series(toExecute);
+
+        return this;
     }
 });
 

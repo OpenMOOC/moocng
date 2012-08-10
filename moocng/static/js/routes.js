@@ -78,6 +78,7 @@ MOOC.App = Backbone.Router.extend({
             var view = MOOC.views.kqViews[kq],
                 cb = _.bind(view.loadQuestion, view);
             cb = async.apply(cb, { data: 0 });
+            // data: 0 because YT.PlayerState.ENDED = 0s
             _.bind(view.waitForPlayer, view)(cb);
             callback();
         });
@@ -88,10 +89,10 @@ MOOC.App = Backbone.Router.extend({
         "use strict";
         unit = parseInt(unit, 10);
         kq = parseInt(kq, 10);
-        var toExecute = this.kqSteps(unit, kq),
-            view = MOOC.views.kqViews[kq];
+        var toExecute = this.kqSteps(unit, kq);
+
         toExecute.push(function (callback) {
-            // TODO
+            MOOC.views.kqViews[kq].loadSolution();
             callback();
         });
         async.series(toExecute);

@@ -71,6 +71,7 @@ class KnowledgeQuantumResource(ModelResource):
 
 class QuestionResource(ModelResource):
     kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
+    solutionID = fields.CharField(readonly=True)
 
     class Meta:
         queryset = Question.objects.all()
@@ -81,6 +82,13 @@ class QuestionResource(ModelResource):
         filtering = {
             "kq": ('exact'),
         }
+
+    def dehydrate_solutionID(self, bundle):
+        parsed_url = urlparse.urlparse(bundle.obj.solution)
+        video_id = urlparse.parse_qs(parsed_url.query)
+        video_id = video_id['v'][0]
+        return video_id
+
 
 class OptionResource(ModelResource):
     question = fields.ToOneField(QuestionResource, 'question')
