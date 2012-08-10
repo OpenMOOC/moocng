@@ -13,7 +13,9 @@ MOOC.models.Option = Backbone.Model.extend({
         return {
             optiontype: null,
             x: null,
-            y: null
+            y: null,
+            answer: null,
+            lastAnswerDate: null
         };
     }
 });
@@ -26,7 +28,7 @@ MOOC.models.Question = Backbone.Model.extend({
     defaults: function () {
         "use strict";
         return {
-            last_frame: null, // of the KnowledgeQuantum's video
+            lastFrame: null, // of the KnowledgeQuantum's video
             solution: null,
             optionList: null
         };

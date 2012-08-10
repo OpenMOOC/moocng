@@ -31,3 +31,19 @@ MOOC.ajax.getOptionsByQuestion = function (question, callback) {
         success: callback
     });
 };
+
+MOOC.ajax.sendAnswers = function (put, answers, callback) {
+    "use strict";
+    var method = "post";
+    if (put) {
+        method = "put";
+    }
+//     $.ajax(MOOC.ajax.host + "option/?format=json", {
+//         type: method,
+//         data: JSON.stringify(answers),
+//         contentType: "application/json",
+//         success: callback
+//     });
+// TODO API on backend
+    callback(); // to delete
+};

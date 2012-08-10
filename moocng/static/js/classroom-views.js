@@ -84,7 +84,12 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             kqObj = this.model;
             // Load Question Data
             MOOC.ajax.getResource(kqObj.get("question"), function (data, textStatus, jqXHR) {
-                var question = new MOOC.models.Question(_.pick(data, "id", "last_frame", "solution"));
+                var aux = _.pick(data, "id", "last_frame", "solution"),
+                    question = new MOOC.models.Question({
+                        id: aux.id,
+                        lastFrame: aux.last_frame,
+                        solution: aux.solution
+                    });
                 kqObj.set("questionInstance", question);
                 // Load Options for Question
                 MOOC.ajax.getOptionsByQuestion(question.get("id"), function (data, textStatus, jqXHR) {
@@ -142,7 +147,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 callback();
             }
         } else {
-            _.delay(_.bind(this.waitForPlayer, this), 500, callback);
+            _.delay(_.bind(this.waitForPlayer, this), 200, callback);
         }
     },
 
@@ -179,7 +184,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     width = $("#kq-video").children().css("width"),
                     height = $("#kq-video").children().css("height"),
                     path = window.location.hash,
-                    html = '<img src="' + question.get("last_frame") + '" ';
+                    html = '<img src="' + question.get("lastFrame") + '" ';
                 html += 'alt="' + this.model.get("title") + '" style="max-width: ' + width;
                 html += '; height: ' + height + ';" />';
                 this.player.destroy();
@@ -223,9 +228,37 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
     submitAnswer: function (question) {
         "use strict";
+        var now = new Date(),
+            answerList = [],
+            put;
+
+        put = question.get("optionList").any(function (opt) {
+            return opt.has("lastAnswerDate");
+        });
+
         question.get("optionList").each(function (opt) {
-            var view = MOOC.views.optionViews[opt.get("id")];
-            // TODO read user input and send it to backend
+            var view = MOOC.views.optionViews[opt.get("id")],
+                input = view.$el.find("input#option" + opt.get("id")),
+                type = input.attr("type"),
+                value;
+
+            if (type === "text") {
+                value = input.val();
+            } else {
+                value = !_.isUndefined(input.attr("checked"));
+            }
+            view.model.set("answer", value);
+            view.model.set("lastAnswerDate", now);
+
+            answerList.push({
+                id: view.model.get("id"),
+                answer: value,
+                date: now
+            });
+        });
+
+        MOOC.ajax.sendAnswers(put, answerList, function (data, textStatus, jqXHR) {
+            // TODO
         });
     }
 });
@@ -243,9 +276,17 @@ MOOC.views.Option = Backbone.View.extend({
         "use strict";
         var html = "<input type='" + this.types[this.model.get("optiontype")] + "' ",
             node;
+        html += "id='option" + this.model.get("id") + "' ";
         html += "style='top: " + this.model.get("y") + "px; left: " + this.model.get("x") + "px;' ";
         if (this.model.get("optiontype") === 'r') {
             html += "name='radio' ";
+        }
+        if (this.model.has("answer")) {
+            if (this.model.get("optiontype") === 'i') {
+                html += "value='" + this.model.get("answer") + "' ";
+            } else {
+                html += "checked='" + this.model.get("answer") + "' ";
+            }
         }
         html += "/>";
         node = $(html)[0];
