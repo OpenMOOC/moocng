@@ -9,6 +9,7 @@ import tempfile
 import urlparse
 
 from django.core.files import File
+from django.conf import settings
 
 from youtube import YouTube
 
@@ -59,14 +60,14 @@ def download(url):
 
 
 def duration(filename):
-    command = ["ffmpeg", "-i", filename]
+    command = [settings.FFMPEG, "-i", filename]
     output = execute_command(command)
     matches = durationRegExp.search(output)
     return matches.group(1)
 
 
 def last_frame(filename, time):
-    command = ["ffmpeg", "-i", filename, "-y", "-sameq", "-ss", time,
+    command = [settings.FFMPEG, "-i", filename, "-y", "-sameq", "-ss", time,
                "-vframes", "1", "-vcodec", "png", "%s.png" % filename]
     execute_command(command)
     return "%s.png" % filename

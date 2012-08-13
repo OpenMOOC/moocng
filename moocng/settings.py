@@ -205,6 +205,8 @@ MOOCNG_THEME = {
 #    'right_banner': u'',
     }
 
+FFMPEG = '/usr/bin/ffmpeg'
+
 # Celery settings
 import djcelery
 djcelery.setup_loader()
