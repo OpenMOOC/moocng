@@ -46,7 +46,7 @@
         {% for unit in unit_list %}
         <div class="accordion-group">
             <div class="accordion-heading">
-                <a class="accordion-toggle" href="#unit{{ unit.id }}" data-toggle="collapse" data-target="#unit{{ unit.id }}" data-parent="#unit-selector">{{ unit.title }}</a>
+                <a class="accordion-toggle" href="#unit{{ unit.id }}" data-target="#unit{{ unit.id }}" data-parent="#unit-selector">{{ unit.title }}</a>
             </div>
             <div id="unit{{ unit.id }}" class="collapse accordion-body">
                 <div class="accordion-inner"></div>

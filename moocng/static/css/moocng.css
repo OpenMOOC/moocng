@@ -94,6 +94,10 @@ footer ul li {
     position: absolute;
 }
 
+.classroom div.kqContainer li {
+    margin-top: 3px;
+}
+
 .classroom div.kqContainer span {
     cursor: pointer;
 }
