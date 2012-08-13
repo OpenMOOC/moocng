@@ -97,14 +97,11 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         unit = MOOC.models.course.getByKQ(this.model.get("id"));
         $("#unit-selector").find("div.collapse").removeClass("in");
         $("#unit" + unit.get("id")).addClass("in");
-        order = this.model.get("order");
+
         $("#kq-previous").unbind("click");
         $("#kq-next").unbind("click");
-
-        kq = unit.get("knowledgeQuantumList").getByPosition(order - 1);
-        this.navigate("#kq-previous", unit, kq);
-        kq = unit.get("knowledgeQuantumList").getByPosition(order + 1);
-        this.navigate("#kq-next", unit, kq);
+        this.navigate("#kq-previous", unit, this.model, false);
+        this.navigate("#kq-next", unit, this.model, true);
 
         this.$el.parent().children().removeClass("active");
         this.$el.addClass("active");
@@ -130,14 +127,61 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         return height;
     },
 
-    navigate: function (selector, unit, kq) {
+    navigate: function (selector, unit, kq, next) {
         "use strict";
-        if (_.isUndefined(kq)) {
+        var path = window.location.hash,
+            order = kq.get("order"),
+            getUrlForOtherKQ,
+            target,
+            url;
+
+        getUrlForOtherKQ = function (position, answer) {
+            var aux = unit.get("knowledgeQuantumList").getByPosition(position),
+                url;
+            if (_.isUndefined(aux)) {
+                $(selector).addClass("disabled");
+            } else {
+                url = "unit" + unit.get("id") + "/kq" + aux.get("id");
+                if (answer && aux.has("question")) {
+                    url += "/a";
+                }
+                return url;
+            }
+        };
+
+        if (/#[\w\/]+\/q/.test(path)) {
+            // Viewing question
+            target = next ? "answer" : "same";
+        } else if (/#[\w\/]+\/a/.test(path)) {
+            // Viewing answer
+            target = next ? "next" : "question";
+        } else {
+            // Viewing kq
+            target = next ? "question" : "prev";
+        }
+        if (target === "question" && !kq.has("question")) {
+            target = "next";
+        }
+
+        if (target === "question") {
+            url = "unit" + unit.get("id") + "/kq" + kq.get("id") + "/q";
+        } else if (target === "answer") {
+            url = "unit" + unit.get("id") + "/kq" + kq.get("id") + "/a";
+        } else if (target === "next") {
+            url = getUrlForOtherKQ(order + 1, false);
+        } else if (target === "prev") {
+            url = getUrlForOtherKQ(order - 1, true);
+        } else {
+            // case same
+            url = "unit" + unit.get("id") + "/kq" + kq.get("id");
+        }
+
+        if (_.isUndefined(url)) {
             $(selector).addClass("disabled");
         } else {
             $(selector).removeClass("disabled");
             $(selector).click(function (evt) {
-                MOOC.router.navigate("unit" + unit.get("id") + "/kq" + kq.get("id"), { trigger: true });
+                MOOC.router.navigate(url, { trigger: true });
             });
         }
     },
