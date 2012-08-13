@@ -115,10 +115,9 @@ class Question(models.Model):
     kq = models.ForeignKey(KnowledgeQuantum, unique=True,
                            verbose_name=_(u'Knowledge Quantum'))
     solution = models.URLField(verbose_name=_(u'Solution video'))
-    last_frame = models.ImageField(verbose_name=_(u'Last frame of the ',
-                                                  u'question video'),
-                                   upload_to='questions', blank=True,
-                                   editable=False)
+    last_frame = models.ImageField(
+        verbose_name=_(u'Last frame of the question video'),
+        upload_to='questions', blank=True, editable=False)
 
     class Meta:
         verbose_name = _(u'question')
