@@ -125,6 +125,14 @@ longer mantained by FFmpeg team and its use is discouraged.
   # Debian/Ubuntu example:
   $ apt-get install ffmpeg
 
+It's required to configure the FFmpeg path in the moocng settings, editing the
+*/var/www/moocng/lib/python2.7/site-packages/moocng-X.Y.Z-py2.7.egg/moocng/local_settings.py*
+file. The default value is:
+
+.. code-block:: python
+
+  FFMPEG = '/usr/bin/ffmpeg'
+
 Creating the database
 ---------------------
 
