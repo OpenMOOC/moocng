@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import random
-import urlparse
 
 from tastypie import fields
 from tastypie.authorization import DjangoAuthorization
@@ -9,6 +8,7 @@ from tastypie.resources import ModelResource
 
 from moocng.api.authentication import DjangoAuthentication
 from moocng.courses.models import Unit, KnowledgeQuantum, Question, Option
+from moocng.courses.utils import extract_YT_video_id
 
 
 class UnitResource(ModelResource):
@@ -48,10 +48,7 @@ class KnowledgeQuantumResource(ModelResource):
         # TODO improve url
 
     def dehydrate_videoID(self, bundle):
-        parsed_url = urlparse.urlparse(bundle.obj.video)
-        video_id = urlparse.parse_qs(parsed_url.query)
-        video_id = video_id['v'][0]
-        return video_id
+        return extract_YT_video_id(bundle.obj.video)
 
     def dehydrate_correct(self, bundle):
         # TODO real implementation, not random!!
@@ -84,10 +81,7 @@ class QuestionResource(ModelResource):
         }
 
     def dehydrate_solutionID(self, bundle):
-        parsed_url = urlparse.urlparse(bundle.obj.solution)
-        video_id = urlparse.parse_qs(parsed_url.query)
-        video_id = video_id['v'][0]
-        return video_id
+        return extract_YT_video_id(bundle.obj.solution)
 
 
 class OptionResource(ModelResource):

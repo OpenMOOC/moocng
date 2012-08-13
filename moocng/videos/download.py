@@ -6,12 +6,13 @@ import re
 import shutil
 import subprocess
 import tempfile
-import urlparse
 
 from django.core.files import File
 from django.conf import settings
 
 from youtube import YouTube
+
+from moocng.courses.utils import extract_YT_video_id
 
 
 durationRegExp = re.compile(r'Duration: (\d+:\d+:\d+)')
@@ -76,9 +77,7 @@ def last_frame(filename, time):
 def process_video(question):
     try:
         url = question.kq.video
-        parsed_url = urlparse.urlparse(url)
-        video_id = urlparse.parse_qs(parsed_url.query)
-        video_id = video_id['v'][0]
+        video_id = extract_YT_video_id(url)
         tempdir, filename = download(url)
         filename = path.join(tempdir, filename)
         time = duration(filename)

@@ -1,5 +1,3 @@
-import urlparse
-
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import signals
@@ -9,6 +7,7 @@ from adminsortable.models import Sortable
 from adminsortable.fields import SortableForeignKey
 from tinymce.models import HTMLField
 
+from moocng.courses.utils import extract_YT_video_id
 from moocng.videos.tasks import process_video_task
 
 
@@ -42,11 +41,7 @@ class Course(models.Model):
 
     def get_embeded_code_for_promotion_video(self):
         if self.promotion_video:
-            parts = urlparse.urlparse(self.promotion_video)
-            if parts.query:
-                params = urlparse.parse_qs(parts.query)
-                if params and 'v' in params:
-                    return params['v'][0]
+            return extract_YT_video_id(self.promotion_video)
 
 
 class Announcement(models.Model):

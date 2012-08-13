@@ -32,12 +32,12 @@ MOOC.App = Backbone.Router.extend({
 
     kqSteps: function (unit, kq) {
         "use strict";
-        var unitObj = MOOC.models.course.get(unit),
-            kqView = MOOC.views.kqViews[kq],
-            steps = this.unitSteps(unit, false);
+        var steps = this.unitSteps(unit, false);
 
         steps.push(function (callback) {
-            var kqObj = unitObj.get("knowledgeQuantumList").get(kq);
+            var unitObj = MOOC.models.course.get(unit),
+                kqObj = unitObj.get("knowledgeQuantumList").get(kq),
+                kqView = MOOC.views.kqViews[kq];
 
             if (_.isUndefined(kqView)) {
                 kqView = new MOOC.views.KnowledgeQuantum({

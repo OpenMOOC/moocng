@@ -23,8 +23,8 @@ MOOC.views.Unit = Backbone.View.extend({
 
         $("#unit-title").html(this.model.get("title"));
 
-        html = '<div class="progress progress-info" title="Completed"><div class="bar completed" style="width: 0%;"></div></div>';
-        html += '<div class="progress progress-success" title="Correct"><div class="bar correct" style="width: 0%;"></div></div>';
+        html = '<div class="progress progress-info" title="' + MOOC.trans.progress.completed + '"><div class="bar completed" style="width: 0%;"></div></div>';
+        html += '<div class="progress progress-success" title="' + MOOC.trans.progress.correct + '"><div class="bar correct" style="width: 0%;"></div></div>';
         $("#unit-progress-bar").html(html);
         progress = this.model.calculateProgress({ completed: true });
         helpText = "<div><span>" + Math.round(progress) + "% " + MOOC.trans.progress.completed + "</span></div>";
