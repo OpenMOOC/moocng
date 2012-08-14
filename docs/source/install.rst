@@ -140,15 +140,6 @@ is recommended to use a statically compiled ffmpeg binary. You can find an
 example of it at http://dl.dropbox.com/u/24633983/ffmpeg/index.html
 
 
-
-It's required to configure the FFmpeg path in the moocng settings, editing the
-*/var/www/moocng/lib/python2.7/site-packages/moocng-X.Y.Z-py2.7.egg/moocng/local_settings.py*
-file. The default value is:
-
-.. code-block:: python
-
-  FFMPEG = '/usr/bin/ffmpeg'
-
 Creating the database
 ---------------------
 
@@ -353,28 +344,8 @@ Django command just for that:
  Type 'yes' to continue, or 'no' to cancel: yes
 
 
-Configuring the web server
---------------------------
-
-The recommended way to serve a moocng site is with a real web server that
-supports the WSGI (Web Server Gateway Interface) protocol. This is no
-surprise since the same applies to Django.
-
-If you use the Apache web server all you need to do is write the
-following configuration into your specific virtual host section:
-
-.. code-block:: none
-
- WSGIScriptAlias / /var/www/moocng/lib/python2.7/site-packages/moocng-X.Y.Z-py2.7.egg/moocng/moocng.wsgi
- Alias /static/ /var/www/moocng/lib/python2.7/site-packages/moocng-X.Y.Z-py2.7.egg/moocng/static/
-
-
-.. note::
-  Bear in mind that the exact path may be different in your case, specially
-  the Python and moocng version numbers. The path
-  fragment :file:`moocng-X.Y.Z-py2.7` is ficticious and will be something like
-  |full_release_name| in real life.
-
+Installing the web server
+-------------------------
 
 The packages needed for installing Apache and wsgi support are:
 
@@ -389,23 +360,6 @@ The packages needed for installing Apache and wsgi support are:
 .. note::
   If you use someting different from Apache, please check the documentation
   of your web server about how to integrate it with a WSGI application.
-
-Finally, you need to make sure that the user that the Apache run as has write
-access to the MEDIA directory of your moocng site.
-
-.. code-block:: bash
-
-  # Fedora example:
-  $ chown apache:apache /var/www/moocng/lib/python2.7/site-packages/moocng-X.Y.Z-py2.7.egg/moocng/media
-
-  # Debian/Ubuntu example:
-  $ chown www-data:www-data /var/www/moocng/lib/python2.7/site-packages/moocng-X.Y.Z-py2.7.egg/moocng/media
-
-.. note::
-  As mentioned before, the exact path may be different in your case, specially
-  the Python and moocng version numbers. The path
-  fragment :file:`moocng-X.Y.Z-py2.7` is ficticious and will be something like
-  |full_release_name| in real life.
 
 
 Development Installation

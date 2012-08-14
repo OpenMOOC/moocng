@@ -21,7 +21,7 @@ Administration manual
    :maxdepth: 2
 
    install
-
+   configuration
 
 User Manual
 ===========
