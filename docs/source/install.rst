@@ -20,7 +20,7 @@ compiles a couple of Python modules.
 
 .. code-block:: bash
 
-  # Fedora example:
+  # CentOS/Fedora example:
   $ yum install python-devel postgresql-devel libjpeg-turbo-devel libpng-devel
   $ yum groupinstall "Development Tools"
 
@@ -61,8 +61,18 @@ So first we will install virtualenv:
   # Debian/Ubuntu example:
   $ apt-get install python-virtualenv
 
+In CentOS/RedHat 6 there is no virtualenv package available but we can
+install it with the easy_install command, available in the setuptools
+package:
+
+.. code-block:: bash
+
+  # CentOS example:
+  $ yum install python-setuptools
+  $ easy_install virtualenv
+
 Check your distribution documentation if you do not use neither Fedora nor
-Ubuntu.
+Ubuntu nor CentOS.
 
 Now a new command called *virtualenv* is available on your system and we
 will use it to create a new virtual environment where we will install moocng.
@@ -393,7 +403,7 @@ So, first you clone the repository:
 
 .. code-block:: bash
 
-  $ cd /var/www
+  $ cd /var/www/moocng
   $ git clone git://github.com/OpenMOOC/moocng.git
 
 Then you activate the virtualenv if you have not already done so:
@@ -406,5 +416,5 @@ Finally, you install the moocng package in development mode:
 
 .. code-block:: bash
 
-  $ cd /var/www/moocng
+  $ cd /var/www/moocng/moocng
   $ python setup.py develop
