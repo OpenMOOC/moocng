@@ -79,7 +79,7 @@ MOOC.App = Backbone.Router.extend({
                 cb = _.bind(view.loadQuestion, view);
             cb = async.apply(cb, { data: 0 });
             // data: 0 because YT.PlayerState.ENDED = 0s
-            _.bind(view.waitForPlayer, view)(cb);
+            _.bind(view.repeatedlyCheckIfPlayer, view)(cb);
             callback();
         });
         async.series(toExecute);

@@ -98,8 +98,6 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         $("#unit-selector").find("div.collapse").removeClass("in");
         $("#unit" + unit.get("id")).addClass("in");
 
-        $("#kq-previous").unbind("click");
-        $("#kq-next").unbind("click");
         this.setEventForNavigation("#kq-previous", unit, this.model, false);
         this.setEventForNavigation("#kq-next", unit, this.model, true);
 
@@ -148,6 +146,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 return url;
             }
         };
+
+        $(selector).unbind("click");
 
         if (/#[\w\/]+\/q/.test(path)) { // Viewing question
             target = next ? "answer" : "same";
