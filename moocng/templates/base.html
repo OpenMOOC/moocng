@@ -31,7 +31,7 @@
       {% block useractions %}{% endblock %}
       {% else %}
       <div class="btn-toolbar pull-right">
-        <a class="btn" href="#">{% trans "Register" %}</a>
+        <a class="btn" href="{{ registry_url }}">{% trans "Register" %}</a>
         <a class="btn" href="#">{% trans "Log in" %}</a>
       </div>
       {% endif %}

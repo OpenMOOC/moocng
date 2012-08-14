@@ -187,6 +187,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
     'moocng.context_processors.site',
     'moocng.context_processors.theme',
+    'moocng.context_processors.idp_urls',
 )
 
 
@@ -214,6 +215,9 @@ import djcelery
 djcelery.setup_loader()
 
 BROKER_URL = 'amqp://moocng:moocngpassword@localhost:5672/moocng'
+
+REGISTRY_URL = 'https://localhost/simplesaml/module.php/userregistration/newUser.php'
+PROFILE_URL = 'https://localhost/simplesaml/module.php/userregistration/reviewUser.php'
 
 
 try:

@@ -33,3 +33,20 @@ def theme(request):
         pass
 
     return theme
+
+
+def idp_urls(request):
+    try:
+        registry_url = settings.REGISTRY_URL
+    except AttributeError:
+        registry_url = '#'
+
+    try:
+        profile_url = settings.PROFILE_URL
+    except AttributeError:
+        profile_url = '#'
+
+    return {
+        'registry_url': registry_url,
+        'profile_url': profile_url,
+        }
