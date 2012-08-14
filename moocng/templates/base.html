@@ -18,7 +18,12 @@
   <link rel="stylesheet" href="{{ STATIC_URL }}css/moocng.css">
   {% endcompress %}
 
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-1.7.2.min.js"><\/script>')</script>
+  {% compress js %}
   <script src="{{ STATIC_URL }}js/libs/modernizr-2.5.3.min.js"></script>
+  <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
+  {% endcompress %}
 </head>
 <body>
   <div class="container">
@@ -58,11 +63,7 @@
     </footer>
   </div>
 
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-  <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-1.7.2.min.js"><\/script>')</script>
-  <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
   {% block extrajs %}{% endblock %}
-
   {% if GOOGLE_ANALYTICS_CODE %}
   <script>
     var _gaq=[['_setAccount','{{ GOOGLE_ANALYTICS_CODE }}}'],['_trackPageview']];
