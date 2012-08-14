@@ -28,9 +28,10 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "moocng.settings")
 # application = HelloWorldApplication(application)
 
 def application(environ, start_response):
-    virtualenv = environ.get('VIRTUALENV', '/var/www')
-    activate_this = os.path.join(virtualenv, 'bin', 'activate_this.py')
-    execfile(activate_this, dict(__file__=activate_this))
+    virtualenv = environ.get('VIRTUALENV', None)
+    if virtualenv is not None:
+        activate_this = os.path.join(virtualenv, 'bin', 'activate_this.py')
+        execfile(activate_this, dict(__file__=activate_this))
 
     from django.core.wsgi import get_wsgi_application
     django_app = get_wsgi_application()
