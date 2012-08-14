@@ -153,6 +153,19 @@ Theme
 TODO
 
 
+Registry and profile URLs
+-------------------------
+
+moocng does not handle any user registration or user profile information.
+It needs an external service for this. There are two options in the settings
+to configure these urls:
+
+.. code-block:: python
+
+  REGISTRY_URL = 'https://idp.example.com/simplesaml/module.php/userregistration/newUser.php'
+  PROFILE_URL = 'https://idp.example.com/simplesaml/module.php/userregistration/reviewUser.php'
+
+
 Web server configuration
 ------------------------
 
