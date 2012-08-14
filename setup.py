@@ -58,5 +58,6 @@ setup(
         'psycopg2==2.4.2',
 #        'djangosaml2==0.4.2',
         'PIL>=1.1.7',
+        'django_compressor==1.1.2',
         ],
 )
