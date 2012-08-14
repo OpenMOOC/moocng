@@ -100,8 +100,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
         $("#kq-previous").unbind("click");
         $("#kq-next").unbind("click");
-        this.navigate("#kq-previous", unit, this.model, false);
-        this.navigate("#kq-next", unit, this.model, true);
+        this.setEventForNavigation("#kq-previous", unit, this.model, false);
+        this.setEventForNavigation("#kq-next", unit, this.model, true);
 
         this.$el.parent().children().removeClass("active");
         this.$el.addClass("active");
@@ -127,7 +127,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         return height;
     },
 
-    navigate: function (selector, unit, kq, next) {
+    setEventForNavigation: function (selector, unit, kq, next) {
         "use strict";
         var path = window.location.hash,
             order = kq.get("order"),
@@ -243,8 +243,19 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     }, this),
                     data = {
                         kq: this.model.get("id")
-                    };
+                    },
+                    path = window.location.hash.substring(1),
+                    unit = MOOC.models.course.getByKQ(this.model);
+
+                if (!(/[\w\/]+\/q/.test(path))) {
+                    path = path + "/q";
+                    MOOC.router.navigate(path, { trigger: false });
+                }
+                this.setEventForNavigation("#kq-previous", unit, this.model, false);
+                this.setEventForNavigation("#kq-next", unit, this.model, true);
+
                 MOOC.ajax.updateUserActivity(data);
+
                 if (_.isUndefined(view)) {
                     view = new MOOC.views.Question({
                         model: question,
@@ -305,21 +316,13 @@ MOOC.views.Question = Backbone.View.extend({
         "use strict";
         var width = this.$el.children().css("width"),
             height = this.$el.children().css("height"),
-            path = window.location.hash,
-            kqPath = path.substring(1),
+            kqPath = window.location.hash.substring(1, window.location.hash.length - 2), // Remove trailing /q
             html = '<img src="' + this.model.get("lastFrame") + '" ';
 
         html += 'alt="' + this.model.get("title") + '" style="max-width: ' + width;
         html += '; height: ' + height + ';" />';
         destroyPlayer();
         this.$el.html(html);
-
-        if (!(/[\w\/]+\/q/.test(path))) {
-            path = path + "/q";
-            MOOC.router.navigate(path, { trigger: false });
-        } else {
-            kqPath = path.substring(0, path.length - 2); // Remove trailing /q
-        }
 
         $("#kq-q-buttons").removeClass("hide");
         $("#kq-q-showkq").click(function () {
