@@ -83,6 +83,9 @@ class QuestionResource(ModelResource):
     def dehydrate_solutionID(self, bundle):
         return extract_YT_video_id(bundle.obj.solution)
 
+    def dehydrate_last_frame(self, bundle):
+        return bundle.obj.last_frame.url
+
 
 class OptionResource(ModelResource):
     question = fields.ToOneField(QuestionResource, 'question')
