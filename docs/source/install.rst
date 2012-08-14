@@ -135,6 +135,12 @@ longer mantained by FFmpeg team and its use is discouraged.
   # Debian/Ubuntu example:
   $ apt-get install ffmpeg
 
+In CentOS/Redhat 6 there are no easy packages for FFmpeg so in this platform it
+is recommended to use a statically compiled ffmpeg binary. You can find an
+example of it at http://dl.dropbox.com/u/24633983/ffmpeg/index.html
+
+
+
 It's required to configure the FFmpeg path in the moocng settings, editing the
 */var/www/moocng/lib/python2.7/site-packages/moocng-X.Y.Z-py2.7.egg/moocng/local_settings.py*
 file. The default value is:
@@ -304,6 +310,13 @@ system:
   # Debian/Ubuntu example:
   $ apt-get install rabbitmq-server
 
+  # CentOS/RedHat example:
+  $ cd /root
+  $ wget http://ftp.cica.es/epel/6/x86_64/epel-release-6-7.noarch.rpm
+  $ rpm -Uvh epel-release-6-7.noarch.rpm
+  $ yum install erlang
+  $ yum install rabbitmq-server
+
 A RabbitMQ user and a virtual host need to be created. Then the user
 needs to have permissions to access to that virtual host:
 
@@ -316,6 +329,9 @@ needs to have permissions to access to that virtual host:
 
 Collecting static files
 -----------------------
+
+TODO: this should go to the configuration chapter as it depends on
+a settings option
 
 In this step you will collect all necessary static resources needed by
 moocng and put them in a single directory so you can serve them directly
