@@ -89,7 +89,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     question.set("optionList", new MOOC.models.OptionList(options));
                 });
             });
-            this.waitForPlayer();
+            this.repeatedlyCheckIfPlayer();
         }
 
         $("#kq-title").html(this.model.get("title"));
@@ -190,7 +190,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
     player: null,
 
-    waitForPlayer: function (callback) {
+    repeatedlyCheckIfPlayer: function (callback) {
         "use strict";
         if (MOOC.YTready) {
             this.player = new YT.Player("ytplayer", {
@@ -202,11 +202,11 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 callback();
             }
         } else {
-            _.delay(_.bind(this.waitForPlayer, this), 200, callback);
+            _.delay(_.bind(this.repeatedlyCheckIfPlayer, this), 200, callback);
         }
     },
 
-    waitFor: function (model, property, callback) {
+    setupListernerFor: function (model, property, callback) {
         "use strict";
         if (model.has(property)) {
             callback();
@@ -226,12 +226,12 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             var toExecute = [];
 
             if (!this.model.has("questionInstance")) {
-                toExecute.push(async.apply(this.waitFor, this.model, "questionInstance"));
+                toExecute.push(async.apply(this.setupListernerFor, this.model, "questionInstance"));
             }
 
             toExecute.push(_.bind(function (callback) {
                 var question = this.model.get("questionInstance");
-                this.waitFor(question, "optionList", callback);
+                this.setupListernerFor(question, "optionList", callback);
             }, this));
 
             toExecute.push(_.bind(function (callback) {
@@ -278,7 +278,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         "use strict";
         var toExecute = [];
 
-        toExecute.push(_.bind(this.waitForPlayer, this));
+        toExecute.push(_.bind(this.repeatedlyCheckIfPlayer, this));
         toExecute.push(_.bind(function (callback) {
             this.player.destroy();
             this.player = null;
@@ -286,7 +286,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         }, this));
 
         if (!this.model.has("questionInstance")) {
-            toExecute.push(async.apply(this.waitFor, this.model, "questionInstance"));
+            toExecute.push(async.apply(this.setupListernerFor, this.model, "questionInstance"));
         }
 
         toExecute.push(_.bind(function (callback) {
