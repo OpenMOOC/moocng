@@ -20,9 +20,18 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "moocng.settings")
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
 # setting points here.
-from django.core.wsgi import get_wsgi_application
-application = get_wsgi_application()
+#from django.core.wsgi import get_wsgi_application
+#application = get_wsgi_application()
 
 # Apply WSGI middleware here.
 # from helloworld.wsgi import HelloWorldApplication
 # application = HelloWorldApplication(application)
+
+def application(environ, start_response):
+    virtualenv = environ.get('VIRTUALENV', '/var/www')
+    activate_this = os.path.join(virtualenv, 'bin', 'activate_this.py')
+    execfile(activate_this, dict(__file__=activate_this))
+
+    from django.core.wsgi import get_wsgi_application
+    django_app = get_wsgi_application()
+    return django_app(environ, start_response)
