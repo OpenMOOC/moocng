@@ -64,6 +64,11 @@ MOOC.ajax.sendAnswers = function (put, answers, callback) {
     callback(); // to delete
 };
 
+MOOC.ajax.updateUserActivity = function (data) {
+    "use strict";
+    // TODO send data
+};
+
 MOOC.alerts = {};
 
 MOOC.alerts.ERROR = "error";

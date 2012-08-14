@@ -149,31 +149,33 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             }
         };
 
-        if (/#[\w\/]+\/q/.test(path)) {
-            // Viewing question
+        if (/#[\w\/]+\/q/.test(path)) { // Viewing question
             target = next ? "answer" : "same";
-        } else if (/#[\w\/]+\/a/.test(path)) {
-            // Viewing answer
+        } else if (/#[\w\/]+\/a/.test(path)) { // Viewing answer
             target = next ? "next" : "question";
-        } else {
-            // Viewing kq
+        } else { // Viewing kq
             target = next ? "question" : "prev";
         }
         if (target === "question" && !kq.has("question")) {
             target = "next";
         }
 
-        if (target === "question") {
+        switch (target) {
+        case "question":
             url = "unit" + unit.get("id") + "/kq" + kq.get("id") + "/q";
-        } else if (target === "answer") {
+            break;
+        case "answer":
             url = "unit" + unit.get("id") + "/kq" + kq.get("id") + "/a";
-        } else if (target === "next") {
+            break;
+        case "next":
             url = getUrlForOtherKQ(order + 1, false);
-        } else if (target === "prev") {
+            break;
+        case "prev":
             url = getUrlForOtherKQ(order - 1, true);
-        } else {
-            // case same
+            break;
+        case "same":
             url = "unit" + unit.get("id") + "/kq" + kq.get("id");
+            break;
         }
 
         if (_.isUndefined(url)) {
@@ -234,88 +236,31 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
             toExecute.push(_.bind(function (callback) {
                 var question = this.model.get("questionInstance"),
-                    width = $("#kq-video").children().css("width"),
-                    height = $("#kq-video").children().css("height"),
-                    path = window.location.hash,
-                    html = '<img src="' + question.get("lastFrame") + '" ';
-                html += 'alt="' + this.model.get("title") + '" style="max-width: ' + width;
-                html += '; height: ' + height + ';" />';
-                this.player.destroy();
-                this.player = null;
-                $("#kq-video").html(html);
-
-                if (!(/#[\w\/]+\/q/.test(path))) {
-                    path = path.substring(1) + "/q";
-                    MOOC.router.navigate(path, { trigger: false });
+                    view = MOOC.views.questionViews[question.get("id")],
+                    destroyPlayer = _.bind(function () {
+                        this.player.destroy();
+                        this.player = null;
+                    }, this),
+                    data = {
+                        kq: this.model.get("id")
+                    };
+                MOOC.ajax.updateUserActivity(data);
+                if (_.isUndefined(view)) {
+                    view = new MOOC.views.Question({
+                        model: question,
+                        el: $("#kq-video")[0]
+                    });
+                    MOOC.views.questionViews[question.get("id")] = view;
                 }
-
-                $("#kq-q-buttons").removeClass("hide");
-                $("#kq-q-showkq").click(function () {
-                    var path = window.location.hash,
-                        idx = path.lastIndexOf('/');
-                    if ((path[idx] + path[idx + 1]) === "/q") {
-                        path = path.substring(1, idx);
-                        MOOC.router.navigate(path, { trigger: true });
-                    }
-                });
-                $("#kq-q-submit").click(_.bind(function () {
-                    this.submitAnswer(question);
-                }, this));
-                $("#kq-next-container").removeClass("offset4");
-
-                question.get("optionList").each(function (opt) {
-                    if (_.isUndefined(MOOC.views.optionViews[opt.get("id")])) {
-                        MOOC.views.optionViews[opt.get("id")] = new MOOC.views.Option({
-                            model: opt,
-                            el: $("#kq-video")[0]
-                        });
-                    }
-                    MOOC.views.optionViews[opt.get("id")].render();
-                });
-
-                callback();
+                // We need to destroy the iframe with a callback because the
+                // question view needs to read the width/height of the video
+                view.render(destroyPlayer);
             }, this));
 
             async.series(toExecute);
         }
 
         return this;
-    },
-
-    submitAnswer: function (question) {
-        "use strict";
-        var now = new Date(),
-            answerList = [],
-            put;
-
-        put = question.get("optionList").any(function (opt) {
-            return opt.has("lastAnswerDate");
-        });
-
-        question.get("optionList").each(function (opt) {
-            var view = MOOC.views.optionViews[opt.get("id")],
-                input = view.$el.find("input#option" + opt.get("id")),
-                type = input.attr("type"),
-                value;
-
-            if (type === "text") {
-                value = input.val();
-            } else {
-                value = !_.isUndefined(input.attr("checked"));
-            }
-            view.model.set("answer", value);
-            view.model.set("lastAnswerDate", now);
-
-            answerList.push({
-                id: view.model.get("id"),
-                answer: value,
-                date: now
-            });
-        });
-
-        MOOC.ajax.sendAnswers(put, answerList, function (data, textStatus, jqXHR) {
-            MOOC.alerts.show(MOOC.alerts.SUCCESS, MOOC.trans.classroom.answersSent, MOOC.trans.classroom.answersSentMsg);
-        });
     },
 
     loadSolution: function () {
@@ -354,6 +299,90 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 });
 
 MOOC.views.kqViews = {};
+
+MOOC.views.Question = Backbone.View.extend({
+    render: function (destroyPlayer) {
+        "use strict";
+        var width = this.$el.children().css("width"),
+            height = this.$el.children().css("height"),
+            path = window.location.hash,
+            kqPath = path.substring(1),
+            html = '<img src="' + this.model.get("lastFrame") + '" ';
+
+        html += 'alt="' + this.model.get("title") + '" style="max-width: ' + width;
+        html += '; height: ' + height + ';" />';
+        destroyPlayer();
+        this.$el.html(html);
+
+        if (!(/[\w\/]+\/q/.test(path))) {
+            path = path + "/q";
+            MOOC.router.navigate(path, { trigger: false });
+        } else {
+            kqPath = path.substring(0, path.length - 2); // Remove trailing /q
+        }
+
+        $("#kq-q-buttons").removeClass("hide");
+        $("#kq-q-showkq").click(function () {
+            MOOC.router.navigate(kqPath, { trigger: true });
+        });
+        $("#kq-q-submit").click(_.bind(function () {
+            this.submitAnswer(this.model);
+        }, this));
+        $("#kq-next-container").removeClass("offset4");
+
+        this.model.get("optionList").each(function (opt) {
+            var view = MOOC.views.optionViews[opt.get("id")];
+            if (_.isUndefined(view)) {
+                view = new MOOC.views.Option({
+                    model: opt,
+                    el: $("#kq-video")[0]
+                });
+                MOOC.views.optionViews[opt.get("id")] = view;
+            }
+            view.render();
+        });
+
+        return this;
+    },
+
+    submitAnswer: function (question) {
+        "use strict";
+        var now = new Date(),
+            answerList = [],
+            put;
+
+        put = question.get("optionList").any(function (opt) {
+            return opt.has("lastAnswerDate");
+        });
+
+        question.get("optionList").each(function (opt) {
+            var view = MOOC.views.optionViews[opt.get("id")],
+                input = view.$el.find("input#option" + opt.get("id")),
+                type = input.attr("type"),
+                value;
+
+            if (type === "text") {
+                value = input.val();
+            } else {
+                value = !_.isUndefined(input.attr("checked"));
+            }
+            view.model.set("answer", value);
+            view.model.set("lastAnswerDate", now);
+
+            answerList.push({
+                id: view.model.get("id"),
+                answer: value,
+                date: now
+            });
+        });
+
+        MOOC.ajax.sendAnswers(put, answerList, function (data, textStatus, jqXHR) {
+            MOOC.alerts.show(MOOC.alerts.SUCCESS, MOOC.trans.classroom.answersSent, MOOC.trans.classroom.answersSentMsg);
+        });
+    }
+});
+
+MOOC.views.questionViews = {};
 
 MOOC.views.Option = Backbone.View.extend({
     types: {
