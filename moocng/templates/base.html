@@ -37,7 +37,7 @@
       {% else %}
       <div class="btn-toolbar pull-right">
         <a class="btn" href="{{ registry_url }}">{% trans "Register" %}</a>
-        <a class="btn" href="#">{% trans "Log in" %}</a>
+        <a class="btn" href="{% url saml2_login %}">{% trans "Log in" %}</a>
       </div>
       {% endif %}
       <div class="clearfix"></div>
