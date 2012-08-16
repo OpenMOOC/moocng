@@ -30,7 +30,7 @@ urlpatterns = patterns(
 
     url(r'^api/', include(v1_api.urls)),
 
-    url(r'^saml/', include('djangosaml2.urls')),
+    url(r'^saml2/', include('djangosaml2.urls')),
 )
 
 if settings.DEBUG:
