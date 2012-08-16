@@ -21,7 +21,7 @@
       <li><a href="#">{% trans "Account settings" %}</a></li>
       <li><a href="{{ profile_url }}">{% trans "Profile settings" %}</a></li>
       <li class="divider"></li>
-      <li><a href="#">{% trans "Log out" %}</a></li>
+      <li><a href="{% url saml2_logout %}">{% trans "Log out" %}</a></li>
     </ul>
   </div>
 </div>
