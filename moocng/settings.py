@@ -229,9 +229,8 @@ LOGOUT_URL = '/saml2/logout/'
 LOGOUT_REDIRECT_URL = '/'
 
 SAML_CREATE_UNKNOWN_USER = True
-SAML_ATTRIBUTE_MAPPINGS = {
-    'uid': ('email', ),
-    'mail': ('email', ),
+SAML_ATTRIBUTE_MAPPING = {
+    'mail': ('username', 'email', ),
     'cn': ('first_name', ),
     'sn': ('last_name', ),
     }
