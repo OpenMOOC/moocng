@@ -20,6 +20,12 @@
       <li><a href="#">{% trans "My transcript" %}</a></li>
       <li><a href="#">{% trans "Account settings" %}</a></li>
       <li><a href="{{ profile_url }}">{% trans "Profile settings" %}</a></li>
+      {% if user.is_staff %}
+      <li class="divider"></li>
+      <li>
+        <a href="/admin">{% trans "Admin interface" %}</a>
+      </li>
+      {% endif %}
       <li class="divider"></li>
       <li><a href="{% url saml2_logout %}">{% trans "Log out" %}</a></li>
     </ul>
