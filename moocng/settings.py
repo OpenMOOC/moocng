@@ -221,6 +221,7 @@ BROKER_URL = 'amqp://moocng:moocngpassword@localhost:5672/moocng'
 
 REGISTRY_URL = 'https://localhost/simplesaml/module.php/userregistration/newUser.php'
 PROFILE_URL = 'https://localhost/simplesaml/module.php/userregistration/reviewUser.php'
+ASKBOT_URL_TEMPLATE = 'https://questions.example.com/%s/questions/'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 LOGIN_URL = '/saml2/login/'

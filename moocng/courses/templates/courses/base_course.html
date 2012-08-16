@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load i18n %}
+{% load i18n askboturl %}
 
 {% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
 
@@ -13,7 +13,7 @@
     <a href="{% url course_classroom course.slug %}">{% trans "Classes" %}</a>
   </li>
   <li {% block nav-course-discussion %}{% endblock %}>
-    <a href="#">{% trans "Discussion" %}</a>
+    <a href="{% askboturl course.slug %}">{% trans "Discussion" %}</a>
   </li>
   <li {% block nav-course-progress %}{% endblock %}>
     <a href="{% url course_progress course.slug %}">{% trans "Progress" %}</a>
