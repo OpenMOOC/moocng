@@ -65,7 +65,7 @@
         <input type="submit" class="btn btn-large btn-primary" value="{% trans "Enroll me in this course" %}" />
       </form>
       {% else %}
-      <a href="#" class="btn btn-large btn-primary">{% blocktrans with site_name=site.name %}Register in {{ site_name }} to enroll in this course{% endblocktrans %}</a>
+      <a href="{{ registry_url }}" class="btn btn-large btn-primary">{% blocktrans with site_name=site.name %}Register in {{ site_name }} to enroll in this course{% endblocktrans %}</a>
       {% endif %}
     </div>
     {% endif %}
