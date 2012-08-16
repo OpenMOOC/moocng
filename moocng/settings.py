@@ -175,7 +175,6 @@ LOGGING = {
     }
 }
 
-
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.debug',
@@ -190,6 +189,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'moocng.context_processors.idp_urls',
 )
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'djangosaml2.backends.Saml2Backend',
+    )
 
 TINYMCE_DEFAULT_CONFIG = {
     'theme': 'advanced',
