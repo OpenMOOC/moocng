@@ -30,6 +30,8 @@ urlpatterns = patterns(
 
     url(r'^api/', include(v1_api.urls)),
 
+    url(r'^saml2/ls/$', 'djangosaml2.views.logout_service', name='saml2_ls',
+        kwargs={'next_page': settings.LOGOUT_REDIRECT_URL}),
     url(r'^saml2/', include('djangosaml2.urls')),
 )
 
