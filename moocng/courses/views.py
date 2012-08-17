@@ -45,6 +45,7 @@ def course_classroom(request, course_slug):
     return render_to_response('courses/classroom.html', {
         'course': course,
         'unit_list': unit_list,
+        'is_enrolled': True,
     }, context_instance=RequestContext(request))
 
 
@@ -55,4 +56,5 @@ def course_progress(request, course_slug):
     return render_to_response('courses/progress.html', {
         'course': course,
         'unit_list': unit_list,
+        'is_enrolled': True,
     }, context_instance=RequestContext(request))

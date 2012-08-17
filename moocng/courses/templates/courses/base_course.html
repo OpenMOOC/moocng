@@ -5,6 +5,8 @@
 {% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
 
 {% block nav %}
+{% if is_enrolled %}
+
 <ul class="nav nav-pills">
   <li {% block nav-course-overview %}{% endblock %}>
     <a href="{% url course_overview course.slug %}">{% trans "Overview" %}</a>
@@ -19,4 +21,6 @@
     <a href="{% url course_progress course.slug %}">{% trans "Progress" %}</a>
   </li>
 </ul>
+
+{% endif %}
 {% endblock %}
