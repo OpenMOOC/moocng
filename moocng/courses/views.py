@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages import success
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import (get_object_or_404, get_list_or_404,
                               render_to_response)
 from django.template import RequestContext
@@ -44,10 +44,14 @@ def course_classroom(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     unit_list = get_list_or_404(Unit, course=course)
 
+    is_enrolled = course.students.filter(id=request.user.id).exists()
+    if not is_enrolled:
+        return HttpResponseForbidden(_('Your are not enrolled in this course'))
+
     return render_to_response('courses/classroom.html', {
         'course': course,
         'unit_list': unit_list,
-        'is_enrolled': True,
+        'is_enrolled': is_enrolled,
     }, context_instance=RequestContext(request))
 
 
@@ -56,8 +60,12 @@ def course_progress(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     unit_list = get_list_or_404(Unit, course=course)
 
+    is_enrolled = course.students.filter(id=request.user.id).exists()
+    if not is_enrolled:
+        return HttpResponseForbidden(_('Your are not enrolled in this course'))
+
     return render_to_response('courses/progress.html', {
         'course': course,
         'unit_list': unit_list,
-        'is_enrolled': True,
+        'is_enrolled': is_enrolled,
     }, context_instance=RequestContext(request))
