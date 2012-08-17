@@ -87,6 +87,10 @@ class KnowledgeQuantum(Sortable):
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
     unit = SortableForeignKey(Unit, verbose_name=_(u'Unit'))
     video = models.URLField(verbose_name=_(u'Video'))
+    teacher_comments = HTMLField(verbose_name=_(u'Teacher comments'),
+                                 blank=True, null=False)
+    supplementary_material = HTMLField(verbose_name=_(u'Supplementary material'),
+                                       blank=True, null=False)
 
     class Meta(Sortable.Meta):
         verbose_name = _(u'knowledge quantum')

@@ -42,6 +42,8 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
             order: -1,
             title: null,
             videoID: null,
+            teacher_comments: null,
+            supplementary_material: null,
             question: null, // Optional
             questionInstance: null,
             completed: false,

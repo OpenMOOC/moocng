@@ -60,7 +60,9 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             unit,
             order,
             kq,
-            kqObj;
+            kqObj,
+            comments,
+            supplementary;
 
         html = '<iframe id="ytplayer" width="100%" height="' + height + 'px" ';
         html += 'src="http://www.youtube.com/embed/' + this.model.get("videoID");
@@ -103,6 +105,16 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
         this.$el.parent().children().removeClass("active");
         this.$el.addClass("active");
+
+        comments = this.model.get("teacher_comments");
+        if (comments) {
+            $("#comments").html(comments);
+        }
+
+        supplementary = this.model.get("supplementary_material");
+        if (supplementary) {
+            $("#suplementary").html(supplementary);
+        }
 
         return this;
     },
