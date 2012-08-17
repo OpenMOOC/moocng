@@ -106,15 +106,11 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         this.$el.parent().children().removeClass("active");
         this.$el.addClass("active");
 
-        comments = this.model.get("teacher_comments");
-        if (comments) {
-            $("#comments").html(comments);
-        }
+        comments = this.model.get("teacher_comments") || '';
+        $("#comments").html(comments);
 
-        supplementary = this.model.get("supplementary_material");
-        if (supplementary) {
-            $("#suplementary").html(supplementary);
-        }
+        supplementary = this.model.get("supplementary_material") || '';
+        $("#suplementary").html(supplementary);
 
         return this;
     },
