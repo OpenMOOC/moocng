@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.messages import success
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
@@ -38,6 +39,7 @@ def course_overview(request, course_slug):
             }, context_instance=RequestContext(request))
 
 
+@login_required
 def course_classroom(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     unit_list = get_list_or_404(Unit, course=course)
@@ -49,6 +51,7 @@ def course_classroom(request, course_slug):
     }, context_instance=RequestContext(request))
 
 
+@login_required
 def course_progress(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     unit_list = get_list_or_404(Unit, course=course)
