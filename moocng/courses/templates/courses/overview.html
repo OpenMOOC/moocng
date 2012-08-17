@@ -49,11 +49,11 @@
 
     <div class="box">
       <h2>{% trans "Syllabus" %}</h2>
-      <ol>
+      <ul>
         {% for unit in course.unit_set.all %}
         <li>{{ unit.title }}</li>
         {% endfor %}
-      </ol>
+      </ul>
     </div>
 
     {% if is_enrolled %}
