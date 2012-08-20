@@ -10,3 +10,7 @@ fieldset .option {
     display: block;
     cursor: pointer;
 }
+
+fieldset .selected {
+    background-color: #8888ff;
+}

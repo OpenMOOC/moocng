@@ -37,9 +37,13 @@
         padding: 5,
 
         initialize: function () {
-            _.bindAll(this, 'render', 'stop');
+            _.bindAll(this, 'render', 'stop', 'select', 'unselect');
             this.parent_width = this.options.parent_width;
             this.parent_height = this.options.parent_height;
+
+            this.$el.draggable({
+                stop: this.stop
+            });
         },
 
         render: function () {
@@ -53,40 +57,47 @@
                     "height: " + this.model.get("height") + " px;"
                 ].join(" ")
             });
-            this.$el.append(input);
+            this.$el.empty().append(input);
             this.$el
                 .width(this.model.get("width") + this.padding * 2)
                 .css("padding", this.padding + "px");
-            this.$el.draggable({
-                stop: this.stop
-            });
             return this;
         },
 
         stop: function () {
             var position = this.$el.position();
             if ((position.left + this.padding) < 0
-                || (position.top + this.padding) < 0
-                || (position.left + this.padding) > this.parent_width
-                || (position.top + this.padding) > this.parent_height) {
+                    || (position.top + this.padding) < 0
+                    || (position.left + this.padding) > this.parent_width
+                    || (position.top + this.padding) > this.parent_height) {
                 this.model.collection.remove(this.model);
             } else {
                 this.model.set("x", position.left);
                 this.model.set("y", position.top);
             }
+        },
+
+        select: function () {
+            this.$el.addClass('selected');
+        },
+
+        unselect: function () {
+            this.$el.removeClass('selected');
         }
 
     });
 
     MOOC.views.Index = Backbone.View.extend({
         events: {
-            "click #add-option": "create_option"
+            "click #add-option": "create_option",
+            "click fieldset span ": "select_option",
+            "click fieldset span input": "select_option"
         },
 
         initialize: function () {
             var $img, url, width, height;
 
-            _.bindAll(this, 'render', 'add', 'remove', 'create_option');
+            _.bindAll(this, 'render', 'add', 'remove', 'create_option', 'select_option');
 
             // Put the img as a background image of the fieldset
             this.$fieldset = this.$el.find("fieldset");
@@ -153,6 +164,20 @@
                 x: 0,
                 y: 0,
                 answer: ''
+            });
+        },
+
+        select_option: function (event) {
+            var target = event.target;
+            if (target.tagName === 'INPUT') {
+                target = target.parentNode;
+            }
+            _(this._optionViews).each(function (ov) {
+                if (ov.el === target) {
+                    ov.select();
+                } else {
+                    ov.unselect();
+                }
             });
         }
     });
