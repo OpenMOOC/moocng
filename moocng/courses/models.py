@@ -148,6 +148,7 @@ class Option(models.Model):
     optiontype = models.CharField(verbose_name=_(u'Type'), max_length=1,
                                   choices=OPTION_TYPES,
                                   default=OPTION_TYPES[0][0])
+    solution = models.CharField(verbose_name=_(u'Solution'), max_length=200)
 
     class Meta:
         verbose_name = _(u'option')
