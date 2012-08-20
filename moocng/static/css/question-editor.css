@@ -1,0 +1,12 @@
+fieldset {
+    position: relative;
+    border: 1px solid black;
+}
+
+fieldset .option {
+    position: absolute;
+    background-color: #888888;
+    opacity: 0.7;
+    display: block;
+    cursor: pointer;
+}
