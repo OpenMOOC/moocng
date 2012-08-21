@@ -2,6 +2,7 @@
 
 from os import path
 import datetime
+import logging
 import re
 import shutil
 import subprocess
@@ -14,6 +15,8 @@ from youtube import YouTube
 
 from moocng.courses.utils import extract_YT_video_id
 
+
+logger = logging.getLogger(__name__)
 
 durationRegExp = re.compile(r'Duration: (\d+:\d+:\d+)')
 second = datetime.timedelta(seconds=1)
@@ -78,9 +81,12 @@ def process_video(question):
     try:
         url = question.kq.video
         video_id = extract_YT_video_id(url)
+        logger.info('Downloading video %s' % url)
         tempdir, filename = download(url)
         filename = path.join(tempdir, filename)
         time = duration(filename)
+        logger.info('The downloaded video %s has a duration of %s'
+                    % (filename, time))
 
         # Get the time position of the last second of the video
         time = time.split(':')
@@ -88,7 +94,7 @@ def process_video(question):
                                int(time[2]))
         dt = dt - second
         time = "%s.900" % dt.strftime("%H:%M:%S")
-
+        logger.info('Getting the last frame at %s' % time)
         frame = last_frame(filename, time)
 
         question.last_frame.save("%s.png" % video_id, File(open(frame)))
