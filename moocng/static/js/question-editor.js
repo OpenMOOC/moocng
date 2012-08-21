@@ -13,12 +13,12 @@
     MOOC.models.Option = Backbone.Model.extend({
         defaults: function () {
             return {
-                optiontype: null,
-                x: null,
-                y: null,
-                width: null,
-                height: null,
-                answer: null
+                optiontype: 't',
+                x: 0,
+                y: 0,
+                width: 100,
+                height: 12,
+                solution: ''
             };
         }
     });
@@ -27,53 +27,85 @@
         model: MOOC.models.Option
     });
 
-    MOOC.models.options = new MOOC.models.OptionList();
-
     MOOC.views = {};
 
     MOOC.views.OptionView = Backbone.View.extend({
         tagName: 'span',
         className: 'option',
         padding: 5,
+        option_types: {
+            't': 'text',
+            'c': 'checkbox',
+            'r': 'radio'
+        },
 
         initialize: function () {
-            _.bindAll(this, 'render', 'stop', 'select', 'unselect');
+            _.bindAll(this, 'render', 'drag', 'stop',
+                      'select', 'unselect', 'is_out', 'change');
             this.parent_width = this.options.parent_width;
             this.parent_height = this.options.parent_height;
 
             this.$el.draggable({
+                drag: this.drag,
                 stop: this.stop
             });
         },
 
         render: function () {
-            var input = this.make("input", {
-                type: this.model.get('optiontype'),
-                value: this.model.get('answer'),
+            var optiontype = this.model.get('optiontype'), attributes = {
+                type: this.option_types[optiontype],
+                value: this.model.get('solution'),
                 style: [
-                    "left: " + this.model.get('x') + "px;",
-                    "top: " + this.model.get('y') + "px;",
                     "width: " + this.model.get("width") + "px;",
                     "height: " + this.model.get("height") + " px;"
                 ].join(" ")
-            });
-            this.$el.empty().append(input);
+            };
+            if (optiontype === 'c' || optiontype === 'r') {
+                if (this.model.get('solution') === 'True') {
+                    attributes.checked = 'checked';
+                }
+            } else {
+                attributes.value = this.model.get('solution');
+            }
+
+            this.$el.empty().append(this.make("input", attributes));
             this.$el
                 .width(this.model.get("width") + this.padding * 2)
-                .css("padding", this.padding + "px");
+                .css({
+                    left: (this.model.get('x') - this.padding) + "px",
+                    top: (this.model.get('y') - this.padding) + "px",
+                    padding: this.padding + "px",
+                    position: 'absolute'
+                })
+                .find('input').change(this.change);
+
             return this;
+        },
+
+        is_out: function (position) {
+            return ((position.left + this.padding) < 0
+                    || (position.top + this.padding) < 0
+                    || (position.left + this.padding) > this.parent_width
+                    || (position.top + this.padding) > this.parent_height);
+        },
+
+        drag: function () {
+            var position = this.$el.position();
+            if (this.is_out(position)) {
+                this.$el.addClass('out');
+            } else {
+                this.$el.removeClass('out');
+            }
         },
 
         stop: function () {
             var position = this.$el.position();
-            if ((position.left + this.padding) < 0
-                    || (position.top + this.padding) < 0
-                    || (position.left + this.padding) > this.parent_width
-                    || (position.top + this.padding) > this.parent_height) {
-                this.model.collection.remove(this.model);
+            if (this.is_out(position)) {
+                this.model.destroy();
             } else {
-                this.model.set("x", position.left);
-                this.model.set("y", position.top);
+                this.model.set("x", position.left + this.padding);
+                this.model.set("y", position.top + this.padding);
+                this.model.save();
             }
         },
 
@@ -83,6 +115,19 @@
 
         unselect: function () {
             this.$el.removeClass('selected');
+        },
+
+        change: function () {
+            var $input = this.$el.find('input'),
+                optiontype = this.model.get('optiontype'),
+                value = '';
+            if (optiontype === 'c' || optiontype === 'r') {
+                value = _.isUndefined($input.attr('checked')) ? false : true;
+            } else {
+                value = $input.val();
+            }
+            this.model.set("solution", value);
+            this.model.save();
         }
 
     });
@@ -159,12 +204,11 @@
         },
 
         create_option: function () {
-            this.collection.add({
-                optiontype: this.$el.find("#option-type").val(),
-                x: 0,
-                y: 0,
-                answer: ''
+            var option = new MOOC.models.Option({
+                optiontype: this.$el.find("#option-type").val()
             });
+            this.collection.add(option);
+            option.save();
         },
 
         select_option: function (event) {
@@ -196,10 +240,11 @@
         }
     });
 
-    MOOC.init = function (options) {
+    MOOC.init = function (url, options) {
         var path = window.location.pathname;
-
+        MOOC.models.options = new MOOC.models.OptionList();
         MOOC.models.options.reset(options);
+        MOOC.models.options.url = url;
 
         MOOC.router = new MOOC.App();
         MOOC.router.route("", "index");

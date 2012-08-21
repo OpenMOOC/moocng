@@ -139,9 +139,11 @@ class Option(models.Model):
     question = models.ForeignKey(Question, verbose_name=_(u'Question'))
     x = models.PositiveSmallIntegerField(default=0)
     y = models.PositiveSmallIntegerField(default=0)
+    width = models.PositiveSmallIntegerField(default=100)
+    height = models.PositiveSmallIntegerField(default=12)
 
     OPTION_TYPES = (
-        ('i', u'Input box'),
+        ('t', u'Input box'),
         ('c', u'Check box'),
         ('r', u'Radio button'),
     )

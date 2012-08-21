@@ -14,3 +14,7 @@ fieldset .option {
 fieldset .selected {
     background-color: #8888ff;
 }
+
+fieldset .out {
+    background-color: #ff8888;
+}
