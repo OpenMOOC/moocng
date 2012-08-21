@@ -18,3 +18,18 @@ fieldset .selected {
 fieldset .out {
     background-color: #ff8888;
 }
+
+.palette {
+    float: left;
+    padding: 6px;
+}
+
+#option-properties {
+    margin-top: 1em;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#option-properties td, #option-properties th {
+    border: 1px solid #aaaaaa;
+}
