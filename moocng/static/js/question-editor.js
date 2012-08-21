@@ -152,8 +152,8 @@
         initialize: function () {
             _.bindAll(this, 'close', 'render', 'reset', 'remove_option',
                       'change_solution', 'change_type',
-                      'change_x', 'change_y','change_width', 'change_height',
-                     '_change_property');
+                      'change_x', 'change_y', 'change_width', 'change_height',
+                      '_change_property');
             this.model.bind("change", this.render, this);
         },
 
@@ -385,7 +385,7 @@
                 height = $img.height();
             $fieldset.width(width).height(height).css({"background-image": "url(" + url + ")"});
             $img.remove();
-        })();
+        }());
 
         MOOC.router = new MOOC.App();
         MOOC.router.route("", "index");
