@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.contrib.admin.util import unquote
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
+from django.db import models
 from django.http import Http404, HttpResponse
 from django.template.response import TemplateResponse
 from django.utils import simplejson
@@ -16,6 +17,7 @@ from adminsortable.admin import SortableAdmin
 
 from moocng.courses.models import Course, Announcement, Unit, KnowledgeQuantum
 from moocng.courses.models import Question, Option
+from moocng.courses.widgets import ImageReadOnlyWidget
 
 
 class CourseAdmin(admin.ModelAdmin):
@@ -50,7 +52,9 @@ class QuestionAdmin(admin.ModelAdmin):
 
     list_display = ('kq', 'solution')
     list_filter = ('kq', )
-    readonly_fields = ('last_frame', )
+    formfield_overrides = {
+        models.ImageField: {'widget': ImageReadOnlyWidget},
+        }
 
     def get_urls(self):
         return patterns(
