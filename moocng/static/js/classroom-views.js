@@ -86,7 +86,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 // Load Options for Question
                 MOOC.ajax.getOptionsByQuestion(question.get("id"), function (data, textStatus, jqXHR) {
                     var options = _.map(data.objects, function (opt) {
-                        return new MOOC.models.Option(_.pick(opt, "id", "optiontype", "x", "y"));
+                        return new MOOC.models.Option(_.pick(opt, "id", "optiontype", "x", "y", "width", "height", "answer"));
                     });
                     question.set("optionList", new MOOC.models.OptionList(options));
                 });
@@ -397,30 +397,38 @@ MOOC.views.questionViews = {};
 
 MOOC.views.Option = Backbone.View.extend({
     types: {
-        i: "text",
+        t: "text",
         c: "checkbox",
         r: "radio"
     },
 
     render: function () {
         "use strict";
-        var html = "<input type='" + this.types[this.model.get("optiontype")] + "' ",
-            node;
-        html += "id='option" + this.model.get("id") + "' ";
-        html += "style='top: " + this.model.get("y") + "px; left: " + this.model.get("x") + "px;' ";
-        if (this.model.get("optiontype") === 'r') {
-            html += "name='radio' ";
+        var optiontype = this.model.get('optiontype'),
+            answer = this.model.get('answer'),
+            attributes = {
+                type: this.types[optiontype],
+                id: 'option' + this.model.get('id'),
+                style: [
+                    'top: ' + this.model.get('y') + 'px;',
+                    'left: ' + this.model.get('x') + 'px;',
+                    'width: ' + this.model.get('width') + 'px;',
+                    'height: ' + this.model.get('height') + 'px;'
+                ].join(' ')
+            };
+        if (optiontype === 'r') {
+            attributes.name = 'radio';
         }
-        if (this.model.has("answer")) {
-            if (this.model.get("optiontype") === 'i') {
-                html += "value='" + this.model.get("answer") + "' ";
+        if (answer) {
+            if (optiontype === 't') {
+                attributes.value = answer;
             } else {
-                html += "checked='" + this.model.get("answer") + "' ";
+                if (answer === 'True') {
+                    attributes.checked = 'checked';
+                }
             }
         }
-        html += "/>";
-        node = $(html)[0];
-        this.$el.append(node);
+        this.$el.append(this.make('input', attributes));
         return this;
     }
 });

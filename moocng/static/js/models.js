@@ -11,9 +11,11 @@ MOOC.models.Option = Backbone.Model.extend({
     defaults: function () {
         "use strict";
         return {
-            optiontype: null,
-            x: null,
-            y: null,
+            optiontype: 't',
+            x: 0,
+            y: 0,
+            width: 100,
+            height: 12,
             answer: null,
             lastAnswerDate: null
         };
