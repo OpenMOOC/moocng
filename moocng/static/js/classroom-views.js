@@ -18,7 +18,7 @@ MOOC.views.Unit = Backbone.View.extend({
         "use strict";
         var html = '<div class="accordion-inner kqContainer"><ol>';
         this.model.get("knowledgeQuantumList").each(function (kq) {
-            html += '<li id="kq' + kq.get("id") + '"><span class="kq label label-info">' + kq.get("title") + '</span>';
+            html += '<li id="kq' + kq.get("id") + '"><span class="kq label label-success">' + kq.get("title") + '</span>';
             if (kq.has("question")) {
                 html += ' <span class="q label">' + MOOC.trans.classroom.q + '</span> ';
                 html += '/ <span class="a label">' + MOOC.trans.classroom.a + '</span>';
