@@ -16,8 +16,7 @@ MOOC.models.Option = Backbone.Model.extend({
             y: 0,
             width: 100,
             height: 12,
-            answer: null,
-            lastAnswerDate: null
+            solution: ''
         };
     }
 });
@@ -32,9 +31,30 @@ MOOC.models.Question = Backbone.Model.extend({
         return {
             lastFrame: null, // of the KnowledgeQuantum's video
             solution: null,
-            optionList: null
+            optionList: null,
+            answer: null
         };
     }
+});
+
+/* An answer is a student submission to a question */
+MOOC.models.Answer = Backbone.Model.extend({
+    defaults: {
+        date: null,
+        replyList: null
+    }
+});
+
+/* A reply is a student value for an option */
+MOOC.models.Reply = Backbone.Model.extend({
+    defaults: {
+        option: null,
+        value: null
+    }
+});
+
+MOOC.models.ReplyList = Backbone.Collection.extend({
+    model: MOOC.models.Reply
 });
 
 MOOC.models.KnowledgeQuantum = Backbone.Model.extend({

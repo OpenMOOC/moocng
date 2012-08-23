@@ -9,6 +9,10 @@ MOOC.ajax = {};
 
 MOOC.ajax.host = "/api/v1/";
 
+MOOC.ajax.getAbsoluteUrl = function (path) {
+    return MOOC.ajax.host + path;
+}
+
 MOOC.ajax.genericError = function (jqXHR, textStatus, errorThrown) {
     "use strict";
     var message;
@@ -47,21 +51,29 @@ MOOC.ajax.getOptionsByQuestion = function (question, callback) {
     });
 };
 
-MOOC.ajax.sendAnswers = function (put, answers, callback) {
+MOOC.ajax.getAnswerByQuestion = function (question, callback) {
     "use strict";
-    var method = "post";
-    if (put) {
+    $.ajax(MOOC.ajax.host + "answer/?format=json&question=" + question, {
+        success: callback,
+        error: MOOC.ajax.genericError
+    });
+}
+
+MOOC.ajax.sendAnswer = function (answer, question_id, callback) {
+    "use strict";
+    var url = MOOC.ajax.host + "answer/", method = "post", data = answer.toJSON();
+    if (answer.get('id')) {
+        url += answer.get('id') + "/";
         method = "put";
     }
-//     $.ajax(MOOC.ajax.host + "option/?format=json", {
-//         type: method,
-//         data: JSON.stringify(answers),
-//         contentType: "application/json",
-//         success: callback,
-//         error: MOOC.ajax.genericError
-//     });
-// TODO API on backend
-    callback(); // to delete
+    data['question'] = MOOC.ajax.getAbsoluteUrl('question/' + question_id + '/')
+    $.ajax(url, {
+        type: method,
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        success: callback,
+        error: MOOC.ajax.genericError
+    });
 };
 
 MOOC.ajax.updateUserActivity = function (data) {

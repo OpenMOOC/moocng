@@ -86,9 +86,30 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 // Load Options for Question
                 MOOC.ajax.getOptionsByQuestion(question.get("id"), function (data, textStatus, jqXHR) {
                     var options = _.map(data.objects, function (opt) {
-                        return new MOOC.models.Option(_.pick(opt, "id", "optiontype", "x", "y", "width", "height", "answer"));
+                        return new MOOC.models.Option(_.pick(opt, "id", "optiontype", "x", "y", "width", "height", "solution"));
                     });
                     question.set("optionList", new MOOC.models.OptionList(options));
+                });
+                // Load Answer for Question
+                MOOC.ajax.getAnswerByQuestion(question.get("id"), function (data, textStatus, jqXHR) {
+                    var obj, replies, answer;
+                    if (data.objects.length === 1) {
+                        obj = data.objects[0];
+                        replies = _.map(obj.replyList, function (reply) {
+                            return new MOOC.models.Reply(_.pick(reply, "option", "value"));
+                        });
+                        answer = new MOOC.models.Answer({
+                            id: question.get('id'),
+                            date: obj.date,
+                            replyList: new MOOC.models.ReplyList(replies)
+                        });
+                    } else {
+                        answer = new MOOC.models.Answer({
+                            date: null,
+                            replyList: new MOOC.models.ReplyList([])
+                        });
+                    }
+                    question.set("answer", answer);
                 });
             });
             this.repeatedlyCheckIfPlayer();
@@ -243,6 +264,11 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             }, this));
 
             toExecute.push(_.bind(function (callback) {
+                var question = this.model.get("questionInstance");
+                this.setupListernerFor(question, "answer", callback);
+            }, this));
+
+            toExecute.push(_.bind(function (callback) {
                 var question = this.model.get("questionInstance"),
                     view = MOOC.views.questionViews[question.get("id")],
                     destroyPlayer = _.bind(function () {
@@ -358,15 +384,9 @@ MOOC.views.Question = Backbone.View.extend({
 
     submitAnswer: function (question) {
         "use strict";
-        var now = new Date(),
-            answerList = [],
-            put;
+        var answer = question.get('answer'), replies;
 
-        put = question.get("optionList").any(function (opt) {
-            return opt.has("lastAnswerDate");
-        });
-
-        question.get("optionList").each(function (opt) {
+        replies = question.get("optionList").map(function (opt) {
             var view = MOOC.views.optionViews[opt.get("id")],
                 input = view.$el.find("input#option" + opt.get("id")),
                 type = input.attr("type"),
@@ -377,18 +397,24 @@ MOOC.views.Question = Backbone.View.extend({
             } else {
                 value = !_.isUndefined(input.attr("checked"));
             }
-            view.model.set("answer", value);
-            view.model.set("lastAnswerDate", now);
 
-            answerList.push({
-                id: view.model.get("id"),
-                answer: value,
-                date: now
+            return new MOOC.models.Reply({
+                option: view.model.get("id"),
+                value: value,
             });
         });
+        answer.set('replyList', replies);
+        answer.set('date', new Date());
 
-        MOOC.ajax.sendAnswers(put, answerList, function (data, textStatus, jqXHR) {
-            MOOC.alerts.show(MOOC.alerts.SUCCESS, MOOC.trans.classroom.answersSent, MOOC.trans.classroom.answersSentMsg);
+        MOOC.ajax.sendAnswer(answer, question.get('id'), function (data, textStatus, jqXHR) {
+            if (jqXHR.status === 201) {
+                answer.set('id', question.get('id'));
+                question.set('answer', answer);
+
+                MOOC.alerts.show(MOOC.alerts.SUCCESS,
+                                 MOOC.trans.classroom.answersSent,
+                                 MOOC.trans.classroom.answersSentMsg);
+            }
         });
     }
 });

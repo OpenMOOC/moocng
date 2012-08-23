@@ -4,17 +4,6 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
-from tastypie.api import Api
-from moocng.api.resources import (UnitResource, KnowledgeQuantumResource,
-                                  QuestionResource, OptionResource)
-
-
-v1_api = Api(api_name='v1')
-v1_api.register(UnitResource())
-v1_api.register(KnowledgeQuantumResource())
-v1_api.register(QuestionResource())
-v1_api.register(OptionResource())
-
 urlpatterns = patterns(
     '',
     # Examples:
@@ -28,7 +17,7 @@ urlpatterns = patterns(
 
     url(r'^tinymce/', include('tinymce.urls')),
 
-    url(r'^api/', include(v1_api.urls)),
+    url(r'^api/', include('moocng.api.urls')),
 
     url(r'^saml2/ls/$', 'djangosaml2.views.logout_service', name='saml2_ls',
         kwargs={'next_page': settings.LOGOUT_REDIRECT_URL}),
