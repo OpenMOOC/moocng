@@ -406,19 +406,21 @@ MOOC.views.Question = Backbone.View.extend({
                 value: value
             });
         });
-        answer.set('replyList', new MOOC.models.ReplyList(replies));
-        answer.set('date', new Date());
+        if (replies.length > 0) {
+            answer.set('replyList', new MOOC.models.ReplyList(replies));
+            answer.set('date', new Date());
 
-        is_first_answer = answer.get('id') ? false : true;
+            is_first_answer = answer.get('id') ? false : true;
 
-        MOOC.ajax.sendAnswer(answer, question.get('id'), function (data, textStatus, jqXHR) {
-            if (jqXHR.status === 201 || jqXHR.status === 204) {
-                answer.set('id', question.get('id'));
-                question.set('answer', answer);
+            MOOC.ajax.sendAnswer(answer, question.get('id'), function (data, textStatus, jqXHR) {
+                if (jqXHR.status === 201 || jqXHR.status === 204) {
+                    answer.set('id', question.get('id'));
+                    question.set('answer', answer);
 
-                self.loadSolution(question, is_first_answer);
-            }
-        });
+                    self.loadSolution(question, is_first_answer);
+                }
+            });
+        }
     },
 
     loadSolution: function (question, fetch_solutions) {

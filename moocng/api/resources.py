@@ -183,10 +183,10 @@ class AnswerResource(MongoResource):
 
         bundle = self.full_hydrate(bundle)
 
-        user['questions'][bundle.obj.question] = bundle.obj.answer
+        if (len(bundle.obj.answer['replyList']) > 0):
+            user['questions'][bundle.obj.question] = bundle.obj.answer
 
-        print user
-        self._collection.update({'_id': user['_id']}, user, safe=True)
+            self._collection.update({'_id': user['_id']}, user, safe=True)
 
         bundle.uuid = bundle.obj.question
 
