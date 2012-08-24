@@ -360,12 +360,16 @@ MOOC.views.Question = Backbone.View.extend({
         this.$el.html(html);
 
         $("#kq-q-buttons").removeClass("hide");
-        $("#kq-q-showkq").click(function () {
-            MOOC.router.navigate(kqPath, { trigger: true });
-        });
-        $("#kq-q-submit").click(_.bind(function () {
-            this.submitAnswer(this.model);
-        }, this));
+        $("#kq-q-showkq")
+            .unbind('click.QuestionView')
+            .bind('click.QuestionView', function () {
+                MOOC.router.navigate(kqPath, { trigger: true });
+            });
+        $("#kq-q-submit")
+            .unbind('click.QuestionView')
+            .bind('click.QuestionView', _.bind(function () {
+                this.submitAnswer();
+            }, this));
         $("#kq-next-container").removeClass("offset4");
 
         this.model.get("optionList").each(function (opt) {
@@ -385,11 +389,11 @@ MOOC.views.Question = Backbone.View.extend({
         return this;
     },
 
-    submitAnswer: function (question) {
+    submitAnswer: function () {
         "use strict";
-        var self = this, answer = question.get('answer'), replies, is_first_answer;
+        var self = this, answer = this.model.get('answer'), replies, is_first_answer;
 
-        replies = question.get("optionList").map(function (opt) {
+        replies = this.model.get("optionList").map(function (opt) {
             var view = MOOC.views.optionViews[opt.get("id")],
                 input = view.$el.find("input#option" + opt.get("id")),
                 type = input.attr("type"),
@@ -412,31 +416,31 @@ MOOC.views.Question = Backbone.View.extend({
 
             is_first_answer = answer.get('id') ? false : true;
 
-            MOOC.ajax.sendAnswer(answer, question.get('id'), function (data, textStatus, jqXHR) {
+            MOOC.ajax.sendAnswer(answer, this.model.get('id'), function (data, textStatus, jqXHR) {
                 if (jqXHR.status === 201 || jqXHR.status === 204) {
-                    answer.set('id', question.get('id'));
-                    question.set('answer', answer);
+                    answer.set('id', self.model.get('id'));
+                    self.model.set('answer', answer);
 
-                    self.loadSolution(question, is_first_answer);
+                    self.loadSolution(is_first_answer);
                 }
             });
         }
     },
 
-    loadSolution: function (question, fetch_solutions) {
+    loadSolution: function (fetch_solutions) {
         "use strict";
         // Set the solution for each option.
         // As there is an answer already, the options will have the solution included
-        var answer = question.get('answer'),
+        var self = this, answer = this.model.get('answer'),
             load_reply = function (oid, solution) {
                 var view = MOOC.views.optionViews[oid],
                     reply = answer.getReply(oid);
                 view.setReply(reply);
-                question.get('optionList').get(oid).set('solution', solution);
+                self.model.get('optionList').get(oid).set('solution', solution);
                 view.render();
             },
             show_result_msg = function () {
-                if (question.isCorrect()) {
+                if (self.model.isCorrect()) {
                     MOOC.alerts.show(MOOC.alerts.SUCCESS,
                                      MOOC.trans.classroom.answersSent,
                                      MOOC.trans.classroom.answersCorrect);
@@ -449,14 +453,14 @@ MOOC.views.Question = Backbone.View.extend({
 
 
         if (fetch_solutions) {
-            MOOC.ajax.getOptionsByQuestion(question.get("id"), function (data, textStatus, jqXHR) {
+            MOOC.ajax.getOptionsByQuestion(this.model.get("id"), function (data, textStatus, jqXHR) {
                 _.each(data.objects, function (opt) {
                     load_reply(opt.id, opt.solution);
                 });
                 show_result_msg();
             });
         } else {
-            question.get('optionList').each(function (opt_obj) {
+            this.model.get('optionList').each(function (opt_obj) {
                 load_reply(opt_obj.get('id'), opt_obj.get('solution'));
                 show_result_msg();
             });
