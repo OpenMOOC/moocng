@@ -387,7 +387,7 @@ MOOC.views.Question = Backbone.View.extend({
 
     submitAnswer: function (question) {
         "use strict";
-        var self = this, answer = question.get('answer'), replies;
+        var self = this, answer = question.get('answer'), replies, is_first_answer;
 
         replies = question.get("optionList").map(function (opt) {
             var view = MOOC.views.optionViews[opt.get("id")],
@@ -406,37 +406,59 @@ MOOC.views.Question = Backbone.View.extend({
                 value: value
             });
         });
-        answer.set('replyList', replies);
+        answer.set('replyList', new MOOC.models.ReplyList(replies));
         answer.set('date', new Date());
+
+        is_first_answer = answer.get('id') ? false : true;
 
         MOOC.ajax.sendAnswer(answer, question.get('id'), function (data, textStatus, jqXHR) {
             if (jqXHR.status === 201 || jqXHR.status === 204) {
                 answer.set('id', question.get('id'));
                 question.set('answer', answer);
 
-                MOOC.alerts.show(MOOC.alerts.SUCCESS,
-                                 MOOC.trans.classroom.answersSent,
-                                 MOOC.trans.classroom.answersSentMsg);
-                self.showSolution();
+                self.loadSolution(question, is_first_answer);
             }
         });
     },
 
-    showSolution: function () {
+    loadSolution: function (question, fetch_solutions) {
         "use strict";
-        this.model.get('optionList').each(function (opt) {
-            var view = MOOC.views.optionViews[opt.get("id")],
-                input = view.$el.find("input#option" + opt.get("id")),
-                type = input.attr("type"),
-                value;
+        // Set the solution for each option.
+        // As there is an answer already, the options will have the solution included
+        var answer = question.get('answer'),
+            load_reply = function (oid, solution) {
+                var view = MOOC.views.optionViews[oid],
+                    reply = answer.getReply(oid);
+                view.setReply(reply);
+                question.get('optionList').get(oid).set('solution', solution);
+                view.render();
+            },
+            show_result_msg = function () {
+                if (question.isCorrect()) {
+                    MOOC.alerts.show(MOOC.alerts.SUCCESS,
+                                     MOOC.trans.classroom.answersSent,
+                                     MOOC.trans.classroom.answersCorrect);
+                } else {
+                    MOOC.alerts.show(MOOC.alerts.ERROR,
+                                     MOOC.trans.classroom.answersSent,
+                                     MOOC.trans.classroom.answersIncorrect);
+                }
+            };
 
-            if (type === "text") {
-                value = input.val();
-            } else {
-                value = !_.isUndefined(input.attr("checked"));
-            }
 
-        });
+        if (fetch_solutions) {
+            MOOC.ajax.getOptionsByQuestion(question.get("id"), function (data, textStatus, jqXHR) {
+                _.each(data.objects, function (opt) {
+                    load_reply(opt.id, opt.solution);
+                });
+                show_result_msg();
+            });
+        } else {
+            question.get('optionList').each(function (opt_obj) {
+                load_reply(opt_obj.get('id'), opt_obj.get('solution'));
+                show_result_msg();
+            });
+        }
     }
 });
 
@@ -457,12 +479,6 @@ MOOC.views.Option = Backbone.View.extend({
     setReply: function (reply) {
         "use strict";
         this.reply = reply;
-        this.render();
-    },
-
-    isCorrect: function (reply, solution) {
-        "use strict";
-        return reply === solution;
     },
 
     render: function () {
@@ -485,19 +501,15 @@ MOOC.views.Option = Backbone.View.extend({
         if (this.reply && this.reply.get('option') === this.model.get('id')) {
             if (optiontype === 't') {
                 attributes.value = this.reply.get('value');
-                if (this.isCorrect(attributes.value, solution)) {
-                    attributes['class'] = 'correct';
-                } else {
-                    attributes['class'] = 'incorrect';
+                if (solution) {
+                    attributes['class'] = this.model.isCorrect(this.reply) ? 'correct' : 'incorrect';
                 }
             } else {
                 if (this.reply.get('value')) {
                     attributes.checked = 'checked';
                 }
-                if (solution === 'True') {
-                    attributes['class'] = this.reply.get('value') ? 'correct' : 'incorrect';
-                } else {
-                    attributes['class'] = this.reply.get('value') ? 'incorrect' : 'correct';
+                if (!_.isUndefined(solution)) {
+                    attributes['class'] = this.model.isCorrect(this.reply) ? 'correct' : 'incorrect';
                 }
             }
         }

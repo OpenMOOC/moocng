@@ -16,8 +16,28 @@ MOOC.models.Option = Backbone.Model.extend({
             y: 0,
             width: 100,
             height: 12,
-            solution: ''
+            solution: null
         };
+    },
+
+    isCorrect: function (reply) {
+        "use strict";
+        var solution = this.get('solution'),
+            optiontype = this.get('optiontype');
+
+        if (_.isUndefined(solution) || solution === null) {
+            return;
+        }
+
+        if (optiontype === 't') {
+            return solution === reply.get('value');
+        } else {
+            if (solution === 'True') {
+                return reply.get('value') === true;
+            } else {
+                return reply.get('value') === false;
+            }
+        }
     }
 });
 
@@ -34,6 +54,18 @@ MOOC.models.Question = Backbone.Model.extend({
             optionList: null,
             answer: null
         };
+    },
+
+    isCorrect: function () {
+        "use strict";
+        var answer = this.get("answer");
+        if (_.isUndefined(answer) || answer === null) {
+            return;
+        }
+
+        return this.get('optionList').all(function (opt) {
+            return opt.isCorrect(answer.getReply(opt.get('id')));
+        });
     }
 });
 

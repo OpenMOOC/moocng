@@ -12,7 +12,53 @@ from tastypie.exceptions import NotFound
 from tastypie.resources import Resource
 
 
+class MongoDB(object):
+
+    def __init__(self, db_uri):
+
+        uri_parts = urlparse.urlparse(db_uri)
+
+        if uri_parts.path:
+            database_name = uri_parts.path[1:]
+        else:
+            try:
+                database_name = settings.MONGODB_NAME
+            except AttributeError:
+                raise ImproperlyConfigured('You did not supply the database name in MONGODB_URI neither in MONGODB_NAME')
+
+        self.connection = Connection(db_uri)
+        self.database = self.connection[database_name]
+
+    def get_collection(self, collection):
+        return self.database[collection]
+
+
+def get_db():
+    try:
+        db_uri = settings.MONGODB_URI
+    except AttributeError:
+        raise ImproperlyConfigured('Missing required MONGODB_URI setting')
+
+    return MongoDB(db_uri)
+
+
+def get_user(request, collection):
+    return collection.find_one({'user': request.user.id}, safe=True)
+
+
+def get_or_create_user(request, collection):
+    user_id = request.user.id
+
+    user = collection.find_one({'user': user_id}, safe=True)
+    if user is None:
+        user = {'user': user_id, 'questions': {}}
+        user['_id'] = collection.insert(user)
+
+    return user
+
+
 class MongoObj(object):
+    """This class is required for Tastypie"""
 
     def __init__(self, initial=None):
         self.__dict__['_data'] = {}
@@ -37,25 +83,7 @@ class MongoResource(Resource):
     def __init__(self, *args, **kwargs):
         super(MongoResource, self).__init__(*args, **kwargs)
 
-        try:
-            db_uri = settings.MONGODB_URI
-        except AttributeError:
-            raise ImproperlyConfigured('Missing required MONGODB_URI setting')
-
-        uri_parts = urlparse.urlparse(db_uri)
-
-        if uri_parts.path:
-            database_name = uri_parts.path[1:]
-        else:
-            try:
-                database_name = settings.MONGODB_NAME
-            except AttributeError:
-                raise ImproperlyConfigured('You did not supply the database name in MONGODB_URI neither in MONGODB_NAME')
-
-
-        self._connection = Connection(db_uri)
-        self._database = self._connection[database_name]
-        self._collection = self._database[self.collection]
+        self._collection = get_db().get_collection(self.collection)
 
     def get_resource_uri(self, bundle_or_obj):
         kwargs = {'resource_name': self._meta.resource_name}

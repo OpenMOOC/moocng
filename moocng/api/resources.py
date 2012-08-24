@@ -9,7 +9,7 @@ from tastypie.exceptions import NotFound
 from tastypie.resources import ModelResource
 
 from moocng.api.authentication import DjangoAuthentication, Authentication
-from moocng.api.mongodb import MongoObj, MongoResource
+from moocng.api.mongodb import get_db, get_user, get_or_create_user, MongoObj, MongoResource
 from moocng.courses.models import Unit, KnowledgeQuantum, Question, Option
 from moocng.courses.utils import extract_YT_video_id
 
@@ -103,6 +103,23 @@ class OptionResource(ModelResource):
             "question": ('exact'),
         }
 
+    def dispatch(self, request_type, request, **kwargs):
+        # We need the request to dehydrate some fields
+        collection = get_db().get_collection('answers')
+        self.user = get_user(request, collection)
+        return super(OptionResource, self).dispatch(request_type, request, **kwargs)
+
+    def dehydrate_solution(self, bundle):
+        # only return the solution if the user has given an answer
+        if self.user:
+            answer = self.user['questions'].get(unicode(bundle.obj.question.id), None)
+        else:
+            answer = None
+
+        if answer is None:
+            return None
+        else:
+            return bundle.obj.solution
 
 class AnswerResource(MongoResource):
     collection = 'answers'
@@ -202,11 +219,4 @@ class AnswerResource(MongoResource):
         return bundle
 
     def _get_or_create_user(self, request):
-        user_id = request.user.id
-
-        user = self._collection.find_one({'user': user_id}, safe=True)
-        if user is None:
-            user = {'user': user_id, 'questions': {}}
-            user['_id'] = self._collection.insert(user)
-
-        return user
+        return get_or_create_user(request, self._collection)
