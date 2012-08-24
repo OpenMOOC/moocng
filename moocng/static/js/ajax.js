@@ -10,8 +10,9 @@ MOOC.ajax = {};
 MOOC.ajax.host = "/api/v1/";
 
 MOOC.ajax.getAbsoluteUrl = function (path) {
+    "use strict";
     return MOOC.ajax.host + path;
-}
+};
 
 MOOC.ajax.genericError = function (jqXHR, textStatus, errorThrown) {
     "use strict";
@@ -57,7 +58,7 @@ MOOC.ajax.getAnswerByQuestion = function (question, callback) {
         success: callback,
         error: MOOC.ajax.genericError
     });
-}
+};
 
 MOOC.ajax.sendAnswer = function (answer, question_id, callback) {
     "use strict";
@@ -66,7 +67,7 @@ MOOC.ajax.sendAnswer = function (answer, question_id, callback) {
         url += answer.get('id') + "/";
         method = "put";
     }
-    data['question'] = MOOC.ajax.getAbsoluteUrl('question/' + question_id + '/')
+    data.question = MOOC.ajax.getAbsoluteUrl('question/' + question_id + '/');
     $.ajax(url, {
         type: method,
         data: JSON.stringify(data),

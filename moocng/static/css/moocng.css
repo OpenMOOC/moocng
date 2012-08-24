@@ -94,6 +94,29 @@ footer ul li {
     position: absolute;
 }
 
+.classroom #kq-video input.correct {
+    background-color: #DFF0D8;
+    border: 1px solid #D6E9C6;
+}
+
+.classroom #kq-video input.incorrect {
+    background-color: #F2DEDE;
+    border: 1px solid #EED3D7;
+}
+
+.classroom #kq-video input.correct[type=checkbox],
+.classroom #kq-video input.correct[type=radio]
+{
+    outline: 2px solid #468847;
+}
+
+.classroom #kq-video input.incorrect[type=checkbox],
+.classroom #kq-video input.incorrect[type=radio]
+{
+    outline: 2px solid #B94A48;
+}
+
+
 .classroom div.kqContainer li {
     margin-top: 3px;
 }

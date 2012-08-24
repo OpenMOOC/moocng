@@ -351,7 +351,8 @@ MOOC.views.Question = Backbone.View.extend({
         var width = this.$el.children().css("width"),
             height = this.$el.children().css("height"),
             kqPath = window.location.hash.substring(1, window.location.hash.length - 2), // Remove trailing /q
-            html = '<img src="' + this.model.get("lastFrame") + '" ';
+            html = '<img src="' + this.model.get("lastFrame") + '" ',
+            answer = this.model.get('answer');
 
         html += 'alt="' + this.model.get("title") + '" style="max-width: ' + width;
         html += '; height: ' + height + ';" />';
@@ -368,10 +369,12 @@ MOOC.views.Question = Backbone.View.extend({
         $("#kq-next-container").removeClass("offset4");
 
         this.model.get("optionList").each(function (opt) {
-            var view = MOOC.views.optionViews[opt.get("id")];
+            var view = MOOC.views.optionViews[opt.get("id")], reply = null;
             if (_.isUndefined(view)) {
+                reply = answer.getReply(opt.get('id'));
                 view = new MOOC.views.Option({
                     model: opt,
+                    reply: reply,
                     el: $("#kq-video")[0]
                 });
                 MOOC.views.optionViews[opt.get("id")] = view;
@@ -384,7 +387,7 @@ MOOC.views.Question = Backbone.View.extend({
 
     submitAnswer: function (question) {
         "use strict";
-        var answer = question.get('answer'), replies;
+        var self = this, answer = question.get('answer'), replies;
 
         replies = question.get("optionList").map(function (opt) {
             var view = MOOC.views.optionViews[opt.get("id")],
@@ -407,14 +410,32 @@ MOOC.views.Question = Backbone.View.extend({
         answer.set('date', new Date());
 
         MOOC.ajax.sendAnswer(answer, question.get('id'), function (data, textStatus, jqXHR) {
-            if (jqXHR.status === 201) {
+            if (jqXHR.status === 201 || jqXHR.status === 204) {
                 answer.set('id', question.get('id'));
                 question.set('answer', answer);
 
                 MOOC.alerts.show(MOOC.alerts.SUCCESS,
                                  MOOC.trans.classroom.answersSent,
                                  MOOC.trans.classroom.answersSentMsg);
+                self.showSolution();
             }
+        });
+    },
+
+    showSolution: function () {
+        "use strict";
+        this.model.get('optionList').each(function (opt) {
+            var view = MOOC.views.optionViews[opt.get("id")],
+                input = view.$el.find("input#option" + opt.get("id")),
+                type = input.attr("type"),
+                value;
+
+            if (type === "text") {
+                value = input.val();
+            } else {
+                value = !_.isUndefined(input.attr("checked"));
+            }
+
         });
     }
 });
@@ -428,10 +449,26 @@ MOOC.views.Option = Backbone.View.extend({
         r: "radio"
     },
 
+    initialize: function () {
+        "use strict";
+        this.reply = this.options.reply;
+    },
+
+    setReply: function (reply) {
+        "use strict";
+        this.reply = reply;
+        this.render();
+    },
+
+    isCorrect: function (reply, solution) {
+        "use strict";
+        return reply === solution;
+    },
+
     render: function () {
         "use strict";
-        var optiontype = this.model.get('optiontype'),
-            answer = this.model.get('answer'),
+        var solution = this.model.get('solution'),
+            optiontype = this.model.get('optiontype'),
             attributes = {
                 type: this.types[optiontype],
                 id: 'option' + this.model.get('id'),
@@ -445,15 +482,26 @@ MOOC.views.Option = Backbone.View.extend({
         if (optiontype === 'r') {
             attributes.name = 'radio';
         }
-        if (answer) {
+        if (this.reply && this.reply.get('option') === this.model.get('id')) {
             if (optiontype === 't') {
-                attributes.value = answer;
+                attributes.value = this.reply.get('value');
+                if (this.isCorrect(attributes.value, solution)) {
+                    attributes['class'] = 'correct';
+                } else {
+                    attributes['class'] = 'incorrect';
+                }
             } else {
-                if (answer === 'True') {
+                if (this.reply.get('value')) {
                     attributes.checked = 'checked';
+                }
+                if (solution === 'True') {
+                    attributes['class'] = this.reply.get('value') ? 'correct' : 'incorrect';
+                } else {
+                    attributes['class'] = this.reply.get('value') ? 'incorrect' : 'correct';
                 }
             }
         }
+        this.$el.find("#" + attributes.id).remove();
         this.$el.append(this.make('input', attributes));
         return this;
     }

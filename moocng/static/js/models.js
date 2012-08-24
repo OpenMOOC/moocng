@@ -42,6 +42,19 @@ MOOC.models.Answer = Backbone.Model.extend({
     defaults: {
         date: null,
         replyList: null
+    },
+
+    /* Return a reply which option is opt_id or null otherwise */
+    getReply: function (opt_id) {
+        "use strict";
+        var replies = this.get('replyList');
+        if (replies) {
+            return replies.find(function (reply) {
+                return reply.get('option') === opt_id;
+            });
+        } else {
+            return null;
+        }
     }
 });
 
