@@ -400,7 +400,7 @@ MOOC.views.Question = Backbone.View.extend({
 
             return new MOOC.models.Reply({
                 option: view.model.get("id"),
-                value: value,
+                value: value
             });
         });
         answer.set('replyList', replies);
