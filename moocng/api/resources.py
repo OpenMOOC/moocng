@@ -3,13 +3,11 @@ import re
 import random
 
 from tastypie import fields
-from tastypie.authorization import DjangoAuthorization, Authorization
-from tastypie.bundle import Bundle
-from tastypie.exceptions import NotFound
+from tastypie.authorization import DjangoAuthorization
 from tastypie.resources import ModelResource
 
-from moocng.api.authentication import DjangoAuthentication, Authentication
-from moocng.api.mongodb import get_db, get_user, get_or_create_user, MongoObj, MongoResource
+from moocng.api.authentication import DjangoAuthentication
+from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
 from moocng.courses.models import Unit, KnowledgeQuantum, Question, Option
 from moocng.courses.utils import extract_YT_video_id
 
@@ -122,10 +120,11 @@ class OptionResource(ModelResource):
             return bundle.obj.solution
 
 class AnswerResource(MongoResource):
-    collection = 'answers'
 
     class Meta:
         resource_name = 'answer'
+        collection = 'answers'
+        datakey = 'questions'
         object_class = MongoObj
         authentication = DjangoAuthentication()
         authorization = DjangoAuthorization()
@@ -134,20 +133,8 @@ class AnswerResource(MongoResource):
             "question": ('exact'),
         }
 
-    def get_resource_uri(self, bundle_or_obj):
-        kwargs = {'resource_name': self._meta.resource_name}
-        if isinstance(bundle_or_obj, Bundle):
-            kwargs['pk'] = str(bundle_or_obj.obj.question)
-        else:
-            kwargs['pk'] = str(bundle_or_obj.question)
-
-        if self._meta.api_name is not None:
-            kwargs['api_name'] = self._meta.api_name
-
-        return self._build_reverse_url('api_dispatch_detail', kwargs=kwargs)
-
     def obj_get_list(self, request=None, **kwargs):
-        user = self._get_or_create_user(request)
+        user = self._get_or_create_user(request, **kwargs)
         question_id = request.GET.get('question', None)
 
         results = []
@@ -155,40 +142,28 @@ class AnswerResource(MongoResource):
             for qid, question in user['questions'].items():
                 if qid == question_id:
                     obj = MongoObj(initial=question)
-                    obj.question = question_id
+                    obj.uuid = question_id
                     results.append(obj)
         else:
             question = user['questions'].get(question_id, None)
             if question is not None:
                 obj = MongoObj(initial=question)
-                obj.question = question_id
+                obj.uuid = question_id
                 results.append(obj)
 
         return results
 
-    def obj_get(self, request=None, **kwargs):
-        user = self._get_or_create_user(request)
-        question_id = kwargs['pk']
-
-        answer = user['questions'].get(question_id, None)
-        if answer is None:
-            raise NotFound('Invalid resource lookup data provided')
-
-        obj = MongoObj(initial=answer)
-        obj.question = question_id
-        return obj
-
     def obj_create(self, bundle, request=None, **kwargs):
-        user = self._get_or_create_user(request)
+        user = self._get_or_create_user(request, **kwargs)
 
         bundle = self.full_hydrate(bundle)
 
         if (len(bundle.obj.answer['replyList']) > 0):
-            user['questions'][bundle.obj.question] = bundle.obj.answer
+            user['questions'][bundle.obj.uuid] = bundle.obj.answer
 
             self._collection.update({'_id': user['_id']}, user, safe=True)
 
-        bundle.uuid = bundle.obj.question
+        bundle.uuid = bundle.obj.uuid
 
         return bundle
 
@@ -201,7 +176,7 @@ class AnswerResource(MongoResource):
             pattern = r'^/api/%s/question/(?P<question_id>[\d+])/$' % self._meta.api_name
             result = re.findall(pattern, question)
             if result and len(result) == 1:
-                bundle.obj.question = result[0]
+                bundle.obj.uuid = result[0]
 
         bundle.obj.answer = {}
 
@@ -218,5 +193,46 @@ class AnswerResource(MongoResource):
         bundle.data['replyList'] = bundle.obj.replyList
         return bundle
 
-    def _get_or_create_user(self, request):
-        return get_or_create_user(request, self._collection)
+
+class ActivityResource(MongoResource):
+
+    class Meta:
+        resource_name = 'activity'
+        collection = 'activity'
+        datakey = 'courses'
+        object_class = MongoObj
+        authentication = DjangoAuthentication()
+        authorization = DjangoAuthorization()
+        allowed_methods = ['get', 'put']
+        filtering = {
+            "unit": ('exact'),
+        }
+
+    def obj_update(self, bundle, request=None, **kwargs):
+        user = self._get_or_create_user(request, **kwargs)
+        course_id = kwargs['pk']
+
+        bundle = self.full_hydrate(bundle)
+
+        user[self._meta.datakey][course_id] = bundle.obj.kqs
+
+        self._collection.update({'_id': user['_id']}, user, safe=True)
+
+        bundle.uuid = bundle.obj.uuid
+
+        return bundle
+
+    def hydrate(self, bundle):
+        bundle.obj.kqs = {}
+        if 'kqs' in bundle.data:
+            bundle.obj.kqs['kqs'] = bundle.data['kqs']
+
+        return bundle
+
+    def dehydrate(self, bundle):
+        bundle.data['kqs'] = bundle.obj.kqs
+        return bundle
+
+    def _initial(self, request, **kwargs):
+        course_id = kwargs['pk']
+        return {course_id: {'kqs': []}}

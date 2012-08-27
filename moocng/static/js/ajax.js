@@ -77,11 +77,6 @@ MOOC.ajax.sendAnswer = function (answer, question_id, callback) {
     });
 };
 
-MOOC.ajax.updateUserActivity = function (data) {
-    "use strict";
-    // TODO send data
-};
-
 MOOC.alerts = {};
 
 MOOC.alerts.ERROR = "error";

@@ -46,12 +46,12 @@ def get_user(request, collection):
     return collection.find_one({'user': request.user.id}, safe=True)
 
 
-def get_or_create_user(request, collection):
+def get_or_create_user(request, collection, key, initial):
     user_id = request.user.id
 
     user = collection.find_one({'user': user_id}, safe=True)
     if user is None:
-        user = {'user': user_id, 'questions': {}}
+        user = {'user': user_id, key: initial}
         user['_id'] = collection.insert(user)
 
     return user
@@ -83,14 +83,14 @@ class MongoResource(Resource):
     def __init__(self, *args, **kwargs):
         super(MongoResource, self).__init__(*args, **kwargs)
 
-        self._collection = get_db().get_collection(self.collection)
+        self._collection = get_db().get_collection(self._meta.collection)
 
     def get_resource_uri(self, bundle_or_obj):
         kwargs = {'resource_name': self._meta.resource_name}
         if isinstance(bundle_or_obj, Bundle):
-            kwargs['pk'] = str(bundle_or_obj.obj._id)
+            kwargs['pk'] = str(bundle_or_obj.obj.uuid)
         else:
-            kwargs['pk'] = str(bundle_or_obj._id)
+            kwargs['pk'] = str(bundle_or_obj.uuid)
 
         if self._meta.api_name is not None:
             kwargs['api_name'] = self._meta.api_name
@@ -111,13 +111,15 @@ class MongoResource(Resource):
         return self.get_object_list(request)
 
     def obj_get(self, request=None, **kwargs):
-        bid = bson.ObjectId(kwargs['pk'])
-        result = self._collection.find_one({'_id': bid})
+        user = self._get_or_create_user(request, **kwargs)
+        oid = kwargs['pk']
+
+        result = user[self._meta.datakey].get(oid, None)
         if result is None:
             raise NotFound('Invalid resource lookup data provided')
 
         obj = MongoObj(initial=result)
-        obj.uuid = str(result['_id'])
+        obj.uuid = oid
         return obj
 
     def obj_create(self, bundle, request=None, **kwargs):
@@ -127,3 +129,10 @@ class MongoResource(Resource):
         bundle.obj.uuid = str(_id)
         return bundle
 
+    def _get_or_create_user(self, request, **kwargs):
+        return get_or_create_user(request, self._collection,
+                                  self._meta.datakey,
+                                  self._initial(request, **kwargs))
+
+    def _initial(self, request, **kwargs):
+        return {}

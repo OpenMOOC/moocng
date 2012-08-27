@@ -136,10 +136,11 @@ MOOC.App = Backbone.Router.extend({
     }
 });
 
-MOOC.init = function (KQRoute) {
+MOOC.init = function (course_id, KQRoute) {
     "use strict";
     var path = window.location.pathname,
-        unit;
+        unit,
+        last_kq = null;
 
     MOOC.router = new MOOC.App();
     MOOC.router.route("unit:unit", "unit");
@@ -147,6 +148,16 @@ MOOC.init = function (KQRoute) {
         MOOC.router.route("unit:unit/kq:kq", "kq");
         MOOC.router.route("unit:unit/kq:kq/q", "kqQ");
         MOOC.router.route("unit:unit/kq:kq/a", "kqA");
+
+        MOOC.models.activity = new MOOC.models.Activity({id: course_id});
+        MOOC.models.activity.fetch();
+
+        MOOC.router.on('route:kq', function (u, kq) {
+            if (last_kq !== null) {
+                MOOC.models.activity.addKQ(last_kq);
+            }
+            last_kq = kq;
+        });
     }
     if (path.lastIndexOf('/') < path.length - 1) {
         path += '/';

@@ -7,6 +7,23 @@ if (_.isUndefined(window.MOOC)) {
 
 MOOC.models = {};
 
+MOOC.models.Activity = Backbone.Model.extend({
+    defaults: {
+        kqs: [],
+    },
+
+    url: function () {
+        return MOOC.ajax.getAbsoluteUrl('activity/') + this.get('id') + '/';
+    },
+
+    addKQ: function (kq) {
+        if (!_.include(this.get('kqs'), kq)) {
+            this.set('kqs', _.union(this.get('kqs'), [kq]));
+            this.save();
+        }
+    }
+});
+
 MOOC.models.Option = Backbone.Model.extend({
     defaults: function () {
         "use strict";

@@ -288,8 +288,6 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 this.setEventForNavigation("#kq-previous", unit, this.model, false);
                 this.setEventForNavigation("#kq-next", unit, this.model, true);
 
-                MOOC.ajax.updateUserActivity(data);
-
                 if (_.isUndefined(view)) {
                     view = new MOOC.views.Question({
                         model: question,
