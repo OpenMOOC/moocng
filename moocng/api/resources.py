@@ -127,8 +127,8 @@ class AnswerResource(MongoResource):
     class Meta:
         resource_name = 'answer'
         object_class = MongoObj
-        authentication = Authentication()
-        authorization = Authorization()
+        authentication = DjangoAuthentication()
+        authorization = DjangoAuthorization()
         allowed_methods = ['get', 'post', 'put']
         filtering = {
             "question": ('exact'),
