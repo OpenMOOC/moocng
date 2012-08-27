@@ -26,7 +26,11 @@ from urllib import urlencode
 from urllib2 import urlopen
 from urlparse import urlparse, parse_qs
 
+import logging
 import re
+
+
+logger = logging.getLogger(__name__)
 
 YT_BASE_URL = 'http://www.youtube.com/get_video_info'
 
@@ -85,6 +89,8 @@ class Video(object):
         path -- Destination directory
         """
 
+        logger.info("Real video to download: %s - %s" % (self.filename, self.url))
+
         path = (normpath(path) + '/' if path else '')
         response = urlopen(self.url)
         with open(path + self.filename, 'wb') as dst_file:
@@ -134,6 +140,7 @@ class YouTube(object):
     def url(self, url):
         """ Defines the URL of the YouTube video."""
         self._video_url = url
+        logger.info("URL stored: %s" % self._video_url)
         #Reset the filename.
         self._filename = None
         #Get the video details.
@@ -248,6 +255,8 @@ class YouTube(object):
             'video_id': self.video_id
         })
 
+        logger.info("Video to download parameters: %s" % querystring)
+
         response = urlopen(YT_BASE_URL + '?' + querystring)
         #TODO: evaulate the status code.
         if response:
@@ -259,6 +268,7 @@ class YouTube(object):
             #available encoding options.
             encoding_options = self._fetch(path, content)
             self.title = self._fetch(('title',), content)
+            self.videos = []
 
             for video in encoding_options:
                 url = self._extract_url(video)
@@ -318,10 +328,10 @@ def safe_filename(text, max_length=200):
     #Tidy up ugly formatted filenames.
     text = text.replace('_', ' ')
     text = text.replace(':', ' -')
-        
+
     #NTFS forbids filenames containing characters in range 0-31 (0x00-0x1F)
     ntfs = [chr(i) for i in range(0, 31)]
-    
+
     #Removing these SHOULD make most filename safe for a wide range
     #of operating systems.
     paranoid = ['\"', '\#', '\$', '\%', '\'', '\*', '\,', '\.', '\/', '\:',

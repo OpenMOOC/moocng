@@ -41,6 +41,7 @@ def execute_command(proc):
 def download(url):
     yt = YouTube()
     yt.url = url
+    video = None
 
     if len(yt.videos) == 0:
         raise NotFound(url)
