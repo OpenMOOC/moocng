@@ -123,9 +123,12 @@
     {{ adminform.form.non_field_errors }}
 {% endif %}
 
+{% if original.last_frame %}
 <fieldset>
   <img class="last-frame" src="{{ original.last_frame.url }}" />
 </fieldset>
+{% endif %}
+
 </div>
 </form></div>
 {% endblock %}
