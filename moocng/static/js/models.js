@@ -129,6 +129,19 @@ MOOC.models.ReplyList = Backbone.Collection.extend({
     model: MOOC.models.Reply
 });
 
+MOOC.models.Attachment = Backbone.Model.extend({
+    defaults: function () {
+        "use strict";
+        return {
+            url: null
+        };
+    }
+});
+
+MOOC.models.AttachmentList = Backbone.Collection.extend({
+    model: MOOC.models.Attachment
+});
+
 MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
     defaults: function () {
         "use strict";
@@ -141,7 +154,8 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
             question: null, // Optional
             questionInstance: null,
             completed: false,
-            correct: null
+            correct: null,
+            attachmentList: null
         };
     }
 });

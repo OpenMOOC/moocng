@@ -143,6 +143,18 @@ MOOC.App = Backbone.Router.extend({
                 MOOC.views.unitViews[unitID] = unitView;
             }
 
+            unitObj.get("knowledgeQuantumList").each(function (kqObj) {
+                MOOC.ajax.getAttachmentsByKQ(kqObj.get("id"), function (data, textStatus, jqXHR) {
+                    kqObj.set("attachmentList", (new MOOC.models.AttachmentList()).reset(_.map(data.objects, function (attachment) {
+                        var data = _.pick(attachment, "id", "attachment");
+                        return {
+                            id : parseInt(data.id, 10),
+                            url: data.attachment
+                        };
+                    })));
+                });
+            });
+
             callback();
         });
     },

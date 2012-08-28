@@ -44,6 +44,14 @@ MOOC.ajax.getKQsByUnit = function (unit, callback) {
     });
 };
 
+MOOC.ajax.getAttachmentsByKQ = function (kq, callback) {
+    "use strict";
+    $.ajax(MOOC.ajax.host + "attachment/?format=json&kq=" + kq, {
+        success: callback,
+        error: MOOC.ajax.genericError
+    });
+};
+
 MOOC.ajax.getOptionsByQuestion = function (question, callback) {
     "use strict";
     $.ajax(MOOC.ajax.host + "option/?format=json&question=" + question, {
