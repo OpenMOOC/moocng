@@ -508,19 +508,36 @@ MOOC.views.Option = Backbone.View.extend({
         "use strict";
         var solution = this.model.get('solution'),
             optiontype = this.model.get('optiontype'),
+            image = this.$el.find("img"),
+            ghostImage = new Image(),
             attributes = {
                 type: this.types[optiontype],
-                id: 'option' + this.model.get('id'),
-                style: [
-                    'top: ' + this.model.get('y') + 'px;',
-                    'left: ' + this.model.get('x') + 'px;',
-                    'width: ' + this.model.get('width') + 'px;',
-                    'height: ' + this.model.get('height') + 'px;'
-                ].join(' ')
-            };
+                id: 'option' + this.model.get('id')
+            },
+            offset = Math.floor((this.$el.width() - image.width()) / 2),
+            width = "auto",
+            height = "auto",
+            widthScale,
+            heightScale;
+
+        ghostImage.src = image.attr("src");
+        widthScale = ghostImage.width / image.width();
+        heightScale = ghostImage.height / image.height();
+        if (optiontype === 't') {
+            width = Math.floor(this.model.get('width') / widthScale);
+            height = Math.floor(this.model.get('height') / heightScale);
+        }
+
+        attributes.style = [
+            'top: ' + Math.floor(this.model.get('y') / heightScale) + 'px;',
+            'left: ' + (offset + Math.floor(this.model.get('x') / widthScale)) + 'px;',
+            'width: ' + width + 'px;',
+            'height: ' + height + 'px;'
+        ].join(' ');
         if (optiontype === 'r') {
             attributes.name = 'radio';
         }
+
         if (this.reply && this.reply.get('option') === this.model.get('id')) {
             if (optiontype === 't') {
                 attributes.value = this.reply.get('value');
