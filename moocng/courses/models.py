@@ -125,6 +125,20 @@ class Question(models.Model):
     def __unicode__(self):
         return u'%s - Question' % self.kq
 
+    def is_correct(self, answer):
+        correct = True
+        replies = dict([(int(r['option']),
+                         r['value']) for r in  answer['replyList']])
+
+        for option in self.option_set.all():
+            reply = replies.get(option.id, None)
+            if reply is None:
+                return False
+
+            correct = correct and option.is_correct(reply)
+
+        return correct
+
 
 def handle_question_post_save(sender, instance, created, **kwargs):
     if created:
@@ -158,3 +172,9 @@ class Option(models.Model):
 
     def __unicode__(self):
         return u'%s at %s x %s' % (self.optiontype, self.x, self.y)
+
+    def is_correct(self, reply):
+        if self.optiontype == 't':
+            return reply == self.solution
+        else:
+            return bool(reply) == bool(self.solution)

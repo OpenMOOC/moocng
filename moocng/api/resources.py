@@ -40,6 +40,14 @@ class KnowledgeQuantumResource(ModelResource):
             "unit": ('exact'),
         }
 
+    def dispatch(self, request_type, request, **kwargs):
+        db = get_db()
+        self.user_answers = get_user(request, db.get_collection('answers'))
+        self.user_activity = get_user(request, db.get_collection('activity'))
+        return super(KnowledgeQuantumResource, self).dispatch(request_type,
+                                                              request,
+                                                              **kwargs)
+
     def dehydrate_question(self, bundle):
         question = bundle.data['question']
         if question.count() == 0:
@@ -52,19 +60,32 @@ class KnowledgeQuantumResource(ModelResource):
         return extract_YT_video_id(bundle.obj.video)
 
     def dehydrate_correct(self, bundle):
-        # TODO real implementation, not random!!
-        # it has to use data from the mongodb to check if the KQ is correct
-        rand = random.Random()
-        correct = rand.randint(0, 1)
-        return correct == 1
+        questions = bundle.obj.question_set.all()
+        if questions.count() == 0:
+            # no question: a kq is correct if it is completed
+            return self._is_completed(self.user_activity, bundle.obj)
+        else:
+            question = questions[0]  # there should be only one question
+            answer = self.user_answers['questions'].get(unicode(question.id))
+            if answer is None:
+                return False
+
+            return question.is_correct(answer)
 
     def dehydrate_completed(self, bundle):
-        # TODO real implementation, not random!!
-        # it has to use data from the mongodb to check if the user has finished
-        # the KQ
-        rand = random.Random()
-        completed = rand.randint(0, 1)
-        return completed == 1
+        return self._is_completed(self.user_activity, bundle.obj)
+
+    def _is_completed(self, activity, kq):
+        course_id = kq.unit.course.id
+        visited = activity['courses'].get(unicode(course_id), None)
+        if visited is None:
+            return False
+
+        kqs = visited.get('kqs', None)
+        if kqs is None:
+            return False
+
+        return unicode(kq.id) in kqs
 
 
 class QuestionResource(ModelResource):
