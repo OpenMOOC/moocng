@@ -9,14 +9,16 @@ MOOC.models = {};
 
 MOOC.models.Activity = Backbone.Model.extend({
     defaults: {
-        kqs: [],
+        kqs: []
     },
 
     url: function () {
+        "use strict";
         return MOOC.ajax.getAbsoluteUrl('activity/') + this.get('id') + '/';
     },
 
     addKQ: function (kq) {
+        "use strict";
         if (!_.include(this.get('kqs'), kq)) {
             this.set('kqs', _.union(this.get('kqs'), [kq]));
             this.save();
@@ -24,7 +26,8 @@ MOOC.models.Activity = Backbone.Model.extend({
     },
 
     hasKQ: function (kq) {
-        return _.include(this.get('kqs'), '' + kq);
+        "use strict";
+        return _.include(this.get('kqs'), String(kq));
     }
 });
 
@@ -44,21 +47,24 @@ MOOC.models.Option = Backbone.Model.extend({
     isCorrect: function (reply) {
         "use strict";
         var solution = this.get('solution'),
-            optiontype = this.get('optiontype');
+            optiontype = this.get('optiontype'),
+            result;
 
         if (_.isUndefined(solution) || solution === null) {
             return;
         }
 
         if (optiontype === 't') {
-            return solution === reply.get('value');
+            result = solution === reply.get('value');
         } else {
             if (solution === 'True') {
-                return reply.get('value') === true;
+                result = reply.get('value') === true;
             } else {
-                return reply.get('value') === false;
+                result = reply.get('value') === false;
             }
         }
+
+        return result;
     }
 });
 
@@ -100,14 +106,14 @@ MOOC.models.Answer = Backbone.Model.extend({
     /* Return a reply which option is opt_id or null otherwise */
     getReply: function (opt_id) {
         "use strict";
-        var replies = this.get('replyList');
+        var replies = this.get('replyList'),
+            result = null;
         if (replies) {
-            return replies.find(function (reply) {
+            result = replies.find(function (reply) {
                 return reply.get('option') === opt_id;
             });
-        } else {
-            return null;
         }
+        return result;
     }
 });
 
