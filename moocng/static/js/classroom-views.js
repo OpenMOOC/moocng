@@ -508,10 +508,9 @@ MOOC.views.Option = Backbone.View.extend({
     render: function () {
         "use strict";
         var image = this.$el.find("img"),
-            ghostImage = new Image();
+            ghostImage = document.createElement("img");
 
-        ghostImage.src = image.attr("src");
-        $(ghostImage).ready(_.bind(function () {
+        $(ghostImage).load(_.bind(function () {
             var solution = this.model.get('solution'),
                 optiontype = this.model.get('optiontype'),
                 attributes = {
@@ -559,6 +558,8 @@ MOOC.views.Option = Backbone.View.extend({
             this.$el.find("#" + attributes.id).remove();
             this.$el.append(this.make('input', attributes));
         }, this));
+
+        ghostImage.src = image.attr("src");
         return this;
     }
 });
