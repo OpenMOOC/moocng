@@ -7,7 +7,8 @@ from tastypie.resources import ModelResource
 
 from moocng.api.authentication import DjangoAuthentication
 from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
-from moocng.courses.models import Unit, KnowledgeQuantum, Question, Option
+from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
+                                   Attachment)
 from moocng.courses.utils import extract_YT_video_id
 
 
@@ -87,6 +88,23 @@ class KnowledgeQuantumResource(ModelResource):
         return unicode(kq.id) in kqs
 
 
+class AttachmentResource(ModelResource):
+    kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
+
+    class Meta:
+        queryset = Attachment.objects.all()
+        resource_name = 'attachment'
+        allowed_methods = ['get']
+        authentication = DjangoAuthentication()
+        authorization = DjangoAuthorization()
+        filtering = {
+            "kq": ('exact'),
+        }
+
+    def dehydrate_attachment(self, bundle):
+        return bundle.obj.attachment.url
+
+
 class QuestionResource(ModelResource):
     kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
     solutionID = fields.CharField(readonly=True)
@@ -125,12 +143,14 @@ class OptionResource(ModelResource):
         # We need the request to dehydrate some fields
         collection = get_db().get_collection('answers')
         self.user = get_user(request, collection)
-        return super(OptionResource, self).dispatch(request_type, request, **kwargs)
+        return super(OptionResource, self).dispatch(request_type, request,
+                                                    **kwargs)
 
     def dehydrate_solution(self, bundle):
         # only return the solution if the user has given an answer
         if self.user:
-            answer = self.user['questions'].get(unicode(bundle.obj.question.id), None)
+            answer = self.user['questions'].get(
+                unicode(bundle.obj.question.id), None)
         else:
             answer = None
 
@@ -138,6 +158,7 @@ class OptionResource(ModelResource):
             return None
         else:
             return bundle.obj.solution
+
 
 class AnswerResource(MongoResource):
 
@@ -193,7 +214,8 @@ class AnswerResource(MongoResource):
     def hydrate(self, bundle):
         if 'question' in bundle.data:
             question = bundle.data['question']
-            pattern = r'^/api/%s/question/(?P<question_id>[\d+])/$' % self._meta.api_name
+            pattern = (r'^/api/%s/question/(?P<question_id>[\d+])/$' %
+                       self._meta.api_name)
             result = re.findall(pattern, question)
             if result and len(result) == 1:
                 bundle.obj.uuid = result[0]
