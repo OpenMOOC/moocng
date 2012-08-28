@@ -46,9 +46,9 @@
         {% for unit in unit_list %}
         <div class="accordion-group">
             <div class="accordion-heading">
-                <a class="accordion-toggle" href="#unit{{ unit.id }}" data-target="#unit{{ unit.id }}" data-parent="#unit-selector">{{ unit.title }}</a>
+                <a class="accordion-toggle" href="#unit{{ unit.id }}" data-target="#unit{{ unit.id }}-container" data-parent="#unit-selector">{{ unit.title }}</a>
             </div>
-            <div id="unit{{ unit.id }}" class="collapse accordion-body">
+            <div id="unit{{ unit.id }}-container" class="collapse accordion-body">
                 <div class="accordion-inner"></div>
             </div>
         </div>
@@ -109,12 +109,9 @@
                 answersIncorrect: "{% trans "Wrong answer, good luck next time" %}"
             },
         };
-        $("#unit-selector .collapse").collapse({
-            parent: "#unit-selector",
-            toggle: false
-        });
         $("#unit-selector div.collapse").each(function (idx, node) {
             var id = node.id.split("unit")[1];
+            id = id.split("-")[0];
             MOOC.models.course.add(new MOOC.models.Unit({
                 order: idx,
                 id: parseInt(id, 10)

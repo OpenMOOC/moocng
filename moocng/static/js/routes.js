@@ -14,6 +14,7 @@ MOOC.App = Backbone.Router.extend({
         if (_.isNull(unitObj.get("knowledgeQuantumList"))) {
             steps.push(async.apply(MOOC.router.loadUnitData, unitObj));
         }
+
         if (loadKQ) {
             steps.push(function (callback) {
                 var kqObj = unitObj.get("knowledgeQuantumList").first();
@@ -23,6 +24,8 @@ MOOC.App = Backbone.Router.extend({
         } else {
             steps.push(function (callback) {
                 MOOC.views.unitViews[unit].render();
+                $("#unit-selector").find("div.collapse").removeClass("in");
+                $("#unit" + unit + "-container").addClass("in");
                 callback();
             });
         }
@@ -30,7 +33,7 @@ MOOC.App = Backbone.Router.extend({
         return steps;
     },
 
-    kqSteps: function (unit, kq) {
+    kqSteps: function (unit, kq, render) {
         "use strict";
         var steps = this.unitSteps(unit, false);
 
@@ -47,10 +50,16 @@ MOOC.App = Backbone.Router.extend({
                 });
                 MOOC.views.kqViews[kq] = kqView;
             }
-            kqView.render();
 
             callback();
         });
+
+        if (render) {
+            steps.push(function (callback) {
+                MOOC.views.kqViews[kq].render();
+                callback();
+            });
+        }
 
         return steps;
     },
@@ -65,14 +74,19 @@ MOOC.App = Backbone.Router.extend({
         "use strict";
         unit = parseInt(unit, 10);
         kq = parseInt(kq, 10);
-        async.series(this.kqSteps(unit, kq));
+        async.series(this.kqSteps(unit, kq, true));
     },
 
     kqQ: function (unit, kq) {
         "use strict";
         unit = parseInt(unit, 10);
         kq = parseInt(kq, 10);
-        var toExecute = this.kqSteps(unit, kq);
+        var toExecute = this.kqSteps(unit, kq, false);
+
+        toExecute.push(function (callback) {
+            MOOC.views.kqViews[kq].loadQuestionData();
+            callback();
+        });
 
         toExecute.push(function (callback) {
             var view = MOOC.views.kqViews[kq],
@@ -89,7 +103,12 @@ MOOC.App = Backbone.Router.extend({
         "use strict";
         unit = parseInt(unit, 10);
         kq = parseInt(kq, 10);
-        var toExecute = this.kqSteps(unit, kq);
+        var toExecute = this.kqSteps(unit, kq, false);
+
+        toExecute.push(function (callback) {
+            MOOC.views.kqViews[kq].loadQuestionData();
+            callback();
+        });
 
         toExecute.push(function (callback) {
             MOOC.views.kqViews[kq].loadSolution();
@@ -119,7 +138,7 @@ MOOC.App = Backbone.Router.extend({
                 unitView = new MOOC.views.Unit({
                     model: unitObj,
                     id: "unit" + unitID,
-                    el: $("#unit" + unitID)[0]
+                    el: $("#unit" + unitID + "-container")[0]
                 });
                 MOOC.views.unitViews[unitID] = unitView;
             }
