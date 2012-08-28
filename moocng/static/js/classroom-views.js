@@ -507,55 +507,58 @@ MOOC.views.Option = Backbone.View.extend({
 
     render: function () {
         "use strict";
-        var solution = this.model.get('solution'),
-            optiontype = this.model.get('optiontype'),
-            image = this.$el.find("img"),
-            ghostImage = new Image(),
-            attributes = {
-                type: this.types[optiontype],
-                id: 'option' + this.model.get('id')
-            },
-            offset = Math.floor((this.$el.width() - image.width()) / 2),
-            width = "auto",
-            height = "auto",
-            widthScale,
-            heightScale;
+        var image = this.$el.find("img"),
+            ghostImage = new Image();
 
         ghostImage.src = image.attr("src");
-        widthScale = ghostImage.width / image.width();
-        heightScale = ghostImage.height / image.height();
-        if (optiontype === 't') {
-            width = Math.floor(this.model.get('width') / widthScale);
-            height = Math.floor(this.model.get('height') / heightScale);
-        }
+        $(ghostImage).ready(_.bind(function () {
+            var solution = this.model.get('solution'),
+                optiontype = this.model.get('optiontype'),
+                attributes = {
+                    type: this.types[optiontype],
+                    id: 'option' + this.model.get('id')
+                },
+                offset = Math.floor((this.$el.width() - image.width()) / 2),
+                width = "auto;",
+                height = "auto;",
+                widthScale,
+                heightScale;
 
-        attributes.style = [
-            'top: ' + Math.floor(this.model.get('y') / heightScale) + 'px;',
-            'left: ' + (offset + Math.floor(this.model.get('x') / widthScale)) + 'px;',
-            'width: ' + width + 'px;',
-            'height: ' + height + 'px;'
-        ].join(' ');
-        if (optiontype === 'r') {
-            attributes.name = 'radio';
-        }
-
-        if (this.reply && this.reply.get('option') === this.model.get('id')) {
+            widthScale = ghostImage.width / image.width();
+            heightScale = ghostImage.height / image.height();
             if (optiontype === 't') {
-                attributes.value = this.reply.get('value');
-                if (solution) {
-                    attributes['class'] = this.model.isCorrect(this.reply) ? 'correct' : 'incorrect';
-                }
-            } else {
-                if (this.reply.get('value')) {
-                    attributes.checked = 'checked';
-                }
-                if (!_.isUndefined(solution)) {
-                    attributes['class'] = this.model.isCorrect(this.reply) ? 'correct' : 'incorrect';
+                width = Math.floor(this.model.get('width') / widthScale) + 'px;';
+                height = Math.floor(this.model.get('height') / heightScale) + 'px;';
+            }
+
+            attributes.style = [
+                'top: ' + Math.floor(this.model.get('y') / heightScale) + 'px;',
+                'left: ' + (offset + Math.floor(this.model.get('x') / widthScale)) + 'px;',
+                'width: ' + width,
+                'height: ' + height
+            ].join(' ');
+            if (optiontype === 'r') {
+                attributes.name = 'radio';
+            }
+
+            if (this.reply && this.reply.get('option') === this.model.get('id')) {
+                if (optiontype === 't') {
+                    attributes.value = this.reply.get('value');
+                    if (solution) {
+                        attributes['class'] = this.model.isCorrect(this.reply) ? 'correct' : 'incorrect';
+                    }
+                } else {
+                    if (this.reply.get('value')) {
+                        attributes.checked = 'checked';
+                    }
+                    if (!_.isUndefined(solution)) {
+                        attributes['class'] = this.model.isCorrect(this.reply) ? 'correct' : 'incorrect';
+                    }
                 }
             }
-        }
-        this.$el.find("#" + attributes.id).remove();
-        this.$el.append(this.make('input', attributes));
+            this.$el.find("#" + attributes.id).remove();
+            this.$el.append(this.make('input', attributes));
+        }, this));
         return this;
     }
 });
