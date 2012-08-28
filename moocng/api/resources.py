@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import re
-import random
 
 from tastypie import fields
 from tastypie.authorization import DjangoAuthorization
