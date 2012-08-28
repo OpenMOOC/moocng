@@ -21,6 +21,10 @@ MOOC.models.Activity = Backbone.Model.extend({
             this.set('kqs', _.union(this.get('kqs'), [kq]));
             this.save();
         }
+    },
+
+    hasKQ: function (kq) {
+        return _.include(this.get('kqs'), '' + kq);
     }
 });
 

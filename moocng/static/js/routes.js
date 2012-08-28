@@ -177,6 +177,16 @@ MOOC.init = function (course_id, KQRoute) {
             }
             last_kq = kq;
         });
+        MOOC.router.on('route:kqQ', function (u, kq) {
+            if (last_kq !== null) {
+                MOOC.models.activity.addKQ(last_kq);
+            }
+        });
+        MOOC.router.on('route:kqA', function (u, kq) {
+            if (last_kq !== null) {
+                MOOC.models.activity.addKQ(last_kq);
+            }
+        });
     }
     if (path.lastIndexOf('/') < path.length - 1) {
         path += '/';
