@@ -16,7 +16,7 @@ from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from adminsortable.admin import SortableAdmin
 
 from moocng.courses.models import Course, Announcement, Unit, KnowledgeQuantum
-from moocng.courses.models import Question, Option
+from moocng.courses.models import Question, Option, Attachment
 from moocng.courses.widgets import ImageReadOnlyWidget
 
 
@@ -38,7 +38,15 @@ class UnitAdmin(SortableAdmin):
     list_filter = ('course', )
 
 
+class AttachmentInline(admin.TabularInline):
+    model = Attachment
+
+
 class KnowledgeQuantumAdmin(SortableAdmin):
+
+    inlines = [
+        AttachmentInline,
+    ]
 
     list_display = ('__unicode__', 'title', 'video')
     list_filter = ('unit', )

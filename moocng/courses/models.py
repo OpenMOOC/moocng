@@ -89,8 +89,9 @@ class KnowledgeQuantum(Sortable):
     video = models.URLField(verbose_name=_(u'Video'))
     teacher_comments = HTMLField(verbose_name=_(u'Teacher comments'),
                                  blank=True, null=False)
-    supplementary_material = HTMLField(verbose_name=_(u'Supplementary material'),
-                                       blank=True, null=False)
+    supplementary_material = HTMLField(
+        verbose_name=_(u'Supplementary material'),
+        blank=True, null=False)
 
     class Meta(Sortable.Meta):
         verbose_name = _(u'knowledge quantum')
@@ -107,6 +108,14 @@ def handle_kq_post_save(sender, instance, created, **kwargs):
 
 
 signals.post_save.connect(handle_kq_post_save, sender=KnowledgeQuantum)
+
+
+class Attachment(models.Model):
+
+    kq = models.ForeignKey(KnowledgeQuantum,
+                           verbose_name=_(u'Knowledge Quantum'))
+    attachment = models.FileField(verbose_name=_(u'Attachment'),
+                                  upload_to='attachments')
 
 
 class Question(models.Model):
