@@ -77,7 +77,14 @@ class KnowledgeQuantumResource(ModelResource):
 
     def _is_completed(self, activity, kq):
         course_id = kq.unit.course.id
-        visited = activity['courses'].get(unicode(course_id), None)
+        if activity is None:
+            return False
+
+        courses = activity.get('courses', None)
+	if courses is None:
+            return False
+
+        visited = courses.get(unicode(course_id), None)
         if visited is None:
             return False
 
