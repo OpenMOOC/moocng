@@ -67,6 +67,14 @@ footer ul li {
     margin-top: 10px;
 }
 
+.collapse.accordion-body {
+    display: none;
+}
+
+.collapse.accordion-body.in {
+    display: block;
+}
+
 .courseprogress #unit-progress-bar .progress,
 .courseprogress #unit-progress-bar .progress .bar {
     height: 30px;

@@ -26,6 +26,21 @@ MOOC.App = Backbone.Router.extend({
                 MOOC.views.unitViews[unit].render();
                 $("#unit-selector").find("div.collapse").removeClass("in");
                 $("#unit" + unit + "-container").addClass("in");
+
+                // HACK for IE 9, see http://stackoverflow.com/questions/5584500/ordered-list-showing-all-zeros-in-ie9
+                var rv = -1;
+                if (navigator.appName === 'Microsoft Internet Explorer') {
+                    if ((new RegExp("MSIE ([0-9]{1,}[.0-9]{0,})")).exec(navigator.userAgent) !== null) {
+                        rv = parseFloat(RegExp.$1);
+                    }
+                }
+                if (rv > 8.0) {
+                    setTimeout(function () {
+                        $("ol").css("counter-reset", "item");
+                    }, 1);
+                }
+                // END HACK
+
                 callback();
             });
         }
