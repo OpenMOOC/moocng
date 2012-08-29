@@ -96,14 +96,10 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
         this.setupListernerFor(this.model, "attachmentList", _.bind(function () {
             this.model.get("attachmentList").each(function (attachment) {
-                var view = MOOC.views.attachmentViews[attachment.get("id")];
-                if (_.isUndefined(view)) {
-                    view = new MOOC.views.Attachment({
-                        model: attachment,
-                        el: $("#supplementary").find("ul#attachments")[0]
-                    });
-                    MOOC.views.attachmentViews[attachment.get("id")] = view;
-                }
+                var view = new MOOC.views.Attachment({
+                    model: attachment,
+                    el: $("#supplementary").find("ul#attachments")[0]
+                });
                 view.render();
             });
         }, this));
@@ -592,5 +588,3 @@ MOOC.views.Attachment = Backbone.View.extend({
         return this;
     }
 });
-
-MOOC.views.attachmentViews = {};
