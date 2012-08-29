@@ -35,7 +35,7 @@ setup(
         'Development Status :: 6 - Development',
         'Environment :: Web Environment',
         'Framework :: Django',
-        'License :: OSI Approved :: BSD License',
+        'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         ],
