@@ -80,7 +80,10 @@ class KnowledgeQuantumResource(ModelResource):
             return self._is_completed(self.user_activity, bundle.obj)
         else:
             question = questions[0]  # there should be only one question
-            answer = self.user_answers['questions'].get(unicode(question.id))
+            if self.user_answers is None:
+                return False
+
+            answer = self.user_answers.get('questions', {}).get(unicode(question.id))
             if answer is None:
                 return False
 
