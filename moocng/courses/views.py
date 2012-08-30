@@ -49,7 +49,8 @@ def course_overview(request, course_slug):
 
     return render_to_response('courses/overview.html', {
             'course': course,
-            'is_enrolled': is_enrolled
+            'is_enrolled': is_enrolled,
+            'request': request
             }, context_instance=RequestContext(request))
 
 

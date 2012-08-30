@@ -34,6 +34,16 @@ class Course(models.Model):
                              blank=True, null=False)
     learning_goals = HTMLField(verbose_name=_(u'Learning goals'),
                                blank=True, null=False)
+    intended_audience = HTMLField(verbose_name=_(u'Intended audience'),
+                                  blank=True, null=False)
+    estimated_effort = HTMLField(verbose_name=_(u'Estimated effort'),
+                                 blank=True, null=False)
+    learning_goals = HTMLField(verbose_name=_(u'Learning goals'),
+                               blank=True, null=False)
+    start_date = models.DateField(verbose_name=_(u'Start date'),
+                           blank=True, null=False)
+    end_date = models.DateField(verbose_name=_(u'End date'),
+                           blank=True, null=False)
     teachers = models.ManyToManyField(User, verbose_name=_(u'Teachers'),
                                       related_name='courses_as_teacher')
     students = models.ManyToManyField(User, verbose_name=_(u'Students'),
