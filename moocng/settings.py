@@ -222,9 +222,12 @@ TINYMCE_DEFAULT_CONFIG = {
 GOOGLE_ANALYTICS_CODE = ''
 
 MOOCNG_THEME = {
+#    'logo': u'',
 #    'subtitle': u'',
 #    'top_banner': u'',
 #    'right_banner': u'',
+#    'bootstrap_css': u'',
+#    'moocng_css': u'',
     }
 
 FFMPEG = '/usr/bin/ffmpeg'

@@ -14,8 +14,8 @@
   <meta name="viewport" content="width=device-width">
 
   {% compress css %}
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css">
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/moocng.css">
+  <link rel="stylesheet" href="{{ theme.bootstrap_css }}">
+  <link rel="stylesheet" href="{{ theme.moocng_css }}">
   {% endcompress %}
 
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -29,7 +29,7 @@
   <div class="container">
     <header>
       <hgroup>
-        <h1><a href="{% url home %}" class="hide-text"><img src="{{ STATIC_URL }}img/logo.png" alt="{{ site.name }}" />{{ site.name }}</a></h1>
+        <h1><a href="{% url home %}" class="hide-text"><img src="{{ theme.logo }}" alt="{{ site.name }}" />{{ site.name }}</a></h1>
         <h2 class="small pull-left">{{ theme.subtitle }}</h2>
       </hgroup>
       {% if user.is_authenticated %}

@@ -35,9 +35,12 @@ def site(request):
 def theme(request):
     theme = {
         'theme': {
+            'logo': settings.STATIC_URL + u'img/logo.png',
             'subtitle': u'Knowledge for the masses',
-            'top_banner': u'top_banner.jpg',
-            'right_banner': u'right_banner.jpg',
+            'top_banner': settings.STATIC_URL + u'img/top_banner.jpg',
+            'right_banner': settings.STATIC_URL + u'img/right_banner.jpg',
+            'bootstrap_css': settings.STATIC_URL + u'css/bootstrap.min.css',
+            'moocng_css': settings.STATIC_URL + u'css/moocng.css',
             }
         }
 
