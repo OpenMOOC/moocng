@@ -3,7 +3,10 @@
 
 {% block object-tools-items %}
 
+{% ifequal state "finished" %}
 <li><a href="options/">{% trans "Options" %}</a></li>
+{% endifequal %}
+
 {{ block.super }}
 
 {% endblock %}

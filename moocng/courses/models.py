@@ -156,7 +156,7 @@ class Question(models.Model):
         verbose_name_plural = _(u'questions')
 
     def __unicode__(self):
-        return u'%s - Question' % self.kq
+        return u'%s - Question %d' % (self.kq, self.id)
 
     def is_correct(self, answer):
         correct = True

@@ -18,16 +18,13 @@ from os import path
 import datetime
 import logging
 import re
-import shutil
 import subprocess
-import tempfile
+import urllib2
 
-from django.core.files import File
 from django.conf import settings
 
 from youtube import YouTube
 
-from moocng.courses.utils import extract_YT_video_id
 
 
 logger = logging.getLogger(__name__)
@@ -52,7 +49,7 @@ def execute_command(proc):
     return err
 
 
-def download(url):
+def download(url, tempdir):
     yt = YouTube()
     yt.url = url
     video = None
@@ -67,15 +64,9 @@ def download(url):
     else:
         video = yt.videos[-1]  # Best resolution
 
-    try:
-        tempdir = tempfile.mkdtemp()
-        video.download(tempdir)
-    except:
-        # Remove temp files only if something goes awry
-        shutil.rmtree(tempdir)
-        raise
+    video.download(tempdir)
 
-    return tempdir, video.filename
+    return video.filename
 
 
 def duration(filename):
@@ -92,17 +83,29 @@ def last_frame(filename, time):
     return "%s.png" % filename
 
 
-def process_video(question):
+def process_video(tempdir, url):
+    """Download the youtube video associated with the KQ of this question
+    and extract the last frame of such video."""
+
+    logger.info('Downloading video %s' % url)
+
     try:
-        url = question.kq.video
-        video_id = extract_YT_video_id(url)
-        logger.info('Downloading video %s' % url)
-        tempdir, filename = download(url)
+        filename = download(url, tempdir)
         filename = path.join(tempdir, filename)
+    except urllib2.HTTPError as e:
+        logger.error('Error downloading video %s: %s' % (url, e))
+        return None
+    except:
+        raise
+
+    try:
         time = duration(filename)
         logger.info('The downloaded video %s has a duration of %s'
                     % (filename, time))
+    except:
+        raise
 
+    try:
         # Get the time position of the last second of the video
         time = time.split(':')
         dt = datetime.datetime(2012, 01, 01, int(time[0]), int(time[1]),
@@ -111,13 +114,7 @@ def process_video(question):
         time = "%s.900" % dt.strftime("%H:%M:%S")
         logger.info('Getting the last frame at %s' % time)
         frame = last_frame(filename, time)
-
-        question.last_frame.save("%s.png" % video_id, File(open(frame)))
     except:
         raise
-    finally:
-        try:
-            shutil.rmtree(tempdir)  # Remove temporal directory and contents
-        except NameError:
-            # No temporal files were created, so there is nothing to delete
-            pass
+
+    return frame

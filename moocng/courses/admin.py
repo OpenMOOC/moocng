@@ -27,6 +27,8 @@ from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 
+from celery.task.control import inspect
+
 from adminsortable.admin import SortableAdmin
 
 from moocng.courses.models import Course, Announcement, Unit, KnowledgeQuantum
@@ -88,6 +90,47 @@ class QuestionAdmin(admin.ModelAdmin):
                 self.admin_site.admin_view(self.edit_option),
                 name='courses_question_option'),
             ) + super(QuestionAdmin, self).get_urls()
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(QuestionAdmin, self).get_form(request, obj, **kwargs)
+        form.base_fields['last_frame'].widget.attrs['state'] = self.get_state(obj)
+        return form
+
+    def get_state(self, obj=None):
+        if obj is None:
+            return None
+
+        if obj.last_frame.name == u'':
+            inspector = inspect()
+            if self._is_scheduled(inspector, obj):
+                state = 'scheduled'
+            elif self._is_active(inspector, obj):
+                state = 'active'
+            else:
+                state = 'error'
+        else:
+            state = 'finished'
+
+        return state
+
+    def _is_scheduled(self, inspector, question):
+        for worker, tasks in inspector.scheduled().items():
+            for task in tasks:
+                if task['args'] == repr((question, )):
+                    return True
+        return False
+
+    def _is_active(self, inspector, question):
+        for worker, tasks in inspector.active().items():
+            for task in tasks:
+                if task['args'] == repr((question, )):
+                    return True
+
+        return False
+
+    def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
+        context['state'] = self.get_state(context.get('original', None))
+        return super(QuestionAdmin, self).render_change_form(request, context, add, change, form_url, obj)
 
     @ensure_csrf_cookie_m
     @csrf_protect_m

@@ -14,11 +14,25 @@
 
 from django.forms.widgets import Widget
 from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext as _
+
+
 
 class ImageReadOnlyWidget(Widget):
 
     def render(self, name, value, attrs=None):
-        if value is not None:
-            return mark_safe(u'<img src="%s" />' % value.url)
+        if value is None:
+            return u''  # the question is not saved yet
+        elif value.name == u'':
+            state = self.attrs.get('state', None)
+            if state == 'error':
+                return _(u'There has been a problem downloading the video. Please check the logs')
+            elif state == 'scheduled':
+                return _(u'The video is about to be downloaded. Please be patient')
+            elif state == 'active':
+                return _(u'The video is being downloaded at this moment. Please be patient')
+            else:
+                return _(u'Unknown error')
         else:
-            return u''
+            return mark_safe(u'<img src="%s" />' % value.url)
+
