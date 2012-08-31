@@ -1,6 +1,6 @@
 // See https://docs.djangoproject.com/en/1.4/ref/contrib/csrf/#ajax
 
-// Copyright 2012 Rooter Analysis S.L. All rights reserved.
+// Copyright 2012 Rooter Analysis S.L.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
