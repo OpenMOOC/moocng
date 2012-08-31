@@ -53,7 +53,7 @@
                         <input type="submit" class="btn btn-large btn-primary" value="{% trans "Enroll me in this course" %}" />
                     </form>
                 {% else %}
-                    <a href="{{ registry_url }}" class="btn btn-large btn-primary">{% blocktrans with site_name=site.name %}Register in {{ site_name }} to enroll in this course{% endblocktrans %}</a>
+                    <a href="{{ registry_url }}" class="btn btn-large btn-primary mb20">{% blocktrans with site_name=site.name %}Register in {{ site_name }} to enroll in this course{% endblocktrans %}</a>
                 {% endif %}
             </div>
         {% endif %}
@@ -69,6 +69,7 @@
         <div class="box">
             <h2>{% trans "Information" %}</h2>
             <dl class="dl-horizontal">
+                <dt>{% trans "Course Code" %}</dt><dd>{{ course.slug }}</dd>
                 {% if course.start_date %}
                     <dt>{% trans "Classes Start" %}</dt><dd>{{ course.start_date }}</dd>
                 {% endif %}
@@ -93,11 +94,12 @@
         <div class="box">
             <h2>{% trans "Share" %}</h2>
             <ul id="share">
-                <li class="pull-left"><a href="https://twitter.com/share?text={{ request.build_absolute_uri }}"><img src="{{ STATIC_URL }}img/share_icons/twitter.png" alt="Share in Twitter" /></a></li>
-                <li class="pull-left"><a href="http://www.facebook.com/sharer.php?url={{ request.build_absolute_uri }}"><img src="{{ STATIC_URL }}img/share_icons/facebook.png" alt="Share in Facebook" /></a></li>
-                <li class="pull-left"><a href="https://plus.google.com/share?url={{ request.build_absolute_uri }}"><img src="{{ STATIC_URL }}img/share_icons/googleplus.png" alt="Share in Google Plus" /></a></li>
-                <li class="pull-left"><a href="http://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}"><img src="{{ STATIC_URL }}img/share_icons/linkedin.png" alt="Share in LinkedIn" /></a></li>
-                <li class="pull-left"><a href="mailto:?subject=Look at this great course&body={{ request.build_absolute_uri }}"><img src="{{ STATIC_URL }}img/share_icons/email.png" alt="Share through email" /></a></li>
+                <li class="pull-left"><a href="https://twitter.com/share?text={{ request.build_absolute_uri }}" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/twitter.png" alt="Share in Twitter" /></a></li>
+                <li class="pull-left"><a href="http://www.facebook.com/sharer.php?url={{ request.build_absolute_uri }}" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/facebook.png" alt="Share in Facebook" /></a></li>
+                <li class="pull-left"><a href="https://plus.google.com/share?url={{ request.build_absolute_uri }}" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/googleplus.png" alt="Share in Google Plus" /></a></li>
+                <li class="pull-left"><a href="http://www.linkedin.com/shareArticle?mini=true&amp;url={{ request.build_absolute_uri }}" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/linkedin.png" alt="Share in LinkedIn" /></a></li>
+                <li class="pull-left"><a href="http://reddit.com/submit?url={{ request.build_absolute_uri }}" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/reddit.png" alt="Share in Reddit" /></a></li>
+                <li class="pull-left"><a href="mailto:?subject=Look at this great course&amp;body={{ request.build_absolute_uri }}" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/email.png" alt="Share through email" /></a></li>
             </ul>
         </div>
     </div>
