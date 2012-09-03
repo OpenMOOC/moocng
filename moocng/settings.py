@@ -52,6 +52,13 @@ TIME_ZONE = 'America/Chicago'
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
 
+gettext = lambda s: s
+
+LANGUAGES = (
+    ('en', gettext('English')),
+    ('es', gettext('Spanish')),
+)
+
 LOCALE_PATHS = (
     os.path.join(BASEDIR, 'locale'),
     )

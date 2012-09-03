@@ -29,6 +29,21 @@ header h2 {
     font-size: 12pt;
 }
 
+#language-selector,
+#language-selector li,
+#language-selector form {
+    display: inline;
+}
+
+#language-selector form .btn-link {
+    padding: 0;
+    border: 0;
+}
+
+#language-selector form .disabled:hover {
+    text-decoration: none;
+}
+
 footer {
     border-top: 1px solid #dddddd;
     padding: 1em 0;
