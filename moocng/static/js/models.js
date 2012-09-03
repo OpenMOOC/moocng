@@ -171,6 +171,24 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
             correct: null,
             attachmentList: null
         };
+    },
+
+    truncateTitle: function (maxLength) {
+        "use strict";
+        var title = this.get("title"),
+            idx;
+
+        if (title.length > maxLength) {
+            title = title.substr(0, maxLength);
+            idx = title.lastIndexOf(' ');
+            if (idx > 0) {
+                title = title.substring(0, idx);
+            } else {
+                title = title.substring(0, maxLength - 3);
+            }
+            title += "...";
+        }
+        return title;
     }
 });
 

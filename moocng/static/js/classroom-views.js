@@ -21,6 +21,8 @@ if (_.isUndefined(window.MOOC)) {
 
 MOOC.views = {};
 
+MOOC.views.KQ_TITLE_MAX_LENGTH = 60;
+
 MOOC.views.Unit = Backbone.View.extend({
     events: {
         "click li span.kq": "showKQ",
@@ -33,7 +35,7 @@ MOOC.views.Unit = Backbone.View.extend({
         var html = '<div class="accordion-inner kqContainer"><ol>', css_class = null;
         this.model.get("knowledgeQuantumList").each(function (kq) {
             css_class = MOOC.models.activity.hasKQ(kq.get('id')) ? ' label-info' : '';
-            html += '<li id="kq' + kq.get("id") + '"><span class="kq label' + css_class + '">' + kq.get("title") + '</span>';
+            html += '<li id="kq' + kq.get("id") + '"><span class="kq label' + css_class + '">' + kq.truncateTitle(25) + '</span>';
             if (kq.has("question")) {
                 html += ' <span class="q label">' + MOOC.trans.classroom.q + '</span> ';
                 html += '/ <span class="a label">' + MOOC.trans.classroom.a + '</span>';
@@ -92,7 +94,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             this.repeatedlyCheckIfPlayer();
         }
 
-        $("#kq-title").html(this.model.get("title"));
+        $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
 
         unit = MOOC.models.course.getByKQ(this.model.get("id"));
         this.setEventForNavigation("#kq-previous", unit, this.model, false);
@@ -307,7 +309,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     path = window.location.hash.substring(1),
                     unit = MOOC.models.course.getByKQ(this.model);
 
-                $("#kq-title").html(this.model.get("title"));
+                $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
                 if (!(/[\w\/]+\/q/.test(path))) {
                     path = path + "/q";
                     MOOC.router.navigate(path, { trigger: false });
@@ -359,7 +361,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             $("#kq-video").css("height", "auto");
             $("#kq-q-buttons").addClass("hide");
             $("#kq-next-container").addClass("offset4");
-            $("#kq-title").html(this.model.get("title"));
+            $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
 
             this.setEventForNavigation("#kq-previous", unit, this.model, false);
             this.setEventForNavigation("#kq-next", unit, this.model, true);
