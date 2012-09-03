@@ -21,7 +21,7 @@ from django.shortcuts import (get_object_or_404, get_list_or_404,
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
-from moocng.courses.models import Course, Unit
+from moocng.courses.models import Course, Unit, Announcement
 
 
 def home(request):
@@ -47,10 +47,13 @@ def course_overview(request, course_slug):
         return HttpResponseRedirect(reverse('course_overview',
                                             args=(course.slug, )))
 
+    announcements = Announcement.objects.filter(course=course).order_by('datetime').reverse()[:5]
+
     return render_to_response('courses/overview.html', {
             'course': course,
             'is_enrolled': is_enrolled,
-            'request': request
+            'request': request,
+            'announcements': announcements,
             }, context_instance=RequestContext(request))
 
 
@@ -83,4 +86,14 @@ def course_progress(request, course_slug):
         'course': course,
         'unit_list': unit_list,
         'is_enrolled': is_enrolled,
+    }, context_instance=RequestContext(request))
+
+
+def announcement_detail(request, course_slug, announcement_slug):
+    course = get_object_or_404(Course, slug=course_slug)
+    announcement = get_object_or_404(Announcement, slug=announcement_slug)
+
+    return render_to_response('courses/announcement.html', {
+        'course': course,
+        'announcement': announcement,
     }, context_instance=RequestContext(request))

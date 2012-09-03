@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-31 05:28-0500\n"
+"POT-Creation-Date: 2012-09-03 04:05-0500\n"
 "PO-Revision-Date: 2012-08-01 14:24+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -16,16 +16,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: courses/admin.py:105 courses/admin.py:152
+#: courses/admin.py:148 courses/admin.py:195
 #, python-format
 msgid "%(name)s object with primary key %(key)r does not exist."
 msgstr "El objeto %(name)s con clave primaria %(key)r no existe."
 
-#: courses/admin.py:122
+#: courses/admin.py:165
 msgid "Edit options for question"
 msgstr "Editar las opciones de la pregunta"
 
-#: courses/admin.py:159
+#: courses/admin.py:202
 #, python-format
 msgid "Option %(option)d for question %(question)s does not exist."
 msgstr "La opción %(option)d de la pregunta %(question)s no existe."
@@ -67,7 +67,7 @@ msgstr "Fecha de inicio"
 msgid "End date"
 msgstr "Fecha de fin"
 
-#: courses/models.py:47 courses/templates/courses/overview.html:62
+#: courses/models.py:47 courses/templates/courses/overview.html:64
 msgid "Teachers"
 msgstr "Profesores"
 
@@ -199,11 +199,28 @@ msgid "Congratulations, you have successfully enroll in the course %(course)s"
 msgstr ""
 "Enhorabuena, te has matriculado correctamente en la asignatura %(course)s"
 
-#: courses/views.py:64 courses/views.py:80
+#: courses/views.py:67 courses/views.py:83
 msgid "Your are not enrolled in this course"
 msgstr "No estás matriculado en esta asignatura"
 
-#: courses/templates/admin/courses/question/change_form.html:6
+#: courses/widgets.py:29
+msgid "There has been a problem downloading the video. Please check the logs"
+msgstr ""
+"Ha habido un problema descargando el vídeo. Por favor, compruebe los logs."
+
+#: courses/widgets.py:31
+msgid "The video is about to be downloaded. Please be patient"
+msgstr "El vídeo va a ser descargado. Por favor, sea paciente."
+
+#: courses/widgets.py:33
+msgid "The video is being downloaded at this moment. Please be patient"
+msgstr "El vídeo se está descargando en este momento. Por favor, sea paciente."
+
+#: courses/widgets.py:35
+msgid "Unknown error"
+msgstr "Error desconocido"
+
+#: courses/templates/admin/courses/question/change_form.html:7
 msgid "Options"
 msgstr "Opciones"
 
@@ -268,6 +285,14 @@ msgid "Please correct the error below."
 msgid_plural "Please correct the errors below."
 msgstr[0] "Por favor, corrija el error mostrado debajo."
 msgstr[1] "Por favor, corrija los errores mostrados debajo."
+
+#: courses/templates/courses/announcement.html:9
+msgid "Published on:"
+msgstr "Publicado el:"
+
+#: courses/templates/courses/announcement.html:11
+msgid "Go back to Course Overview"
+msgstr "Volver a la vista General del Curso"
 
 #: courses/templates/courses/base_course.html:12
 msgid "Overview"
@@ -387,44 +412,48 @@ msgstr "Resumen de la asignatura"
 msgid "Recommended requirements"
 msgstr "Requisitos recomendados"
 
-#: courses/templates/courses/overview.html:48
+#: courses/templates/courses/overview.html:49
 msgid "You are enrolled in this course"
 msgstr "Estás matriculado en esta asignatura"
 
-#: courses/templates/courses/overview.html:53
+#: courses/templates/courses/overview.html:55
 msgid "Enroll me in this course"
 msgstr "Matricúlame en esta asignatura"
 
-#: courses/templates/courses/overview.html:56
+#: courses/templates/courses/overview.html:58
 #, python-format
 msgid "Register in %(site_name)s to enroll in this course"
 msgstr "Registrarme en %(site_name)s para matricularme en esta asignatura"
 
-#: courses/templates/courses/overview.html:70
+#: courses/templates/courses/overview.html:72
 msgid "Information"
 msgstr "Información"
 
-#: courses/templates/courses/overview.html:72
+#: courses/templates/courses/overview.html:74
 msgid "Course Code"
 msgstr "Código de la Asignatura"
 
-#: courses/templates/courses/overview.html:74
+#: courses/templates/courses/overview.html:76
 msgid "Classes Start"
 msgstr "Inicio de las Clases"
 
-#: courses/templates/courses/overview.html:77
+#: courses/templates/courses/overview.html:79
 msgid "Classes End"
 msgstr "Final de las Clases"
 
-#: courses/templates/courses/overview.html:80
+#: courses/templates/courses/overview.html:82
 msgid "Estimated Effort"
 msgstr "Esfuerzo Estimado"
 
-#: courses/templates/courses/overview.html:86
+#: courses/templates/courses/overview.html:88
+msgid "Announcements"
+msgstr "Comunicados"
+
+#: courses/templates/courses/overview.html:98
 msgid "Syllabus"
 msgstr "Temario"
 
-#: courses/templates/courses/overview.html:95
+#: courses/templates/courses/overview.html:107
 msgid "Share"
 msgstr "Comparte"
 

@@ -161,3 +161,7 @@ footer ul li {
 .classroom #kq-q-buttons {
     text-align: center;
 }
+
+.announcement div.content {
+    margin-top: 30px;
+}

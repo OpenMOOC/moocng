@@ -45,7 +45,9 @@
 
     <div class="span4">
         {% if is_enrolled %}
-            <p>{% trans "You are enrolled in this course" %}</p>
+            <div class="alert alert-success">
+                <strong>{% trans "You are enrolled in this course" %}</strong>
+            </div>
         {% else %}
             <div style="text-align: center">
                 {% if user.is_authenticated %}
@@ -71,14 +73,24 @@
             <dl>
                 <dt>{% trans "Course Code" %}</dt><dd>{{ course.slug }}</dd>
                 {% if course.start_date %}
-                    <dt>{% trans "Classes Start" %}</dt><dd>{{ course.start_date }}</dd>
+                    <dt>{% trans "Classes Start" %}</dt><dd>{{ course.start_date|date:"d / M / Y" }}</dd>
                 {% endif %}
                 {% if course.end_date %}
-                    <dt>{% trans "Classes End" %}</dt><dd>{{ course.end_date }}</dd>
+                    <dt>{% trans "Classes End" %}</dt><dd>{{ course.end_date|date:"d / M / Y" }}</dd>
                 {% endif %}
                 {% if course.estimated_effort %}
                     <dt>{% trans "Estimated Effort" %}</dt><dd>{{ course.estimated_effort|safe }}</dd>
                 {% endif %}
+            </dl>
+        </div>
+
+        <div class="box">
+            <h2>{% trans "Announcements" %}</h2>
+            <dl>
+                {% for announcement in announcements %}
+                    <dt>{{ announcement.datetime|date:"d / M / Y - H:i" }}</dt>
+                    <dd><a href="{% url courses.views.announcement_detail course.slug announcement.slug %}">{{ announcement.title|truncatewords:8 }}</a></dd>
+                {% endfor %}
             </dl>
         </div>
 
