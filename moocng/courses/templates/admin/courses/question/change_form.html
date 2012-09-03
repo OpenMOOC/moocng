@@ -1,6 +1,15 @@
 {% extends "admin/change_form.html" %}
 {% load i18n %}
 
+{% block extrastyle %}
+{{ block.super }}
+<style type="text/css">
+  div.field-last_frame img {
+      border: 1px solid #888;
+  }
+</style>
+{% endblock %}
+
 {% block object-tools-items %}
 
 {% ifequal state "finished" %}
