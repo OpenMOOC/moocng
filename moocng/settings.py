@@ -160,6 +160,7 @@ INSTALLED_APPS = (
     'tastypie',
     'compressor',
     'moocng.courses',
+    'moocng.portal',
     'moocng.videos',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',

@@ -33,7 +33,7 @@
         {% if LANGUAGE_CODE == language.name_local %}
         <li>{{ language.name_local|capfirst }}</li>
         {% else %}
-        <li><form action="{% url django.views.i18n.set_language %}" method="post">
+        <li><form action="{% url set_language %}" method="post">
           {% csrf_token %}
           <input type="hidden" name="language" value="{{ language.code }}" />
           <input class="btn btn-link{% if LANGUAGE_CODE == language.code %} disabled{% endif %}" type="submit" value="{{ language.name_local|capfirst }}" {% if LANGUAGE_CODE == language.code %}disabled="disabled"{% endif %}/>
