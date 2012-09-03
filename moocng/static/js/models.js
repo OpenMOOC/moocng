@@ -203,8 +203,13 @@ MOOC.models.Unit = Backbone.Model.extend({
     calculateProgress: function (conditions) {
         "use strict";
         var kqs = this.get("knowledgeQuantumList").length,
-            progress = this.get("knowledgeQuantumList").where(conditions);
-        return (progress.length * 100) / kqs;
+            progress = this.get("knowledgeQuantumList").where(conditions),
+            result = (progress.length * 100) / kqs;
+
+        if (!_.isNumber(result) || _.isNaN(result)) {
+            result = 0;
+        }
+        return result;
     }
 });
 
