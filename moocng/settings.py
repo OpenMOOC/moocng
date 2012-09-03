@@ -59,6 +59,10 @@ LANGUAGES = (
     ('es', gettext('Spanish')),
 )
 
+# the default value is 'django_language' but changing this
+# to 'language' makes it easier to integrate with the IdP
+LANGUAGE_COOKIE_NAME = 'language'
+
 LOCALE_PATHS = (
     os.path.join(BASEDIR, 'locale'),
     )
