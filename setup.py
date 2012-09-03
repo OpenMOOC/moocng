@@ -39,7 +39,7 @@ setup(
     name='moocng',
     version=VERSION,
     url='https://github.com/OpenMOOC/moocng',
-    license='Undecided',
+    license='Apache 2.0 Software License',
     description=('MOOC web tool'),
     long_description=(read('README') + '\n\n' + read('CHANGES')),
     author='Rooter',
