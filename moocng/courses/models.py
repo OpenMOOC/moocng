@@ -41,9 +41,9 @@ class Course(models.Model):
     learning_goals = HTMLField(verbose_name=_(u'Learning goals'),
                                blank=True, null=False)
     start_date = models.DateField(verbose_name=_(u'Start date'),
-                           blank=True, null=True)
+                                  blank=True, null=True)
     end_date = models.DateField(verbose_name=_(u'End date'),
-                           blank=True, null=True)
+                                blank=True, null=True)
     teachers = models.ManyToManyField(User, verbose_name=_(u'Teachers'),
                                       related_name='courses_as_teacher')
     students = models.ManyToManyField(User, verbose_name=_(u'Students'),
@@ -82,6 +82,10 @@ class Announcement(models.Model):
 
     def __unicode__(self):
         return self.title
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('announcement_detail', [self.course.slug, self.slug])
 
 
 class Unit(Sortable):
@@ -161,7 +165,7 @@ class Question(models.Model):
     def is_correct(self, answer):
         correct = True
         replies = dict([(int(r['option']),
-                         r['value']) for r in  answer['replyList']])
+                         r['value']) for r in answer['replyList']])
 
         for option in self.option_set.all():
             reply = replies.get(option.id, None)

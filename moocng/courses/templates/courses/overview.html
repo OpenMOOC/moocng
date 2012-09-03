@@ -4,8 +4,11 @@
 
 {% block nav-course-overview %}class="active"{% endblock %}
 
-{% block content %}
+{% block extraheader %}
+<link rel="alternate" type="application/rss+xml" href="{% url announcements_feed course.slug %}" />
+{% endblock %}
 
+{% block content %}
 <h1>{{ course.name }}</h1>
 
 <div class="row">
@@ -85,7 +88,10 @@
         </div>
 
         <div class="box">
-            <h2>{% trans "Announcements" %}</h2>
+            <h2>
+                {% trans "Announcements" %}
+                <a class="pull-right" href="{% url announcements_feed course.slug %}"><img src="{{ STATIC_URL }}img/share_icons/rss.png" alt="Subscribe to Announcements RSS" /></a>
+            </h2>
             <dl>
                 {% for announcement in announcements %}
                     <dt>{{ announcement.datetime|date:"d / M / Y - H:i" }}</dt>
@@ -117,4 +123,3 @@
     </div>
 </div>
 {% endblock %}
-
