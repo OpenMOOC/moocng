@@ -87,6 +87,7 @@
             </dl>
         </div>
 
+        {% if announcements %}
         <div class="box">
             <h2>
                 {% trans "Announcements" %}
@@ -99,6 +100,7 @@
                 {% endfor %}
             </dl>
         </div>
+        {% endif %}
 
         <div class="box">
             <h2>{% trans "Syllabus" %}</h2>
