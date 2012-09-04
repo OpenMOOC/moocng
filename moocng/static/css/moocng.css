@@ -98,6 +98,12 @@ footer ul li {
     margin-top: 10px;
 }
 
+.teacher {
+    display: inline-block;
+    text-align: center;
+    width: 130px;
+}
+
 #share {
     list-style: none;
     margin: 0 0 45px 0;
