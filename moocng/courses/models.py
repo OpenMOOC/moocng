@@ -152,7 +152,7 @@ class Question(models.Model):
                            verbose_name=_(u'Knowledge Quantum'))
     solution = models.URLField(verbose_name=_(u'Solution video'))
     last_frame = models.ImageField(
-        verbose_name=_(u'Last frame of the question video'),
+        verbose_name=_(u"Last frame of the knowledge quantum's video"),
         upload_to='questions', blank=True)
 
     class Meta:

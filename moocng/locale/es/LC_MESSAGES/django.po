@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-03 04:05-0500\n"
+"POT-Creation-Date: 2012-09-04 03:07-0500\n"
 "PO-Revision-Date: 2012-08-01 14:24+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -15,6 +15,14 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: settings.py:58
+msgid "English"
+msgstr "Inglés"
+
+#: settings.py:59
+msgid "Spanish"
+msgstr "Español"
 
 #: courses/admin.py:148 courses/admin.py:195
 #, python-format
@@ -29,6 +37,20 @@ msgstr "Editar las opciones de la pregunta"
 #, python-format
 msgid "Option %(option)d for question %(question)s does not exist."
 msgstr "La opción %(option)d de la pregunta %(question)s no existe."
+
+#: courses/feeds.py:29
+#, python-format
+msgid "Announcements of %(course_title)s"
+msgstr "Comunicados del %(course_title)s"
+
+#: courses/feeds.py:35
+#, python-format
+msgid ""
+"Announcements of the online course \"%(course_title)s\" on the platform "
+"\"%(site_name)s\"."
+msgstr ""
+"Comunicados del curso online \"%(course_title)s\" en la plataforma "
+"\"%(site_name)s\"."
 
 #: courses/models.py:30
 msgid "Name"
@@ -47,11 +69,11 @@ msgid "Requirements"
 msgstr "Requisitos"
 
 #: courses/models.py:35 courses/models.py:41
-#: courses/templates/courses/overview.html:26
+#: courses/templates/courses/overview.html:29
 msgid "Learning goals"
 msgstr "Objetivos formativos"
 
-#: courses/models.py:37 courses/templates/courses/overview.html:40
+#: courses/models.py:37 courses/templates/courses/overview.html:43
 msgid "Intended audience"
 msgstr "Público objetivo"
 
@@ -67,7 +89,7 @@ msgstr "Fecha de inicio"
 msgid "End date"
 msgstr "Fecha de fin"
 
-#: courses/models.py:47 courses/templates/courses/overview.html:64
+#: courses/models.py:47 courses/templates/courses/overview.html:67
 msgid "Teachers"
 msgstr "Profesores"
 
@@ -87,7 +109,7 @@ msgstr "asignatura"
 msgid "courses"
 msgstr "asignaturas"
 
-#: courses/models.py:73 courses/models.py:88 courses/models.py:111
+#: courses/models.py:73 courses/models.py:92 courses/models.py:115
 msgid "Title"
 msgstr "Título"
 
@@ -95,7 +117,7 @@ msgstr "Título"
 msgid "Content"
 msgstr "Contenido"
 
-#: courses/models.py:76 courses/models.py:89
+#: courses/models.py:76 courses/models.py:93
 msgid "Course"
 msgstr "Asignatura"
 
@@ -111,85 +133,85 @@ msgstr "comunicado"
 msgid "announcements"
 msgstr "comunicados"
 
-#: courses/models.py:96 courses/models.py:197
+#: courses/models.py:100 courses/models.py:201
 #: courses/templates/admin/courses/question/options.html:76
 msgid "Type"
 msgstr "Tipo"
 
-#: courses/models.py:98
+#: courses/models.py:102
 msgid "Deadline"
 msgstr "Fecha límite"
 
-#: courses/models.py:102
+#: courses/models.py:106
 msgid "unit"
 msgstr "unidad"
 
-#: courses/models.py:103
+#: courses/models.py:107
 msgid "units"
 msgstr "unidades"
 
-#: courses/models.py:112
+#: courses/models.py:116
 msgid "Unit"
 msgstr "Unidad"
 
-#: courses/models.py:113
+#: courses/models.py:117
 msgid "Video"
 msgstr "Vídeo"
 
-#: courses/models.py:114
+#: courses/models.py:118
 msgid "Teacher comments"
 msgstr "Comentarios del Profesor"
 
-#: courses/models.py:117 courses/templates/courses/classroom.html:63
+#: courses/models.py:121 courses/templates/courses/classroom.html:63
 msgid "Supplementary material"
 msgstr "Material suplementario"
 
-#: courses/models.py:121
+#: courses/models.py:125
 msgid "knowledge quantum"
 msgstr "cuanto de conocimiento"
 
-#: courses/models.py:122
+#: courses/models.py:126
 msgid "knowledge quantums"
 msgstr "cuantos de conocimiento"
 
-#: courses/models.py:140 courses/models.py:148
+#: courses/models.py:144 courses/models.py:152
 msgid "Knowledge Quantum"
 msgstr "Cuanto de conocimiento"
 
-#: courses/models.py:141
+#: courses/models.py:145
 msgid "Attachment"
 msgstr "Adjunto"
 
-#: courses/models.py:149
+#: courses/models.py:153
 msgid "Solution video"
 msgstr "Vídeo con la solución"
 
-#: courses/models.py:151
-msgid "Last frame of the question video"
-msgstr "Última imagen del vídeo de la pregunta"
-
 #: courses/models.py:155
+msgid "Last frame of the knowledge quantum's video"
+msgstr "Última imagen del vídeo del cuanto de conocimiento"
+
+#: courses/models.py:159
 msgid "question"
 msgstr "pregunta"
 
-#: courses/models.py:156
+#: courses/models.py:160
 msgid "questions"
 msgstr "preguntas"
 
-#: courses/models.py:186
+#: courses/models.py:190
 msgid "Question"
 msgstr "Pregunta"
 
-#: courses/models.py:200
+#: courses/models.py:204
 #: courses/templates/admin/courses/question/options.html:86
 msgid "Solution"
 msgstr "Solución"
 
-#: courses/models.py:203
+#: courses/models.py:207
 msgid "option"
 msgstr "opción"
 
-#: courses/models.py:204
+#: courses/models.py:208
 msgid "options"
 msgstr "opciones"
 
@@ -220,7 +242,7 @@ msgstr "El vídeo se está descargando en este momento. Por favor, sea paciente.
 msgid "Unknown error"
 msgstr "Error desconocido"
 
-#: courses/templates/admin/courses/question/change_form.html:7
+#: courses/templates/admin/courses/question/change_form.html:16
 msgid "Options"
 msgstr "Opciones"
 
@@ -404,56 +426,56 @@ msgstr "Interfaz de administración"
 msgid "Log out"
 msgstr "Terminar sesión"
 
-#: courses/templates/courses/overview.html:20
+#: courses/templates/courses/overview.html:23
 msgid "Course summary"
 msgstr "Resumen de la asignatura"
 
-#: courses/templates/courses/overview.html:33
+#: courses/templates/courses/overview.html:36
 msgid "Recommended requirements"
 msgstr "Requisitos recomendados"
 
-#: courses/templates/courses/overview.html:49
+#: courses/templates/courses/overview.html:52
 msgid "You are enrolled in this course"
 msgstr "Estás matriculado en esta asignatura"
 
-#: courses/templates/courses/overview.html:55
+#: courses/templates/courses/overview.html:58
 msgid "Enroll me in this course"
 msgstr "Matricúlame en esta asignatura"
 
-#: courses/templates/courses/overview.html:58
+#: courses/templates/courses/overview.html:61
 #, python-format
 msgid "Register in %(site_name)s to enroll in this course"
 msgstr "Registrarme en %(site_name)s para matricularme en esta asignatura"
 
-#: courses/templates/courses/overview.html:72
+#: courses/templates/courses/overview.html:75
 msgid "Information"
 msgstr "Información"
 
-#: courses/templates/courses/overview.html:74
+#: courses/templates/courses/overview.html:77
 msgid "Course Code"
 msgstr "Código de la Asignatura"
 
-#: courses/templates/courses/overview.html:76
+#: courses/templates/courses/overview.html:79
 msgid "Classes Start"
 msgstr "Inicio de las Clases"
 
-#: courses/templates/courses/overview.html:79
+#: courses/templates/courses/overview.html:82
 msgid "Classes End"
 msgstr "Final de las Clases"
 
-#: courses/templates/courses/overview.html:82
+#: courses/templates/courses/overview.html:85
 msgid "Estimated Effort"
 msgstr "Esfuerzo Estimado"
 
-#: courses/templates/courses/overview.html:88
+#: courses/templates/courses/overview.html:93
 msgid "Announcements"
 msgstr "Comunicados"
 
-#: courses/templates/courses/overview.html:98
+#: courses/templates/courses/overview.html:106
 msgid "Syllabus"
 msgstr "Temario"
 
-#: courses/templates/courses/overview.html:107
+#: courses/templates/courses/overview.html:115
 msgid "Share"
 msgstr "Comparte"
 
@@ -477,19 +499,19 @@ msgstr "Incorrecto"
 msgid "Pending"
 msgstr "Pendiente"
 
-#: templates/base.html:37
+#: templates/base.html:53
 msgid "Register"
 msgstr "Registrar"
 
-#: templates/base.html:38
+#: templates/base.html:54
 msgid "Log in"
 msgstr "Entrar"
 
-#: templates/base.html:57
+#: templates/base.html:73
 msgid "Legal"
 msgstr "Condiciones legales"
 
-#: templates/base.html:59
+#: templates/base.html:75
 msgid "Terms of Use"
 msgstr "Términos de uso"
 
