@@ -38,7 +38,8 @@ def theme(request):
             'logo': settings.STATIC_URL + u'img/logo.png',
             'subtitle': u'Knowledge for the masses',
             'top_banner': settings.STATIC_URL + u'img/top_banner.jpg',
-            'right_banner': settings.STATIC_URL + u'img/right_banner.jpg',
+            'right_banner1': settings.STATIC_URL + u'img/right_banner1.jpg',
+            'right_banner2': settings.STATIC_URL + u'img/right_banner2.jpg',
             'bootstrap_css': settings.STATIC_URL + u'css/bootstrap.min.css',
             'moocng_css': settings.STATIC_URL + u'css/moocng.css',
             }

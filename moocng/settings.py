@@ -237,7 +237,8 @@ MOOCNG_THEME = {
 #    'logo': u'',
 #    'subtitle': u'',
 #    'top_banner': u'',
-#    'right_banner': u'',
+#    'right_banner1': u'',
+#    'right_banner2': u'',
 #    'bootstrap_css': u'',
 #    'moocng_css': u'',
     }
