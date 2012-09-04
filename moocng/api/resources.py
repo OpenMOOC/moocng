@@ -98,7 +98,7 @@ class KnowledgeQuantumResource(ModelResource):
             return False
 
         courses = activity.get('courses', None)
-	if courses is None:
+        if courses is None:
             return False
 
         visited = courses.get(unicode(course_id), None)
@@ -238,7 +238,7 @@ class AnswerResource(MongoResource):
     def hydrate(self, bundle):
         if 'question' in bundle.data:
             question = bundle.data['question']
-            pattern = (r'^/api/%s/question/(?P<question_id>[\d+])/$' %
+            pattern = (r'^/api/%s/question/(?P<question_id>\d+)/$' %
                        self._meta.api_name)
             result = re.findall(pattern, question)
             if result and len(result) == 1:
