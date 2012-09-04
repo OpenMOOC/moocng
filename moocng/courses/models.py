@@ -122,8 +122,8 @@ class KnowledgeQuantum(Sortable):
         blank=True, null=False)
 
     class Meta(Sortable.Meta):
-        verbose_name = _(u'knowledge quantum')
-        verbose_name_plural = _(u'knowledge quantums')
+        verbose_name = _(u'nugget')
+        verbose_name_plural = _(u'nuggets')
 
     def __unicode__(self):
         return u'%s - %s' % (self.unit, self.title)
@@ -141,7 +141,7 @@ signals.post_save.connect(handle_kq_post_save, sender=KnowledgeQuantum)
 class Attachment(models.Model):
 
     kq = models.ForeignKey(KnowledgeQuantum,
-                           verbose_name=_(u'Knowledge Quantum'))
+                           verbose_name=_(u'Nugget'))
     attachment = models.FileField(verbose_name=_(u'Attachment'),
                                   upload_to='attachments')
 
@@ -149,10 +149,10 @@ class Attachment(models.Model):
 class Question(models.Model):
 
     kq = models.ForeignKey(KnowledgeQuantum, unique=True,
-                           verbose_name=_(u'Knowledge Quantum'))
+                           verbose_name=_(u'Nugget'))
     solution = models.URLField(verbose_name=_(u'Solution video'))
     last_frame = models.ImageField(
-        verbose_name=_(u"Last frame of the knowledge quantum's video"),
+        verbose_name=_(u"Last frame of the nugget's video"),
         upload_to='questions', blank=True)
 
     class Meta:

@@ -1,13 +1,21 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Copyright 2012 Rooter Analysis S.L.
 #
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-04 03:07-0500\n"
+"POT-Creation-Date: 2012-09-04 03:38-0500\n"
 "PO-Revision-Date: 2012-08-01 14:24+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -103,11 +111,11 @@ msgstr "Video promocional"
 
 #: courses/models.py:56
 msgid "course"
-msgstr "asignatura"
+msgstr "curso"
 
 #: courses/models.py:57
 msgid "courses"
-msgstr "asignaturas"
+msgstr "cursos"
 
 #: courses/models.py:73 courses/models.py:92 courses/models.py:115
 msgid "Title"
@@ -119,7 +127,7 @@ msgstr "Contenido"
 
 #: courses/models.py:76 courses/models.py:93
 msgid "Course"
-msgstr "Asignatura"
+msgstr "Curso"
 
 #: courses/models.py:77
 msgid "Datetime"
@@ -144,15 +152,15 @@ msgstr "Fecha límite"
 
 #: courses/models.py:106
 msgid "unit"
-msgstr "unidad"
+msgstr "módulo"
 
 #: courses/models.py:107
 msgid "units"
-msgstr "unidades"
+msgstr "módulos"
 
 #: courses/models.py:116
 msgid "Unit"
-msgstr "Unidad"
+msgstr "Módulo"
 
 #: courses/models.py:117
 msgid "Video"
@@ -167,16 +175,16 @@ msgid "Supplementary material"
 msgstr "Material suplementario"
 
 #: courses/models.py:125
-msgid "knowledge quantum"
-msgstr "cuanto de conocimiento"
+msgid "nugget"
+msgstr "píldora"
 
 #: courses/models.py:126
-msgid "knowledge quantums"
-msgstr "cuantos de conocimiento"
+msgid "nuggets"
+msgstr "píldoras"
 
 #: courses/models.py:144 courses/models.py:152
-msgid "Knowledge Quantum"
-msgstr "Cuanto de conocimiento"
+msgid "Nugget"
+msgstr "Píldora"
 
 #: courses/models.py:145
 msgid "Attachment"
@@ -187,8 +195,8 @@ msgid "Solution video"
 msgstr "Vídeo con la solución"
 
 #: courses/models.py:155
-msgid "Last frame of the knowledge quantum's video"
-msgstr "Última imagen del vídeo del cuanto de conocimiento"
+msgid "Last frame of the nugget's video"
+msgstr "Última imagen del vídeo de la píldora"
 
 #: courses/models.py:159
 msgid "question"
@@ -218,12 +226,11 @@ msgstr "opciones"
 #: courses/views.py:45
 #, python-format
 msgid "Congratulations, you have successfully enroll in the course %(course)s"
-msgstr ""
-"Enhorabuena, te has matriculado correctamente en la asignatura %(course)s"
+msgstr "Enhorabuena, te has matriculado correctamente en el curso %(course)s"
 
 #: courses/views.py:67 courses/views.py:83
 msgid "Your are not enrolled in this course"
-msgstr "No estás matriculado en esta asignatura"
+msgstr "No estás matriculado en este curso"
 
 #: courses/widgets.py:29
 msgid "There has been a problem downloading the video. Please check the logs"
@@ -388,19 +395,19 @@ msgstr "Respuesta erróna, suerte para la próxima vez"
 
 #: courses/templates/courses/home.html:16
 msgid "Courses"
-msgstr "Asignaturas"
+msgstr "Cursos"
 
 #: courses/templates/courses/home.html:22
 msgid "More information about this course"
-msgstr "Más información sobre esta asignatura"
+msgstr "Más información sobre este curso"
 
 #: courses/templates/courses/include.useractions.html:5
 msgid "My courses"
-msgstr "Mis clases"
+msgstr "Mis cursos"
 
 #: courses/templates/courses/include.useractions.html:11
 msgid "See all courses"
-msgstr "Ver todas las asignaturas"
+msgstr "Ver todos los cursos"
 
 #: courses/templates/courses/include.useractions.html:16
 msgid "Welcome"
@@ -428,7 +435,7 @@ msgstr "Terminar sesión"
 
 #: courses/templates/courses/overview.html:23
 msgid "Course summary"
-msgstr "Resumen de la asignatura"
+msgstr "Resumen del curso"
 
 #: courses/templates/courses/overview.html:36
 msgid "Recommended requirements"
@@ -436,16 +443,16 @@ msgstr "Requisitos recomendados"
 
 #: courses/templates/courses/overview.html:52
 msgid "You are enrolled in this course"
-msgstr "Estás matriculado en esta asignatura"
+msgstr "Estás matriculado en este curso"
 
 #: courses/templates/courses/overview.html:58
 msgid "Enroll me in this course"
-msgstr "Matricúlame en esta asignatura"
+msgstr "Matricúlame en este curso"
 
 #: courses/templates/courses/overview.html:61
 #, python-format
 msgid "Register in %(site_name)s to enroll in this course"
-msgstr "Registrarme en %(site_name)s para matricularme en esta asignatura"
+msgstr "Registrarme en %(site_name)s para matricularme en este curso"
 
 #: courses/templates/courses/overview.html:75
 msgid "Information"
@@ -453,7 +460,7 @@ msgstr "Información"
 
 #: courses/templates/courses/overview.html:77
 msgid "Course Code"
-msgstr "Código de la Asignatura"
+msgstr "Código del Curso"
 
 #: courses/templates/courses/overview.html:79
 msgid "Classes Start"
