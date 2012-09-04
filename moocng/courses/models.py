@@ -214,4 +214,4 @@ class Option(models.Model):
         if self.optiontype == 't':
             return reply == self.solution
         else:
-            return bool(reply) == bool(self.solution)
+            return bool(reply) == (self.solution.lower() == u'true')
