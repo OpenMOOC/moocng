@@ -50,7 +50,7 @@ MOOC.views.Unit = Backbone.View.extend({
 
         html = '';
         this.model.get("knowledgeQuantumList").each(function (kq) {
-            html += "<li><b>" + kq.truncateTitle(40) + "</b>";
+            html += "<li title='" + kq.get("title") + "'><b>" + kq.truncateTitle(40) + "</b>";
             if (kq.get("completed")) {
                 if (kq.get("correct")) {
                     html += '<span class="badge badge-success pull-right"><i class="icon-ok icon-white"></i> ' + MOOC.trans.progress.correct2 + '</span>';
