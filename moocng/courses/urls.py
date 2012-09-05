@@ -24,6 +24,9 @@ urlpatterns = patterns(
     # Flatpages
     url(r'^faq/$', 'flatpage', {'page': 'faq'}, name='faq'),
     url(r'^methodology/$', 'flatpage', {'page': 'methodology'}, name='methodology'),
+    url(r'^legal/$', 'flatpage', {'page': 'legal'}, name='legal'),
+    url(r'^tos/$', 'flatpage', {'page': 'tos'}, name='tos'),
+    url(r'^copyright/$', 'flatpage', {'page': 'copyright'}, name='copyright'),
 
     url(r'^course/(?P<course_slug>[-\w]+)$', 'course_overview',
         name='course_overview'),
