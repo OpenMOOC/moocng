@@ -167,6 +167,7 @@ INSTALLED_APPS = (
     'moocng.courses',
     'moocng.portal',
     'moocng.videos',
+    'djangosaml2',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -220,8 +221,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'djangosaml2.backends.Saml2Backend',
-    )
+    'moocng.courses.backends.Saml2BackendExtension',
+)
 
 FIXTURE_DIRS = (
     os.path.join(BASEDIR, 'fixtures', 'django.contrib.flatpages'),
@@ -272,6 +273,7 @@ SAML_ATTRIBUTE_MAPPING = {
     'mail': ('username', 'email', ),
     'cn': ('first_name', ),
     'sn': ('last_name', ),
+    'eduPersonAffiliation': ('groups', ),
     }
 
 import saml2
