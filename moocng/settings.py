@@ -225,6 +225,7 @@ AUTHENTICATION_BACKENDS = (
 
 FIXTURE_DIRS = (
     os.path.join(BASEDIR, 'fixtures', 'django.contrib.flatpages'),
+    os.path.join(BASEDIR, 'fixtures', 'django.contrib.auth'),
 )
 
 TINYMCE_DEFAULT_CONFIG = {
