@@ -21,6 +21,10 @@ urlpatterns = patterns(
     'moocng.courses.views',
     url(r'^$', 'home', name='home'),
 
+    # Flatpages
+    url(r'^faq/$', 'flatpage', {'page': 'faq'}, name='faq'),
+    url(r'^methodology/$', 'flatpage', {'page': 'methodology'}, name='methodology'),
+
     url(r'^course/(?P<course_slug>[-\w]+)$', 'course_overview',
         name='course_overview'),
     url(r'^course/(?P<course_slug>[-\w]+)/classroom$', 'course_classroom',

@@ -31,17 +31,24 @@ header h2 {
 
 #language-selector,
 #language-selector li,
-#language-selector form {
+#language-selector form,
+#meta-buttons,
+#meta-buttons li {
     display: inline;
 }
 
-#language-selector form .btn-link {
+#language-selector form .btn-link,
+#meta-buttons .btn-link {
     padding: 0;
     border: 0;
 }
 
 #language-selector form .disabled:hover {
     text-decoration: none;
+}
+
+#meta-buttons {
+    margin: 20px 15px 0 0;
 }
 
 footer {

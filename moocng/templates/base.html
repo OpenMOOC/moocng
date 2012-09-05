@@ -54,6 +54,13 @@
         <a class="btn" href="{% url saml2_login %}">{% trans "Log in" %}</a>
       </div>
       {% endif %}
+      <ul class="unstyled pull-right" id="meta-buttons">
+        <li><a href="/" class="btn btn-link">{% trans "Home"%}</a></li>
+        |
+        <li><a href="/faq/" class="btn btn-link">FAQ</a></li>
+        |
+        <li><a href="/methodology/" class="btn btn-link">{% trans "Methodology" %}</a></li>
+      </ul>
       <div class="clearfix"></div>
     </header>
     <div role="main" class="{% block mainclass %}{% endblock %}">

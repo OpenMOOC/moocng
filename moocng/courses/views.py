@@ -12,7 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.flatpages.models import FlatPage
+from django.contrib.flatpages.views import render_flatpage
 from django.contrib.messages import success
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponseForbidden
@@ -28,6 +31,14 @@ def home(request):
     return render_to_response('courses/home.html', {
             'courses': Course.objects.all(),
             }, context_instance=RequestContext(request))
+
+
+def flatpage(request, page=""):
+    # Translate flatpages
+    lang = request.LANGUAGE_CODE.lower()
+    fpage = get_object_or_404(FlatPage, url__exact=("/%s-%s/" % (page, lang)),
+                              sites__id__exact=settings.SITE_ID)
+    return render_flatpage(request, fpage)
 
 
 def course_overview(request, course_slug):
