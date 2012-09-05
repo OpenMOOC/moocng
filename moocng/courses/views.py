@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from datetime import date
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.flatpages.models import FlatPage
@@ -28,8 +30,9 @@ from moocng.courses.models import Course, Unit, Announcement
 
 
 def home(request):
+    courses = Course.objects.exclude(end_date__lt=date.today())
     return render_to_response('courses/home.html', {
-            'courses': Course.objects.all(),
+            'courses': courses,
             }, context_instance=RequestContext(request))
 
 
