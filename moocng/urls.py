@@ -42,6 +42,8 @@ urlpatterns = patterns(
     url(r'^saml2/ls/$', 'djangosaml2.views.logout_service', name='saml2_ls',
         kwargs={'next_page': settings.LOGOUT_REDIRECT_URL}),
     url(r'^saml2/', include('djangosaml2.urls')),
+
+    url(r'^complaints/', include('moocng.complaints.urls')),
 )
 
 if settings.DEBUG:

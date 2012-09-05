@@ -193,3 +193,7 @@ footer ul li {
 .announcement div.content {
     margin-top: 30px;
 }
+
+input[type="checkbox"] {
+    margin: -4px 0 0;
+}
