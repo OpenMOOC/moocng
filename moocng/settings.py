@@ -223,6 +223,10 @@ AUTHENTICATION_BACKENDS = (
     'djangosaml2.backends.Saml2Backend',
     )
 
+FIXTURE_DIRS = (
+    os.path.join(BASEDIR, 'fixtures', 'django.contrib.flatpages'),
+)
+
 TINYMCE_DEFAULT_CONFIG = {
     'theme': 'advanced',
     'theme_advanced_toolbar_location': 'top',
