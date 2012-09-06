@@ -64,20 +64,20 @@
         },
 
         render: function () {
-            var optiontype = this.model.get('optiontype'), attributes = {
-                type: this.option_types[optiontype],
-                value: this.model.get('solution'),
-                style: [
-                    "width: " + this.model.get("width") + "px;",
-                    "height: " + this.model.get("height") + "px;"
-                ].join(" ")
-            };
-            if (optiontype === 'c' || optiontype === 'r') {
-                if (this.model.get('solution') === 'True') {
-                    attributes.checked = 'checked';
-                }
-            } else {
-                attributes.value = this.model.get('solution');
+            var optiontype = this.model.get('optiontype'),
+                sol = this.model.get('solution'),
+                attributes = {
+                    type: this.option_types[optiontype],
+                    value: sol,
+                    style: [
+                        "width: " + this.model.get("width") + "px;",
+                        "height: " + this.model.get("height") + "px;"
+                    ].join(" ")
+                };
+
+            if ((optiontype === 'c' || optiontype === 'r') &&
+                    ((_.isString(sol) && sol === 'true') || (_.isBoolean(sol) && sol))) {
+                attributes.checked = 'checked';
             }
 
             this.$el.empty().append(this.make("input", attributes));
