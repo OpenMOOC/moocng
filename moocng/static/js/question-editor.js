@@ -165,19 +165,18 @@
 
         initialize: function () {
             _.bindAll(this, 'close', 'render', 'reset', 'remove_option',
-                      'change_property_handler', 'change_property');
-            this.model.bind("change", this.render, this);
+                      'change_property_handler', 'change_property',
+                      'unbind_change');
+            this.model.bind("change", _.bind(function () {
+                this.unbind_change();
+                this.render();
+            }, this), this);
         },
 
         close: function () {
             this.model.unbind("change", this.render);
             this.unbind();
-            this.$el.find("#option-optiontype").unbind('change');
-            this.$el.find("#option-solution").unbind('change');
-            this.$el.find("#option-x").unbind('change');
-            this.$el.find("#option-y").unbind('change');
-            this.$el.find("#option-width").unbind('change');
-            this.$el.find("#option-height").unbind('change');
+            this.unbind_change();
         },
 
         render: function () {
@@ -189,6 +188,15 @@
                 .find('#option-y').change(this.change_property_handler(['y', true])).val(this.model.get('y')).end()
                 .find('#option-width').change(this.change_property_handler(['width', true])).val(this.model.get('width')).end()
                 .find('#option-height').change(this.change_property_handler(['height', true])).val(this.model.get('height'));
+        },
+
+        unbind_change: function () {
+            this.$el.find("#option-optiontype").unbind('change');
+            this.$el.find("#option-solution").unbind('change');
+            this.$el.find("#option-x").unbind('change');
+            this.$el.find("#option-y").unbind('change');
+            this.$el.find("#option-width").unbind('change');
+            this.$el.find("#option-height").unbind('change');
         },
 
         change_property_handler: function (args) {
