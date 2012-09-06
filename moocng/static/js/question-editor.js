@@ -1,4 +1,4 @@
-/*jslint browser: true, nomen: true */
+/*jslint vars: false, browser: true, nomen: true */
 /*global MOOC: true, Backbone, jQuery, _ */
 
 // Copyright 2012 Rooter Analysis S.L.
@@ -364,28 +364,44 @@
         }
     });
 
+    MOOC.imageLoaded = function () {
+        var $fieldset = $("#content-main fieldset"),
+            $img = $("img.last-frame"),
+            url = $img.attr("src"),
+            width = $img.width(),
+            height = $img.height();
+        $fieldset.width(width).height(height).css({"background-image": "url(" + url + ")"});
+        $img.remove();
+
+        MOOC.imageInitDone = true;
+    };
+
     MOOC.init = function (url, options) {
-        var path = window.location.pathname;
+        var path = window.location.pathname,
+            auxFunc,
+            start;
+
         MOOC.models.options = new MOOC.models.OptionList();
         MOOC.models.options.reset(options);
         MOOC.models.options.url = url;
 
-        // Put the img as a background image of the fieldset
-        (function () {
-            var $fieldset = $("#content-main fieldset"),
-                $img = $fieldset.find("img"),
-                url = $img.attr("src"),
-                width = $img.width(),
-                height = $img.height();
-            $fieldset.width(width).height(height).css({"background-image": "url(" + url + ")"});
-            $img.remove();
-        }());
+        start = function () {
+            MOOC.router = new MOOC.App();
+            MOOC.router.route("", "index");
+            MOOC.router.route("option:option", "option");
+            Backbone.history.start({root: path});
 
-        MOOC.router = new MOOC.App();
-        MOOC.router.route("", "index");
-        MOOC.router.route("option:option", "option");
-        Backbone.history.start({root: path});
+            MOOC.router.navigate("", {trigger: true});
+        };
 
-        MOOC.router.navigate("", {trigger: true});
+        auxFunc = function () {
+            if (MOOC.imageInitDone) {
+                start();
+            } else {
+                setTimeout(auxFunc, 100);
+            }
+        };
+
+        auxFunc();
     };
 }(jQuery, Backbone, _));
