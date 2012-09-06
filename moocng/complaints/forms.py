@@ -13,18 +13,20 @@
 # limitations under the License.
 
 from django import forms
+from django.utils.translation import ugettext_lazy as _
 
-COMUNICATION_TYPE = (('rights','Rights violation'),
-                     ('feedback','Feedback / Comments'),
-                     ('unsubscribe','Remove account'),
-                     ('other','Other'))
+
+COMUNICATION_TYPE = (('rights',_('Rights violation')),
+                     ('feedback',_('Feedback / Comment')),
+                     ('unsubscribe',_('Remove account')),
+                     ('other',_('Other')))
 
 class ComplaintsForm(forms.Form):
-    username = forms.CharField(label='Username')
-    sender = forms.EmailField(label='Email')
-    communication_type = forms.ChoiceField(label='Communication type', choices=COMUNICATION_TYPE)
-    message = forms.CharField(label='Message', widget=forms.Textarea())
+    username = forms.CharField(label=_('Username'))
+    sender = forms.EmailField(label=_('Email'))
+    communication_type = forms.ChoiceField(label=_('Communication type'), choices=COMUNICATION_TYPE)
+    message = forms.CharField(label=_('Message'), widget=forms.Textarea())
     tos = forms.BooleanField(label="",
                             required=True, 
-                            help_text='I have read and agree with the terms of service (<a href="/tos">See Terms of Use</a>)', 
-                            error_messages={'required':'You must accept the Terms of Use'})
+                            help_text=_('I have read and agree with the terms of use (<a href="/tos">See Terms of Use</a>)'), 
+                            error_messages={'required': _('You must accept the Terms of Use')})
