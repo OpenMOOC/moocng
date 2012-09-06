@@ -39,6 +39,15 @@ DATABASES = {
 
 MONGODB_URI = 'mongodb://localhost:27017/moocng'
 
+
+#SMTP server
+EMAIL_HOST = 'example.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+
+ADMINS = (('Admin', 'admin@example.com'),)
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.

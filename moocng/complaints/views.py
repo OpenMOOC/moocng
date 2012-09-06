@@ -26,7 +26,7 @@ def complaints(request):
             subject = "%s | %s" % (form.cleaned_data['communication_type'], form.cleaned_data['username'])
             message = form.cleaned_data['message']
             mail_admins(subject, message)
-            return HttpResponseRedirect('/complaints/sent') # Redirect after POST
+            return HttpResponseRedirect('/complaints/sent')
     else:
         form = ComplaintsForm()
 
