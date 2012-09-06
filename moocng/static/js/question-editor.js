@@ -1,4 +1,4 @@
-/*jslint browser: true, nomen: true */
+/*jslint vars: false, browser: true, nomen: true */
 /*global MOOC: true, Backbone, jQuery, _ */
 
 // Copyright 2012 Rooter Analysis S.L.
@@ -64,20 +64,20 @@
         },
 
         render: function () {
-            var optiontype = this.model.get('optiontype'), attributes = {
-                type: this.option_types[optiontype],
-                value: this.model.get('solution'),
-                style: [
-                    "width: " + this.model.get("width") + "px;",
-                    "height: " + this.model.get("height") + "px;"
-                ].join(" ")
-            };
-            if (optiontype === 'c' || optiontype === 'r') {
-                if (this.model.get('solution') === 'True') {
-                    attributes.checked = 'checked';
-                }
-            } else {
-                attributes.value = this.model.get('solution');
+            var optiontype = this.model.get('optiontype'),
+                sol = this.model.get('solution'),
+                attributes = {
+                    type: this.option_types[optiontype],
+                    value: sol,
+                    style: [
+                        "width: " + this.model.get("width") + "px;",
+                        "height: " + this.model.get("height") + "px;"
+                    ].join(" ")
+                };
+
+            if ((optiontype === 'c' || optiontype === 'r') &&
+                    ((_.isString(sol) && sol === 'true') || (_.isBoolean(sol) && sol))) {
+                attributes.checked = 'checked';
             }
 
             this.$el.empty().append(this.make("input", attributes));
@@ -165,15 +165,32 @@
 
         initialize: function () {
             _.bindAll(this, 'close', 'render', 'reset', 'remove_option',
-                      'change_solution', 'change_type',
-                      'change_x', 'change_y', 'change_width', 'change_height',
-                      '_change_property');
-            this.model.bind("change", this.render, this);
+                      'change_property_handler', 'change_property',
+                      'unbind_change');
+            this.model.bind("change", _.bind(function () {
+                this.unbind_change();
+                this.render();
+            }, this), this);
         },
 
         close: function () {
             this.model.unbind("change", this.render);
             this.unbind();
+            this.unbind_change();
+        },
+
+        render: function () {
+            this.$el
+                .find('#option-id').html(this.model.get('id')).end()
+                .find('#option-optiontype').change(this.change_property_handler(['optiontype', false])).val(this.model.get('optiontype')).end()
+                .find('#option-solution').change(this.change_property_handler(['solution', false])).val(this.model.get('solution')).end()
+                .find('#option-x').change(this.change_property_handler(['x', true])).val(this.model.get('x')).end()
+                .find('#option-y').change(this.change_property_handler(['y', true])).val(this.model.get('y')).end()
+                .find('#option-width').change(this.change_property_handler(['width', true])).val(this.model.get('width')).end()
+                .find('#option-height').change(this.change_property_handler(['height', true])).val(this.model.get('height'));
+        },
+
+        unbind_change: function () {
             this.$el.find("#option-optiontype").unbind('change');
             this.$el.find("#option-solution").unbind('change');
             this.$el.find("#option-x").unbind('change');
@@ -182,39 +199,10 @@
             this.$el.find("#option-height").unbind('change');
         },
 
-        render: function () {
-            this.$el
-                .find('#option-id').html(this.model.get('id')).end()
-                .find('#option-optiontype').change(this.change_type).val(this.model.get('optiontype')).end()
-                .find('#option-solution').change(this.change_solution).val(this.model.get('solution')).end()
-                .find('#option-x').change(this.change_x).val(this.model.get('x')).end()
-                .find('#option-y').change(this.change_y).val(this.model.get('y')).end()
-                .find('#option-width').change(this.change_width).val(this.model.get('width')).end()
-                .find('#option-height').change(this.change_height).val(this.model.get('height'));
-        },
-
-        change_type: function () {
-            this._change_property('optiontype', false);
-        },
-
-        change_solution: function () {
-            this._change_property('solution', false);
-        },
-
-        change_x: function () {
-            this._change_property('x', true);
-        },
-
-        change_y: function () {
-            this._change_property('y', true);
-        },
-
-        change_width: function () {
-            this._change_property('width', true);
-        },
-
-        change_height: function () {
-            this._change_property('height', true);
+        change_property_handler: function (args) {
+            return _.bind(function (evt) {
+                this.change_property.apply(this, args);
+            }, this);
         },
 
         remove_option: function () {
@@ -233,7 +221,7 @@
                 .find('#option-height').val('');
         },
 
-        _change_property: function (prop, numerical) {
+        change_property: function (prop, numerical) {
             var value = this.$el.find("#option-" + prop).val();
             if (value) {
                 if (numerical) {
@@ -384,28 +372,44 @@
         }
     });
 
+    MOOC.imageLoaded = function () {
+        var $fieldset = $("#content-main fieldset"),
+            $img = $("img.last-frame"),
+            url = $img.attr("src"),
+            width = $img.width(),
+            height = $img.height();
+        $fieldset.width(width).height(height).css({"background-image": "url(" + url + ")"});
+        $img.remove();
+
+        MOOC.imageInitDone = true;
+    };
+
     MOOC.init = function (url, options) {
-        var path = window.location.pathname;
+        var path = window.location.pathname,
+            auxFunc,
+            start;
+
         MOOC.models.options = new MOOC.models.OptionList();
         MOOC.models.options.reset(options);
         MOOC.models.options.url = url;
 
-        // Put the img as a background image of the fieldset
-        (function () {
-            var $fieldset = $("#content-main fieldset"),
-                $img = $fieldset.find("img"),
-                url = $img.attr("src"),
-                width = $img.width(),
-                height = $img.height();
-            $fieldset.width(width).height(height).css({"background-image": "url(" + url + ")"});
-            $img.remove();
-        }());
+        start = function () {
+            MOOC.router = new MOOC.App();
+            MOOC.router.route("", "index");
+            MOOC.router.route("option:option", "option");
+            Backbone.history.start({root: path});
 
-        MOOC.router = new MOOC.App();
-        MOOC.router.route("", "index");
-        MOOC.router.route("option:option", "option");
-        Backbone.history.start({root: path});
+            MOOC.router.navigate("", {trigger: true});
+        };
 
-        MOOC.router.navigate("", {trigger: true});
+        auxFunc = function () {
+            if (MOOC.imageInitDone) {
+                start();
+            } else {
+                setTimeout(auxFunc, 100);
+            }
+        };
+
+        auxFunc();
     };
 }(jQuery, Backbone, _));

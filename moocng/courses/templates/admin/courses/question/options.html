@@ -125,7 +125,7 @@
 
 {% if original.last_frame %}
 <fieldset>
-  <img class="last-frame" src="{{ original.last_frame.url }}" />
+  <img class="last-frame" onload="MOOC.imageLoaded();" src="{{ original.last_frame.url }}" />
 </fieldset>
 {% endif %}
 

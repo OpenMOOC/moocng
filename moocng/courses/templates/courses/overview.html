@@ -67,7 +67,7 @@
             <h2>{% trans "Teachers" %}</h2>
             {% for teacher in course.teachers.all %}
                 <div class="teacher">
-                    <h4>{% firstof teacher.get_full_name|truncatechars:15 teacher.username|truncatechars:15 %}</h4>
+                    <h4 title="{% firstof teacher.get_full_name teacher.username %}">{% firstof teacher.get_full_name|truncatechars:15 teacher.username|truncatechars:15 %}</h4>
                     {% gravatar_img_for_user teacher 50 %}
                 </div>
             {% endfor %}
