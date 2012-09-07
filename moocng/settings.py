@@ -39,6 +39,8 @@ DATABASES = {
 
 MONGODB_URI = 'mongodb://localhost:27017/moocng'
 
+# Tastypie resource limit per page, 0 means unlimited
+API_LIMIT_PER_PAGE = 0
 
 #SMTP server
 EMAIL_HOST = 'idp.openmooc.org'
