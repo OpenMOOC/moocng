@@ -43,10 +43,13 @@
 
     MOOC.views = {};
 
+    MOOC.views.defaultSize = 14; // For checkboxes and radios
+
     MOOC.views.OptionView = Backbone.View.extend({
         tagName: 'span',
         className: 'option',
         padding: 5,
+        handlePadding: 20,
         option_types: {
             't': 'text',
             'c': 'checkbox',
@@ -75,14 +78,20 @@
                     ].join(" ")
                 };
 
-            if ((optiontype === 'c' || optiontype === 'r') &&
-                    ((_.isString(sol) && sol === 'true') || (_.isBoolean(sol) && sol))) {
-                attributes.checked = 'checked';
+            if (optiontype === 'c' || optiontype === 'r') {
+                attributes.style = [
+                    "width: " + MOOC.views.defaultSize + "px;",
+                    "height: " + MOOC.views.defaultSize + "px;"
+                ].join(" ");
+
+                if ((_.isString(sol) && sol.toLowerCase() === 'true') || (_.isBoolean(sol) && sol)) {
+                    attributes.checked = 'checked';
+                }
             }
 
             this.$el.empty().append(this.make("input", attributes));
             this.$el
-                .width(this.model.get("width") + this.padding * 2)
+                .width(this.model.get("width") + this.padding * 2 + this.handlePadding)
                 .height(this.model.get("height") + this.padding * 2)
                 .css({
                     left: (this.model.get('x') - this.padding) + "px",
@@ -180,14 +189,24 @@
         },
 
         render: function () {
+            var optiontype = this.model.get('optiontype');
+
             this.$el
                 .find('#option-id').html(this.model.get('id')).end()
                 .find('#option-optiontype').change(this.change_property_handler(['optiontype', false])).val(this.model.get('optiontype')).end()
                 .find('#option-solution').change(this.change_property_handler(['solution', false])).val(this.model.get('solution')).end()
                 .find('#option-x').change(this.change_property_handler(['x', true])).val(this.model.get('x')).end()
-                .find('#option-y').change(this.change_property_handler(['y', true])).val(this.model.get('y')).end()
-                .find('#option-width').change(this.change_property_handler(['width', true])).val(this.model.get('width')).end()
-                .find('#option-height').change(this.change_property_handler(['height', true])).val(this.model.get('height'));
+                .find('#option-y').change(this.change_property_handler(['y', true])).val(this.model.get('y'));
+
+            if (optiontype === 'c' || optiontype === 'r') {
+                this.$el
+                    .find('#option-width').attr("disabled", "disabled").val(this.model.get('width')).end()
+                    .find('#option-height').attr("disabled", "disabled").val(this.model.get('height'));
+            } else {
+                this.$el
+                    .find('#option-width').attr("disabled", false).change(this.change_property_handler(['width', true])).val(this.model.get('width')).end()
+                    .find('#option-height').attr("disabled", false).change(this.change_property_handler(['height', true])).val(this.model.get('height'));
+            }
         },
 
         unbind_change: function () {
