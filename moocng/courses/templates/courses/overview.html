@@ -108,7 +108,7 @@
             <h2>{% trans "Syllabus" %}</h2>
             <ul>
                 {% for unit in course.unit_set.all %}
-                    <li>{{ unit.title }}</li>
+                    <li><a href="{% url course_overview course.slug %}/classroom/#unit{{ unit.id }}">{{ unit.title }}</a></li>
                 {% endfor %}
             </ul>
         </div>
