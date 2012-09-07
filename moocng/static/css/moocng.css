@@ -137,6 +137,11 @@ footer ul li {
     margin-bottom: 5px;
 }
 
+.classroom #unit-selector {
+    max-height: 430px;
+    overflow-y: auto;
+}
+
 .classroom #unit-selector .accordion-group {
     background-color: #FAFAFA;
 }
