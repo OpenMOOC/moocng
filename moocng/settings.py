@@ -21,7 +21,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+    ('Admin', 'admin@eopenmooc.org'),
 )
 
 MANAGERS = ADMINS
@@ -48,7 +48,6 @@ EMAIL_PORT = 25
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 
-ADMINS = (('Admin', 'admin@eopenmooc.org'),)
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -270,8 +269,9 @@ djcelery.setup_loader()
 
 BROKER_URL = 'amqp://moocng:moocngpassword@localhost:5672/moocng'
 
-REGISTRY_URL = 'https://localhost/simplesaml/module.php/userregistration/newUser.php'
-PROFILE_URL = 'https://localhost/simplesaml/module.php/userregistration/reviewUser.php'
+REGISTRY_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/newUser.php'
+PROFILE_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/reviewUser.php'
+CHANGEPW_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/changePassword.php'
 ASKBOT_URL_TEMPLATE = 'https://questions.example.com/%s/'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True

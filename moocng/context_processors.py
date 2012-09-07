@@ -64,7 +64,13 @@ def idp_urls(request):
     except AttributeError:
         profile_url = '#'
 
+    try:
+        changepw_url = settings.CHANGEPW_URL
+    except AttributeError:
+        changepw_url = '#'
+
     return {
         'registry_url': registry_url,
         'profile_url': profile_url,
+        'changepw_url': changepw_url,
         }

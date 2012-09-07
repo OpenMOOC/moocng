@@ -24,5 +24,6 @@ def set_language(request):
         lang_code = request.POST.get('language', None)
         response.set_cookie(settings.LANGUAGE_COOKIE_NAME,
                             lang_code,
-                            domain=site.domain)
+                            domain=site.domain,
+                            httponly=False)
     return response

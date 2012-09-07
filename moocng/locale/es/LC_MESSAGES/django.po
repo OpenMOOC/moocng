@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-06 09:22-0500\n"
+"POT-Creation-Date: 2012-09-07 04:58-0500\n"
 "PO-Revision-Date: 2012-08-01 14:24+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -24,11 +24,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: es_ES\n"
 
-#: settings.py:67
+#: settings.py:68
 msgid "English"
 msgstr "Inglés"
 
-#: settings.py:68
+#: settings.py:69
 msgid "Spanish"
 msgstr "Español"
 
@@ -488,11 +488,15 @@ msgstr "Preferencias de la cuenta"
 msgid "Profile settings"
 msgstr "Preferencias del perfil"
 
-#: courses/templates/courses/include.useractions.html:26
+#: courses/templates/courses/include.useractions.html:23
+msgid "Change Password"
+msgstr "Cambiar contraseña"
+
+#: courses/templates/courses/include.useractions.html:27
 msgid "Admin interface"
 msgstr "Interfaz de administración"
 
-#: courses/templates/courses/include.useractions.html:30
+#: courses/templates/courses/include.useractions.html:31
 msgid "Log out"
 msgstr "Terminar sesión"
 
