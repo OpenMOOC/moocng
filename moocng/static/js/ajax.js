@@ -113,7 +113,7 @@ MOOC.alerts.show = function (type, title, message) {
     alert.removeClass("hide");
     _.delay(function () {
         MOOC.alerts.hide();
-    }, 5000);
+    }, 10000);
 };
 
 MOOC.alerts.hide = function () {
