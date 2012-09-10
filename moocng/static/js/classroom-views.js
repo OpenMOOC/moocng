@@ -516,6 +516,8 @@ MOOC.views.Question = Backbone.View.extend({
 MOOC.views.questionViews = {};
 
 MOOC.views.Option = Backbone.View.extend({
+    MIN_TEXT_HEIGHT: 14,
+
     types: {
         t: "text",
         c: "checkbox",
@@ -554,7 +556,11 @@ MOOC.views.Option = Backbone.View.extend({
             heightScale = ghostImage.height / image.height();
             if (optiontype === 't') {
                 width = Math.floor(this.model.get('width') / widthScale) + 'px;';
-                height = Math.floor(this.model.get('height') / heightScale) + 'px;';
+                height = Math.floor(this.model.get('height') / heightScale);
+                if (height < this.MIN_TEXT_HEIGHT) {
+                    height = this.MIN_TEXT_HEIGHT;
+                }
+                height = height + 'px;';
             }
 
             attributes.style = [
