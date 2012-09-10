@@ -99,6 +99,8 @@ class Unit(Sortable):
     )
     unittype = models.CharField(verbose_name=_(u'Type'), choices=UNIT_TYPES,
                                 max_length=1, default=UNIT_TYPES[0][0])
+    start = models.DateTimeField(verbose_name=_(u'Start'),
+                                 null=True, blank=True)
     deadline = models.DateTimeField(verbose_name=_(u'Deadline'),
                                     null=True, blank=True)
 
