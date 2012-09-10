@@ -31,6 +31,7 @@ from celery.task.control import inspect
 
 from adminsortable.admin import SortableAdmin
 
+from moocng.courses.forms import UnitForm
 from moocng.courses.models import Course, Announcement, Unit, KnowledgeQuantum
 from moocng.courses.models import Question, Option, Attachment
 from moocng.courses.widgets import ImageReadOnlyWidget
@@ -50,7 +51,8 @@ class AnnouncementAdmin(admin.ModelAdmin):
 
 class UnitAdmin(SortableAdmin):
 
-    list_display = ('__unicode__', 'unittype', 'deadline')
+    form = UnitForm
+    list_display = ('__unicode__', 'unittype', 'start', 'deadline')
     list_filter = ('course', )
 
 
