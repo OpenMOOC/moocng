@@ -55,6 +55,9 @@ class UnitAdmin(SortableAdmin):
     list_display = ('__unicode__', 'unittype', 'start', 'deadline')
     list_filter = ('course', )
 
+    class Media:
+        js = ("js/unit-admin.js",)
+
 
 class AttachmentInline(admin.TabularInline):
     model = Attachment
