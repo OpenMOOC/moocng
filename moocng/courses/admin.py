@@ -36,11 +36,11 @@ from moocng.courses.models import Question, Option, Attachment
 from moocng.courses.widgets import ImageReadOnlyWidget
 
 
-class CourseAdmin(admin.ModelAdmin):
+class CourseAdmin(SortableAdmin):
 
     prepopulated_fields = {'slug': ('name', )}
 
-
+    
 class AnnouncementAdmin(admin.ModelAdmin):
 
     prepopulated_fields = {'slug': ('title', )}
