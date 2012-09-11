@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Copyright 2012 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,12 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# -*- coding: utf-8 -*-
+from datetime import datetime
 import re
 
 from tastypie import fields
 from tastypie.authorization import DjangoAuthorization
 from tastypie.resources import ModelResource
+
+from django.db.models import Q
 
 from moocng.api.authentication import DjangoAuthentication
 from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
@@ -53,6 +57,14 @@ class KnowledgeQuantumResource(ModelResource):
         filtering = {
             "unit": ('exact'),
         }
+
+    def get_object_list(self, request):
+        objects = super(KnowledgeQuantumResource, self).get_object_list(request)
+        return objects.filter(
+            Q(unit__unittype='n') |
+            Q(unit__start__isnull=True) |
+            Q(unit__start__isnull=False, unit__start__lte=datetime.now)
+        )
 
     def dispatch(self, request_type, request, **kwargs):
         db = get_db()
@@ -143,7 +155,28 @@ class QuestionResource(ModelResource):
             "kq": ('exact'),
         }
 
+    def get_object_list(self, request):
+        objects = super(QuestionResource, self).get_object_list(request)
+        return objects.filter(
+            Q(kq__unit__unittype='n') |
+            Q(kq__unit__start__isnull=True) |
+            Q(kq__unit__start__isnull=False, kq__unit__start__lte=datetime.now)
+        )
+
+    def dehydrate_solution(self, bundle):
+        # Only return solution if the deadline has been reached, or there is
+        # no deadline
+        unit = bundle.obj.kq.unit
+        if unit.unittype != 'n' and unit.deadline > datetime.now(unit.deadline.tzinfo):
+            return None
+        return bundle.obj.solution
+
     def dehydrate_solutionID(self, bundle):
+        # Only return solution if the deadline has been reached, or there is
+        # no deadline
+        unit = bundle.obj.kq.unit
+        if unit.unittype != 'n' and unit.deadline > datetime.now(unit.deadline.tzinfo):
+            return None
         return extract_YT_video_id(bundle.obj.solution)
 
     def dehydrate_last_frame(self, bundle):
@@ -171,17 +204,18 @@ class OptionResource(ModelResource):
                                                     **kwargs)
 
     def dehydrate_solution(self, bundle):
-        # only return the solution if the user has given an answer
+        # Only return the solution if the user has given an answer
+        # If there is a deadline, then only return the solution if the deadline
+        # has been reached too
+        solution = None
         if self.user:
             answer = self.user['questions'].get(
                 unicode(bundle.obj.question.id), None)
-        else:
-            answer = None
-
-        if answer is None:
-            return None
-        else:
-            return bundle.obj.solution
+            if answer is not None:
+                unit = bundle.obj.question.kq.unit
+                if unit.unittype == 'n' or not(unit.deadline and datetime.now(unit.deadline.tzinfo) < unit.deadline):
+                    solution = bundle.obj.solution
+        return solution
 
 
 class AnswerResource(MongoResource):
