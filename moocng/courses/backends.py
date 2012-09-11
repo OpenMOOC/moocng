@@ -47,14 +47,7 @@ class Saml2BackendExtension(Saml2Backend):
                 for attr in django_attrs:
                     if hasattr(user, attr):
                         if attr == 'groups':
-                            group_ids = []
-                            for value in attributes[saml_attr]:
-                                try:
-                                    id = Group.objects.get(name=value).id
-                                    group_ids.append(id)
-                                except DoesNotExist:
-                                    pass
-                            user.groups = group_ids
+                            user.groups = Group.objects.filter(name__in=attributes[saml_attr])
                         else:
                             setattr(user, attr, attributes[saml_attr][0])
                         user_modified = True
