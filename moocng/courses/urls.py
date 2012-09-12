@@ -28,6 +28,8 @@ urlpatterns = patterns(
     url(r'^tos/$', 'flatpage', {'page': 'tos'}, name='tos'),
     url(r'^copyright/$', 'flatpage', {'page': 'copyright'}, name='copyright'),
 
+    url(r'^transcript/$', 'transcript', name='transcript'),
+
     url(r'^course/(?P<course_slug>[-\w]+)/$', 'course_overview',
         name='course_overview'),
     url(r'^course/(?P<course_slug>[-\w]+)/classroom/$', 'course_classroom',

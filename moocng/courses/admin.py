@@ -57,7 +57,7 @@ class AnnouncementAdmin(admin.ModelAdmin):
 class UnitAdmin(SortableAdmin):
 
     form = UnitForm
-    list_display = ('__unicode__', 'unittype', 'start', 'deadline')
+    list_display = ('__unicode__', 'unittype', 'start', 'deadline', 'weight')
     list_filter = ('course', )
 
     class Media:
@@ -74,7 +74,7 @@ class KnowledgeQuantumAdmin(SortableAdmin):
         AttachmentInline,
     ]
 
-    list_display = ('__unicode__', 'title', 'video')
+    list_display = ('__unicode__', 'title', 'video', 'weight')
     list_filter = ('unit', )
 
 

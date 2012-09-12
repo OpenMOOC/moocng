@@ -22,6 +22,7 @@ from adminsortable.fields import SortableForeignKey
 from tinymce.models import HTMLField
 
 from moocng.courses.utils import extract_YT_video_id
+from moocng.courses.fields import PercentField
 from moocng.videos.tasks import process_video_task
 
 
@@ -103,6 +104,7 @@ class Unit(Sortable):
                                  null=True, blank=True)
     deadline = models.DateTimeField(verbose_name=_(u'Deadline'),
                                     null=True, blank=True)
+    weight = PercentField(verbose_name=_(u'Weight'), null=False, default=0, help_text='0-100%')
 
     class Meta(Sortable.Meta):
         verbose_name = _(u'unit')
@@ -116,6 +118,7 @@ class KnowledgeQuantum(Sortable):
 
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
     unit = SortableForeignKey(Unit, verbose_name=_(u'Unit'))
+    weight = PercentField(verbose_name=_(u'Weight'), null=False, default=0, help_text='0-100%')
     video = models.URLField(verbose_name=_(u'Video'))
     teacher_comments = HTMLField(verbose_name=_(u'Teacher comments'),
                                  blank=True, null=False)

@@ -26,6 +26,7 @@ from django.shortcuts import (get_object_or_404, get_list_or_404,
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
+from moocng.courses.utils import calculate_unit_mark, normalize_unit_weight
 from moocng.courses.models import Course, Unit, Announcement
 
 
@@ -111,3 +112,30 @@ def announcement_detail(request, course_slug, announcement_slug):
         'course': course,
         'announcement': announcement,
     }, context_instance=RequestContext(request))
+
+
+@login_required
+def transcript(request):
+    course_list = request.user.courses_as_student.all()
+    courses_info = []
+    for course in course_list:
+        total_mark = 0
+        unit_list = Unit.objects.filter(course=course)
+        units_info = []
+        for unit in unit_list:
+            unit_info = {}
+            mark, relative_mark = calculate_unit_mark(unit, request.user)
+            total_mark += relative_mark
+            unit_info = {'unit': unit,
+                         'mark': mark,
+                         'normalized_weight': normalize_unit_weight(unit),
+                        }
+            units_info.append(unit_info)
+        courses_info.append({'course': course,
+                             'units_info': units_info,
+                             'mark': total_mark,
+                            })
+    return render_to_response('courses/transcript.html', {
+            'courses_info': courses_info,
+        }, context_instance=RequestContext(request))
+

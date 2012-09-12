@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
+
+{% block content %}
+<div class="media-box">
+  <a href="#">
+    <img src="{{ theme.top_banner }}" alt="" />
+  </a>
+</div>
+
+<div class="row">
+  <section class="span8">
+    <h1 class="content-title">{% trans "My transcript" %}</h1>
+
+    {% for course_info in courses_info %}
+    <div class="box">
+      <h2><a href="{{ course_info.course.get_absolute_url }}">{{ course_info.course.name }}</a></h2>
+      <p>{% trans "Mark" %}: <b>{{ course_info.mark|floatformat:"-2" }}</b>/10 </p>
+        {% if course_info.units_info %}
+            <ul>
+            {% for unit_info in course_info.units_info %}
+                <li><a href="{% url course_overview course_info.course.slug %}classroom/#unit{{ unit_info.unit.id }}">{{ unit_info.unit.title }}</a> <b> {{ unit_info.mark|floatformat:"-2" }}</b>/10   ({{ unit_info.normalized_weight|floatformat:"-2" }}%)</li>
+            {% endfor %}        
+            </ul>
+        {% endif%}
+    </div>
+    {% endfor %}
+
+  </section>
+  <div class="span4">
+    <div class="media-box">
+      <img src="{{ theme.right_banner1 }}" alt="" />
+    </div>
+    <div class="media-box">
+      <img src="{{ theme.right_banner2 }}" alt="" />
+    </div>
+  </div>
+</div>
+{% endblock %}
