@@ -214,7 +214,8 @@ MOOC.models.Unit = Backbone.Model.extend({
         return {
             order: -1,
             knowledgeQuantumList: null,
-            title: ""
+            title: "",
+            type: ''
         };
     },
 

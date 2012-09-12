@@ -71,10 +71,27 @@ def course_overview(request, course_slug):
             }, context_instance=RequestContext(request))
 
 
+unit_badge_classes = {
+    'n': 'badge-inverse',
+    'h': 'badge-warning',
+    'e': 'badge-important',
+}
+
+
 @login_required
 def course_classroom(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     unit_list = get_list_or_404(Unit, course=course)
+
+    units = []
+    for u in unit_list:
+        unit = {
+            'id': u.id,
+            'title': u.title,
+            'unittype': u.unittype,
+            'badge_class': unit_badge_classes[u.unittype],
+        }
+        units.append(unit)
 
     is_enrolled = course.students.filter(id=request.user.id).exists()
     if not is_enrolled:
@@ -82,7 +99,7 @@ def course_classroom(request, course_slug):
 
     return render_to_response('courses/classroom.html', {
         'course': course,
-        'unit_list': unit_list,
+        'unit_list': units,
         'is_enrolled': is_enrolled,
     }, context_instance=RequestContext(request))
 
@@ -92,13 +109,23 @@ def course_progress(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     unit_list = get_list_or_404(Unit, course=course)
 
+    units = []
+    for u in unit_list:
+        unit = {
+            'id': u.id,
+            'title': u.title,
+            'unittype': u.unittype,
+            'badge_class': unit_badge_classes[u.unittype],
+        }
+        units.append(unit)
+
     is_enrolled = course.students.filter(id=request.user.id).exists()
     if not is_enrolled:
         return HttpResponseForbidden(_('Your are not enrolled in this course'))
 
     return render_to_response('courses/progress.html', {
         'course': course,
-        'unit_list': unit_list,
+        'unit_list': units,
         'is_enrolled': is_enrolled,
     }, context_instance=RequestContext(request))
 

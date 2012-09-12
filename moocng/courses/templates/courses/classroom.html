@@ -46,9 +46,9 @@
         {% for unit in unit_list %}
         <div class="accordion-group">
             <div class="accordion-heading">
-                <a class="accordion-toggle" href="#unit{{ unit.id }}" data-target="#unit{{ unit.id }}-container" data-parent="#unit-selector">{{ unit.title }}</a>
+                <a class="accordion-toggle" href="#unit{{ unit.id }}" data-target="#unit{{ unit.id }}-container" data-parent="#unit-selector"><span class="badge {{ unit.badge_class }}">{{ unit.unittype|capfirst }}</span> - {{ unit.title }}</a>
             </div>
-            <div id="unit{{ unit.id }}-container" class="collapse accordion-body">
+            <div id="unit{{ unit.id }}-container" class="collapse accordion-body" unit-type="{{ unit.unittype }}">
                 <div class="accordion-inner"></div>
             </div>
         </div>
@@ -112,7 +112,8 @@
             id = id.split("-")[0];
             MOOC.models.course.add(new MOOC.models.Unit({
                 order: idx,
-                id: parseInt(id, 10)
+                id: parseInt(id, 10),
+                type: $(node).attr("unit-type")
             }));
         });
         MOOC.init({{ course.id }}, true);

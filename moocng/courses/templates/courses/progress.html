@@ -37,7 +37,7 @@
     <div class="span3" id="unit-list">
         <ul class="nav nav-pills nav-stacked">
             {% for unit in unit_list %}
-            <li id="unit{{ unit.id }}-container"><a href="#unit{{ unit.id }}">{{ unit.title }}</a></li>
+            <li id="unit{{ unit.id }}-container" class="unit-{{ unit.unittype }}"><a href="#unit{{ unit.id }}"><span class="badge {{ unit.badge_class }}">{{ unit.unittype|capfirst }}</span> - {{ unit.title }}</a></li>
             {% endfor %}
         </ul>
     </div>
@@ -74,7 +74,8 @@
             MOOC.models.course.add(new MOOC.models.Unit({
                 order: idx,
                 id: parseInt(id, 10),
-                title: $(node).find("a").html()
+                title: $(node).find("a").text().split('- ')[1],
+                type: node.className.split('-')[1]
             }));
         });
         MOOC.init({{ course.id }});
