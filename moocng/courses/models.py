@@ -25,7 +25,7 @@ from moocng.courses.utils import extract_YT_video_id
 from moocng.videos.tasks import process_video_task
 
 
-class Course(models.Model):
+class Course(Sortable):
 
     name = models.CharField(verbose_name=_(u'Name'), max_length=200)
     slug = models.SlugField(verbose_name=_(u'Slug'))
@@ -52,7 +52,7 @@ class Course(models.Model):
     promotion_video = models.URLField(verbose_name=_(u'Promotion video'),
                                       blank=True)
 
-    class Meta:
+    class Meta(Sortable.Meta):
         verbose_name = _(u'course')
         verbose_name_plural = _(u'courses')
 

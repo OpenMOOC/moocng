@@ -29,4 +29,5 @@ django.jQuery(document).ready(function () {
             django.jQuery(".field-deadline").show();
         }
     });
+    django.jQuery(".field-unittype").trigger("change");
 });

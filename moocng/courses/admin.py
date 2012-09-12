@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
+
 from django.conf.urls import patterns, url
 from django.contrib import admin
 from django.contrib.admin.util import unquote
@@ -37,7 +39,10 @@ from moocng.courses.models import Question, Option, Attachment
 from moocng.courses.widgets import ImageReadOnlyWidget
 
 
-class CourseAdmin(admin.ModelAdmin):
+logger = logging.getLogger(__name__)
+
+
+class CourseAdmin(SortableAdmin):
 
     prepopulated_fields = {'slug': ('name', )}
 
@@ -119,18 +124,25 @@ class QuestionAdmin(admin.ModelAdmin):
         return state
 
     def _is_scheduled(self, inspector, question):
-        for worker, tasks in inspector.scheduled().items():
-            for task in tasks:
-                if task['args'] == repr((question, )):
-                    return True
+        scheduled = inspector.scheduled()
+        if scheduled is None:
+            logger.error('Celery seems to be down.')
+        else:
+            for worker, tasks in scheduled.items():
+                for task in tasks:
+                    if task['args'] == repr((question, )):
+                        return True
         return False
 
     def _is_active(self, inspector, question):
-        for worker, tasks in inspector.active().items():
-            for task in tasks:
-                if task['args'] == repr((question, )):
-                    return True
-
+        active = inspector.active()
+        if active is None:
+            logger.error('Celery seems to be down.')
+        else:
+            for worker, tasks in active.items():
+                for task in tasks:
+                    if task['args'] == repr((question, )):
+                        return True
         return False
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
