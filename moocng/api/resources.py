@@ -196,6 +196,14 @@ class OptionResource(ModelResource):
             "question": ('exact'),
         }
 
+    def get_object_list(self, request):
+        objects = super(OptionResource, self).get_object_list(request)
+        return objects.filter(
+            Q(question__kq__unit__unittype='n') |
+            Q(question__kq__unit__start__isnull=True) |
+            Q(question__kq__unit__start__isnull=False, question__kq__unit__start__lte=datetime.now)
+        )
+
     def dispatch(self, request_type, request, **kwargs):
         # We need the request to dehydrate some fields
         collection = get_db().get_collection('answers')
