@@ -12,15 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import tempfile
 import shutil
 
 from celery import task
 
 from moocng.courses.utils import extract_YT_video_id
-from moocng.videos.download import process_video
+from moocng.videos.download import process_video, NotFound
 
 from django.core.files import File
+
+logger = logging.getLogger(__name__)
 
 
 def do_process_video_task(question):
@@ -33,6 +36,8 @@ def do_process_video_task(question):
         if frame is not None:
             video_id = extract_YT_video_id(url)
             question.last_frame.save("%s.png" % video_id, File(open(frame)))
+    except NotFound:
+        logger.error('Video %s not found' % url)
     finally:
         shutil.rmtree(tempdir)
 
