@@ -69,6 +69,8 @@ def normalize_kq_weight(kq):
     total_weight = 0
     for unit_kq in unit_kq_list:
         total_weight += unit_kq.weight
+    if total_weight == 0:
+        return 0.0
     return (float(kq.weight) * 100) / total_weight
 
 
@@ -78,4 +80,6 @@ def normalize_unit_weight(unit):
     total_weight = 0
     for course_unit in course_unit_list:
         total_weight += course_unit.weight
+    if total_weight == 0:
+        return 0.0
     return (float(unit.weight) * 100) / total_weight
