@@ -111,6 +111,7 @@ MOOC.alerts.show = function (type, title, message) {
     alert.find("h4").text(title);
     alert.find("p").text(message);
     alert.removeClass("hide");
+    $("body").animate({ scrollTop: alert.offset().top }, 500);
     _.delay(function () {
         MOOC.alerts.hide();
     }, 10000);
