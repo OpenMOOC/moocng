@@ -40,7 +40,7 @@ def calculate_unit_mark(unit, user):
     else:
         normalized_unit_weight = normalize_unit_weight(unit)
         # returns the absolute mark and the mark in relation with the course
-        return [unit_mark, (normalized_unit_weight * float(unit_mark)) / 100]
+        return [unit_mark, (normalized_unit_weight * unit_mark) / 100.0]
 
 
 def calculate_kq_mark(kq, user):
@@ -54,7 +54,7 @@ def calculate_kq_mark(kq, user):
             if question:
                 answer = user_answer_list.get('questions', {}).get(unicode(question[0].id))
                 if answer and question[0].is_correct(answer):
-                    return (float(normalize_kq_weight(kq)) * 10) / 100
+                    return (normalize_kq_weight(kq) * 10.0) / 100
                 else:
                     if kq.unit.deadline is not None and kq.unit.deadline > datetime.now():
                         return 0
@@ -70,8 +70,8 @@ def normalize_kq_weight(kq):
     for unit_kq in unit_kq_list:
         total_weight += unit_kq.weight
     if total_weight == 0:
-        return 0.0
-    return (float(kq.weight) * 100) / total_weight
+        return 100.0 / len(unit_kq_list)
+    return (kq.weight * 100.0) / total_weight
 
 
 def normalize_unit_weight(unit):
@@ -81,5 +81,5 @@ def normalize_unit_weight(unit):
     for course_unit in course_unit_list:
         total_weight += course_unit.weight
     if total_weight == 0:
-        return 0.0
-    return (float(unit.weight) * 100) / total_weight
+        return 100.0 / len(course_unit_list)
+    return (unit.weight * 100.0) / total_weight
