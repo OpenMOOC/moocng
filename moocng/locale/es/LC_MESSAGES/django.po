@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-12 07:03-0500\n"
+"POT-Creation-Date: 2012-09-13 06:27-0500\n"
 "PO-Revision-Date: 2012-08-01 14:24+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -457,29 +457,45 @@ msgid "Answers sent"
 msgstr "Respuesta enviada"
 
 #: courses/templates/courses/classroom.html:105
-msgid "Your answers were successfully sent to the server."
-msgstr "Su respuesta ha sido enviada con éxito al servidor."
-
-#: courses/templates/courses/classroom.html:106
 msgid "Congratulations, you got it right!"
 msgstr "¡Enhorabuena, acertaste!"
 
+#: courses/templates/courses/classroom.html:106
+msgid "Wrong answer, good luck next time."
+msgstr "Respuesta erróna, suerte para la próxima vez."
+
 #: courses/templates/courses/classroom.html:107
-msgid "Wrong answer, good luck next time"
-msgstr "Respuesta erróna, suerte para la próxima vez"
+msgid ""
+"Your answers were stored, but can't be corrected until the deadline is "
+"reached."
+msgstr ""
+"Sus respuestas han sido almacenadas, pero no podrán ser corregidas hasta que "
+"se alcance la fecha límite."
 
 #: courses/templates/courses/classroom.html:110
-#: courses/templates/courses/progress.html:72
+#: courses/templates/courses/progress.html:71
 msgid "The module is not ready"
 msgstr "El módulo no está listo"
 
 #: courses/templates/courses/classroom.html:111
-#: courses/templates/courses/progress.html:73
+#: courses/templates/courses/progress.html:72
 msgid ""
 "This module has no nuggets. Probably the start date hasn't been reached yet."
 msgstr ""
 "Este módulo no tiene píldoras. Probablemente aún no se ha alcanzado la fecha "
 "de inicio."
+
+#: courses/templates/courses/classroom.html:112
+msgid "The solution is not available"
+msgstr "La solución no se encuentra disponible"
+
+#: courses/templates/courses/classroom.html:113
+msgid ""
+"This video is not available yet. Please wait until the deadline of the "
+"module."
+msgstr ""
+"Este vídeo no está disponible aún. Por favor, espere hasta alcanzar la fecha "
+"límite del módulo."
 
 #: courses/templates/courses/home.html:16
 msgid "Courses"
@@ -587,14 +603,10 @@ msgid "correct"
 msgstr "correcto"
 
 #: courses/templates/courses/progress.html:67
-msgid "Correct"
-msgstr "Correcto"
-
-#: courses/templates/courses/progress.html:68
 msgid "Incorrect"
 msgstr "Incorrecto"
 
-#: courses/templates/courses/progress.html:69
+#: courses/templates/courses/progress.html:68
 msgid "Pending"
 msgstr "Pendiente"
 
@@ -657,3 +669,9 @@ msgstr "Sitio de administración de moocng"
 #: templates/admin/base_site.html:7
 msgid "moocng administration"
 msgstr "Administración de moocng"
+
+#~ msgid "Your answers were successfully sent to the server."
+#~ msgstr "Su respuesta ha sido enviada con éxito al servidor."
+
+#~ msgid "Correct"
+#~ msgstr "Correcto"
