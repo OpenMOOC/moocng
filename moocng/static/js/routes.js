@@ -32,8 +32,12 @@ MOOC.App = Backbone.Router.extend({
         if (loadKQ) {
             steps.push(function (callback) {
                 var kqObj = unitObj.get("knowledgeQuantumList").first();
-                MOOC.router.navigate("unit" + unitObj.get("id") + "/kq" + kqObj.get("id"), { trigger: true });
-                callback();
+                if (_.isUndefined(kqObj)) {
+                    MOOC.alerts.show(MOOC.alerts.INFO, MOOC.trans.api.unitNotReadyTitle, MOOC.trans.api.unitNotReady);
+                } else {
+                    MOOC.router.navigate("unit" + unitObj.get("id") + "/kq" + kqObj.get("id"), { trigger: true });
+                    callback();
+                }
             });
         } else {
             steps.push(function (callback) {

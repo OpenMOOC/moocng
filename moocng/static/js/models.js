@@ -58,13 +58,20 @@ MOOC.models.Option = Backbone.Model.extend({
         };
     },
 
+    /**
+     * Returns:
+     *  true if correct
+     *  false if incorrect
+     *  undefined if can't be corrected yet, because the deadline hasn't been
+     *               reached, there is no solution data
+     */
     isCorrect: function (reply) {
         "use strict";
         var solution = this.get('solution'),
             optiontype = this.get('optiontype'),
             result;
 
-        if (_.isUndefined(solution) || solution === null) {
+        if (_.isUndefined(solution) || _.isNull(solution)) {
             return;
         }
 
@@ -97,16 +104,52 @@ MOOC.models.Question = Backbone.Model.extend({
         };
     },
 
+    /**
+     * Returns:
+     *  true if correct
+     *  false if incorrect
+     *  undefined if can't be corrected yet, because the deadline hasn't been
+     *               reached, there is no solution data
+     */
     isCorrect: function () {
         "use strict";
-        var answer = this.get("answer");
-        if (_.isUndefined(answer) || answer === null) {
-            return;
-        }
+        var answer = this.get("answer"),
+            unknown = false,
+            correct = false;
+
+        if (_.isUndefined(answer) || _.isNull(answer)) { return; }
+
+        unknown = this.get('optionList').any(function (opt) {
+            return _.isUndefined(opt.isCorrect(answer.getReply(opt.get('id'))));
+        });
+        if (unknown) { return; }
 
         return this.get('optionList').all(function (opt) {
             return opt.isCorrect(answer.getReply(opt.get('id')));
         });
+    },
+
+    isActive: function () {
+        "use strict";
+        var id = this.id,
+            unit;
+
+        unit = MOOC.models.course.find(function (u) {
+            var knowledgeQuantumList = u.get("knowledgeQuantumList");
+            if (_.isNull(knowledgeQuantumList)) { return false; }
+            return knowledgeQuantumList.any(function (kq) {
+                var url = kq.get("question");
+                if (_.isNull(url)) { return false; }
+                url = url.split('/');
+                url = url[url.length - 2];
+                return url === id;
+            });
+        });
+
+        if (!_.isUndefined(unit) && unit.get("type") !== 'n' && this.has("solution")) {
+            return false;
+        }
+        return true;
     }
 });
 
@@ -214,7 +257,8 @@ MOOC.models.Unit = Backbone.Model.extend({
         return {
             order: -1,
             knowledgeQuantumList: null,
-            title: ""
+            title: "",
+            type: ''
         };
     },
 

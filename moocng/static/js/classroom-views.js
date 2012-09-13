@@ -352,11 +352,16 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         toExecute.push(_.bind(function (callback) {
             var height = this.getVideoHeight(),
                 unit = MOOC.models.course.getByKQ(this.model),
-                html;
+                html = "";
 
-            html = '<iframe id="ytplayer" width="100%" height="' + height + 'px" ';
-            html += 'src="http://www.youtube.com/embed/' + this.model.get("questionInstance").get("solution");
-            html += '" frameborder="0" allowfullscreen></iframe>';
+            if (!_.isNull(this.model.get("questionInstance").get("solution"))) {
+                html = '<iframe id="ytplayer" width="100%" height="' + height + 'px" ';
+                html += 'src="http://www.youtube.com/embed/' + this.model.get("questionInstance").get("solution");
+                html += '" frameborder="0" allowfullscreen></iframe>';
+            } else {
+                MOOC.alerts.show(MOOC.alerts.INFO, MOOC.trans.api.solutionNotReadyTitle, MOOC.trans.api.solutionNotReady);
+            }
+
             $("#kq-video").html(html);
             $("#kq-video").css("height", "auto");
             $("#kq-q-buttons").addClass("hide");
@@ -405,6 +410,13 @@ MOOC.views.Question = Backbone.View.extend({
         this.$el.css("height", "auto");
 
         $("#kq-q-buttons").removeClass("hide");
+
+        if (this.model.isActive()) {
+            $("#kq-q-submit").attr("disabled", false);
+        } else {
+            $("#kq-q-submit").attr("disabled", "disabled");
+        }
+
         $("#kq-q-showkq")
             .unbind('click.QuestionView')
             .bind('click.QuestionView', function () {
@@ -436,7 +448,10 @@ MOOC.views.Question = Backbone.View.extend({
 
     submitAnswer: function () {
         "use strict";
-        var self = this, answer = this.model.get('answer'), replies, is_first_answer;
+        var self = this,
+            answer = this.model.get('answer'),
+            replies,
+            fetch_solutions;
 
         replies = this.model.get("optionList").map(function (opt) {
             var view = MOOC.views.optionViews[opt.get("id")],
@@ -459,14 +474,14 @@ MOOC.views.Question = Backbone.View.extend({
             answer.set('replyList', new MOOC.models.ReplyList(replies));
             answer.set('date', new Date());
 
-            is_first_answer = answer.get('id') ? false : true;
+            fetch_solutions = _.isNull(self.model.get("solution"));
 
             MOOC.ajax.sendAnswer(answer, this.model.get('id'), function (data, textStatus, jqXHR) {
                 if (jqXHR.status === 201 || jqXHR.status === 204) {
                     answer.set('id', self.model.get('id'));
                     self.model.set('answer', answer);
 
-                    self.loadSolution(is_first_answer);
+                    self.loadSolution(fetch_solutions);
                 }
             });
         }
@@ -485,7 +500,12 @@ MOOC.views.Question = Backbone.View.extend({
                 view.render();
             },
             show_result_msg = function () {
-                if (self.model.isCorrect()) {
+                var correct = self.model.isCorrect();
+                if (_.isUndefined(correct)) {
+                    MOOC.alerts.show(MOOC.alerts.INFO,
+                                     MOOC.trans.classroom.answersSent,
+                                     MOOC.trans.classroom.answersUnknown);
+                } else if (correct) {
                     MOOC.alerts.show(MOOC.alerts.SUCCESS,
                                      MOOC.trans.classroom.answersSent,
                                      MOOC.trans.classroom.answersCorrect);
@@ -576,14 +596,14 @@ MOOC.views.Option = Backbone.View.extend({
             if (this.reply && this.reply.get('option') === this.model.get('id')) {
                 if (optiontype === 't') {
                     attributes.value = this.reply.get('value');
-                    if (solution) {
+                    if (!(_.isUndefined(solution) || _.isNull(solution))) {
                         attributes['class'] = this.model.isCorrect(this.reply) ? 'correct' : 'incorrect';
                     }
                 } else {
                     if (this.reply.get('value')) {
                         attributes.checked = 'checked';
                     }
-                    if (!_.isUndefined(solution)) {
+                    if (!(_.isUndefined(solution) || _.isNull(solution))) {
                         attributes['class'] = this.model.isCorrect(this.reply) ? 'correct' : 'incorrect';
                     }
                 }

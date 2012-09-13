@@ -15,14 +15,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-11 12:32-0500\n"
+"POT-Creation-Date: 2012-09-13 06:36-0500\n"
 "PO-Revision-Date: 2012-08-01 14:24+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
+"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es_ES\n"
 
 #: settings.py:70
 msgid "English"
@@ -94,16 +94,16 @@ msgstr ""
 "apropiado. Pronto contactaremos con usted para informarle del estado del "
 "proceso."
 
-#: courses/admin.py:153 courses/admin.py:200
+#: courses/admin.py:165 courses/admin.py:212
 #, python-format
 msgid "%(name)s object with primary key %(key)r does not exist."
 msgstr "El objeto %(name)s con clave primaria %(key)r no existe."
 
-#: courses/admin.py:170
+#: courses/admin.py:182
 msgid "Edit options for question"
 msgstr "Editar las opciones de la pregunta"
 
-#: courses/admin.py:207
+#: courses/admin.py:219
 #, python-format
 msgid "Option %(option)d for question %(question)s does not exist."
 msgstr "La opción %(option)d de la pregunta %(question)s no existe."
@@ -116,11 +116,11 @@ msgstr "Comunicados del %(course_title)s"
 #: courses/feeds.py:35
 #, python-format
 msgid ""
-"Announcements of the online course \"%(course_title)s\" on the platform \"%"
-"(site_name)s\"."
+"Announcements of the online course \"%(course_title)s\" on the platform "
+"\"%(site_name)s\"."
 msgstr ""
-"Comunicados del curso online \"%(course_title)s\" en la plataforma \"%"
-"(site_name)s\"."
+"Comunicados del curso online \"%(course_title)s\" en la plataforma "
+"\"%(site_name)s\"."
 
 #: courses/forms.py:24
 msgid "The deadline date is mandatory for homework and exams."
@@ -130,174 +130,174 @@ msgstr "La fecha de finalización es obligatoria para las tareas y los examenes"
 msgid "The start date is later than the deadline."
 msgstr "La fecha de comienzo es posterior a la fecha de finalización"
 
-#: courses/models.py:32
+#: courses/models.py:31
 msgid "Name"
 msgstr "Nombre"
 
-#: courses/models.py:33 courses/models.py:76
+#: courses/models.py:32 courses/models.py:75
 msgid "Slug"
 msgstr "Slug"
 
-#: courses/models.py:34
+#: courses/models.py:33
 msgid "Description"
 msgstr "Descripción"
 
-#: courses/models.py:35
+#: courses/models.py:34
 msgid "Requirements"
 msgstr "Requisitos"
 
-#: courses/models.py:37 courses/models.py:43
+#: courses/models.py:36 courses/models.py:42
 #: courses/templates/courses/overview.html:29
 msgid "Learning goals"
 msgstr "Objetivos formativos"
 
-#: courses/models.py:39 courses/templates/courses/overview.html:43
+#: courses/models.py:38 courses/templates/courses/overview.html:43
 msgid "Intended audience"
 msgstr "Público objetivo"
 
-#: courses/models.py:41
+#: courses/models.py:40
 msgid "Estimated effort"
 msgstr "Esfuerzo estimado"
 
-#: courses/models.py:45
+#: courses/models.py:44
 msgid "Start date"
 msgstr "Fecha de inicio"
 
-#: courses/models.py:47
+#: courses/models.py:46
 msgid "End date"
 msgstr "Fecha de fin"
 
-#: courses/models.py:49 courses/templates/courses/overview.html:67
+#: courses/models.py:48 courses/templates/courses/overview.html:67
 msgid "Teachers"
 msgstr "Profesores"
 
-#: courses/models.py:51
+#: courses/models.py:50
 msgid "Students"
 msgstr "Alumnos"
 
-#: courses/models.py:54
+#: courses/models.py:53
 msgid "Promotion video"
 msgstr "Video promocional"
 
-#: courses/models.py:58
+#: courses/models.py:57
 msgid "course"
 msgstr "curso"
 
-#: courses/models.py:59
+#: courses/models.py:58
 msgid "courses"
 msgstr "cursos"
 
-#: courses/models.py:75 courses/models.py:94 courses/models.py:120
+#: courses/models.py:74 courses/models.py:93 courses/models.py:119
 msgid "Title"
 msgstr "Título"
 
-#: courses/models.py:77
+#: courses/models.py:76
 msgid "Content"
 msgstr "Contenido"
 
-#: courses/models.py:78 courses/models.py:95
+#: courses/models.py:77 courses/models.py:94
 msgid "Course"
 msgstr "Curso"
 
-#: courses/models.py:79
+#: courses/models.py:78
 msgid "Datetime"
 msgstr "Fecha y hora"
 
-#: courses/models.py:82
+#: courses/models.py:81
 msgid "announcement"
 msgstr "comunicado"
 
-#: courses/models.py:83
+#: courses/models.py:82
 msgid "announcements"
 msgstr "comunicados"
 
-#: courses/models.py:102 courses/models.py:207
+#: courses/models.py:101 courses/models.py:206
 #: courses/templates/admin/courses/question/options.html:76
 msgid "Type"
 msgstr "Tipo"
 
-#: courses/models.py:104
+#: courses/models.py:103
 msgid "Start"
 msgstr "Fecha de inicio"
 
-#: courses/models.py:106
+#: courses/models.py:105
 msgid "Deadline"
 msgstr "Fecha límite"
 
-#: courses/models.py:108 courses/models.py:122
+#: courses/models.py:107 courses/models.py:121
 msgid "Weight"
 msgstr "Peso"
 
-#: courses/models.py:111
+#: courses/models.py:110
 msgid "unit"
 msgstr "módulo"
 
-#: courses/models.py:112
+#: courses/models.py:111
 msgid "units"
 msgstr "módulos"
 
-#: courses/models.py:121
+#: courses/models.py:120
 msgid "Unit"
 msgstr "Módulo"
 
-#: courses/models.py:123
+#: courses/models.py:122
 msgid "Video"
 msgstr "Vídeo"
 
-#: courses/models.py:124
+#: courses/models.py:123
 msgid "Teacher comments"
 msgstr "Comentarios del Profesor"
 
-#: courses/models.py:127 courses/templates/courses/classroom.html:63
+#: courses/models.py:126 courses/templates/courses/classroom.html:63
 msgid "Supplementary material"
 msgstr "Material suplementario"
 
-#: courses/models.py:131
+#: courses/models.py:130
 msgid "nugget"
 msgstr "píldora"
 
-#: courses/models.py:132
+#: courses/models.py:131
 msgid "nuggets"
 msgstr "píldoras"
 
-#: courses/models.py:150 courses/models.py:158
+#: courses/models.py:149 courses/models.py:157
 msgid "Nugget"
 msgstr "Píldora"
 
-#: courses/models.py:151
+#: courses/models.py:150
 msgid "Attachment"
 msgstr "Adjunto"
 
-#: courses/models.py:159
+#: courses/models.py:158
 msgid "Solution video"
 msgstr "Vídeo con la solución"
 
-#: courses/models.py:161
+#: courses/models.py:160
 msgid "Last frame of the nugget's video"
 msgstr "Última imagen del vídeo de la píldora"
 
-#: courses/models.py:165
+#: courses/models.py:164
 msgid "question"
 msgstr "pregunta"
 
-#: courses/models.py:166
+#: courses/models.py:165
 msgid "questions"
 msgstr "preguntas"
 
-#: courses/models.py:196
+#: courses/models.py:195
 msgid "Question"
 msgstr "Pregunta"
 
-#: courses/models.py:210
+#: courses/models.py:209
 #: courses/templates/admin/courses/question/options.html:86
 msgid "Solution"
 msgstr "Solución"
 
-#: courses/models.py:213
+#: courses/models.py:212
 msgid "option"
 msgstr "opción"
 
-#: courses/models.py:214
+#: courses/models.py:213
 msgid "options"
 msgstr "opciones"
 
@@ -306,7 +306,7 @@ msgstr "opciones"
 msgid "Congratulations, you have successfully enroll in the course %(course)s"
 msgstr "Enhorabuena, te has matriculado correctamente en el curso %(course)s"
 
-#: courses/views.py:82 courses/views.py:98
+#: courses/views.py:99 courses/views.py:125
 msgid "Your are not enrolled in this course"
 msgstr "No estás matriculado en este curso"
 
@@ -461,16 +461,45 @@ msgid "Answers sent"
 msgstr "Respuesta enviada"
 
 #: courses/templates/courses/classroom.html:105
-msgid "Your answers were successfully sent to the server."
-msgstr "Su respuesta ha sido enviada con éxito al servidor."
-
-#: courses/templates/courses/classroom.html:106
 msgid "Congratulations, you got it right!"
 msgstr "¡Enhorabuena, acertaste!"
 
+#: courses/templates/courses/classroom.html:106
+msgid "Wrong answer, good luck next time."
+msgstr "Respuesta erróna, suerte para la próxima vez."
+
 #: courses/templates/courses/classroom.html:107
-msgid "Wrong answer, good luck next time"
-msgstr "Respuesta erróna, suerte para la próxima vez"
+msgid ""
+"Your answers were stored, but can't be corrected until the deadline is "
+"reached."
+msgstr ""
+"Sus respuestas han sido almacenadas, pero no podrán ser corregidas hasta que "
+"se alcance la fecha límite."
+
+#: courses/templates/courses/classroom.html:110
+#: courses/templates/courses/progress.html:71
+msgid "The module is not ready"
+msgstr "El módulo no está listo"
+
+#: courses/templates/courses/classroom.html:111
+#: courses/templates/courses/progress.html:72
+msgid ""
+"This module has no nuggets. Probably the start date hasn't been reached yet."
+msgstr ""
+"Este módulo no tiene píldoras. Probablemente aún no se ha alcanzado la fecha "
+"de inicio."
+
+#: courses/templates/courses/classroom.html:112
+msgid "The solution is not available"
+msgstr "La solución no se encuentra disponible"
+
+#: courses/templates/courses/classroom.html:113
+msgid ""
+"This video is not available yet. Please wait until the deadline of the "
+"module."
+msgstr ""
+"Este vídeo no está disponible aún. Por favor, espere hasta alcanzar la fecha "
+"límite del módulo."
 
 #: courses/templates/courses/home.html:16
 msgid "Courses"
@@ -498,22 +527,18 @@ msgid "My transcript"
 msgstr "Mis notas"
 
 #: courses/templates/courses/include.useractions.html:21
-msgid "Account settings"
-msgstr "Preferencias de la cuenta"
-
-#: courses/templates/courses/include.useractions.html:22
 msgid "Profile settings"
 msgstr "Preferencias del perfil"
 
-#: courses/templates/courses/include.useractions.html:23
+#: courses/templates/courses/include.useractions.html:22
 msgid "Change Password"
 msgstr "Cambiar contraseña"
 
-#: courses/templates/courses/include.useractions.html:27
+#: courses/templates/courses/include.useractions.html:26
 msgid "Admin interface"
 msgstr "Interfaz de administración"
 
-#: courses/templates/courses/include.useractions.html:31
+#: courses/templates/courses/include.useractions.html:30
 msgid "Log out"
 msgstr "Terminar sesión"
 
@@ -579,14 +604,10 @@ msgid "correct"
 msgstr "correcto"
 
 #: courses/templates/courses/progress.html:67
-msgid "Correct"
-msgstr "Correcto"
-
-#: courses/templates/courses/progress.html:68
 msgid "Incorrect"
 msgstr "Incorrecto"
 
-#: courses/templates/courses/progress.html:69
+#: courses/templates/courses/progress.html:68
 msgid "Pending"
 msgstr "Pendiente"
 
