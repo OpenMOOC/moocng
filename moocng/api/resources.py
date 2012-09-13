@@ -265,6 +265,10 @@ class AnswerResource(MongoResource):
 
         bundle = self.full_hydrate(bundle)
 
+        unit = Question.objects.get(id=bundle.obj.uuid).kq.unit
+        if unit.unittype != 'n' and unit.deadline and datetime.now(unit.deadline.tzinfo) > unit.deadline:
+            return bundle
+
         if (len(bundle.obj.answer['replyList']) > 0):
             user['questions'][bundle.obj.uuid] = bundle.obj.answer
 

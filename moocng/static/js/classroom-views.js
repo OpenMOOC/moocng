@@ -436,7 +436,10 @@ MOOC.views.Question = Backbone.View.extend({
 
     submitAnswer: function () {
         "use strict";
-        var self = this, answer = this.model.get('answer'), replies, is_first_answer;
+        var self = this,
+            answer = this.model.get('answer'),
+            replies,
+            fetch_solutions;
 
         replies = this.model.get("optionList").map(function (opt) {
             var view = MOOC.views.optionViews[opt.get("id")],
@@ -459,14 +462,14 @@ MOOC.views.Question = Backbone.View.extend({
             answer.set('replyList', new MOOC.models.ReplyList(replies));
             answer.set('date', new Date());
 
-            is_first_answer = answer.get('id') ? false : true;
+            fetch_solutions = _.isNull(self.model.get("solution"));
 
             MOOC.ajax.sendAnswer(answer, this.model.get('id'), function (data, textStatus, jqXHR) {
                 if (jqXHR.status === 201 || jqXHR.status === 204) {
                     answer.set('id', self.model.get('id'));
                     self.model.set('answer', answer);
 
-                    self.loadSolution(is_first_answer);
+                    self.loadSolution(fetch_solutions);
                 }
             });
         }
@@ -485,7 +488,12 @@ MOOC.views.Question = Backbone.View.extend({
                 view.render();
             },
             show_result_msg = function () {
-                if (self.model.isCorrect()) {
+                var correct = self.model.isCorrect();
+                if (_.isUndefined(correct)) {
+                    MOOC.alerts.show(MOOC.alerts.INFO,
+                                     MOOC.trans.classroom.answersSent,
+                                     MOOC.trans.classroom.answersUnknown);
+                } else if (correct) {
                     MOOC.alerts.show(MOOC.alerts.SUCCESS,
                                      MOOC.trans.classroom.answersSent,
                                      MOOC.trans.classroom.answersCorrect);
@@ -576,14 +584,14 @@ MOOC.views.Option = Backbone.View.extend({
             if (this.reply && this.reply.get('option') === this.model.get('id')) {
                 if (optiontype === 't') {
                     attributes.value = this.reply.get('value');
-                    if (solution) {
+                    if (!(_.isUndefined(solution) || _.isNull(solution))) {
                         attributes['class'] = this.model.isCorrect(this.reply) ? 'correct' : 'incorrect';
                     }
                 } else {
                     if (this.reply.get('value')) {
                         attributes.checked = 'checked';
                     }
-                    if (!_.isUndefined(solution)) {
+                    if (!(_.isUndefined(solution) || _.isNull(solution))) {
                         attributes['class'] = this.model.isCorrect(this.reply) ? 'correct' : 'incorrect';
                     }
                 }
