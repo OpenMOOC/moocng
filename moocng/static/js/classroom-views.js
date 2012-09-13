@@ -352,11 +352,16 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         toExecute.push(_.bind(function (callback) {
             var height = this.getVideoHeight(),
                 unit = MOOC.models.course.getByKQ(this.model),
-                html;
+                html = "";
 
-            html = '<iframe id="ytplayer" width="100%" height="' + height + 'px" ';
-            html += 'src="http://www.youtube.com/embed/' + this.model.get("questionInstance").get("solution");
-            html += '" frameborder="0" allowfullscreen></iframe>';
+            if (!_.isNull(this.model.get("questionInstance").get("solution"))) {
+                html = '<iframe id="ytplayer" width="100%" height="' + height + 'px" ';
+                html += 'src="http://www.youtube.com/embed/' + this.model.get("questionInstance").get("solution");
+                html += '" frameborder="0" allowfullscreen></iframe>';
+            } else {
+                MOOC.alerts.show(MOOC.alerts.INFO, MOOC.trans.api.solutionNotReadyTitle, MOOC.trans.api.solutionNotReady);
+            }
+
             $("#kq-video").html(html);
             $("#kq-video").css("height", "auto");
             $("#kq-q-buttons").addClass("hide");
