@@ -410,6 +410,13 @@ MOOC.views.Question = Backbone.View.extend({
         this.$el.css("height", "auto");
 
         $("#kq-q-buttons").removeClass("hide");
+
+        if (this.model.isActive()) {
+            $("#kq-q-submit").attr("disabled", false);
+        } else {
+            $("#kq-q-submit").attr("disabled", "disabled");
+        }
+
         $("#kq-q-showkq")
             .unbind('click.QuestionView')
             .bind('click.QuestionView', function () {

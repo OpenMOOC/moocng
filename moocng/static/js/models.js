@@ -127,6 +127,29 @@ MOOC.models.Question = Backbone.Model.extend({
         return this.get('optionList').all(function (opt) {
             return opt.isCorrect(answer.getReply(opt.get('id')));
         });
+    },
+
+    isActive: function () {
+        "use strict";
+        var id = this.id,
+            unit;
+
+        unit = MOOC.models.course.find(function (u) {
+            var knowledgeQuantumList = u.get("knowledgeQuantumList");
+            if (_.isNull(knowledgeQuantumList)) { return false; }
+            return knowledgeQuantumList.any(function (kq) {
+                var url = kq.get("question");
+                if (_.isNull(url)) { return false; }
+                url = url.split('/');
+                url = url[url.length - 2];
+                return url === id;
+            });
+        });
+
+        if (!_.isUndefined(unit) && unit.get("type") !== 'n' && this.has("solution")) {
+            return false;
+        }
+        return true;
     }
 });
 
