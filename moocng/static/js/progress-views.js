@@ -21,6 +21,11 @@ if (_.isUndefined(window.MOOC)) {
 
 MOOC.views = {};
 
+MOOC.views.capitalize = function (text) {
+    "use strict";
+    return text.charAt(0).toUpperCase() + text.slice(1);
+};
+
 MOOC.views.Unit = Backbone.View.extend({
     events: {
         "click": "showUnit"
@@ -57,7 +62,7 @@ MOOC.views.Unit = Backbone.View.extend({
                 html += "<li title='" + kq.get("title") + "'><b>" + kq.truncateTitle(40) + "</b>";
                 if (kq.get("completed")) {
                     if (kq.get("correct")) {
-                        html += '<span class="badge badge-success pull-right"><i class="icon-ok icon-white"></i> ' + MOOC.trans.progress.correct2 + '</span>';
+                        html += '<span class="badge badge-success pull-right"><i class="icon-ok icon-white"></i> ' + MOOC.views.capitalize(MOOC.trans.progress.correct) + '</span>';
                     } else {
                         html += '<span class="badge badge-important pull-right"><i class="icon-remove icon-white"></i> ' + MOOC.trans.progress.incorrect + '</span>';
                     }
