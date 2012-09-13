@@ -47,13 +47,23 @@ def calculate_kq_mark(kq, user):
     from moocng.courses.models import Question
     try:
         db = get_db()
-        answers = db.get_collection('answers')
-        user_answer_list = answers.find_one({'user': user.id}, safe=True)
-        if user_answer_list is not None:
-            question = Question.objects.filter(kq=kq)
-            if question:
+        question = Question.objects.filter(kq=kq)
+        if question:
+            answers = db.get_collection('answers')
+            user_answer_list = answers.find_one({'user': user.id}, safe=True)
+            if user_answer_list is not None:
                 answer = user_answer_list.get('questions', {}).get(unicode(question[0].id))
                 if answer and question[0].is_correct(answer):
+                    return (normalize_kq_weight(kq) * 10.0) / 100
+                else:
+                    if kq.unit.deadline is not None and kq.unit.deadline > datetime.now():
+                        return 0
+        else:
+            activity = db.get_collection('activity')
+            user_activity_list = activity.find_one({'user': user.id}, safe=True)
+            if user_activity_list is not None:
+                visited_kqs = user_activity_list.get('courses', {}).get(unicode(kq.unit.course.id), {}).get('kqs', [])
+                if unicode(kq.id) in visited_kqs:
                     return (normalize_kq_weight(kq) * 10.0) / 100
                 else:
                     if kq.unit.deadline is not None and kq.unit.deadline > datetime.now():
