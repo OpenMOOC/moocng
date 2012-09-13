@@ -15,14 +15,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-13 06:36-0500\n"
+"POT-Creation-Date: 2012-09-13 09:56-0500\n"
 "PO-Revision-Date: 2012-08-01 14:24+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
-"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: es_ES\n"
 
 #: settings.py:70
 msgid "English"
@@ -94,16 +94,16 @@ msgstr ""
 "apropiado. Pronto contactaremos con usted para informarle del estado del "
 "proceso."
 
-#: courses/admin.py:165 courses/admin.py:212
+#: courses/admin.py:169 courses/admin.py:216 courses/admin.py:262
 #, python-format
 msgid "%(name)s object with primary key %(key)r does not exist."
 msgstr "El objeto %(name)s con clave primaria %(key)r no existe."
 
-#: courses/admin.py:182
+#: courses/admin.py:186
 msgid "Edit options for question"
 msgstr "Editar las opciones de la pregunta"
 
-#: courses/admin.py:219
+#: courses/admin.py:223
 #, python-format
 msgid "Option %(option)d for question %(question)s does not exist."
 msgstr "La opción %(option)d de la pregunta %(question)s no existe."
@@ -116,11 +116,11 @@ msgstr "Comunicados del %(course_title)s"
 #: courses/feeds.py:35
 #, python-format
 msgid ""
-"Announcements of the online course \"%(course_title)s\" on the platform "
-"\"%(site_name)s\"."
+"Announcements of the online course \"%(course_title)s\" on the platform \"%"
+"(site_name)s\"."
 msgstr ""
-"Comunicados del curso online \"%(course_title)s\" en la plataforma "
-"\"%(site_name)s\"."
+"Comunicados del curso online \"%(course_title)s\" en la plataforma \"%"
+"(site_name)s\"."
 
 #: courses/forms.py:24
 msgid "The deadline date is mandatory for homework and exams."
@@ -328,6 +328,10 @@ msgid "Unknown error"
 msgstr "Error desconocido"
 
 #: courses/templates/admin/courses/question/change_form.html:16
+msgid "Process video"
+msgstr "Procesar vídeo"
+
+#: courses/templates/admin/courses/question/change_form.html:17
 msgid "Options"
 msgstr "Opciones"
 

@@ -20,7 +20,7 @@ from django.contrib.admin.util import unquote
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.db import models
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.template.response import TemplateResponse
 from django.utils import simplejson
 from django.utils.decorators import method_decorator
@@ -37,6 +37,7 @@ from moocng.courses.forms import UnitForm
 from moocng.courses.models import Course, Announcement, Unit, KnowledgeQuantum
 from moocng.courses.models import Question, Option, Attachment
 from moocng.courses.widgets import ImageReadOnlyWidget
+from moocng.videos.tasks import process_video_task
 
 
 logger = logging.getLogger(__name__)
@@ -99,6 +100,9 @@ class QuestionAdmin(admin.ModelAdmin):
             url(r'^(.+)/options/(.+)$',
                 self.admin_site.admin_view(self.edit_option),
                 name='courses_question_option'),
+            url(r'^(.+)/processvideo/$',
+                self.admin_site.admin_view(self.process_video),
+                name='courses_process_video'),
             ) + super(QuestionAdmin, self).get_urls()
 
     def get_form(self, request, obj=None, **kwargs):
@@ -243,6 +247,25 @@ class QuestionAdmin(admin.ModelAdmin):
                 }
             return HttpResponse(simplejson.dumps(data),
                                 mimetype='application/json')
+
+    @csrf_protect_m
+    def process_video(self, request, object_id):
+        model = self.model
+        opts = model._meta
+
+        obj = self.get_object(request, unquote(object_id))
+
+        if not self.has_change_permission(request, obj):
+            raise PermissionDenied
+
+        if obj is None:
+            raise Http404(_('%(name)s object with primary key %(key)r does not exist.')
+                          % {'name': force_unicode(opts.verbose_name),
+                             'key': escape(object_id)})
+
+        process_video_task.delay(obj)
+
+        return HttpResponseRedirect('..')
 
 
 class OptionAdmin(admin.ModelAdmin):
