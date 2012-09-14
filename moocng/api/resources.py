@@ -27,7 +27,7 @@ from moocng.api.authentication import DjangoAuthentication
 from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment)
-from moocng.courses.utils import extract_YT_video_id
+from moocng.courses.utils import extract_YT_video_id, normalize_kq_weight
 
 
 class UnitResource(ModelResource):
@@ -47,6 +47,7 @@ class KnowledgeQuantumResource(ModelResource):
     videoID = fields.CharField(readonly=True)
     correct = fields.BooleanField()
     completed = fields.BooleanField()
+    normalized_weight = fields.IntegerField()
 
     class Meta:
         queryset = KnowledgeQuantum.objects.all()
@@ -73,6 +74,9 @@ class KnowledgeQuantumResource(ModelResource):
         return super(KnowledgeQuantumResource, self).dispatch(request_type,
                                                               request,
                                                               **kwargs)
+
+    def dehydrate_normalized_weight(self, bundle):
+        return normalize_kq_weight(bundle.obj)
 
     def dehydrate_question(self, bundle):
         question = bundle.data['question']

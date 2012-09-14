@@ -212,7 +212,8 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
             questionInstance: null,
             completed: false,
             correct: null,
-            attachmentList: null
+            attachmentList: null,
+            normalized_weight: 0
         };
     },
 
@@ -266,7 +267,11 @@ MOOC.models.Unit = Backbone.Model.extend({
         "use strict";
         var kqs = this.get("knowledgeQuantumList").length,
             progress = this.get("knowledgeQuantumList").where(conditions),
-            result = (progress.length * 100) / kqs;
+            result = 0;
+
+        _.each(progress, function (kq) {
+            result += kq.get("normalized_weight");
+        });
 
         if (!_.isNumber(result) || _.isNaN(result)) {
             result = 0;

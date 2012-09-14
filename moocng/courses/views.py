@@ -127,7 +127,7 @@ def course_progress(request, course_slug):
     return render_to_response('courses/progress.html', {
         'course': course,
         'unit_list': units,
-        'is_enrolled': is_enrolled,
+        'is_enrolled': is_enrolled, #required due course nav templatetag
     }, context_instance=RequestContext(request))
 
 
