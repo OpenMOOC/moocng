@@ -102,10 +102,18 @@ class Unit(Sortable):
     unittype = models.CharField(verbose_name=_(u'Type'), choices=UNIT_TYPES,
                                 max_length=1, default=UNIT_TYPES[0][0])
     start = models.DateTimeField(verbose_name=_(u'Start'),
-                                 null=True, blank=True)
+                                 null=True, blank=True,
+                                 help_text=_(u'Until this date is reached, no '
+                                             u'contents of this module will '
+                                             u'be shown to the students.'))
     deadline = models.DateTimeField(verbose_name=_(u'Deadline'),
-                                    null=True, blank=True)
-    weight = PercentField(verbose_name=_(u'Weight'), null=False, default=0, help_text='0-100%')
+                                    null=True, blank=True,
+                                    help_text=_(u'Until this date is reached, '
+                                                u'the students will be able '
+                                                u'to modify their answers, '
+                                                u"but won't see the solution"))
+    weight = PercentField(verbose_name=_(u'Weight'), null=False, default=0,
+                          help_text='0-100%')
 
     class Meta(Sortable.Meta):
         verbose_name = _(u'unit')
@@ -119,7 +127,8 @@ class KnowledgeQuantum(Sortable):
 
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
     unit = SortableForeignKey(Unit, verbose_name=_(u'Unit'))
-    weight = PercentField(verbose_name=_(u'Weight'), null=False, default=0, help_text='0-100%')
+    weight = PercentField(verbose_name=_(u'Weight'), null=False, default=0,
+                          help_text='0-100%')
     video = models.URLField(verbose_name=_(u'Video'))
     teacher_comments = HTMLField(verbose_name=_(u'Teacher comments'),
                                  blank=True, null=False)
@@ -157,7 +166,11 @@ class Question(models.Model):
 
     kq = models.ForeignKey(KnowledgeQuantum, unique=True,
                            verbose_name=_(u'Nugget'))
-    solution = models.URLField(verbose_name=_(u'Solution video'))
+    solution = models.URLField(verbose_name=_(u'Solution video'),
+                               help_text=_(u'If this belongs to a homework or '
+                                           u'an exam, then the stundents '
+                                           u"won't see this video until the "
+                                           u'deadline is reached.'))
     last_frame = models.ImageField(
         verbose_name=_(u"Last frame of the nugget's video"),
         upload_to='questions', blank=True)
