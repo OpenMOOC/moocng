@@ -78,8 +78,10 @@
     <footer>
       <ul>
         <li><a href="/legal/">{% trans "Legal" %}</a></li>
-        <li><a href="/copyright/">{{ site.name }} Copyright {% now "Y" %}</a></li>
+        <li><a href="/copyright/">&copy; {% now "Y" %} {{ site.name }} {% trans "All rights reserved" %}</a></li>
+        {% if show_tos %}
         <li><a href="/tos/">{% trans "Terms of Use" %}</a></li>
+        {% endif %}
         <li><a href="/complaints/">{% trans "Contact" %}</a></li>
       </ul>
     </footer>

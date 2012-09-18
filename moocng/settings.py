@@ -263,6 +263,8 @@ MOOCNG_THEME = {
 #    'moocng_css': u'',
     }
 
+#SHOW_TOS = True
+
 FFMPEG = '/usr/bin/ffmpeg'
 
 # Celery settings

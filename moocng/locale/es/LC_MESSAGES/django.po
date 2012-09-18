@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-14 07:17-0500\n"
-"PO-Revision-Date: 2012-08-01 14:24+0200\n"
+"POT-Creation-Date: 2012-09-18 03:34-0500\n"
+"PO-Revision-Date: 2012-09-18 10:35+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
 "Language: es_ES\n"
@@ -77,7 +77,7 @@ msgid "You must accept the Terms of Use"
 msgstr "Debe aceptar los Términos de Uso"
 
 #: complaints/templates/complaints.html:16
-#: complaints/templates/complaints_sent.html:16 templates/base.html:83
+#: complaints/templates/complaints_sent.html:16 templates/base.html:85
 msgid "Contact"
 msgstr "Contacto"
 
@@ -385,12 +385,12 @@ msgstr "Texto"
 #: courses/templates/admin/courses/question/options.html:61
 #: courses/templates/admin/courses/question/options.html:80
 msgid "Checkbox"
-msgstr ""
+msgstr "Casilla de verificación"
 
 #: courses/templates/admin/courses/question/options.html:62
 #: courses/templates/admin/courses/question/options.html:81
 msgid "Radio"
-msgstr ""
+msgstr "Botón excluyente"
 
 #: courses/templates/admin/courses/question/options.html:67
 msgid "Property"
@@ -402,7 +402,7 @@ msgstr "Valor"
 
 #: courses/templates/admin/courses/question/options.html:72
 msgid "Id"
-msgstr ""
+msgstr "Id"
 
 #: courses/templates/admin/courses/question/options.html:98
 msgid "width"
@@ -691,7 +691,11 @@ msgstr "Metodología"
 msgid "Legal"
 msgstr "Condiciones legales"
 
-#: templates/base.html:82
+#: templates/base.html:81
+msgid "All rights reserved"
+msgstr "Todos los derechos reservados"
+
+#: templates/base.html:83
 msgid "Terms of Use"
 msgstr "Términos de uso"
 

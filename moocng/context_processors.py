@@ -33,7 +33,7 @@ def site(request):
 
 
 def theme(request):
-    theme = {
+    context = {
         'theme': {
             'logo': settings.STATIC_URL + u'img/logo.png',
             'subtitle': u'Knowledge for the masses',
@@ -46,11 +46,16 @@ def theme(request):
         }
 
     try:
-        theme['theme'].update(settings.MOOCNG_THEME)
+        context['theme'].update(settings.MOOCNG_THEME)
     except AttributeError:
         pass
 
-    return theme
+    try:
+        context['show_tos'] = settings.SHOW_TOS
+    except AttributeError:
+        context['show_tos'] = True
+
+    return context
 
 
 def idp_urls(request):
