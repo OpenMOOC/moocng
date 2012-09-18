@@ -15,14 +15,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-18 03:34-0500\n"
+"POT-Creation-Date: 2012-09-18 07:28-0500\n"
 "PO-Revision-Date: 2012-09-18 10:35+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
-"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: es_ES\n"
 
 #: settings.py:70
 msgid "English"
@@ -116,11 +116,11 @@ msgstr "Comunicados del %(course_title)s"
 #: courses/feeds.py:35
 #, python-format
 msgid ""
-"Announcements of the online course \"%(course_title)s\" on the platform "
-"\"%(site_name)s\"."
+"Announcements of the online course \"%(course_title)s\" on the platform \"%"
+"(site_name)s\"."
 msgstr ""
-"Comunicados del curso online \"%(course_title)s\" en la plataforma "
-"\"%(site_name)s\"."
+"Comunicados del curso online \"%(course_title)s\" en la plataforma \"%"
+"(site_name)s\"."
 
 #: courses/forms.py:24
 msgid "The deadline date is mandatory for homework and exams."
@@ -167,7 +167,7 @@ msgstr "Fecha de inicio"
 msgid "End date"
 msgstr "Fecha de fin"
 
-#: courses/models.py:49 courses/templates/courses/overview.html:67
+#: courses/models.py:49 courses/templates/courses/overview.html:70
 msgid "Teachers"
 msgstr "Profesores"
 
@@ -325,12 +325,17 @@ msgstr "opción"
 msgid "options"
 msgstr "opciones"
 
-#: courses/views.py:60
+#: courses/views.py:61
 #, python-format
 msgid "Congratulations, you have successfully enroll in the course %(course)s"
 msgstr "Enhorabuena, te has matriculado correctamente en el curso %(course)s"
 
-#: courses/views.py:99 courses/views.py:125
+#: courses/views.py:67
+#, python-format
+msgid "You have successfully unenroll in the course %(course)s"
+msgstr "Te has desmatriculado correctamente del curso %(course)s"
+
+#: courses/views.py:106 courses/views.py:132
 msgid "Your are not enrolled in this course"
 msgstr "No estás matriculado en este curso"
 
@@ -582,44 +587,48 @@ msgstr "Requisitos recomendados"
 msgid "You are enrolled in this course"
 msgstr "Estás matriculado en este curso"
 
-#: courses/templates/courses/overview.html:58
+#: courses/templates/courses/overview.html:54
+msgid "Unenroll me"
+msgstr "Desmatricúlame"
+
+#: courses/templates/courses/overview.html:61
 msgid "Enroll me in this course"
 msgstr "Matricúlame en este curso"
 
-#: courses/templates/courses/overview.html:61
+#: courses/templates/courses/overview.html:64
 #, python-format
 msgid "Register in %(site_name)s to enroll in this course"
 msgstr "Registrarme en %(site_name)s para matricularme en este curso"
 
-#: courses/templates/courses/overview.html:77
+#: courses/templates/courses/overview.html:80
 msgid "Information"
 msgstr "Información"
 
-#: courses/templates/courses/overview.html:79
+#: courses/templates/courses/overview.html:82
 msgid "Course Code"
 msgstr "Código del Curso"
 
-#: courses/templates/courses/overview.html:81
+#: courses/templates/courses/overview.html:84
 msgid "Classes Start"
 msgstr "Inicio de las Clases"
 
-#: courses/templates/courses/overview.html:84
+#: courses/templates/courses/overview.html:87
 msgid "Classes End"
 msgstr "Final de las Clases"
 
-#: courses/templates/courses/overview.html:87
+#: courses/templates/courses/overview.html:90
 msgid "Estimated Effort"
 msgstr "Esfuerzo Estimado"
 
-#: courses/templates/courses/overview.html:95
+#: courses/templates/courses/overview.html:98
 msgid "Announcements"
 msgstr "Comunicados"
 
-#: courses/templates/courses/overview.html:108
+#: courses/templates/courses/overview.html:111
 msgid "Syllabus"
 msgstr "Temario"
 
-#: courses/templates/courses/overview.html:121
+#: courses/templates/courses/overview.html:124
 msgid "Share"
 msgstr "Comparte"
 

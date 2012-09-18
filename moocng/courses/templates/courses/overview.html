@@ -50,6 +50,9 @@
         {% if is_enrolled %}
             <div class="alert alert-success">
                 <strong>{% trans "You are enrolled in this course" %}</strong>
+                    <form method="post" action="{% url course_overview course.slug %}">{% csrf_token %}
+                        <input type="submit" class="btn btn-medium btn-primary" value="{% trans "Unenroll me" %}" />
+                    </form>
             </div>
         {% else %}
             <div style="text-align: center">

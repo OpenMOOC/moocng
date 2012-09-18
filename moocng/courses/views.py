@@ -54,11 +54,18 @@ def course_overview(request, course_slug):
         is_enrolled = False
 
     if request.method == 'POST':
-        course.students.add(request.user)
-        course.save()
-        success(request,
-                _(u'Congratulations, you have successfully enroll in the course %(course)s')
-                % {'course': unicode(course)})
+        if not is_enrolled:
+            course.students.add(request.user)
+            course.save()
+            success(request,
+                    _(u'Congratulations, you have successfully enroll in the course %(course)s')
+                    % {'course': unicode(course)})
+        else:
+            course.students.remove(request.user)
+            course.save()
+            success(request,
+                    _(u'You have successfully unenroll in the course %(course)s')
+                    % {'course': unicode(course)})
         return HttpResponseRedirect(reverse('course_overview',
                                             args=(course.slug, )))
 
