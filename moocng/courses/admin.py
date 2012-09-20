@@ -33,7 +33,7 @@ from celery.task.control import inspect
 
 from adminsortable.admin import SortableAdmin
 
-from moocng.courses.forms import UnitForm
+from moocng.courses.forms import UnitForm, AttachmentForm
 from moocng.courses.models import Course, Announcement, Unit, KnowledgeQuantum
 from moocng.courses.models import Question, Option, Attachment
 from moocng.courses.widgets import ImageReadOnlyWidget
@@ -66,7 +66,9 @@ class UnitAdmin(SortableAdmin):
 
 
 class AttachmentInline(admin.TabularInline):
+
     model = Attachment
+    form = AttachmentForm
 
 
 class KnowledgeQuantumAdmin(SortableAdmin):

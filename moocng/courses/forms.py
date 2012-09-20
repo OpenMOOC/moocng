@@ -12,10 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
 from django.forms import ModelForm, ValidationError
+from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 
-from moocng.courses.models import Unit
+from moocng.courses.models import Unit, Attachment
 
 
 class UnitForm(ModelForm):
@@ -39,3 +42,15 @@ class UnitForm(ModelForm):
             raise ValidationError(self.error_messages['start_later_deadline'])
 
         return self.cleaned_data
+
+
+class AttachmentForm(ModelForm):
+
+    class Meta:
+        model = Attachment
+
+    def clean_attachment(self):
+        file_name, file_ext = os.path.splitext(self.cleaned_data["attachment"].name)
+        file_name = slugify(file_name)
+        self.cleaned_data["attachment"].name = "%s%s" % (file_name, file_ext)
+        return self.cleaned_data["attachment"]
