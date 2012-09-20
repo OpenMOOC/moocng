@@ -91,7 +91,7 @@ class QuestionAdmin(admin.ModelAdmin):
     list_filter = ('kq', )
     formfield_overrides = {
         models.ImageField: {'widget': ImageReadOnlyWidget},
-        }
+    }
 
     def get_urls(self):
         return patterns(
@@ -105,7 +105,7 @@ class QuestionAdmin(admin.ModelAdmin):
             url(r'^(.+)/processvideo/$',
                 self.admin_site.admin_view(self.process_video),
                 name='courses_process_video'),
-            ) + super(QuestionAdmin, self).get_urls()
+        ) + super(QuestionAdmin, self).get_urls()
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(QuestionAdmin, self).get_form(request, obj, **kwargs)
@@ -196,13 +196,12 @@ class QuestionAdmin(admin.ModelAdmin):
                 'add': False,
                 'change': True,
                 'options_json': simplejson.dumps(json),
-                }
+            }
             return TemplateResponse(request, [
-                    "admin/%s/%s/options.html" % (app_label, opts.object_name.lower()),
-                    "admin/%s/options.html" % app_label,
-                    "admin/options.html"
-                    ], context, current_app=self.admin_site.name)
-
+                "admin/%s/%s/options.html" % (app_label, opts.object_name.lower()),
+                "admin/%s/options.html" % app_label,
+                "admin/options.html"
+            ], context, current_app=self.admin_site.name)
 
     @csrf_protect_m
     def edit_option(self, request, object_id, option_id):
@@ -246,7 +245,7 @@ class QuestionAdmin(admin.ModelAdmin):
                 'solution': option.solution,
                 'x': option.x, 'y': option.y,
                 'width': option.width, 'height': option.height,
-                }
+            }
             return HttpResponse(simplejson.dumps(data),
                                 mimetype='application/json')
 
