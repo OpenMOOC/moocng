@@ -476,7 +476,9 @@ MOOC.views.Question = Backbone.View.extend({
             answer.set('replyList', new MOOC.models.ReplyList(replies));
             answer.set('date', new Date());
 
-            fetch_solutions = _.isNull(self.model.get("solution"));
+            fetch_solutions = self.model.get("optionList").any(function (option) {
+                return _.isNull(option.get("solution"));
+            });
 
             MOOC.ajax.sendAnswer(answer, this.model.get('id'), function (data, textStatus, jqXHR) {
                 if (jqXHR.status === 201 || jqXHR.status === 204) {
