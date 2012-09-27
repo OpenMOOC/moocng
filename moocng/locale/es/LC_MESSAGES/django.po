@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-18 07:28-0500\n"
+"POT-Creation-Date: 2012-09-27 06:49-0500\n"
 "PO-Revision-Date: 2012-09-18 10:35+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -94,16 +94,16 @@ msgstr ""
 "apropiado. Pronto contactaremos con usted para informarle del estado del "
 "proceso."
 
-#: courses/admin.py:169 courses/admin.py:216 courses/admin.py:262
+#: courses/admin.py:171 courses/admin.py:217 courses/admin.py:263
 #, python-format
 msgid "%(name)s object with primary key %(key)r does not exist."
 msgstr "El objeto %(name)s con clave primaria %(key)r no existe."
 
-#: courses/admin.py:186
+#: courses/admin.py:188
 msgid "Edit options for question"
 msgstr "Editar las opciones de la pregunta"
 
-#: courses/admin.py:223
+#: courses/admin.py:224
 #, python-format
 msgid "Option %(option)d for question %(question)s does not exist."
 msgstr "La opción %(option)d de la pregunta %(question)s no existe."
@@ -122,11 +122,11 @@ msgstr ""
 "Comunicados del curso online \"%(course_title)s\" en la plataforma \"%"
 "(site_name)s\"."
 
-#: courses/forms.py:24
+#: courses/forms.py:27
 msgid "The deadline date is mandatory for homework and exams."
 msgstr "La fecha de finalización es obligatoria para las tareas y los examenes"
 
-#: courses/forms.py:25
+#: courses/forms.py:28
 msgid "The start date is later than the deadline."
 msgstr "La fecha de comienzo es posterior a la fecha de finalización"
 
@@ -651,6 +651,10 @@ msgstr "Pendiente"
 #: courses/templates/courses/transcript.html:21
 msgid "Mark"
 msgstr "Calificación"
+
+#: courses/templates/courses/transcript.html:31
+msgid "You are not enrolled in any course"
+msgstr "No estás matriculado en ningún curso"
 
 #: templates/403.html:19
 msgid "Access denied"

@@ -111,7 +111,7 @@
             <h2>{% trans "Syllabus" %}</h2>
             <ul>
                 {% for unit in course.unit_set.all %}
-                     {% if user.is_authenticated %}
+                     {% if is_enrolled %}
                         <li><a href="{% url course_overview course.slug %}classroom/#unit{{ unit.id }}">{{ unit.title }}</a></li>
                      {% else %}
                         <li>{{ unit.title }}</li>

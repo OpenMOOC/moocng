@@ -27,6 +27,8 @@
             </ul>
         {% endif%}
     </div>
+    {% empty %}
+      <p><b>{% trans "You are not enrolled in any course" %}</b></p>
     {% endfor %}
 
   </section>
