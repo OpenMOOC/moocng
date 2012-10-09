@@ -242,7 +242,10 @@ best to configure them to start on the server boot.
   $ chkconfig --add httpd
   $ chkconfig --add rabbitmq-server
   $ chkconfig --add postgresql
+  $ chkconfig --add mongodb
+  $ chkconfig --add celeryd
   $ chkconfig postgresql on
   $ chkconfig httpd on
   $ chkconfig rabbitmq-server on
-  $ chkconfig postgresql on
+  $ chkconfig mongodb on
+  $ chkconfig celeryd on

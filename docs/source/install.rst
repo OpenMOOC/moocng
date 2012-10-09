@@ -27,6 +27,22 @@ compiles a couple of Python modules.
   # Debian/Ubuntu example:
   $ apt-get install build-essential python-dev libpq-dev libjpeg-turbo8-dev libpng12-dev
 
+Installing the web server
+.........................
+
+The packages needed for installing Apache and wsgi support are:
+
+.. code-block:: bash
+
+  # Fedora example:
+  $ yum install httpd mod_wsgi
+
+  # Debian/Ubuntu example:
+  $ apt-get install apache2 libapache2-mod-wsgi
+
+.. note::
+  If you use someting different from Apache, please check the documentation
+  of your web server about how to integrate it with a WSGI application.
 
 Creating a virtualenv
 ---------------------
@@ -158,6 +174,9 @@ database because it is the RDMS we recommend. Check the
 
 .. _`Django documentation`: http://docs.djangoproject.com/
 
+PostgreSQL
+..........
+
 The first step is to install database server. It is recommended to use the
 packages for your Linux distribution:
 
@@ -228,7 +247,30 @@ database using the *moocng* user and the password you assigned to it:
   this into production you may consider checking other Postgresql
   configuration settings to improve its performance and security.
 
-TODO: MongoDB installation
+MongoDB
+.......
+
+For CentOS or Fedora we need to add a new repository to the system, so we must
+create the ``/etc/yum.repos.d/10gen.repo`` file.
+
+Then, edit it and add this content:
+
+.. code-block:: text
+
+    [10gen]
+    name=10gen Repository
+    baseurl=http://downloads-distro.mongodb.org/repo/redhat/os/x86_64
+    gpgcheck=0
+    enabled=1
+
+After adding the repo we only have to install the packages:
+
+.. code-block:: bash
+
+    yum install mongo-10gen mongo-10gen-server
+
+For Debian based distributions there are guides that can be found at
+http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian-or-ubuntu-linux/
 
 Creating the database schema
 ----------------------------
@@ -318,6 +360,19 @@ needs to have permissions to access to that virtual host:
   $ rabbitmqctl add_vhost moocng
   $ rabbitmqctl set_permissions -p moocng moocng ".*" ".*" ".*"
 
+Installing Celery's service script
+..................................
+
+Celery is installed with moocng, but we need to create a service script to
+control its execution.
+
+.. code-block:: bash
+
+    $ cp /var/www/moocng/moocng/celeryd /etc/init.d/
+    $ chmod +x /etc/init.d/celeryd
+
+With these two commands we'll have the needed service script.
+
 Collecting static files
 -----------------------
 
@@ -342,25 +397,6 @@ Django command just for that:
  Are you sure you want to do this?
 
  Type 'yes' to continue, or 'no' to cancel: yes
-
-
-Installing the web server
--------------------------
-
-The packages needed for installing Apache and wsgi support are:
-
-.. code-block:: bash
-
-  # Fedora example:
-  $ yum install httpd mod_wsgi
-
-  # Debian/Ubuntu example:
-  $ apt-get install apache2 libapache2-mod-wsgi
-
-.. note::
-  If you use someting different from Apache, please check the documentation
-  of your web server about how to integrate it with a WSGI application.
-
 
 Development Installation
 ------------------------
