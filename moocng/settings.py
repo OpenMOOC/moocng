@@ -309,7 +309,7 @@ SAML_CONFIG = {
     'service': {
         # we are just a lonely SP
         'sp' : {
-            'name': 'PEER SP',
+            'name': 'Moocng SP',
             'endpoints': {
                 # url and binding to the assetion consumer service view
                 # do not change the binding or service name
