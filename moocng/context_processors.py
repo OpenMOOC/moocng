@@ -42,8 +42,8 @@ def theme(request):
             'right_banner2': settings.STATIC_URL + u'img/right_banner2.jpg',
             'bootstrap_css': settings.STATIC_URL + u'css/bootstrap.min.css',
             'moocng_css': settings.STATIC_URL + u'css/moocng.css',
-            }
         }
+    }
 
     try:
         context['theme'].update(settings.MOOCNG_THEME)
@@ -55,6 +55,15 @@ def theme(request):
     except AttributeError:
         context['show_tos'] = True
 
+    return context
+
+
+def google_analytics(request):
+    context = {}
+    try:
+        context['google_analytics'] = settings.GOOGLE_ANALYTICS_CODE
+    except AttributeError:
+        context['google_analytics'] = ''
     return context
 
 
@@ -78,4 +87,4 @@ def idp_urls(request):
         'registry_url': registry_url,
         'profile_url': profile_url,
         'changepw_url': changepw_url,
-        }
+    }

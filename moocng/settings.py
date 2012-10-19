@@ -230,6 +230,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'moocng.context_processors.site',
     'moocng.context_processors.theme',
     'moocng.context_processors.idp_urls',
+    'moocng.context_processors.google_analytics',
 )
 
 AUTHENTICATION_BACKENDS = (
