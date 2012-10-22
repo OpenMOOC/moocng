@@ -357,7 +357,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
             if (!_.isNull(this.model.get("questionInstance").get("solution"))) {
                 html = '<iframe id="ytplayer" width="100%" height="' + height + 'px" ';
-                html += 'src="http://www.youtube.com/embed/' + this.model.get("questionInstance").get("solution");
+                html += 'src="//www.youtube.com/embed/' + this.model.get("questionInstance").get("solution");
                 html += '?rel=0';
                 html += '" frameborder="0" allowfullscreen></iframe>';
             } else {
