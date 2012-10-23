@@ -82,7 +82,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             supplementary;
 
         html = '<iframe id="ytplayer" width="100%" height="' + height + 'px" ';
-        html += 'src="http://www.youtube.com/embed/' + this.model.get("videoID");
+        html += 'src="//www.youtube.com/embed/' + this.model.get("videoID");
         html += '?rel=0';
         html += '" frameborder="0" allowfullscreen></iframe>';
         $("#kq-video").html(html);
