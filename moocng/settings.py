@@ -254,6 +254,8 @@ TINYMCE_DEFAULT_CONFIG = {
 
 GOOGLE_ANALYTICS_CODE = ''
 
+GRAVATAR_URL_PREFIX = '//www.gravatar.com/'
+
 MOOCNG_THEME = {
 #    'logo': u'',
 #    'subtitle': u'',
