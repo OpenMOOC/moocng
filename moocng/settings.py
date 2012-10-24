@@ -180,6 +180,7 @@ INSTALLED_APPS = (
     'moocng.portal',
     'moocng.videos',
     'moocng.complaints',
+    'moocng.teacheradmin',
     'djangosaml2',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
@@ -269,6 +270,9 @@ MOOCNG_THEME = {
 #SHOW_TOS = True
 
 FFMPEG = '/usr/bin/ffmpeg'
+
+# Let authenticated users create their own courses
+ALLOW_PUBLIC_COURSE_CREATION = False
 
 # Celery settings
 import djcelery
