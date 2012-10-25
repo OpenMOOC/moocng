@@ -15,14 +15,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-27 06:49-0500\n"
+"POT-Creation-Date: 2012-10-25 04:01-0500\n"
 "PO-Revision-Date: 2012-09-18 10:35+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
+"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es_ES\n"
 
 #: settings.py:70
 msgid "English"
@@ -116,11 +116,11 @@ msgstr "Comunicados del %(course_title)s"
 #: courses/feeds.py:35
 #, python-format
 msgid ""
-"Announcements of the online course \"%(course_title)s\" on the platform \"%"
-"(site_name)s\"."
+"Announcements of the online course \"%(course_title)s\" on the platform "
+"\"%(site_name)s\"."
 msgstr ""
-"Comunicados del curso online \"%(course_title)s\" en la plataforma \"%"
-"(site_name)s\"."
+"Comunicados del curso online \"%(course_title)s\" en la plataforma "
+"\"%(site_name)s\"."
 
 #: courses/forms.py:27
 msgid "The deadline date is mandatory for homework and exams."
@@ -168,6 +168,7 @@ msgid "End date"
 msgstr "Fecha de fin"
 
 #: courses/models.py:49 courses/templates/courses/overview.html:70
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:11
 msgid "Teachers"
 msgstr "Profesores"
 
@@ -601,6 +602,7 @@ msgid "Register in %(site_name)s to enroll in this course"
 msgstr "Registrarme en %(site_name)s para matricularme en este curso"
 
 #: courses/templates/courses/overview.html:80
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:10
 msgid "Information"
 msgstr "Información"
 
@@ -621,6 +623,7 @@ msgid "Estimated Effort"
 msgstr "Esfuerzo Estimado"
 
 #: courses/templates/courses/overview.html:98
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:13
 msgid "Announcements"
 msgstr "Comunicados"
 
@@ -655,6 +658,26 @@ msgstr "Calificación"
 #: courses/templates/courses/transcript.html:31
 msgid "You are not enrolled in any course"
 msgstr "No estás matriculado en ningún curso"
+
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:9
+msgid "Statistics"
+msgstr "Estadísticas"
+
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:12
+msgid "Units"
+msgstr "Módulos"
+
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:14
+msgid "Send mail"
+msgstr "Enviar correo"
+
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:21
+msgid "We are sorry"
+msgstr "Lo sentimos"
+
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:22
+msgid "But this section is not available yet."
+msgstr "Pero esta sección aún no está disponible."
 
 #: templates/403.html:19
 msgid "Access denied"

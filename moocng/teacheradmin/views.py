@@ -21,41 +21,46 @@ from moocng.courses.models import Course
 def teacheradmin_stats(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
 
-    return render_to_response('teacheradmin/base_teacheradmin.html', {
+    return render_to_response('teacheradmin/stats.html', {
         'course': course,
     }, context_instance=RequestContext(request))
+
 
 def teacheradmin_units(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
 
-    return render_to_response('teacheradmin/base_teacheradmin.html', {
+    return render_to_response('teacheradmin/units.html', {
         'course': course,
     }, context_instance=RequestContext(request))
+
 
 def teacheradmin_teachers(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
 
-    return render_to_response('teacheradmin/base_teacheradmin.html', {
+    return render_to_response('teacheradmin/teachers.html', {
         'course': course,
     }, context_instance=RequestContext(request))
+
 
 def teacheradmin_info(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
 
-    return render_to_response('teacheradmin/base_teacheradmin.html', {
+    return render_to_response('teacheradmin/info.html', {
         'course': course,
     }, context_instance=RequestContext(request))
+
 
 def teacheradmin_announcements(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
 
-    return render_to_response('teacheradmin/base_teacheradmin.html', {
+    return render_to_response('teacheradmin/announcements.html', {
         'course': course,
     }, context_instance=RequestContext(request))
+
 
 def teacheradmin_emails(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
 
-    return render_to_response('teacheradmin/base_teacheradmin.html', {
+    return render_to_response('teacheradmin/emails.html', {
         'course': course,
     }, context_instance=RequestContext(request))
