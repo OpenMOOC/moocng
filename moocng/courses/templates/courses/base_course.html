@@ -20,6 +20,9 @@
   <li {% block nav-course-progress %}{% endblock %}>
     <a href="{% url course_progress course.slug %}">{% trans "Progress" %}</a>
   </li>
+  <li>
+    <a href="{% url teacheradmin_stats course.slug %}">{% trans "Course administration" %}</a>
+  </li>
 </ul>
 
 {% endif %}

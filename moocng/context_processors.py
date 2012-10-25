@@ -60,14 +60,16 @@ def theme(request):
 
 def google_analytics(request):
     context = {}
+
     try:
         context['google_analytics'] = settings.GOOGLE_ANALYTICS_CODE
     except AttributeError:
         context['google_analytics'] = ''
+
     return context
 
 
-def idp_urls(request):
+def extra_settings(request):
     try:
         registry_url = settings.REGISTRY_URL
     except AttributeError:
@@ -83,8 +85,20 @@ def idp_urls(request):
     except AttributeError:
         changepw_url = '#'
 
+    try:
+        google_analytics = settings.GOOGLE_ANALYTICS_CODE
+    except AttributeError:
+        google_analytics = ''
+
+    try:
+        sandbox = settings.ALLOW_PUBLIC_COURSE_CREATION
+    except AttributeError:
+        sandbox = ''
+
     return {
         'registry_url': registry_url,
         'profile_url': profile_url,
         'changepw_url': changepw_url,
+        'google_analytics': google_analytics,
+        'sandbox': sandbox,
     }

@@ -26,8 +26,8 @@ from django.shortcuts import (get_object_or_404, get_list_or_404,
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
-from moocng.courses.utils import calculate_unit_mark, normalize_unit_weight
 from moocng.courses.models import Course, Unit, Announcement
+from moocng.courses.utils import calculate_unit_mark, normalize_unit_weight
 
 
 def home(request):

@@ -15,9 +15,11 @@
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 
+from moocng.courses.decorators import is_teacher
 from moocng.courses.models import Course
 
 
+@is_teacher
 def teacheradmin_stats(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
 
@@ -26,6 +28,7 @@ def teacheradmin_stats(request, course_slug):
     }, context_instance=RequestContext(request))
 
 
+@is_teacher
 def teacheradmin_units(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
 
@@ -34,6 +37,7 @@ def teacheradmin_units(request, course_slug):
     }, context_instance=RequestContext(request))
 
 
+@is_teacher
 def teacheradmin_teachers(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
 
@@ -42,6 +46,7 @@ def teacheradmin_teachers(request, course_slug):
     }, context_instance=RequestContext(request))
 
 
+@is_teacher
 def teacheradmin_info(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
 

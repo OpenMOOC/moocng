@@ -230,8 +230,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
     'moocng.context_processors.site',
     'moocng.context_processors.theme',
-    'moocng.context_processors.idp_urls',
-    'moocng.context_processors.google_analytics',
+    'moocng.context_processors.extra_settings',
 )
 
 AUTHENTICATION_BACKENDS = (
