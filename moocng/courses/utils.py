@@ -93,3 +93,10 @@ def normalize_unit_weight(unit):
     if total_weight == 0:
         return 100.0 / len(course_unit_list)
     return (unit.weight * 100.0) / total_weight
+
+
+def is_teacher(user, course):
+    is_teacher = False
+    if user.is_authenticated():
+        is_teacher = course.teachers.filter(id=user.id).exists()
+    return is_teacher

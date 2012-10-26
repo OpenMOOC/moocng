@@ -16,18 +16,16 @@ from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404
 
 from moocng.courses.models import Course
+from moocng.courses.utils import is_teacher
 
 
-def is_teacher(original_function=None):
+def is_teacher_or_staff(original_function=None):
 
     def decorated(request, course_slug=None, *args, **kwargs):
         course = get_object_or_404(Course, slug=course_slug)
 
         def teacherness_test(user):
-            is_teacher = False
-            if user.is_authenticated():
-                is_teacher = course.teachers.filter(id=user.id).exists()
-            return is_teacher
+            return is_teacher(user, course) or user.is_staff
 
         decorator = user_passes_test(teacherness_test)
 

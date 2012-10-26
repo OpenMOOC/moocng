@@ -27,7 +27,8 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
 from moocng.courses.models import Course, Unit, Announcement
-from moocng.courses.utils import calculate_unit_mark, normalize_unit_weight
+from moocng.courses.utils import (calculate_unit_mark, normalize_unit_weight,
+                                  is_teacher as is_teacher_test)
 
 
 def home(request):
@@ -50,8 +51,10 @@ def course_overview(request, course_slug):
 
     if request.user.is_authenticated():
         is_enrolled = course.students.filter(id=request.user.id).exists()
+        is_teacher = is_teacher_test(request.user, course)
     else:
         is_enrolled = False
+        is_teacher = False
 
     if request.method == 'POST':
         if not is_enrolled:
@@ -74,6 +77,7 @@ def course_overview(request, course_slug):
     return render_to_response('courses/overview.html', {
             'course': course,
             'is_enrolled': is_enrolled,
+            'is_teacher': is_teacher,
             'request': request,
             'announcements': announcements,
             }, context_instance=RequestContext(request))
@@ -104,11 +108,13 @@ def course_classroom(request, course_slug):
     is_enrolled = course.students.filter(id=request.user.id).exists()
     if not is_enrolled:
         return HttpResponseForbidden(_('Your are not enrolled in this course'))
+    is_teacher = is_teacher_test(request.user, course)
 
     return render_to_response('courses/classroom.html', {
         'course': course,
         'unit_list': units,
         'is_enrolled': is_enrolled,
+        'is_teacher': is_teacher,
     }, context_instance=RequestContext(request))
 
 
@@ -130,11 +136,13 @@ def course_progress(request, course_slug):
     is_enrolled = course.students.filter(id=request.user.id).exists()
     if not is_enrolled:
         return HttpResponseForbidden(_('Your are not enrolled in this course'))
+    is_teacher = is_teacher_test(request.user, course)
 
     return render_to_response('courses/progress.html', {
         'course': course,
         'unit_list': units,
         'is_enrolled': is_enrolled, #required due course nav templatetag
+        'is_teacher': is_teacher,
     }, context_instance=RequestContext(request))
 
 

@@ -5,25 +5,29 @@
 {% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
 
 {% block nav %}
-{% if is_enrolled %}
-
+{% if is_enrolled or is_teacher or user.is_staff %}
 <ul class="nav nav-pills">
   <li {% block nav-course-overview %}{% endblock %}>
     <a href="{% url course_overview course.slug %}">{% trans "Overview" %}</a>
   </li>
+  {% if is_enrolled %}
   <li {% block nav-course-classroom %}{% endblock %}>
     <a href="{% url course_classroom course.slug %}">{% trans "Classes" %}</a>
   </li>
+  {% endif %}
   <li {% block nav-course-discussion %}{% endblock %}>
     <a href="{% askboturl course.slug %}">{% trans "Discussion" %}</a>
   </li>
+  {% if is_enrolled %}
   <li {% block nav-course-progress %}{% endblock %}>
     <a href="{% url course_progress course.slug %}">{% trans "Progress" %}</a>
   </li>
-  <li>
+  {% endif %}
+  {% if is_teacher or user.is_staff %}
+  <li class="pull-right">
     <a href="{% url teacheradmin_stats course.slug %}">{% trans "Course administration" %}</a>
   </li>
+  {% endif %}
 </ul>
-
 {% endif %}
 {% endblock %}
