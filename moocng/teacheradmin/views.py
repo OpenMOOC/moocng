@@ -17,6 +17,7 @@ from django.template import RequestContext
 
 from moocng.courses.models import Course
 from moocng.teacheradmin.decorators import is_teacher_or_staff
+from moocng.teacheradmin.forms import CourseForm
 
 
 @is_teacher_or_staff
@@ -50,11 +51,20 @@ def teacheradmin_teachers(request, course_slug):
 def teacheradmin_info(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
 
+    if request.method == 'POST':
+        form = CourseForm(data=request.POST, instance=course)
+        if form.is_valid():
+            form.save()
+        else:
+            # TODO
+            print form.errors
+
     return render_to_response('teacheradmin/info.html', {
         'course': course,
     }, context_instance=RequestContext(request))
 
 
+@is_teacher_or_staff
 def teacheradmin_announcements(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
 
@@ -63,6 +73,7 @@ def teacheradmin_announcements(request, course_slug):
     }, context_instance=RequestContext(request))
 
 
+@is_teacher_or_staff
 def teacheradmin_emails(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
 

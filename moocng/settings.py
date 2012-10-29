@@ -89,6 +89,9 @@ USE_I18N = True
 # calendars according to the current locale.
 USE_L10N = True
 
+# Use custom formats
+FORMAT_MODULE_PATH = 'moocng.formats'
+
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
 
