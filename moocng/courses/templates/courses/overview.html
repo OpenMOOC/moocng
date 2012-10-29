@@ -68,12 +68,15 @@
 
         <div class="box">
             <h2>{% trans "Teachers" %}</h2>
+            <ul class="unstyled">
             {% for teacher in course.teachers.all %}
-                <div class="teacher">
-                    <h4 title="{% firstof teacher.get_full_name teacher.username %}">{% firstof teacher.get_full_name|truncatechars:15 teacher.username|truncatechars:15 %}</h4>
+                <li class="teacher">
                     {% gravatar_img_for_user teacher 50 %}
-                </div>
+                    <strong>{% firstof teacher.get_full_name teacher.username %}</strong>
+                </li>
             {% endfor %}
+            </ul>
+            <div class="visual-clear"></div>
         </div>
 
         <div class="box">

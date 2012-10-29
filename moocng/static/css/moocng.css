@@ -105,10 +105,49 @@ footer ul li {
     margin-top: 10px;
 }
 
-.teacher {
+.visual-clear {
+    display: block;
+    clear: both;
+}
+
+li.teacher {
+    margin-bottom: 10px;
+}
+
+li.teacher:last-child {
+    margin-bottom: -10px;
+}
+
+
+li.teacher img,
+li.teacher strong {
+    vertical-align: middle;
     display: inline-block;
-    text-align: center;
-    width: 130px;
+}
+
+li.teacher strong {
+    width: 210px;
+    margin-left: 5px;
+}
+
+html.ie li.teacher {
+    float: left;
+    width: 100%;
+    clear: both;
+}
+
+html.ie li.teacher:last-child {
+    margin-bottom: 0;
+}
+
+html.ie li.teacher img,
+html.ie li.teacher strong {
+    float: left;
+}
+
+html.ie li.teacher img {
+    width: 50px;
+    height: 50px;
 }
 
 .unit-n {}
