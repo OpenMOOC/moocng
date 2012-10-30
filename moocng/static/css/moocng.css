@@ -121,7 +121,7 @@ li.teacher:last-child {
 
 li.teacher img,
 li.teacher strong {
-    vertical-align: middle;
+    vertical-align: top;
     display: inline-block;
 }
 
