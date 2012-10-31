@@ -50,17 +50,21 @@ def teacheradmin_teachers(request, course_slug):
 @is_teacher_or_staff
 def teacheradmin_info(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
+    errors = ''
+    success = False
 
     if request.method == 'POST':
         form = CourseForm(data=request.POST, instance=course)
         if form.is_valid():
             form.save()
+            success = True
         else:
-            # TODO
-            print form.errors
+            errors = form.get_pretty_errors()
 
     return render_to_response('teacheradmin/info.html', {
         'course': course,
+        'errors': errors,
+        'success': success,
     }, context_instance=RequestContext(request))
 
 

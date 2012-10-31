@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from django.forms import ModelForm
+from django.forms.util import ErrorDict
 
 from moocng.courses.models import Course
 
@@ -22,3 +23,10 @@ class CourseForm(ModelForm):
     class Meta:
         model = Course
         exclude = ('slug', 'teachers',)
+
+    def get_pretty_errors(self):
+        errors = ErrorDict()
+        for k, v in self.errors.items():
+            name = self.fields[k].label
+            errors[name] = v
+        return errors
