@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-25 04:01-0500\n"
+"POT-Creation-Date: 2012-10-31 06:19-0500\n"
 "PO-Revision-Date: 2012-09-18 10:35+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -130,7 +130,7 @@ msgstr "La fecha de finalización es obligatoria para las tareas y los examenes"
 msgid "The start date is later than the deadline."
 msgstr "La fecha de comienzo es posterior a la fecha de finalización"
 
-#: courses/models.py:32
+#: courses/models.py:32 teacheradmin/templates/teacheradmin/info.html:43
 msgid "Name"
 msgstr "Nombre"
 
@@ -138,32 +138,34 @@ msgstr "Nombre"
 msgid "Slug"
 msgstr "Slug"
 
-#: courses/models.py:34
+#: courses/models.py:34 teacheradmin/templates/teacheradmin/info.html:51
 msgid "Description"
 msgstr "Descripción"
 
-#: courses/models.py:35
+#: courses/models.py:35 teacheradmin/templates/teacheradmin/info.html:52
 msgid "Requirements"
 msgstr "Requisitos"
 
 #: courses/models.py:37 courses/models.py:43
 #: courses/templates/courses/overview.html:29
+#: teacheradmin/templates/teacheradmin/info.html:55
 msgid "Learning goals"
 msgstr "Objetivos formativos"
 
 #: courses/models.py:39 courses/templates/courses/overview.html:43
+#: teacheradmin/templates/teacheradmin/info.html:53
 msgid "Intended audience"
 msgstr "Público objetivo"
 
-#: courses/models.py:41
+#: courses/models.py:41 teacheradmin/templates/teacheradmin/info.html:54
 msgid "Estimated effort"
 msgstr "Esfuerzo estimado"
 
-#: courses/models.py:45
+#: courses/models.py:45 teacheradmin/templates/teacheradmin/info.html:47
 msgid "Start date"
 msgstr "Fecha de inicio"
 
-#: courses/models.py:47
+#: courses/models.py:47 teacheradmin/templates/teacheradmin/info.html:48
 msgid "End date"
 msgstr "Fecha de fin"
 
@@ -176,7 +178,7 @@ msgstr "Profesores"
 msgid "Students"
 msgstr "Alumnos"
 
-#: courses/models.py:54
+#: courses/models.py:54 teacheradmin/templates/teacheradmin/info.html:44
 msgid "Promotion video"
 msgstr "Video promocional"
 
@@ -326,17 +328,17 @@ msgstr "opción"
 msgid "options"
 msgstr "opciones"
 
-#: courses/views.py:61
+#: courses/views.py:64
 #, python-format
 msgid "Congratulations, you have successfully enroll in the course %(course)s"
 msgstr "Enhorabuena, te has matriculado correctamente en el curso %(course)s"
 
-#: courses/views.py:67
+#: courses/views.py:70
 #, python-format
 msgid "You have successfully unenroll in the course %(course)s"
 msgstr "Te has desmatriculado correctamente del curso %(course)s"
 
-#: courses/views.py:106 courses/views.py:132
+#: courses/views.py:110 courses/views.py:138
 msgid "Your are not enrolled in this course"
 msgstr "No estás matriculado en este curso"
 
@@ -436,7 +438,7 @@ msgstr "Publicado el:"
 msgid "Go back to Course Overview"
 msgstr "Volver a la vista General del Curso"
 
-#: courses/templates/courses/base_course.html:12
+#: courses/templates/courses/base_course.html:11
 msgid "Overview"
 msgstr "General"
 
@@ -444,13 +446,17 @@ msgstr "General"
 msgid "Classes"
 msgstr "Clases"
 
-#: courses/templates/courses/base_course.html:18
+#: courses/templates/courses/base_course.html:19
 msgid "Discussion"
 msgstr "Debates"
 
-#: courses/templates/courses/base_course.html:21
+#: courses/templates/courses/base_course.html:23
 msgid "Progress"
 msgstr "Progreso"
+
+#: courses/templates/courses/base_course.html:28
+msgid "Course administration"
+msgstr "Administración del curso"
 
 #: courses/templates/courses/classroom.html:18
 msgid "Previous"
@@ -572,7 +578,11 @@ msgstr "Cambiar contraseña"
 msgid "Admin interface"
 msgstr "Interfaz de administración"
 
-#: courses/templates/courses/include.useractions.html:30
+#: courses/templates/courses/include.useractions.html:33
+msgid "Create course"
+msgstr "Crear un curso"
+
+#: courses/templates/courses/include.useractions.html:37
 msgid "Log out"
 msgstr "Terminar sesión"
 
@@ -671,13 +681,41 @@ msgstr "Módulos"
 msgid "Send mail"
 msgstr "Enviar correo"
 
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:21
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:15
+msgid "Go back to the course"
+msgstr "Volver al curso"
+
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:22
 msgid "We are sorry"
 msgstr "Lo sentimos"
 
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:22
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:23
 msgid "But this section is not available yet."
 msgstr "Pero esta sección aún no está disponible."
+
+#: teacheradmin/templates/teacheradmin/info.html:29
+msgid "Errors"
+msgstr "Errores"
+
+#: teacheradmin/templates/teacheradmin/info.html:30
+msgid ""
+"There were problems with some data you introduced, please fix them and try "
+"again:"
+msgstr ""
+"Hubo problemas con algunos de los datos introducidos, por favor, corrija los "
+"fallos y pruebe de nuevo:"
+
+#: teacheradmin/templates/teacheradmin/info.html:36
+msgid "Success"
+msgstr "Éxito"
+
+#: teacheradmin/templates/teacheradmin/info.html:37
+msgid "Your changes were saved."
+msgstr "Sus cambios han sido guardados."
+
+#: teacheradmin/templates/teacheradmin/info.html:56
+msgid "Save"
+msgstr "Guardar"
 
 #: templates/403.html:19
 msgid "Access denied"
