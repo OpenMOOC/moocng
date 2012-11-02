@@ -14,17 +14,9 @@
 
 # -*- coding: utf-8 -*-
 
-import urlparse
 from datetime import datetime
 
-from moocng.api.mongodb import get_db, MongoObj, MongoResource
-
-
-def extract_YT_video_id(url):
-    parsed_url = urlparse.urlparse(url)
-    video_id = urlparse.parse_qs(parsed_url.query)
-    video_id = video_id['v'][0]
-    return video_id
+from moocng.api.mongodb import get_db
 
 
 def calculate_unit_mark(unit, user):
@@ -36,7 +28,7 @@ def calculate_unit_mark(unit, user):
         if mark > 0:
             unit_mark += mark
     if unit_mark == 0:
-        return [0,0]
+        return [0, 0]
     else:
         normalized_unit_weight = normalize_unit_weight(unit)
         # returns the absolute mark and the mark in relation with the course
