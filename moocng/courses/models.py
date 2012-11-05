@@ -22,9 +22,9 @@ from adminsortable.models import Sortable
 from adminsortable.fields import SortableForeignKey
 from tinymce.models import HTMLField
 
-from moocng.courses.utils import extract_YT_video_id
 from moocng.courses.fields import PercentField
 from moocng.videos.tasks import process_video_task
+from moocng.videos.utils import extract_YT_video_id
 
 
 class Course(Sortable):

@@ -31,11 +31,15 @@ MOOC.models.Activity = Backbone.Model.extend({
         return MOOC.ajax.getAbsoluteUrl('activity/') + this.get('id') + '/';
     },
 
-    addKQ: function (kq) {
+    addKQ: function (kq, callback) {
         "use strict";
         if (!_.include(this.get('kqs'), kq)) {
             this.set('kqs', _.union(this.get('kqs'), [kq]));
-            this.save();
+            if (_.isUndefined(callback)) {
+                this.save();
+            } else {
+                this.save("kqs", this.get("kqs"), { success: callback });
+            }
         }
     },
 

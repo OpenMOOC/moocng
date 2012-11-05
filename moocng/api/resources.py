@@ -27,7 +27,8 @@ from moocng.api.authentication import DjangoAuthentication
 from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment)
-from moocng.courses.utils import extract_YT_video_id, normalize_kq_weight
+from moocng.courses.utils import normalize_kq_weight
+from moocng.videos.utils import extract_YT_video_id
 
 
 class UnitResource(ModelResource):

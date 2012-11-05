@@ -92,8 +92,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
         if (this.model.has("question")) {
             this.loadQuestionData();
-            this.repeatedlyCheckIfPlayer();
         }
+        this.repeatedlyCheckIfPlayer();
 
         $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
 
@@ -285,52 +285,66 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
     loadQuestion: function (evt) {
         "use strict";
         if (evt.data === YT.PlayerState.ENDED) {
-            var toExecute = [];
+            var model = this.model,
+                toExecute;
 
-            if (!this.model.has("questionInstance")) {
-                toExecute.push(async.apply(this.setupListernerFor, this.model, "questionInstance"));
+            // Mark kq as "viewed"
+            MOOC.models.activity.addKQ(String(model.get("id")), function () {
+                var unit = MOOC.models.course.getByKQ(model),
+                    view = MOOC.views.unitViews[unit.get("id")];
+
+                view.render();
+            });
+
+            // We can't assume the question exists
+            if (model.has("question")) {
+                toExecute = [];
+
+                if (!this.model.has("questionInstance")) {
+                    toExecute.push(async.apply(this.setupListernerFor, this.model, "questionInstance"));
+                }
+
+                toExecute.push(_.bind(function (callback) {
+                    var question = this.model.get("questionInstance");
+                    this.setupListernerFor(question, "optionList", callback);
+                }, this));
+
+                toExecute.push(_.bind(function (callback) {
+                    var question = this.model.get("questionInstance");
+                    this.setupListernerFor(question, "answer", callback);
+                }, this));
+
+                toExecute.push(_.bind(function (callback) {
+                    var question = this.model.get("questionInstance"),
+                        view = MOOC.views.questionViews[question.get("id")],
+                        data = {
+                            kq: this.model.get("id")
+                        },
+                        path = window.location.hash.substring(1),
+                        unit = MOOC.models.course.getByKQ(this.model);
+
+                    $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
+                    if (!(/[\w\/]+\/q/.test(path))) {
+                        path = path + "/q";
+                        MOOC.router.navigate(path, { trigger: false });
+                    }
+                    this.setEventForNavigation("#kq-previous", unit, this.model, false);
+                    this.setEventForNavigation("#kq-next", unit, this.model, true);
+
+                    if (_.isUndefined(view)) {
+                        view = new MOOC.views.Question({
+                            model: question,
+                            el: $("#kq-video")[0]
+                        });
+                        MOOC.views.questionViews[question.get("id")] = view;
+                    }
+                    // We need to destroy the iframe with a callback because the
+                    // question view needs to read the width/height of the video
+                    view.render(_.bind(this.destroyVideo, this));
+                }, this));
+
+                async.series(toExecute);
             }
-
-            toExecute.push(_.bind(function (callback) {
-                var question = this.model.get("questionInstance");
-                this.setupListernerFor(question, "optionList", callback);
-            }, this));
-
-            toExecute.push(_.bind(function (callback) {
-                var question = this.model.get("questionInstance");
-                this.setupListernerFor(question, "answer", callback);
-            }, this));
-
-            toExecute.push(_.bind(function (callback) {
-                var question = this.model.get("questionInstance"),
-                    view = MOOC.views.questionViews[question.get("id")],
-                    data = {
-                        kq: this.model.get("id")
-                    },
-                    path = window.location.hash.substring(1),
-                    unit = MOOC.models.course.getByKQ(this.model);
-
-                $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
-                if (!(/[\w\/]+\/q/.test(path))) {
-                    path = path + "/q";
-                    MOOC.router.navigate(path, { trigger: false });
-                }
-                this.setEventForNavigation("#kq-previous", unit, this.model, false);
-                this.setEventForNavigation("#kq-next", unit, this.model, true);
-
-                if (_.isUndefined(view)) {
-                    view = new MOOC.views.Question({
-                        model: question,
-                        el: $("#kq-video")[0]
-                    });
-                    MOOC.views.questionViews[question.get("id")] = view;
-                }
-                // We need to destroy the iframe with a callback because the
-                // question view needs to read the width/height of the video
-                view.render(_.bind(this.destroyVideo, this));
-            }, this));
-
-            async.series(toExecute);
         }
 
         return this;
