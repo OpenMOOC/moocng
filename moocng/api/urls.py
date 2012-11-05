@@ -25,6 +25,7 @@ v1_api.register(resources.QuestionResource())
 v1_api.register(resources.OptionResource())
 v1_api.register(resources.AnswerResource())
 v1_api.register(resources.ActivityResource())
+v1_api.register(resources.UserResource())
 
 
 urlpatterns = patterns(

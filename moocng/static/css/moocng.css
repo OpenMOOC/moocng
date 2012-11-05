@@ -97,6 +97,10 @@ footer ul li {
     border-top: 1px solid #dddddd;
 }
 
+.pointer {
+    cursor: pointer;
+}
+
 .mb20 {
     margin-bottom: 20px;
 }

@@ -44,6 +44,7 @@ def teacheradmin_teachers(request, course_slug):
 
     return render_to_response('teacheradmin/teachers.html', {
         'course': course,
+        'request': request,
     }, context_instance=RequestContext(request))
 
 

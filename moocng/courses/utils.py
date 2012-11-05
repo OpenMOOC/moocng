@@ -17,6 +17,7 @@
 from datetime import datetime
 
 from moocng.api.mongodb import get_db
+from moocng.courses.models import Course
 
 
 def calculate_unit_mark(unit, user):
@@ -87,8 +88,11 @@ def normalize_unit_weight(unit):
     return (unit.weight * 100.0) / total_weight
 
 
-def is_teacher(user, course):
+def is_teacher(user, courses):
     is_teacher = False
+    if isinstance(courses, Course):
+        courses = [courses]
     if user.is_authenticated():
-        is_teacher = course.teachers.filter(id=user.id).exists()
+        for course in courses:
+            is_teacher = is_teacher or course.teachers.filter(id=user.id).exists()
     return is_teacher

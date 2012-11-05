@@ -21,9 +21,11 @@ from tastypie import fields
 from tastypie.authorization import DjangoAuthorization
 from tastypie.resources import ModelResource
 
+from django.contrib.auth.models import User
 from django.db.models import Q
 
-from moocng.api.authentication import DjangoAuthentication
+from moocng.api.authentication import (DjangoAuthentication,
+                                       TeacherAuthentication)
 from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment)
@@ -353,3 +355,28 @@ class ActivityResource(MongoResource):
     def _initial(self, request, **kwargs):
         course_id = kwargs['pk']
         return {course_id: {'kqs': []}}
+
+
+class UserResource(ModelResource):
+
+    class Meta:
+        resource_name = 'user'
+        queryset = User.objects.all()
+        allowed_methods = ['get']
+        authentication = TeacherAuthentication()
+        authorization = DjangoAuthorization()
+        fields = ['first_name', 'last_name']
+        filtering = {
+            'first_name': ['istartswith'],
+            'last_name': ['istartswith']
+        }
+
+    def apply_filters(self, request, applicable_filters):
+        applicable_filters = applicable_filters.items()
+        if len(applicable_filters) > 0:
+            Qfilter = Q(applicable_filters[0])
+            for apfilter in applicable_filters[1:]:
+                Qfilter = Qfilter | Q(apfilter)
+            return self.get_object_list(request).filter(Qfilter)
+        else:
+            return self.get_object_list(request)

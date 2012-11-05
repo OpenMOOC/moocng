@@ -16,10 +16,23 @@
 
 from tastypie.authentication import Authentication
 
+from moocng.courses.models import Course
+from moocng.courses.utils import is_teacher
+
 
 class DjangoAuthentication(Authentication):
+
     def is_authenticated(self, request, **kwargs):
         return request.user.is_authenticated()
+
+    def get_identifier(self, request):
+        return request.user.username
+
+
+class TeacherAuthentication(Authentication):
+
+    def is_authenticated(self, request, **kwargs):
+        return is_teacher(request.user, Course.objects.all())
 
     def get_identifier(self, request):
         return request.user.username
