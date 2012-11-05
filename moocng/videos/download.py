@@ -88,7 +88,10 @@ def process_video(tempdir, url):
     """Download the youtube video associated with the KQ of this question
     and extract the last frame of such video."""
 
-    url = "http://www.youtube.com/watch?v=%s" % extract_YT_video_id(url)
+    video_id = extract_YT_video_id(url)
+    if video_id == u'':
+        raise NotFound(url)
+    url = "http://www.youtube.com/watch?v=%s" % video_id
 
     logger.info('Downloading video %s' % url)
 

@@ -35,6 +35,8 @@ def do_process_video_task(question):
 
         if frame is not None:
             video_id = extract_YT_video_id(url)
+            if video_id == u'':
+                raise NotFound(url)
             question.last_frame.save("%s.png" % video_id, File(open(frame)))
     except NotFound:
         logger.error('Video %s not found' % url)
