@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 
@@ -46,6 +50,25 @@ def teacheradmin_teachers(request, course_slug):
         'course': course,
         'request': request,
     }, context_instance=RequestContext(request))
+
+
+@is_teacher_or_staff
+def teacheradmin_teachers_invite(request, course_slug):
+    course = get_object_or_404(Course, slug=course_slug)
+    email_or_id = request.POST['data']
+    try:
+        validate_email(email_or_id)
+        # is email
+        # TODO invite email
+    except ValidationError:
+        # is id
+        try:
+            user = User.objects.get(id=email_or_id)
+            course.teachers.add(user)
+            response = HttpResponse()
+        except (ValueError, User.DoesNotExist):
+            response = HttpResponse(status=404)
+    return response
 
 
 @is_teacher_or_staff

@@ -365,7 +365,7 @@ class UserResource(ModelResource):
         allowed_methods = ['get']
         authentication = TeacherAuthentication()
         authorization = DjangoAuthorization()
-        fields = ['first_name', 'last_name']
+        fields = ['id', 'first_name', 'last_name']
         filtering = {
             'first_name': ['istartswith'],
             'last_name': ['istartswith']
