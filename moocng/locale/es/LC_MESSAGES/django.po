@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-31 06:19-0500\n"
+"POT-Creation-Date: 2012-11-07 10:32-0600\n"
 "PO-Revision-Date: 2012-09-18 10:35+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -52,7 +52,7 @@ msgstr "Otro"
 msgid "Username"
 msgstr "Nombre de usuario"
 
-#: complaints/forms.py:26
+#: complaints/forms.py:26 teacheradmin/models.py:26
 msgid "Email"
 msgstr "Correo electrónico"
 
@@ -77,7 +77,7 @@ msgid "You must accept the Terms of Use"
 msgstr "Debe aceptar los Términos de Uso"
 
 #: complaints/templates/complaints.html:16
-#: complaints/templates/complaints_sent.html:16 templates/base.html:85
+#: complaints/templates/complaints_sent.html:16 templates/base.html:86
 msgid "Contact"
 msgstr "Contacto"
 
@@ -170,7 +170,8 @@ msgid "End date"
 msgstr "Fecha de fin"
 
 #: courses/models.py:49 courses/templates/courses/overview.html:70
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:11
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:12
+#: teacheradmin/templates/teacheradmin/teachers.html:19
 msgid "Teachers"
 msgstr "Profesores"
 
@@ -198,7 +199,7 @@ msgstr "Título"
 msgid "Content"
 msgstr "Contenido"
 
-#: courses/models.py:78 courses/models.py:95
+#: courses/models.py:78 courses/models.py:95 teacheradmin/models.py:28
 msgid "Course"
 msgstr "Curso"
 
@@ -368,12 +369,13 @@ msgid "Options"
 msgstr "Opciones"
 
 #: courses/templates/admin/courses/question/options.html:38
-#: templates/base.html:58
+#: templates/base.html:59
 msgid "Home"
 msgstr "Inicio"
 
 #: courses/templates/admin/courses/question/options.html:41
 #: courses/templates/admin/courses/question/options.html:64
+#: teacheradmin/templates/teacheradmin/teachers.html:54
 msgid "Add"
 msgstr "Añadir"
 
@@ -480,6 +482,8 @@ msgstr "Comentarios del profesor"
 
 #: courses/templates/courses/classroom.html:98
 #: courses/templates/courses/progress.html:61
+#: teacheradmin/templates/teacheradmin/teachers.html:25
+#: teacheradmin/templates/teacheradmin/teachers.html:29
 msgid "Error"
 msgstr "Error"
 
@@ -611,37 +615,37 @@ msgstr "Matricúlame en este curso"
 msgid "Register in %(site_name)s to enroll in this course"
 msgstr "Registrarme en %(site_name)s para matricularme en este curso"
 
-#: courses/templates/courses/overview.html:80
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:10
+#: courses/templates/courses/overview.html:83
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:11
 msgid "Information"
 msgstr "Información"
 
-#: courses/templates/courses/overview.html:82
+#: courses/templates/courses/overview.html:85
 msgid "Course Code"
 msgstr "Código del Curso"
 
-#: courses/templates/courses/overview.html:84
+#: courses/templates/courses/overview.html:87
 msgid "Classes Start"
 msgstr "Inicio de las Clases"
 
-#: courses/templates/courses/overview.html:87
+#: courses/templates/courses/overview.html:90
 msgid "Classes End"
 msgstr "Final de las Clases"
 
-#: courses/templates/courses/overview.html:90
+#: courses/templates/courses/overview.html:93
 msgid "Estimated Effort"
 msgstr "Esfuerzo Estimado"
 
-#: courses/templates/courses/overview.html:98
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:13
+#: courses/templates/courses/overview.html:101
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:14
 msgid "Announcements"
 msgstr "Comunicados"
 
-#: courses/templates/courses/overview.html:111
+#: courses/templates/courses/overview.html:114
 msgid "Syllabus"
 msgstr "Temario"
 
-#: courses/templates/courses/overview.html:124
+#: courses/templates/courses/overview.html:127
 msgid "Share"
 msgstr "Comparte"
 
@@ -658,6 +662,8 @@ msgid "Incorrect"
 msgstr "Incorrecto"
 
 #: courses/templates/courses/progress.html:68
+#: teacheradmin/templates/teacheradmin/teachers.html:11
+#: teacheradmin/templates/teacheradmin/teachers.html:41
 msgid "Pending"
 msgstr "Pendiente"
 
@@ -669,27 +675,61 @@ msgstr "Calificación"
 msgid "You are not enrolled in any course"
 msgstr "No estás matriculado en ningún curso"
 
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:9
+#: teacheradmin/models.py:24
+msgid "Host"
+msgstr "Anfitrión"
+
+#: teacheradmin/models.py:30
+msgid "Date and time"
+msgstr "Fecha y hora"
+
+#: teacheradmin/utils.py:23
+#, python-format
+msgid ""
+"Hello, you have been invited to be a teacher in the course \"%(course)s\" by "
+"%(host)s. After your registration in the platform is complete, you will be "
+"automatically assigned as a teacher to the course.\n"
+"\n"
+"You can register here: %(register)s\n"
+"\n"
+"Best regards,\n"
+"%(site)s's team"
+msgstr ""
+"Hola, %(host)s te ha invitado a ser profesor en el curso \"%(course)s\". Una "
+"vez te hayas registrado en la plataforma, serás automáticamente asignado "
+"como profesor al curso.\n"
+"\n"
+"Puedes registrarte aquí: %(register)s\n"
+"\n"
+"Un afectuoso saludo,\n"
+"el equipo de %(site)s"
+
+#: teacheradmin/utils.py:29
+#, python-format
+msgid "You have been invited to be a teacher in \"%s\""
+msgstr "Has sido invitado a ser profesor en \"%s\""
+
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:10
 msgid "Statistics"
 msgstr "Estadísticas"
 
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:12
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:13
 msgid "Units"
 msgstr "Módulos"
 
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:14
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:15
 msgid "Send mail"
 msgstr "Enviar correo"
 
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:15
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:16
 msgid "Go back to the course"
 msgstr "Volver al curso"
 
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:22
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:23
 msgid "We are sorry"
 msgstr "Lo sentimos"
 
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:23
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:24
 msgid "But this section is not available yet."
 msgstr "Pero esta sección aún no está disponible."
 
@@ -706,6 +746,7 @@ msgstr ""
 "fallos y pruebe de nuevo:"
 
 #: teacheradmin/templates/teacheradmin/info.html:36
+#: teacheradmin/templates/teacheradmin/teachers.html:21
 msgid "Success"
 msgstr "Éxito"
 
@@ -716,6 +757,25 @@ msgstr "Sus cambios han sido guardados."
 #: teacheradmin/templates/teacheradmin/info.html:56
 msgid "Save"
 msgstr "Guardar"
+
+#: teacheradmin/templates/teacheradmin/teachers.html:22
+msgid "The teacher has been added to the course or invited."
+msgstr "El profesor ha sido añadido o invitado al curso."
+
+#: teacheradmin/templates/teacheradmin/teachers.html:26
+msgid ""
+"That teacher doesn't exists. Please, introduce a valid user or an email."
+msgstr ""
+"Ese profesor no existe. Por favor, introduza un usuario válido o un correo "
+"electrónico."
+
+#: teacheradmin/templates/teacheradmin/teachers.html:30
+msgid "The email introduced has already received an invitation."
+msgstr "El email introducido ya ha sido invitado a este curso."
+
+#: teacheradmin/templates/teacheradmin/teachers.html:53
+msgid "Name or email"
+msgstr "Nombre o correo electrónico"
 
 #: templates/403.html:19
 msgid "Access denied"
@@ -749,27 +809,27 @@ msgstr ""
 "Ha habido un error. Se ha reportado al administrador del sitio mediante "
 "email y debería ser solucionado en breve. Gracias por su paciencia."
 
-#: templates/base.html:53
+#: templates/base.html:54
 msgid "Register"
 msgstr "Registrar"
 
-#: templates/base.html:54
+#: templates/base.html:55
 msgid "Log in"
 msgstr "Entrar"
 
-#: templates/base.html:62
+#: templates/base.html:63
 msgid "Methodology"
 msgstr "Metodología"
 
-#: templates/base.html:80
+#: templates/base.html:81
 msgid "Legal"
 msgstr "Condiciones legales"
 
-#: templates/base.html:81
+#: templates/base.html:82
 msgid "All rights reserved"
 msgstr "Todos los derechos reservados"
 
-#: templates/base.html:83
+#: templates/base.html:84
 msgid "Terms of Use"
 msgstr "Términos de uso"
 

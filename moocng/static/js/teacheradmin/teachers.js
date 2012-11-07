@@ -69,7 +69,8 @@ jQuery(document).ready(function () {
                     var html = "<tr><td class='hide'>" + data.id + "</td>" +
                             "<td></td><td>" + data.name + "</td><td>";
                     if (data.pending) {
-                        html += "<span class='label label-warning'>Pending</span>";
+                        html += "<span class='label label-warning'>" +
+                            MOOC.pending + "</span>";
                     }
                     html += "</td><td class='align-right'><i class='icon-remove pointer'></i></td></r>";
                     $("table > tbody").append(html);
@@ -79,7 +80,7 @@ jQuery(document).ready(function () {
                     }, 3500);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    $(".alert-error").show();
+                    $("#" + jqXHR.status).show();
                     setTimeout(function () {
                         $(".alert-error").hide();
                     }, 3500);

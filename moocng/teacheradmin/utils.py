@@ -13,21 +13,21 @@
 # limitations under the License.
 
 from django.conf import settings
+from django.contrib.sites.models import get_current_site
 from django.core.mail import send_mail
 from django.utils.translation import ugettext_lazy as _
 
-def send_invitation(invitation):
-    import ipdb;ipdb.set_trace()
-    msg = (u'Hello, you have been invited to be a teacher in the course %s by '
-           u'%s. After your registration in the platform is complete, you '
-           u'will be automatically assigned as a teacher to the course.\n\n'
-           u'You can register here: %s\n\n'
-           u'Best regards,\n%s\'s team')
-    send_mail(_(u'You have been invited to be a teacher in %s') %
+
+def send_invitation(request, invitation):
+    name = invitation.host.get_full_name() or invitation.host.username
+    msg = _(u'Hello, you have been invited to be a teacher in the course "%(course)s" by %(host)s. After your registration in the platform is complete, you will be automatically assigned as a teacher to the course.\n\nYou can register here: %(register)s\n\nBest regards,\n%(site)s\'s team') % {
+        'course': invitation.course.name,
+        'host': name,
+        'register': settings.REGISTRY_URL,
+        'site': get_current_site(request).name
+    }
+    send_mail(_(u'You have been invited to be a teacher in "%s"') %
               invitation.course.name,
-              _(msg) % (invitation.course.name,
-                        invitation.host.get_full_name(),
-                        settings.REGISTRY_URL,
-                        site.name),
+              msg,
               settings.DEFAULT_FROM_EMAIL,
               [invitation.email])

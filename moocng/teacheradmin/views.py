@@ -107,17 +107,20 @@ def teacheradmin_teachers_invite(request, course_slug):
         response = HttpResponse(simplejson.dumps(data),
                                 mimetype='application/json')
     elif response is None:
-        invitation = Invitation(host=request.user, email=email_or_id,
-                                course=course, datetime=datetime.now())
-        invitation.save()
-        send_invitation(invitation)
-        data = {
-            'id': -1,
-            'name': email_or_id,
-            'pending': True
-        }
-        response = HttpResponse(simplejson.dumps(data),
-                                mimetype='application/json')
+        if Invitation.objects.filter(email=email_or_id).filter(course=course).count() == 0:
+            invitation = Invitation(host=request.user, email=email_or_id,
+                                    course=course, datetime=datetime.now())
+            invitation.save()
+            send_invitation(request, invitation)
+            data = {
+                'id': -1,
+                'name': email_or_id,
+                'pending': True
+            }
+            response = HttpResponse(simplejson.dumps(data),
+                                    mimetype='application/json')
+        else:
+            response = HttpResponse(status=409)
 
     return response
 
