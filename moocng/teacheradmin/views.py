@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -20,9 +22,13 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils import simplejson
 
+from gravatar.templatetags.gravatar import gravatar_img_for_email
+
 from moocng.courses.models import Course
 from moocng.teacheradmin.decorators import is_teacher_or_staff
 from moocng.teacheradmin.forms import CourseForm
+from moocng.teacheradmin.models import Invitation
+from moocng.teacheradmin.utils import send_invitation
 
 
 @is_teacher_or_staff
@@ -46,9 +52,23 @@ def teacheradmin_units(request, course_slug):
 @is_teacher_or_staff
 def teacheradmin_teachers(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
+    teachers = course.teachers.all()
+    teachers = [{
+                    'id': t.id,
+                    'username': t.get_full_name() or t.username,
+                    'gravatar': gravatar_img_for_email(t.email, 20),
+                } for t in teachers]
+    invitations = Invitation.objects.filter(course=course)
+    invitations = [{
+                        'id': -1,
+                        'username': inv.email,
+                        'gravatar': '',
+                   } for inv in invitations]
+    teachers.extend(invitations)
 
     return render_to_response('teacheradmin/teachers.html', {
         'course': course,
+        'teachers': teachers,
         'request': request,
     }, context_instance=RequestContext(request))
 
@@ -87,7 +107,10 @@ def teacheradmin_teachers_invite(request, course_slug):
         response = HttpResponse(simplejson.dumps(data),
                                 mimetype='application/json')
     elif response is None:
-        # TODO invite email
+        invitation = Invitation(host=request.user, email=email_or_id,
+                                course=course, datetime=datetime.now())
+        invitation.save()
+        send_invitation(invitation)
         data = {
             'id': -1,
             'name': email_or_id,

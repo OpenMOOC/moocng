@@ -26,12 +26,16 @@
 </div>
 <table class="table table-striped">
     <tbody>
-        {% for teacher in course.teachers.all %}
+        {% for teacher in teachers %}
         <tr>
             <td class="hide">{{ teacher.id }}</td>
-            <td>{% gravatar_img_for_user teacher 20 %}</td>
-            <td>{% firstof teacher.get_full_name teacher.username %}</a></td>
-            <td></td> <!-- TODO pending badge via templatetag -->
+            <td>{{ teacher.gravatar|safe }}</td>
+            <td>{{ teacher.username }}</a></td>
+            <td>
+            {% if teacher.id < 0 %}
+                <span class='label label-warning'>{% trans "Pending" %}</span>
+            {% endif %}
+            </td>
             <td class="align-right"><i class="icon-remove pointer"></i></td>
         </tr>
         {% endfor %}
