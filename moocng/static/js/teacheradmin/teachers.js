@@ -19,6 +19,9 @@ jQuery(document).ready(function () {
     "use strict";
 
     (function ($) {
+        var removeTeacher,
+            re;
+
         $("#invite-teacher").typeahead({
             source: function (query, process) {
                 $.getJSON("/api/v1/user/",
@@ -36,7 +39,13 @@ jQuery(document).ready(function () {
             minLength: 1
         });
 
-        var re = /\S+@\S+\.\S+/; // Very simple email validation
+        removeTeacher = function (evt) {
+            // TODO
+        };
+
+        $("table .icon-remove").click(removeTeacher);
+
+        re = /\S+@\S+\.\S+/; // Very simple email validation
         $("#invite-teacher").next().click(function (evt) {
             evt.preventDefault();
             evt.stopPropagation();
@@ -74,6 +83,7 @@ jQuery(document).ready(function () {
                     }
                     html += "</td><td class='align-right'><i class='icon-remove pointer'></i></td></r>";
                     $("table > tbody").append(html);
+                    $("table .icon-remove").off("click").click(removeTeacher);
                     $(".alert-success").show();
                     setTimeout(function () {
                         $(".alert-success").hide();
