@@ -18,6 +18,7 @@ from django.core.validators import validate_email
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
+from django.utils import simplejson
 
 from moocng.courses.models import Course
 from moocng.teacheradmin.decorators import is_teacher_or_staff
@@ -56,18 +57,45 @@ def teacheradmin_teachers(request, course_slug):
 def teacheradmin_teachers_invite(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     email_or_id = request.POST['data']
+    user = None
+    response = None
+
     try:
         validate_email(email_or_id)
         # is email
-        # TODO invite email
+        try:
+            user = User.objects.get(email=email_or_id)
+        except User.DoesNotExist:
+            pass
     except ValidationError:
         # is id
         try:
             user = User.objects.get(id=email_or_id)
-            course.teachers.add(user)
-            response = HttpResponse()
         except (ValueError, User.DoesNotExist):
             response = HttpResponse(status=404)
+
+    if user is not None:
+        course.teachers.add(user)
+        name = user.get_full_name()
+        if not name:
+            name = user.username
+        data = {
+            'id': user.id,
+            'name': name,
+            'pending': False
+        }
+        response = HttpResponse(simplejson.dumps(data),
+                                mimetype='application/json')
+    elif response is None:
+        # TODO invite email
+        data = {
+            'id': -1,
+            'name': email_or_id,
+            'pending': True
+        }
+        response = HttpResponse(simplejson.dumps(data),
+                                mimetype='application/json')
+
     return response
 
 

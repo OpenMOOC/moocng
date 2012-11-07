@@ -114,6 +114,10 @@ footer ul li {
     clear: both;
 }
 
+.align-right {
+    text-align: right;
+}
+
 li.teacher {
     margin-bottom: 10px;
 }
