@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-07 10:32-0600\n"
+"POT-Creation-Date: 2012-11-08 04:56-0600\n"
 "PO-Revision-Date: 2012-09-18 10:35+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -171,7 +171,7 @@ msgstr "Fecha de fin"
 
 #: courses/models.py:49 courses/templates/courses/overview.html:70
 #: teacheradmin/templates/teacheradmin/base_teacheradmin.html:12
-#: teacheradmin/templates/teacheradmin/teachers.html:19
+#: teacheradmin/templates/teacheradmin/teachers.html:20
 msgid "Teachers"
 msgstr "Profesores"
 
@@ -375,7 +375,7 @@ msgstr "Inicio"
 
 #: courses/templates/admin/courses/question/options.html:41
 #: courses/templates/admin/courses/question/options.html:64
-#: teacheradmin/templates/teacheradmin/teachers.html:54
+#: teacheradmin/templates/teacheradmin/teachers.html:63
 msgid "Add"
 msgstr "Añadir"
 
@@ -482,8 +482,9 @@ msgstr "Comentarios del profesor"
 
 #: courses/templates/courses/classroom.html:98
 #: courses/templates/courses/progress.html:61
-#: teacheradmin/templates/teacheradmin/teachers.html:25
-#: teacheradmin/templates/teacheradmin/teachers.html:29
+#: teacheradmin/templates/teacheradmin/teachers.html:30
+#: teacheradmin/templates/teacheradmin/teachers.html:34
+#: teacheradmin/templates/teacheradmin/teachers.html:38
 msgid "Error"
 msgstr "Error"
 
@@ -663,7 +664,7 @@ msgstr "Incorrecto"
 
 #: courses/templates/courses/progress.html:68
 #: teacheradmin/templates/teacheradmin/teachers.html:11
-#: teacheradmin/templates/teacheradmin/teachers.html:41
+#: teacheradmin/templates/teacheradmin/teachers.html:50
 msgid "Pending"
 msgstr "Pendiente"
 
@@ -709,6 +710,25 @@ msgstr ""
 msgid "You have been invited to be a teacher in \"%s\""
 msgstr "Has sido invitado a ser profesor en \"%s\""
 
+#: teacheradmin/utils.py:36
+#, python-format
+msgid ""
+"Hello, you have been removed as teacher from the course \"%(course)s\" by "
+"%(host)s.\n"
+"\n"
+"Best regards,\n"
+"%(site)s's team"
+msgstr ""
+"Hola, %(host)s te ha quitado de profesor del curso \"%(course)s\".\n"
+"\n"
+"Un afectuoso saludo,\n"
+"el equipo de %(site)s"
+
+#: teacheradmin/utils.py:41
+#, python-format
+msgid "You have been removed as teacher from \"%s\""
+msgstr "Ya no eres profesor de \"%s\""
+
 #: teacheradmin/templates/teacheradmin/base_teacheradmin.html:10
 msgid "Statistics"
 msgstr "Estadísticas"
@@ -746,7 +766,8 @@ msgstr ""
 "fallos y pruebe de nuevo:"
 
 #: teacheradmin/templates/teacheradmin/info.html:36
-#: teacheradmin/templates/teacheradmin/teachers.html:21
+#: teacheradmin/templates/teacheradmin/teachers.html:22
+#: teacheradmin/templates/teacheradmin/teachers.html:26
 msgid "Success"
 msgstr "Éxito"
 
@@ -758,22 +779,30 @@ msgstr "Sus cambios han sido guardados."
 msgid "Save"
 msgstr "Guardar"
 
-#: teacheradmin/templates/teacheradmin/teachers.html:22
+#: teacheradmin/templates/teacheradmin/teachers.html:23
 msgid "The teacher has been added to the course or invited."
 msgstr "El profesor ha sido añadido o invitado al curso."
 
-#: teacheradmin/templates/teacheradmin/teachers.html:26
+#: teacheradmin/templates/teacheradmin/teachers.html:27
+msgid "The teacher has been removed from the course."
+msgstr "El profesor ha eliminado del curso."
+
+#: teacheradmin/templates/teacheradmin/teachers.html:31
 msgid ""
 "That teacher doesn't exists. Please, introduce a valid user or an email."
 msgstr ""
 "Ese profesor no existe. Por favor, introduza un usuario válido o un correo "
 "electrónico."
 
-#: teacheradmin/templates/teacheradmin/teachers.html:30
+#: teacheradmin/templates/teacheradmin/teachers.html:35
 msgid "The email introduced has already received an invitation."
 msgstr "El email introducido ya ha sido invitado a este curso."
 
-#: teacheradmin/templates/teacheradmin/teachers.html:53
+#: teacheradmin/templates/teacheradmin/teachers.html:39
+msgid "Something went wrong, please try again later."
+msgstr "Algo ha ido mal, por favor pruebe de nuevo más tarde."
+
+#: teacheradmin/templates/teacheradmin/teachers.html:62
 msgid "Name or email"
 msgstr "Nombre o correo electrónico"
 

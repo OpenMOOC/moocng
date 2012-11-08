@@ -26,8 +26,22 @@ def send_invitation(request, invitation):
         'register': settings.REGISTRY_URL,
         'site': get_current_site(request).name
     }
-    send_mail(_(u'You have been invited to be a teacher in "%s"') %
-              invitation.course.name,
-              msg,
-              settings.DEFAULT_FROM_EMAIL,
-              [invitation.email])
+    send_mail_wrapper(_(u'You have been invited to be a teacher in "%s"') % invitation.course.name,
+                      msg,
+                      [invitation.email])
+
+
+def send_removed_notification(request, email, course):
+    name = request.user.get_full_name() or request.user.username
+    msg = _(u'Hello, you have been removed as teacher from the course "%(course)s" by %(host)s.\n\nBest regards,\n%(site)s\'s team') % {
+        'course': course.name,
+        'host': name,
+        'site': get_current_site(request).name
+    }
+    send_mail_wrapper(_(u'You have been removed as teacher from "%s"') % course.name,
+                      msg,
+                      [email])
+
+
+def send_mail_wrapper(subject, message, to):
+    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, to)

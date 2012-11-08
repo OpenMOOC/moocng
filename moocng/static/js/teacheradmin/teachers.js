@@ -19,8 +19,32 @@ jQuery(document).ready(function () {
     "use strict";
 
     (function ($) {
-        var removeTeacher,
+        var getCookie,
+            csrftoken,
+            removeTeacher,
             re;
+
+        getCookie = function (name) {
+            var cookieValue = null,
+                cookies,
+                i,
+                cookie;
+
+            if (document.cookie && document.cookie !== '') {
+                cookies = document.cookie.split(';');
+                for (i = 0; i < cookies.length; i += 1) {
+                    cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        };
+
+        csrftoken = getCookie("csrftoken");
 
         $("#invite-teacher").typeahead({
             source: function (query, process) {
@@ -40,7 +64,33 @@ jQuery(document).ready(function () {
         });
 
         removeTeacher = function (evt) {
-            // TODO
+            var row = $(evt.target).parent().parent(),
+                id = parseInt($(row.children()[0]).text(), 10),
+                email = $(row.children()[2]).text();
+
+            if (id < 0) {
+                id = email;
+            }
+
+            $.ajax(MOOC.basePath + id + "/", {
+                headers: {
+                    "X-CSRFToken": csrftoken
+                },
+                type: "DELETE",
+                success: function (data, textStatus, jqXHR) {
+                    row.remove();
+                    $("#removed.alert-success").show();
+                    setTimeout(function () {
+                        $(".alert-success").hide();
+                    }, MOOC.alertTime);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $("#generic.alert-error").show();
+                    setTimeout(function () {
+                        $(".alert-error").hide();
+                    }, MOOC.alertTime);
+                }
+            });
         };
 
         $("table .icon-remove").click(removeTeacher);
@@ -50,7 +100,6 @@ jQuery(document).ready(function () {
             evt.preventDefault();
             evt.stopPropagation();
             var data = $("#invite-teacher").val(),
-                csrf,
                 idxA,
                 idxB;
 
@@ -65,12 +114,13 @@ jQuery(document).ready(function () {
                     data = ""; // Invalid
                 }
             }
-            csrf = $("#invite-teacher").parent().parent().parent().find("input[name=csrfmiddlewaretoken]").val();
 
             $.ajax(MOOC.basePath + "invite", {
                 data: {
-                    data: data,
-                    csrfmiddlewaretoken: csrf
+                    data: data
+                },
+                headers: {
+                    "X-CSRFToken": csrftoken
                 },
                 dataType: "json",
                 type: "POST",
@@ -84,16 +134,16 @@ jQuery(document).ready(function () {
                     html += "</td><td class='align-right'><i class='icon-remove pointer'></i></td></r>";
                     $("table > tbody").append(html);
                     $("table .icon-remove").off("click").click(removeTeacher);
-                    $(".alert-success").show();
+                    $("#added.alert-success").show();
                     setTimeout(function () {
                         $(".alert-success").hide();
-                    }, 3500);
+                    }, MOOC.alertTime);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     $("#" + jqXHR.status).show();
                     setTimeout(function () {
                         $(".alert-error").hide();
-                    }, 3500);
+                    }, MOOC.alertTime);
                 }
             });
         });

@@ -28,7 +28,8 @@ from moocng.courses.models import Course
 from moocng.teacheradmin.decorators import is_teacher_or_staff
 from moocng.teacheradmin.forms import CourseForm
 from moocng.teacheradmin.models import Invitation
-from moocng.teacheradmin.utils import send_invitation
+from moocng.teacheradmin.utils import (send_invitation,
+                                       send_removed_notification)
 
 
 @is_teacher_or_staff
@@ -54,15 +55,15 @@ def teacheradmin_teachers(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     teachers = course.teachers.all()
     teachers = [{
-                    'id': t.id,
-                    'username': t.get_full_name() or t.username,
-                    'gravatar': gravatar_img_for_email(t.email, 20),
+                'id': t.id,
+                'username': t.get_full_name() or t.username,
+                'gravatar': gravatar_img_for_email(t.email, 20),
                 } for t in teachers]
     invitations = Invitation.objects.filter(course=course)
     invitations = [{
-                        'id': -1,
-                        'username': inv.email,
-                        'gravatar': '',
+                   'id': -1,
+                   'username': inv.email,
+                   'gravatar': '',
                    } for inv in invitations]
     teachers.extend(invitations)
 
@@ -77,7 +78,27 @@ def teacheradmin_teachers(request, course_slug):
 def teacheradmin_teachers_delete(request, course_slug, email_or_id):
     course = get_object_or_404(Course, slug=course_slug)
     response = HttpResponse()
-    # TODO
+
+    try:
+        validate_email(email_or_id)
+        # is email, so is an invitation
+        try:
+            invitation = Invitation.objects.get(email=email_or_id,
+                                                course=course)
+            invitation.delete()
+            send_removed_notification(request, email_or_id, course)
+        except Invitation.DoesNotExist:
+            response = HttpResponse(status=404)
+    except ValidationError:
+        # is an id
+        try:
+            user = User.objects.get(id=email_or_id)
+            # TODO check if the user is the owner of the course
+            course.teachers.remove(user)
+            send_removed_notification(request, user.email, course)
+        except (ValueError, User.DoesNotExist):
+            response = HttpResponse(status=404)
+
     return response
 
 
