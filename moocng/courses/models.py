@@ -48,6 +48,9 @@ class Course(Sortable):
                                 blank=True, null=True)
     teachers = models.ManyToManyField(User, verbose_name=_(u'Teachers'),
                                       related_name='courses_as_teacher')
+    owner = models.ForeignKey(User, verbose_name=_(u'Teacher owner'),
+                              related_name='courses_as_owner', blank=False,
+                              null=False)
     students = models.ManyToManyField(User, verbose_name=_(u'Students'),
                                       related_name='courses_as_student',
                                       blank=True)
@@ -68,6 +71,14 @@ class Course(Sortable):
     def get_embeded_code_for_promotion_video(self):
         if self.promotion_video:
             return extract_YT_video_id(self.promotion_video)
+
+
+def handle_course_m2m_changed(sender, instance, action, **kwargs):
+    if action.startswith('post') and not instance.teachers.filter(id=instance.owner.id).exists():
+        instance.teachers.add(instance.owner)
+
+
+signals.m2m_changed.connect(handle_course_m2m_changed, sender=Course.teachers.through)
 
 
 class Announcement(models.Model):
