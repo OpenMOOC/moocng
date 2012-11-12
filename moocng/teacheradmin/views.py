@@ -93,9 +93,11 @@ def teacheradmin_teachers_delete(request, course_slug, email_or_id):
         # is an id
         try:
             user = User.objects.get(id=email_or_id)
-            # TODO check if the user is the owner of the course
-            course.teachers.remove(user)
-            send_removed_notification(request, user.email, course)
+            if user == course.owner:
+                response = HttpResponse(status=401)
+            else:
+                course.teachers.remove(user)
+                send_removed_notification(request, user.email, course)
         except (ValueError, User.DoesNotExist):
             response = HttpResponse(status=404)
 
@@ -150,6 +152,22 @@ def teacheradmin_teachers_invite(request, course_slug):
                                     mimetype='application/json')
         else:
             response = HttpResponse(status=409)
+
+    return response
+
+
+@is_teacher_or_staff
+def teacheradmin_teachers_transfer(request, course_slug):
+    course = get_object_or_404(Course, slug=course_slug)
+    ident = request.POST['data']
+    response = HttpResponse()
+
+    try:
+        user = User.objects.get(id=ident)
+        course.owner = user
+        course.save()
+    except (ValueError, User.DoesNotExist):
+        response = HttpResponse(status=404)
 
     return response
 

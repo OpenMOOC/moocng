@@ -115,7 +115,7 @@ footer ul li {
 }
 
 .align-right {
-    text-align: right;
+    text-align: right !important;
 }
 
 li.teacher {

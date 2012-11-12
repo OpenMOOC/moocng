@@ -9,6 +9,7 @@
     var MOOC = {
         basePath: "{{ request.path }}",
         pending: "{% trans "Pending" %}",
+        owner: "{% trans "Owner" %}",
         alertTime: 3500
     };
 </script>
@@ -45,12 +46,25 @@
             <td class="hide">{{ teacher.id }}</td>
             <td>{{ teacher.gravatar|safe }}</td>
             <td>{{ teacher.username }}</a></td>
+            <td class="ownership">
+            {% if teacher.id == course.owner.id %}
+                <span class='label label-info'>{% trans "Owner" %}</span>
+            {% else %}
+                {% if request.user.id == course.owner.id %}
+                    <button class='btn btn-mini make-owner'>{% trans "Make owner" %}</button>
+                {% endif %}
+            {% endif %}
+            </td>
             <td>
             {% if teacher.id < 0 %}
                 <span class='label label-warning'>{% trans "Pending" %}</span>
             {% endif %}
             </td>
-            <td class="align-right"><i class="icon-remove pointer"></i></td>
+            <td class="align-right">
+                {% if teacher.id != course.owner.id %}
+                <i class="icon-remove pointer"></i>
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </tbody>

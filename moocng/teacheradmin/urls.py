@@ -25,6 +25,8 @@ urlpatterns = patterns(
         name='teacheradmin_teachers_delete'),
     url(r'^teachers/invite$', 'teacheradmin_teachers_invite',
         name='teacheradmin_teachers_invite'),
+    url(r'^teachers/transfer$', 'teacheradmin_teachers_transfer',
+        name='teacheradmin_teachers_transfer'),
     url(r'^info/$', 'teacheradmin_info', name='teacheradmin_info'),
     url(r'^announcements/$', 'teacheradmin_announcements',
         name='teacheradmin_announcements'),

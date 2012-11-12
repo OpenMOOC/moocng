@@ -126,12 +126,14 @@ jQuery(document).ready(function () {
                 type: "POST",
                 success: function (data, textStatus, jqXHR) {
                     var html = "<tr><td class='hide'>" + data.id + "</td>" +
-                            "<td></td><td>" + data.name + "</td><td>";
+                            "<td></td><td>" + data.name + "</td>" +
+                            "<td class='ownership'></td><td>";
                     if (data.pending) {
                         html += "<span class='label label-warning'>" +
                             MOOC.pending + "</span>";
                     }
-                    html += "</td><td class='align-right'><i class='icon-remove pointer'></i></td></r>";
+                    html += "</td><td class='align-right'>" +
+                            "<i class='icon-remove pointer'></i></td></r>";
                     $("table > tbody").append(html);
                     $("table .icon-remove").off("click").click(removeTeacher);
                     $("#added.alert-success").show();
@@ -145,6 +147,28 @@ jQuery(document).ready(function () {
                         $(".alert-error").hide();
                     }, MOOC.alertTime);
                 }
+            });
+        });
+
+        $(".make-owner").click(function (evt) {
+            var data = $(evt.target).parent().parent().children()[0];
+            data = $(data).text();
+            $.ajax(MOOC.basePath + "transfer", {
+                data: {
+                    data: data
+                },
+                headers: {
+                    "X-CSRFToken": csrftoken
+                },
+                dataType: "json",
+                type: "POST",
+                success: function (data, textStatus, jqXHR) {
+                    var td = $(evt.target).parent();
+                    $("table td.ownership").html("");
+                    td.html("<span class='label label-info'>" + MOOC.owner +
+                            "</span>");
+                },
+                error: function (jqXHR, textStatus, errorThrown) {}
             });
         });
     }(jQuery));
