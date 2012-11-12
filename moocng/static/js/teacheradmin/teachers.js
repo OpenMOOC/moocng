@@ -167,9 +167,19 @@ jQuery(document).ready(function () {
                     $("table td.ownership").html("");
                     td.html("<span class='label label-info'>" + MOOC.owner +
                             "</span>");
+                    td.parent().find("td:last-child").html("");
                 },
-                error: function (jqXHR, textStatus, errorThrown) {}
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $("#generic").show();
+                    setTimeout(function () {
+                        $(".alert-error").hide();
+                    }, MOOC.alertTime);
+                }
             });
+        });
+
+        $("#reload").click(function () {
+            window.location.reload(true);
         });
     }(jQuery));
 });

@@ -160,6 +160,10 @@ def teacheradmin_teachers_invite(request, course_slug):
 def teacheradmin_teachers_transfer(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     ident = request.POST['data']
+
+    if request.user != course.owner:
+        return HttpResponse(status=401)
+
     response = HttpResponse()
 
     try:

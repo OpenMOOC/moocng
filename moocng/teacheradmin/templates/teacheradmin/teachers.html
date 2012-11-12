@@ -39,6 +39,7 @@
     <h4>{% trans "Error" %}</h4>
     <p>{% trans "Something went wrong, please try again later." %}</p>
 </div>
+<p class="align-right"><button id="reload" class="btn">{% trans "Reload" %}</button></p>
 <table class="table table-striped">
     <tbody>
         {% for teacher in teachers %}
@@ -51,7 +52,7 @@
                 <span class='label label-info'>{% trans "Owner" %}</span>
             {% else %}
                 {% if request.user.id == course.owner.id %}
-                    <button class='btn btn-mini make-owner'>{% trans "Make owner" %}</button>
+                    <button class='btn btn-mini make-owner'>{% trans "Transfer ownership" %}</button>
                 {% endif %}
             {% endif %}
             </td>
