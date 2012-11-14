@@ -49,9 +49,9 @@
             <td>{{ teacher.username }}</a></td>
             <td class="ownership">
             {% if teacher.id == course.owner.id %}
-                <span class='label label-info'>{% trans "Owner" %}</span>
+                <span class='label label-info owner'>{% trans "Owner" %}</span>
             {% else %}
-                {% if request.user.id == course.owner.id %}
+                {% if request.user.id == course.owner.id and teacher.id >= 0%}
                     <button class='btn btn-mini make-owner'>{% trans "Transfer ownership" %}</button>
                 {% endif %}
             {% endif %}

@@ -151,7 +151,8 @@ jQuery(document).ready(function () {
         });
 
         $(".make-owner").click(function (evt) {
-            var data = $(evt.target).parent().parent().children()[0];
+            var data = $(evt.target).parent().parent().children()[0],
+                originalOwner = $("table span.label.owner").parent().parent();
             data = $(data).text();
             $.ajax(MOOC.basePath + "transfer", {
                 data: {
@@ -165,9 +166,11 @@ jQuery(document).ready(function () {
                 success: function (data, textStatus, jqXHR) {
                     var td = $(evt.target).parent();
                     $("table td.ownership").html("");
-                    td.html("<span class='label label-info'>" + MOOC.owner +
+                    td.html("<span class='label label-info owner'>" + MOOC.owner +
                             "</span>");
                     td.parent().find("td:last-child").html("");
+                    originalOwner.find("td:last-child").html("<i class='icon-remove pointer'></i>");
+                    originalOwner.find(".icon-remove").click(removeTeacher);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     $("#generic").show();

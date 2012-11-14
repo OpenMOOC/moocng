@@ -12,10 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
+
 from django.conf import settings
 from django.contrib.sites.models import get_current_site
 from django.core.mail import send_mail
 from django.utils.translation import ugettext_lazy as _
+
+
+logger = logging.getLogger(__name__)
 
 
 def send_invitation(request, invitation):
@@ -44,4 +49,7 @@ def send_removed_notification(request, email, course):
 
 
 def send_mail_wrapper(subject, message, to):
-    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, to)
+    try:
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, to)
+    except IOError as ex:
+        logger.error('The notification "%s" to %s could not be sent because of %s' % (subject, str(to), str(ex)))
