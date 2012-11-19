@@ -50,9 +50,9 @@
         {% if is_enrolled %}
             <div class="alert alert-success">
                 <strong>{% trans "You are enrolled in this course" %}</strong>
-                    <form method="post" action="{% url course_overview course.slug %}">{% csrf_token %}
-                        <input type="submit" class="btn btn-medium btn-primary" value="{% trans "Unenroll me" %}" />
-                    </form>
+                <form method="post" action="{% url course_overview course.slug %}">{% csrf_token %}
+                    <input type="submit" class="btn btn-medium btn-primary" value="{% trans "Unenroll me" %}" />
+                </form>
             </div>
         {% else %}
             <div style="text-align: center">
@@ -63,6 +63,13 @@
                 {% else %}
                     <a href="{{ registry_url }}" class="btn btn-large btn-primary mb20">{% blocktrans with site_name=site.name %}Register in {{ site_name }} to enroll in this course{% endblocktrans %}</a>
                 {% endif %}
+            </div>
+        {% endif %}
+
+        {% if course.certification_cost %}
+            <div style="text-align: center">
+                <!-- TODO -->
+                <a href="{{ registry_url }}" class="btn btn-large btn-primary mb20">{% trans "Certificate" %}</a>
             </div>
         {% endif %}
 

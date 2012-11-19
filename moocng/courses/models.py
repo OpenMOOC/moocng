@@ -53,6 +53,9 @@ class Course(Sortable):
                                       blank=True)
     promotion_video = models.URLField(verbose_name=_(u'Promotion video'),
                                       blank=True)
+    certification_cost = models.DecimalField(
+        verbose_name=_(u'Certification cost'), blank=True, null=True,
+        max_digits=10, decimal_places=2)
 
     class Meta(Sortable.Meta):
         verbose_name = _(u'course')
