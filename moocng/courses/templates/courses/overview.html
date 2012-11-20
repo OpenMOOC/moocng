@@ -69,7 +69,7 @@
         {% if course.certification_cost %}
             <div style="text-align: center">
                 <!-- TODO -->
-                <a href="{{ registry_url }}" class="btn btn-large btn-primary mb20">{% trans "Certificate" %}</a>
+                <a href="{% url buy_exam_right course.slug %}" class="btn btn-large btn-primary mb20">{% trans "Certificate" %}</a>
             </div>
         {% endif %}
 

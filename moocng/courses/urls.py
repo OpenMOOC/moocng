@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from django.conf.urls import patterns, url
+from django.conf.urls import include, patterns, url
 
 from moocng.courses.feeds import AnnouncementFeed
 
@@ -39,4 +39,8 @@ urlpatterns = patterns(
     url(r'^course/(?P<course_slug>[-\w]+)/announcement/(?P<announcement_slug>[-\w]+)/$',
         'announcement_detail', name='announcement_detail'),
     url(r'^course/(?P<course_slug>[-\w]+)/announcements_feed/$', AnnouncementFeed(), name='announcements_feed'),
+
+    # Course certification
+    url(r'^course/(?P<course_slug>[-\w]+)/certificate/',
+        include('moocng.certificates.urls')),
 )
