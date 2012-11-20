@@ -149,7 +149,7 @@ msgstr "Requisitos"
 #: courses/models.py:37 courses/models.py:43
 #: courses/templates/courses/overview.html:29
 msgid "Learning goals"
-msgstr "Objetivos formativos"
+msgstr "Objetivos"
 
 #: courses/models.py:39 courses/templates/courses/overview.html:43
 msgid "Intended audience"
@@ -577,7 +577,7 @@ msgstr "Terminar sesión"
 
 #: courses/templates/courses/overview.html:23
 msgid "Course summary"
-msgstr "Resumen del curso"
+msgstr "El curso"
 
 #: courses/templates/courses/overview.html:36
 msgid "Recommended requirements"
