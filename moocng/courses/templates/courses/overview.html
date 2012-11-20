@@ -68,8 +68,17 @@
 
         {% if course.certification_cost %}
             <div style="text-align: center">
-                <!-- TODO -->
-                <a href="{% url buy_exam_right course.slug %}" class="btn btn-large btn-primary mb20">{% trans "Certificate" %}</a>
+                {% if user.is_authenticated %}
+                    {% if course.certification_banner %}
+                        <a href="{% url buy_exam_right course.slug %}">
+                            <img class="mb20" src="{{ course.certification_banner.url }}" width="300" title="{% trans "Get a certification in this course" %}" />
+                        </a>
+                    {% else %}
+                        <a href="{% url buy_exam_right course.slug %}" class="btn btn-large btn-primary mb20">{% trans "Get a certification in this course" %}</a>
+                    {% endif %}
+                {% else %}
+                    <a href="{{ registry_url }}" class="btn btn-large btn-primary mb20">{% blocktrans with site_name=site.name %}Register in {{ site_name }} to get a certification in this course{% endblocktrans %}</a>
+                {% endif %}
             </div>
         {% endif %}
 

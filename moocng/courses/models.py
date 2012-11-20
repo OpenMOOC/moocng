@@ -56,6 +56,9 @@ class Course(Sortable):
     certification_cost = models.DecimalField(
         verbose_name=_(u'Certification cost'), blank=True, null=True,
         max_digits=10, decimal_places=2)
+    certification_banner = models.ImageField(
+        verbose_name=_(u'Certification banner'),
+        upload_to='certification_banners', blank=True, null=True)
 
     class Meta(Sortable.Meta):
         verbose_name = _(u'course')
