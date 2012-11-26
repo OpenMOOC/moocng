@@ -53,6 +53,15 @@ class Course(Sortable):
                                       blank=True)
     promotion_video = models.URLField(verbose_name=_(u'Promotion video'),
                                       blank=True)
+    threshold = models.DecimalField(
+        verbose_name=_(u'Pass threshold'),
+        max_digits=3, decimal_places=2, blank=True, null=True)
+    certification_banner = models.ImageField(
+        verbose_name=_(u'Certification banner'),
+        upload_to='certification_banners', blank=True, null=True)
+    completion_badge = models.ImageField(
+        verbose_name=_(u'Completion badge'),
+        upload_to='completion_badges', blank=True, null=True)
 
     class Meta(Sortable.Meta):
         verbose_name = _(u'course')

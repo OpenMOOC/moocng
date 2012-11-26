@@ -66,6 +66,18 @@
             </div>
         {% endif %}
 
+        {% if course.certification_banner %}
+            <div style="text-align: center">
+                {% if user.is_authenticated %}
+                    <a href="">
+                        <img class="mb20" src="{{ course.certification_banner.url }}" width="300" title="{% trans "Get a certification in this course" %}" alt="{% trans "Get a certification in this course" %}" />
+                    </a>
+                {% else %}
+                    <a href="{{ registry_url }}" class="btn btn-large btn-primary mb20">{% blocktrans with site_name=site.name %}Register in {{ site_name }} to get a certification in this course{% endblocktrans %}</a>
+                {% endif %}
+            </div>
+        {% endif %}
+
         <div class="box">
             <h2>{% trans "Teachers" %}</h2>
             <ul class="unstyled">
