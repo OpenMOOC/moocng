@@ -294,6 +294,10 @@ MOOCNG_THEME = {
 
 FFMPEG = '/usr/bin/ffmpeg'
 
+# Make this unique, and don't share it with anybody else than payment system
+# Override this in local settings
+USER_API_KEY = '123456789'
+
 # Celery settings
 import djcelery
 djcelery.setup_loader()

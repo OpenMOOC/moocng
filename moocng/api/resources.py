@@ -21,12 +21,16 @@ from tastypie import fields
 from tastypie.authorization import DjangoAuthorization
 from tastypie.resources import ModelResource
 
+from django.conf.urls import url
+from django.contrib.auth.models import User
 from django.db.models import Q
+from django.http import HttpResponse
 
 from moocng.api.authentication import DjangoAuthentication
+from moocng.api.authorization import ApiKeyAuthorization, is_api_key_authorized
 from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
-                                   Attachment)
+                                   Attachment, Course)
 from moocng.courses.utils import normalize_kq_weight
 from moocng.videos.utils import extract_YT_video_id
 
@@ -353,3 +357,54 @@ class ActivityResource(MongoResource):
     def _initial(self, request, **kwargs):
         course_id = kwargs['pk']
         return {course_id: {'kqs': []}}
+
+
+class CourseResource(ModelResource):
+    class Meta:
+        queryset = Course.objects.all()
+        resource_name = 'course'
+        allowed_methods = ['get']
+
+
+class UserResource(ModelResource):
+    class Meta:
+        queryset = User.objects.all()
+        resource_name = 'user'
+        authorization = ApiKeyAuthorization()
+        allowed_methods = ['get']
+        fields = ['id', 'email']
+        filtering = {
+            'email': ('exact'),
+        }
+
+    def override_urls(self):
+        return [
+            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/allcourses/$" % self._meta.resource_name,
+                self.wrap_view('get_courses'), name="get_courses_as_student"),
+            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/passedcourses/$" % self._meta.resource_name,
+                self.wrap_view('get_passed_courses'),
+                name="get_passed_courses_as_student"),
+        ]
+
+    def get_object(self, request, kwargs):
+        try:
+            obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
+        except self.Meta.object_class.DoesNotExist:
+            return HttpResponse(status=404)
+        return obj
+
+    @is_api_key_authorized
+    def get_courses(self, request, **kwargs):
+        obj = self.get_object(request, kwargs)
+        if isinstance(obj, HttpResponse):
+            return obj
+        return CourseResource(obj.courses_as_student.all()).get_list(request)
+
+    @is_api_key_authorized
+    def get_passed_courses(self, request, **kwargs):
+        obj = self.get_object(request, kwargs)
+        if isinstance(obj, HttpResponse):
+            return obj
+        courses = obj.courses_as_student.all()
+        # TODO
+        return CourseResource(courses).get_list(request)
