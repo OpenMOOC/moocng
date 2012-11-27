@@ -31,7 +31,7 @@ from moocng.api.authorization import ApiKeyAuthorization, is_api_key_authorized
 from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment, Course)
-from moocng.courses.utils import normalize_kq_weight
+from moocng.courses.utils import normalize_kq_weight, calculate_course_mark
 from moocng.videos.utils import extract_YT_video_id
 
 
@@ -388,17 +388,39 @@ class UserResource(ModelResource):
 
     def get_object(self, request, kwargs):
         try:
-            obj = self.cached_obj_get(request=request, **self.remove_api_resource_names(kwargs))
+            obj = self.cached_obj_get(request=request,
+                                      **self.remove_api_resource_names(kwargs))
         except self.Meta.object_class.DoesNotExist:
             return HttpResponse(status=404)
         return obj
+
+    def alt_get_list(self, request, courses):
+        resource = CourseResource()
+
+        sorted_objects = resource.apply_sorting(courses,
+                                                options=request.GET)
+        paginator = resource._meta.paginator_class(
+            request.GET, sorted_objects,
+            resource_uri=resource.get_resource_list_uri(),
+            limit=resource._meta.limit)
+        to_be_serialized = paginator.page()
+
+        # Dehydrate the bundles in preparation for serialization.
+        bundles = [resource.build_bundle(obj=obj, request=request)
+                   for obj in to_be_serialized['objects']]
+        to_be_serialized['objects'] = [resource.full_dehydrate(bundle)
+                                       for bundle in bundles]
+        to_be_serialized = resource.alter_list_data_to_serialize(
+            request, to_be_serialized)
+        return resource.create_response(request, to_be_serialized)
 
     @is_api_key_authorized
     def get_courses(self, request, **kwargs):
         obj = self.get_object(request, kwargs)
         if isinstance(obj, HttpResponse):
             return obj
-        return CourseResource(obj.courses_as_student.all()).get_list(request)
+        courses = obj.courses_as_student.all()
+        return self.alt_get_list(request, courses)
 
     @is_api_key_authorized
     def get_passed_courses(self, request, **kwargs):
@@ -406,5 +428,13 @@ class UserResource(ModelResource):
         if isinstance(obj, HttpResponse):
             return obj
         courses = obj.courses_as_student.all()
-        # TODO
-        return CourseResource(courses).get_list(request)
+        passed_courses = []
+
+        for course in courses:
+            if course.threshold is not None:
+                total_mark, units_info = calculate_course_mark(course,
+                                                               request.user)
+                if total_mark >= course.threshold:
+                    passed_courses.append(course)
+
+        return self.alt_get_list(request, passed_courses)

@@ -19,6 +19,24 @@ from datetime import datetime
 from moocng.api.mongodb import get_db
 
 
+def calculate_course_mark(course, user):
+    from moocng.courses.models import Unit
+    total_mark = 0
+    unit_list = Unit.objects.filter(course=course)
+    units_info = []
+    for unit in unit_list:
+        unit_info = {}
+        mark, relative_mark = calculate_unit_mark(unit, user)
+        total_mark += relative_mark
+        unit_info = {
+            'unit': unit,
+            'mark': mark,
+            'normalized_weight': normalize_unit_weight(unit),
+        }
+        units_info.append(unit_info)
+    return total_mark, units_info
+
+
 def calculate_unit_mark(unit, user):
     from moocng.courses.models import KnowledgeQuantum
     unit_kqs = KnowledgeQuantum.objects.filter(unit=unit)
