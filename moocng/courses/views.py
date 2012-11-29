@@ -26,6 +26,7 @@ from django.shortcuts import (get_object_or_404, get_list_or_404,
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
+from moocng.badges.models import Award
 from moocng.courses.utils import calculate_course_mark
 from moocng.courses.models import Course, Unit, Announcement
 
@@ -154,10 +155,19 @@ def transcript(request):
     courses_info = []
     for course in course_list:
         total_mark, units_info = calculate_course_mark(course, request.user)
+        award = None
+        if course.threshold is not None and total_mark / 10 >= course.threshold:
+            badge = course.completion_badge
+            try:
+                award = Award.objects.get(badge=badge, user=request.user)
+            except Award.DoesNotExist:
+                award = Award(badge=badge, user=request.user)
+                award.save()
         courses_info.append({
             'course': course,
             'units_info': units_info,
             'mark': total_mark,
+            'award': award,
         })
     return render_to_response('courses/transcript.html', {
         'courses_info': courses_info,

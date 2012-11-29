@@ -23,9 +23,13 @@
             <ul>
             {% for unit_info in course_info.units_info %}
                 <li><a href="{% url course_overview course_info.course.slug %}classroom/#unit{{ unit_info.unit.id }}">{{ unit_info.unit.title }}</a> <b> {{ unit_info.mark|floatformat:"-2" }}</b>/10   ({{ unit_info.normalized_weight|floatformat:"-2" }}%)</li>
-            {% endfor %}        
+            {% endfor %}
             </ul>
         {% endif%}
+        {% if course_info.award %}
+            <p>{% trans "Congratulations, you have completed" %} "{{ course_info.course.name }}". {% trans "Here is a badge!" %}</p>
+            <img src="{{ course_info.award.get_image }}" alt="{{ course_info.award.badge.title }}" title="{{ course_info.award.badge.title }}" width="50" height="50" />
+        {% endif %}
     </div>
     {% empty %}
       <p><b>{% trans "You are not enrolled in any course" %}</b></p>

@@ -180,6 +180,7 @@ INSTALLED_APPS = (
     'moocng.portal',
     'moocng.videos',
     'moocng.complaints',
+    'moocng.badges',
     'djangosaml2',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
