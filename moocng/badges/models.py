@@ -50,6 +50,8 @@ class Badge(models.Model):
 
     class Meta:
         ordering = ['-modified', '-created']
+        verbose_name = _(u'badge')
+        verbose_name_plural = _(u'badges')
 
     def __unicode__(self):
         return self.title
@@ -72,6 +74,8 @@ class Award(models.Model):
     class Meta:
         unique_together = ('user', 'badge')
         ordering = ['-modified', '-awarded']
+        verbose_name = _(u'award')
+        verbose_name_plural = _(u'awards')
 
     def __unicode__(self):
         return "%s awarded to %s" % (self.badge.title, self.user.username)
