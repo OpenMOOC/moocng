@@ -18,10 +18,10 @@ from django.shortcuts import get_object_or_404
 from moocng.badges.models import Badge, Award
 
 
-def badge_url(request, badge_slug):
+def badge_image(request, badge_slug, user_id):
     badge = get_object_or_404(Badge, slug=badge_slug)
     try:
-        award = Award.objects.filter(user=request.user).get(badge=badge)
-        return HttpResponse(request.build_absolute_uri(award.get_image()))
+        Award.objects.filter(user__id=user_id).get(badge=badge)
+        return HttpResponse(badge.image.read(), content_type="image/png")
     except Award.DoesNotExist:
         return HttpResponse(status=404)

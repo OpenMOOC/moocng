@@ -28,7 +28,10 @@
         {% endif%}
         {% if course_info.award %}
             <p>{% trans "Congratulations, you have completed" %} "{{ course_info.course.name }}". {% trans "Here is a badge!" %}</p>
-            <p><img src="{{ course_info.award.get_image }}" alt="{{ course_info.award.badge.title }}" title="{{ course_info.award.badge.title }}" width="50" height="50" class="award" /></p>
+            <p>
+                <img src="{{ course_info.award.get_image_url }}" alt="{{ course_info.award.badge.title }}" title="{{ course_info.award.badge.title }}" width="50" height="50" class="award" />
+                <code>{{ course_info.award.get_image_public_url }}</code>
+            </p>
         {% endif %}
         {% if course_info.passed %}
             <p><a href="" class="btn btn-success">{% trans "I want a certificate of completion for this course" %}</a></p>

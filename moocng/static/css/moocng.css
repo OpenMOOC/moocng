@@ -150,6 +150,10 @@ html.ie li.teacher img {
     height: 50px;
 }
 
+img.award {
+    margin-right: 10px;
+}
+
 .unit-n {}
 
 .unit-h {}

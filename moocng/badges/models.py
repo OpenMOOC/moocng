@@ -16,7 +16,9 @@
 # Copyright (c) 2011, Mozilla    BSD 3-Clause License
 
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -80,5 +82,10 @@ class Award(models.Model):
     def __unicode__(self):
         return "%s awarded to %s" % (self.badge.title, self.user.username)
 
-    def get_image(self):
+    def get_image_url(self):
         return self.badge.image.url
+
+    def get_image_public_url(self):
+        current_site = Site.objects.get_current()
+        url = reverse('badge_image', args=[self.badge.slug, self.user.id])
+        return 'http://%s%s' % (current_site.domain, url)

@@ -17,5 +17,6 @@ from django.conf.urls import patterns, url
 
 urlpatterns = patterns(
     'moocng.badges.views',
-    url(r'^(?P<badge_slug>[-\w]+)/url/$', 'badge_url', name='badge_url'),
+    url(r'^(?P<badge_slug>[-\w]+)/(?P<user_id>[\d]+)/image/$', 'badge_image',
+        name='badge_image'),
 )
