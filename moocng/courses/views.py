@@ -156,18 +156,22 @@ def transcript(request):
     for course in course_list:
         total_mark, units_info = calculate_course_mark(course, request.user)
         award = None
+        passed = False
         if course.threshold is not None and total_mark / 10 >= course.threshold:
+            passed = True
             badge = course.completion_badge
-            try:
-                award = Award.objects.get(badge=badge, user=request.user)
-            except Award.DoesNotExist:
-                award = Award(badge=badge, user=request.user)
-                award.save()
+            if badge is not None:
+                try:
+                    award = Award.objects.get(badge=badge, user=request.user)
+                except Award.DoesNotExist:
+                    award = Award(badge=badge, user=request.user)
+                    award.save()
         courses_info.append({
             'course': course,
             'units_info': units_info,
             'mark': total_mark,
             'award': award,
+            'passed': passed,
         })
     return render_to_response('courses/transcript.html', {
         'courses_info': courses_info,
