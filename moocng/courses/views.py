@@ -27,7 +27,7 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
 from moocng.badges.models import Award
-from moocng.courses.utils import calculate_course_mark
+from moocng.courses.utils import calculate_course_mark, get_unit_badge_class
 from moocng.courses.models import Course, Unit, Announcement
 
 
@@ -80,13 +80,6 @@ def course_overview(request, course_slug):
             }, context_instance=RequestContext(request))
 
 
-unit_badge_classes = {
-    'n': 'badge-inverse',
-    'h': 'badge-warning',
-    'e': 'badge-important',
-}
-
-
 @login_required
 def course_classroom(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
@@ -98,7 +91,7 @@ def course_classroom(request, course_slug):
             'id': u.id,
             'title': u.title,
             'unittype': u.unittype,
-            'badge_class': unit_badge_classes[u.unittype],
+            'badge_class': get_unit_badge_class(u),
         }
         units.append(unit)
 
@@ -124,7 +117,7 @@ def course_progress(request, course_slug):
             'id': u.id,
             'title': u.title,
             'unittype': u.unittype,
-            'badge_class': unit_badge_classes[u.unittype],
+            'badge_class': get_unit_badge_class(u),
         }
         units.append(unit)
 
@@ -154,6 +147,9 @@ def transcript(request):
     course_list = request.user.courses_as_student.all()
     courses_info = []
     for course in course_list:
+        use_old_calculus = False
+        if course.slug in settings.COURSES_USING_OLD_TRANSCRIPT:
+            use_old_calculus = True
         total_mark, units_info = calculate_course_mark(course, request.user)
         award = None
         passed = False
@@ -166,6 +162,11 @@ def transcript(request):
                 except Award.DoesNotExist:
                     award = Award(badge=badge, user=request.user)
                     award.save()
+        for idx, uinfo in enumerate(units_info):
+            unit_class = get_unit_badge_class(uinfo['unit'])
+            units_info[idx]['badge_class'] = unit_class
+            if not use_old_calculus and uinfo['unit'].unittype == 'n':
+                units_info[idx]['hide'] = True
         courses_info.append({
             'course': course,
             'units_info': units_info,

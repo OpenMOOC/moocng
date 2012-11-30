@@ -22,7 +22,9 @@
         {% if course_info.units_info %}
             <ul>
             {% for unit_info in course_info.units_info %}
-                <li><a href="{% url course_overview course_info.course.slug %}classroom/#unit{{ unit_info.unit.id }}">{{ unit_info.unit.title }}</a> <b> {{ unit_info.mark|floatformat:"-2" }}</b>/10   ({{ unit_info.normalized_weight|floatformat:"-2" }}%)</li>
+                {% if not unit_info.hide %}
+                    <li><span class="badge {{ unit_info.badge_class }}">{{ unit_info.unit.unittype|capfirst }}</span> <a href="{% url course_overview   course_info.course.slug %}classroom/#unit{{ unit_info.unit.id }}">{{ unit_info.unit.title }}</a> <b> {{ unit_info.mark|floatformat:"-2" }}</b>/10   ({{ unit_info.normalized_weight|floatformat:"-2" }}%)</li>
+                {% endif %}
             {% endfor %}
             </ul>
         {% endif%}

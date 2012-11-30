@@ -299,6 +299,10 @@ FFMPEG = '/usr/bin/ffmpeg'
 # Override this in local settings
 USER_API_KEY = '123456789'
 
+# A list with the slugs of the courses that use the old qualification system
+# where the normal units counted
+COURSES_USING_OLD_TRANSCRIPT = []
+
 # Celery settings
 import djcelery
 djcelery.setup_loader()
