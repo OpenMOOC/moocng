@@ -23,6 +23,13 @@ if (_.isUndefined(window.MOOC)) {
     "use strict";
 
     MOOC.views = {
-        Unit: Backbone.View.extend({})
+        List: Backbone.View.extend({}),
+        listView: undefined,
+
+        Unit: Backbone.View.extend({}),
+        unitViews: {},
+
+        KQ: Backbone.View.extend({}),
+        kqViews: {}
     };
 }(jQuery, Backbone, _));
