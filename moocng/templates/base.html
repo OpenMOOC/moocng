@@ -45,7 +45,7 @@
         {% endfor %}
       </ul>
       <hgroup>
-        <h1><a href="{% url home %}" class="hide-text"><img src="{{ theme.logo }}" alt="{{ site.name }}" />{{ site.name }}</a></h1>
+        <h1 class="logo"><a href="{% url home %}" class="hide-text"><img src="{{ theme.logo }}" alt="{{ site.name }}" />{{ site.name }}</a></h1>
         <h2 class="small pull-left">{{ theme.subtitle }}</h2>
       </hgroup>
       {% if user.is_authenticated %}
