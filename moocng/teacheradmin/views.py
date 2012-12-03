@@ -35,24 +35,30 @@ from moocng.teacheradmin.utils import (send_invitation,
 @is_teacher_or_staff
 def teacheradmin_stats(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
+    is_enrolled = course.students.filter(id=request.user.id).exists()
 
     return render_to_response('teacheradmin/stats.html', {
         'course': course,
+        'is_enrolled': is_enrolled,
     }, context_instance=RequestContext(request))
 
 
 @is_teacher_or_staff
 def teacheradmin_units(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
+    is_enrolled = course.students.filter(id=request.user.id).exists()
 
     return render_to_response('teacheradmin/units.html', {
         'course': course,
+        'is_enrolled': is_enrolled,
     }, context_instance=RequestContext(request))
 
 
 @is_teacher_or_staff
 def teacheradmin_teachers(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
+    is_enrolled = course.students.filter(id=request.user.id).exists()
+
     teachers = course.teachers.all()
     teachers = [{
                 'id': t.id,
@@ -69,6 +75,7 @@ def teacheradmin_teachers(request, course_slug):
 
     return render_to_response('teacheradmin/teachers.html', {
         'course': course,
+        'is_enrolled': is_enrolled,
         'teachers': teachers,
         'request': request,
     }, context_instance=RequestContext(request))
@@ -179,6 +186,7 @@ def teacheradmin_teachers_transfer(request, course_slug):
 @is_teacher_or_staff
 def teacheradmin_info(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
+    is_enrolled = course.students.filter(id=request.user.id).exists()
     errors = ''
     success = False
 
@@ -192,6 +200,7 @@ def teacheradmin_info(request, course_slug):
 
     return render_to_response('teacheradmin/info.html', {
         'course': course,
+        'is_enrolled': is_enrolled,
         'errors': errors,
         'success': success,
     }, context_instance=RequestContext(request))
@@ -200,16 +209,20 @@ def teacheradmin_info(request, course_slug):
 @is_teacher_or_staff
 def teacheradmin_announcements(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
+    is_enrolled = course.students.filter(id=request.user.id).exists()
 
     return render_to_response('teacheradmin/announcements.html', {
         'course': course,
+        'is_enrolled': is_enrolled,
     }, context_instance=RequestContext(request))
 
 
 @is_teacher_or_staff
 def teacheradmin_emails(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
+    is_enrolled = course.students.filter(id=request.user.id).exists()
 
     return render_to_response('teacheradmin/emails.html', {
         'course': course,
+        'is_enrolled': is_enrolled,
     }, context_instance=RequestContext(request))
