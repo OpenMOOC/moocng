@@ -24,6 +24,7 @@ if (_.isUndefined(window.MOOC)) {
 
     var loadData = function (callback) {
         if (MOOC.models.course.length === 0) {
+            MOOC.models.course.fetch();
             // TODO
         }
         callback();
