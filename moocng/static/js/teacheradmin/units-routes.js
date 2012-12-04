@@ -50,19 +50,6 @@ if (_.isUndefined(window.MOOC)) {
                 .fail(function () {
                     errorHandler();
                 });
-        },
-        loadUnits = function (callback) {
-            if (MOOC.models.course.length === 0) {
-                $("#loading").show();
-                MOOC.models.course.fetch({
-                    error: errorHandler,
-                    success: function () {
-                        loadKQs(callback);
-                    }
-                });
-            } else {
-                callback();
-            }
         };
 
     MOOC.ajax = {
@@ -75,7 +62,7 @@ if (_.isUndefined(window.MOOC)) {
 
     MOOC.App = Backbone.Router.extend({
         all: function () {
-            var cb = function () {
+            var callback = function () {
                 if (_.isUndefined(MOOC.views.listView)) {
                     MOOC.views.listView = new MOOC.views.List({
                         model: MOOC.models.course,
@@ -86,7 +73,17 @@ if (_.isUndefined(window.MOOC)) {
                 MOOC.views.listView.render();
             };
 
-            loadUnits(cb);
+            if (MOOC.models.course.length === 0) {
+                $("#loading").show();
+                MOOC.models.course.fetch({
+                    error: errorHandler,
+                    success: function () {
+                        loadKQs(callback);
+                    }
+                });
+            } else {
+                callback();
+            }
         },
 
         editUnit: function (unit) {
@@ -94,18 +91,18 @@ if (_.isUndefined(window.MOOC)) {
                 unitView;
 
             unit = parseInt(unit, 10);
-            unitView = MOOC.views.unitViews[unit];
+            unitView = MOOC.views.unitEditorViews[unit];
 
             if (_.isUndefined(unitView)) {
                 unitObj = MOOC.models.course.find(function (item) {
                     return unit === item.get("id");
                 });
-                unitView = new MOOC.views.Unit({
+                unitView = new MOOC.views.UnitEditor({
                     model: unitObj,
-                    id: "unit" + unit,
+                    id: "unitEditor" + unit,
                     el: $("#unit-editor")[0]
                 });
-                MOOC.views.unitViews[unit] = unitView;
+                MOOC.views.unitEditorViews[unit] = unitView;
             }
 
             unitView.render();
@@ -117,19 +114,19 @@ if (_.isUndefined(window.MOOC)) {
                 kqView;
 
             kq = parseInt(kq, 10);
-            kqView = MOOC.views.kqViews[kq];
+            kqView = MOOC.views.kqEditorViews[kq];
 
             if (_.isUndefined(kqView)) {
                 unitObj = MOOC.models.course.getByKQ(kq);
                 kqObj = unitObj.get("knowledgeQuantumList").find(function (item) {
                     return kq === item.get("id");
                 });
-                kqView = new MOOC.views.KQ({
+                kqView = new MOOC.views.KQEditor({
                     model: kqObj,
-                    id: "kq" + kq,
+                    id: "kqEditor" + kq,
                     el: $("#kq-editor")[0]
                 });
-                MOOC.views.kqViews[kq] = kqView;
+                MOOC.views.kqEditorViews[kq] = kqView;
             }
 
             kqView.render();
@@ -138,6 +135,7 @@ if (_.isUndefined(window.MOOC)) {
 
     MOOC.init = function (courseID) {
         var path = window.location.pathname;
+        MOOC.host = window.location.origin;
 
         MOOC.router = new MOOC.App();
         MOOC.router.route("", "all");
