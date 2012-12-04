@@ -118,6 +118,14 @@ footer ul li {
     text-align: right !important;
 }
 
+.inlineb {
+    display: inline-block;
+}
+
+.wide {
+    width: 100%;
+}
+
 li.teacher {
     margin-bottom: 10px;
 }
@@ -254,4 +262,22 @@ html.ie li.teacher img {
 
 input[type="checkbox"] {
     margin: -4px 0 0;
+}
+
+.teacheradmin-units p.unit {
+    padding: 10px;
+    border: 1px solid blue;
+}
+
+.teacheradmin-units p.unit h3 {
+    display: inline-block;
+}
+
+.teacheradmin-units p.kq {
+    padding: 10px;
+    border: 1px solid green;
+}
+
+.teacheradmin-units p.kq h4 {
+    display: inline-block;
 }

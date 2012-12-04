@@ -22,6 +22,40 @@ if (_.isUndefined(window.MOOC)) {
 (function ($, Backbone, _) {
     "use strict";
 
+    var block = function () {
+            var result = "<div",
+                chunkList = _.toArray(arguments),
+                options = _.last(chunkList);
+            if (_.isObject(options)) {
+                chunkList = _.initial(chunkList);
+                if (options.classes) {
+                    result += " class='" + options.classes + "'";
+                }
+            }
+            result += ">";
+            _.each(chunkList, function (chunk) {
+                result += chunk;
+            });
+            return result + "</div>";
+        },
+
+        inlineb = function () {
+            var chunkList = _.toArray(arguments),
+                options = {
+                    classes: ""
+                };
+            if (_.isObject(_.last(chunkList))) {
+                options = _.last(chunkList);
+                chunkList = _.initial(chunkList);
+                if (_.isUndefined(options.classes)) {
+                    options.classes = "";
+                }
+            }
+            options.classes += " inlineb";
+            chunkList.push(options);
+            return block.apply(null, chunkList);
+        };
+
     MOOC.views = {
         List: Backbone.View.extend({
             events: {},
@@ -56,13 +90,19 @@ if (_.isUndefined(window.MOOC)) {
 
             render: function () {
                 var node = this.$el,
+                    header,
                     html;
-                html = "<span class='drag-handle'></span><h3>" + this.model.get("title") + "</h3>" +
-                    "<button class='btn'><i class='icon-edit'></i></button>" +
-                    "<div class='kq-containter'></div>" +
-                    "<button class='btn'><i class='icon-plus'></i></button>";
+
+                header = "<h3>" + this.model.get("title") + "</h3>" +
+                    "<button class='btn pull-right'><i class='icon-edit'></i></button>";
+                html = inlineb("<span class='drag-handle'></span>");
+                html += inlineb(block(header),
+                                block("", { classes: "kq-containter" }),
+                                block("<button class='btn pull-right'><i class='icon-plus'></i></button>"),
+                                { classes: "wide" });
                 node.html(html);
-                node = node.find("div.kq-containter");
+
+                node = node.find(".kq-containter");
                 this.model.get("knowledgeQuantumList").each(function (kq) {
                     var view = MOOC.views.kqViews[kq.get("id")],
                         el = $("<p class='kq'></p>")[0];
@@ -89,18 +129,26 @@ if (_.isUndefined(window.MOOC)) {
             events: {},
 
             render: function () {
-                var node = this.$el,
-                    html;
-                html = "<span class='drag-handle'></span><h4>" + this.model.get("title") + "</h4>" +
-                    "<iframe width='110px' height='80px' src='//www.youtube.com/embed/" +
-                    this.model.get("videoID") + "?rel=0&controls=0&origin=" +
-                    MOOC.host + "' frameborder='0'></iframe>" +
-                    "<button class='btn'><i class='icon-edit'></i></button>";
+                var html,
+                    header,
+                    iframe,
+                    data;
+
+                header = "<h4>" + this.model.get("title") + "</h4><button class='btn pull-right'><i class='icon-edit'></i></button>";
                 if (this.model.has("question")) {
-                    html += "<span class='badge badge-inverse'><i class='icon-white icon-question-sign'></i></span>";
+                    header += "<span class='badge badge-inverse pull-right'><i class='icon-white icon-question-sign'></i></span>";
                 }
-                html += "<img class='video-thumbnail' />";
-                node.html(html);
+
+                iframe = "<iframe width='110px' height='65px' src='//www.youtube.com/embed/" +
+                    this.model.get("videoID") + "?rel=0&controls=0&origin=" +
+                    MOOC.host + "' frameborder='0'></iframe>";
+
+                data = ""; // TODO
+
+                html = inlineb("<span class='drag-handle'></span>");
+                html += inlineb(block(header), inlineb(inlineb(iframe), inlineb(data)), { classes: "wide" });
+
+                this.$el.html(html);
             }
         }),
         kqViews: {},
