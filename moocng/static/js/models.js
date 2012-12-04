@@ -221,6 +221,17 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
         };
     },
 
+    url: function () {
+        "use strict";
+        return MOOC.ajax.getAbsoluteUrl("kq/") + this.get("id") + "/";
+    },
+
+    parse: function (resp, xhr) {
+        "use strict";
+        resp.id = parseInt(resp.id, 10);
+        return resp;
+    },
+
     truncateTitle: function (maxLength) {
         "use strict";
         var title = this.get("title"),
@@ -302,6 +313,16 @@ MOOC.models.Unit = Backbone.Model.extend({
 MOOC.models.UnitList = Backbone.Collection.extend({
     model: MOOC.models.Unit,
 
+    url: function () {
+        "use strict";
+        return MOOC.ajax.getAbsoluteUrl("unit/");
+    },
+
+    parse: function (resp, xhr) {
+        "use strict";
+        return resp.objects;
+    },
+
     getByKQ: function (kqID) {
         "use strict";
         return this.find(function (unit) {
@@ -312,16 +333,6 @@ MOOC.models.UnitList = Backbone.Collection.extend({
             kq = kq.get(kqID);
             return !_.isUndefined(kq);
         });
-    },
-
-    url: function () {
-        "use strict";
-        return MOOC.ajax.getAbsoluteUrl("unit/");
-    },
-
-    parse: function (resp, xhr) {
-        "use strict";
-        return resp.objects;
     }
 });
 

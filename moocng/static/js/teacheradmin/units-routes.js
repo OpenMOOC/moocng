@@ -22,12 +22,55 @@ if (_.isUndefined(window.MOOC)) {
 (function ($, Backbone, _) {
     "use strict";
 
-    var loadData = function (callback) {
-        if (MOOC.models.course.length === 0) {
-            MOOC.models.course.fetch();
+    var errorHandler = function () {
+            $("#loading").hide();
             // TODO
+        },
+        loadKQs = function (callback) {
+            var promises = [];
+            MOOC.models.course.each(function (unit) {
+                unit.set("knowledgeQuantumList", new MOOC.models.KnowledgeQuantumList());
+                promises.push($.ajax(MOOC.ajax.host + "kq/?format=json&unit=" + unit.get("id"), {
+                    success: function (data, textStatus, jqXHR) {
+                        unit.get("knowledgeQuantumList").reset(_.map(data.objects, function (kq) {
+                            var data = _.pick(kq, "id", "title", "videoID",
+                                "teacher_comments", "supplementary_material",
+                                "question", "order", "correct", "completed",
+                                "normalized_weight");
+                            data.id = parseInt(data.id, 10);
+                            return data;
+                        }));
+                    }
+                }));
+            });
+            $.when.apply(null, promises)
+                .done(function () {
+                    callback();
+                })
+                .fail(function () {
+                    errorHandler();
+                });
+        },
+        loadUnits = function (callback) {
+            if (MOOC.models.course.length === 0) {
+                $("#loading").show();
+                MOOC.models.course.fetch({
+                    error: errorHandler,
+                    success: function () {
+                        loadKQs(callback);
+                    }
+                });
+            } else {
+                callback();
+            }
+        };
+
+    MOOC.ajax = {
+        host: "/api/v1/",
+
+        getAbsoluteUrl: function (path) {
+            return MOOC.ajax.host + path;
         }
-        callback();
     };
 
     MOOC.App = Backbone.Router.extend({
@@ -43,7 +86,7 @@ if (_.isUndefined(window.MOOC)) {
                 MOOC.views.listView.render();
             };
 
-            loadData(cb);
+            loadUnits(cb);
         },
 
         editUnit: function (unit) {
