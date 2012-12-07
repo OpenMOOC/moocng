@@ -276,6 +276,18 @@ input[type="checkbox"] {
     border: 1px solid green;
 }
 
+.teacheradmin-units .unit-right {
+    width: 728px;
+    vertical-align: top;
+    margin-left: 30px;
+}
+
+.teacheradmin-units .kq-right {
+    width: 556px;
+    margin-left: 10px;
+    vertical-align: top;
+}
+
 .teacheradmin-units .unit h3 {
     display: inline-block;
     margin-top: 0;

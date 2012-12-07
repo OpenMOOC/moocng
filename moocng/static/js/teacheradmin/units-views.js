@@ -108,7 +108,7 @@ if (_.isUndefined(window.MOOC)) {
                 html += inlineb(block(header),
                                 block("", { classes: "kq-containter" }),
                                 block("<button class='btn pull-right'><i class='icon-plus'></i></button>"),
-                                { style: "width: 728px; vertical-align: top; margin-left: 30px;" });
+                                { classes: "unit-right" });
                 node.html(html);
 
                 node = node.find(".kq-containter");
@@ -148,7 +148,7 @@ if (_.isUndefined(window.MOOC)) {
                     header += "<span class='badge badge-inverse question pull-right'><i class='icon-white icon-question-sign'></i></span>";
                 }
 
-                iframe = "<iframe width='110px' height='65px' src='//www.youtube.com/embed/" +
+                iframe = "<iframe width='110px' height='71px' src='//www.youtube.com/embed/" +
                     this.model.get("videoID") + "?rel=0&controls=0&origin=" +
                     MOOC.host + "' frameborder='0'></iframe>";
 
@@ -159,9 +159,7 @@ if (_.isUndefined(window.MOOC)) {
 
                 html = inlineb({ classes: "drag-handle" }) +
                     inlineb(iframe, { style: "margin-left: 30px;" }) +
-                    inlineb(block(header), block(data), {
-                        style: "width: 556px; margin-left: 10px; vertical-align: top;"
-                    });
+                    inlineb(block(header), block(data), { classes: "kq-right" });
 
                 this.$el.html(html);
             }
