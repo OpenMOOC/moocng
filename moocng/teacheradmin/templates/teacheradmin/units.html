@@ -17,8 +17,10 @@
     <script src="{{ STATIC_URL }}js/teacheradmin/units-routes.js" type="text/javascript"></script>
     <script type="text/javascript">
         MOOC.trans = {
-            api: {
-                unitNotReadyTitle: "{% trans "The module is not ready" %}"
+            nothing: "{% trans "Nothing" %}",
+            kq : {
+                teacher_comments: "{% trans "Instructor's comments" %}",
+                supplementary_material: "{% trans "Supplementary material" %}"
             }
         };
         MOOC.init({{ course.id }});
@@ -28,9 +30,7 @@
 
 {% block section %}
 <h2>{% trans "Units" %}</h2>
-<div id="units-container" class="draggable ui-widget-content viewport">
-<!--     <p class="unit"><p> -->
-</div>
+<div id="units-container" class="draggable ui-widget-content viewport"></div>
 <div id="unit-editor" class="viewport hide"></div>
 <div id="kq-editor" class="viewport hide"></div>
 {% endblock %}

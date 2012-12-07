@@ -31,6 +31,9 @@ if (_.isUndefined(window.MOOC)) {
                 if (options.classes) {
                     result += " class='" + options.classes + "'";
                 }
+                if (options.style) {
+                    result += " style='" + options.style + "'";
+                }
             }
             result += ">";
             _.each(chunkList, function (chunk) {
@@ -41,9 +44,7 @@ if (_.isUndefined(window.MOOC)) {
 
         inlineb = function () {
             var chunkList = _.toArray(arguments),
-                options = {
-                    classes: ""
-                };
+                options = { classes: "" };
             if (_.isObject(_.last(chunkList))) {
                 options = _.last(chunkList);
                 chunkList = _.initial(chunkList);
@@ -54,6 +55,14 @@ if (_.isUndefined(window.MOOC)) {
             options.classes += " inlineb";
             chunkList.push(options);
             return block.apply(null, chunkList);
+        },
+
+        truncate = function (text) {
+            if (text.length === 0) {
+                return MOOC.trans.nothing;
+            } else {
+                return text.substring(0, 100) + "...";
+            }
         };
 
     MOOC.views = {
@@ -65,7 +74,7 @@ if (_.isUndefined(window.MOOC)) {
                 node.html("");
                 this.model.each(function (unit) {
                     var view = MOOC.views.unitViews[unit.get("id")],
-                        el = $("<p class='unit'></p>")[0];
+                        el = $("<div class='unit'></div>")[0];
                     node.append(el);
                     if (_.isUndefined(view)) {
                         view = new MOOC.views.Unit({
@@ -95,17 +104,17 @@ if (_.isUndefined(window.MOOC)) {
 
                 header = "<h3>" + this.model.get("title") + "</h3>" +
                     "<button class='btn pull-right'><i class='icon-edit'></i></button>";
-                html = inlineb("<span class='drag-handle'></span>");
+                html = inlineb({ classes: "drag-handle" });
                 html += inlineb(block(header),
                                 block("", { classes: "kq-containter" }),
                                 block("<button class='btn pull-right'><i class='icon-plus'></i></button>"),
-                                { classes: "wide" });
+                                { style: "width: 728px; vertical-align: top; margin-left: 30px;" });
                 node.html(html);
 
                 node = node.find(".kq-containter");
                 this.model.get("knowledgeQuantumList").each(function (kq) {
                     var view = MOOC.views.kqViews[kq.get("id")],
-                        el = $("<p class='kq'></p>")[0];
+                        el = $("<div class='kq'></div>")[0];
                     node.append(el);
                     if (_.isUndefined(view)) {
                         view = new MOOC.views.KQ({
@@ -136,17 +145,23 @@ if (_.isUndefined(window.MOOC)) {
 
                 header = "<h4>" + this.model.get("title") + "</h4><button class='btn pull-right'><i class='icon-edit'></i></button>";
                 if (this.model.has("question")) {
-                    header += "<span class='badge badge-inverse pull-right'><i class='icon-white icon-question-sign'></i></span>";
+                    header += "<span class='badge badge-inverse question pull-right'><i class='icon-white icon-question-sign'></i></span>";
                 }
 
                 iframe = "<iframe width='110px' height='65px' src='//www.youtube.com/embed/" +
                     this.model.get("videoID") + "?rel=0&controls=0&origin=" +
                     MOOC.host + "' frameborder='0'></iframe>";
 
-                data = ""; // TODO
+                data = "<p>" + MOOC.trans.kq.teacher_comments + ": " +
+                    truncate(_.escape(this.model.get("teacher_comments"))) + "</p>" +
+                    "<p>" + MOOC.trans.kq.supplementary_material + ": " +
+                    truncate(_.escape(this.model.get("supplementary_material"))) + "<p/>";
 
-                html = inlineb("<span class='drag-handle'></span>");
-                html += inlineb(block(header), inlineb(inlineb(iframe), inlineb(data)), { classes: "wide" });
+                html = inlineb({ classes: "drag-handle" }) +
+                    inlineb(iframe, { style: "margin-left: 30px;" }) +
+                    inlineb(block(header), block(data), {
+                        style: "width: 556px; margin-left: 10px; vertical-align: top;"
+                    });
 
                 this.$el.html(html);
             }

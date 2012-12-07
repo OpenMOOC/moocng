@@ -264,20 +264,40 @@ input[type="checkbox"] {
     margin: -4px 0 0;
 }
 
-.teacheradmin-units p.unit {
+.teacheradmin-units .unit,
+.teacheradmin-units .kq {
     padding: 10px;
+    margin-bottom: 10px;
+    position: relative;
     border: 1px solid blue;
 }
 
-.teacheradmin-units p.unit h3 {
-    display: inline-block;
-}
-
-.teacheradmin-units p.kq {
-    padding: 10px;
+.teacheradmin-units .kq {
     border: 1px solid green;
 }
 
-.teacheradmin-units p.kq h4 {
+.teacheradmin-units .unit h3 {
     display: inline-block;
+    margin-top: 0;
+}
+
+.teacheradmin-units .kq h4 {
+    display: inline-block;
+    margin-top: 0;
+}
+
+.teacheradmin-units .kq p {
+    margin: 0 0 3px 0;
+}
+
+.teacheradmin-units .drag-handle {
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    width: 20px;
+    background-color: #CCC;
+}
+
+.teacheradmin-units .badge.question {
+    margin-right: 10px;
 }
