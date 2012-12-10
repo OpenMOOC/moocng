@@ -2,6 +2,8 @@
 
 {% load i18n askboturl %}
 
+{% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
+
 {% block nav %}
 <ul class="nav nav-pills">
     <li><a href="{% url course_overview course.slug %}">{% trans "Overview" %}</a></li>

@@ -264,6 +264,15 @@ input[type="checkbox"] {
     margin: -4px 0 0;
 }
 
+.teacheradmin-units .ui-state-highlight {
+    min-height: 30px;
+    margin-bottom: 10px;
+}
+
+.teacheradmin-units .kq-container {
+    min-height: 30px;
+}
+
 .teacheradmin-units .unit,
 .teacheradmin-units .kq {
     padding: 10px;

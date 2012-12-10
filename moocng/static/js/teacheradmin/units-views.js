@@ -58,11 +58,24 @@ if (_.isUndefined(window.MOOC)) {
         },
 
         truncate = function (text) {
-            if (text.length === 0) {
-                return MOOC.trans.nothing;
-            } else {
-                return text.substring(0, 100) + "...";
+            var result = MOOC.trans.nothing;
+            if (text.length > 0) {
+                result = text.substring(0, 100) + "...";
             }
+            return result;
+        },
+
+        jQueryUI = function () {
+            $("#units-container").sortable({
+                placeholder: "ui-state-highlight",
+                handle: ".drag-handle"
+            });
+            $(".kq-container").sortable({
+                placeholder: "ui-state-highlight",
+                handle: ".drag-handle",
+                connectWith: ".kq-container",
+                dropOnEmpty: true
+            });
         };
 
     MOOC.views = {
@@ -74,7 +87,7 @@ if (_.isUndefined(window.MOOC)) {
                 node.html("");
                 this.model.each(function (unit) {
                     var view = MOOC.views.unitViews[unit.get("id")],
-                        el = $("<div class='unit'></div>")[0];
+                        el = $("<div class='unit ui-widget ui-widget-content ui-helper-clearfix ui-corner-all'></div>")[0];
                     node.append(el);
                     if (_.isUndefined(view)) {
                         view = new MOOC.views.Unit({
@@ -88,6 +101,7 @@ if (_.isUndefined(window.MOOC)) {
                     }
                     view.render();
                 });
+                jQueryUI();
                 return this;
             }
         }),
@@ -106,15 +120,15 @@ if (_.isUndefined(window.MOOC)) {
                     "<button class='btn pull-right'><i class='icon-edit'></i></button>";
                 html = inlineb({ classes: "drag-handle" });
                 html += inlineb(block(header),
-                                block("", { classes: "kq-containter" }),
+                                block("", { classes: "kq-container" }),
                                 block("<button class='btn pull-right'><i class='icon-plus'></i></button>"),
                                 { classes: "unit-right" });
                 node.html(html);
 
-                node = node.find(".kq-containter");
+                node = node.find(".kq-container");
                 this.model.get("knowledgeQuantumList").each(function (kq) {
                     var view = MOOC.views.kqViews[kq.get("id")],
-                        el = $("<div class='kq'></div>")[0];
+                        el = $("<div class='kq ui-widget ui-widget-content ui-helper-clearfix ui-corner-all'></div>")[0];
                     node.append(el);
                     if (_.isUndefined(view)) {
                         view = new MOOC.views.KQ({
@@ -127,6 +141,7 @@ if (_.isUndefined(window.MOOC)) {
                         view.set("el", el);
                     }
                     view.render();
+                    jQueryUI();
                 });
                 return this;
             }
