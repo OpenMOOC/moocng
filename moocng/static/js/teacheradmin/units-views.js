@@ -98,6 +98,10 @@ if (_.isUndefined(window.MOOC)) {
                     }
                     view.render();
                 });
+                node.append(block("<button class='btn' title='" +
+                    MOOC.trans.add + " " + MOOC.trans.unit.unit +
+                    "'><i class='icon-plus'></i> " + MOOC.trans.add +
+                    "</button>", { classes: "mb20 align-right" }));
                 $("#units-container").off("sortstop").sortable(sortableOptions)
                     .on("sortstop", this.sortingHandler);
                 return this;
@@ -132,14 +136,20 @@ if (_.isUndefined(window.MOOC)) {
                 var node = this.$el,
                     sortOpts,
                     header,
+                    add,
                     html;
 
                 header = "<h3>" + this.model.get("title") + "</h3>" +
-                    "<button class='btn pull-right'><i class='icon-edit'></i></button>";
+                    "<button class='btn pull-right' title='" + MOOC.trans.edit +
+                    " " + MOOC.trans.unit.unit + "'><i class='icon-edit'></i> " +
+                    MOOC.trans.edit + "</button>";
+                add = "<button class='btn pull-right' title='" + MOOC.trans.add +
+                    " " + MOOC.trans.kq.kq + "'><i class='icon-plus'></i> " +
+                    MOOC.trans.add + "</button>";
                 html = inlineb({ classes: "drag-handle" });
                 html += inlineb(block(header),
                                 block("", { classes: "kq-container" }),
-                                block("<button class='btn pull-right'><i class='icon-plus'></i></button>"),
+                                block(add),
                                 { classes: "unit-right" });
                 node.html(html);
 
@@ -218,9 +228,14 @@ if (_.isUndefined(window.MOOC)) {
                     iframe,
                     data;
 
-                header = "<h4>" + this.model.get("title") + "</h4><button class='btn pull-right'><i class='icon-edit'></i></button>";
+                header = "<h4>" + this.model.get("title") + "</h4><button " +
+                    "class='btn pull-right' title='" + MOOC.trans.edit + " " +
+                    MOOC.trans.kq.kq + "'><i class='icon-edit'></i> " +
+                    MOOC.trans.edit + "</button>";
                 if (this.model.has("question")) {
-                    header += "<span class='badge badge-inverse question pull-right'><i class='icon-white icon-question-sign'></i></span>";
+                    header += "<span class='badge badge-inverse question " +
+                        "pull-right'><i class='icon-white icon-question-sign'>" +
+                        "</i></span>";
                 }
 
                 iframe = "<iframe width='110px' height='71px' src='//www.youtube.com/embed/" +

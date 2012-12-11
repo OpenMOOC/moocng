@@ -21,9 +21,15 @@
     <script type="text/javascript">
         MOOC.trans = {
             nothing: "{% trans "Nothing" %}",
-            kq : {
+            edit: "{% trans "Edit" %}",
+            add: "{% trans "Add" %}",
+            unit: {
+                unit: "{% trans "unit" %}"
+            },
+            kq: {
                 teacher_comments: "{% trans "Instructor's comments" %}",
-                supplementary_material: "{% trans "Supplementary material" %}"
+                supplementary_material: "{% trans "Supplementary material" %}",
+                kq: "{% trans "nugget" %}"
             }
         };
         MOOC.init({{ course.id }});
