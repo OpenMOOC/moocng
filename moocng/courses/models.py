@@ -156,8 +156,9 @@ class KnowledgeQuantum(Sortable):
 
 
 def handle_kq_post_save(sender, instance, created, **kwargs):
+    if transaction.is_dirty():
+        transaction.commit()
     question_list = instance.question_set.all()
-    transaction.commit()
     if len(question_list) > 0:
         process_video_task.delay(question_list[0])
 

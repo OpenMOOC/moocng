@@ -14,25 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from tastypie.authentication import Authentication
+from tastypie.authorization import Authorization
 
 from moocng.courses.models import Course
 from moocng.courses.utils import is_teacher
 
 
-class DjangoAuthentication(Authentication):
+class PublicReadTeachersModifyAuthorization(Authorization):
 
-    def is_authenticated(self, request, **kwargs):
-        return request.user.is_authenticated()
-
-    def get_identifier(self, request):
-        return request.user.username
-
-
-class TeacherAuthentication(Authentication):
-
-    def is_authenticated(self, request, **kwargs):
-        return is_teacher(request.user, Course.objects.all())
-
-    def get_identifier(self, request):
-        return request.user.username
+    def is_authorized(self, request, object=None):
+        if request.method == 'GET':
+            return request.user.is_authenticated()
+        else:
+            return (request.user.is_authenticated() and
+                    is_teacher(request.user, Course.objects.all()))

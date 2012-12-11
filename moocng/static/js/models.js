@@ -232,6 +232,14 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
         return resp;
     },
 
+    sync: function (method, model, options) {
+        "use strict";
+        var model2send = model.clone(),
+            unit = MOOC.models.course.getByKQ(model.get("id"));
+        model2send.set("unit", MOOC.ajax.host + "unit/" + unit.get("id") + "/");
+        Backbone.sync(method, model2send, options);
+    },
+
     truncateTitle: function (maxLength) {
         "use strict";
         var title = this.get("title"),
@@ -285,12 +293,16 @@ MOOC.models.Unit = Backbone.Model.extend({
 
     parse: function (resp, xhr) {
         "use strict";
-        return {
-            id: parseInt(resp.id, 10),
-            order: resp.order,
-            title: resp.title,
-            type: resp.unittype
-        };
+        var result = {};
+        if (!_.isNull(resp)) {
+            result = {
+                id: parseInt(resp.id, 10),
+                order: resp.order,
+                title: resp.title,
+                type: resp.unittype
+            };
+        }
+        return result;
     },
 
     calculateProgress: function (conditions) {

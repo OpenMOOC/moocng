@@ -65,29 +65,26 @@ if (_.isUndefined(window.MOOC)) {
             return result;
         },
 
-        jQueryUI = function () {
-            $("#units-container").sortable({
-                placeholder: "ui-state-highlight",
-                handle: ".drag-handle"
-            });
-            $(".kq-container").sortable({
-                placeholder: "ui-state-highlight",
-                handle: ".drag-handle",
-                connectWith: ".kq-container",
-                dropOnEmpty: true
-            });
+        sortableOptions = {
+            placeholder: "ui-state-highlight",
+            handle: ".drag-handle",
+            opacity: 0.7
         };
 
     MOOC.views = {
         List: Backbone.View.extend({
             events: {},
 
+            initialize: function () {
+                _.bindAll(this, "render", "sortingHandler");
+            },
+
             render: function () {
                 var node = this.$el;
                 node.html("");
                 this.model.each(function (unit) {
                     var view = MOOC.views.unitViews[unit.get("id")],
-                        el = $("<div class='unit ui-widget ui-widget-content ui-helper-clearfix ui-corner-all'></div>")[0];
+                        el = $("<div id='unit" + unit.get("id") + "' class='unit ui-widget ui-widget-content ui-helper-clearfix ui-corner-all'></div>")[0];
                     node.append(el);
                     if (_.isUndefined(view)) {
                         view = new MOOC.views.Unit({
@@ -101,8 +98,24 @@ if (_.isUndefined(window.MOOC)) {
                     }
                     view.render();
                 });
-                jQueryUI();
+                $("#units-container").off("sortstop").sortable(sortableOptions)
+                    .on("sortstop", this.sortingHandler);
                 return this;
+            },
+
+            sortingHandler: function (evt, ui) {
+                if (!ui.item.hasClass("unit")) {
+                    return;
+                }
+
+                var container = ui.item.parent();
+                container.children().each(function (pos, node) {
+                    var id = parseInt(node.id.split("unit")[1], 10),
+                        view = MOOC.views.unitViews[id];
+                    if (view.model.get("order") !== pos + 1) {
+                        view.model.save("order", pos + 1);
+                    }
+                });
             }
         }),
 
@@ -111,8 +124,13 @@ if (_.isUndefined(window.MOOC)) {
         Unit: Backbone.View.extend({
             events: {},
 
+            initialize: function () {
+                _.bindAll(this, "render", "sortingHandler");
+            },
+
             render: function () {
                 var node = this.$el,
+                    sortOpts,
                     header,
                     html;
 
@@ -128,7 +146,7 @@ if (_.isUndefined(window.MOOC)) {
                 node = node.find(".kq-container");
                 this.model.get("knowledgeQuantumList").each(function (kq) {
                     var view = MOOC.views.kqViews[kq.get("id")],
-                        el = $("<div class='kq ui-widget ui-widget-content ui-helper-clearfix ui-corner-all'></div>")[0];
+                        el = $("<div id='kq" + kq.get("id") + "' class='kq ui-widget ui-widget-content ui-helper-clearfix ui-corner-all'></div>")[0];
                     node.append(el);
                     if (_.isUndefined(view)) {
                         view = new MOOC.views.KQ({
@@ -141,9 +159,51 @@ if (_.isUndefined(window.MOOC)) {
                         view.set("el", el);
                     }
                     view.render();
-                    jQueryUI();
                 });
+                sortOpts = _.defaults({
+                    connectWith: ".kq-container",
+                    dropOnEmpty: true
+                }, sortableOptions);
+                $(".kq-container").off("sortstop").sortable(sortOpts)
+                    .on("sortstop", this.sortingHandler);
                 return this;
+            },
+
+            sortingHandler: function (evt, ui) {
+                if (!ui.item.hasClass("kq")) {
+                    return;
+                }
+
+                var container = ui.item.parent(),
+                    newUnitNode = container.parent().parent(),
+                    newUnitID = parseInt(newUnitNode[0].id.split("unit")[1], 10),
+                    kqID = parseInt(ui.item[0].id.split("kq")[1], 10),
+                    oldUnitObj = MOOC.models.course.getByKQ(kqID),
+                    newUnitObj,
+                    newUnitKQList,
+                    kqObj;
+
+                kqObj = oldUnitObj.get("knowledgeQuantumList").find(function (kq) {
+                    return kq.get("id") === kqID;
+                });
+                oldUnitObj.get("knowledgeQuantumList").remove(kqObj);
+
+                newUnitObj = MOOC.models.course.find(function (unit) {
+                    return unit.get("id") === newUnitID;
+                });
+                newUnitKQList = newUnitObj.get("knowledgeQuantumList");
+                newUnitKQList.add(kqObj);
+
+                container.children().each(function (pos, node) {
+                    var id = parseInt(node.id.split("kq")[1], 10),
+                        model;
+                    model = newUnitKQList.find(function (kq) {
+                        return kq.get("id") === id;
+                    });
+                    if (model.get("order") !== pos + 1 || model.get("id") === kqID) {
+                        model.save("order", pos + 1);
+                    }
+                });
             }
         }),
 

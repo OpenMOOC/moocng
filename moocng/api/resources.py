@@ -26,6 +26,7 @@ from django.db.models import Q
 
 from moocng.api.authentication import (DjangoAuthentication,
                                        TeacherAuthentication)
+from moocng.api.authorization import PublicReadTeachersModifyAuthorization
 from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment)
@@ -38,15 +39,14 @@ class UnitResource(ModelResource):
     class Meta:
         queryset = Unit.objects.all()
         resource_name = 'unit'
-        allowed_methods = ['get']
         authentication = DjangoAuthentication()
-        authorization = DjangoAuthorization()
+        authorization = PublicReadTeachersModifyAuthorization()
 
 
 class KnowledgeQuantumResource(ModelResource):
     unit = fields.ToOneField(UnitResource, 'unit')
-    question = fields.RelatedField('moocng.api.resources.QuestionResource',
-                                   'question_set')
+    question = fields.ToManyField('moocng.api.resources.QuestionResource',
+                                  'question_set', related_name='kq', readonly=True, null=True)
     videoID = fields.CharField(readonly=True)
     correct = fields.BooleanField()
     completed = fields.BooleanField()
@@ -55,9 +55,8 @@ class KnowledgeQuantumResource(ModelResource):
     class Meta:
         queryset = KnowledgeQuantum.objects.all()
         resource_name = 'kq'
-        allowed_methods = ['get']
         authentication = DjangoAuthentication()
-        authorization = DjangoAuthorization()
+        authorization = PublicReadTeachersModifyAuthorization()
         filtering = {
             "unit": ('exact'),
         }
@@ -83,11 +82,10 @@ class KnowledgeQuantumResource(ModelResource):
 
     def dehydrate_question(self, bundle):
         question = bundle.data['question']
-        if question.count() == 0:
+        if len(question) == 0:
             return None
         else:
-            return "/api/v1/question/%d/" % question.all()[0].id
-        # TODO improve url
+            return question[0]
 
     def dehydrate_videoID(self, bundle):
         return extract_YT_video_id(bundle.obj.video)
