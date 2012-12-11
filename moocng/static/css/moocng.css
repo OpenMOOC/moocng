@@ -278,11 +278,7 @@ input[type="checkbox"] {
     padding: 10px;
     margin-bottom: 10px;
     position: relative;
-    border: 1px solid blue;
-}
-
-.teacheradmin-units .kq {
-    border: 1px solid green;
+    border: 1px solid #AAA;
 }
 
 .teacheradmin-units .unit-right {
@@ -317,6 +313,7 @@ input[type="checkbox"] {
     bottom: 10px;
     width: 20px;
     background-color: #CCC;
+    cursor: move;
 }
 
 .teacheradmin-units .badge.question {
