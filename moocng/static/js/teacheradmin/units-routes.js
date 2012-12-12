@@ -163,6 +163,7 @@ if (_.isUndefined(window.MOOC)) {
     MOOC.init = function (courseID) {
         var path = window.location.pathname;
         MOOC.host = window.location.origin;
+        MOOC.alertTime = 3500;
 
         MOOC.router = new MOOC.App();
         MOOC.router.route("", "all");

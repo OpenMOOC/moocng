@@ -79,6 +79,16 @@
     </div></div>
 </form>
 </script>
+
+<div class="alert alert-success hide" id="saved">
+    <h4>{% trans "Success" %}</h4>
+    <p>{% trans "The changes were saved successfully." %}</p>
+</div>
+<div class="alert alert-error hide" id="generic">
+    <h4>{% trans "Error" %}</h4>
+    <p>{% trans "Something went wrong, please try again later." %}</p>
+</div>
+
 <div id="units-container" class="viewport"></div>
 <div id="unit-editor" class="viewport hide"></div>
 <div id="kq-editor" class="viewport hide"></div>

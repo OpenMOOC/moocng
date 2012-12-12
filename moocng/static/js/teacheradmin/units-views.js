@@ -69,6 +69,13 @@ if (_.isUndefined(window.MOOC)) {
             placeholder: "ui-state-highlight",
             handle: ".drag-handle",
             opacity: 0.7
+        },
+
+        showAlert = function (id) {
+            $("#" + id).removeClass("hide");
+            setTimeout(function () {
+                $("#" + id).addClass("hide");
+            }, MOOC.alertTime);
         };
 
     MOOC.views = {
@@ -326,6 +333,19 @@ if (_.isUndefined(window.MOOC)) {
             save: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
+                this.model.set("title", this.$el.find("input#title").val());
+                this.model.set("type", this.$el.find("select#type").val());
+                this.model.set("weight", parseInt(this.$el.find("input#weight").val(), 10));
+                this.model.set("start", this.$el.find("input#start_date").val());
+                this.model.set("deadline", this.$el.find("input#end_date").val());
+                this.model.save({
+                    success: function () {
+                        showAlert("saved");
+                    },
+                    error: function () {
+                        showAlert("generic");
+                    }
+                });
             },
 
             remove: function (evt) {

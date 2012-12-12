@@ -311,6 +311,19 @@ MOOC.models.Unit = Backbone.Model.extend({
         return result;
     },
 
+    sync: function (method, model, options) {
+        "use strict";
+        var model2send = model.clone();
+        if (model.get("type") === 'n') {
+            model2send.set("start", null);
+            model2send.set("deadline", null);
+        }
+        model2send.set("unittype", model.get("type"));
+        model2send.unset("type");
+        model2send.unset("knowledgeQuantumList");
+        Backbone.sync(method, model2send, options);
+    },
+
     calculateProgress: function (conditions) {
         "use strict";
         var kqs = this.get("knowledgeQuantumList").length,
