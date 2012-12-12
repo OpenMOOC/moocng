@@ -417,7 +417,7 @@ if (_.isUndefined(window.MOOC)) {
                 $(".viewport").addClass("hide");
                 this.$el.html($("#edit-kq-tpl").text());
                 this.$el.find("input#kqtitle").val(this.model.get("title"));
-                this.$el.find("input#kqvideo").val("http://youtu.be/" + this.model.get("videoID"));
+                this.$el.find("input#kqvideo").val(this.model.get("videoID"));
                 this.$el.find("input#kqweight").val(this.model.get("normalized_weight"));
                 this.$el.find("textarea#kqsupplementary").val(this.model.get("supplementary_material"));
                 this.$el.find("textarea#kqcomments").val(this.model.get("teacher_comments"));
@@ -425,9 +425,39 @@ if (_.isUndefined(window.MOOC)) {
                 return this;
             },
 
-            save: function (evt) {},
+            save: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                this.model.set("title", this.$el.find("input#kqtitle").val());
+                this.model.set("videoID", this.$el.find("input#kqvideo").val());
+                this.model.set("normalized_weight", parseInt(this.$el.find("input#kqweight").val(), 10));
+                this.model.set("supplementary_material", this.$el.find("textarea#kqsupplementary").val());
+                this.model.set("teacher_comments", this.$el.find("textarea#kqcomments").val());
+                this.model.save(null, {
+                    success: function () {
+                        showAlert("saved");
+                    },
+                    error: function () {
+                        showAlert("generic");
+                    }
+                });
+            },
 
-            remove: function (evt) {},
+            remove: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                var unit = MOOC.models.course.getByKQ(this.model.get("id")),
+                    model = this.model;
+                model.destroy({
+                    success: function () {
+                        unit.get("knowledgeQuantumList").remove(model);
+                        MOOC.router.navigate("", { trigger: true });
+                    },
+                    error: function () {
+                        showAlert("generic");
+                    }
+                });
+            },
 
             goBack: function (evt) {
                 evt.preventDefault();

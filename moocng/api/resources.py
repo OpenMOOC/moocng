@@ -61,15 +61,17 @@ class UnitResource(ModelResource):
 class KnowledgeQuantumResource(ModelResource):
     unit = fields.ToOneField(UnitResource, 'unit')
     question = fields.ToManyField('moocng.api.resources.QuestionResource',
-                                  'question_set', related_name='kq', readonly=True, null=True)
+                                  'question_set', related_name='kq',
+                                  readonly=True, null=True)
     videoID = fields.CharField(readonly=True)
-    correct = fields.BooleanField()
-    completed = fields.BooleanField()
-    normalized_weight = fields.IntegerField()
+    correct = fields.BooleanField(readonly=True)
+    completed = fields.BooleanField(readonly=True)
+    normalized_weight = fields.IntegerField(readonly=True)
 
     class Meta:
         queryset = KnowledgeQuantum.objects.all()
         resource_name = 'kq'
+        always_return_data = True
         authentication = DjangoAuthentication()
         authorization = PublicReadTeachersModifyAuthorization()
         filtering = {

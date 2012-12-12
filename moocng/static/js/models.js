@@ -237,6 +237,12 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
         var model2send = model.clone(),
             unit = MOOC.models.course.getByKQ(model.get("id"));
         model2send.set("unit", MOOC.ajax.host + "unit/" + unit.get("id") + "/");
+        model2send.set("weight", model.get("normalized_weight"));
+        model2send.unset("normalized_weight");
+        model2send.unset("completed");
+        model2send.unset("correct");
+        model2send.unset("questionInstance");
+        model2send.unset("attachmentList");
         Backbone.sync(method, model2send, options);
     },
 
