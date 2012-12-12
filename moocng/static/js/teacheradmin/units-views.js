@@ -262,7 +262,13 @@ if (_.isUndefined(window.MOOC)) {
         unitViews: {},
 
         KQ: Backbone.View.extend({
-            events: {},
+            events: {
+                "click button.kqedit": "toKQEditor"
+            },
+
+            initialize: function () {
+                _.bindAll(this, "render", "toKQEditor");
+            },
 
             render: function () {
                 var html,
@@ -271,7 +277,7 @@ if (_.isUndefined(window.MOOC)) {
                     data;
 
                 header = "<h4>" + this.model.get("title") + "</h4><button " +
-                    "class='btn pull-right' title='" + MOOC.trans.edit + " " +
+                    "class='btn kqedit pull-right' title='" + MOOC.trans.edit + " " +
                     MOOC.trans.kq.kq + "'><i class='icon-edit'></i> " +
                     MOOC.trans.edit + "</button>";
                 if (this.model.has("question")) {
@@ -294,6 +300,12 @@ if (_.isUndefined(window.MOOC)) {
                     inlineb(block(header), block(data), { classes: "kq-right" });
 
                 this.$el.html(html);
+            },
+
+            toKQEditor: function (evt) {
+                MOOC.router.navigate("kq" + this.model.get("id"), {
+                    trigger: true
+                });
             }
         }),
 
@@ -390,7 +402,40 @@ if (_.isUndefined(window.MOOC)) {
 
         unitEditorView: undefined,
 
-        KQEditor: Backbone.View.extend({}),
+        KQEditor: Backbone.View.extend({
+            events: {
+                "click button#save-kq": "save",
+                "click button#delete-kq": "remove",
+                "click button.back": "goBack"
+            },
+
+            initialize: function () {
+                _.bindAll(this, "render", "save", "remove", "goBack");
+            },
+
+            render: function () {
+                $(".viewport").addClass("hide");
+                this.$el.html($("#edit-kq-tpl").text());
+                this.$el.find("input#kqtitle").val(this.model.get("title"));
+                this.$el.find("input#kqvideo").val("http://youtu.be/" + this.model.get("videoID"));
+                this.$el.find("input#kqweight").val(this.model.get("normalized_weight"));
+                this.$el.find("textarea#kqsupplementary").val(this.model.get("supplementary_material"));
+                this.$el.find("textarea#kqcomments").val(this.model.get("teacher_comments"));
+                $("#kq-editor").removeClass("hide");
+                return this;
+            },
+
+            save: function (evt) {},
+
+            remove: function (evt) {},
+
+            goBack: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                MOOC.router.navigate("", { trigger: true });
+            }
+        }),
+
         kqEditorView: undefined
     };
 }(jQuery, Backbone, _));

@@ -130,19 +130,21 @@ if (_.isUndefined(window.MOOC)) {
                     kqView;
 
                 kq = parseInt(kq, 10);
-                kqView = MOOC.views.kqEditorViews[kq];
+                kqView = MOOC.views.kqEditorView;
+                unitObj = MOOC.models.course.getByKQ(kq);
+                kqObj = unitObj.get("knowledgeQuantumList").find(function (item) {
+                    return kq === item.get("id");
+                });
 
                 if (_.isUndefined(kqView)) {
-                    unitObj = MOOC.models.course.getByKQ(kq);
-                    kqObj = unitObj.get("knowledgeQuantumList").find(function (item) {
-                        return kq === item.get("id");
-                    });
                     kqView = new MOOC.views.KQEditor({
                         model: kqObj,
                         id: "kqEditor" + kq,
                         el: $("#kq-editor")[0]
                     });
-                    MOOC.views.kqEditorViews[kq] = kqView;
+                    MOOC.views.kqEditorView = kqView;
+                } else {
+                    kqView.model = kqObj;
                 }
 
                 kqView.render();
