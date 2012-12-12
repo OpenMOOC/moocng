@@ -388,9 +388,9 @@ if (_.isUndefined(window.MOOC)) {
             }
         }),
 
-        unitEditorViews: {},
+        unitEditorView: undefined,
 
         KQEditor: Backbone.View.extend({}),
-        kqEditorViews: {}
+        kqEditorView: undefined
     };
 }(jQuery, Backbone, _));

@@ -91,18 +91,20 @@ if (_.isUndefined(window.MOOC)) {
                     unitView;
 
                 unit = parseInt(unit, 10);
-                unitView = MOOC.views.unitEditorViews[unit];
+                unitView = MOOC.views.unitEditorView;
+                unitObj = MOOC.models.course.find(function (item) {
+                    return unit === item.get("id");
+                });
 
                 if (_.isUndefined(unitView)) {
-                    unitObj = MOOC.models.course.find(function (item) {
-                        return unit === item.get("id");
-                    });
                     unitView = new MOOC.views.UnitEditor({
                         model: unitObj,
                         id: "unitEditor" + unit,
                         el: $("#unit-editor")[0]
                     });
-                    MOOC.views.unitEditorViews[unit] = unitView;
+                    MOOC.views.unitEditorView = unitView;
+                } else {
+                    unitView.model = unitObj;
                 }
 
                 unitView.render();
