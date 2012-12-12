@@ -235,7 +235,7 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
     sync: function (method, model, options) {
         "use strict";
         var model2send = model.clone(),
-            unit = MOOC.models.course.getByKQ(model.get("id"));
+            unit = MOOC.models.course.getByKQcid(model.cid);
         model2send.set("unit", MOOC.ajax.host + "unit/" + unit.get("id") + "/");
         model2send.set("weight", model.get("normalized_weight"));
         model2send.unset("normalized_weight");
@@ -243,6 +243,9 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
         model2send.unset("correct");
         model2send.unset("questionInstance");
         model2send.unset("attachmentList");
+        if (method === "create") {
+            model2send.url = MOOC.ajax.getAbsoluteUrl("kq/");
+        }
         Backbone.sync(method, model2send, options);
     },
 
@@ -375,6 +378,20 @@ MOOC.models.UnitList = Backbone.Collection.extend({
             }
             kq = kq.get(kqID);
             return !_.isUndefined(kq);
+        });
+    },
+
+    getByKQcid: function (cid) {
+        "use strict";
+        return this.find(function (unit) {
+            var kqList = unit.get("knowledgeQuantumList");
+            if (_.isNull(kqList)) {
+                return false;
+            }
+            kqList = kqList.find(function (kq) {
+                return kq.cid === cid;
+            });
+            return !_.isUndefined(kqList);
         });
     }
 });

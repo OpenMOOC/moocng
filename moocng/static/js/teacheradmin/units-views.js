@@ -255,7 +255,19 @@ if (_.isUndefined(window.MOOC)) {
             },
 
             addKQ: function (evt) {
-                // TODO
+                var kq = new MOOC.models.KnowledgeQuantum();
+                this.model.get("knowledgeQuantumList").add(kq);
+                kq.save(null, {
+                    success: function (model, response) {
+                        MOOC.router.navigate("kq" + model.get("id"), {
+                            trigger: true
+                        });
+                    },
+                    error: function () {
+                        this.model.get("knowledgeQuantumList").remove(kq);
+                        showAlert("generic");
+                    }
+                });
             }
         }),
 
