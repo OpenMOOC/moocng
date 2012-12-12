@@ -69,7 +69,6 @@ if (_.isUndefined(window.MOOC)) {
                         el: $("#units-container")[0]
                     });
                 }
-
                 MOOC.views.listView.render();
             };
 
@@ -87,49 +86,77 @@ if (_.isUndefined(window.MOOC)) {
         },
 
         editUnit: function (unit) {
-            var unitObj,
-                unitView;
+            var callback = function () {
+                var unitObj,
+                    unitView;
 
-            unit = parseInt(unit, 10);
-            unitView = MOOC.views.unitEditorViews[unit];
+                unit = parseInt(unit, 10);
+                unitView = MOOC.views.unitEditorViews[unit];
 
-            if (_.isUndefined(unitView)) {
-                unitObj = MOOC.models.course.find(function (item) {
-                    return unit === item.get("id");
+                if (_.isUndefined(unitView)) {
+                    unitObj = MOOC.models.course.find(function (item) {
+                        return unit === item.get("id");
+                    });
+                    unitView = new MOOC.views.UnitEditor({
+                        model: unitObj,
+                        id: "unitEditor" + unit,
+                        el: $("#unit-editor")[0]
+                    });
+                    MOOC.views.unitEditorViews[unit] = unitView;
+                }
+
+                unitView.render();
+            };
+
+            if (MOOC.models.course.length === 0) {
+                $("#loading").show();
+                MOOC.models.course.fetch({
+                    error: errorHandler,
+                    success: function () {
+                        loadKQs(callback);
+                    }
                 });
-                unitView = new MOOC.views.UnitEditor({
-                    model: unitObj,
-                    id: "unitEditor" + unit,
-                    el: $("#unit-editor")[0]
-                });
-                MOOC.views.unitEditorViews[unit] = unitView;
+            } else {
+                callback();
             }
-
-            unitView.render();
         },
 
         editKQ: function (kq) {
-            var unitObj,
-                kqObj,
-                kqView;
+            var callback = function () {
+                var unitObj,
+                    kqObj,
+                    kqView;
 
-            kq = parseInt(kq, 10);
-            kqView = MOOC.views.kqEditorViews[kq];
+                kq = parseInt(kq, 10);
+                kqView = MOOC.views.kqEditorViews[kq];
 
-            if (_.isUndefined(kqView)) {
-                unitObj = MOOC.models.course.getByKQ(kq);
-                kqObj = unitObj.get("knowledgeQuantumList").find(function (item) {
-                    return kq === item.get("id");
+                if (_.isUndefined(kqView)) {
+                    unitObj = MOOC.models.course.getByKQ(kq);
+                    kqObj = unitObj.get("knowledgeQuantumList").find(function (item) {
+                        return kq === item.get("id");
+                    });
+                    kqView = new MOOC.views.KQEditor({
+                        model: kqObj,
+                        id: "kqEditor" + kq,
+                        el: $("#kq-editor")[0]
+                    });
+                    MOOC.views.kqEditorViews[kq] = kqView;
+                }
+
+                kqView.render();
+            };
+
+            if (MOOC.models.course.length === 0) {
+                $("#loading").show();
+                MOOC.models.course.fetch({
+                    error: errorHandler,
+                    success: function () {
+                        loadKQs(callback);
+                    }
                 });
-                kqView = new MOOC.views.KQEditor({
-                    model: kqObj,
-                    id: "kqEditor" + kq,
-                    el: $("#kq-editor")[0]
-                });
-                MOOC.views.kqEditorViews[kq] = kqView;
+            } else {
+                callback();
             }
-
-            kqView.render();
         }
     });
 

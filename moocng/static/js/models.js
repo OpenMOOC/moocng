@@ -282,7 +282,10 @@ MOOC.models.Unit = Backbone.Model.extend({
             order: -1,
             knowledgeQuantumList: null,
             title: "",
-            type: ''
+            type: 'n',
+            weight: 0,
+            start: null,
+            deadline: null
         };
     },
 
@@ -299,7 +302,10 @@ MOOC.models.Unit = Backbone.Model.extend({
                 id: parseInt(resp.id, 10),
                 order: resp.order,
                 title: resp.title,
-                type: resp.unittype
+                type: resp.unittype,
+                weight: parseInt(resp.weight, 10),
+                start: new Date(resp.start),
+                deadline: new Date(resp.deadline)
             };
         }
         return result;

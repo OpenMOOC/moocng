@@ -81,6 +81,7 @@ if (_.isUndefined(window.MOOC)) {
 
             render: function () {
                 var node = this.$el;
+                $(".viewport").addClass("hide");
                 node.html("");
                 this.model.each(function (unit) {
                     var view = MOOC.views.unitViews[unit.get("id")],
@@ -94,7 +95,7 @@ if (_.isUndefined(window.MOOC)) {
                         });
                         MOOC.views.unitViews[unit.get("id")] = view;
                     } else {
-                        view.set("el", el);
+                        view.setElement(el);
                     }
                     view.render();
                 });
@@ -104,6 +105,7 @@ if (_.isUndefined(window.MOOC)) {
                     "</button>", { classes: "mb20 align-right" }));
                 $("#units-container").off("sortstop").sortable(sortableOptions)
                     .on("sortstop", this.sortingHandler);
+                $("#units-container").removeClass("hide");
                 return this;
             },
 
@@ -126,10 +128,14 @@ if (_.isUndefined(window.MOOC)) {
         listView: undefined,
 
         Unit: Backbone.View.extend({
-            events: {},
+            events: {
+                "click button.edit": "toUnitEditor",
+                "click button.add": "addUnit"
+            },
 
             initialize: function () {
-                _.bindAll(this, "render", "sortingHandler");
+                _.bindAll(this, "render", "sortingHandler", "toUnitEditor",
+                    "addUnit");
             },
 
             render: function () {
@@ -140,10 +146,10 @@ if (_.isUndefined(window.MOOC)) {
                     html;
 
                 header = "<h3>" + this.model.get("title") + "</h3>" +
-                    "<button class='btn pull-right' title='" + MOOC.trans.edit +
+                    "<button class='btn pull-right edit' title='" + MOOC.trans.edit +
                     " " + MOOC.trans.unit.unit + "'><i class='icon-edit'></i> " +
                     MOOC.trans.edit + "</button>";
-                add = "<button class='btn pull-right' title='" + MOOC.trans.add +
+                add = "<button class='btn pull-right add' title='" + MOOC.trans.add +
                     " " + MOOC.trans.kq.kq + "'><i class='icon-plus'></i> " +
                     MOOC.trans.add + "</button>";
                 html = inlineb({ classes: "drag-handle" });
@@ -166,7 +172,7 @@ if (_.isUndefined(window.MOOC)) {
                         });
                         MOOC.views.kqViews[kq.get("id")] = view;
                     } else {
-                        view.set("el", el);
+                        view.setElement(el);
                     }
                     view.render();
                 });
@@ -214,6 +220,16 @@ if (_.isUndefined(window.MOOC)) {
                         model.save("order", pos + 1);
                     }
                 });
+            },
+
+            toUnitEditor: function (evt) {
+                MOOC.router.navigate("unit" + this.model.get("id"), {
+                    trigger: true
+                });
+            },
+
+            addUnit: function (evt) {
+                // TODO
             }
         }),
 
@@ -254,9 +270,76 @@ if (_.isUndefined(window.MOOC)) {
                 this.$el.html(html);
             }
         }),
+
         kqViews: {},
 
-        UnitEditor: Backbone.View.extend({}),
+        UnitEditor: Backbone.View.extend({
+            events: {
+                "change select#type": "changeType",
+                "click button#save-unit": "save",
+                "click button#delete-unit": "remove",
+                "click button.back": "goBack"
+            },
+
+            initialize: function () {
+                _.bindAll(this, "render", "changeType", "save", "remove", "goBack");
+            },
+
+            formatDate: function (date) {
+                var aux = date.getFullYear() + "-";
+                if (date.getMonth() < 9) {
+                    aux += "0";
+                }
+                aux += (date.getMonth() + 1) + "-";
+                if (date.getDate() < 10) {
+                    aux += "0";
+                }
+                aux += date.getDate();
+                return aux;
+            },
+
+            render: function () {
+                $(".viewport").addClass("hide");
+                this.$el.html($("#edit-unit-tpl").text());
+                this.$el.find("input#title").val(this.model.get("title"));
+                this.$el.find("select#type").val(this.model.get("type"));
+                this.$el.find("select#type").trigger("change");
+                this.$el.find("input#weight").val(this.model.get("weight"));
+                if (!_.isNull(this.model.get("start"))) {
+                    this.$el.find("input#start_date").val(this.formatDate(this.model.get("start")));
+                }
+                if (!_.isNull(this.model.get("deadline"))) {
+                    this.$el.find("input#end_date").val(this.formatDate(this.model.get("deadline")));
+                }
+                $("#unit-editor").removeClass("hide");
+                return this;
+            },
+
+            changeType: function (evt) {
+                if ($(evt.target).val() !== 'n') {
+                    $("#dates").removeClass("hide");
+                } else {
+                    $("#dates").addClass("hide");
+                }
+            },
+
+            save: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+            },
+
+            remove: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+            },
+
+            goBack: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                MOOC.router.navigate("", { trigger: true });
+            }
+        }),
+
         unitEditorViews: {},
 
         KQEditor: Backbone.View.extend({}),

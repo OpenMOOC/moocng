@@ -23,6 +23,7 @@
             nothing: "{% trans "Nothing" %}",
             edit: "{% trans "Edit" %}",
             add: "{% trans "Add" %}",
+            back: "{% trans "Go back" %}",
             unit: {
                 unit: "{% trans "unit" %}"
             },
@@ -38,6 +39,46 @@
 {% endblock %}
 
 {% block section %}
+<script id="edit-unit-tpl" type="text/template">
+<form>
+    <div class="row">
+        <div class="span4">
+            <label for="title">{% trans "Title" %}</label>
+                <input id="title" type="text" name="title" maxlength="200" class="input-xlarge" />
+        </div>
+        <div class="span4">
+            <label for="type">{% trans "Type" %}</label>
+            <select name="type" id="type" class="input-xlarge">
+                <option value="n" selected="selected">{% trans "Normal" %}</option>
+                <option value="h">{% trans "Homework" %}</option>
+                <option value="e">{% trans "Exam" %}</option>
+            </select>
+        </div>
+        <div class="span2">
+            <label for="weight">{% trans "Weight" %}</label>
+            <div class="input-append">
+                <input type="number" min="0" max="100" step="1" name="weight" id="weight" class="input-mini" />
+                <span class="add-on">%</span>
+            </div>
+        </div>
+    </div>
+    <div id="dates" class="row hide">
+        <div class="span4">
+            <label for="start_date">{% trans "Start date" %}</label>
+            <input type="date" name="start_date" id="start_date" placeholder="YYYY-MM-DD" class="input-xlarge" />
+        </div>
+        <div class="span4">
+            <label for="end_date">{% trans "End date" %}</label>
+            <input type="date" name="end_date" id="end_date" placeholder="YYYY-MM-DD" class="input-xlarge" />
+        </div>
+    </div>
+    <div class="row"><div class="span10 align-right">
+        <button id="save-unit" class="btn btn-primary"><i class="icon icon-white icon-ok"></i> {% trans "Save" %}</button>
+        <button id="delete-unit" class="btn btn-danger"><i class="icon icon-white icon-remove"></i> {% trans "Delete" %}</button>
+        <button class="btn back"><i class="icon icon-arrow-left"></i> {% trans "Back" %}</button>
+    </div></div>
+</form>
+</script>
 <div id="units-container" class="viewport"></div>
 <div id="unit-editor" class="viewport hide"></div>
 <div id="kq-editor" class="viewport hide"></div>
