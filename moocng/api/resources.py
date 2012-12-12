@@ -29,18 +29,33 @@ from moocng.api.authentication import (DjangoAuthentication,
 from moocng.api.authorization import PublicReadTeachersModifyAuthorization
 from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
-                                   Attachment)
+                                   Attachment, Course)
 from moocng.courses.utils import normalize_kq_weight
 from moocng.videos.utils import extract_YT_video_id
 
 
+class CourseResource(ModelResource):
+
+    class Meta:
+        queryset = Course.objects.all()
+        resource_name = 'course'
+        allowed_methods = ['get']
+        authentication = DjangoAuthentication()
+        authorization = DjangoAuthorization()
+
+
 class UnitResource(ModelResource):
+    course = fields.ToOneField(CourseResource, 'course')
 
     class Meta:
         queryset = Unit.objects.all()
         resource_name = 'unit'
         authentication = DjangoAuthentication()
         authorization = PublicReadTeachersModifyAuthorization()
+        always_return_data = True
+        filtering = {
+            "course": ('exact'),
+        }
 
 
 class KnowledgeQuantumResource(ModelResource):

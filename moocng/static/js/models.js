@@ -321,6 +321,11 @@ MOOC.models.Unit = Backbone.Model.extend({
         model2send.set("unittype", model.get("type"));
         model2send.unset("type");
         model2send.unset("knowledgeQuantumList");
+        if (method === "create") {
+            model2send.url = MOOC.ajax.getAbsoluteUrl("unit/");
+            model2send.set("course", MOOC.ajax.host + "course/" +
+                MOOC.models.course.courseId + "/");
+        }
         Backbone.sync(method, model2send, options);
     },
 
@@ -343,10 +348,11 @@ MOOC.models.Unit = Backbone.Model.extend({
 
 MOOC.models.UnitList = Backbone.Collection.extend({
     model: MOOC.models.Unit,
+    courseId: -1,
 
     url: function () {
         "use strict";
-        return MOOC.ajax.getAbsoluteUrl("unit/");
+        return MOOC.ajax.getAbsoluteUrl("unit/") + "?course=" + this.courseId;
     },
 
     parse: function (resp, xhr) {
