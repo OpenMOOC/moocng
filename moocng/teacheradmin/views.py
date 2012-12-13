@@ -17,14 +17,15 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils import simplejson
+from django.utils.translation import ugettext as _
 
 from gravatar.templatetags.gravatar import gravatar_img_for_email
 
-from moocng.courses.models import Course, KnowledgeQuantum
+from moocng.courses.models import Course, KnowledgeQuantum, Option
 from moocng.teacheradmin.decorators import is_teacher_or_staff
 from moocng.teacheradmin.forms import CourseForm
 from moocng.teacheradmin.models import Invitation
@@ -59,15 +60,80 @@ def teacheradmin_units(request, course_slug):
 def teacheradmin_units_forcevideoprocess(request, course_slug):
     if not 'kq' in request.GET:
         return HttpResponse(status=400)
-    try:
-        kq = KnowledgeQuantum.objects.get(id=request.GET['kq'])
-    except KnowledgeQuantum.DoesNotExist:
-        return HttpResponse(status=404)
+    kq = get_object_or_404(KnowledgeQuantum, id=request.GET['kq'])
 
     question_list = kq.question_set.all()
     if len(question_list) > 0:
         process_video_task.delay(question_list[0])
     return HttpResponse()
+
+
+@is_teacher_or_staff
+def teacheradmin_units_question(request, course_slug, kq_id):
+    kq = get_object_or_404(KnowledgeQuantum, id=kq_id)
+    course = get_object_or_404(Course, slug=course_slug)
+    is_enrolled = course.students.filter(id=request.user.id).exists()
+    question_list = kq.question_set.all()
+    if len(question_list) > 0:
+        obj = question_list[0]
+    else:
+        return HttpResponse(status=400)
+
+    if obj is None:
+        raise Http404(_('The KQ with the %s id doesn\'t exists') % kq_id)
+
+    if request.method == 'POST':
+        data = simplejson.loads(request.raw_post_data)
+        option = obj.option_set.create(**data)
+        data['id'] = option.id
+        return HttpResponse(simplejson.dumps(data),
+                            mimetype='application/json')
+    else:
+        json = [{
+                'id': opt.id,
+                'optiontype': opt.optiontype,
+                'solution': opt.solution,
+                'x': opt.x, 'y': opt.y,
+                'width': opt.width, 'height': opt.height,
+                } for opt in obj.option_set.all()]
+        context = {
+            'course': course,
+            'is_enrolled': is_enrolled,
+            'object_id': obj.id,
+            'original': obj,
+            'options_json': simplejson.dumps(json),
+        }
+        return render_to_response('teacheradmin/question.html', context,
+                                  context_instance=RequestContext(request))
+
+
+@is_teacher_or_staff
+def teacheradmin_units_option(request, course_slug, kq_id, option_id):
+    option = get_object_or_404(Option, id=option_id)
+
+    if request.method == 'PUT':
+        data = simplejson.loads(request.raw_post_data)
+        for key, value in data.items():
+            if key != 'id':
+                setattr(option, key, value)
+        option.save()
+        return HttpResponse(simplejson.dumps(data),
+                            mimetype='application/json')
+
+    elif request.method == 'DELETE':
+        option.delete()
+        return HttpResponse('')
+
+    elif request.method == 'GET':
+        data = {
+            'id': option.id,
+            'optiontype': option.optiontype,
+            'solution': option.solution,
+            'x': option.x, 'y': option.y,
+            'width': option.width, 'height': option.height,
+        }
+        return HttpResponse(simplejson.dumps(data),
+                            mimetype='application/json')
 
 
 @is_teacher_or_staff

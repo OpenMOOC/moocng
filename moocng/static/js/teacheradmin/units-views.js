@@ -545,9 +545,10 @@ if (_.isUndefined(window.MOOC)) {
             go2options: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
-                var callback = function () {
-                    window.open("../question", "_self");
-                };
+                var model = this.model,
+                    callback = function () {
+                        window.open("question/" + model.get("id"), "_self");
+                    };
                 this.save(evt, callback);
             },
 
