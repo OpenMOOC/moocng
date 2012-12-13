@@ -92,14 +92,16 @@
 </div>
 
 <form action="{{ form_url }}" method="post">{% csrf_token %}{% block form_top %}{% endblock %}
-<div>
 {% if original.last_frame %}
 <fieldset>
   <img class="last-frame" onload="MOOC.imageLoaded();" src="{{ original.last_frame.url }}" />
 </fieldset>
 {% endif %}
-</div>
 </form>
 
 </div>
+
+<div class="row"><div class="span10 align-right">
+    <a class="btn mb20"><i class="icon icon-arrow-left"></i> {% trans "Go back"%}</a>
+</div></div>
 {% endblock %}

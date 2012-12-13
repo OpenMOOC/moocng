@@ -35,6 +35,10 @@ fieldset .out {
     background-color: #ff8888;
 }
 
+fieldset img {
+    max-width: 540px;
+}
+
 .palette {
     float: left;
     padding: 6px;
