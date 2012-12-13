@@ -108,10 +108,10 @@ if (_.isUndefined(window.MOOC)) {
                     }
                     view.render();
                 });
-                node.append(block("<button id='addUnit' class='btn' title='" +
-                    MOOC.trans.add + " " + MOOC.trans.unit.unit +
-                    "'><i class='icon-plus'></i> " + MOOC.trans.add +
-                    "</button>", { classes: "mb20 align-right" }));
+                node.append(block("<button id='addUnit' class='btn'>" +
+                    "<i class='icon-plus'></i> " + MOOC.trans.add + " " +
+                    MOOC.trans.unit.unit + "</button>",
+                    { classes: "mb20 align-right" }));
                 $("#units-container").off("sortstop").sortable(sortableOptions)
                     .on("sortstop", this.sortingHandler);
                 $("#units-container").removeClass("hide");
@@ -173,9 +173,8 @@ if (_.isUndefined(window.MOOC)) {
                     "<button class='btn pull-right edit' title='" + MOOC.trans.edit +
                     " " + MOOC.trans.unit.unit + "'><i class='icon-edit'></i> " +
                     MOOC.trans.edit + "</button>";
-                add = "<button class='btn pull-right add' title='" + MOOC.trans.add +
-                    " " + MOOC.trans.kq.kq + "'><i class='icon-plus'></i> " +
-                    MOOC.trans.add + "</button>";
+                add = "<button class='btn pull-right add'><i class='icon-plus'></i> " +
+                    MOOC.trans.add + " " + MOOC.trans.kq.kq + "</button>";
                 html = inlineb({ classes: "drag-handle" });
                 html += inlineb(block(header),
                                 block("", { classes: "kq-container" }),
@@ -294,7 +293,8 @@ if (_.isUndefined(window.MOOC)) {
                     MOOC.trans.edit + "</button>";
                 if (this.model.has("question")) {
                     header += "<span class='badge badge-inverse question " +
-                        "pull-right'><i class='icon-white icon-question-sign'>" +
+                        "pull-right' title='" + MOOC.trans.kq.question +
+                        "'><i class='icon-white icon-question-sign'>" +
                         "</i></span>";
                 }
 
@@ -426,6 +426,7 @@ if (_.isUndefined(window.MOOC)) {
             },
 
             render: function () {
+                var question;
                 $(".viewport").addClass("hide");
                 this.$el.html($("#edit-kq-tpl").text());
                 this.$el.find("input#kqtitle").val(this.model.get("title"));
@@ -433,6 +434,12 @@ if (_.isUndefined(window.MOOC)) {
                 this.$el.find("input#kqweight").val(this.model.get("normalized_weight"));
                 this.$el.find("textarea#kqsupplementary").val(this.model.get("supplementary_material"));
                 this.$el.find("textarea#kqcomments").val(this.model.get("teacher_comments"));
+                if (this.model.has("questionInstance")) {
+                    question = this.model.get("questionInstance");
+                    this.$el.find("#noquestion").addClass("hide");
+                    this.$el.find("#question").removeClass("hide").find("img").attr("src", question.get("lastFrame"));
+                    this.$el.find("#questionvideo").val(question.get("solution"));
+                }
                 $("#kq-editor").removeClass("hide");
                 return this;
             },

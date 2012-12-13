@@ -43,13 +43,19 @@ if (_.isUndefined(window.MOOC)) {
                     }
                 }));
             });
-            $.when.apply(null, promises)
-                .done(function () {
-                    callback();
-                })
-                .fail(function () {
-                    errorHandler();
-                });
+            $.when.apply(null, promises).done(callback).fail(errorHandler);
+        },
+        loadQuestion = function (kq, callback) {
+            $.ajax(kq.get("question"), {
+                success: function (data, textStatus, jqXHR) {
+                    var question = new MOOC.models.Question({
+                        id: parseInt(data.id, 10),
+                        lastFrame: data.last_frame,
+                        solution: data.solutionID
+                    });
+                    kq.set("questionInstance", question);
+                }
+            }).done(callback).fail(errorHandler);
         };
 
     MOOC.ajax = {
@@ -127,7 +133,8 @@ if (_.isUndefined(window.MOOC)) {
             var callback = function () {
                 var unitObj,
                     kqObj,
-                    kqView;
+                    kqView,
+                    callback;
 
                 kq = parseInt(kq, 10);
                 kqView = MOOC.views.kqEditorView;
@@ -136,18 +143,30 @@ if (_.isUndefined(window.MOOC)) {
                     return kq === item.get("id");
                 });
 
-                if (_.isUndefined(kqView)) {
-                    kqView = new MOOC.views.KQEditor({
-                        model: kqObj,
-                        id: "kqEditor" + kq,
-                        el: $("#kq-editor")[0]
-                    });
-                    MOOC.views.kqEditorView = kqView;
-                } else {
-                    kqView.model = kqObj;
-                }
+                callback = function () {
+                    if (_.isUndefined(kqView)) {
+                        kqView = new MOOC.views.KQEditor({
+                            model: kqObj,
+                            id: "kqEditor" + kq,
+                            el: $("#kq-editor")[0]
+                        });
+                        MOOC.views.kqEditorView = kqView;
+                    } else {
+                        kqView.model = kqObj;
+                    }
 
-                kqView.render();
+                    kqView.render();
+                };
+
+                if (kqObj.has("question")) {
+                    if (kqObj.has("questionInstance")) {
+                        callback();
+                    } else {
+                        loadQuestion(kqObj, callback);
+                    }
+                } else {
+                    callback();
+                }
             };
 
             if (MOOC.models.course.length === 0) {

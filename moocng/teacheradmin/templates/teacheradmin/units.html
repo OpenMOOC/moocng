@@ -30,7 +30,8 @@
             kq: {
                 teacher_comments: "{% trans "Instructor's comments" %}",
                 supplementary_material: "{% trans "Supplementary material" %}",
-                kq: "{% trans "nugget" %}"
+                kq: "{% trans "nugget" %}",
+                question: "{% trans "It has a question" %}",
             }
         };
         MOOC.init({{ course.id }});
@@ -106,6 +107,28 @@
         <div class="span5">
             <label for="kqcomments">{% trans "Instructor's comments" %}</label>
             <textarea id="kqcomments" name="kqcomments" class="span5" rows="5"></textarea>
+        </div>
+    </div>
+    <div id="noquestion" class="row mb20">
+        <div class="span10 align-right">
+            <button id="addquestion" class="btn">{% trans "Add a question to this nugget" %}</button>
+        </div>
+    </div>
+    <div id="question" class="hide">
+        <div class="row">
+            <div class="span5">
+                <label>{% trans "Nugget's video last frame" %}</label>
+                <img src="" alt="{% trans "Nugget's video last frame" %}" />
+            </div>
+            <div class="span5">
+                <label for="questionvideo">{% trans "Solution Video ID" %}</label>
+                <input id="questionvideo" type="text" name="questionvideo" maxlength="200" class="input-xlarge" required="required" />
+            </div>
+        </div>
+        <div class="row mb20">
+            <div class="align-right span10">
+                <button id="go2options" class="btn">{% trans "Save changes and edit question's options" %}</button>
+            </div>
         </div>
     </div>
     <div class="row"><div class="span10 align-right">
