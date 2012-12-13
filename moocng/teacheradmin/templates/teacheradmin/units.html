@@ -42,6 +42,8 @@
 {% block section %}
 <script id="edit-unit-tpl" type="text/template">
 <form>
+    <fieldset>
+    <legend>{% trans "Unit" %}</legend>
     <div class="row">
         <div class="span4">
             <label for="title">{% trans "Title" %}</label>
@@ -73,6 +75,7 @@
             <input type="date" name="end_date" id="end_date" placeholder="YYYY-MM-DD" class="input-xlarge" />
         </div>
     </div>
+    </fieldset>
     <div class="row"><div class="span10 align-right">
         <button id="save-unit" class="btn btn-primary"><i class="icon icon-white icon-ok"></i> {% trans "Save" %}</button>
         <button id="delete-unit" class="btn btn-danger"><i class="icon icon-white icon-remove"></i> {% trans "Delete" %}</button>
@@ -82,6 +85,8 @@
 </script>
 <script id="edit-kq-tpl" type="text/template">
 <form>
+    <fieldset>
+    <legend>{% trans "Nugget" %}</legend>
     <div class="row">
         <div class="span4">
             <label for="kqtitle">{% trans "Title" %}</label>
@@ -109,12 +114,15 @@
             <textarea id="kqcomments" name="kqcomments" class="span5" rows="5"></textarea>
         </div>
     </div>
+    </fieldset>
     <div id="noquestion" class="row mb20">
         <div class="span10 align-right">
             <button id="addquestion" class="btn">{% trans "Add a question to this nugget" %}</button>
         </div>
     </div>
     <div id="question" class="hide">
+        <fieldset>
+        <legend>{% trans "Question" %}</legend>
         <div class="row">
             <div class="span5">
                 <label>{% trans "Nugget's video last frame" %}</label>
@@ -122,7 +130,7 @@
             </div>
             <div class="span5">
                 <label for="questionvideo">{% trans "Solution Video ID" %}</label>
-                <input id="questionvideo" type="text" name="questionvideo" maxlength="200" class="input-xlarge" required="required" />
+                <input id="questionvideo" type="text" name="questionvideo" maxlength="200" class="span5" required="required" />
             </div>
         </div>
         <div class="row mb20">
@@ -130,6 +138,7 @@
                 <button id="go2options" class="btn">{% trans "Save changes and edit question's options" %}</button>
             </div>
         </div>
+        </fieldset>
     </div>
     <div class="row"><div class="span10 align-right">
         <button id="save-kq" class="btn btn-primary"><i class="icon icon-white icon-ok"></i> {% trans "Save" %}</button>
