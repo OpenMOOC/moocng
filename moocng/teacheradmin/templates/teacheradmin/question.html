@@ -101,7 +101,9 @@
 
 </div>
 
+{% if goback %}
 <div class="row"><div class="span10 align-right">
-    <a class="btn mb20"><i class="icon icon-arrow-left"></i> {% trans "Go back"%}</a>
+    <a class="btn mb20" href="{{ goback }}"><i class="icon icon-arrow-left"></i> {% trans "Go back"%}</a>
 </div></div>
+{% endif %}
 {% endblock %}

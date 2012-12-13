@@ -79,6 +79,11 @@ def teacheradmin_units_question(request, course_slug, kq_id):
     else:
         return HttpResponse(status=400)
 
+    if 'HTTP_REFERER' in request.META:
+        goback = request.META['HTTP_REFERER']
+    else:
+        goback = None
+
     if obj is None:
         raise Http404(_('The KQ with the %s id doesn\'t exists') % kq_id)
 
@@ -102,6 +107,7 @@ def teacheradmin_units_question(request, course_slug, kq_id):
             'object_id': obj.id,
             'original': obj,
             'options_json': simplejson.dumps(json),
+            'goback': goback,
         }
         return render_to_response('teacheradmin/question.html', context,
                                   context_instance=RequestContext(request))
