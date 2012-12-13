@@ -19,7 +19,11 @@ urlpatterns = patterns(
     'moocng.teacheradmin.views',
 
     url(r'^$', 'teacheradmin_stats', name='teacheradmin_stats'),
+
     url(r'^units/$', 'teacheradmin_units', name='teacheradmin_units'),
+    url(r'^units/forcevideoprocess$', 'teacheradmin_units_forcevideoprocess',
+        name='teacheradmin_units_forcevideoprocess'),
+
     url(r'^teachers/$', 'teacheradmin_teachers', name='teacheradmin_teachers'),
     url(r'^teachers/(?P<email_or_id>[^/]+)/$', 'teacheradmin_teachers_delete',
         name='teacheradmin_teachers_delete'),
@@ -27,8 +31,11 @@ urlpatterns = patterns(
         name='teacheradmin_teachers_invite'),
     url(r'^teachers/transfer$', 'teacheradmin_teachers_transfer',
         name='teacheradmin_teachers_transfer'),
+
     url(r'^info/$', 'teacheradmin_info', name='teacheradmin_info'),
+
     url(r'^announcements/$', 'teacheradmin_announcements',
         name='teacheradmin_announcements'),
+
     url(r'^emails/$', 'teacheradmin_emails', name='teacheradmin_emails'),
 )

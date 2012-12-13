@@ -416,6 +416,10 @@ if (_.isUndefined(window.MOOC)) {
 
         KQEditor: Backbone.View.extend({
             events: {
+                "click button#addquestion": "addQuestion",
+                "click button#force-process": "forceProcess",
+                "click button#delete-question": "removeQuestion",
+                "click button#go2options": "go2options",
                 "click button#save-kq": "save",
                 "click button#delete-kq": "remove",
                 "click button.back": "goBack"
@@ -439,12 +443,16 @@ if (_.isUndefined(window.MOOC)) {
                     this.$el.find("#noquestion").addClass("hide");
                     this.$el.find("#question").removeClass("hide").find("img").attr("src", question.get("lastFrame"));
                     this.$el.find("#questionvideo").val(question.get("solution"));
+                    if (question.get("lastFrame").indexOf("no-image.png") >= 0) {
+                        this.$el.find("#question img").css("margin-bottom", "10px");
+                        $("button#force-process").removeClass("hide");
+                    }
                 }
                 $("#kq-editor").removeClass("hide");
                 return this;
             },
 
-            save: function (evt) {
+            save: function (evt, callback) {
                 evt.preventDefault();
                 evt.stopPropagation();
                 this.model.set("title", this.$el.find("input#kqtitle").val());
@@ -455,6 +463,9 @@ if (_.isUndefined(window.MOOC)) {
                 this.model.save(null, {
                     success: function () {
                         showAlert("saved");
+                        if (!_.isUndefined(callback)) {
+                            callback();
+                        }
                     },
                     error: function () {
                         showAlert("generic");
@@ -476,6 +487,68 @@ if (_.isUndefined(window.MOOC)) {
                         showAlert("generic");
                     }
                 });
+            },
+
+            addQuestion: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                var question = new MOOC.models.Question(),
+                    view = this;
+                this.model.set("questionInstance", question);
+                question.save(null, {
+                    success: function () {
+                        showAlert("saved");
+                        view.render();
+                    },
+                    error: function () {
+                        showAlert("generic");
+                    }
+                });
+            },
+
+            forceProcess: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                $.ajax(window.location.pathname + "forcevideoprocess?kq=" + this.model.get("id"), {
+                    success: function () {
+                        showAlert("forced");
+                    },
+                    error: function () {
+                        showAlert("generic");
+                    }
+                });
+            },
+
+            removeQuestion: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                var view = this;
+                this.model.get("questionInstance").destroy({
+                    success: function () {
+                        view.model.set("questionInstance", null);
+                        view.model.set("question", null);
+                        view.model.save(null, {
+                            success: function () {
+                                view.render();
+                            },
+                            error: function () {
+                                showAlert("generic");
+                            }
+                        });
+                    },
+                    error: function () {
+                        showAlert("generic");
+                    }
+                });
+            },
+
+            go2options: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                var callback = function () {
+                    window.open("../question", "_self");
+                };
+                this.save(evt, callback);
             },
 
             goBack: function (evt) {

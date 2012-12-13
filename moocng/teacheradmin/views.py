@@ -24,12 +24,13 @@ from django.utils import simplejson
 
 from gravatar.templatetags.gravatar import gravatar_img_for_email
 
-from moocng.courses.models import Course
+from moocng.courses.models import Course, KnowledgeQuantum
 from moocng.teacheradmin.decorators import is_teacher_or_staff
 from moocng.teacheradmin.forms import CourseForm
 from moocng.teacheradmin.models import Invitation
 from moocng.teacheradmin.utils import (send_invitation,
                                        send_removed_notification)
+from moocng.videos.tasks import process_video_task
 
 
 @is_teacher_or_staff
@@ -52,6 +53,21 @@ def teacheradmin_units(request, course_slug):
         'course': course,
         'is_enrolled': is_enrolled,
     }, context_instance=RequestContext(request))
+
+
+@is_teacher_or_staff
+def teacheradmin_units_forcevideoprocess(request, course_slug):
+    if not 'kq' in request.GET:
+        return HttpResponse(status=400)
+    try:
+        kq = KnowledgeQuantum.objects.get(id=request.GET['kq'])
+    except KnowledgeQuantum.DoesNotExist:
+        return HttpResponse(status=404)
+
+    question_list = kq.question_set.all()
+    if len(question_list) > 0:
+        process_video_task.delay(question_list[0])
+    return HttpResponse()
 
 
 @is_teacher_or_staff

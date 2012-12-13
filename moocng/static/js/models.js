@@ -108,6 +108,62 @@ MOOC.models.Question = Backbone.Model.extend({
         };
     },
 
+    url: function () {
+        "use strict";
+        return MOOC.ajax.getAbsoluteUrl("question/") + this.get("id") + "/";
+    },
+
+    parse: function (resp, xhr) {
+        "use strict";
+        return {
+            id: parseInt(resp.id, 10),
+            lastFrame: resp.last_frame,
+            solution: resp.solutionID
+        };
+    },
+
+    sync: function (method, model, options) {
+        "use strict";
+        var model2send = model.clone(),
+            url = "",
+            question,
+            kqObj,
+            i;
+        if (method === "create") {
+            MOOC.models.course.each(function (unit) {
+                unit.get("knowledgeQuantumList").each(function (kq) {
+                    if (kq.has("questionInstance")) {
+                        question = kq.get("questionInstance");
+                        if (question.cid === model.cid) {
+                            kqObj = kq;
+                        }
+                    } else if (kq.has("question")) {
+                        question = kq.get("question");
+                        question = question.split("question/")[1].split("/")[0];
+                        question = parseInt(question, 10);
+                        if (question === model.get("id")) {
+                            kqObj = kq;
+                        }
+                    }
+                });
+            });
+            model2send.set("kq", MOOC.ajax.getAbsoluteUrl("kq/") + kqObj.get("id") + "/");
+            model2send.url = model.url().split("/");
+            for (i = 1; i < (model2send.url.length - 2); i += 1) {
+                url += "/" + model2send.url[i];
+            }
+            model2send.url = url + "/";
+        }
+        model2send.unset("lastFrame");
+        if (model.has("solutionID")) {
+            model2send.set("solution", "https://www.youtube.com/watch?v=" + model.get("solutionID"));
+        }
+        model2send.unset("solutionID");
+        model2send.unset("optionList");
+        model2send.unset("answer");
+        Backbone.sync(method, model2send, options);
+    },
+
     /**
      * Returns:
      *  true if correct

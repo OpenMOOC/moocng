@@ -23,7 +23,7 @@ from adminsortable.fields import SortableForeignKey
 from tinymce.models import HTMLField
 
 from moocng.courses.fields import PercentField
-from moocng.videos.tasks import process_video_task
+from moocng.videos.tasks import do_process_video_task
 from moocng.videos.utils import extract_YT_video_id
 
 
@@ -160,7 +160,7 @@ def handle_kq_post_save(sender, instance, created, **kwargs):
         transaction.commit()
     question_list = instance.question_set.all()
     if len(question_list) > 0:
-        process_video_task.delay(question_list[0])
+        do_process_video_task(question_list[0])
 
 
 signals.post_save.connect(handle_kq_post_save, sender=KnowledgeQuantum)
@@ -211,7 +211,7 @@ class Question(models.Model):
 
 def handle_question_post_save(sender, instance, created, **kwargs):
     if created:
-        process_video_task.delay(instance)
+        do_process_video_task(instance)
 
 
 signals.post_save.connect(handle_question_post_save, sender=Question)

@@ -46,7 +46,8 @@ if (_.isUndefined(window.MOOC)) {
             $.when.apply(null, promises).done(callback).fail(errorHandler);
         },
         loadQuestion = function (kq, callback) {
-            $.ajax(kq.get("question"), {
+            var url = kq.get("question").replace("question", "privquestion");
+            $.ajax(url, {
                 success: function (data, textStatus, jqXHR) {
                     var question = new MOOC.models.Question({
                         id: parseInt(data.id, 10),
@@ -188,6 +189,11 @@ if (_.isUndefined(window.MOOC)) {
         MOOC.host = window.location.origin;
         MOOC.alertTime = 3500;
         MOOC.models.course.courseId = courseID;
+        MOOC.models.Question = MOOC.models.Question.extend({
+            url: function () {
+                return MOOC.ajax.getAbsoluteUrl("privquestion/") + this.get("id") + "/";
+            }
+        });
 
         MOOC.router = new MOOC.App();
         MOOC.router.route("", "all");

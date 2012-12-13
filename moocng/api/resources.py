@@ -21,8 +21,10 @@ from tastypie import fields
 from tastypie.authorization import DjangoAuthorization
 from tastypie.resources import ModelResource
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.db.models.fields.files import ImageFieldFile
 
 from moocng.api.authentication import (DjangoAuthentication,
                                        TeacherAuthentication)
@@ -111,7 +113,10 @@ class KnowledgeQuantumResource(ModelResource):
         questions = bundle.obj.question_set.all()
         if questions.count() == 0:
             # no question: a kq is correct if it is completed
-            return self._is_completed(self.user_activity, bundle.obj)
+            try:
+                return self._is_completed(self.user_activity, bundle.obj)
+            except AttributeError:
+                return False
         else:
             question = questions[0]  # there should be only one question
             if self.user_answers is None:
@@ -124,7 +129,10 @@ class KnowledgeQuantumResource(ModelResource):
             return question.is_correct(answer)
 
     def dehydrate_completed(self, bundle):
-        return self._is_completed(self.user_activity, bundle.obj)
+        try:
+            return self._is_completed(self.user_activity, bundle.obj)
+        except AttributeError:
+            return False
 
     def _is_completed(self, activity, kq):
         course_id = kq.unit.course.id
@@ -203,6 +211,35 @@ class QuestionResource(ModelResource):
 
     def dehydrate_last_frame(self, bundle):
         return bundle.obj.last_frame.url
+
+
+class PrivateQuestionResource(ModelResource):
+    kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
+    solutionID = fields.CharField(readonly=True)
+
+    class Meta:
+        queryset = Question.objects.all()
+        resource_name = 'privquestion'
+        authentication = TeacherAuthentication()
+        authorization = DjangoAuthorization()
+        always_return_data = True
+        filtering = {
+            "kq": ('exact'),
+        }
+
+    def dehydrate_solutionID(self, bundle):
+        return extract_YT_video_id(bundle.obj.solution)
+
+    def dehydrate_last_frame(self, bundle):
+        try:
+            return bundle.obj.last_frame.url
+        except ValueError:
+            return "%simg/no-image.png" % settings.STATIC_URL
+
+    def hydrate(self, bundle):
+        bundle.obj.last_frame = ImageFieldFile(
+            bundle.obj, Question._meta.get_field_by_name('last_frame')[0], "")
+        return bundle
 
 
 class OptionResource(ModelResource):
