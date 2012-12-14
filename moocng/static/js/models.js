@@ -19,7 +19,18 @@ if (_.isUndefined(window.MOOC)) {
     window.MOOC = {};
 }
 
-MOOC.models = {};
+MOOC.models = {
+    detailUrlToCollection: function (url) {
+        "use strict";
+        var aux = url.split("/"),
+            result = "",
+            i;
+        for (i = 1; i < (aux.length - 2); i += 1) {
+            result += "/" + aux[i];
+        }
+        return result + "/";
+    }
+};
 
 MOOC.models.Activity = Backbone.Model.extend({
     defaults: {
@@ -125,7 +136,6 @@ MOOC.models.Question = Backbone.Model.extend({
     sync: function (method, model, options) {
         "use strict";
         var model2send = model.clone(),
-            url = "",
             question,
             kqObj,
             i;
@@ -148,11 +158,7 @@ MOOC.models.Question = Backbone.Model.extend({
                 });
             });
             model2send.set("kq", MOOC.ajax.getAbsoluteUrl("kq/") + kqObj.get("id") + "/");
-            model2send.url = model.url().split("/");
-            for (i = 1; i < (model2send.url.length - 2); i += 1) {
-                url += "/" + model2send.url[i];
-            }
-            model2send.url = url + "/";
+            model2send.url = MOOC.models.detailUrlToCollection(model.url());
         }
         model2send.unset("lastFrame");
         if (model.has("solutionID")) {
@@ -300,7 +306,7 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
         model2send.unset("questionInstance");
         model2send.unset("attachmentList");
         if (method === "create") {
-            model2send.url = MOOC.ajax.getAbsoluteUrl("kq/");
+            model2send.url = MOOC.models.detailUrlToCollection(model.url());
         }
         Backbone.sync(method, model2send, options);
     },

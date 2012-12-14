@@ -75,7 +75,7 @@ class KnowledgeQuantumResource(ModelResource):
         resource_name = 'kq'
         always_return_data = True
         authentication = DjangoAuthentication()
-        authorization = PublicReadTeachersModifyAuthorization()
+        authorization = DjangoAuthorization()
         filtering = {
             "unit": ('exact'),
         }
@@ -152,6 +152,38 @@ class KnowledgeQuantumResource(ModelResource):
             return False
 
         return unicode(kq.id) in kqs
+
+
+class PrivateKnowledgeQuantumResource(ModelResource):
+    unit = fields.ToOneField(UnitResource, 'unit')
+    question = fields.ToManyField('moocng.api.resources.QuestionResource',
+                                  'question_set', related_name='kq',
+                                  readonly=True, null=True)
+    videoID = fields.CharField(readonly=True)
+    normalized_weight = fields.IntegerField(readonly=True)
+
+    class Meta:
+        queryset = KnowledgeQuantum.objects.all()
+        resource_name = 'kq'
+        always_return_data = True
+        authentication = TeacherAuthentication()
+        authorization = DjangoAuthorization()
+        filtering = {
+            "unit": ('exact'),
+        }
+
+    def dehydrate_normalized_weight(self, bundle):
+        return normalize_kq_weight(bundle.obj)
+
+    def dehydrate_question(self, bundle):
+        question = bundle.data['question']
+        if len(question) == 0:
+            return None
+        else:
+            return question[0]
+
+    def dehydrate_videoID(self, bundle):
+        return extract_YT_video_id(bundle.obj.video)
 
 
 class AttachmentResource(ModelResource):
