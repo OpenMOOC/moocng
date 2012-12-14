@@ -40,6 +40,14 @@ urlpatterns = patterns(
 
     url(r'^announcements/$', 'teacheradmin_announcements',
         name='teacheradmin_announcements'),
+    url(r'^announcements/add', 'teacheradmin_announcements_edit',
+        name='teacheradmin_announcements_add'),
+    url(r'^announcements/(?P<announ_slug>[^/]+)/edit/$', 'teacheradmin_announcements_edit',
+        name='teacheradmin_announcements_edit'),
+    url(r'^announcements/(?P<announ_slug>[^/]+)/$', 'teacheradmin_announcements_view',
+        name='teacheradmin_announcements_view'),
+    url(r'^announcements/(?P<announ_slug>[^/]+)/delete$', 'teacheradmin_announcements_delete',
+        name='teacheradmin_announcements_delete'),
 
     url(r'^emails/$', 'teacheradmin_emails', name='teacheradmin_emails'),
 )

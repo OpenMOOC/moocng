@@ -15,18 +15,21 @@
 from datetime import datetime
 
 from django.contrib.auth.models import User
+from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
+from django.template.defaultfilters import slugify
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from gravatar.templatetags.gravatar import gravatar_img_for_email
 
-from moocng.courses.models import Course, KnowledgeQuantum, Option
+from moocng.courses.models import Course, KnowledgeQuantum, Option, Announcement
 from moocng.courses.views import unit_badge_classes
+from moocng.courses.forms import AnnouncementForm
 from moocng.teacheradmin.decorators import is_teacher_or_staff
 from moocng.teacheradmin.forms import CourseForm
 from moocng.teacheradmin.models import Invitation
@@ -300,11 +303,69 @@ def teacheradmin_info(request, course_slug):
 def teacheradmin_announcements(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     is_enrolled = course.students.filter(id=request.user.id).exists()
+    announcements = course.announcement_set.all()
 
     return render_to_response('teacheradmin/announcements.html', {
         'course': course,
         'is_enrolled': is_enrolled,
+        'announcements': announcements,
     }, context_instance=RequestContext(request))
+
+
+@is_teacher_or_staff
+def teacheradmin_announcements_view(request, course_slug, announ_slug):
+    announcement = get_object_or_404(Announcement, slug=announ_slug, course__slug=course_slug)
+    course = announcement.course
+    is_enrolled = course.students.filter(id=request.user.id).exists()
+    return render_to_response('teacheradmin/announcement_view.html', {
+        'course': course,
+        'is_enrolled': is_enrolled,
+        'announcement': announcement,
+    }, context_instance=RequestContext(request))
+
+
+@is_teacher_or_staff
+def teacheradmin_announcements_edit(request, course_slug, announ_slug=None):
+
+    if announ_slug is None:
+        announcement = None
+    else:
+        announcement = get_object_or_404(Announcement, slug=announ_slug, course__slug=course_slug)
+
+    course = get_object_or_404(Course, slug=course_slug)
+    is_enrolled = course.students.filter(id=request.user.id).exists()
+
+    if request.method == 'POST':
+        form = AnnouncementForm(request.POST, request.FILES, instance=announcement)
+        if form.is_valid():
+            form.instance.slug = slugify(form.instance.title)
+            if Announcement.objects.filter(slug=form.instance.slug).exists():
+                messages.error(request, _("There is a announce with the same title"))
+            else:
+                if not announcement:
+                    form.instance.course = course
+                form.save()
+
+                return HttpResponseRedirect(form.instance.get_absolute_url())
+
+    else:
+        form = AnnouncementForm(instance=announcement)
+
+    return render_to_response('teacheradmin/announcement_edit.html', {
+        'course': course,
+        'is_enrolled': is_enrolled,
+        'announcement': announcement,
+        'form': form,
+    }, context_instance=RequestContext(request))
+
+
+@is_teacher_or_staff
+def teacheradmin_announcements_delete(request, course_slug, announ_slug):
+
+    announcement = get_object_or_404(Announcement, slug=announ_slug, course__slug=course_slug)
+    announcement.delete()
+
+    return HttpResponseRedirect(reverse("teacheradmin_announcements", course_slug=course_slug))
 
 
 @is_teacher_or_staff

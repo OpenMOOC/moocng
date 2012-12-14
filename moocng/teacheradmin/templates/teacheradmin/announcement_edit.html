@@ -1,0 +1,22 @@
+{% extends "teacheradmin/base_teacheradmin.html" %}
+
+{% load i18n %}
+
+{% block nav-teacheradmin-announcements %}active{% endblock %}
+
+{% block section %}
+
+{{ form.media }}
+
+<form method="post">{% csrf_token %}
+  {{ form }}
+
+  <div class="form-actions">
+    <button type="submit" class="btn">{% trans "Submit" %}</button>
+  </div>
+
+</form>
+
+
+
+{% endblock %}

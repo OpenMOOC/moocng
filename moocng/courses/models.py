@@ -84,10 +84,11 @@ signals.m2m_changed.connect(handle_course_m2m_changed, sender=Course.teachers.th
 class Announcement(models.Model):
 
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
-    slug = models.SlugField(verbose_name=_(u'Slug'))
+    slug = models.SlugField(verbose_name=_(u'Slug'), unique=True)
     content = HTMLField(verbose_name=_(u'Content'))
     course = models.ForeignKey(Course, verbose_name=_(u'Course'))
-    datetime = models.DateTimeField(verbose_name=_(u'Datetime'))
+    datetime = models.DateTimeField(verbose_name=_(u'Datetime'),
+                    help_text=_(u"Use format:  DD/MM/AAAA 00:00"))
 
     class Meta:
         verbose_name = _(u'announcement')
