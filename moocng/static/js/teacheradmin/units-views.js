@@ -72,7 +72,9 @@ if (_.isUndefined(window.MOOC)) {
         },
 
         showAlert = function (id) {
-            $("#" + id).removeClass("hide");
+            var alert = $("#" + id);
+            alert.removeClass("hide");
+            $("body").animate({ scrollTop: alert.offset().top }, 500);
             setTimeout(function () {
                 $("#" + id).addClass("hide");
             }, MOOC.alertTime);
