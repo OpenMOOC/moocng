@@ -139,30 +139,30 @@ MOOC.models.Question = Backbone.Model.extend({
             question,
             kqObj,
             i;
-        if (method === "create") {
-            MOOC.models.course.each(function (unit) {
-                unit.get("knowledgeQuantumList").each(function (kq) {
-                    if (kq.has("questionInstance")) {
-                        question = kq.get("questionInstance");
-                        if (question.cid === model.cid) {
-                            kqObj = kq;
-                        }
-                    } else if (kq.has("question")) {
-                        question = kq.get("question");
-                        question = question.split("question/")[1].split("/")[0];
-                        question = parseInt(question, 10);
-                        if (question === model.get("id")) {
-                            kqObj = kq;
-                        }
+        MOOC.models.course.each(function (unit) {
+            unit.get("knowledgeQuantumList").each(function (kq) {
+                if (kq.has("questionInstance")) {
+                    question = kq.get("questionInstance");
+                    if (question.cid === model.cid) {
+                        kqObj = kq;
                     }
-                });
+                } else if (kq.has("question")) {
+                    question = kq.get("question");
+                    question = question.split("question/")[1].split("/")[0];
+                    question = parseInt(question, 10);
+                    if (question === model.get("id")) {
+                        kqObj = kq;
+                    }
+                }
             });
-            model2send.set("kq", MOOC.ajax.getAbsoluteUrl("kq/") + kqObj.get("id") + "/");
+        });
+        model2send.set("kq", kqObj.url());
+        if (method === "create") {
             model2send.url = MOOC.models.detailUrlToCollection(model.url());
         }
         model2send.unset("lastFrame");
-        if (model.has("solutionID")) {
-            model2send.set("solution", "https://www.youtube.com/watch?v=" + model.get("solutionID"));
+        if (model.has("solution")) {
+            model2send.set("solution", "https://www.youtube.com/watch?v=" + model.get("solution"));
         }
         model2send.unset("solutionID");
         model2send.unset("optionList");

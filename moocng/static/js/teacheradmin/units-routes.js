@@ -190,11 +190,12 @@ if (_.isUndefined(window.MOOC)) {
         MOOC.unitBadgeClasses = unitBadgeClasses;
         MOOC.alertTime = 3500;
         MOOC.models.course.courseId = courseID;
-        MOOC.models.Question = MOOC.models.Question.extend({
-            url: function () {
-                return MOOC.ajax.getAbsoluteUrl("privquestion/") + this.get("id") + "/";
-            }
-        });
+        MOOC.models.Question.prototype.url = function () {
+            return MOOC.ajax.getAbsoluteUrl("privquestion/") + this.get("id") + "/";
+        };
+        MOOC.models.KnowledgeQuantum.prototype.url = function () {
+            return MOOC.ajax.getAbsoluteUrl("privkq/") + this.get("id") + "/";
+        };
 
         MOOC.router = new MOOC.App();
         MOOC.router.route("", "all");

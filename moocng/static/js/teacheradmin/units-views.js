@@ -511,17 +511,26 @@ if (_.isUndefined(window.MOOC)) {
                     showAlert("required");
                     return;
                 }
+                var question;
                 this.model.unset("new");
                 this.model.set("title", this.$el.find("input#kqtitle").val());
                 this.model.set("videoID", this.$el.find("input#kqvideo").val());
                 this.model.set("normalized_weight", parseInt(this.$el.find("input#kqweight").val(), 10));
                 this.model.set("supplementary_material", tinyMCE.get("kqsupplementary").getContent());
                 this.model.set("teacher_comments", tinyMCE.get("kqcomments").getContent());
+                if (this.model.has("questionInstance")) {
+                    question = this.model.get("questionInstance");
+                    question.set("solution", this.$el.find("#questionvideo").val());
+                }
                 this.model.save(null, {
                     success: function () {
                         showAlert("saved");
                         if (!_.isUndefined(callback)) {
                             callback();
+                        } else {
+                            if (!_.isUndefined(question)) {
+                                question.save();
+                            }
                         }
                     },
                     error: function () {
@@ -610,7 +619,11 @@ if (_.isUndefined(window.MOOC)) {
                 evt.stopPropagation();
                 var model = this.model,
                     callback = function () {
-                        window.open("question/" + model.get("id"), "_self");
+                        model.get("questionInstance").save(null, {
+                            success: function () {
+                                window.open("question/" + model.get("id"), "_self");
+                            }
+                        });
                     };
                 this.save(evt, callback);
             },
