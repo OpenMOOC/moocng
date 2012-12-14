@@ -25,8 +25,26 @@ header {
 }
 
 header h2 {
+    margin-bottom: 0;
     padding-top: 0.5em;
     font-size: 12pt;
+}
+
+h1.logo a {
+    display: inline-block;
+    overflow: auto;
+}
+
+h1.logo a img {
+    display: block;
+}
+
+a.hide-text {
+    text-decoration: none;
+}
+
+a.hide-text:hover {
+    text-decoration: none;
 }
 
 #language-selector,

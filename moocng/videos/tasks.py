@@ -38,6 +38,8 @@ def do_process_video_task(question):
             if video_id == u'':
                 raise NotFound(url)
             question.last_frame.save("%s.png" % video_id, File(open(frame)))
+    except IOError:
+        logger.error('Video %s could not be downloaded or processed. Probably the codec is not supported, please try again with a newer YouTube video.' % url)
     except NotFound:
         logger.error('Video %s not found' % url)
     finally:
