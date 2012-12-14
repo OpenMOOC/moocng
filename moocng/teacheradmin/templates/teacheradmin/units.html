@@ -35,7 +35,7 @@
                 question: "{% trans "It has a question" %}",
             }
         };
-        MOOC.init({{ course.id }});
+        MOOC.init({{ course.id }}, {{ unit_badge_classes|safe }});
     </script>
 {% endcompress %}
 {% endblock %}

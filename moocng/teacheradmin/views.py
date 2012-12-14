@@ -26,6 +26,7 @@ from django.utils.translation import ugettext as _
 from gravatar.templatetags.gravatar import gravatar_img_for_email
 
 from moocng.courses.models import Course, KnowledgeQuantum, Option
+from moocng.courses.views import unit_badge_classes
 from moocng.teacheradmin.decorators import is_teacher_or_staff
 from moocng.teacheradmin.forms import CourseForm
 from moocng.teacheradmin.models import Invitation
@@ -53,6 +54,7 @@ def teacheradmin_units(request, course_slug):
     return render_to_response('teacheradmin/units.html', {
         'course': course,
         'is_enrolled': is_enrolled,
+        'unit_badge_classes': simplejson.dumps(unit_badge_classes),
     }, context_instance=RequestContext(request))
 
 

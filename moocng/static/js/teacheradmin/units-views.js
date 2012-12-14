@@ -169,7 +169,9 @@ if (_.isUndefined(window.MOOC)) {
                     add,
                     html;
 
-                header = "<h3>" + this.model.get("title") + "</h3>" +
+                header = "<span class='badge " + MOOC.unitBadgeClasses[this.model.get("type")] +
+                    "'>" + this.model.get("type").toUpperCase() + "</span> " +
+                    "<h3>" + this.model.get("title") + "</h3>" +
                     "<button class='btn pull-right edit' title='" + MOOC.trans.edit +
                     " " + MOOC.trans.unit.unit + "'><i class='icon-edit'></i> " +
                     MOOC.trans.edit + "</button>";

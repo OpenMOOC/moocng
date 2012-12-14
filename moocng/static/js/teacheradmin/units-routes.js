@@ -184,9 +184,10 @@ if (_.isUndefined(window.MOOC)) {
         }
     });
 
-    MOOC.init = function (courseID) {
+    MOOC.init = function (courseID, unitBadgeClasses) {
         var path = window.location.pathname;
         MOOC.host = window.location.origin;
+        MOOC.unitBadgeClasses = unitBadgeClasses;
         MOOC.alertTime = 3500;
         MOOC.models.course.courseId = courseID;
         MOOC.models.Question = MOOC.models.Question.extend({
