@@ -1,5 +1,5 @@
 /*jslint vars: false, browser: true, nomen: true */
-/*global MOOC:true, _, jQuery, Backbone */
+/*global MOOC:true, _, jQuery, Backbone, tinyMCE */
 
 // Copyright 2012 Rooter Analysis S.L.
 //
@@ -448,6 +448,17 @@ if (_.isUndefined(window.MOOC)) {
                         $("button#force-process").removeClass("hide");
                     }
                 }
+                tinyMCE.init({
+                    mode: "textareas",
+                    plugins: "paste,searchreplace",
+                    width: "380", // bootstrap span5
+                    theme: "advanced",
+                    theme_advanced_resizing : true,
+                    theme_advanced_toolbar_location: "top",
+                    theme_advanced_buttons1: "bold,italic,underline,strikethrough,separator,undo,redo,separator,cleanup,separator,bullist,numlist",
+                    theme_advanced_buttons2: "",
+                    theme_advanced_buttons3: ""
+                });
                 $("#kq-editor").removeClass("hide");
                 return this;
             },
@@ -458,8 +469,8 @@ if (_.isUndefined(window.MOOC)) {
                 this.model.set("title", this.$el.find("input#kqtitle").val());
                 this.model.set("videoID", this.$el.find("input#kqvideo").val());
                 this.model.set("normalized_weight", parseInt(this.$el.find("input#kqweight").val(), 10));
-                this.model.set("supplementary_material", this.$el.find("textarea#kqsupplementary").val());
-                this.model.set("teacher_comments", this.$el.find("textarea#kqcomments").val());
+                this.model.set("supplementary_material", tinyMCE.get("kqsupplementary").getContent());
+                this.model.set("teacher_comments", tinyMCE.get("kqcomments").getContent());
                 this.model.save(null, {
                     success: function () {
                         showAlert("saved");
