@@ -18,6 +18,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
@@ -346,7 +347,7 @@ def teacheradmin_announcements_edit(request, course_slug, announ_slug=None):
                     form.instance.course = course
                 form.save()
 
-                return HttpResponseRedirect(form.instance.get_absolute_url())
+                return HttpResponseRedirect(reverse("teacheradmin_announcements_view", args=[course_slug, form.instance.slug]))
 
     else:
         form = AnnouncementForm(instance=announcement)
@@ -365,7 +366,7 @@ def teacheradmin_announcements_delete(request, course_slug, announ_slug):
     announcement = get_object_or_404(Announcement, slug=announ_slug, course__slug=course_slug)
     announcement.delete()
 
-    return HttpResponseRedirect(reverse("teacheradmin_announcements", course_slug=course_slug))
+    return HttpResponseRedirect(reverse("teacheradmin_announcements", args=[course_slug]))
 
 
 @is_teacher_or_staff
