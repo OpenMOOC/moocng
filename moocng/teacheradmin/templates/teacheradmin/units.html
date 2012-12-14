@@ -105,7 +105,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    <div class="row mb20">
         <div class="span5">
             <label for="kqsupplementary">{% trans "Supplementary material" %}</label>
             <textarea id="kqsupplementary" name="kqsupplementary" class="span5" rows="5"></textarea>
@@ -118,7 +118,7 @@
     </fieldset>
     <div id="noquestion" class="row mb20">
         <div class="span10 align-right">
-            <button id="addquestion" class="btn">{% trans "Add a question to this nugget" %}</button>
+            <button id="addquestion" class="btn btn-primary">{% trans "Save changes and add a question to this nugget" %}</button>
         </div>
     </div>
     <div id="question" class="hide">
@@ -135,7 +135,7 @@
                 <input id="questionvideo" type="text" name="questionvideo" maxlength="200" class="span5" required="required" />
             </div>
         </div>
-        <div class="row mb20">
+        <div class="row">
             <div class="align-right span10">
                 <button id="go2options" class="btn btn-primary">{% trans "Save changes and edit question's options" %}</button>
                 <button id="delete-question" class="btn btn-danger">{% trans "Remove the question from this nugget" %}</button>
@@ -143,11 +143,14 @@
         </div>
         </fieldset>
     </div>
+    <fieldset>
+    <legend>{% trans "Nugget actions" %}</legend>
     <div class="row"><div class="span10 align-right">
         <button id="save-kq" class="btn btn-primary"><i class="icon icon-white icon-ok"></i> {% trans "Save" %}</button>
         <button id="delete-kq" class="btn btn-danger"><i class="icon icon-white icon-remove"></i> {% trans "Delete" %}</button>
         <button class="btn back"><i class="icon icon-arrow-left"></i> {% trans "Back" %}</button>
     </div></div>
+    </fieldset>
 </form>
 </script>
 
@@ -162,6 +165,14 @@
 <div class="alert alert-error hide" id="generic">
     <h4>{% trans "Error" %}</h4>
     <p>{% trans "Something went wrong, please try again later." %}</p>
+</div>
+<div class="alert alert-error hide" id="required">
+    <h4>{% trans "Error" %}</h4>
+    <p>{% trans "A required field is empty." %}</p>
+</div>
+<div class="alert alert-error hide" id="unsaved">
+    <h4>{% trans "Error" %}</h4>
+    <p>{% trans "This item is new and must be saved before going back." %}</p>
 </div>
 
 <div id="units-container" class="viewport"></div>

@@ -76,6 +76,17 @@ if (_.isUndefined(window.MOOC)) {
             setTimeout(function () {
                 $("#" + id).addClass("hide");
             }, MOOC.alertTime);
+        },
+
+        checkRequiredAux = function ($el) {
+            var result = true;
+            $el.find("[required=required]").each(function (idx, elem) {
+                elem = $(elem);
+                if (elem.is(":visible") && elem.val() === "") {
+                    result = false;
+                }
+            });
+            return result;
         };
 
     MOOC.views = {
@@ -138,6 +149,7 @@ if (_.isUndefined(window.MOOC)) {
                 unit.save(null, {
                     success: function (model, response) {
                         MOOC.models.course.add(model);
+                        model.set("new", true);
                         MOOC.router.navigate("unit" + model.get("id"), {
                             trigger: true
                         });
@@ -159,7 +171,8 @@ if (_.isUndefined(window.MOOC)) {
             },
 
             initialize: function () {
-                _.bindAll(this, "render", "sortingHandler", "toUnitEditor", "addKQ");
+                _.bindAll(this, "render", "sortingHandler", "toUnitEditor",
+                    "addKQ");
             },
 
             render: function () {
@@ -334,7 +347,8 @@ if (_.isUndefined(window.MOOC)) {
             },
 
             initialize: function () {
-                _.bindAll(this, "render", "changeType", "save", "remove", "goBack");
+                _.bindAll(this, "render", "changeType", "save", "remove",
+                    "goBack", "checkRequired");
             },
 
             formatDate: function (date) {
@@ -375,9 +389,19 @@ if (_.isUndefined(window.MOOC)) {
                 }
             },
 
+            // Returns true if all required fields are filled, false otherwise
+            checkRequired: function () {
+                return checkRequiredAux(this.$el);
+            },
+
             save: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
+                if (!this.checkRequired()) {
+                    showAlert("required");
+                    return;
+                }
+                this.model.unset("new");
                 this.model.set("title", this.$el.find("input#title").val());
                 this.model.set("type", this.$el.find("select#type").val());
                 this.model.set("weight", parseInt(this.$el.find("input#weight").val(), 10));
@@ -410,6 +434,10 @@ if (_.isUndefined(window.MOOC)) {
             goBack: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
+                if (this.model.has("new")) {
+                    showAlert("unsaved");
+                    return;
+                }
                 MOOC.router.navigate("", { trigger: true });
             }
         }),
@@ -428,7 +456,8 @@ if (_.isUndefined(window.MOOC)) {
             },
 
             initialize: function () {
-                _.bindAll(this, "render", "save", "remove", "goBack");
+                _.bindAll(this, "render", "save", "remove", "goBack",
+                    "checkRequired");
             },
 
             render: function () {
@@ -468,9 +497,19 @@ if (_.isUndefined(window.MOOC)) {
                 return this;
             },
 
+            // Returns true if all required fields are filled, false otherwise
+            checkRequired: function () {
+                return checkRequiredAux(this.$el);
+            },
+
             save: function (evt, callback) {
                 evt.preventDefault();
                 evt.stopPropagation();
+                if (!this.checkRequired()) {
+                    showAlert("required");
+                    return;
+                }
+                this.model.unset("new");
                 this.model.set("title", this.$el.find("input#kqtitle").val());
                 this.model.set("videoID", this.$el.find("input#kqvideo").val());
                 this.model.set("normalized_weight", parseInt(this.$el.find("input#kqweight").val(), 10));
@@ -508,17 +547,23 @@ if (_.isUndefined(window.MOOC)) {
             addQuestion: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
+                if (!this.checkRequired()) {
+                    showAlert("required");
+                    return;
+                }
                 var question = new MOOC.models.Question(),
                     view = this;
                 this.model.set("questionInstance", question);
-                question.save(null, {
-                    success: function () {
-                        showAlert("saved");
-                        view.render();
-                    },
-                    error: function () {
-                        showAlert("generic");
-                    }
+                this.save(evt, function () {
+                    question.save(null, {
+                        success: function () {
+                            showAlert("saved");
+                            view.render();
+                        },
+                        error: function () {
+                            showAlert("generic");
+                        }
+                    });
                 });
             },
 
@@ -571,6 +616,10 @@ if (_.isUndefined(window.MOOC)) {
             goBack: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
+                if (this.model.has("new")) {
+                    showAlert("unsaved");
+                    return;
+                }
                 MOOC.router.navigate("", { trigger: true });
             }
         }),
