@@ -436,8 +436,6 @@ if (_.isUndefined(window.MOOC)) {
                 this.$el.find("input#kqtitle").val(this.model.get("title"));
                 this.$el.find("input#kqvideo").val(this.model.get("videoID"));
                 this.$el.find("input#kqweight").val(this.model.get("normalized_weight"));
-                this.$el.find("textarea#kqsupplementary").val(this.model.get("supplementary_material"));
-                this.$el.find("textarea#kqcomments").val(this.model.get("teacher_comments"));
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
                     this.$el.find("#noquestion").addClass("hide");
@@ -448,6 +446,11 @@ if (_.isUndefined(window.MOOC)) {
                         $("button#force-process").removeClass("hide");
                     }
                 }
+                while (tinyMCE.editors.length > 0) {
+                    tinyMCE.editors[0].remove();
+                }
+                this.$el.find("textarea#kqsupplementary").val(this.model.get("supplementary_material"));
+                this.$el.find("textarea#kqcomments").val(this.model.get("teacher_comments"));
                 tinyMCE.init({
                     mode: "textareas",
                     plugins: "paste,searchreplace",
