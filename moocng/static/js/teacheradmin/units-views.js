@@ -272,6 +272,9 @@ if (_.isUndefined(window.MOOC)) {
 
             addKQ: function (evt) {
                 var kq = new MOOC.models.KnowledgeQuantum();
+                if (!this.model.has("knowledgeQuantumList")) {
+                    this.model.set("knowledgeQuantumList", new MOOC.models.KnowledgeQuantumList());
+                }
                 this.model.get("knowledgeQuantumList").add(kq);
                 kq.save(null, {
                     success: function (model, response) {
