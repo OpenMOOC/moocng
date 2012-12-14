@@ -186,7 +186,7 @@ class PrivateKnowledgeQuantumResource(ModelResource):
         return extract_YT_video_id(bundle.obj.video)
 
     def hydrate_videoID(self, bundle):
-        if 'videoID' in bundle.data:
+        if 'videoID' in bundle.data and bundle.data['videoID'] is not None:
             video = 'http://youtu.be/' + bundle.data['videoID']
             bundle.data['video'] = video
         return bundle
