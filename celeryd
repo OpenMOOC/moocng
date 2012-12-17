@@ -106,12 +106,11 @@ start_foreground () {
         cd $CELERYD_CHDIR
     fi
 
-    echo -n $"Starting $prog: CTRL+C to exit"
-    $PYTHON $MOOCNG/manage.py celery tasks worker \
+    echo $"Starting $prog: CTRL+C to exit"
+    $PYTHON $MOOCNG/manage.py celeryd tasks worker \
                                --pidfile=$CELERYD_PID_FILE \
                                --logfile=$CELERYD_LOG_FILE \
                                --loglevel=$CELERYD_LOG_LEVEL \
-                                --quiet \
                                $CELERYD_OPTS
 
     RETVAL=$?
