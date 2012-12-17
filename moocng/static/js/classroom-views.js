@@ -581,16 +581,27 @@ MOOC.views.Option = Backbone.View.extend({
     render: function () {
         "use strict";
         var image = this.$el.find("img"),
+            optiontype = this.model.get('optiontype'),
             ghostImage,
             callback;
 
-        callback = _.bind(function (width, height, widthScale, heightScale, offset) {
+        callback = _.bind(function (widthScale, heightScale, offset) {
             var solution = this.model.get('solution'),
-                optiontype = this.model.get('optiontype'),
+                width = "auto;",
+                height = "auto;",
                 attributes = {
                     type: this.types[optiontype],
                     id: 'option' + this.model.get('id')
                 };
+
+            if (optiontype === 't') {
+                width = Math.floor(this.model.get('width') / widthScale) + 'px;';
+                height = Math.floor(this.model.get('height') / heightScale);
+                if (height < this.MIN_TEXT_HEIGHT) {
+                    height = this.MIN_TEXT_HEIGHT;
+                }
+                height = height + 'px;';
+            }
 
             attributes.style = [
                 'top: ' + Math.floor(this.model.get('y') / heightScale) + 'px;',
@@ -624,30 +635,14 @@ MOOC.views.Option = Backbone.View.extend({
         if (image.length > 0) {
             ghostImage = document.createElement("img");
             $(ghostImage).load(_.bind(function () {
-                var optiontype = this.model.get('optiontype'),
-                    offset = Math.floor((this.$el.width() - image.width()) / 2),
-                    width = "auto;",
-                    height = "auto;",
-                    widthScale,
-                    heightScale;
-
-                widthScale = ghostImage.width / image.width();
-                heightScale = ghostImage.height / image.height();
-                if (optiontype === 't') {
-                    width = Math.floor(this.model.get('width') / widthScale) + 'px;';
-                    height = Math.floor(this.model.get('height') / heightScale);
-                    if (height < this.MIN_TEXT_HEIGHT) {
-                        height = this.MIN_TEXT_HEIGHT;
-                    }
-                    height = height + 'px;';
-                }
-
-                callback(width, height, widthScale, heightScale, offset);
+                var offset = Math.floor((this.$el.width() - image.width()) / 2),
+                    widthScale = ghostImage.width / image.width(),
+                    heightScale = ghostImage.height / image.height();
+                callback(widthScale, heightScale, offset);
             }, this));
-
             ghostImage.src = image.attr("src");
         } else {
-            callback("auto;", "auto;", 1, 1, 0);
+            callback(1, 1, 0);
         }
 
         return this;
