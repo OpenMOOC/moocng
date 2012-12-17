@@ -20,6 +20,8 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+FFMPEG_DEBUG = DEBUG
+
 ADMINS = (
     ('Admin', 'admin@eopenmooc.org'),
 )

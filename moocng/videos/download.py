@@ -47,6 +47,11 @@ def execute_command(proc):
     # ffmpeg uses stderr for comunicating
     p = subprocess.Popen(proc, stderr=subprocess.PIPE)
     out, err = p.communicate()
+    if getattr(settings, "FFMPEG_DEBUG", False):
+        print out
+        print err
+        logger.debug(out)
+        logger.debug(err)
     return err
 
 
