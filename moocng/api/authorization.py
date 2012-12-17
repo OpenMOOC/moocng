@@ -27,4 +27,13 @@ class PublicReadTeachersModifyAuthorization(Authorization):
             return request.user.is_authenticated()
         else:
             return (request.user.is_authenticated() and
-                    is_teacher(request.user, Course.objects.all()))
+                    (is_teacher(request.user, Course.objects.all()) or
+                     request.user.is_staff))
+
+
+class TeacherAuthorization(Authorization):
+
+    def is_authorized(self, request, object=None):
+        return (request.user.is_authenticated() and
+                (is_teacher(request.user, Course.objects.all()) or
+                 request.user.is_staff))

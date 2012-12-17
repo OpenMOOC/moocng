@@ -28,7 +28,8 @@ from django.db.models.fields.files import ImageFieldFile
 
 from moocng.api.authentication import (DjangoAuthentication,
                                        TeacherAuthentication)
-from moocng.api.authorization import PublicReadTeachersModifyAuthorization
+from moocng.api.authorization import (PublicReadTeachersModifyAuthorization,
+                                      TeacherAuthorization)
 from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment, Course)
@@ -167,7 +168,7 @@ class PrivateKnowledgeQuantumResource(ModelResource):
         resource_name = 'privkq'
         always_return_data = True
         authentication = TeacherAuthentication()
-        authorization = DjangoAuthorization()
+        authorization = TeacherAuthorization()
         filtering = {
             "unit": ('exact'),
         }
@@ -259,7 +260,7 @@ class PrivateQuestionResource(ModelResource):
         queryset = Question.objects.all()
         resource_name = 'privquestion'
         authentication = TeacherAuthentication()
-        authorization = DjangoAuthorization()
+        authorization = TeacherAuthorization()
         always_return_data = True
         filtering = {
             "kq": ('exact'),
