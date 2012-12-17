@@ -109,7 +109,6 @@ start_foreground () {
     echo $"Starting $prog: CTRL+C to exit"
     $PYTHON $MOOCNG/manage.py celeryd tasks worker \
                                --pidfile=$CELERYD_PID_FILE \
-                               --logfile=$CELERYD_LOG_FILE \
                                --loglevel=$CELERYD_LOG_LEVEL \
                                $CELERYD_OPTS
 
