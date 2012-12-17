@@ -144,6 +144,10 @@ footer ul li {
     width: 100%;
 }
 
+.white {
+    background-color: #FAFAFA;
+}
+
 li.teacher {
     margin-bottom: 10px;
 }

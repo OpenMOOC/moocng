@@ -243,11 +243,11 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         if (!kqObj.has("questionInstance")) {
             // Load Question Data
             MOOC.ajax.getResource(kqObj.get("question"), function (data, textStatus, jqXHR) {
-                var aux = _.pick(data, "id", "last_frame", "solutionID"),
-                    question = new MOOC.models.Question({
-                        id: aux.id,
-                        lastFrame: aux.last_frame,
-                        solution: aux.solutionID
+                var question = new MOOC.models.Question({
+                        id: data.id,
+                        lastFrame: data.last_frame,
+                        solution: data.solutionID,
+                        use_last_frame: data.use_last_frame
                     });
                 kqObj.set("questionInstance", question);
                 // Load Options for Question
@@ -416,11 +416,17 @@ MOOC.views.Question = Backbone.View.extend({
         var width = this.$el.children().css("width"),
             height = this.$el.children().css("height"),
             kqPath = window.location.hash.substring(1, window.location.hash.length - 2), // Remove trailing /q
-            html = '<img src="' + this.model.get("lastFrame") + '" ',
-            answer = this.model.get('answer');
+            answer = this.model.get('answer'),
+            html;
 
-        html += 'alt="' + this.model.get("title") + '" style="max-width: ' + width;
-        html += '; height: ' + height + ';" />';
+        if (this.model.get("use_last_frame")) {
+            html = '<img src="' + this.model.get("lastFrame") + '" ';
+            html += 'alt="' + this.model.get("title") + '" style="max-width: ' + width;
+            html += '; height: ' + height + ';" />';
+        } else {
+            html = "<div class='white' style='width: " + width + "; height: ";
+            html += height + "; min-height: 372px;'></div>";
+        }
         destroyPlayer();
         this.$el.html(html);
         this.$el.css("height", "auto");
@@ -575,31 +581,16 @@ MOOC.views.Option = Backbone.View.extend({
     render: function () {
         "use strict";
         var image = this.$el.find("img"),
-            ghostImage = document.createElement("img");
+            ghostImage,
+            callback;
 
-        $(ghostImage).load(_.bind(function () {
+        callback = _.bind(function (width, height, widthScale, heightScale, offset) {
             var solution = this.model.get('solution'),
                 optiontype = this.model.get('optiontype'),
                 attributes = {
                     type: this.types[optiontype],
                     id: 'option' + this.model.get('id')
-                },
-                offset = Math.floor((this.$el.width() - image.width()) / 2),
-                width = "auto;",
-                height = "auto;",
-                widthScale,
-                heightScale;
-
-            widthScale = ghostImage.width / image.width();
-            heightScale = ghostImage.height / image.height();
-            if (optiontype === 't') {
-                width = Math.floor(this.model.get('width') / widthScale) + 'px;';
-                height = Math.floor(this.model.get('height') / heightScale);
-                if (height < this.MIN_TEXT_HEIGHT) {
-                    height = this.MIN_TEXT_HEIGHT;
-                }
-                height = height + 'px;';
-            }
+                };
 
             attributes.style = [
                 'top: ' + Math.floor(this.model.get('y') / heightScale) + 'px;',
@@ -628,9 +619,37 @@ MOOC.views.Option = Backbone.View.extend({
             }
             this.$el.find("#" + attributes.id).remove();
             this.$el.append(this.make('input', attributes));
-        }, this));
+        }, this);
 
-        ghostImage.src = image.attr("src");
+        if (image.length > 0) {
+            ghostImage = document.createElement("img");
+            $(ghostImage).load(_.bind(function () {
+                var optiontype = this.model.get('optiontype'),
+                    offset = Math.floor((this.$el.width() - image.width()) / 2),
+                    width = "auto;",
+                    height = "auto;",
+                    widthScale,
+                    heightScale;
+
+                widthScale = ghostImage.width / image.width();
+                heightScale = ghostImage.height / image.height();
+                if (optiontype === 't') {
+                    width = Math.floor(this.model.get('width') / widthScale) + 'px;';
+                    height = Math.floor(this.model.get('height') / heightScale);
+                    if (height < this.MIN_TEXT_HEIGHT) {
+                        height = this.MIN_TEXT_HEIGHT;
+                    }
+                    height = height + 'px;';
+                }
+
+                callback(width, height, widthScale, heightScale, offset);
+            }, this));
+
+            ghostImage.src = image.attr("src");
+        } else {
+            callback("auto;", "auto;", 1, 1, 0);
+        }
+
         return this;
     }
 });

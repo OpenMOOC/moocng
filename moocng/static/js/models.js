@@ -115,7 +115,8 @@ MOOC.models.Question = Backbone.Model.extend({
             lastFrame: null, // of the KnowledgeQuantum's video
             solution: null,
             optionList: null,
-            answer: null
+            answer: null,
+            use_last_frame: true
         };
     },
 
@@ -129,7 +130,8 @@ MOOC.models.Question = Backbone.Model.extend({
         return {
             id: parseInt(resp.id, 10),
             lastFrame: resp.last_frame,
-            solution: resp.solutionID
+            solution: resp.solutionID,
+            use_last_frame: resp.use_last_frame
         };
     },
 

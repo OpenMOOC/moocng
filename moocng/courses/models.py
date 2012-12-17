@@ -189,6 +189,12 @@ class Question(models.Model):
         verbose_name=_(u"Last frame of the nugget's video"),
         upload_to='questions', blank=True)
 
+    use_last_frame = models.BooleanField(
+        verbose_name=_(u'Use the last frame of the video or not'),
+        help_text=_(u'Chooses if the nugget\'s video last frame is used, or a '
+                    u'white canvas instead.'),
+        default=True, blank=False, null=False)
+
     class Meta:
         verbose_name = _(u'question')
         verbose_name_plural = _(u'questions')
