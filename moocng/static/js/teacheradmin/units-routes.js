@@ -23,8 +23,8 @@ if (_.isUndefined(window.MOOC)) {
     "use strict";
 
     var errorHandler = function () {
-            $("#loading").hide();
-            // TODO
+            MOOC.ajax.showAlert("generic");
+            MOOC.ajax.hideLoading();
         },
         loadKQs = function (callback) {
             var promises = [];
@@ -64,6 +64,23 @@ if (_.isUndefined(window.MOOC)) {
 
         getAbsoluteUrl: function (path) {
             return MOOC.ajax.host + path;
+        },
+
+        showLoading: function () {
+            $(".loading").removeClass("hide");
+        },
+
+        hideLoading: function () {
+            $(".loading").addClass("hide");
+        },
+
+        showAlert: function (id) {
+            var alert = $("#" + id);
+            alert.removeClass("hide");
+            $("body").animate({ scrollTop: alert.offset().top }, 500);
+            setTimeout(function () {
+                $("#" + id).addClass("hide");
+            }, MOOC.alertTime);
         }
     };
 
@@ -77,10 +94,11 @@ if (_.isUndefined(window.MOOC)) {
                     });
                 }
                 MOOC.views.listView.render();
+                MOOC.ajax.hideLoading();
             };
 
             if (MOOC.models.course.length === 0) {
-                $("#loading").show();
+                MOOC.ajax.showLoading();
                 MOOC.models.course.fetch({
                     error: errorHandler,
                     success: function () {
@@ -115,10 +133,11 @@ if (_.isUndefined(window.MOOC)) {
                 }
 
                 unitView.render();
+                MOOC.ajax.hideLoading();
             };
 
             if (MOOC.models.course.length === 0) {
-                $("#loading").show();
+                MOOC.ajax.showLoading();
                 MOOC.models.course.fetch({
                     error: errorHandler,
                     success: function () {
@@ -157,6 +176,7 @@ if (_.isUndefined(window.MOOC)) {
                     }
 
                     kqView.render();
+                    MOOC.ajax.hideLoading();
                 };
 
                 if (kqObj.has("question")) {
@@ -171,7 +191,7 @@ if (_.isUndefined(window.MOOC)) {
             };
 
             if (MOOC.models.course.length === 0) {
-                $("#loading").show();
+                MOOC.ajax.showLoading();
                 MOOC.models.course.fetch({
                     error: errorHandler,
                     success: function () {
@@ -188,7 +208,7 @@ if (_.isUndefined(window.MOOC)) {
         var path = window.location.pathname;
         MOOC.host = window.location.origin;
         MOOC.unitBadgeClasses = unitBadgeClasses;
-        MOOC.alertTime = 3500;
+        MOOC.alertTime = 4000;
         MOOC.models.course.courseId = courseID;
         MOOC.models.Question.prototype.url = function () {
             return MOOC.ajax.getAbsoluteUrl("privquestion/") + this.get("id") + "/";

@@ -337,3 +337,26 @@ input[type="checkbox"] {
 .teacheradmin-units .badge.question {
     margin-right: 10px;
 }
+
+.teacheradmin-units div.loading.backdrop {
+    z-index: 99999999;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    opacity: 0.6;
+    background: black;
+}
+
+.teacheradmin-units div.loading.indicator {
+    z-index: 100000000;
+    width: 54px;
+    height: 55px;
+    background: url(../img/ajax-loader.gif);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -22px;
+    margin-left: -22px;
+}

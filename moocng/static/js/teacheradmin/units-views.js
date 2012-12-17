@@ -71,15 +71,6 @@ if (_.isUndefined(window.MOOC)) {
             opacity: 0.7
         },
 
-        showAlert = function (id) {
-            var alert = $("#" + id);
-            alert.removeClass("hide");
-            $("body").animate({ scrollTop: alert.offset().top }, 500);
-            setTimeout(function () {
-                $("#" + id).addClass("hide");
-            }, MOOC.alertTime);
-        },
-
         checkRequiredAux = function ($el) {
             var result = true;
             $el.find("[required=required]").each(function (idx, elem) {
@@ -141,23 +132,34 @@ if (_.isUndefined(window.MOOC)) {
                     var id = parseInt(node.id.split("unit")[1], 10),
                         view = MOOC.views.unitViews[id];
                     if (view.model.get("order") !== pos + 1) {
-                        view.model.save("order", pos + 1);
+                        MOOC.ajax.showLoading();
+                        view.model.save("order", pos + 1, {
+                            success: function () {
+                                MOOC.ajax.hideLoading();
+                            },
+                            error: function () {
+                                MOOC.ajax.hideLoading();
+                            }
+                        });
                     }
                 });
             },
 
             addUnit: function (evt) {
                 var unit = new MOOC.models.Unit();
+                MOOC.ajax.showLoading();
                 unit.save(null, {
                     success: function (model, response) {
                         MOOC.models.course.add(model);
                         model.set("new", true);
+                        MOOC.ajax.hideLoading();
                         MOOC.router.navigate("unit" + model.get("id"), {
                             trigger: true
                         });
                     },
                     error: function () {
-                        showAlert("generic");
+                        MOOC.ajax.hideLoading();
+                        MOOC.ajax.showAlert("generic");
                     }
                 });
 
@@ -259,7 +261,15 @@ if (_.isUndefined(window.MOOC)) {
                         return kq.get("id") === id;
                     });
                     if (model.get("order") !== pos + 1 || model.get("id") === kqID) {
-                        model.save("order", pos + 1);
+                        MOOC.ajax.showLoading();
+                        model.save("order", pos + 1, {
+                            success: function () {
+                                MOOC.ajax.hideLoading();
+                            },
+                            error: function () {
+                                MOOC.ajax.hideLoading();
+                            }
+                        });
                     }
                 });
             },
@@ -276,15 +286,18 @@ if (_.isUndefined(window.MOOC)) {
                     this.model.set("knowledgeQuantumList", new MOOC.models.KnowledgeQuantumList());
                 }
                 this.model.get("knowledgeQuantumList").add(kq);
+                MOOC.ajax.showLoading();
                 kq.save(null, {
                     success: function (model, response) {
+                        MOOC.ajax.hideLoading();
                         MOOC.router.navigate("kq" + model.get("id"), {
                             trigger: true
                         });
                     },
                     error: function () {
                         this.model.get("knowledgeQuantumList").remove(kq);
-                        showAlert("generic");
+                        MOOC.ajax.hideLoading();
+                        MOOC.ajax.showAlert("generic");
                     }
                 });
             }
@@ -403,9 +416,10 @@ if (_.isUndefined(window.MOOC)) {
                 evt.preventDefault();
                 evt.stopPropagation();
                 if (!this.checkRequired()) {
-                    showAlert("required");
+                    MOOC.ajax.showAlert("required");
                     return;
                 }
+                MOOC.ajax.showLoading();
                 this.model.unset("new");
                 this.model.set("title", this.$el.find("input#title").val());
                 this.model.set("type", this.$el.find("select#type").val());
@@ -414,10 +428,12 @@ if (_.isUndefined(window.MOOC)) {
                 this.model.set("deadline", this.$el.find("input#end_date").val());
                 this.model.save(null, {
                     success: function () {
-                        showAlert("saved");
+                        MOOC.ajax.hideLoading();
+                        MOOC.ajax.showAlert("saved");
                     },
                     error: function () {
-                        showAlert("generic");
+                        MOOC.ajax.hideLoading();
+                        MOOC.ajax.showAlert("generic");
                     }
                 });
             },
@@ -425,13 +441,16 @@ if (_.isUndefined(window.MOOC)) {
             remove: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
+                MOOC.ajax.showLoading();
                 MOOC.models.course.remove(this.model);
                 this.model.destroy({
                     success: function () {
+                        MOOC.ajax.hideLoading();
                         MOOC.router.navigate("", { trigger: true });
                     },
                     error: function () {
-                        showAlert("generic");
+                        MOOC.ajax.hideLoading();
+                        MOOC.ajax.showAlert("generic");
                     }
                 });
             },
@@ -440,7 +459,7 @@ if (_.isUndefined(window.MOOC)) {
                 evt.preventDefault();
                 evt.stopPropagation();
                 if (this.model.has("new")) {
-                    showAlert("unsaved");
+                    MOOC.ajax.showAlert("unsaved");
                     return;
                 }
                 MOOC.router.navigate("", { trigger: true });
@@ -511,9 +530,10 @@ if (_.isUndefined(window.MOOC)) {
                 evt.preventDefault();
                 evt.stopPropagation();
                 if (!this.checkRequired()) {
-                    showAlert("required");
+                    MOOC.ajax.showAlert("required");
                     return;
                 }
+                MOOC.ajax.showLoading();
                 var question;
                 this.model.unset("new");
                 this.model.set("title", this.$el.find("input#kqtitle").val());
@@ -527,17 +547,26 @@ if (_.isUndefined(window.MOOC)) {
                 }
                 this.model.save(null, {
                     success: function () {
-                        showAlert("saved");
+                        MOOC.ajax.showAlert("saved");
                         if (!_.isUndefined(callback)) {
                             callback();
+                        } else if (!_.isUndefined(question)) {
+                            question.save(null, {
+                                success: function () {
+                                    MOOC.ajax.hideLoading();
+                                },
+                                error: function () {
+                                    MOOC.ajax.hideLoading();
+                                    MOOC.ajax.showAlert("generic");
+                                }
+                            });
                         } else {
-                            if (!_.isUndefined(question)) {
-                                question.save();
-                            }
+                            MOOC.ajax.hideLoading();
                         }
                     },
                     error: function () {
-                        showAlert("generic");
+                        MOOC.ajax.hideLoading();
+                        MOOC.ajax.showAlert("generic");
                     }
                 });
             },
@@ -545,15 +574,18 @@ if (_.isUndefined(window.MOOC)) {
             remove: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
+                MOOC.ajax.showLoading();
                 var unit = MOOC.models.course.getByKQ(this.model.get("id")),
                     model = this.model;
                 model.destroy({
                     success: function () {
                         unit.get("knowledgeQuantumList").remove(model);
+                        MOOC.ajax.hideLoading();
                         MOOC.router.navigate("", { trigger: true });
                     },
                     error: function () {
-                        showAlert("generic");
+                        MOOC.ajax.hideLoading();
+                        MOOC.ajax.showAlert("generic");
                     }
                 });
             },
@@ -562,20 +594,23 @@ if (_.isUndefined(window.MOOC)) {
                 evt.preventDefault();
                 evt.stopPropagation();
                 if (!this.checkRequired()) {
-                    showAlert("required");
+                    MOOC.ajax.showAlert("required");
                     return;
                 }
+                MOOC.ajax.showLoading();
                 var question = new MOOC.models.Question(),
                     view = this;
                 this.model.set("questionInstance", question);
                 this.save(evt, function () {
                     question.save(null, {
                         success: function () {
-                            showAlert("saved");
+                            MOOC.ajax.hideLoading();
+                            MOOC.ajax.showAlert("saved");
                             view.render();
                         },
                         error: function () {
-                            showAlert("generic");
+                            MOOC.ajax.hideLoading();
+                            MOOC.ajax.showAlert("generic");
                         }
                     });
                 });
@@ -584,12 +619,15 @@ if (_.isUndefined(window.MOOC)) {
             forceProcess: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
+                MOOC.ajax.showLoading();
                 $.ajax(window.location.pathname + "forcevideoprocess?kq=" + this.model.get("id"), {
                     success: function () {
-                        showAlert("forced");
+                        MOOC.ajax.hideLoading();
+                        MOOC.ajax.showAlert("forced");
                     },
                     error: function () {
-                        showAlert("generic");
+                        MOOC.ajax.hideLoading();
+                        MOOC.ajax.showAlert("generic");
                     }
                 });
             },
@@ -597,6 +635,7 @@ if (_.isUndefined(window.MOOC)) {
             removeQuestion: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
+                MOOC.ajax.showLoading();
                 var view = this;
                 this.model.get("questionInstance").destroy({
                     success: function () {
@@ -604,15 +643,18 @@ if (_.isUndefined(window.MOOC)) {
                         view.model.set("question", null);
                         view.model.save(null, {
                             success: function () {
+                                MOOC.ajax.hideLoading();
                                 view.render();
                             },
                             error: function () {
-                                showAlert("generic");
+                                MOOC.ajax.hideLoading();
+                                MOOC.ajax.showAlert("generic");
                             }
                         });
                     },
                     error: function () {
-                        showAlert("generic");
+                        MOOC.ajax.hideLoading();
+                        MOOC.ajax.showAlert("generic");
                     }
                 });
             },
@@ -620,11 +662,16 @@ if (_.isUndefined(window.MOOC)) {
             go2options: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
+                MOOC.ajax.showLoading();
                 var model = this.model,
                     callback = function () {
                         model.get("questionInstance").save(null, {
                             success: function () {
                                 window.open("question/" + model.get("id"), "_self");
+                            },
+                            error: function () {
+                                MOOC.ajax.hideLoading();
+                                MOOC.ajax.showAlert("generic");
                             }
                         });
                     };
@@ -635,7 +682,7 @@ if (_.isUndefined(window.MOOC)) {
                 evt.preventDefault();
                 evt.stopPropagation();
                 if (this.model.has("new")) {
-                    showAlert("unsaved");
+                    MOOC.ajax.showAlert("unsaved");
                     return;
                 }
                 MOOC.router.navigate("", { trigger: true });
