@@ -340,7 +340,7 @@ input[type="checkbox"] {
 
 .teacheradmin-units div.loading.backdrop {
     z-index: 99999999;
-    position: absolute;
+    position: fixed;
     top: 0px;
     bottom: 0px;
     left: 0px;
@@ -354,7 +354,7 @@ input[type="checkbox"] {
     width: 54px;
     height: 55px;
     background: url(../img/ajax-loader.gif);
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     margin-top: -22px;
