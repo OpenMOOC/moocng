@@ -32,7 +32,7 @@ class DjangoAuthentication(Authentication):
 class TeacherAuthentication(Authentication):
 
     def is_authenticated(self, request, **kwargs):
-        return is_teacher(request.user, Course.objects.all())
+        return (is_teacher(request.user, Course.objects.all()) or request.user.is_staff)
 
     def get_identifier(self, request):
         return request.user.username
