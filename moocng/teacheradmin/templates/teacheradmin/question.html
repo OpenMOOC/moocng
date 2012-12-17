@@ -92,11 +92,14 @@
 </div>
 
 <form action="{{ form_url }}" method="post">{% csrf_token %}{% block form_top %}{% endblock %}
-{% if original.last_frame %}
+
 <fieldset>
-  <img class="last-frame" onload="MOOC.imageLoaded();" src="{{ original.last_frame.url }}" />
-</fieldset>
+{% if original.last_frame %}
+    <img class="last-frame" onload="MOOC.imageLoaded();" src="{{ original.last_frame.url }}" />
+{% else %}
+    <img class="last-frame" onload="MOOC.imageLoaded();" src="{{ STATIC_URL }}img/no-image.png" />
 {% endif %}
+</fieldset>
 </form>
 
 </div>
