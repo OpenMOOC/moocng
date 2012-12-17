@@ -87,8 +87,9 @@ class Announcement(models.Model):
     slug = models.SlugField(verbose_name=_(u'Slug'), unique=True)
     content = HTMLField(verbose_name=_(u'Content'))
     course = models.ForeignKey(Course, verbose_name=_(u'Course'))
-    datetime = models.DateTimeField(verbose_name=_(u'Datetime'),
-                    help_text=_(u"Use format:  DD/MM/AAAA 00:00"))
+    datetime = models.DateTimeField(
+        verbose_name=_(u'Datetime'),
+        help_text=_(u"Use format:  DD/MM/AAAA 00:00"))
 
     class Meta:
         verbose_name = _(u'announcement')
@@ -161,7 +162,7 @@ def handle_kq_post_save(sender, instance, created, **kwargs):
         transaction.commit()
     question_list = instance.question_set.all()
     if len(question_list) > 0:
-        process_video_task.delay(question_list[0])
+        process_video_task.delay(question_list[0].id)
 
 
 signals.post_save.connect(handle_kq_post_save, sender=KnowledgeQuantum)
@@ -212,7 +213,7 @@ class Question(models.Model):
 
 def handle_question_post_save(sender, instance, created, **kwargs):
     if created:
-        process_video_task.delay(instance)
+        process_video_task.delay(instance.id)
 
 
 signals.post_save.connect(handle_question_post_save, sender=Question)

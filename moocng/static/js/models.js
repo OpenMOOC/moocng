@@ -162,9 +162,9 @@ MOOC.models.Question = Backbone.Model.extend({
         }
         model2send.unset("lastFrame");
         if (model.has("solution")) {
-            model2send.set("solution", "https://www.youtube.com/watch?v=" + model.get("solution"));
+            model2send.set("solutionID", model.get("solution"));
         }
-        model2send.unset("solutionID");
+        model2send.unset("solution");
         model2send.unset("optionList");
         model2send.unset("answer");
         Backbone.sync(method, model2send, options);

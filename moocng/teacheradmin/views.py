@@ -70,7 +70,7 @@ def teacheradmin_units_forcevideoprocess(request, course_slug):
 
     question_list = kq.question_set.all()
     if len(question_list) > 0:
-        process_video_task.delay(question_list[0])
+        process_video_task.delay(question_list[0].id)
     return HttpResponse()
 
 

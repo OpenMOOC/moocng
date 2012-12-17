@@ -96,15 +96,15 @@ def process_video(tempdir, url):
     video_id = extract_YT_video_id(url)
     if video_id == u'':
         raise NotFound(url)
-    url = "http://www.youtube.com/watch?v=%s" % video_id
+    url2download = "http://www.youtube.com/watch?v=%s" % video_id
 
-    logger.info('Downloading video %s' % url)
+    logger.info('Downloading video %s' % url2download)
 
     try:
-        filename = download(url, tempdir)
+        filename = download(url2download, tempdir)
         filename = path.join(tempdir, filename)
     except urllib2.HTTPError as e:
-        logger.error('Error downloading video %s: %s' % (url, e))
+        logger.error('Error downloading video %s: %s' % (url2download, e))
         return None
     except:
         raise

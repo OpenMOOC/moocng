@@ -15,13 +15,10 @@
 from django.core.management.base import BaseCommand
 
 from moocng.videos.tasks import do_process_video_task
-from moocng.courses.models import Question
 
 
 class Command(BaseCommand):
     help = 'Download a YouTube video and extracts the last frame'
 
     def handle(self, *args, **options):
-        question_id = args[0]
-        question = Question.objects.get(id=question_id)
-        do_process_video_task(question)
+        do_process_video_task(args[0])

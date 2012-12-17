@@ -253,7 +253,7 @@ class QuestionResource(ModelResource):
 
 class PrivateQuestionResource(ModelResource):
     kq = fields.ToOneField(PrivateKnowledgeQuantumResource, 'kq')
-    solutionID = fields.CharField(readonly=True)
+    solutionID = fields.CharField()
 
     class Meta:
         queryset = Question.objects.all()
@@ -275,8 +275,18 @@ class PrivateQuestionResource(ModelResource):
             return "%simg/no-image.png" % settings.STATIC_URL
 
     def hydrate(self, bundle):
-        bundle.obj.last_frame = ImageFieldFile(
-            bundle.obj, Question._meta.get_field_by_name('last_frame')[0], "")
+        try:
+            bundle.obj.last_frame.file
+        except ValueError:
+            bundle.obj.last_frame = ImageFieldFile(
+                bundle.obj, Question._meta.get_field_by_name('last_frame')[0],
+                "")
+        return bundle
+
+    def hydrate_solutionID(self, bundle):
+        if 'solutionID' in bundle.data and bundle.data['solutionID'] is not None:
+            video = 'http://youtu.be/' + bundle.data['solutionID']
+            bundle.data['solution'] = video
         return bundle
 
 

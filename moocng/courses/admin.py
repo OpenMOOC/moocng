@@ -264,7 +264,7 @@ class QuestionAdmin(admin.ModelAdmin):
                           % {'name': force_unicode(opts.verbose_name),
                              'key': escape(object_id)})
 
-        process_video_task.delay(obj)
+        process_video_task.delay(obj.id)
 
         return HttpResponseRedirect('..')
 
