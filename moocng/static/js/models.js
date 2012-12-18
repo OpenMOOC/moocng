@@ -143,21 +143,23 @@ MOOC.models.Question = Backbone.Model.extend({
             kqObj,
             i;
         MOOC.models.course.each(function (unit) {
-            unit.get("knowledgeQuantumList").each(function (kq) {
-                if (kq.has("questionInstance")) {
-                    question = kq.get("questionInstance");
-                    if (question.cid === model.cid) {
-                        kqObj = kq;
+            if (unit.has("knowledgeQuantumList")) {
+                unit.get("knowledgeQuantumList").each(function (kq) {
+                    if (kq.has("questionInstance")) {
+                        question = kq.get("questionInstance");
+                        if (question.cid === model.cid) {
+                            kqObj = kq;
+                        }
+                    } else if (kq.has("question")) {
+                        question = kq.get("question");
+                        question = question.split("question/")[1].split("/")[0];
+                        question = parseInt(question, 10);
+                        if (question === model.get("id")) {
+                            kqObj = kq;
+                        }
                     }
-                } else if (kq.has("question")) {
-                    question = kq.get("question");
-                    question = question.split("question/")[1].split("/")[0];
-                    question = parseInt(question, 10);
-                    if (question === model.get("id")) {
-                        kqObj = kq;
-                    }
-                }
-            });
+                });
+            }
         });
         model2send.set("kq", kqObj.url());
         if (method === "create") {
