@@ -215,6 +215,11 @@ html.ie li.teacher img {
     display: block;
 }
 
+div#course-name {
+    width: 280px;
+    float: right;
+}
+
 .courseprogress #unit-progress-bar .progress,
 .courseprogress #unit-progress-bar .progress .bar {
     height: 30px;

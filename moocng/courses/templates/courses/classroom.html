@@ -7,12 +7,17 @@
 {% block mainclass %}classroom{% endblock %}
 
 {% block content %}
-<div class="row"><div class="span8">
-    <h2 id="kq-title"></h2>
-</div></div>
+<div class="row">
+    <div class="span8">
+        <h2 id="kq-title"></h2>
+    </div>
+    <div id="course-name">{{ course.name }}</div>
+</div>
 <div class="row mb20">
     <section class="span8">
-        <div class="row"><div class="span8" id="kq-video"></div></div>
+        <div class="row">
+            <div class="span8" id="kq-video"></div>
+        </div>
         <div class="row">
             <div class="span2">
                 <button class="btn" id="kq-previous">{% trans "Previous" %}</button>

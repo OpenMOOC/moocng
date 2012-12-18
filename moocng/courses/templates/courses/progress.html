@@ -7,9 +7,12 @@
 {% block mainclass %}courseprogress{% endblock %}
 
 {% block content %}
-<div class="row"><div class="span9">
-    <h2 id="unit-title"></h2>
-</div></div>
+<div class="row">
+    <div class="span9">
+        <h2 id="unit-title"></h2>
+    </div>
+    <div id="course-name">{{ course.name }}</div>
+</div>
 <div class="row">
     <section class="span9">
         <div class="row">
