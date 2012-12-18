@@ -617,7 +617,9 @@ if (_.isUndefined(window.MOOC)) {
                 var question = new MOOC.models.Question(),
                     view = this;
                 this.model.set("questionInstance", question);
-                this.save(evt);
+                this.save(evt, _.bind(function () {
+                    this.render();
+                }, this));
             },
 
             forceProcess: function (evt) {
