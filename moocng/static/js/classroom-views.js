@@ -253,7 +253,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 // Load Options for Question
                 MOOC.ajax.getOptionsByQuestion(question.get("id"), function (data, textStatus, jqXHR) {
                     var options = _.map(data.objects, function (opt) {
-                        return new MOOC.models.Option(_.pick(opt, "id", "optiontype", "x", "y", "width", "height", "solution"));
+                        return new MOOC.models.Option(_.pick(opt, "id", "optiontype", "x", "y", "width", "height", "solution", "text"));
                     });
                     question.set("optionList", new MOOC.models.OptionList(options));
                 });
@@ -612,6 +612,7 @@ MOOC.views.Option = Backbone.View.extend({
             attributes["class"] = "text";
             tag = attributes.type;
             delete attributes.type;
+            content = this.model.get("text");
         } else {
             attributes.style.push('width: ' + width);
             attributes.style.push('height: ' + height);
@@ -621,7 +622,7 @@ MOOC.views.Option = Backbone.View.extend({
             attributes.name = 'radio';
         }
 
-        if (this.reply && this.reply.get('option') === this.model.get('id')) {
+        if (this.reply && this.reply.get('option') === this.model.get('id') && optiontype !== 'l') {
             if (optiontype === 't') {
                 attributes.value = this.reply.get('value');
                 if (!(_.isUndefined(solution) || _.isNull(solution))) {

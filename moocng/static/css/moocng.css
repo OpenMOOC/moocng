@@ -244,9 +244,13 @@ html.ie li.teacher img {
     position: absolute;
 }
 
-.classroom #kq-video textarea {
+.classroom #kq-video textarea.text {
     border: 0;
     background: transparent;
+    box-shadow: none;
+    transition: none;
+    width: auto;
+    height: auto;
 }
 
 .classroom #kq-video input.correct {
