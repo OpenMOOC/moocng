@@ -238,6 +238,14 @@
                     .find('#option-width').attr("disabled", false).change(this.change_property_handler(['width', true])).val(this.model.get('width')).end()
                     .find('#option-height').attr("disabled", false).change(this.change_property_handler(['height', true])).val(this.model.get('height'));
             }
+
+            if (optiontype === 'l') {
+                this.$el.find("#solution-title").addClass("hide");
+                this.$el.find("#content-title").removeClass("hide");
+            } else {
+                this.$el.find("#solution-title").removeClass("hide");
+                this.$el.find("#content-title").addClass("hide");
+            }
         },
 
         unbind_change: function () {
