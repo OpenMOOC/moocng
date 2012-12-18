@@ -32,7 +32,8 @@
                 y: 0,
                 width: 100,
                 height: 12,
-                solution: ''
+                solution: '',
+                text: ""
             };
         }
     });
@@ -95,7 +96,7 @@
                 }
             } else if (optiontype === 'l') {
                 tag = attributes.type;
-                content = attributes.value;
+                content = this.model.get("text");
                 delete attributes.type;
                 delete attributes.value;
                 delete attributes.style;
@@ -183,7 +184,8 @@
         change: function () {
             var $input = this.$el.find('input'),
                 optiontype = this.model.get('optiontype'),
-                value = '';
+                value = "",
+                prop = "solution";
             if (optiontype === 'l') {
                 $input = this.$el.find("textarea");
             }
@@ -191,8 +193,9 @@
                 value = _.isUndefined($input.attr('checked')) ? false : true;
             } else {
                 value = $input.val();
+                prop = "text";
             }
-            this.model.set("solution", value);
+            this.model.set(prop, value);
             this.model.save();
         }
 
@@ -240,11 +243,14 @@
             }
 
             if (optiontype === 'l') {
-                this.$el.find("#solution-title").addClass("hide");
-                this.$el.find("#content-title").removeClass("hide");
+                this.$el
+                    .find("#option-solution").val(this.model.get("text")).end()
+                    .find("#solution-title").addClass("hide").end()
+                    .find("#content-title").removeClass("hide");
             } else {
-                this.$el.find("#solution-title").removeClass("hide");
-                this.$el.find("#content-title").addClass("hide");
+                this.$el
+                    .find("#solution-title").removeClass("hide").end()
+                    .find("#content-title").addClass("hide");
             }
         },
 
@@ -284,6 +290,9 @@
             if (value) {
                 if (numerical) {
                     value = parseInt(value, 10);
+                }
+                if (this.model.get("optiontype") === 'l' && prop === "solution") {
+                    prop = "text";
                 }
                 this.model.set(prop, value);
                 this.model.save();
@@ -363,9 +372,14 @@
         },
 
         create_option: function () {
-            var option = new MOOC.models.Option({
-                optiontype: this.$el.find("#option-optiontype-creation").val()
-            });
+            var settings = {},
+                option;
+            settings.optiontype = this.$el.find("#option-optiontype-creation").val();
+            if (settings.optiontype === 'l') {
+                settings.width = 50;
+                settings.height = 3;
+            }
+            option = new MOOC.models.Option(settings);
             this.collection.add(option);
             option.save();
         },
@@ -388,7 +402,7 @@
 
         option_click: function (event) {
             var target = event.target;
-            if (target.tagName === 'INPUT') {
+            if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
                 target = target.parentNode;
             }
             this.select_option(target);
@@ -430,44 +444,25 @@
         }
     });
 
-    MOOC.imageLoaded = function () {
-        var $fieldset = $("#content-main fieldset"),
-            $img = $("img.last-frame"),
-            url = $img.attr("src"),
-            width = $img.width(),
-            height = $img.height();
-        $fieldset.width(width).height(height).css({"background-image": "url(" + url + ")"});
-        $img.remove();
-
-        MOOC.imageInitDone = true;
-    };
-
     MOOC.init = function (url, options) {
         var path = window.location.pathname,
-            auxFunc,
-            start;
+            $fieldset = $("#content-main fieldset"),
+            $img = $("img.last-frame");
 
         MOOC.models.options = new MOOC.models.OptionList();
         MOOC.models.options.reset(options);
         MOOC.models.options.url = url;
 
-        start = function () {
-            MOOC.router = new MOOC.App();
-            MOOC.router.route("", "index");
-            MOOC.router.route("option:option", "option");
-            Backbone.history.start({root: path});
+        if ($img.length > 0) {
+            $fieldset.css({ "background-image": "url(" + $img.attr("src") + ")" });
+            $img.remove();
+        }
 
-            MOOC.router.navigate("", {trigger: true});
-        };
+        MOOC.router = new MOOC.App();
+        MOOC.router.route("", "index");
+        MOOC.router.route("option:option", "option");
+        Backbone.history.start({root: path});
 
-        auxFunc = function () {
-            if (MOOC.imageInitDone) {
-                start();
-            } else {
-                setTimeout(auxFunc, 100);
-            }
-        };
-
-        auxFunc();
+        MOOC.router.navigate("", {trigger: true});
     };
 }(jQuery, Backbone, _));

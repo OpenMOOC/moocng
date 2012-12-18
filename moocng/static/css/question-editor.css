@@ -21,10 +21,12 @@
 fieldset {
     border: 0;
     position: relative;
+    background-color: #FAFAFA;
+    background-size: 540px 324px;
 }
 
-fieldset img,
-fieldset div.white {
+fieldset,
+fieldset img {
     border: 1px solid black;
     width: 540px;
     height: 324px;

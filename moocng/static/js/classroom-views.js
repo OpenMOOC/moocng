@@ -560,6 +560,7 @@ MOOC.views.Option = Backbone.View.extend({
     MIN_TEXT_HEIGHT: 14,
 
     types: {
+        l: "textarea",
         t: "text",
         c: "checkbox",
         r: "radio"
@@ -582,6 +583,8 @@ MOOC.views.Option = Backbone.View.extend({
             solution = this.model.get('solution'),
             width = "auto;",
             height = "auto;",
+            tag = "input",
+            content = "",
             attributes = {
                 type: this.types[optiontype],
                 id: 'option' + this.model.get('id')
@@ -600,10 +603,20 @@ MOOC.views.Option = Backbone.View.extend({
 
         attributes.style = [
             'top: ' + Math.floor(this.model.get('y') / heightScale) + 'px;',
-            'left: ' + Math.floor(this.model.get('x') / widthScale) + 'px;',
-            'width: ' + width,
-            'height: ' + height
-        ].join(' ');
+            'left: ' + Math.floor(this.model.get('x') / widthScale) + 'px;'
+        ];
+        if (optiontype === 'l') {
+            attributes.cols = this.model.get("width");
+            attributes.rows = this.model.get("height");
+            attributes.disabled = "disabled";
+            attributes["class"] = "text";
+            tag = attributes.type;
+            delete attributes.type;
+        } else {
+            attributes.style.push('width: ' + width);
+            attributes.style.push('height: ' + height);
+        }
+        attributes.style = attributes.style.join(' ');
         if (optiontype === 'r') {
             attributes.name = 'radio';
         }
@@ -624,7 +637,7 @@ MOOC.views.Option = Backbone.View.extend({
             }
         }
         this.$el.find("#" + attributes.id).remove();
-        this.$el.append(this.make('input', attributes));
+        this.$el.append(this.make(tag, attributes, content));
 
         return this;
     }

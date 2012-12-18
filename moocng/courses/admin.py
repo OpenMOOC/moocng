@@ -181,6 +181,7 @@ class QuestionAdmin(admin.ModelAdmin):
                     'id': opt.id,
                     'optiontype': opt.optiontype,
                     'solution': opt.solution,
+                    'text': opt.text,
                     'x': opt.x, 'y': opt.y,
                     'width': opt.width, 'height': opt.height,
                     } for opt in obj.option_set.all()]
