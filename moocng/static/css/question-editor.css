@@ -15,8 +15,15 @@
  */
 
 fieldset {
+    border: 0;
     position: relative;
+}
+
+fieldset img,
+fieldset div.white {
     border: 1px solid black;
+    width: 540px;
+    height: 324px;
 }
 
 fieldset .option {
@@ -33,10 +40,6 @@ fieldset .selected {
 
 fieldset .out {
     background-color: #ff8888;
-}
-
-fieldset img {
-    max-width: 540px;
 }
 
 .palette {

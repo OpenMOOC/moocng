@@ -413,19 +413,16 @@ MOOC.views.kqViews = {};
 MOOC.views.Question = Backbone.View.extend({
     render: function (destroyPlayer) {
         "use strict";
-        var width = this.$el.children().css("width"),
-            height = this.$el.children().css("height"),
-            kqPath = window.location.hash.substring(1, window.location.hash.length - 2), // Remove trailing /q
+        var kqPath = window.location.hash.substring(1, window.location.hash.length - 2), // Remove trailing /q
             answer = this.model.get('answer'),
             html;
 
         if (this.model.get("use_last_frame")) {
-            html = '<img src="' + this.model.get("lastFrame") + '" ';
-            html += 'alt="' + this.model.get("title") + '" style="max-width: ' + width;
-            html += '; height: ' + height + ';" />';
+            html = '<img src="' + this.model.get("lastFrame") + '" ' +
+                'alt="' + this.model.get("title") +
+                '" style="width: 620px; height: 372px;" />';
         } else {
-            html = "<div class='white' style='width: " + width + "; height: ";
-            html += height + "; min-height: 372px;'></div>";
+            html = "<div class='white' style='width: 620px; height: 372px;'></div>";
         }
         destroyPlayer();
         this.$el.html(html);
@@ -582,68 +579,52 @@ MOOC.views.Option = Backbone.View.extend({
         "use strict";
         var image = this.$el.find("img"),
             optiontype = this.model.get('optiontype'),
-            ghostImage,
-            callback;
+            solution = this.model.get('solution'),
+            width = "auto;",
+            height = "auto;",
+            attributes = {
+                type: this.types[optiontype],
+                id: 'option' + this.model.get('id')
+            },
+            widthScale = 540 / 620,
+            heightScale = 324 / 372;
 
-        callback = _.bind(function (widthScale, heightScale, offset) {
-            var solution = this.model.get('solution'),
-                width = "auto;",
-                height = "auto;",
-                attributes = {
-                    type: this.types[optiontype],
-                    id: 'option' + this.model.get('id')
-                };
-
-            if (optiontype === 't') {
-                width = Math.floor(this.model.get('width') / widthScale) + 'px;';
-                height = Math.floor(this.model.get('height') / heightScale);
-                if (height < this.MIN_TEXT_HEIGHT) {
-                    height = this.MIN_TEXT_HEIGHT;
-                }
-                height = height + 'px;';
+        if (optiontype === 't') {
+            width = Math.floor(this.model.get('width') / widthScale) + 'px;';
+            height = Math.floor(this.model.get('height') / heightScale);
+            if (height < this.MIN_TEXT_HEIGHT) {
+                height = this.MIN_TEXT_HEIGHT;
             }
-
-            attributes.style = [
-                'top: ' + Math.floor(this.model.get('y') / heightScale) + 'px;',
-                'left: ' + (offset + Math.floor(this.model.get('x') / widthScale)) + 'px;',
-                'width: ' + width,
-                'height: ' + height
-            ].join(' ');
-            if (optiontype === 'r') {
-                attributes.name = 'radio';
-            }
-
-            if (this.reply && this.reply.get('option') === this.model.get('id')) {
-                if (optiontype === 't') {
-                    attributes.value = this.reply.get('value');
-                    if (!(_.isUndefined(solution) || _.isNull(solution))) {
-                        attributes['class'] = this.model.isCorrect(this.reply) ? 'correct' : 'incorrect';
-                    }
-                } else {
-                    if (this.reply.get('value')) {
-                        attributes.checked = 'checked';
-                    }
-                    if (!(_.isUndefined(solution) || _.isNull(solution))) {
-                        attributes['class'] = this.model.isCorrect(this.reply) ? 'correct' : 'incorrect';
-                    }
-                }
-            }
-            this.$el.find("#" + attributes.id).remove();
-            this.$el.append(this.make('input', attributes));
-        }, this);
-
-        if (image.length > 0) {
-            ghostImage = document.createElement("img");
-            $(ghostImage).load(_.bind(function () {
-                var offset = Math.floor((this.$el.width() - image.width()) / 2),
-                    widthScale = ghostImage.width / image.width(),
-                    heightScale = ghostImage.height / image.height();
-                callback(widthScale, heightScale, offset);
-            }, this));
-            ghostImage.src = image.attr("src");
-        } else {
-            callback(1, 1, 0);
+            height = height + 'px;';
         }
+
+        attributes.style = [
+            'top: ' + Math.floor(this.model.get('y') / heightScale) + 'px;',
+            'left: ' + Math.floor(this.model.get('x') / widthScale) + 'px;',
+            'width: ' + width,
+            'height: ' + height
+        ].join(' ');
+        if (optiontype === 'r') {
+            attributes.name = 'radio';
+        }
+
+        if (this.reply && this.reply.get('option') === this.model.get('id')) {
+            if (optiontype === 't') {
+                attributes.value = this.reply.get('value');
+                if (!(_.isUndefined(solution) || _.isNull(solution))) {
+                    attributes['class'] = this.model.isCorrect(this.reply) ? 'correct' : 'incorrect';
+                }
+            } else {
+                if (this.reply.get('value')) {
+                    attributes.checked = 'checked';
+                }
+                if (!(_.isUndefined(solution) || _.isNull(solution))) {
+                    attributes['class'] = this.model.isCorrect(this.reply) ? 'correct' : 'incorrect';
+                }
+            }
+        }
+        this.$el.find("#" + attributes.id).remove();
+        this.$el.append(this.make('input', attributes));
 
         return this;
     }

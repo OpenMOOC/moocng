@@ -190,7 +190,7 @@ class Question(models.Model):
         upload_to='questions', blank=True)
 
     use_last_frame = models.BooleanField(
-        verbose_name=_(u'Use the last frame of the video or not'),
+        verbose_name=_(u'Use the last frame of the video'),
         help_text=_(u'Chooses if the nugget\'s video last frame is used, or a '
                     u'white canvas instead.'),
         default=True, blank=False, null=False)

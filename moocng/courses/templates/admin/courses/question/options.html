@@ -123,11 +123,17 @@
     {{ adminform.form.non_field_errors }}
 {% endif %}
 
-{% if original.last_frame %}
 <fieldset>
-  <img class="last-frame" onload="MOOC.imageLoaded();" src="{{ original.last_frame.url }}" />
-</fieldset>
+{%if original.use_last_frame %}
+    {% if original.last_frame %}
+        <img class="last-frame" onload="MOOC.imageLoaded();" src="{{ original.last_frame.url }}" />
+    {% else %}
+        <img class="last-frame" onload="MOOC.imageLoaded();" src="{{ STATIC_URL }}img/no-image.png" />
+    {% endif %}
+{% else %}
+    <div class="white"></div>
 {% endif %}
+</fieldset>
 
 </div>
 </form></div>
