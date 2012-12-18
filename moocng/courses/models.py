@@ -254,7 +254,9 @@ class Option(models.Model):
         return u'%s at %s x %s' % (self.optiontype, self.x, self.y)
 
     def is_correct(self, reply):
-        if self.optiontype == 't':
+        if self.optiontype == 'l':
+            return True
+        elif self.optiontype == 't':
             return reply == self.solution
         else:
             return bool(reply) == (self.solution.lower() == u'true')
