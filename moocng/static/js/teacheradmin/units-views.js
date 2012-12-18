@@ -477,6 +477,8 @@ if (_.isUndefined(window.MOOC)) {
             events: {
                 "click button#addquestion": "addQuestion",
                 "click button#force-process": "forceProcess",
+                "click button#dont-use-last-frame": "useBlankCanvas",
+                "click button#use-last-frame": "useLastFrame",
                 "click button#delete-question": "removeQuestion",
                 "click button#go2options": "go2options",
                 "click button#save-kq": "save",
@@ -486,7 +488,7 @@ if (_.isUndefined(window.MOOC)) {
 
             initialize: function () {
                 _.bindAll(this, "render", "save", "remove", "goBack",
-                    "checkRequired");
+                    "checkRequired", "useBlankCanvas", "useLastFrame");
             },
 
             render: function () {
@@ -501,6 +503,10 @@ if (_.isUndefined(window.MOOC)) {
                     this.$el.find("#noquestion").addClass("hide");
                     this.$el.find("#question").removeClass("hide").find("img").attr("src", question.get("lastFrame"));
                     this.$el.find("#questionvideo").val(question.get("solution"));
+                    if (!question.get("use_last_frame")) {
+                        this.$el.find("#last-frame").addClass("hide");
+                        this.$el.find("#no-last-frame").removeClass("hide");
+                    }
                     if (question.get("lastFrame").indexOf("no-image.png") >= 0) {
                         this.$el.find("#question img").css("margin-bottom", "10px");
                         $("button#force-process").removeClass("hide");
@@ -635,6 +641,24 @@ if (_.isUndefined(window.MOOC)) {
                         MOOC.ajax.showAlert("generic");
                     }
                 });
+            },
+
+            useBlankCanvas: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                var question = this.model.get("questionInstance");
+                this.$el.find("#last-frame").addClass("hide");
+                this.$el.find("#no-last-frame").removeClass("hide");
+                question.set("use_last_frame", false);
+            },
+
+            useLastFrame: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                var question = this.model.get("questionInstance");
+                this.$el.find("#last-frame").removeClass("hide");
+                this.$el.find("#no-last-frame").addClass("hide");
+                question.set("use_last_frame", true);
             },
 
             removeQuestion: function (evt) {

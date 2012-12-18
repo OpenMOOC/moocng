@@ -119,6 +119,10 @@ footer ul li {
     cursor: pointer;
 }
 
+.mb10 {
+    margin-bottom: 10px;
+}
+
 .mb20 {
     margin-bottom: 20px;
 }
@@ -373,4 +377,9 @@ input[type="checkbox"] {
     left: 50%;
     margin-top: -22px;
     margin-left: -22px;
+}
+
+.teacheradmin-question fieldset textarea {
+    height: auto;
+    width: auto;
 }

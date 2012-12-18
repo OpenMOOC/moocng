@@ -124,11 +124,21 @@
     <div id="question" class="hide">
         <fieldset>
         <legend>{% trans "Question" %}</legend>
-        <div class="row mb20">
+        <div class="row">
             <div class="span5">
-                <label>{% trans "Nugget's video last frame" %}</label>
-                <img src="" alt="{% trans "Nugget's video last frame" %}" />
-                <button id="force-process" class="hide btn">{% trans "Force processing the nugget's video" %}</button>
+                <div id="last-frame">
+                    <label>{% trans "Nugget's video last frame" %}</label>
+                    <img src="" alt="{% trans "Nugget's video last frame" %}" class="mb10" />
+                    <p><button id="dont-use-last-frame" class="btn" title="{% trans "Use a blank canvas instead" %}">{% trans "Don't use the last frame" %}</button></p>
+                    <p><button id="force-process" class="hide btn">{% trans "Force processing the nugget's video" %}</button></p>
+                </div>
+                <div id="no-last-frame" class="hide">
+                    <div class="alert alert-info">
+                        <h4>{% trans "Using blank canvas" %}</h4>
+                        <p>{% trans "You are using a blank canvas for the question instead of the last frame of the nugget's video." %}</p>
+                    </div>
+                    <p><button id="use-last-frame" class="btn" title="{% trans "Use the last frame of the nugget's video" %}">{% trans "Use the last frame" %}</button></p>
+                </div>
             </div>
             <div class="span5">
                 <label for="questionvideo">{% trans "Solution Video ID" %}</label>

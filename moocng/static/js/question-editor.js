@@ -110,10 +110,10 @@
                 width = aux.width();
                 height = aux.height();
                 if (width === 0) {
-                    width = 8 * attributes.cols;
+                    width = 8.3 * attributes.cols;
                 }
                 if (height === 0) {
-                    height = 15 * attributes.rows;
+                    height = 20 * attributes.rows;
                 }
             } else {
                 width = this.model.get("width");
