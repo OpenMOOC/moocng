@@ -20,6 +20,7 @@ from djangosaml2.backends import Saml2Backend
 from moocng.courses.models import Course
 from moocng.teacheradmin.models import Invitation
 
+
 class Saml2BackendExtension(Saml2Backend):
 
     # This function is called when a new user is created
