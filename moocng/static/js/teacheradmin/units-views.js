@@ -80,6 +80,11 @@ if (_.isUndefined(window.MOOC)) {
                 }
             });
             return result;
+        },
+
+
+        stripTags = function(str){
+            return str.replace(/<\/?[^>]+>/ig, '');
         };
 
     MOOC.views = {
@@ -336,9 +341,9 @@ if (_.isUndefined(window.MOOC)) {
                     MOOC.host + "' frameborder='0'></iframe>";
 
                 data = "<p>" + MOOC.trans.kq.teacher_comments + ": " +
-                    truncate(_.escape(this.model.get("teacher_comments"))) + "</p>" +
+                    truncate(_.escape(stripTags(this.model.get("teacher_comments")))) + "</p>" +
                     "<p>" + MOOC.trans.kq.supplementary_material + ": " +
-                    truncate(_.escape(this.model.get("supplementary_material"))) + "<p/>";
+                    truncate(_.escape(stripTags(this.model.get("supplementary_material")))) + "<p/>";
 
                 html = inlineb({ classes: "drag-handle" }) +
                     inlineb(iframe, { style: "margin-left: 30px;" }) +
