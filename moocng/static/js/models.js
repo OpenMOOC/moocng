@@ -308,6 +308,9 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
         model2send.unset("correct");
         model2send.unset("questionInstance");
         model2send.unset("attachmentList");
+        if (model.get("order") < 0) {
+            model2send.unset("order");
+        }
         if (method === "create") {
             model2send.url = MOOC.models.detailUrlToCollection(model.url());
         }
@@ -395,6 +398,9 @@ MOOC.models.Unit = Backbone.Model.extend({
         model2send.set("unittype", model.get("type"));
         model2send.unset("type");
         model2send.unset("knowledgeQuantumList");
+        if (model.get("order") < 0) {
+            model2send.unset("order");
+        }
         if (method === "create") {
             model2send.url = MOOC.ajax.getAbsoluteUrl("unit/");
             model2send.set("course", MOOC.ajax.host + "course/" +
