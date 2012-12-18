@@ -30,7 +30,7 @@ from moocng.videos.utils import extract_YT_video_id
 
 logger = logging.getLogger(__name__)
 
-durationRegExp = re.compile(r'Duration: (\d+:\d+:\d+)')
+durationRegExp = re.compile(r'Duration: (\d+:\d+:\d+\.\d+)')
 second = datetime.timedelta(seconds=1)
 
 
@@ -118,13 +118,11 @@ def process_video(tempdir, url):
 
     try:
         # Get the time position of the last second of the video
-        time = time.split(':')
-        dt = datetime.datetime(2012, 01, 01, int(time[0]), int(time[1]),
-                               int(time[2]))
+        dt = datetime.datetime.strptime(time, "%H:%M:%S.%f")
         dt = dt - second
-        time = "%s.900" % dt.strftime("%H:%M:%S")
-        logger.info('Getting the last frame at %s' % time)
-        frame = last_frame(filename, time)
+        fototime = dt.strftime("%H:%M:%S.%f")
+        logger.info('Getting the last frame at %s' % fototime)
+        frame = last_frame(filename, fototime)
     except:
         raise
 
