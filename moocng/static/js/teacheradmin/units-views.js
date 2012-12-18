@@ -82,8 +82,7 @@ if (_.isUndefined(window.MOOC)) {
             return result;
         },
 
-
-        stripTags = function(str){
+        stripTags = function (str) {
             return str.replace(/<\/?[^>]+>/ig, '');
         };
 
@@ -545,7 +544,27 @@ if (_.isUndefined(window.MOOC)) {
                     return;
                 }
                 MOOC.ajax.showLoading();
-                var question;
+
+                var question,
+                    secondAjax;
+
+                secondAjax = _.bind(function () {
+                    this.model.save(null, {
+                        success: function () {
+                            MOOC.ajax.showAlert("saved");
+                            if (!_.isUndefined(callback)) {
+                                callback();
+                            } else {
+                                MOOC.ajax.hideLoading();
+                            }
+                        },
+                        error: function () {
+                            MOOC.ajax.hideLoading();
+                            MOOC.ajax.showAlert("generic");
+                        }
+                    });
+                }, this);
+
                 this.model.unset("new");
                 this.model.set("title", this.$el.find("input#kqtitle").val());
                 this.model.set("videoID", this.$el.find("input#kqvideo").val());
@@ -555,31 +574,18 @@ if (_.isUndefined(window.MOOC)) {
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
                     question.set("solution", this.$el.find("#questionvideo").val());
-                }
-                this.model.save(null, {
-                    success: function () {
-                        MOOC.ajax.showAlert("saved");
-                        if (!_.isUndefined(callback)) {
-                            callback();
-                        } else if (!_.isUndefined(question)) {
-                            question.save(null, {
-                                success: function () {
-                                    MOOC.ajax.hideLoading();
-                                },
-                                error: function () {
-                                    MOOC.ajax.hideLoading();
-                                    MOOC.ajax.showAlert("generic");
-                                }
-                            });
-                        } else {
+                    question.save(null, {
+                        success: function () {
+                            secondAjax();
+                        },
+                        error: function () {
                             MOOC.ajax.hideLoading();
+                            MOOC.ajax.showAlert("generic");
                         }
-                    },
-                    error: function () {
-                        MOOC.ajax.hideLoading();
-                        MOOC.ajax.showAlert("generic");
-                    }
-                });
+                    });
+                } else {
+                    secondAjax();
+                }
             },
 
             remove: function (evt) {
@@ -611,19 +617,7 @@ if (_.isUndefined(window.MOOC)) {
                 var question = new MOOC.models.Question(),
                     view = this;
                 this.model.set("questionInstance", question);
-                this.save(evt, function () {
-                    question.save(null, {
-                        success: function () {
-                            MOOC.ajax.hideLoading();
-                            MOOC.ajax.showAlert("saved");
-                            view.render();
-                        },
-                        error: function () {
-                            MOOC.ajax.hideLoading();
-                            MOOC.ajax.showAlert("generic");
-                        }
-                    });
-                });
+                this.save(evt);
             },
 
             forceProcess: function (evt) {
@@ -692,15 +686,7 @@ if (_.isUndefined(window.MOOC)) {
                 evt.stopPropagation();
                 var model = this.model,
                     callback = function () {
-                        model.get("questionInstance").save(null, {
-                            success: function () {
-                                window.open("question/" + model.get("id"), "_self");
-                            },
-                            error: function () {
-                                MOOC.ajax.hideLoading();
-                                MOOC.ajax.showAlert("generic");
-                            }
-                        });
+                        window.open("question/" + model.get("id"), "_self");
                     };
                 this.save(evt, callback);
             },
