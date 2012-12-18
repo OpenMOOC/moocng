@@ -619,6 +619,7 @@ if (_.isUndefined(window.MOOC)) {
                 this.model.set("questionInstance", question);
                 this.save(evt, _.bind(function () {
                     this.render();
+                    MOOC.ajax.hideLoading();
                 }, this));
             },
 
