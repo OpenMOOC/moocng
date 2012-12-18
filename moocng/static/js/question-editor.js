@@ -188,12 +188,12 @@
                 prop = "solution";
             if (optiontype === 'l') {
                 $input = this.$el.find("textarea");
+                prop = "text";
             }
             if (optiontype === 'c' || optiontype === 'r') {
                 value = _.isUndefined($input.attr('checked')) ? false : true;
             } else {
                 value = $input.val();
-                prop = "text";
             }
             this.model.set(prop, value);
             this.model.save();
