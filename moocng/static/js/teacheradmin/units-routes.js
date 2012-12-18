@@ -30,7 +30,7 @@ if (_.isUndefined(window.MOOC)) {
             var promises = [];
             MOOC.models.course.each(function (unit) {
                 unit.set("knowledgeQuantumList", new MOOC.models.KnowledgeQuantumList());
-                promises.push($.ajax(MOOC.ajax.host + "kq/?format=json&unit=" + unit.get("id"), {
+                promises.push($.ajax(MOOC.ajax.host + "privkq/?format=json&unit=" + unit.get("id"), {
                     success: function (data, textStatus, jqXHR) {
                         unit.get("knowledgeQuantumList").reset(_.map(data.objects, function (kq) {
                             var data = _.pick(kq, "id", "title", "videoID",
