@@ -57,7 +57,8 @@
 
 <div class="palette">
   <select id="option-optiontype-creation">
-    <option value="t">{% trans "Text" %}</option>
+    <option value="l">{% trans "Label" %}</option>
+    <option value="t">{% trans "Input text" %}</option>
     <option value="c">{% trans "Checkbox" %}</option>
     <option value="r">{% trans "Radio" %}</option>
   </select>
@@ -76,7 +77,8 @@
         <td>{% trans "Type" %}</td>
         <td>
           <select id="option-optiontype">
-            <option value="t">{% trans "Text" %}</option>
+            <option value="l">{% trans "Label" %}</option>
+            <option value="t">{% trans "Input text" %}</option>
             <option value="c">{% trans "Checkbox" %}</option>
             <option value="r">{% trans "Radio" %}</option>
           </select>
@@ -100,7 +102,7 @@
       </tr>
       <tr>
         <td>{% trans "height" %}</td>
-        <td><input type="number" min="14" id="option-height" /></td>
+        <td><input type="number" min="3" id="option-height" /></td>
       </tr>
     </tbody>
     <tfooter>

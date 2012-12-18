@@ -237,6 +237,7 @@ class Option(models.Model):
         ('t', u'Input box'),
         ('c', u'Check box'),
         ('r', u'Radio button'),
+        ('l', u'Label'),
     )
     optiontype = models.CharField(verbose_name=_(u'Type'), max_length=1,
                                   choices=OPTION_TYPES,

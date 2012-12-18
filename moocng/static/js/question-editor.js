@@ -51,6 +51,7 @@
         padding: 5,
         handlePadding: 20,
         option_types: {
+            'l': 'textarea',
             't': 'text',
             'c': 'checkbox',
             'r': 'radio'
@@ -69,6 +70,8 @@
         render: function () {
             var optiontype = this.model.get('optiontype'),
                 sol = this.model.get('solution'),
+                tag = "input",
+                content = "",
                 attributes = {
                     type: this.option_types[optiontype],
                     value: sol,
@@ -76,7 +79,10 @@
                         "width: " + this.model.get("width") + "px;",
                         "height: " + this.model.get("height") + "px;"
                     ].join(" ")
-                };
+                },
+                width,
+                height,
+                aux;
 
             if (optiontype === 'c' || optiontype === 'r') {
                 attributes.style = [
@@ -87,12 +93,34 @@
                 if ((_.isString(sol) && sol.toLowerCase() === 'true') || (_.isBoolean(sol) && sol)) {
                     attributes.checked = 'checked';
                 }
+            } else if (optiontype === 'l') {
+                tag = attributes.type;
+                content = attributes.value;
+                delete attributes.type;
+                delete attributes.value;
+                delete attributes.style;
+                attributes.cols = this.model.get("width");
+                attributes.rows = this.model.get("height");
             }
 
-            this.$el.empty().append(this.make("input", attributes));
+            this.$el.empty().append(this.make(tag, attributes, content));
+            if (optiontype === 'l') {
+                aux = this.$el.find("textarea");
+                width = aux.width();
+                height = aux.height();
+                if (width === 0) {
+                    width = 8 * attributes.cols;
+                }
+                if (height === 0) {
+                    height = 15 * attributes.rows;
+                }
+            } else {
+                width = this.model.get("width");
+                height = this.model.get("height");
+            }
             this.$el
-                .width(this.model.get("width") + this.padding * 2 + this.handlePadding)
-                .height(this.model.get("height") + this.padding * 2)
+                .width(width + this.padding * 2 + this.handlePadding)
+                .height(height + this.padding * 2)
                 .css({
                     left: (this.model.get('x') - this.padding) + "px",
                     top: (this.model.get('y') - this.padding) + "px",
@@ -104,7 +132,7 @@
                     start: this.start,
                     stop: this.stop
                 })
-                .find('input').change(this.change);
+                .find(tag).change(this.change);
 
             return this;
         },
@@ -156,6 +184,9 @@
             var $input = this.$el.find('input'),
                 optiontype = this.model.get('optiontype'),
                 value = '';
+            if (optiontype === 'l') {
+                $input = this.$el.find("textarea");
+            }
             if (optiontype === 'c' || optiontype === 'r') {
                 value = _.isUndefined($input.attr('checked')) ? false : true;
             } else {
