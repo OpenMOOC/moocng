@@ -608,7 +608,6 @@ if (_.isUndefined(window.MOOC)) {
                     MOOC.ajax.showAlert("required");
                     return;
                 }
-                MOOC.ajax.showLoading();
                 var question = new MOOC.models.Question(),
                     view = this;
                 this.model.set("questionInstance", question);
@@ -691,7 +690,6 @@ if (_.isUndefined(window.MOOC)) {
             go2options: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
-                MOOC.ajax.showLoading();
                 var model = this.model,
                     callback = function () {
                         model.get("questionInstance").save(null, {
