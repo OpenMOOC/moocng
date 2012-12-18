@@ -22,7 +22,7 @@ class CourseForm(ModelForm):
 
     class Meta:
         model = Course
-        exclude = ('slug', 'teachers',)
+        exclude = ('slug', 'teachers', 'owner',)
 
     def get_pretty_errors(self):
         errors = ErrorDict()
