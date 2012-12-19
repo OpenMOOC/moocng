@@ -207,7 +207,7 @@ if (_.isUndefined(window.MOOC)) {
 
     MOOC.init = function (courseID, unitBadgeClasses) {
         var path = window.location.pathname;
-        MOOC.host = window.location.origin;
+        MOOC.host = window.location.protocol + '//' + window.location.host;
         MOOC.unitBadgeClasses = unitBadgeClasses;
         MOOC.alertTime = 4000;
         MOOC.models.course.courseId = courseID;

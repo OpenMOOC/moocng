@@ -23,7 +23,7 @@
 <script type="text/javascript">
     (function ($) {
         $(document).ready(function () {
-            MOOC.init(window.location.origin + window.location.pathname,
+            MOOC.init(window.location.protocol + '//' + window.location.host + window.location.pathname,
                 {{ options_json|safe }});
         });
     }(jQuery));
