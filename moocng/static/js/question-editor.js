@@ -99,22 +99,22 @@
                 content = this.model.get("text");
                 delete attributes.type;
                 delete attributes.value;
-                delete attributes.style;
                 attributes.cols = this.model.get("width");
                 attributes.rows = this.model.get("height");
+                attributes.style = [];
+                attributes.style.push('resize:none;');
+                attributes.style.push('line-height: 20px;');
             }
 
             this.$el.empty().append(this.make(tag, attributes, content));
             if (optiontype === 'l') {
                 aux = this.$el.find("textarea");
-                width = aux.width();
                 height = aux.height();
-                if (width === 0) {
-                    width = 8.3 * attributes.cols;
-                }
+                width = (8.1 * attributes.cols) + 10;
                 if (height === 0) {
-                    height = 20 * attributes.rows;
+                    height = (20 * attributes.rows) + 10;
                 }
+
             } else {
                 width = this.model.get("width");
                 height = this.model.get("height");

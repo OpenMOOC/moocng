@@ -613,9 +613,11 @@ MOOC.views.Option = Backbone.View.extend({
             tag = attributes.type;
             delete attributes.type;
             content = this.model.get("text");
+            attributes.style.push('resize: none;');
+            attributes.style.push('cursor: default;');
         } else {
-            attributes.style.push('width: ' + width);
-            attributes.style.push('height: ' + height);
+            attributes.style.push('width: ' + width + 'px;');
+            attributes.style.push('height: ' + height + 'px;');
         }
         attributes.style = attributes.style.join(' ');
         if (optiontype === 'r') {
