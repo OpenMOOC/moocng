@@ -81,9 +81,7 @@
                         "height: " + this.model.get("height") + "px;"
                     ].join(" ")
                 },
-                width,
-                height,
-                aux;
+                size ={};
 
             if (optiontype === 'c' || optiontype === 'r') {
                 attributes.style = [
@@ -107,21 +105,10 @@
             }
 
             this.$el.empty().append(this.make(tag, attributes, content));
-            if (optiontype === 'l') {
-                aux = this.$el.find("textarea");
-                height = aux.height();
-                width = (8.1 * attributes.cols) + 10;
-                if (height === 0) {
-                    height = (20 * attributes.rows) + 10;
-                }
-
-            } else {
-                width = this.model.get("width");
-                height = this.model.get("height");
-            }
+            size = this.calculate_size();
             this.$el
-                .width(width + this.padding * 2 + this.handlePadding)
-                .height(height + this.padding * 2)
+                .width(size.width + this.padding * 2 + this.handlePadding)
+                .height(size.height + this.padding * 2)
                 .css({
                     left: (this.model.get('x') - this.padding) + "px",
                     top: (this.model.get('y') - this.padding) + "px",
@@ -139,10 +126,11 @@
         },
 
         is_out: function (position) {
+            var size = this.calculate_size();
             return ((position.left + this.padding) < 0
                     || (position.top + this.padding) < 0
-                    || (position.left + this.padding) > this.parent_width
-                    || (position.top + this.padding) > this.parent_height);
+                    || (position.left + size.width + (2 * this.padding)) > this.parent_width
+                    || (position.top + size.height + (2 * this.padding)) > this.parent_height);
         },
 
         drag: function () {
@@ -154,6 +142,22 @@
                 this.model.set("y", position.top + this.padding);
                 this.$el.removeClass('out');
             }
+        },
+
+        calculate_size: function() {
+            var optiontype = this.model.get('optiontype'),
+                width = this.model.get("width"),
+                height = this.model.get("height");
+
+            if (optiontype === 'l') {
+                width = (8.1 * width) + 10;
+                height = (20 * height) + 10;
+            }
+            return {
+                width: width,
+                height: height
+
+            };
         },
 
         start: function () {
