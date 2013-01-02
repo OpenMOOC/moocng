@@ -224,6 +224,7 @@
             this.model.unbind("change", this.render);
             this.unbind();
             this.unbind_change();
+            this.undelegateEvents();
         },
 
         render: function () {
