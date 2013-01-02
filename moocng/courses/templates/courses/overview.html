@@ -69,11 +69,18 @@
         <div class="box">
             <h2>{% trans "Teachers" %}</h2>
             <ul class="unstyled">
-            {% for teacher in course.teachers.all %}
                 <li class="teacher">
-                    {% gravatar_img_for_user teacher 50 %}
-                    <strong>{% firstof teacher.get_full_name teacher.username %}</strong>
+                    {% gravatar_img_for_user course.owner 50 %}
+                    <strong>{% firstof course.owner.get_full_name course.owner.username %}</strong>
                 </li>
+
+            {% for teacher in course.teachers.all %}
+                {% if teacher.username != course.owner.username %}
+                    <li class="teacher">
+                        {% gravatar_img_for_user teacher 50 %}
+                        <strong>{% firstof teacher.get_full_name teacher.username %}</strong>
+                    </li>
+                {% endif %}
             {% endfor %}
             </ul>
             <div class="visual-clear"></div>
