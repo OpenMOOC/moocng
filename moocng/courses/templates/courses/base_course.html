@@ -8,18 +8,27 @@
 {% if is_enrolled %}
 
 <ul class="nav nav-pills">
+
   <li {% block nav-course-overview %}{% endblock %}>
     <a href="{% url course_overview course.slug %}">{% trans "Overview" %}</a>
   </li>
+
+  {% if show_material %}
+
   <li {% block nav-course-classroom %}{% endblock %}>
     <a href="{% url course_classroom course.slug %}">{% trans "Classes" %}</a>
   </li>
+
   <li {% block nav-course-discussion %}{% endblock %}>
     <a href="{% askboturl course.slug %}">{% trans "Discussion" %}</a>
   </li>
+
   <li {% block nav-course-progress %}{% endblock %}>
     <a href="{% url course_progress course.slug %}">{% trans "Progress" %}</a>
   </li>
+
+  {% endif %}
+
 </ul>
 
 {% endif %}

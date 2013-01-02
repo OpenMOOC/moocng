@@ -14,7 +14,7 @@
 
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
+from datetime import datetime, date
 
 from moocng.api.mongodb import get_db
 
@@ -85,3 +85,13 @@ def normalize_unit_weight(unit):
     if total_weight == 0:
         return 100.0 / len(course_unit_list)
     return (unit.weight * 100.0) / total_weight
+
+
+def show_material_checker(course, user):
+    show_material = False
+    in_time = course.start_date is None or date.today() > course.start_date
+    has_privileges = user.is_staff or course.teachers.filter(id=user.id).exists()
+    if in_time or has_privileges:
+        show_material = True
+    return show_material
+

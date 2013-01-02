@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-27 06:49-0500\n"
+"POT-Creation-Date: 2013-01-02 12:44-0600\n"
 "PO-Revision-Date: 2012-09-18 10:35+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -77,7 +77,7 @@ msgid "You must accept the Terms of Use"
 msgstr "Debe aceptar los Términos de Uso"
 
 #: complaints/templates/complaints.html:16
-#: complaints/templates/complaints_sent.html:16 templates/base.html:85
+#: complaints/templates/complaints_sent.html:16 templates/base.html:87
 msgid "Contact"
 msgstr "Contacto"
 
@@ -325,19 +325,23 @@ msgstr "opción"
 msgid "options"
 msgstr "opciones"
 
-#: courses/views.py:61
+#: courses/views.py:62
 #, python-format
 msgid "Congratulations, you have successfully enroll in the course %(course)s"
 msgstr "Enhorabuena, te has matriculado correctamente en el curso %(course)s"
 
-#: courses/views.py:67
+#: courses/views.py:68
 #, python-format
 msgid "You have successfully unenroll in the course %(course)s"
 msgstr "Te has desmatriculado correctamente del curso %(course)s"
 
-#: courses/views.py:106 courses/views.py:132
-msgid "Your are not enrolled in this course"
+#: courses/views.py:108 courses/views.py:138
+msgid "You are not enrolled in this course"
 msgstr "No estás matriculado en este curso"
+
+#: courses/views.py:112
+msgid "You are enrolled in this course but it has not yet begun"
+msgstr "Estás matriculado en este curso pero no ha empezado aún"
 
 #: courses/widgets.py:29
 msgid "There has been a problem downloading the video. Please check the logs"
@@ -365,7 +369,7 @@ msgid "Options"
 msgstr "Opciones"
 
 #: courses/templates/admin/courses/question/options.html:38
-#: templates/base.html:58
+#: templates/base.html:60
 msgid "Home"
 msgstr "Inicio"
 
@@ -600,35 +604,35 @@ msgstr "Matricúlame en este curso"
 msgid "Register in %(site_name)s to enroll in this course"
 msgstr "Registrarme en %(site_name)s para matricularme en este curso"
 
-#: courses/templates/courses/overview.html:80
+#: courses/templates/courses/overview.html:83
 msgid "Information"
 msgstr "Información"
 
-#: courses/templates/courses/overview.html:82
+#: courses/templates/courses/overview.html:85
 msgid "Course Code"
 msgstr "Código del Curso"
 
-#: courses/templates/courses/overview.html:84
+#: courses/templates/courses/overview.html:87
 msgid "Classes Start"
 msgstr "Inicio de las Clases"
 
-#: courses/templates/courses/overview.html:87
+#: courses/templates/courses/overview.html:90
 msgid "Classes End"
 msgstr "Final de las Clases"
 
-#: courses/templates/courses/overview.html:90
+#: courses/templates/courses/overview.html:93
 msgid "Estimated Effort"
 msgstr "Esfuerzo Estimado"
 
-#: courses/templates/courses/overview.html:98
+#: courses/templates/courses/overview.html:101
 msgid "Announcements"
 msgstr "Comunicados"
 
-#: courses/templates/courses/overview.html:111
+#: courses/templates/courses/overview.html:114
 msgid "Syllabus"
 msgstr "Temario"
 
-#: courses/templates/courses/overview.html:124
+#: courses/templates/courses/overview.html:127
 msgid "Share"
 msgstr "Comparte"
 
@@ -688,27 +692,27 @@ msgstr ""
 "Ha habido un error. Se ha reportado al administrador del sitio mediante "
 "email y debería ser solucionado en breve. Gracias por su paciencia."
 
-#: templates/base.html:53
+#: templates/base.html:55
 msgid "Register"
 msgstr "Registrar"
 
-#: templates/base.html:54
+#: templates/base.html:56
 msgid "Log in"
 msgstr "Entrar"
 
-#: templates/base.html:62
+#: templates/base.html:64
 msgid "Methodology"
 msgstr "Metodología"
 
-#: templates/base.html:80
+#: templates/base.html:82
 msgid "Legal"
 msgstr "Condiciones legales"
 
-#: templates/base.html:81
+#: templates/base.html:83
 msgid "All rights reserved"
 msgstr "Todos los derechos reservados"
 
-#: templates/base.html:83
+#: templates/base.html:85
 msgid "Terms of Use"
 msgstr "Términos de uso"
 

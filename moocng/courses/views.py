@@ -26,7 +26,7 @@ from django.shortcuts import (get_object_or_404, get_list_or_404,
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
-from moocng.courses.utils import calculate_unit_mark, normalize_unit_weight
+from moocng.courses.utils import calculate_unit_mark, normalize_unit_weight, show_material_checker
 from moocng.courses.models import Course, Unit, Announcement
 
 
@@ -47,11 +47,12 @@ def flatpage(request, page=""):
 
 def course_overview(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
-
+    is_enrolled = False
+    show_material = False
     if request.user.is_authenticated():
         is_enrolled = course.students.filter(id=request.user.id).exists()
-    else:
-        is_enrolled = False
+    if is_enrolled:
+        show_material = show_material_checker(course, request.user)
 
     if request.method == 'POST':
         if not is_enrolled:
@@ -74,6 +75,7 @@ def course_overview(request, course_slug):
     return render_to_response('courses/overview.html', {
             'course': course,
             'is_enrolled': is_enrolled,
+            'show_material': show_material,
             'request': request,
             'announcements': announcements,
             }, context_instance=RequestContext(request))
@@ -103,12 +105,17 @@ def course_classroom(request, course_slug):
 
     is_enrolled = course.students.filter(id=request.user.id).exists()
     if not is_enrolled:
-        return HttpResponseForbidden(_('Your are not enrolled in this course'))
+        return HttpResponseForbidden(_('You are not enrolled in this course'))
+
+    show_material = show_material_checker(course, request.user)
+    if not show_material:
+        return HttpResponseForbidden(_('You are enrolled in this course but it has not yet begun') + course.start_date.strftime(' (%d / %m / %Y)'))
 
     return render_to_response('courses/classroom.html', {
         'course': course,
         'unit_list': units,
         'is_enrolled': is_enrolled,
+        'show_material': show_material,
     }, context_instance=RequestContext(request))
 
 
@@ -129,12 +136,17 @@ def course_progress(request, course_slug):
 
     is_enrolled = course.students.filter(id=request.user.id).exists()
     if not is_enrolled:
-        return HttpResponseForbidden(_('Your are not enrolled in this course'))
+        return HttpResponseForbidden(_('You are not enrolled in this course'))
+
+    show_material = show_material_checker(course, request.user)
+    if not show_material:
+        return HttpResponseForbidden(_('You are enrolled in this course but it has not yet begun') + course.start_date.strftime(' (%d / %m / %Y)'))
 
     return render_to_response('courses/progress.html', {
         'course': course,
         'unit_list': units,
         'is_enrolled': is_enrolled, #required due course nav templatetag
+        'show_material': show_material,
     }, context_instance=RequestContext(request))
 
 
