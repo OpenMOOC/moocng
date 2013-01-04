@@ -30,7 +30,7 @@ from moocng.videos.utils import extract_YT_video_id
 
 logger = logging.getLogger(__name__)
 
-durationRegExp = re.compile(r'Duration: (\d+:\d+:\d+)')
+durationRegExp = re.compile(r'Duration: (\d+:\d+:\d+\.\d+)')
 second = datetime.timedelta(seconds=1)
 
 
@@ -47,6 +47,11 @@ def execute_command(proc):
     # ffmpeg uses stderr for comunicating
     p = subprocess.Popen(proc, stderr=subprocess.PIPE)
     out, err = p.communicate()
+    if getattr(settings, "FFMPEG_DEBUG", False):
+        print out
+        print err
+        logger.debug(out)
+        logger.debug(err)
     return err
 
 
@@ -91,15 +96,15 @@ def process_video(tempdir, url):
     video_id = extract_YT_video_id(url)
     if video_id == u'':
         raise NotFound(url)
-    url = "http://www.youtube.com/watch?v=%s" % video_id
+    url2download = "http://www.youtube.com/watch?v=%s" % video_id
 
-    logger.info('Downloading video %s' % url)
+    logger.info('Downloading video %s' % url2download)
 
     try:
-        filename = download(url, tempdir)
+        filename = download(url2download, tempdir)
         filename = path.join(tempdir, filename)
     except urllib2.HTTPError as e:
-        logger.error('Error downloading video %s: %s' % (url, e))
+        logger.error('Error downloading video %s: %s' % (url2download, e))
         return None
     except:
         raise
@@ -113,13 +118,11 @@ def process_video(tempdir, url):
 
     try:
         # Get the time position of the last second of the video
-        time = time.split(':')
-        dt = datetime.datetime(2012, 01, 01, int(time[0]), int(time[1]),
-                               int(time[2]))
+        dt = datetime.datetime.strptime(time, "%H:%M:%S.%f")
         dt = dt - second
-        time = "%s.900" % dt.strftime("%H:%M:%S")
-        logger.info('Getting the last frame at %s' % time)
-        frame = last_frame(filename, time)
+        fototime = dt.strftime("%H:%M:%S.%f")
+        logger.info('Getting the last frame at %s' % fototime)
+        frame = last_frame(filename, fototime)
     except:
         raise
 

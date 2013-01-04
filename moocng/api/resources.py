@@ -21,34 +21,55 @@ from tastypie import fields
 from tastypie.authorization import DjangoAuthorization
 from tastypie.resources import ModelResource
 
+from django.conf import settings
+from django.contrib.auth.models import User
 from django.db.models import Q
+from django.db.models.fields.files import ImageFieldFile
 
-from moocng.api.authentication import DjangoAuthentication
+from moocng.api.authentication import (DjangoAuthentication,
+                                       TeacherAuthentication)
+from moocng.api.authorization import (PublicReadTeachersModifyAuthorization,
+                                      TeacherAuthorization)
 from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
-                                   Attachment)
+                                   Attachment, Course)
 from moocng.courses.utils import normalize_kq_weight
 from moocng.videos.utils import extract_YT_video_id
 
 
-class UnitResource(ModelResource):
+class CourseResource(ModelResource):
 
     class Meta:
-        queryset = Unit.objects.all()
-        resource_name = 'unit'
+        queryset = Course.objects.all()
+        resource_name = 'course'
         allowed_methods = ['get']
         authentication = DjangoAuthentication()
         authorization = DjangoAuthorization()
 
 
+class UnitResource(ModelResource):
+    course = fields.ToOneField(CourseResource, 'course')
+
+    class Meta:
+        queryset = Unit.objects.all()
+        resource_name = 'unit'
+        authentication = DjangoAuthentication()
+        authorization = PublicReadTeachersModifyAuthorization()
+        always_return_data = True
+        filtering = {
+            "course": ('exact'),
+        }
+
+
 class KnowledgeQuantumResource(ModelResource):
     unit = fields.ToOneField(UnitResource, 'unit')
-    question = fields.RelatedField('moocng.api.resources.QuestionResource',
-                                   'question_set')
+    question = fields.ToManyField('moocng.api.resources.QuestionResource',
+                                  'question_set', related_name='kq',
+                                  readonly=True, null=True)
     videoID = fields.CharField(readonly=True)
-    correct = fields.BooleanField()
-    completed = fields.BooleanField()
-    normalized_weight = fields.IntegerField()
+    correct = fields.BooleanField(readonly=True)
+    completed = fields.BooleanField(readonly=True)
+    normalized_weight = fields.IntegerField(readonly=True)
 
     class Meta:
         queryset = KnowledgeQuantum.objects.all()
@@ -81,11 +102,10 @@ class KnowledgeQuantumResource(ModelResource):
 
     def dehydrate_question(self, bundle):
         question = bundle.data['question']
-        if question.count() == 0:
+        if len(question) == 0:
             return None
         else:
-            return "/api/v1/question/%d/" % question.all()[0].id
-        # TODO improve url
+            return question[0]
 
     def dehydrate_videoID(self, bundle):
         return extract_YT_video_id(bundle.obj.video)
@@ -94,7 +114,10 @@ class KnowledgeQuantumResource(ModelResource):
         questions = bundle.obj.question_set.all()
         if questions.count() == 0:
             # no question: a kq is correct if it is completed
-            return self._is_completed(self.user_activity, bundle.obj)
+            try:
+                return self._is_completed(self.user_activity, bundle.obj)
+            except AttributeError:
+                return False
         else:
             question = questions[0]  # there should be only one question
             if self.user_answers is None:
@@ -107,7 +130,10 @@ class KnowledgeQuantumResource(ModelResource):
             return question.is_correct(answer)
 
     def dehydrate_completed(self, bundle):
-        return self._is_completed(self.user_activity, bundle.obj)
+        try:
+            return self._is_completed(self.user_activity, bundle.obj)
+        except AttributeError:
+            return False
 
     def _is_completed(self, activity, kq):
         course_id = kq.unit.course.id
@@ -127,6 +153,44 @@ class KnowledgeQuantumResource(ModelResource):
             return False
 
         return unicode(kq.id) in kqs
+
+
+class PrivateKnowledgeQuantumResource(ModelResource):
+    unit = fields.ToOneField(UnitResource, 'unit')
+    question = fields.ToManyField('moocng.api.resources.QuestionResource',
+                                  'question_set', related_name='kq',
+                                  readonly=True, null=True)
+    videoID = fields.CharField()
+    normalized_weight = fields.IntegerField()
+
+    class Meta:
+        queryset = KnowledgeQuantum.objects.all()
+        resource_name = 'privkq'
+        always_return_data = True
+        authentication = TeacherAuthentication()
+        authorization = TeacherAuthorization()
+        filtering = {
+            "unit": ('exact'),
+        }
+
+    def dehydrate_normalized_weight(self, bundle):
+        return normalize_kq_weight(bundle.obj)
+
+    def dehydrate_question(self, bundle):
+        question = bundle.data['question']
+        if len(question) == 0:
+            return None
+        else:
+            return question[0]
+
+    def dehydrate_videoID(self, bundle):
+        return extract_YT_video_id(bundle.obj.video)
+
+    def hydrate_videoID(self, bundle):
+        if 'videoID' in bundle.data and bundle.data['videoID'] is not None:
+            video = 'http://youtu.be/' + bundle.data['videoID']
+            bundle.data['video'] = video
+        return bundle
 
 
 class AttachmentResource(ModelResource):
@@ -186,6 +250,45 @@ class QuestionResource(ModelResource):
 
     def dehydrate_last_frame(self, bundle):
         return bundle.obj.last_frame.url
+
+
+class PrivateQuestionResource(ModelResource):
+    kq = fields.ToOneField(PrivateKnowledgeQuantumResource, 'kq')
+    solutionID = fields.CharField()
+
+    class Meta:
+        queryset = Question.objects.all()
+        resource_name = 'privquestion'
+        authentication = TeacherAuthentication()
+        authorization = TeacherAuthorization()
+        always_return_data = True
+        filtering = {
+            "kq": ('exact'),
+        }
+
+    def dehydrate_solutionID(self, bundle):
+        return extract_YT_video_id(bundle.obj.solution)
+
+    def dehydrate_last_frame(self, bundle):
+        try:
+            return bundle.obj.last_frame.url
+        except ValueError:
+            return "%simg/no-image.png" % settings.STATIC_URL
+
+    def hydrate(self, bundle):
+        try:
+            bundle.obj.last_frame.file
+        except ValueError:
+            bundle.obj.last_frame = ImageFieldFile(
+                bundle.obj, Question._meta.get_field_by_name('last_frame')[0],
+                "")
+        return bundle
+
+    def hydrate_solutionID(self, bundle):
+        if 'solutionID' in bundle.data and bundle.data['solutionID'] is not None:
+            video = 'http://youtu.be/' + bundle.data['solutionID']
+            bundle.data['solution'] = video
+        return bundle
 
 
 class OptionResource(ModelResource):
@@ -353,3 +456,28 @@ class ActivityResource(MongoResource):
     def _initial(self, request, **kwargs):
         course_id = kwargs['pk']
         return {course_id: {'kqs': []}}
+
+
+class UserResource(ModelResource):
+
+    class Meta:
+        resource_name = 'user'
+        queryset = User.objects.all()
+        allowed_methods = ['get']
+        authentication = TeacherAuthentication()
+        authorization = DjangoAuthorization()
+        fields = ['id', 'first_name', 'last_name']
+        filtering = {
+            'first_name': ['istartswith'],
+            'last_name': ['istartswith']
+        }
+
+    def apply_filters(self, request, applicable_filters):
+        applicable_filters = applicable_filters.items()
+        if len(applicable_filters) > 0:
+            Qfilter = Q(applicable_filters[0])
+            for apfilter in applicable_filters[1:]:
+                Qfilter = Qfilter | Q(apfilter)
+            return self.get_object_list(request).filter(Qfilter)
+        else:
+            return self.get_object_list(request)

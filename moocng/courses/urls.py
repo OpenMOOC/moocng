@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from django.conf.urls import patterns, url
+from django.conf.urls import include, patterns, url
 
 from moocng.courses.feeds import AnnouncementFeed
 
@@ -23,10 +23,12 @@ urlpatterns = patterns(
 
     # Flatpages
     url(r'^faq/$', 'flatpage', {'page': 'faq'}, name='faq'),
-    url(r'^methodology/$', 'flatpage', {'page': 'methodology'}, name='methodology'),
+    url(r'^methodology/$', 'flatpage', {'page': 'methodology'},
+        name='methodology'),
     url(r'^legal/$', 'flatpage', {'page': 'legal'}, name='legal'),
     url(r'^tos/$', 'flatpage', {'page': 'tos'}, name='tos'),
-    url(r'^copyright/$', 'flatpage', {'page': 'copyright'}, name='copyright'),
+    url(r'^copyright/$', 'flatpage', {'page': 'copyright'},
+        name='copyright'),
 
     url(r'^transcript/$', 'transcript', name='transcript'),
 
@@ -38,5 +40,10 @@ urlpatterns = patterns(
         name='course_progress'),
     url(r'^course/(?P<course_slug>[-\w]+)/announcement/(?P<announcement_slug>[-\w]+)/$',
         'announcement_detail', name='announcement_detail'),
-    url(r'^course/(?P<course_slug>[-\w]+)/announcements_feed/$', AnnouncementFeed(), name='announcements_feed'),
+    url(r'^course/(?P<course_slug>[-\w]+)/announcements_feed/$',
+        AnnouncementFeed(), name='announcements_feed'),
+
+    # Teacher's course administration
+    url(r'^course/(?P<course_slug>[-\w]+)/teacheradmin/',
+        include('moocng.teacheradmin.urls')),
 )

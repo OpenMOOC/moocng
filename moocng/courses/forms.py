@@ -15,10 +15,13 @@
 import os
 
 from django.forms import ModelForm, ValidationError
+from django.forms.widgets import DateTimeInput
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 
-from moocng.courses.models import Unit, Attachment
+from tinymce.widgets import TinyMCE
+
+from moocng.courses.models import Unit, Attachment, Announcement
 
 
 class UnitForm(ModelForm):
@@ -54,3 +57,14 @@ class AttachmentForm(ModelForm):
         file_name = slugify(file_name)
         self.cleaned_data["attachment"].name = "%s%s" % (file_name, file_ext)
         return self.cleaned_data["attachment"]
+
+
+class AnnouncementForm(ModelForm):
+
+    class Meta:
+        model = Announcement
+        exclude = ('slug', 'course',)
+        widgets = {
+                'content': TinyMCE(attrs={'cols':80, 'class':'input-xxlarge'}),
+        }
+

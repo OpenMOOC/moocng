@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% load i18n askboturl %}
+
+{% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
+
+{% block nav %}
+<ul class="nav nav-pills">
+    <li><a href="{% url course_overview course.slug %}">{% trans "Overview" %}</a></li>
+    {% if is_enrolled %}
+        <li><a href="{% url course_classroom course.slug %}">{% trans "Classes" %}</a></li>
+    {% endif %}
+    <li><a href="{% askboturl course.slug %}">{% trans "Discussion" %}</a></li>
+    {% if is_enrolled %}
+        <li><a href="{% url course_progress course.slug %}">{% trans "Progress" %}</a></li>
+    {% endif %}
+    <li class="active pull-right"><a href="{% url teacheradmin_stats course.slug %}">{% trans "Course administration" %}</a></li>
+</ul>
+{% endblock %}
+
+{% block content %}
+<h1>{{ course.name }}</h1>
+<div class="row">
+    <div class="span2">
+        <ul class="nav nav-list">
+            <li class="nav-header">{% trans "Course edition" %}</li>
+            <li class="{% block nav-teacheradmin-info %}{% endblock %}"><a href="{% url teacheradmin_stats course.slug %}info/">{% trans "Information" %}</a></li>
+            <li class="{% block nav-teacheradmin-teachers %}{% endblock %}"><a href="{% url teacheradmin_stats course.slug %}teachers/">{% trans "Teachers" %}</a></li>
+            <li class="{% block nav-teacheradmin-units %}{% endblock %}"><a href="{% url teacheradmin_stats course.slug %}units/">{% trans "Units" %}</a></li>
+            <li class="{% block nav-teacheradmin-announcements %}{% endblock %}"><a href="{% url teacheradmin_stats course.slug %}announcements/">{% trans "Announcements" %}</a></li>
+            <li class="nav-header">{% trans "Extra" %}</li>
+            <li class="{% block nav-teacheradmin-stats %}{% endblock %}"><a href="{% url teacheradmin_stats course.slug %}">{% trans "Statistics" %}</a></li>
+            <li class="{% block nav-teacheradmin-emails %}{% endblock %}"><a href="{% url teacheradmin_stats course.slug %}emails/">{% trans "Send mail" %}</a></li>
+        </ul>
+    </div>
+
+    <div class="span10">
+        {% block section %}
+        <div class="alert">
+            <h4>{% trans "We are sorry" %}</h4>
+            {% trans "But this section is not available yet." %}
+        </div>
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}

@@ -17,6 +17,7 @@
 from datetime import datetime, date
 
 from moocng.api.mongodb import get_db
+from moocng.courses.models import Course
 
 
 def calculate_unit_mark(unit, user):
@@ -95,3 +96,12 @@ def show_material_checker(course, user):
         show_material = True
     return show_material
 
+
+def is_teacher(user, courses):
+    is_teacher = False
+    if isinstance(courses, Course):
+        courses = [courses]
+    if user.is_authenticated():
+        for course in courses:
+            is_teacher = is_teacher or course.teachers.filter(id=user.id).exists()
+    return is_teacher

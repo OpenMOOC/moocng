@@ -115,6 +115,14 @@ footer ul li {
     border-top: 1px solid #dddddd;
 }
 
+.pointer {
+    cursor: pointer;
+}
+
+.mb10 {
+    margin-bottom: 10px;
+}
+
 .mb20 {
     margin-bottom: 20px;
 }
@@ -126,6 +134,22 @@ footer ul li {
 .visual-clear {
     display: block;
     clear: both;
+}
+
+.align-right {
+    text-align: right !important;
+}
+
+.inlineb {
+    display: inline-block;
+}
+
+.wide {
+    width: 100%;
+}
+
+.white {
+    background-color: #FAFAFA;
 }
 
 li.teacher {
@@ -191,6 +215,11 @@ html.ie li.teacher img {
     display: block;
 }
 
+div#course-name {
+    width: 280px;
+    float: right;
+}
+
 .courseprogress #unit-progress-bar .progress,
 .courseprogress #unit-progress-bar .progress .bar {
     height: 30px;
@@ -219,8 +248,18 @@ html.ie li.teacher img {
     margin: 0 auto;
 }
 
-.classroom #kq-video input {
+.classroom #kq-video input,
+.classroom #kq-video textarea {
     position: absolute;
+}
+
+.classroom #kq-video textarea.text {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    transition: none;
+    width: auto;
+    height: auto;
 }
 
 .classroom #kq-video input.correct {
@@ -264,4 +303,88 @@ html.ie li.teacher img {
 
 input[type="checkbox"] {
     margin: -4px 0 0;
+}
+
+.teacheradmin-units .ui-state-highlight {
+    min-height: 30px;
+    margin-bottom: 10px;
+}
+
+.teacheradmin-units .kq-container {
+    min-height: 30px;
+}
+
+.teacheradmin-units .unit,
+.teacheradmin-units .kq {
+    padding: 10px;
+    margin-bottom: 10px;
+    position: relative;
+    border: 1px solid #AAA;
+}
+
+.teacheradmin-units .unit-right {
+    width: 728px;
+    vertical-align: top;
+    margin-left: 30px;
+}
+
+.teacheradmin-units .kq-right {
+    width: 556px;
+    margin-left: 10px;
+    vertical-align: top;
+}
+
+.teacheradmin-units .unit h3 {
+    display: inline-block;
+    margin-top: 0;
+}
+
+.teacheradmin-units .kq h4 {
+    display: inline-block;
+    margin-top: 0;
+}
+
+.teacheradmin-units .kq p {
+    margin: 0 0 3px 0;
+}
+
+.teacheradmin-units .drag-handle {
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    width: 20px;
+    background-color: #CCC;
+    cursor: move;
+}
+
+.teacheradmin-units .badge.question {
+    margin-right: 10px;
+}
+
+.teacheradmin-units div.loading.backdrop {
+    z-index: 99999999;
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    opacity: 0.6;
+    background: black;
+}
+
+.teacheradmin-units div.loading.indicator {
+    z-index: 100000000;
+    width: 54px;
+    height: 55px;
+    background: url(../img/ajax-loader.gif);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -22px;
+    margin-left: -22px;
+}
+
+.teacheradmin-question fieldset textarea {
+    height: auto;
+    width: auto;
 }

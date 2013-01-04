@@ -14,9 +14,22 @@
  * limitations under the License.
  */
 
+.hide {
+    display: none;
+}
+
 fieldset {
+    border: 0;
     position: relative;
+    background-color: #FAFAFA;
+    background-size: 540px 324px;
+}
+
+fieldset,
+fieldset img {
     border: 1px solid black;
+    width: 540px;
+    height: 324px;
 }
 
 fieldset .option {

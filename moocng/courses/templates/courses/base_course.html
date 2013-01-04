@@ -5,8 +5,7 @@
 {% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
 
 {% block nav %}
-{% if is_enrolled %}
-
+{% if is_enrolled or is_teacher or user.is_staff %}
 <ul class="nav nav-pills">
 
   <li {% block nav-course-overview %}{% endblock %}>
@@ -29,7 +28,12 @@
 
   {% endif %}
 
-</ul>
+  {% if is_teacher or user.is_staff %}
+  <li class="pull-right">
+    <a href="{% url teacheradmin_info course.slug %}">{% trans "Course administration" %}</a>
+  </li>
+  {% endif %}
 
+</ul>
 {% endif %}
 {% endblock %}

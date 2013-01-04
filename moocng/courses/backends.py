@@ -17,9 +17,28 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.models import SiteProfileNotAvailable
 from django.core.exceptions import ObjectDoesNotExist
 from djangosaml2.backends import Saml2Backend
+from moocng.courses.models import Course
+from moocng.teacheradmin.models import Invitation
 
 
 class Saml2BackendExtension(Saml2Backend):
+
+    # This function is called when a new user is created
+    # we will check here if a pending teacher invitation
+    # exists for this user
+    def configure_user(self, user, attributes, attribute_mapping):
+        """Configures a user after creation and returns the updated user.
+
+        By default, returns the user with his attributes updated.
+        """
+        user.set_unusable_password()
+        user = self.update_user(user, attributes, attribute_mapping,
+                                force_save=True)
+        user_pendings = Invitation.objects.filter(email=user.email)
+        for user_pending in user_pendings:
+	        user_pending.course.teachers.add(user)
+	        user_pending.delete()
+        return user
 
     def update_user(self, user, attributes, attribute_mapping,
                 force_save=False):

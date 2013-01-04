@@ -20,6 +20,8 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+FFMPEG_DEBUG = DEBUG
+
 ADMINS = (
     ('Admin', 'admin@eopenmooc.org'),
 )
@@ -88,6 +90,9 @@ USE_I18N = True
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale.
 USE_L10N = True
+
+# Use custom formats
+FORMAT_MODULE_PATH = 'moocng.formats'
 
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
@@ -180,6 +185,7 @@ INSTALLED_APPS = (
     'moocng.portal',
     'moocng.videos',
     'moocng.complaints',
+    'moocng.teacheradmin',
     'djangosaml2',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
@@ -253,8 +259,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
     'moocng.context_processors.site',
     'moocng.context_processors.theme',
-    'moocng.context_processors.idp_urls',
-    'moocng.context_processors.google_analytics',
+    'moocng.context_processors.extra_settings',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -293,6 +298,9 @@ MOOCNG_THEME = {
 #SHOW_TOS = True
 
 FFMPEG = '/usr/bin/ffmpeg'
+
+# Let authenticated users create their own courses
+ALLOW_PUBLIC_COURSE_CREATION = False
 
 # Celery settings
 import djcelery

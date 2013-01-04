@@ -48,6 +48,9 @@ class Course(Sortable):
                                 blank=True, null=True)
     teachers = models.ManyToManyField(User, verbose_name=_(u'Teachers'),
                                       related_name='courses_as_teacher')
+    owner = models.ForeignKey(User, verbose_name=_(u'Teacher owner'),
+                              related_name='courses_as_owner', blank=False,
+                              null=False)
     students = models.ManyToManyField(User, verbose_name=_(u'Students'),
                                       related_name='courses_as_student',
                                       blank=True)
@@ -70,13 +73,23 @@ class Course(Sortable):
             return extract_YT_video_id(self.promotion_video)
 
 
+def handle_course_m2m_changed(sender, instance, action, **kwargs):
+    if action.startswith('post') and not instance.teachers.filter(id=instance.owner.id).exists():
+        instance.teachers.add(instance.owner)
+
+
+signals.m2m_changed.connect(handle_course_m2m_changed, sender=Course.teachers.through)
+
+
 class Announcement(models.Model):
 
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
-    slug = models.SlugField(verbose_name=_(u'Slug'))
+    slug = models.SlugField(verbose_name=_(u'Slug'), unique=True)
     content = HTMLField(verbose_name=_(u'Content'))
     course = models.ForeignKey(Course, verbose_name=_(u'Course'))
-    datetime = models.DateTimeField(verbose_name=_(u'Datetime'))
+    datetime = models.DateTimeField(
+        verbose_name=_(u'Datetime'),
+        help_text=_(u"Use format:  DD/MM/AAAA 00:00"))
 
     class Meta:
         verbose_name = _(u'announcement')
@@ -145,10 +158,11 @@ class KnowledgeQuantum(Sortable):
 
 
 def handle_kq_post_save(sender, instance, created, **kwargs):
+    if transaction.is_dirty():
+        transaction.commit()
     question_list = instance.question_set.all()
-    transaction.commit()
     if len(question_list) > 0:
-        process_video_task.delay(question_list[0])
+        process_video_task.delay(question_list[0].id)
 
 
 signals.post_save.connect(handle_kq_post_save, sender=KnowledgeQuantum)
@@ -175,6 +189,12 @@ class Question(models.Model):
         verbose_name=_(u"Last frame of the nugget's video"),
         upload_to='questions', blank=True)
 
+    use_last_frame = models.BooleanField(
+        verbose_name=_(u'Use the last frame of the video'),
+        help_text=_(u'Chooses if the nugget\'s video last frame is used, or a '
+                    u'white canvas instead.'),
+        default=True, blank=False, null=False)
+
     class Meta:
         verbose_name = _(u'question')
         verbose_name_plural = _(u'questions')
@@ -199,7 +219,7 @@ class Question(models.Model):
 
 def handle_question_post_save(sender, instance, created, **kwargs):
     if created:
-        process_video_task.delay(instance)
+        process_video_task.delay(instance.id)
 
 
 signals.post_save.connect(handle_question_post_save, sender=Question)
@@ -217,11 +237,14 @@ class Option(models.Model):
         ('t', u'Input box'),
         ('c', u'Check box'),
         ('r', u'Radio button'),
+        ('l', u'Label'),
     )
     optiontype = models.CharField(verbose_name=_(u'Type'), max_length=1,
                                   choices=OPTION_TYPES,
                                   default=OPTION_TYPES[0][0])
     solution = models.CharField(verbose_name=_(u'Solution'), max_length=200)
+    text = models.CharField(verbose_name=_(u'Label text'), max_length=500,
+                            blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'option')
@@ -231,7 +254,9 @@ class Option(models.Model):
         return u'%s at %s x %s' % (self.optiontype, self.x, self.y)
 
     def is_correct(self, reply):
-        if self.optiontype == 't':
+        if self.optiontype == 'l':
+            return True
+        elif self.optiontype == 't':
             return reply == self.solution
         else:
             return bool(reply) == (self.solution.lower() == u'true')

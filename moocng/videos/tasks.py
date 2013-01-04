@@ -26,7 +26,9 @@ from django.core.files import File
 logger = logging.getLogger(__name__)
 
 
-def do_process_video_task(question):
+def do_process_video_task(question_id):
+    from moocng.courses.models import Question
+    question = Question.objects.get(id=question_id)
     url = question.kq.video
 
     try:
@@ -45,6 +47,7 @@ def do_process_video_task(question):
     finally:
         shutil.rmtree(tempdir)
 
+
 @task
-def process_video_task(question):
-    return do_process_video_task(question)
+def process_video_task(question_id):
+    return do_process_video_task(question_id)

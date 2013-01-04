@@ -26,8 +26,10 @@ from django.shortcuts import (get_object_or_404, get_list_or_404,
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
-from moocng.courses.utils import calculate_unit_mark, normalize_unit_weight, show_material_checker
 from moocng.courses.models import Course, Unit, Announcement
+from moocng.courses.utils import (calculate_unit_mark, normalize_unit_weight,
+                                  show_material_checker,
+                                  is_teacher as is_teacher_test)
 
 
 def home(request):
@@ -47,12 +49,16 @@ def flatpage(request, page=""):
 
 def course_overview(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
-    is_enrolled = False
+
     show_material = False
     if request.user.is_authenticated():
         is_enrolled = course.students.filter(id=request.user.id).exists()
-    if is_enrolled:
-        show_material = show_material_checker(course, request.user)
+        is_teacher = is_teacher_test(request.user, course)
+        if is_enrolled:
+            show_material = show_material_checker(course, request.user)
+    else:
+        is_enrolled = False
+        is_teacher = False
 
     if request.method == 'POST':
         if not is_enrolled:
@@ -76,6 +82,7 @@ def course_overview(request, course_slug):
             'course': course,
             'is_enrolled': is_enrolled,
             'show_material': show_material,
+            'is_teacher': is_teacher,
             'request': request,
             'announcements': announcements,
             }, context_instance=RequestContext(request))
@@ -116,6 +123,7 @@ def course_classroom(request, course_slug):
         'unit_list': units,
         'is_enrolled': is_enrolled,
         'show_material': show_material,
+        'is_teacher': is_teacher_test(request.user, course),
     }, context_instance=RequestContext(request))
 
 
@@ -147,6 +155,7 @@ def course_progress(request, course_slug):
         'unit_list': units,
         'is_enrolled': is_enrolled, #required due course nav templatetag
         'show_material': show_material,
+        'is_teacher': is_teacher_test(request.user, course),
     }, context_instance=RequestContext(request))
 
 

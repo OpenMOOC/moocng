@@ -32,7 +32,8 @@
                 y: 0,
                 width: 100,
                 height: 12,
-                solution: ''
+                solution: '',
+                text: ""
             };
         }
     });
@@ -51,6 +52,7 @@
         padding: 5,
         handlePadding: 20,
         option_types: {
+            'l': 'textarea',
             't': 'text',
             'c': 'checkbox',
             'r': 'radio'
@@ -69,6 +71,8 @@
         render: function () {
             var optiontype = this.model.get('optiontype'),
                 sol = this.model.get('solution'),
+                tag = "input",
+                content = "",
                 attributes = {
                     type: this.option_types[optiontype],
                     value: sol,
@@ -76,7 +80,8 @@
                         "width: " + this.model.get("width") + "px;",
                         "height: " + this.model.get("height") + "px;"
                     ].join(" ")
-                };
+                },
+                size ={};
 
             if (optiontype === 'c' || optiontype === 'r') {
                 attributes.style = [
@@ -87,12 +92,23 @@
                 if ((_.isString(sol) && sol.toLowerCase() === 'true') || (_.isBoolean(sol) && sol)) {
                     attributes.checked = 'checked';
                 }
+            } else if (optiontype === 'l') {
+                tag = attributes.type;
+                content = this.model.get("text");
+                delete attributes.type;
+                delete attributes.value;
+                attributes.cols = this.model.get("width");
+                attributes.rows = this.model.get("height");
+                attributes.style = [];
+                attributes.style.push('resize:none;');
+                attributes.style.push('line-height: 20px;');
             }
 
-            this.$el.empty().append(this.make("input", attributes));
+            this.$el.empty().append(this.make(tag, attributes, content));
+            size = this.calculate_size();
             this.$el
-                .width(this.model.get("width") + this.padding * 2 + this.handlePadding)
-                .height(this.model.get("height") + this.padding * 2)
+                .width(size.width + this.padding * 2 + this.handlePadding)
+                .height(size.height + this.padding * 2)
                 .css({
                     left: (this.model.get('x') - this.padding) + "px",
                     top: (this.model.get('y') - this.padding) + "px",
@@ -104,16 +120,17 @@
                     start: this.start,
                     stop: this.stop
                 })
-                .find('input').change(this.change);
+                .find(tag).change(this.change);
 
             return this;
         },
 
         is_out: function (position) {
+            var size = this.calculate_size();
             return ((position.left + this.padding) < 0
                     || (position.top + this.padding) < 0
-                    || (position.left + this.padding) > this.parent_width
-                    || (position.top + this.padding) > this.parent_height);
+                    || (position.left + size.width + (2 * this.padding)) > this.parent_width
+                    || (position.top + size.height + (2 * this.padding)) > this.parent_height);
         },
 
         drag: function () {
@@ -125,6 +142,22 @@
                 this.model.set("y", position.top + this.padding);
                 this.$el.removeClass('out');
             }
+        },
+
+        calculate_size: function() {
+            var optiontype = this.model.get('optiontype'),
+                width = this.model.get("width"),
+                height = this.model.get("height");
+
+            if (optiontype === 'l') {
+                width = (8.1 * width) + 10;
+                height = (20 * height) + 10;
+            }
+            return {
+                width: width,
+                height: height
+
+            };
         },
 
         start: function () {
@@ -155,13 +188,18 @@
         change: function () {
             var $input = this.$el.find('input'),
                 optiontype = this.model.get('optiontype'),
-                value = '';
+                value = "",
+                prop = "solution";
+            if (optiontype === 'l') {
+                $input = this.$el.find("textarea");
+                prop = "text";
+            }
             if (optiontype === 'c' || optiontype === 'r') {
                 value = _.isUndefined($input.attr('checked')) ? false : true;
             } else {
                 value = $input.val();
             }
-            this.model.set("solution", value);
+            this.model.set(prop, value);
             this.model.save();
         }
 
@@ -186,6 +224,7 @@
             this.model.unbind("change", this.render);
             this.unbind();
             this.unbind_change();
+            this.undelegateEvents();
         },
 
         render: function () {
@@ -206,6 +245,17 @@
                 this.$el
                     .find('#option-width').attr("disabled", false).change(this.change_property_handler(['width', true])).val(this.model.get('width')).end()
                     .find('#option-height').attr("disabled", false).change(this.change_property_handler(['height', true])).val(this.model.get('height'));
+            }
+
+            if (optiontype === 'l') {
+                this.$el
+                    .find("#option-solution").val(this.model.get("text")).end()
+                    .find("#solution-title").addClass("hide").end()
+                    .find("#content-title").removeClass("hide");
+            } else {
+                this.$el
+                    .find("#solution-title").removeClass("hide").end()
+                    .find("#content-title").addClass("hide");
             }
         },
 
@@ -245,6 +295,9 @@
             if (value) {
                 if (numerical) {
                     value = parseInt(value, 10);
+                }
+                if (this.model.get("optiontype") === 'l' && prop === "solution") {
+                    prop = "text";
                 }
                 this.model.set(prop, value);
                 this.model.save();
@@ -324,9 +377,14 @@
         },
 
         create_option: function () {
-            var option = new MOOC.models.Option({
-                optiontype: this.$el.find("#option-optiontype-creation").val()
-            });
+            var settings = {},
+                option;
+            settings.optiontype = this.$el.find("#option-optiontype-creation").val();
+            if (settings.optiontype === 'l') {
+                settings.width = 50;
+                settings.height = 3;
+            }
+            option = new MOOC.models.Option(settings);
             this.collection.add(option);
             option.save();
         },
@@ -349,7 +407,7 @@
 
         option_click: function (event) {
             var target = event.target;
-            if (target.tagName === 'INPUT') {
+            if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
                 target = target.parentNode;
             }
             this.select_option(target);
@@ -391,44 +449,25 @@
         }
     });
 
-    MOOC.imageLoaded = function () {
-        var $fieldset = $("#content-main fieldset"),
-            $img = $("img.last-frame"),
-            url = $img.attr("src"),
-            width = $img.width(),
-            height = $img.height();
-        $fieldset.width(width).height(height).css({"background-image": "url(" + url + ")"});
-        $img.remove();
-
-        MOOC.imageInitDone = true;
-    };
-
     MOOC.init = function (url, options) {
         var path = window.location.pathname,
-            auxFunc,
-            start;
+            $fieldset = $("#content-main fieldset"),
+            $img = $("img.last-frame");
 
         MOOC.models.options = new MOOC.models.OptionList();
         MOOC.models.options.reset(options);
         MOOC.models.options.url = url;
 
-        start = function () {
-            MOOC.router = new MOOC.App();
-            MOOC.router.route("", "index");
-            MOOC.router.route("option:option", "option");
-            Backbone.history.start({root: path});
+        if ($img.length > 0) {
+            $fieldset.css({ "background-image": "url(" + $img.attr("src") + ")" });
+            $img.remove();
+        }
 
-            MOOC.router.navigate("", {trigger: true});
-        };
+        MOOC.router = new MOOC.App();
+        MOOC.router.route("", "index");
+        MOOC.router.route("option:option", "option");
+        Backbone.history.start({root: path});
 
-        auxFunc = function () {
-            if (MOOC.imageInitDone) {
-                start();
-            } else {
-                setTimeout(auxFunc, 100);
-            }
-        };
-
-        auxFunc();
+        MOOC.router.navigate("", {trigger: true});
     };
 }(jQuery, Backbone, _));
