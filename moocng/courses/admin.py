@@ -46,6 +46,7 @@ logger = logging.getLogger(__name__)
 class CourseAdmin(SortableAdmin):
 
     prepopulated_fields = {'slug': ('name', )}
+    filter_horizontal = ('teachers', 'students')
 
 
 class AnnouncementAdmin(admin.ModelAdmin):
