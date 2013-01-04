@@ -95,7 +95,10 @@ def normalize_kq_weight(kq):
     for unit_kq in unit_kq_list:
         total_weight += unit_kq.weight
     if total_weight == 0:
-        return 100.0 / len(unit_kq_list)
+        if len(unit_kq_list) == 0:
+            return 0
+        else:
+            return 100.0 / len(unit_kq_list)
     return (kq.weight * 100.0) / total_weight
 
 
@@ -112,7 +115,10 @@ def normalize_unit_weight(unit, use_old_calculus=False):
     for course_unit in course_unit_list:
         total_weight += course_unit.weight
     if total_weight == 0:
-        return 100.0 / len(course_unit_list)
+        if len(course_unit_list) == 0:
+            return 0
+        else:
+            return 100.0 / len(course_unit_list)
     return (weight * 100.0) / total_weight
 
 

@@ -152,8 +152,8 @@ def transcript(request):
             use_old_calculus = True
         total_mark, units_info = calculate_course_mark(course, request.user)
         award = None
-        passed = False
-        if course.threshold is not None and total_mark / 10 >= course.threshold:
+        passed = False        
+        if course.threshold is not None and not float(course.threshold) < total_mark:
             passed = True
             badge = course.completion_badge
             if badge is not None:
