@@ -187,6 +187,7 @@ INSTALLED_APPS = (
     'moocng.complaints',
     'moocng.teacheradmin',
     'djangosaml2',
+    'south',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
