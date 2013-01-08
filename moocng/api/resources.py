@@ -363,6 +363,7 @@ class CourseResource(ModelResource):
     class Meta:
         queryset = Course.objects.all()
         resource_name = 'course'
+        excludes = ['certification_banner']
         allowed_methods = ['get']
 
 
@@ -379,15 +380,18 @@ class UserResource(ModelResource):
 
     def override_urls(self):
         return [
-            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/allcourses/$" % self._meta.resource_name,
+            url(r"^(?P<resource_name>%s)/(?P<pk>[^/]+)/allcourses/$" % self._meta.resource_name,
                 self.wrap_view('get_courses'), name="get_courses_as_student"),
-            url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/passedcourses/$" % self._meta.resource_name,
+            url(r"^(?P<resource_name>%s)/(?P<pk>[^/]+)/passedcourses/$" % self._meta.resource_name,
                 self.wrap_view('get_passed_courses'),
                 name="get_passed_courses_as_student"),
         ]
 
     def get_object(self, request, kwargs):
         try:
+            if not kwargs['pk'].isdigit():
+                kwargs['email'] = kwargs['pk']
+                del kwargs['pk']
             obj = self.cached_obj_get(request=request,
                                       **self.remove_api_resource_names(kwargs))
         except self.Meta.object_class.DoesNotExist:
@@ -434,7 +438,7 @@ class UserResource(ModelResource):
             if course.threshold is not None:
                 total_mark, units_info = calculate_course_mark(course,
                                                                request.user)
-                if total_mark >= float(course.threshold):
+                if not float(course.threshold) < total_mark:
                     passed_courses.append(course)
 
         return self.alt_get_list(request, passed_courses)

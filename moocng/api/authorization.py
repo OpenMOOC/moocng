@@ -36,6 +36,6 @@ def is_api_key_authorized(original_function=None):
         if auth.is_authorized(request):
             return original_function(resource, request, **kwargs)
         else:
-            return HttpResponse(status=401)
+            return HttpResponse("Unauthorized", status=401)
 
     return decorated
