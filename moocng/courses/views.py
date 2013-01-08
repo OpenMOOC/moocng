@@ -146,6 +146,7 @@ def announcement_detail(request, course_slug, announcement_slug):
 def transcript(request):
     course_list = request.user.courses_as_student.all()
     courses_info = []
+    cert_url = ''
     for course in course_list:
         use_old_calculus = False
         if course.slug in settings.COURSES_USING_OLD_TRANSCRIPT:
@@ -155,6 +156,7 @@ def transcript(request):
         passed = False        
         if course.threshold is not None and not float(course.threshold) < total_mark:
             passed = True
+            cert_url = '%s/idactividad/%s/email/%s' % (settings.CERTIFICATE_URL, course.id, request.user.email)
             badge = course.completion_badge
             if badge is not None:
                 try:
@@ -173,6 +175,7 @@ def transcript(request):
             'mark': total_mark,
             'award': award,
             'passed': passed,
+            'cert_url': cert_url,
         })
     return render_to_response('courses/transcript.html', {
         'courses_info': courses_info,

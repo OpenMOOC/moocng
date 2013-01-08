@@ -58,6 +58,8 @@ class Course(Sortable):
         verbose_name=_(u'Pass threshold'),
         max_digits=4, decimal_places=2,
         blank=True, null=True, help_text="0.00 - 10.00")
+    certification_available = models.BooleanField(default=False,
+        verbose_name=_(u'Certification available'))
     certification_banner = models.ImageField(
         verbose_name=_(u'Certification banner'),
         upload_to='certification_banners', blank=True, null=True)

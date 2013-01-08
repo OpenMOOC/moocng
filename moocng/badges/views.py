@@ -12,11 +12,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from django.contrib.auth.models import User
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render_to_response
+from django.template import RequestContext
 
 from moocng.badges.models import Badge, Award
 
+
+def user_badges(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    try:
+        award_list = Award.objects.filter(user__id=user_id)
+        return render_to_response('badges/user_badges.html', {
+        'award_list': award_list,
+        'user': user,
+        }, context_instance=RequestContext(request))
+    except Award.DoesNotExist:
+        return HttpResponse(status=404)
+
+def user_badge(request, badge_slug, user_id):
+    badge = get_object_or_404(Badge, slug=badge_slug)
+    user = get_object_or_404(User, id=user_id)
+    try:
+        award = get_object_or_404(Award, badge=badge, user=user)
+        return render_to_response('badges/user_badge.html', {
+        'award': award,
+        'user': user,
+    }, context_instance=RequestContext(request))
+    except Award.DoesNotExist:
+        return HttpResponse(status=404)
 
 def badge_image(request, badge_slug, user_id):
     badge = get_object_or_404(Badge, slug=badge_slug)
@@ -25,3 +50,16 @@ def badge_image(request, badge_slug, user_id):
         return HttpResponse(badge.image.read(), content_type="image/png")
     except Award.DoesNotExist:
         return HttpResponse(status=404)
+
+def user_badges_email(request, user_email):
+    user = get_object_or_404(User, email=user_email)
+    return user_badges(request, user.id)
+
+def user_badge_email(request, badge_slug, user_email):
+    user = get_object_or_404(User, email=user_email)
+    return user_badge(request, badge_slug, user.id)
+
+def badge_image_email(request, badge_slug, user_email):
+    user = get_object_or_404(User, email=user_email)
+    return badge_image(request, badge_slug, user.id)
+

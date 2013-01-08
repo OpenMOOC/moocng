@@ -248,6 +248,13 @@ img.award {
     margin-top: 30px;
 }
 
+code {
+    padding: 2px 4px;
+    color: #333;
+    background-color: #F7F7F9;
+    border: 1px solid #E1E1E8;
+}
+
 input[type="checkbox"] {
     margin: -4px 0 0;
 }

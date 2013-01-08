@@ -256,6 +256,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'moocng.context_processors.theme',
     'moocng.context_processors.idp_urls',
     'moocng.context_processors.google_analytics',
+    'moocng.context_processors.certificate_url',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -289,6 +290,7 @@ MOOCNG_THEME = {
 #    'right_banner2': u'',
 #    'bootstrap_css': u'',
 #    'moocng_css': u'',
+#    'cert_banner': u'',
     }
 
 #SHOW_TOS = True
@@ -313,6 +315,7 @@ REGISTRY_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/
 PROFILE_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/reviewUser.php'
 CHANGEPW_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/changePassword.php'
 ASKBOT_URL_TEMPLATE = 'https://questions.example.com/%s/'
+CERTIFICATE_URL = ''
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 LOGIN_URL = '/saml2/login/'

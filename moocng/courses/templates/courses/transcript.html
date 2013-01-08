@@ -11,7 +11,7 @@
     <h1 class="content-title">{% trans "My transcript" %}</h1>
 
     {% for course_info in courses_info %}
-    <div class="box">
+    <div class="box" id="{{ course_info.course.slug }}" name="{{ course_info.course.slug }}">
       <h2><a href="{{ course_info.course.get_absolute_url }}">{{ course_info.course.name }}</a></h2>
       <p>{% trans "Mark" %}: <b>{{ course_info.mark|floatformat:"-2" }}</b>/10 </p>
         {% if course_info.units_info %}
@@ -30,10 +30,17 @@
                 <code>{{ course_info.award.get_image_public_url }}</code>
             </p>
         {% endif %}
-        {% if course_info.passed %}
-            <p><a href="" class="btn btn-success">{% trans "I want a certificate of completion for this course" %}</a></p>
+        {% if course_info.course.certification_available %}
+            {% if course_info.passed %}
+                <p><a target="_new" href="{{ course_info.cert_url }}" class="btn btn-success">{% trans "I want a certificate of completion for this course" %}</a>
+                    <a target="_new" href="{% url cert %}" ><small>{% trans "Read more" %}</small></a>
+                </p>
+                
+            {% else %}
+                <p>{% trans "You need to complete the course before asking for a certificate of completion." %}</p>
+            {% endif %}
         {% else %}
-            <p>{% trans "You need to complete the course before asking for a certificate of completion." %}</p>
+                <p>{% trans "No certificate available for this course." %}</p>
         {% endif %}
     </div>
     {% empty %}

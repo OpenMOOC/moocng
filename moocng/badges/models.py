@@ -87,5 +87,5 @@ class Award(models.Model):
 
     def get_image_public_url(self):
         current_site = Site.objects.get_current()
-        url = reverse('badge_image', args=[self.badge.slug, self.user.id])
+        url = reverse('badge_image_email', args=[self.badge.slug, self.user.email])
         return 'http://%s%s' % (current_site.domain, url)

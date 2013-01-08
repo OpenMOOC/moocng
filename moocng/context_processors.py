@@ -42,6 +42,7 @@ def theme(request):
             'right_banner2': settings.STATIC_URL + u'img/right_banner2.jpg',
             'bootstrap_css': settings.STATIC_URL + u'css/bootstrap.min.css',
             'moocng_css': settings.STATIC_URL + u'css/moocng.css',
+            'cert_banner': settings.STATIC_URL + u'img/cert_banner.png',
         }
     }
 
@@ -64,6 +65,16 @@ def google_analytics(request):
         context['google_analytics'] = settings.GOOGLE_ANALYTICS_CODE
     except AttributeError:
         context['google_analytics'] = ''
+    return context
+
+
+def certificate_url(request):
+    context = {}
+    try:
+        context['certificate_provider_url'] = settings.CERTIFICATE_URL
+    except AttributeError:
+        context['certificate_provider_url'] = '#'
+
     return context
 
 
