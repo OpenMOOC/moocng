@@ -132,6 +132,37 @@ Now we can install the moocng software:
 After a while you will have a bunch of new packages inside
 */var/www/moocng/lib/python2.7/site-packages/*
 
+Tastypie
+~~~~~~~~
+
+Note: If you already have installed the official tastypie you need to execute first:
+
+.. code-block:: bash
+
+  pip uninstall django-tastypie
+
+
+Installation steps:
+
+1. In the virtualenv directory:
+
+.. code-block:: bash
+
+  git checkout git@github.com:OpenMOOC/django-tastypie.git
+
+2. In the new django-tastypie directory execute:
+
+.. code-block:: bash
+
+  python setup develop
+
+3. In the moocng directory execute:
+
+.. code-block:: bash
+
+  python setup develop
+
+
 FFmpeg
 ~~~~~~
 
