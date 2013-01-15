@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% load i18n askboturl %}
+
+{% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
+
+{% block content %}
+
+<p><big>{% blocktrans with first_name=user.first_name last_name=user.last_name %}The user "<b>{{ first_name }} {{ last_name }}</b>" has the following awards:{% endblocktrans %}
+</big><p>
+
+{% for award in award_list %}
+<p>
+    <img src="{{ award.get_image_url }}" alt="{{ award.badge.title }}" title="{{ award.badge.title }}" width="50" height="50" class="award" />
+    <code>{{ award.get_image_public_url }}</code>
+</p>
+
+{% if award.badge.description %}
+<p>{{ award.badge.description }}</p>
+{% endif %}
+
+{% if not forloop.last %}
+<hr>
+{% endif %}
+
+{% endfor %}
+
+{% endblock %}
