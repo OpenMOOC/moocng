@@ -38,6 +38,7 @@ urlpatterns = patterns(
     url(r'^tinymce/', include('tinymce.urls')),
 
     url(r'^api/', include('moocng.api.urls')),
+    url(r'^badges/', include('moocng.badges.urls')),
 
     url(r'^saml2/ls/$', 'djangosaml2.views.logout_service', name='saml2_ls',
         kwargs={'next_page': settings.LOGOUT_REDIRECT_URL}),

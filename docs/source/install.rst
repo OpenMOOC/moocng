@@ -148,19 +148,19 @@ Installation steps:
 
 .. code-block:: bash
 
-  git checkout git@github.com:OpenMOOC/django-tastypie.git
+  git clone git@github.com:OpenMOOC/django-tastypie.git
 
 2. In the new django-tastypie directory execute:
 
 .. code-block:: bash
 
-  python setup develop
+  python setup.py develop
 
 3. In the moocng directory execute:
 
 .. code-block:: bash
 
-  python setup develop
+  python setup.py develop
 
 
 FFmpeg

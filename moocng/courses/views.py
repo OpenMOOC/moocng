@@ -26,6 +26,10 @@ from django.shortcuts import (get_object_or_404, get_list_or_404,
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
+from moocng.badges.models import Award
+from moocng.courses.utils import (calculate_course_mark, get_unit_badge_class,
+                                  show_material_checker,
+                                  is_teacher as is_teacher_test)
 from moocng.courses.models import Course, Unit, Announcement
 from moocng.courses.utils import (calculate_unit_mark, normalize_unit_weight,
                                   show_material_checker,
@@ -106,7 +110,7 @@ def course_classroom(request, course_slug):
             'id': u.id,
             'title': u.title,
             'unittype': u.unittype,
-            'badge_class': unit_badge_classes[u.unittype],
+            'badge_class': get_unit_badge_class(u),
         }
         units.append(unit)
 
@@ -138,7 +142,7 @@ def course_progress(request, course_slug):
             'id': u.id,
             'title': u.title,
             'unittype': u.unittype,
-            'badge_class': unit_badge_classes[u.unittype],
+            'badge_class': get_unit_badge_class(u),
         }
         units.append(unit)
 
@@ -173,24 +177,37 @@ def announcement_detail(request, course_slug, announcement_slug):
 def transcript(request):
     course_list = request.user.courses_as_student.all()
     courses_info = []
+    cert_url = ''
     for course in course_list:
-        total_mark = 0
-        unit_list = Unit.objects.filter(course=course)
-        units_info = []
-        for unit in unit_list:
-            unit_info = {}
-            mark, relative_mark = calculate_unit_mark(unit, request.user)
-            total_mark += relative_mark
-            unit_info = {'unit': unit,
-                         'mark': mark,
-                         'normalized_weight': normalize_unit_weight(unit),
-                        }
-            units_info.append(unit_info)
-        courses_info.append({'course': course,
-                             'units_info': units_info,
-                             'mark': total_mark,
-                            })
+        use_old_calculus = False
+        if course.slug in settings.COURSES_USING_OLD_TRANSCRIPT:
+            use_old_calculus = True
+        total_mark, units_info = calculate_course_mark(course, request.user)
+        award = None
+        passed = False        
+        if course.threshold is not None and not float(course.threshold) < total_mark:
+            passed = True
+            cert_url = '%s/idactividad/%s/email/%s' % (settings.CERTIFICATE_URL, course.id, request.user.email)
+            badge = course.completion_badge
+            if badge is not None:
+                try:
+                    award = Award.objects.get(badge=badge, user=request.user)
+                except Award.DoesNotExist:
+                    award = Award(badge=badge, user=request.user)
+                    award.save()
+        for idx, uinfo in enumerate(units_info):
+            unit_class = get_unit_badge_class(uinfo['unit'])
+            units_info[idx]['badge_class'] = unit_class
+            if not use_old_calculus and uinfo['unit'].unittype == 'n':
+                units_info[idx]['hide'] = True
+        courses_info.append({
+            'course': course,
+            'units_info': units_info,
+            'mark': total_mark,
+            'award': award,
+            'passed': passed,
+            'cert_url': cert_url,
+        })
     return render_to_response('courses/transcript.html', {
-            'courses_info': courses_info,
-        }, context_instance=RequestContext(request))
-
+        'courses_info': courses_info,
+    }, context_instance=RequestContext(request))

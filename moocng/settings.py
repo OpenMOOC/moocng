@@ -186,6 +186,7 @@ INSTALLED_APPS = (
     'moocng.videos',
     'moocng.complaints',
     'moocng.teacheradmin',
+    'moocng.badges',
     'djangosaml2',
     'south',
     # Uncomment the next line to enable admin documentation:
@@ -261,6 +262,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'moocng.context_processors.site',
     'moocng.context_processors.theme',
     'moocng.context_processors.extra_settings',
+    'moocng.context_processors.idp_urls',
+    'moocng.context_processors.google_analytics',
+    'moocng.context_processors.certificate_url',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -294,6 +298,7 @@ MOOCNG_THEME = {
 #    'right_banner2': u'',
 #    'bootstrap_css': u'',
 #    'moocng_css': u'',
+#    'cert_banner': u'',
     }
 
 #SHOW_TOS = True
@@ -302,6 +307,15 @@ FFMPEG = '/usr/bin/ffmpeg'
 
 # Let authenticated users create their own courses
 ALLOW_PUBLIC_COURSE_CREATION = False
+
+# Make this unique, and don't share it with anybody else than payment system
+# Override this in local settings
+USER_API_KEY = '123456789'
+
+# A list with the slugs of the courses that use the old qualification system
+# where the normal units counted
+COURSES_USING_OLD_TRANSCRIPT = []
+
 
 # Celery settings
 import djcelery
@@ -313,6 +327,7 @@ REGISTRY_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/
 PROFILE_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/reviewUser.php'
 CHANGEPW_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/changePassword.php'
 ASKBOT_URL_TEMPLATE = 'https://questions.example.com/%s/'
+CERTIFICATE_URL = ''
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 LOGIN_URL = '/saml2/login/'

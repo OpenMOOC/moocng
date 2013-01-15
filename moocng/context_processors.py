@@ -42,6 +42,7 @@ def theme(request):
             'right_banner2': settings.STATIC_URL + u'img/right_banner2.jpg',
             'bootstrap_css': settings.STATIC_URL + u'css/bootstrap.min.css',
             'moocng_css': settings.STATIC_URL + u'css/moocng.css',
+            'cert_banner': settings.STATIC_URL + u'img/cert_banner.png',
         }
     }
 
@@ -69,7 +70,17 @@ def google_analytics(request):
     return context
 
 
-def extra_settings(request):
+def certificate_url(request):
+    context = {}
+    try:
+        context['certificate_provider_url'] = settings.CERTIFICATE_URL
+    except AttributeError:
+        context['certificate_provider_url'] = '#'
+
+    return context
+
+
+def idp_urls(request):
     try:
         registry_url = settings.REGISTRY_URL
     except AttributeError:
@@ -84,21 +95,22 @@ def extra_settings(request):
         changepw_url = settings.CHANGEPW_URL
     except AttributeError:
         changepw_url = '#'
+    context = {
+            'registry_url': registry_url,
+            'profile_url': profile_url,
+            'changepw_url': changepw_url,
+    }
+    return context
 
-    try:
-        google_analytics = settings.GOOGLE_ANALYTICS_CODE
-    except AttributeError:
-        google_analytics = ''
+
+def extra_settings(request):
 
     try:
         sandbox = settings.ALLOW_PUBLIC_COURSE_CREATION
     except AttributeError:
         sandbox = ''
 
-    return {
-        'registry_url': registry_url,
-        'profile_url': profile_url,
-        'changepw_url': changepw_url,
-        'google_analytics': google_analytics,
+    context = {
         'sandbox': sandbox,
     }
+    return context

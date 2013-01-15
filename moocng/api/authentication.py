@@ -36,3 +36,18 @@ class TeacherAuthentication(Authentication):
 
     def get_identifier(self, request):
         return request.user.username
+
+
+class ApiKeyAuthentication(Authentication):
+
+    def is_authenticated(self, request, **kwargs):
+        key = request.GET.get('key', 'nope')
+        if key == settings.USER_API_KEY:
+            return True
+        else:
+            return False
+
+    def get_identifier(self, request):
+        # TODO Create a new table in the database with user- key association
+        # delete the USER_API_KEY of the settings and use that instead
+        return request.user.username

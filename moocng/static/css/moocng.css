@@ -192,6 +192,10 @@ html.ie li.teacher img {
     height: 50px;
 }
 
+img.award {
+    margin-right: 10px;
+}
+
 .unit-n {}
 
 .unit-h {}
@@ -299,6 +303,13 @@ div#course-name {
 
 .announcement div.content {
     margin-top: 30px;
+}
+
+code {
+    padding: 2px 4px;
+    color: #333;
+    background-color: #F7F7F9;
+    border: 1px solid #E1E1E8;
 }
 
 input[type="checkbox"] {

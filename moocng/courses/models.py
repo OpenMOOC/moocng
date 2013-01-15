@@ -22,6 +22,7 @@ from adminsortable.models import Sortable
 from adminsortable.fields import SortableForeignKey
 from tinymce.models import HTMLField
 
+from moocng.badges.models import Badge
 from moocng.courses.fields import PercentField
 from moocng.videos.tasks import process_video_task
 from moocng.videos.utils import extract_YT_video_id
@@ -56,6 +57,18 @@ class Course(Sortable):
                                       blank=True)
     promotion_video = models.URLField(verbose_name=_(u'Promotion video'),
                                       blank=True)
+    threshold = models.DecimalField(
+        verbose_name=_(u'Pass threshold'),
+        max_digits=4, decimal_places=2,
+        blank=True, null=True, help_text="0.00 - 10.00")
+    certification_available = models.BooleanField(default=False,
+        verbose_name=_(u'Certification available'))
+    certification_banner = models.ImageField(
+        verbose_name=_(u'Certification banner'),
+        upload_to='certification_banners', blank=True, null=True)
+    completion_badge = models.ForeignKey(
+        Badge, blank=True, null=True, verbose_name=_(u'Completion badge'),
+        related_name='course', unique=True)
 
     class Meta(Sortable.Meta):
         verbose_name = _(u'course')

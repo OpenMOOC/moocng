@@ -18,22 +18,31 @@ from datetime import datetime
 import re
 
 from tastypie import fields
-from tastypie.authorization import DjangoAuthorization
 from tastypie.resources import ModelResource
-
+# TODO replace the tastypie-openmooc with a new version with 
+# the MultiAuthentication functionality
+#from tastypie.authentication import MultiAuthentication
+from tastypie.authorization import DjangoAuthorization
 from django.conf import settings
+from django.conf.urls import url
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.http import HttpResponse
 from django.db.models.fields.files import ImageFieldFile
 
 from moocng.api.authentication import (DjangoAuthentication,
-                                       TeacherAuthentication)
-from moocng.api.authorization import (PublicReadTeachersModifyAuthorization,
-                                      TeacherAuthorization)
+                                       TeacherAuthentication,
+                                       ApiKeyAuthentication) 
+                                       
+from moocng.api.authorization import  (PublicReadTeachersModifyAuthorization,
+                                       TeacherAuthorization,
+                                       ApiKeyAuthorization,
+                                       is_api_key_authorized)
 from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment, Course)
-from moocng.courses.utils import normalize_kq_weight
+from moocng.courses.utils import normalize_kq_weight, calculate_course_mark
+
 from moocng.videos.utils import extract_YT_video_id
 
 
@@ -43,6 +52,7 @@ class CourseResource(ModelResource):
         queryset = Course.objects.all()
         resource_name = 'course'
         allowed_methods = ['get']
+        excludes = ['certification_banner']
         authentication = DjangoAuthentication()
         authorization = DjangoAuthorization()
 
@@ -464,12 +474,15 @@ class UserResource(ModelResource):
         resource_name = 'user'
         queryset = User.objects.all()
         allowed_methods = ['get']
-        authentication = TeacherAuthentication()
+#        authentication = MultiAuthentication(TeacherAuthentication(),
+#                                             ApiKeyAuthentication)
+        authentication = DjangoAuthentication()
         authorization = DjangoAuthorization()
-        fields = ['id', 'first_name', 'last_name']
+        fields = ['id', 'first_name', 'last_name', 'email']
         filtering = {
             'first_name': ['istartswith'],
-            'last_name': ['istartswith']
+            'last_name': ['istartswith'],
+            'email': ('exact')
         }
 
     def apply_filters(self, request, applicable_filters):
@@ -481,3 +494,68 @@ class UserResource(ModelResource):
             return self.get_object_list(request).filter(Qfilter)
         else:
             return self.get_object_list(request)
+
+    def override_urls(self):
+        return [
+            url(r"^(?P<resource_name>%s)/(?P<pk>[^/]+)/allcourses/$" % self._meta.resource_name,
+                self.wrap_view('get_courses'), name="get_courses_as_student"),
+            url(r"^(?P<resource_name>%s)/(?P<pk>[^/]+)/passedcourses/$" % self._meta.resource_name,
+                self.wrap_view('get_passed_courses'),
+                name="get_passed_courses_as_student"),
+        ]
+
+    def get_object(self, request, kwargs):
+        try:
+            if not kwargs['pk'].isdigit():
+                kwargs['email'] = kwargs['pk']
+                del kwargs['pk']
+            obj = self.cached_obj_get(request=request,
+                                      **self.remove_api_resource_names(kwargs))
+        except self.Meta.object_class.DoesNotExist:
+            return HttpResponse(status=404)
+        return obj
+
+    def alt_get_list(self, request, courses):
+        resource = CourseResource()
+
+        sorted_objects = resource.apply_sorting(courses,
+                                                options=request.GET)
+        paginator = resource._meta.paginator_class(
+            request.GET, sorted_objects,
+            resource_uri=resource.get_resource_list_uri(),
+            limit=resource._meta.limit)
+        to_be_serialized = paginator.page()
+
+        # Dehydrate the bundles in preparation for serialization.
+        bundles = [resource.build_bundle(obj=obj, request=request)
+                   for obj in to_be_serialized['objects']]
+        to_be_serialized['objects'] = [resource.full_dehydrate(bundle)
+                                       for bundle in bundles]
+        to_be_serialized = resource.alter_list_data_to_serialize(
+            request, to_be_serialized)
+        return resource.create_response(request, to_be_serialized)
+
+    @is_api_key_authorized
+    def get_courses(self, request, **kwargs):
+        obj = self.get_object(request, kwargs)
+        if isinstance(obj, HttpResponse):
+            return obj
+        courses = obj.courses_as_student.all()
+        return self.alt_get_list(request, courses)
+
+    @is_api_key_authorized
+    def get_passed_courses(self, request, **kwargs):
+        obj = self.get_object(request, kwargs)
+        if isinstance(obj, HttpResponse):
+            return obj
+        courses = obj.courses_as_student.all()
+        passed_courses = []
+
+        for course in courses:
+            if course.threshold is not None:
+                total_mark, units_info = calculate_course_mark(course,
+                                                               request.user)
+                if not float(course.threshold) < total_mark:
+                    passed_courses.append(course)
+
+        return self.alt_get_list(request, passed_courses)

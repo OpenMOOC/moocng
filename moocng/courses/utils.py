@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Copyright 2012 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +14,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# -*- coding: utf-8 -*-
 
 from datetime import datetime, date
+
+from django.conf import settings
 
 from moocng.api.mongodb import get_db
 from moocng.courses.models import Course
 
 
-def calculate_unit_mark(unit, user):
+def calculate_course_mark(course, user):
+    from moocng.courses.models import Unit
+    use_old_calculus = False
+    if course.slug in settings.COURSES_USING_OLD_TRANSCRIPT:
+        use_old_calculus = True
+    total_mark = 0
+    unit_list = Unit.objects.filter(course=course)
+    units_info = []
+    for unit in unit_list:
+        unit_info = {}
+        mark, relative_mark = calculate_unit_mark(unit, user, use_old_calculus)
+        total_mark += relative_mark
+        unit_info = {
+            'unit': unit,
+            'mark': mark,
+            'normalized_weight': normalize_unit_weight(unit, use_old_calculus),
+        }
+        units_info.append(unit_info)
+    return total_mark, units_info
+
+
+def calculate_unit_mark(unit, user, use_old_calculus=False):
     from moocng.courses.models import KnowledgeQuantum
     unit_kqs = KnowledgeQuantum.objects.filter(unit=unit)
     unit_mark = 0
@@ -31,7 +55,7 @@ def calculate_unit_mark(unit, user):
     if unit_mark == 0:
         return [0, 0]
     else:
-        normalized_unit_weight = normalize_unit_weight(unit)
+        normalized_unit_weight = normalize_unit_weight(unit, use_old_calculus)
         # returns the absolute mark and the mark in relation with the course
         return [unit_mark, (normalized_unit_weight * unit_mark) / 100.0]
 
@@ -49,7 +73,7 @@ def calculate_kq_mark(kq, user):
                 if answer and question[0].is_correct(answer):
                     return (normalize_kq_weight(kq) * 10.0) / 100
                 else:
-                    if kq.unit.deadline is not None and kq.unit.deadline > datetime.now():
+                    if kq.unit.deadline is not None and kq.unit.deadline > datetime.now(kq.unit.deadline.tzinfo):
                         return 0
         else:
             activity = db.get_collection('activity')
@@ -59,7 +83,7 @@ def calculate_kq_mark(kq, user):
                 if unicode(kq.id) in visited_kqs:
                     return (normalize_kq_weight(kq) * 10.0) / 100
                 else:
-                    if kq.unit.deadline is not None and kq.unit.deadline > datetime.now():
+                    if kq.unit.deadline is not None and kq.unit.deadline > datetime.now(kq.unit.deadline.tzinfo):
                         return 0
     except AttributeError:
         pass
@@ -73,19 +97,31 @@ def normalize_kq_weight(kq):
     for unit_kq in unit_kq_list:
         total_weight += unit_kq.weight
     if total_weight == 0:
-        return 100.0 / len(unit_kq_list)
+        if len(unit_kq_list) == 0:
+            return 0
+        else:
+            return 100.0 / len(unit_kq_list)
     return (kq.weight * 100.0) / total_weight
 
 
-def normalize_unit_weight(unit):
+def normalize_unit_weight(unit, use_old_calculus=False):
     from moocng.courses.models import Unit
-    course_unit_list = Unit.objects.filter(course=unit.course)
+    weight = unit.weight
+    if use_old_calculus:
+        course_unit_list = Unit.objects.filter(course=unit.course)
+    else:
+        course_unit_list = Unit.objects.filter(course=unit.course).exclude(unittype='n')
+        if unit.unittype == 'n':
+            weight = 0
     total_weight = 0
     for course_unit in course_unit_list:
         total_weight += course_unit.weight
     if total_weight == 0:
-        return 100.0 / len(course_unit_list)
-    return (unit.weight * 100.0) / total_weight
+        if len(course_unit_list) == 0:
+            return 0
+        else:
+            return 100.0 / len(course_unit_list)
+    return (weight * 100.0) / total_weight
 
 
 def show_material_checker(course, user):
@@ -105,3 +141,14 @@ def is_teacher(user, courses):
         for course in courses:
             is_teacher = is_teacher or course.teachers.filter(id=user.id).exists()
     return is_teacher
+
+
+UNIT_BADGE_CLASSES = {
+    'n': 'badge-inverse',
+    'h': 'badge-warning',
+    'e': 'badge-important',
+}
+
+
+def get_unit_badge_class(unit):
+    return UNIT_BADGE_CLASSES[unit.unittype]

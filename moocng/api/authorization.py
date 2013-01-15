@@ -15,6 +15,8 @@
 # limitations under the License.
 
 from tastypie.authorization import Authorization
+from django.conf import settings
+from django.http import HttpResponse
 
 from moocng.courses.models import Course
 from moocng.courses.utils import is_teacher
@@ -37,3 +39,24 @@ class TeacherAuthorization(Authorization):
         return (request.user.is_authenticated() and
                 (is_teacher(request.user, Course.objects.all()) or
                  request.user.is_staff))
+
+
+class ApiKeyAuthorization(Authorization):
+    def is_authorized(self, request, object=None):
+        key = request.GET.get('key', 'nope')
+        if key == settings.USER_API_KEY:
+            return True
+        else:
+            return False
+
+
+def is_api_key_authorized(original_function=None):
+    auth = ApiKeyAuthorization()
+
+    def decorated(resource, request, *args, **kwargs):
+        if auth.is_authorized(request):
+            return original_function(resource, request, **kwargs)
+        else:
+            return HttpResponse("Unauthorized", status=401)
+
+    return decorated

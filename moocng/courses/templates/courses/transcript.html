@@ -5,40 +5,48 @@
 {% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
 
 {% block content %}
-<div class="media-box">
-  <a href="#">
-    <img src="{{ theme.top_banner }}" alt="" />
-  </a>
-</div>
 
 <div class="row">
-  <section class="span8">
+  <section class="span12">
     <h1 class="content-title">{% trans "My transcript" %}</h1>
 
     {% for course_info in courses_info %}
-    <div class="box">
+    <div class="box" id="{{ course_info.course.slug }}" name="{{ course_info.course.slug }}">
       <h2><a href="{{ course_info.course.get_absolute_url }}">{{ course_info.course.name }}</a></h2>
       <p>{% trans "Mark" %}: <b>{{ course_info.mark|floatformat:"-2" }}</b>/10 </p>
         {% if course_info.units_info %}
             <ul>
             {% for unit_info in course_info.units_info %}
-                <li><a href="{% url course_overview course_info.course.slug %}classroom/#unit{{ unit_info.unit.id }}">{{ unit_info.unit.title }}</a> <b> {{ unit_info.mark|floatformat:"-2" }}</b>/10   ({{ unit_info.normalized_weight|floatformat:"-2" }}%)</li>
-            {% endfor %}        
+                {% if not unit_info.hide %}
+                    <li><span class="badge {{ unit_info.badge_class }}">{{ unit_info.unit.unittype|capfirst }}</span> <a href="{% url course_overview   course_info.course.slug %}classroom/#unit{{ unit_info.unit.id }}">{{ unit_info.unit.title }}</a> <b> {{ unit_info.mark|floatformat:"-2" }}</b>/10   ({{ unit_info.normalized_weight|floatformat:"-2" }}%)</li>
+                {% endif %}
+            {% endfor %}
             </ul>
         {% endif%}
+        {% if course_info.award %}
+            <p>{% trans "Congratulations, you have completed" %} "{{ course_info.course.name }}". {% trans "Here is a badge!" %}</p>
+            <p>
+                <img src="{{ course_info.award.get_image_url }}" alt="{{ course_info.award.badge.title }}" title="{{ course_info.award.badge.title }}" width="50" height="50" class="award" />
+                <code>{{ course_info.award.get_image_public_url }}</code>
+            </p>
+        {% endif %}
+        {% if course_info.course.certification_available %}
+            {% if course_info.passed %}
+                <p><a target="_new" href="{{ course_info.cert_url }}" class="btn btn-success">{% trans "I want a certificate of completion for this course" %}</a>
+                    <a target="_new" href="{% url cert %}" ><small>{% trans "Read more" %}</small></a>
+                </p>
+                
+            {% else %}
+                <p>{% trans "You need to complete the course before asking for a certificate of completion." %}</p>
+            {% endif %}
+        {% else %}
+                <p>{% trans "No certificate available for this course." %}</p>
+        {% endif %}
     </div>
     {% empty %}
       <p><b>{% trans "You are not enrolled in any course" %}</b></p>
     {% endfor %}
 
   </section>
-  <div class="span4">
-    <div class="media-box">
-      <img src="{{ theme.right_banner1 }}" alt="" />
-    </div>
-    <div class="media-box">
-      <img src="{{ theme.right_banner2 }}" alt="" />
-    </div>
-  </div>
 </div>
 {% endblock %}
