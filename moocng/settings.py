@@ -316,7 +316,6 @@ USER_API_KEY = '123456789'
 # where the normal units counted
 COURSES_USING_OLD_TRANSCRIPT = []
 
-
 # Celery settings
 import djcelery
 djcelery.setup_loader()

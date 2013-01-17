@@ -19,30 +19,29 @@ import re
 
 from tastypie import fields
 from tastypie.resources import ModelResource
-# TODO replace the tastypie-openmooc with a new version with 
+# TODO replace the tastypie-openmooc with a new version with
 # the MultiAuthentication functionality
 #from tastypie.authentication import MultiAuthentication
 from tastypie.authorization import DjangoAuthorization
+
 from django.conf import settings
 from django.conf.urls import url
 from django.contrib.auth.models import User
 from django.db.models import Q
-from django.http import HttpResponse
 from django.db.models.fields.files import ImageFieldFile
+from django.http import HttpResponse
 
 from moocng.api.authentication import (DjangoAuthentication,
-                                       TeacherAuthentication,
-                                       ApiKeyAuthentication) 
-                                       
-from moocng.api.authorization import  (PublicReadTeachersModifyAuthorization,
-                                       TeacherAuthorization,
-                                       ApiKeyAuthorization,
-                                       is_api_key_authorized)
+                                       TeacherAuthentication)
+                                       #ApiKeyAuthentication)
+from moocng.api.authorization import (PublicReadTeachersModifyAuthorization,
+                                      TeacherAuthorization,
+                                      #ApiKeyAuthorization,
+                                      is_api_key_authorized)
 from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment, Course)
 from moocng.courses.utils import normalize_kq_weight, calculate_course_mark
-
 from moocng.videos.utils import extract_YT_video_id
 
 
@@ -468,13 +467,25 @@ class ActivityResource(MongoResource):
         return {course_id: {'kqs': []}}
 
 
+#class UserResource(ModelResource):
+    #class Meta:
+        #queryset = User.objects.all()
+        #resource_name = 'user'
+        #authorization = ApiKeyAuthorization()
+        #allowed_methods = ['get']
+        #fields = ['id', 'email']
+        #filtering = {
+            #'email': ('exact'),
+        #}
+
+
 class UserResource(ModelResource):
 
     class Meta:
         resource_name = 'user'
         queryset = User.objects.all()
         allowed_methods = ['get']
-#        authentication = MultiAuthentication(TeacherAuthentication(),
+# TODO       authentication = MultiAuthentication(TeacherAuthentication(),
 #                                             ApiKeyAuthentication)
         authentication = DjangoAuthentication()
         authorization = DjangoAuthorization()

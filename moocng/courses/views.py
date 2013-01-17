@@ -27,11 +27,8 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
 from moocng.badges.models import Award
-from moocng.courses.utils import (calculate_course_mark, get_unit_badge_class,
-                                  show_material_checker,
-                                  is_teacher as is_teacher_test)
 from moocng.courses.models import Course, Unit, Announcement
-from moocng.courses.utils import (calculate_unit_mark, normalize_unit_weight,
+from moocng.courses.utils import (calculate_course_mark, get_unit_badge_class,
                                   show_material_checker,
                                   is_teacher as is_teacher_test)
 
@@ -39,8 +36,8 @@ from moocng.courses.utils import (calculate_unit_mark, normalize_unit_weight,
 def home(request):
     courses = Course.objects.exclude(end_date__lt=date.today())
     return render_to_response('courses/home.html', {
-            'courses': courses,
-            }, context_instance=RequestContext(request))
+        'courses': courses,
+    }, context_instance=RequestContext(request))
 
 
 def flatpage(request, page=""):
@@ -83,20 +80,13 @@ def course_overview(request, course_slug):
     announcements = Announcement.objects.filter(course=course).order_by('datetime').reverse()[:5]
 
     return render_to_response('courses/overview.html', {
-            'course': course,
-            'is_enrolled': is_enrolled,
-            'show_material': show_material,
-            'is_teacher': is_teacher,
-            'request': request,
-            'announcements': announcements,
-            }, context_instance=RequestContext(request))
-
-
-unit_badge_classes = {
-    'n': 'badge-inverse',
-    'h': 'badge-warning',
-    'e': 'badge-important',
-}
+        'course': course,
+        'is_enrolled': is_enrolled,
+        'show_material': show_material,
+        'is_teacher': is_teacher,
+        'request': request,
+        'announcements': announcements,
+    }, context_instance=RequestContext(request))
 
 
 @login_required
@@ -157,7 +147,7 @@ def course_progress(request, course_slug):
     return render_to_response('courses/progress.html', {
         'course': course,
         'unit_list': units,
-        'is_enrolled': is_enrolled, #required due course nav templatetag
+        'is_enrolled': is_enrolled,  # required due course nav templatetag
         'show_material': show_material,
         'is_teacher': is_teacher_test(request.user, course),
     }, context_instance=RequestContext(request))
@@ -184,7 +174,7 @@ def transcript(request):
             use_old_calculus = True
         total_mark, units_info = calculate_course_mark(course, request.user)
         award = None
-        passed = False        
+        passed = False
         if course.threshold is not None and not float(course.threshold) < total_mark:
             passed = True
             cert_url = '%s/idactividad/%s/email/%s' % (settings.CERTIFICATE_URL, course.id, request.user.email)

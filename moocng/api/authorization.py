@@ -14,9 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from tastypie.authorization import Authorization
 from django.conf import settings
 from django.http import HttpResponse
+
+from tastypie.authorization import Authorization
 
 from moocng.courses.models import Course
 from moocng.courses.utils import is_teacher
