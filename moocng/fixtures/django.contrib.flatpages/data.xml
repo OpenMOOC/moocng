@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <django-objects version="1.0">
+    <object pk="11" model="flatpages.flatpage">
+        <field type="CharField" name="url">/cert-en/</field>
+        <field type="CharField" name="title">Certification</field>
+        <field type="TextField" name="content">&lt;p&gt;Pellentesque sed quam id augue commodo auctor id sed odio. Vestibulum placerat, leo tempor semper gravida, mauris augue ornare lectus, vel bibendum massa mi quis tellus. In rutrum imperdiet diam, id lacinia purus sollicitudin eu. Morbi at libero aliquam sapien varius iaculis. Sed auctor, tellus sed cursus bibendum, enim arcu porttitor eros, eget rhoncus erat nunc et lorem. Pellentesque suscipit lorem at tellus ullamcorper ornare consequat arcu venenatis. Nulla in mollis elit.&lt;/p&gt;
+
+&lt;p&gt;Etiam sagittis, felis eget facilisis fermentum, augue magna commodo arcu, non convallis sem nunc non nisl. Vestibulum vitae eros non mauris commodo ullamcorper. Proin bibendum aliquet tempor. Maecenas venenatis lectus magna. Ut justo mi, ullamcorper eu tincidunt vitae, aliquam vitae odio. Suspendisse elit massa, rutrum ut facilisis id, luctus quis erat. Cras ornare cursus lacus eu vulputate. Nulla placerat risus eget eros placerat sollicitudin. Etiam vel facilisis nisi. Curabitur egestas tincidunt diam ac euismod. Curabitur euismod faucibus quam, vel lobortis dui sagittis congue. Integer nec risus mauris. Quisque ac risus eget lectus aliquam blandit. Maecenas volutpat metus sed turpis ullamcorper fermentum. Morbi tortor ipsum, viverra id adipiscing vel, egestas at nulla. Phasellus rutrum consequat arcu, tristique accumsan sem sagittis vitae.&lt;/p&gt;
+
+&lt;p&gt;Integer eget lectus at dui fringilla auctor id mollis elit. Phasellus velit orci, posuere malesuada cursus cursus, commodo lobortis diam. Curabitur nibh nisi, blandit eget posuere nec, eleifend a leo. Praesent et nibh sed felis sagittis ultrices. Aliquam fringilla diam sit amet quam dignissim cursus. Curabitur sed massa sem, ut bibendum augue. Sed egestas risus eu est eleifend vel dapibus massa posuere. Praesent sed lobortis nunc. Nunc id velit ut ante elementum commodo. Praesent varius ullamcorper elementum. Integer tincidunt commodo turpis, non ullamcorper nunc iaculis nec. Morbi at sapien odio.&lt;/p&gt;</field>
+        <field type="BooleanField" name="enable_comments">False</field>
+        <field type="CharField" name="template_name"></field>
+        <field type="BooleanField" name="registration_required">False</field>
+        <field to="sites.site" name="sites" rel="ManyToManyRel"><object pk="1"></object></field>
+    </object>
+    <object pk="12" model="flatpages.flatpage">
+        <field type="CharField" name="url">/cert-es/</field>
+        <field type="CharField" name="title">Certificación</field>
+        <field type="TextField" name="content">&lt;p&gt;Pellentesque sed quam id augue commodo auctor id sed odio. Vestibulum placerat, leo tempor semper gravida, mauris augue ornare lectus, vel bibendum massa mi quis tellus. In rutrum imperdiet diam, id lacinia purus sollicitudin eu. Morbi at libero aliquam sapien varius iaculis. Sed auctor, tellus sed cursus bibendum, enim arcu porttitor eros, eget rhoncus erat nunc et lorem. Pellentesque suscipit lorem at tellus ullamcorper ornare consequat arcu venenatis. Nulla in mollis elit.&lt;/p&gt;
+
+&lt;p&gt;Etiam sagittis, felis eget facilisis fermentum, augue magna commodo arcu, non convallis sem nunc non nisl. Vestibulum vitae eros non mauris commodo ullamcorper. Proin bibendum aliquet tempor. Maecenas venenatis lectus magna. Ut justo mi, ullamcorper eu tincidunt vitae, aliquam vitae odio. Suspendisse elit massa, rutrum ut facilisis id, luctus quis erat. Cras ornare cursus lacus eu vulputate. Nulla placerat risus eget eros placerat sollicitudin. Etiam vel facilisis nisi. Curabitur egestas tincidunt diam ac euismod. Curabitur euismod faucibus quam, vel lobortis dui sagittis congue. Integer nec risus mauris. Quisque ac risus eget lectus aliquam blandit. Maecenas volutpat metus sed turpis ullamcorper fermentum. Morbi tortor ipsum, viverra id adipiscing vel, egestas at nulla. Phasellus rutrum consequat arcu, tristique accumsan sem sagittis vitae.&lt;/p&gt;
+
+&lt;p&gt;Integer eget lectus at dui fringilla auctor id mollis elit. Phasellus velit orci, posuere malesuada cursus cursus, commodo lobortis diam. Curabitur nibh nisi, blandit eget posuere nec, eleifend a leo. Praesent et nibh sed felis sagittis ultrices. Aliquam fringilla diam sit amet quam dignissim cursus. Curabitur sed massa sem, ut bibendum augue. Sed egestas risus eu est eleifend vel dapibus massa posuere. Praesent sed lobortis nunc. Nunc id velit ut ante elementum commodo. Praesent varius ullamcorper elementum. Integer tincidunt commodo turpis, non ullamcorper nunc iaculis nec. Morbi at sapien odio.&lt;/p&gt;</field>
+        <field type="BooleanField" name="enable_comments">False</field>
+        <field type="CharField" name="template_name"></field>
+        <field type="BooleanField" name="registration_required">False</field>
+        <field to="sites.site" name="sites" rel="ManyToManyRel"><object pk="1"></object></field>
+    </object>
     <object pk="7" model="flatpages.flatpage">
         <field type="CharField" name="url">/copyright-en/</field>
         <field type="CharField" name="title">OpenMooc copyright</field>
