@@ -177,7 +177,10 @@ def transcript(request):
         passed = False
         if course.threshold is not None and float(course.threshold) <= total_mark:
             passed = True
-            cert_url = '%s/idactividad/%s/email/%s' % (settings.CERTIFICATE_URL, course.id, request.user.email)
+            cert_url = settings.CERTIFICATE_URL % {
+                'courseid': course.id,
+                'email': request.user.email
+            }
             badge = course.completion_badge
             if badge is not None:
                 try:
