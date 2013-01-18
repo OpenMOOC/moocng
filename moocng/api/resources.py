@@ -566,7 +566,7 @@ class UserResource(ModelResource):
             if course.threshold is not None:
                 total_mark, units_info = calculate_course_mark(course,
                                                                request.user)
-                if not float(course.threshold) < total_mark:
+                if float(course.threshold) <= total_mark:
                     passed_courses.append(course)
 
         return self.alt_get_list(request, passed_courses)
