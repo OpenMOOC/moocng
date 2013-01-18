@@ -1,5 +1,6 @@
 build/
 dist/
+moocng/media
 moocng/local_settings.py
 docs/build
 
