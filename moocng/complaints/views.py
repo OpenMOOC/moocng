@@ -31,11 +31,15 @@ def complaints(request):
             return HttpResponseRedirect('/complaints/sent')
     else:
         if request.user.is_authenticated():
+            name = ''
             full_name = request.user.get_full_name()
             if full_name:
-                name = "%s (%s)" % (request.user.username, full_name)
-            else:
-                name = request.user.username
+                name = full_name
+            if request.user.username != request.user.email:
+                if name:
+                    name += " (%s)" % request.user.username
+                else:
+                    name = request.user.username
             initial = {
                 "username": name,
                 "sender": request.user.email,
