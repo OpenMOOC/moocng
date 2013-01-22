@@ -158,7 +158,7 @@ msgid ""
 "I have read and agree with the terms of use (<a href=\"/tos\">See Terms of "
 "Use</a>)"
 msgstr ""
-"He leido y estoy de acuerdo con los términos de uso (<a href=\"/tos\">Ver "
+"He leído y estoy de acuerdo con los términos de uso (<a href=\"/tos\">Ver "
 "Términos de Uso</a>)"
 
 #: complaints/forms.py:32

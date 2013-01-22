@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from django.conf import settings
 from django.core.mail import mail_admins
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -23,16 +22,32 @@ def complaints(request):
     if request.method == 'POST':
         form = ComplaintsForm(request.POST)
         if form.is_valid():
-            subject = "%s | %s" % (form.cleaned_data['communication_type'], form.cleaned_data['username'])
+            communication_type = form.cleaned_data['communication_type']
+            subject = "%s | %s <%s>" % (communication_type.title(),
+                                        form.cleaned_data['username'],
+                                        form.cleaned_data['sender'])
             message = form.cleaned_data['message']
             mail_admins(subject, message)
             return HttpResponseRedirect('/complaints/sent')
     else:
-        form = ComplaintsForm()
+        if request.user.is_authenticated():
+            full_name = request.user.get_full_name()
+            if full_name:
+                name = "%s (%s)" % (request.user.username, full_name)
+            else:
+                name = request.user.username
+            initial = {
+                "username": name,
+                "sender": request.user.email,
+            }
+        else:
+            initial = {}
+        form = ComplaintsForm(initial=initial)
 
     return render(request, 'complaints.html', {
         'form': form,
     })
+
 
 def sent(request):
     return render(request, 'complaints_sent.html')
