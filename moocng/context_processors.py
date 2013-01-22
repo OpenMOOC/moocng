@@ -80,16 +80,6 @@ def certificate_url(request):
     return context
 
 
-def certificate_url(request):
-    context = {}
-    try:
-        context['certificate_provider_url'] = settings.CERTIFICATE_URL
-    except AttributeError:
-        context['certificate_provider_url'] = '#'
-
-    return context
-
-
 def idp_urls(request):
     try:
         registry_url = settings.REGISTRY_URL
