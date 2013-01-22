@@ -307,11 +307,7 @@
             if (value) {
                 if (numerical) {
                     value = parseInt(value, 10);
-                }
-                if (this.model.get("optiontype") === 'l' && prop === "solution") {
-                    prop = "text";
-                }
-                if (value.toLocaleLowerCase() === "true" && this.model.get("optiontype") === 'r') {
+                } else if (value.toLowerCase() === "true" && this.model.get("optiontype") === 'r') {
                     // Update the solution stored in the other radio models
                     _.each(
                         MOOC.views.current_index_view.collection.filter(function (model) {
@@ -321,6 +317,10 @@
                             radio.set(prop, false);
                         }
                     );
+                }
+
+                if (this.model.get("optiontype") === 'l' && prop === "solution") {
+                    prop = "text";
                 }
 
                 this.model.set(prop, value);
