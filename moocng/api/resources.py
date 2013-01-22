@@ -258,7 +258,10 @@ class QuestionResource(ModelResource):
         return extract_YT_video_id(bundle.obj.solution)
 
     def dehydrate_last_frame(self, bundle):
-        return bundle.obj.last_frame.url
+        try:
+            return bundle.obj.last_frame.url
+        except ValueError:
+            return "%simg/no-image.png" % settings.STATIC_URL
 
 
 class PrivateQuestionResource(ModelResource):
