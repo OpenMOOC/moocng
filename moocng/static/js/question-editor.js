@@ -239,12 +239,17 @@
         },
 
         render: function () {
-            var optiontype = this.model.get('optiontype');
+            var optiontype = this.model.get('optiontype'),
+                solution = this.model.get('solution');
+
+            if (optiontype === 'c' || optiontype === 'r') {
+                solution = solution.toLowerCase();
+            }
 
             this.$el
                 .find('#option-id').html(this.model.get('id')).end()
                 .find('#option-optiontype').change(this.change_property_handler(['optiontype', false])).val(this.model.get('optiontype')).end()
-                .find('#option-solution').change(this.change_property_handler(['solution', false])).val(this.model.get('solution')).end()
+                .find('#option-solution').change(this.change_property_handler(['solution', false])).val(solution).end()
                 .find('#option-x').change(this.change_property_handler(['x', true])).val(this.model.get('x')).end()
                 .find('#option-y').change(this.change_property_handler(['y', true])).val(this.model.get('y'));
 
