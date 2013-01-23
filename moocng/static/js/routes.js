@@ -208,6 +208,7 @@ MOOC.init = function (course_id, KQRoute) {
 
     MOOC.router = new MOOC.App();
     MOOC.router.route("unit:unit", "unit");
+    MOOC.host = window.location.protocol + '//' + window.location.host;
     if (KQRoute) {
         MOOC.router.route("unit:unit/kq:kq", "kq");
         MOOC.router.route("unit:unit/kq:kq/q", "kqQ");

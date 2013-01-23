@@ -83,7 +83,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
         html = '<iframe id="ytplayer" width="100%" height="' + height + 'px" ';
         html += 'src="//www.youtube.com/embed/' + this.model.get("videoID");
-        html += '?rel=0';
+        html += '?rel=0&origin=' + MOOC.host;
         html += '" frameborder="0" allowfullscreen></iframe>';
         $("#kq-video").html(html);
 
@@ -372,8 +372,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             if (!_.isNull(this.model.get("questionInstance").get("solution"))) {
                 html = '<iframe id="ytplayer" width="100%" height="' + height + 'px" ';
                 html += 'src="//www.youtube.com/embed/' + this.model.get("questionInstance").get("solution");
-                html += '?rel=0';
-                html += '" frameborder="0" allowfullscreen></iframe>';
+                html += '?rel=0&origin=' + MOOC.host + '" frameborder="0" allowfullscreen></iframe>';
             } else {
                 MOOC.alerts.show(MOOC.alerts.INFO, MOOC.trans.api.solutionNotReadyTitle, MOOC.trans.api.solutionNotReady);
             }
