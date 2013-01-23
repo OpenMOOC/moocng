@@ -242,8 +242,8 @@
             var optiontype = this.model.get('optiontype'),
                 solution = this.model.get('solution');
 
-            if (optiontype === 'c' || optiontype === 'r') {
-                solution = solution.toLowerCase();
+            if ((optiontype === 'c' || optiontype === 'r') && _.isString(solution)) {
+                solution = solution.toLowerCase() === "true";
             }
 
             this.$el
