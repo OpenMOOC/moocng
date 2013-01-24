@@ -19,6 +19,8 @@ urlpatterns = patterns(
     'moocng.teacheradmin.views',
 
     url(r'^$', 'teacheradmin_stats', name='teacheradmin_stats'),
+    url(r'^stats/units$', 'teacheradmin_stats_units', name='teacheradmin_stats_units'),
+    url(r'^stats/kqs$', 'teacheradmin_stats_kqs', name='teacheradmin_stats_kqs'),
 
     url(r'^units/$', 'teacheradmin_units', name='teacheradmin_units'),
     url(r'^units/forcevideoprocess$', 'teacheradmin_units_forcevideoprocess',

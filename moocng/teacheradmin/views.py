@@ -43,11 +43,31 @@ from moocng.videos.tasks import process_video_task
 def teacheradmin_stats(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     is_enrolled = course.students.filter(id=request.user.id).exists()
+    data = {}
 
     return render_to_response('teacheradmin/stats.html', {
         'course': course,
         'is_enrolled': is_enrolled,
+        'initial_data': simplejson.dumps(data),
     }, context_instance=RequestContext(request))
+
+
+@is_teacher_or_staff
+def teacheradmin_stats_units(request, course_slug):
+    course = get_object_or_404(Course, slug=course_slug)
+    data = []
+
+    return HttpResponse(simplejson.dumps(data),
+                        mimetype='application/json')
+
+
+@is_teacher_or_staff
+def teacheradmin_stats_kqs(request, course_slug):
+    course = get_object_or_404(Course, slug=course_slug)
+    data = []
+
+    return HttpResponse(simplejson.dumps(data),
+                        mimetype='application/json')
 
 
 @is_teacher_or_staff
