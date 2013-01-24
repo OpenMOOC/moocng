@@ -28,9 +28,10 @@ from django.utils.translation import ugettext as _
 
 from gravatar.templatetags.gravatar import gravatar_img_for_email
 
+from moocng.api.mongodb import get_db
 from moocng.courses.models import Course, KnowledgeQuantum, Option, Announcement
 from moocng.courses.forms import AnnouncementForm
-from moocng.courses.utils import UNIT_BADGE_CLASSES
+from moocng.courses.utils import UNIT_BADGE_CLASSES, calculate_course_mark
 from moocng.teacheradmin.decorators import is_teacher_or_staff
 from moocng.teacheradmin.forms import CourseForm
 from moocng.teacheradmin.models import Invitation
@@ -43,7 +44,34 @@ from moocng.videos.tasks import process_video_task
 def teacheradmin_stats(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     is_enrolled = course.students.filter(id=request.user.id).exists()
-    data = {}
+
+    data = {
+        'enrolled': course.students.count(),
+        'teachers': course.teachers.count(),
+        'started': 0,
+        'completed': 0
+    }
+
+    if course.threshold is not None:
+        data['passed'] = 0
+        for student in course.students.all():
+            if calculate_course_mark(course, student)[0] >= float(course.threshold):
+                data['passed'] += 1
+
+    mongodb = get_db()
+    units = course.unit_set.all()
+    kqs = 0
+    for unit in units:
+        kqs += unit.knowledgequantum_set.count()
+    for student in course.students.all():
+        activity = mongodb.get_collection('activity')
+        user_activity_list = activity.find_one({'user': student.id}, safe=True)
+        if user_activity_list is not None:
+            visited_kqs = user_activity_list.get('courses', {}).get(unicode(course.id), {}).get('kqs', [])
+            if len(visited_kqs) > 0:
+                data['started'] += 1
+            if len(visited_kqs) == kqs:
+                data['completed'] += 1
 
     return render_to_response('teacheradmin/stats.html', {
         'course': course,
