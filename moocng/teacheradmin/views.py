@@ -14,6 +14,7 @@
 
 from datetime import datetime
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.exceptions import ValidationError
@@ -31,7 +32,8 @@ from gravatar.templatetags.gravatar import gravatar_img_for_email
 from moocng.api.mongodb import get_db
 from moocng.courses.models import Course, KnowledgeQuantum, Option, Announcement
 from moocng.courses.forms import AnnouncementForm
-from moocng.courses.utils import UNIT_BADGE_CLASSES, calculate_course_mark
+from moocng.courses.utils import (UNIT_BADGE_CLASSES, calculate_course_mark,
+                                  calculate_unit_mark)
 from moocng.teacheradmin.decorators import is_teacher_or_staff
 from moocng.teacheradmin.forms import CourseForm
 from moocng.teacheradmin.models import Invitation
@@ -44,6 +46,7 @@ from moocng.videos.tasks import process_video_task
 def teacheradmin_stats(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     is_enrolled = course.students.filter(id=request.user.id).exists()
+    activity = get_db().get_collection('activity')
 
     data = {
         'enrolled': course.students.count(),
@@ -53,21 +56,24 @@ def teacheradmin_stats(request, course_slug):
     }
 
     if course.threshold is not None:
+        # if the course doesn't support certification, then don't return the
+        # 'passed' stat since it doesn't apply
         data['passed'] = 0
         for student in course.students.all():
             if calculate_course_mark(course, student)[0] >= float(course.threshold):
                 data['passed'] += 1
 
-    mongodb = get_db()
     units = course.unit_set.all()
     kqs = 0
     for unit in units:
         kqs += unit.knowledgequantum_set.count()
+
     for student in course.students.all():
-        activity = mongodb.get_collection('activity')
         user_activity_list = activity.find_one({'user': student.id}, safe=True)
+
         if user_activity_list is not None:
             visited_kqs = user_activity_list.get('courses', {}).get(unicode(course.id), {}).get('kqs', [])
+
             if len(visited_kqs) > 0:
                 data['started'] += 1
             if len(visited_kqs) == kqs:
@@ -84,6 +90,45 @@ def teacheradmin_stats(request, course_slug):
 def teacheradmin_stats_units(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     data = []
+    use_old_calculus = False
+    if course.slug in settings.COURSES_USING_OLD_TRANSCRIPT:
+        use_old_calculus = True
+    activity = get_db().get_collection('activity')
+
+    unit_list = course.unit_set.all()
+    for unit in unit_list:
+        unit_data = {
+            'started': 0,
+            'completed': 0
+        }
+
+        if course.threshold is not None:
+            # if the course doesn't support certification, then don't return
+            # the 'passed' stat since it doesn't apply
+            unit_data['passed'] = 0
+            for student in course.students.all():
+                if calculate_unit_mark(unit, student, use_old_calculus)[0] >= float(course.threshold):
+                    unit_data['passed'] += 1
+
+        kqs = [kq.id for kq in unit.knowledgequantum_set.all()]
+        for student in course.students.all():
+            user_activity_list = activity.find_one({'user': student.id}, safe=True)
+
+            if user_activity_list is not None:
+                visited_kqs = user_activity_list.get('courses', {}).get(unicode(course.id), {}).get('kqs', [])
+
+                started = 0
+                completed = 0
+                for kq in visited_kqs:
+                    if int(kq) in kqs:
+                        started = 1
+                        completed += 1
+
+                unit_data['started'] += started
+                if len(kqs) == completed:
+                    unit_data['completed'] += 1
+
+        data.append(unit_data)
 
     return HttpResponse(simplejson.dumps(data),
                         mimetype='application/json')
