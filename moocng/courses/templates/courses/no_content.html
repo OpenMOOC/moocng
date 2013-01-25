@@ -6,12 +6,16 @@
 <div class="row">
     <section class="span12">
         <h2>{% trans "This course is not ready yet" %}</h2>
-        <p>{% blocktrans with course_name=course.name %}The course "{{ course_name }}" hasn't started yet.{% endblocktrans %}
-        {% if course.start_date %}
-        {% blocktrans with date=course.start_date %}It starts in {{ date }}.{% endblocktrans %}
+        <p>
+        {% blocktrans with course_name=course.name %}The course "{{ course_name }}" has no content.{% endblocktrans %}
+        {% if ask_admin %}
+            {% blocktrans %}Consider <a href="{{ complaints_url }}">getting in touch with an administrator</a>.{% endblocktrans %}
+        {% else %}
+            {% blocktrans with date=course.start_date %}It starts in {{ date }}.{% endblocktrans %}
+            </p><p>
+            {% blocktrans %}Please, use this <a href="{{ complaints_url }}">contact form</a> if you have any questions.{% endblocktrans %}
         {% endif %}
         </p>
-        <p>{% trans "Please, use this" %} <a href="{% url complaints %}">{% trans "contact form" %}</a> {% trans "if you have any questions" %}.</p>
     </section>
 </div>
 {% endblock %}

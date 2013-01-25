@@ -28,7 +28,7 @@ from django.utils.translation import ugettext as _
 from moocng.badges.models import Award
 from moocng.courses.models import Course, Announcement
 from moocng.courses.utils import (calculate_course_mark, get_unit_badge_class,
-                                  show_material_checker,
+                                  show_material_checker, is_course_ready,
                                   is_teacher as is_teacher_test)
 
 
@@ -96,15 +96,14 @@ def course_classroom(request, course_slug):
     if not is_enrolled:
         return HttpResponseForbidden(_('You are not enrolled in this course'))
 
-    is_ready = course.unit_set.count() > 0
-    if is_ready and course.start_date:
-        is_ready = date.today() >= course.start_date
+    is_ready, ask_admin = is_course_ready(course)
 
     if not is_ready:
-        # course is not ready
         return render_to_response('courses/no_content.html', {
             'course': course,
             'is_enrolled': is_enrolled,
+            'ask_admin': ask_admin,
+            'complaints_url': reverse('complaints'),
         }, context_instance=RequestContext(request))
 
     units = []
@@ -138,15 +137,14 @@ def course_progress(request, course_slug):
     if not is_enrolled:
         return HttpResponseForbidden(_('You are not enrolled in this course'))
 
-    is_ready = course.unit_set.count() > 0
-    if is_ready and course.start_date:
-        is_ready = date.today() >= course.start_date
+    is_ready, ask_admin = is_course_ready(course)
 
     if not is_ready:
-        # course is not ready
         return render_to_response('courses/no_content.html', {
             'course': course,
             'is_enrolled': is_enrolled,
+            'ask_admin': ask_admin,
+            'complaints_url': reverse('complaints'),
         }, context_instance=RequestContext(request))
 
     units = []

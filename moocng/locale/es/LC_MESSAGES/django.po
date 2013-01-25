@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-25 04:47-0600\n"
+"POT-Creation-Date: 2013-01-25 05:35-0600\n"
 "PO-Revision-Date: 2012-09-18 10:35+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -480,11 +480,11 @@ msgstr "Enhorabuena, te has matriculado correctamente en el curso %(course)s"
 msgid "You have successfully unenroll in the course %(course)s"
 msgstr "Te has desmatriculado correctamente del curso %(course)s"
 
-#: courses/views.py:97 courses/views.py:139
+#: courses/views.py:97 courses/views.py:138
 msgid "You are not enrolled in this course"
 msgstr "No estás matriculado en este curso"
 
-#: courses/views.py:122 courses/views.py:164
+#: courses/views.py:121 courses/views.py:162
 msgid "You are enrolled in this course but it has not yet begun"
 msgstr "Estás matriculado en este curso pero no ha empezado aún"
 
@@ -773,27 +773,32 @@ msgstr "Terminar sesión"
 msgid "This course is not ready yet"
 msgstr "Este curso no está listo aún"
 
-#: courses/templates/courses/no_content.html:9
+#: courses/templates/courses/no_content.html:10
 #, python-format
-msgid "The course \"%(course_name)s\" hasn't started yet."
-msgstr "El curso \"%(course_name)s\" aún no ha empezado."
+msgid "The course \"%(course_name)s\" has no content."
+msgstr "El curso \"%(course_name)s\" no tiene contenido."
 
-#: courses/templates/courses/no_content.html:11
+#: courses/templates/courses/no_content.html:12
+#, python-format
+msgid ""
+"Consider <a href=\"%(complaints_url)s\">getting in touch with an "
+"administrator</a>."
+msgstr ""
+"Considere <a href=\"%(complaints_url)s\">contactar con un administrador</a>."
+
+#: courses/templates/courses/no_content.html:14
 #, python-format
 msgid "It starts in %(date)s."
 msgstr "Comienza el %(date)s."
 
-#: courses/templates/courses/no_content.html:14
-msgid "Please, use this"
-msgstr "Por favor, use este"
-
-#: courses/templates/courses/no_content.html:14
-msgid "contact form"
-msgstr "formulario de contacto"
-
-#: courses/templates/courses/no_content.html:14
-msgid "if you have any questions"
-msgstr "si tiene alguna pregunta"
+#: courses/templates/courses/no_content.html:16
+#, python-format
+msgid ""
+"Please, use this <a href=\"%(complaints_url)s\">contact form</a> if you have "
+"any questions."
+msgstr ""
+"Por favor, use este <a href=\"%(complaints_url)s\">formulario de contacto</"
+"a> si tiene alguna pregunta."
 
 #: courses/templates/courses/overview.html:23
 msgid "Course summary"
