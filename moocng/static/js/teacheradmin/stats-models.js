@@ -28,6 +28,7 @@ if (_.isUndefined(window.MOOC)) {
         defaults: function () {
             return {
                 id: -1,
+                unit: null,
                 passed: -1,
                 answered: -1,
                 viewed: -1
@@ -38,7 +39,10 @@ if (_.isUndefined(window.MOOC)) {
     MOOC.models.KnowledgeQuantumList = Backbone.Collection.extend({
         model: MOOC.models.KnowledgeQuantum,
         url: function () {
-            return MOOC.ajax.getAbsoluteUrl("kqs");
+            if this.has("unit") {
+                return MOOC.ajax.getAbsoluteUrl("kqs") + "?unit=" + this.get("unit").get("id");
+            }
+            return ""; // ERROR
         }
     });
 

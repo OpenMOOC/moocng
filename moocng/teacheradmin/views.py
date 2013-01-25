@@ -33,7 +33,7 @@ from moocng.api.mongodb import get_db
 from moocng.courses.models import Course, KnowledgeQuantum, Option, Announcement
 from moocng.courses.forms import AnnouncementForm
 from moocng.courses.utils import (UNIT_BADGE_CLASSES, calculate_course_mark,
-                                  calculate_unit_mark)
+                                  calculate_unit_mark, calculate_kq_mark)
 from moocng.teacheradmin.decorators import is_teacher_or_staff
 from moocng.teacheradmin.forms import CourseForm
 from moocng.teacheradmin.models import Invitation
@@ -98,6 +98,7 @@ def teacheradmin_stats_units(request, course_slug):
     unit_list = course.unit_set.all()
     for unit in unit_list:
         unit_data = {
+            'id': unit.id,
             'started': 0,
             'completed': 0
         }
@@ -137,7 +138,15 @@ def teacheradmin_stats_units(request, course_slug):
 @is_teacher_or_staff
 def teacheradmin_stats_kqs(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
+    if not 'unit' in request.GET:
+        return HttpResponse(status=400)
+    unit = get_object_or_404(Unit, id=request.GET['unit'])
+    if not unit in course.unit_set.all():
+        return HttpResponse(status=400)
     data = []
+    activity = get_db().get_collection('activity')
+
+    # TODO
 
     return HttpResponse(simplejson.dumps(data),
                         mimetype='application/json')
