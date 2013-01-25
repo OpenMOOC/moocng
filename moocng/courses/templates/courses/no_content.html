@@ -1,0 +1,17 @@
+{% extends "courses/base_course.html" %}
+
+{% load i18n %}
+
+{% block content %}
+<div class="row">
+    <section class="span12">
+        <h2>{% trans "This course is not ready yet" %}</h2>
+        <p>{% blocktrans with course_name=course.name %}The course "{{ course_name }}" hasn't started yet.{% endblocktrans %}
+        {% if course.start_date %}
+        {% blocktrans with date=course.start_date %}It starts in {{ date }}.{% endblocktrans %}
+        {% endif %}
+        </p>
+        <p>{% trans "Please, use this" %} <a href="{% url complaints %}">{% trans "contact form" %}</a> {% trans "if you have any questions" %}.</p>
+    </section>
+</div>
+{% endblock %}

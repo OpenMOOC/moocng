@@ -21,13 +21,12 @@ from django.contrib.flatpages.views import render_flatpage
 from django.contrib.messages import success
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponseForbidden
-from django.shortcuts import (get_object_or_404, get_list_or_404,
-                              render_to_response)
+from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
 from moocng.badges.models import Award
-from moocng.courses.models import Course, Unit, Announcement
+from moocng.courses.models import Course, Announcement
 from moocng.courses.utils import (calculate_course_mark, get_unit_badge_class,
                                   show_material_checker,
                                   is_teacher as is_teacher_test)
@@ -92,10 +91,24 @@ def course_overview(request, course_slug):
 @login_required
 def course_classroom(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
-    unit_list = get_list_or_404(Unit, course=course)
+
+    is_enrolled = course.students.filter(id=request.user.id).exists()
+    if not is_enrolled:
+        return HttpResponseForbidden(_('You are not enrolled in this course'))
+
+    is_ready = course.unit_set.count() > 0
+    if is_ready and course.start_date:
+        is_ready = date.today() >= course.start_date
+
+    if not is_ready:
+        # course is not ready
+        return render_to_response('courses/no_content.html', {
+            'course': course,
+            'is_enrolled': is_enrolled,
+        }, context_instance=RequestContext(request))
 
     units = []
-    for u in unit_list:
+    for u in course.unit_set.all():
         unit = {
             'id': u.id,
             'title': u.title,
@@ -103,10 +116,6 @@ def course_classroom(request, course_slug):
             'badge_class': get_unit_badge_class(u),
         }
         units.append(unit)
-
-    is_enrolled = course.students.filter(id=request.user.id).exists()
-    if not is_enrolled:
-        return HttpResponseForbidden(_('You are not enrolled in this course'))
 
     show_material = show_material_checker(course, request.user)
     if not show_material:
@@ -124,10 +133,24 @@ def course_classroom(request, course_slug):
 @login_required
 def course_progress(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
-    unit_list = get_list_or_404(Unit, course=course)
+
+    is_enrolled = course.students.filter(id=request.user.id).exists()
+    if not is_enrolled:
+        return HttpResponseForbidden(_('You are not enrolled in this course'))
+
+    is_ready = course.unit_set.count() > 0
+    if is_ready and course.start_date:
+        is_ready = date.today() >= course.start_date
+
+    if not is_ready:
+        # course is not ready
+        return render_to_response('courses/no_content.html', {
+            'course': course,
+            'is_enrolled': is_enrolled,
+        }, context_instance=RequestContext(request))
 
     units = []
-    for u in unit_list:
+    for u in course.unit_set.all():
         unit = {
             'id': u.id,
             'title': u.title,
@@ -135,10 +158,6 @@ def course_progress(request, course_slug):
             'badge_class': get_unit_badge_class(u),
         }
         units.append(unit)
-
-    is_enrolled = course.students.filter(id=request.user.id).exists()
-    if not is_enrolled:
-        return HttpResponseForbidden(_('You are not enrolled in this course'))
 
     show_material = show_material_checker(course, request.user)
     if not show_material:
