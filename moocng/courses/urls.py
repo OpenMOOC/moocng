@@ -27,8 +27,6 @@ urlpatterns = patterns(
         name='methodology'),
     url(r'^legal/$', 'flatpage', {'page': 'legal'}, name='legal'),
     url(r'^tos/$', 'flatpage', {'page': 'tos'}, name='tos'),
-    url(r'^copyright/$', 'flatpage', {'page': 'copyright'},
-        name='copyright'),
     url(r'^copyright/$', 'flatpage', {'page': 'copyright'}, name='copyright'),
     url(r'^cert/$', 'flatpage', {'page': 'cert'}, name='cert'),
 

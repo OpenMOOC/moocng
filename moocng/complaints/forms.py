@@ -14,6 +14,7 @@
 
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from django.utils.safestring import mark_safe
 
 
 COMUNICATION_TYPE = (('rights',_('Rights violation')),
@@ -26,7 +27,7 @@ class ComplaintsForm(forms.Form):
     sender = forms.EmailField(label=_('Email'))
     communication_type = forms.ChoiceField(label=_('Communication type'), choices=COMUNICATION_TYPE)
     message = forms.CharField(label=_('Message'), widget=forms.Textarea())
-    tos = forms.BooleanField(label="",
-                            required=True, 
-                            help_text=_('I have read and agree with the terms of use (<a href="/tos">See Terms of Use</a>)'), 
+    tos = forms.BooleanField(label=mark_safe(_('I have read and agree with the terms of use (<a href="/tos">See Terms of Use</a>)')),
+                            required=True,
                             error_messages={'required': _('You must accept the Terms of Use')})
+	

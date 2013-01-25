@@ -399,3 +399,23 @@ input[type="checkbox"] {
     height: auto;
     width: auto;
 }
+
+#complaints .errorlist {
+    color: red;
+    padding-top: 10px;
+}
+
+#complaints label[for=id_tos] {
+    display: inline;
+}
+
+#complaints .btn {
+    clear: both;
+    display: block !important;
+}
+
+#id_tos {
+    float: left;
+    margin-right: 5px;
+    margin-top: 2px;
+}

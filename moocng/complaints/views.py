@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from django.core.mail import mail_admins
+from django.core.mail import mail_managers
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from moocng.complaints.forms import ComplaintsForm
@@ -27,7 +27,7 @@ def complaints(request):
                                         form.cleaned_data['username'],
                                         form.cleaned_data['sender'])
             message = form.cleaned_data['message']
-            mail_admins(subject, message)
+            mail_managers(subject, message)
             return HttpResponseRedirect('/complaints/sent')
     else:
         if request.user.is_authenticated():

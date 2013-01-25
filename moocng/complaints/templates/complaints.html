@@ -12,9 +12,9 @@
 </div>
 
 <div class="row">
-  <section class="span8">
+  <section class="span8" id="complaints">
         <h1>{% trans "Contact" %}</h1>
-        <form action="/complaints/" method="post">{% csrf_token %}
+        <form action="/complaints/#complaints" method="post">{% csrf_token %}
             <div class="control-group">
             {{ form.as_p }}
             </div>
