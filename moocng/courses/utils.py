@@ -151,3 +151,18 @@ UNIT_BADGE_CLASSES = {
 
 def get_unit_badge_class(unit):
     return UNIT_BADGE_CLASSES[unit.unittype]
+
+
+def is_course_ready(course):
+    has_content = course.unit_set.count() > 0
+    ask_admin = False
+    if course.start_date:
+        is_ready = date.today() >= course.start_date
+        if is_ready and not has_content:
+            is_ready = False
+            ask_admin = True
+    else:
+        if not has_content:
+            is_ready = False
+            ask_admin = True
+    return (is_ready, ask_admin)

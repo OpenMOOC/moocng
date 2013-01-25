@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-17 10:34-0600\n"
+"POT-Creation-Date: 2013-01-25 05:35-0600\n"
 "PO-Revision-Date: 2012-09-18 10:35+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -470,22 +470,21 @@ msgstr "opción"
 msgid "options"
 msgstr "opciones"
 
-#: courses/views.py:69
+#: courses/views.py:68
 #, python-format
 msgid "Congratulations, you have successfully enroll in the course %(course)s"
 msgstr "Enhorabuena, te has matriculado correctamente en el curso %(course)s"
 
-#: courses/views.py:75
+#: courses/views.py:74
 #, python-format
 msgid "You have successfully unenroll in the course %(course)s"
 msgstr "Te has desmatriculado correctamente del curso %(course)s"
 
-#: courses/views.py:109 courses/views.py:141
-#, fuzzy
+#: courses/views.py:97 courses/views.py:138
 msgid "You are not enrolled in this course"
 msgstr "No estás matriculado en este curso"
 
-#: courses/views.py:113 courses/views.py:145
+#: courses/views.py:121 courses/views.py:162
 msgid "You are enrolled in this course but it has not yet begun"
 msgstr "Estás matriculado en este curso pero no ha empezado aún"
 
@@ -657,6 +656,7 @@ msgstr "Comentarios del profesor"
 
 #: courses/templates/courses/classroom.html:103
 #: courses/templates/courses/progress.html:64
+#: teacheradmin/templates/teacheradmin/stats.html:32
 #: teacheradmin/templates/teacheradmin/teachers.html:30
 #: teacheradmin/templates/teacheradmin/teachers.html:34
 #: teacheradmin/templates/teacheradmin/teachers.html:38
@@ -769,6 +769,37 @@ msgstr "Crear un curso"
 msgid "Log out"
 msgstr "Terminar sesión"
 
+#: courses/templates/courses/no_content.html:8
+msgid "This course is not ready yet"
+msgstr "Este curso no está listo aún"
+
+#: courses/templates/courses/no_content.html:10
+#, python-format
+msgid "The course \"%(course_name)s\" has no content."
+msgstr "El curso \"%(course_name)s\" no tiene contenido."
+
+#: courses/templates/courses/no_content.html:12
+#, python-format
+msgid ""
+"Consider <a href=\"%(complaints_url)s\">getting in touch with an "
+"administrator</a>."
+msgstr ""
+"Considere <a href=\"%(complaints_url)s\">contactar con un administrador</a>."
+
+#: courses/templates/courses/no_content.html:14
+#, python-format
+msgid "It starts in %(date)s."
+msgstr "Comienza el %(date)s."
+
+#: courses/templates/courses/no_content.html:16
+#, python-format
+msgid ""
+"Please, use this <a href=\"%(complaints_url)s\">contact form</a> if you have "
+"any questions."
+msgstr ""
+"Por favor, use este <a href=\"%(complaints_url)s\">formulario de contacto</"
+"a> si tiene alguna pregunta."
+
 #: courses/templates/courses/overview.html:23
 msgid "Course summary"
 msgstr "El curso"
@@ -790,9 +821,9 @@ msgid "Enroll me in this course"
 msgstr "Matricúlame en este curso"
 
 #: courses/templates/courses/overview.html:64
-#, fuzzy, python-format
+#, python-format
 msgid "Register in %(site_name)s to enroll in this course"
-msgstr "Registrarme en %(site_name)s para obtener un certificado en este curso"
+msgstr "Registrarme en %(site_name)s para matricularme en este curso"
 
 #: courses/templates/courses/overview.html:74
 #: courses/templates/courses/overview.html:76
@@ -944,12 +975,12 @@ msgstr ""
 msgid "You have been removed as teacher from \"%s\""
 msgstr "Ya no eres profesor de \"%s\""
 
-#: teacheradmin/views.py:94
+#: teacheradmin/views.py:196
 #, python-format
 msgid "The KQ with the %s id doesn't exists"
 msgstr "La Píldora con el id %s no existe"
 
-#: teacheradmin/views.py:345
+#: teacheradmin/views.py:447
 msgid "There is a announce with the same title"
 msgstr "Ya hay un comunicado con ese mismo título"
 
@@ -1024,9 +1055,16 @@ msgid "Save"
 msgstr "Guardar"
 
 #: teacheradmin/templates/teacheradmin/question.html:116
+#: teacheradmin/templates/teacheradmin/stats.html:20
 #: teacheradmin/templates/teacheradmin/units.html:27
 msgid "Go back"
 msgstr "Volver"
+
+#: teacheradmin/templates/teacheradmin/stats.html:33
+#: teacheradmin/templates/teacheradmin/teachers.html:39
+#: teacheradmin/templates/teacheradmin/units.html:180
+msgid "Something went wrong, please try again later."
+msgstr "Algo ha ido mal, por favor pruebe de nuevo más tarde."
 
 #: teacheradmin/templates/teacheradmin/teachers.html:12
 #: teacheradmin/templates/teacheradmin/teachers.html:51
@@ -1051,11 +1089,6 @@ msgstr ""
 #: teacheradmin/templates/teacheradmin/teachers.html:35
 msgid "The email introduced has already received an invitation."
 msgstr "El email introducido ya ha sido invitado a este curso."
-
-#: teacheradmin/templates/teacheradmin/teachers.html:39
-#: teacheradmin/templates/teacheradmin/units.html:180
-msgid "Something went wrong, please try again later."
-msgstr "Algo ha ido mal, por favor pruebe de nuevo más tarde."
 
 #: teacheradmin/templates/teacheradmin/teachers.html:41
 msgid "Reload"
