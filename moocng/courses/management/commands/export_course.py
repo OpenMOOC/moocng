@@ -1,10 +1,11 @@
 from optparse import make_option
 from datetime import datetime
-import os
+import tarfile
+import StringIO
 
 from django.core import serializers
-from django.utils import simplejson
 from django.core.management.base import BaseCommand, CommandError
+from django.utils import simplejson
 
 from moocng.courses.models import Course
 
@@ -20,17 +21,18 @@ class Command(BaseCommand):
                     action='store',
                     dest='filename',
                     default="",
-                    help="Filename to save the course (Don't include extension)"),
+                    help="Filename to save the course (without file extension)"),
     )
 
     def error(self, message):
-        self.stderr.write(message.encode("ascii", "replace"))
+        self.stderr.write("%s\n" % message.encode("ascii", "replace"))
 
     def message(self, message):
-        self.stdout.write(message.encode("ascii", "replace"))
+        self.stdout.write("%s\n" % message.encode("ascii", "replace"))
 
-    def save_file(self, file):
-        pass
+    def save_file(self, filefield):
+        self.message("Saving file %s" % filefield.name)
+        self.tar.add(filefield.file.name, filefield.name)
 
     def properties_dict(self, obj):
         data = serializers.serialize("json", [obj],  use_natural_keys=True)
@@ -56,12 +58,14 @@ class Command(BaseCommand):
         questions = []
         for question in kq.question_set.all():
             questions.append(self.question_dict(question))
+            self.save_file(question.last_frame)
 
         _dict["questions"] = questions
 
         attachments = []
         for attachment in kq.attachment_set.all():
             attachments.append(self.properties_dict(attachment))
+            self.save_file(attachment.attachment)
 
         _dict["attachment"] = attachments
 
@@ -106,16 +110,19 @@ class Command(BaseCommand):
 
         self.filename = filename
 
-        os.mkdir(os.path.join("/tmp", filename))
-
-        old_dir = os.getcwd()
-
-        os.chdir(filename)
+        self.tar = tarfile.open("%s.tgz" % filename, "w:gz")
 
         course_dict = self.course_dict(course)
-        with open("%s.json" % course.slug, "wt") as coursefile:
-            coursefile.write(simplejson.dumps(course_dict))
 
-        os.chdir(old_dir)
+        coursefile = StringIO.StringIO()
+        coursefile.write(simplejson.dumps(course_dict))
+        coursefile.seek(0)
 
-        # make a zip with filename directory
+        self.message("Saving course metadata file course.json")
+        tarinfo = tarfile.TarInfo(name="course.json")
+        tarinfo.size = len(coursefile.buf)
+        self.tar.addfile(tarinfo=tarinfo, fileobj=coursefile)
+
+        self.tar.close()
+
+        self.message("\n\nCourse saved in %s.tar.gz" % filename)
