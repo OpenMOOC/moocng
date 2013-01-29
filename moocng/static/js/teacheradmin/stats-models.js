@@ -28,6 +28,7 @@ if (_.isUndefined(window.MOOC)) {
         defaults: function () {
             return {
                 id: -1,
+                title: "",
                 passed: -1,
                 answered: -1,
                 viewed: -1
@@ -51,6 +52,7 @@ if (_.isUndefined(window.MOOC)) {
         defaults: function () {
             return {
                 id: -1,
+                title: "",
                 passed: -1,
                 started: -1,
                 completed: -1,
@@ -82,7 +84,6 @@ if (_.isUndefined(window.MOOC)) {
         defaults: function () {
             return {
                 enrolled: -1,
-                teachers: -1,
                 passed: -1,
                 started: -1,
                 completed: -1,
@@ -90,6 +91,20 @@ if (_.isUndefined(window.MOOC)) {
                 slug: undefined,
                 units: new MOOC.models.UnitList()
             };
+        },
+
+        getData: function () {
+            var result = {
+                enrolled: this.get("enrolled"),
+                started: this.get("started"),
+                completed: this.get("completed")
+            };
+
+            if (this.get("passed") >= 0) {
+                result.passed = this.get("passed");
+            }
+
+            return result;
         },
 
         getUnitByID: function (unitID) {

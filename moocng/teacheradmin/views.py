@@ -51,7 +51,6 @@ def teacheradmin_stats(request, course_slug):
 
     data = {
         'enrolled': course.students.count(),
-        'teachers': course.teachers.count(),
         'started': 0,
         'completed': 0
     }
@@ -100,6 +99,7 @@ def teacheradmin_stats_units(request, course_slug):
     for unit in unit_list:
         unit_data = {
             'id': unit.id,
+            'title': unit.title,
             'started': 0,
             'completed': 0
         }
@@ -152,6 +152,7 @@ def teacheradmin_stats_kqs(request, course_slug):
     for kq in kq_list:
         kq_data = {
             'id': kq.id,
+            'title': kq.title,
             'viewed': 0
         }
 

@@ -64,7 +64,8 @@ if (_.isUndefined(window.MOOC)) {
         MOOC.ajax.hideLoading();
 
         MOOC.lastView = new View({
-            model: instance
+            model: instance,
+            el: MOOC.viewport
         });
         MOOC.lastView.render();
     };
@@ -116,6 +117,7 @@ if (_.isUndefined(window.MOOC)) {
         MOOC.alertTime = 4000;
         initialData.slug = courseSlug;
         MOOC.course = new MOOC.models.Course(initialData);
+        MOOC.viewport = $("#viewport")[0];
 
         MOOC.router = new MOOC.App();
         MOOC.router.route("", "course");

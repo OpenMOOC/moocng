@@ -30,7 +30,7 @@
 
   {% if is_teacher or user.is_staff %}
   <li class="pull-right">
-    <a href="{% url teacheradmin_info course.slug %}">{% trans "Course administration" %}</a>
+    <a href="{% url teacheradmin_stats course.slug %}">{% trans "Course administration" %}</a>
   </li>
   {% endif %}
 

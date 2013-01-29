@@ -372,7 +372,8 @@ input[type="checkbox"] {
     margin-right: 10px;
 }
 
-.teacheradmin-units div.loading.backdrop {
+.teacheradmin-units div.loading.backdrop,
+.teacheradmin-stats div.loading.backdrop {
     z-index: 99999999;
     position: fixed;
     top: 0px;
@@ -383,7 +384,8 @@ input[type="checkbox"] {
     background: black;
 }
 
-.teacheradmin-units div.loading.indicator {
+.teacheradmin-units div.loading.indicator,
+.teacheradmin-stats div.loading.indicator {
     z-index: 100000000;
     width: 54px;
     height: 55px;
@@ -398,6 +400,15 @@ input[type="checkbox"] {
 .teacheradmin-question fieldset textarea {
     height: auto;
     width: auto;
+}
+
+.teacheradmin-stats .pie.viewport svg {
+    height: 250px;
+}
+
+.teacheradmin-stats #tendencies .viewport svg,
+.teacheradmin-stats #units .viewport svg {
+    height: 350px;
 }
 
 #complaints .errorlist {
