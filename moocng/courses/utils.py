@@ -155,6 +155,7 @@ def get_unit_badge_class(unit):
 
 def is_course_ready(course):
     has_content = course.unit_set.count() > 0
+    is_ready = True
     ask_admin = False
     if course.start_date:
         is_ready = date.today() >= course.start_date

@@ -30,7 +30,8 @@ from django.utils.translation import ugettext as _
 from gravatar.templatetags.gravatar import gravatar_img_for_email
 
 from moocng.api.mongodb import get_db
-from moocng.courses.models import Course, KnowledgeQuantum, Option, Announcement
+from moocng.courses.models import (Course, KnowledgeQuantum, Option,
+                                   Announcement, Unit)
 from moocng.courses.forms import AnnouncementForm
 from moocng.courses.utils import (UNIT_BADGE_CLASSES, calculate_course_mark,
                                   calculate_unit_mark, calculate_kq_mark)
@@ -145,8 +146,46 @@ def teacheradmin_stats_kqs(request, course_slug):
         return HttpResponse(status=400)
     data = []
     activity = get_db().get_collection('activity')
+    answers = get_db().get_collection('answers')
 
-    # TODO
+    kq_list = unit.knowledgequantum_set.all()
+    for kq in kq_list:
+        kq_data = {
+            'id': kq.id,
+            'viewed': 0
+        }
+
+        question = None
+        if kq.question_set.count() > 0:
+            question = kq.question_set.all()[0]
+            kq_data['answered'] = 0
+
+            if course.threshold is not None:
+                # if the course doesn't support certification, then don't
+                # return the 'passed' stat since it doesn't apply
+                kq_data['passed'] = 0
+                for student in course.students.all():
+                    if calculate_kq_mark(kq, student) >= float(course.threshold):
+                        kq_data['passed'] += 1
+
+        for student in course.students.all():
+            user_activity_list = activity.find_one({'user': student.id}, safe=True)
+
+            if user_activity_list is not None:
+                visited_kqs = user_activity_list.get('courses', {}).get(unicode(course.id), {}).get('kqs', [])
+                visited_kqs = [int(vkq) for vkq in visited_kqs]
+
+                if kq.id in visited_kqs:
+                    kq_data['viewed'] += 1
+
+            if question is not None:
+                user_answer_list = answers.find_one({'user': student.id}, safe=True)
+                if user_answer_list is not None:
+                    answer = user_answer_list.get('questions', {}).get(unicode(question.id))
+                    if answer:
+                        kq_data['answered'] += 1
+
+        data.append(kq_data)
 
     return HttpResponse(simplejson.dumps(data),
                         mimetype='application/json')
