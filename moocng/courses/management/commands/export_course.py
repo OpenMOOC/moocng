@@ -67,7 +67,7 @@ class Command(BaseCommand):
             attachments.append(self.properties_dict(attachment))
             self.save_file(attachment.attachment)
 
-        _dict["attachment"] = attachments
+        _dict["attachments"] = attachments
 
         return _dict
 
