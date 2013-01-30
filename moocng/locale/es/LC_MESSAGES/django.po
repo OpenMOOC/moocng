@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-29 10:19-0600\n"
+"POT-Creation-Date: 2013-01-30 04:43-0600\n"
 "PO-Revision-Date: 2012-09-18 10:35+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -1059,57 +1059,65 @@ msgstr "Guardar"
 msgid "Go back"
 msgstr "Volver"
 
-#: teacheradmin/templates/teacheradmin/stats.html:27
+#: teacheradmin/templates/teacheradmin/stats.html:26
 msgid "Enrolled"
 msgstr "Matriculados"
 
-#: teacheradmin/templates/teacheradmin/stats.html:28
+#: teacheradmin/templates/teacheradmin/stats.html:27
 msgid "Started"
 msgstr "Comenzado"
 
-#: teacheradmin/templates/teacheradmin/stats.html:29
+#: teacheradmin/templates/teacheradmin/stats.html:28
 msgid "Completed"
 msgstr "Completado"
 
-#: teacheradmin/templates/teacheradmin/stats.html:30
+#: teacheradmin/templates/teacheradmin/stats.html:29
 msgid "Passed"
 msgstr "Aprobado"
 
-#: teacheradmin/templates/teacheradmin/stats.html:31
+#: teacheradmin/templates/teacheradmin/stats.html:30
 msgid "Not started"
 msgstr "No comenzado"
 
-#: teacheradmin/templates/teacheradmin/stats.html:32
+#: teacheradmin/templates/teacheradmin/stats.html:31
 msgid "Incompleted"
 msgstr "No completado"
 
-#: teacheradmin/templates/teacheradmin/stats.html:33
+#: teacheradmin/templates/teacheradmin/stats.html:32
 msgid "Not passed"
 msgstr "Suspendido"
 
-#: teacheradmin/templates/teacheradmin/stats.html:44
+#: teacheradmin/templates/teacheradmin/stats.html:33
+msgid "Students evolution"
+msgstr "Evolución de los estudiantes"
+
+#: teacheradmin/templates/teacheradmin/stats.html:42
 msgid "Students that have..."
 msgstr "Estudiantes que han..."
 
-#: teacheradmin/templates/teacheradmin/stats.html:46
+#: teacheradmin/templates/teacheradmin/stats.html:45
 msgid "...started the course"
 msgstr "...comenzado el curso"
 
-#: teacheradmin/templates/teacheradmin/stats.html:50
+#: teacheradmin/templates/teacheradmin/stats.html:49
 msgid "...completed the course"
 msgstr "...completado el curso"
 
-#: teacheradmin/templates/teacheradmin/stats.html:54
+#: teacheradmin/templates/teacheradmin/stats.html:53
 msgid "...passed the course"
 msgstr "...aprobado el curso"
 
+#: teacheradmin/templates/teacheradmin/stats.html:57
+msgid "Students evolution..."
+msgstr "Evolución de los estudiantes..."
+
 #: teacheradmin/templates/teacheradmin/stats.html:60
-msgid "Evolution of students"
-msgstr "Evolución de los alumnos"
+msgid "...in general"
+msgstr "...en general"
 
 #: teacheradmin/templates/teacheradmin/stats.html:66
-msgid "Modules"
-msgstr "Módulos"
+msgid "...per module"
+msgstr "...por módulo"
 
 #: teacheradmin/templates/teacheradmin/stats.html:77
 #: teacheradmin/templates/teacheradmin/teachers.html:39

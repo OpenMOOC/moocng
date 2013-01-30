@@ -83,6 +83,29 @@ if (_.isUndefined(window.MOOC)) {
                 nv.utils.windowResize(chart.update);
                 return chart;
             });
+        },
+
+        renderLine = function (viewport, data, yDomain, callback) {
+            nv.addGraph(function () {
+                var chart = nv.models.lineChart(),
+                    showLegend = true;
+
+                if (data.length === 1) {
+                    showLegend = false;
+                }
+
+                chart = chart.showLegend(showLegend)
+                    .yDomain(yDomain);
+                chart = callback(chart);
+
+                d3.select(viewport).append("svg")
+                    .datum(data)
+                    .transition().duration(750)
+                    .call(chart);
+
+                nv.utils.windowResize(chart.update);
+                return chart;
+            });
         };
 
     MOOC.views = {};
@@ -96,14 +119,16 @@ if (_.isUndefined(window.MOOC)) {
         },
 
         render: function () {
-            var data = this.model.getData();
+            var data = this.model.getData(),
+                chartData,
+                aux;
             this.$el.html(this.template);
 
             if (!_.isUndefined(data.passed)) {
                 this.$el.find("#passed").removeClass("hide");
                 renderPie(
                     this.$el.find("#passed .viewport")[0],
-                    [MOOC.trans.course.notPassed, MOOC.trans.course.passed],
+                    [MOOC.trans.notPassed, MOOC.trans.passed],
                     [data.enrolled - data.passed, data.passed]
                 );
             } else {
@@ -114,49 +139,74 @@ if (_.isUndefined(window.MOOC)) {
 
             renderPie(
                 this.$el.find("#started .viewport")[0],
-                [MOOC.trans.course.notStarted, MOOC.trans.course.started],
+                [MOOC.trans.notStarted, MOOC.trans.started],
                 [data.enrolled - data.started, data.started]
             );
 
             renderPie(
                 this.$el.find("#completed .viewport")[0],
-                [MOOC.trans.course.notCompleted, MOOC.trans.course.completed],
+                [MOOC.trans.notCompleted, MOOC.trans.completed],
                 [data.enrolled - data.completed, data.completed]
             );
 
-            renderBar(
+            chartData = [{
+                key: MOOC.trans.evolution,
+                values: [
+                    { x: 0, y: data.enrolled },
+                    { x: 1, y: data.started },
+                    { x: 2, y: data.completed },
+                    { x: 3, y: data.passed }
+                ]
+            }];
+
+            aux = {
+                0: MOOC.trans.enrolled,
+                1: MOOC.trans.started,
+                2: MOOC.trans.completed,
+                3: MOOC.trans.passed
+            };
+
+            renderLine(
                 this.$el.find("#tendencies .viewport")[0],
-                [MOOC.trans.course.enrolled, MOOC.trans.course.started, MOOC.trans.course.completed, MOOC.trans.course.passed],
-                [data.enrolled, data.started, data.completed, data.passed]
+                chartData,
+                [0, data.enrolled],
+                function (chart) {
+                    chart.xAxis
+                        .tickSubdivide(false)
+                        .tickFormat(function (t) {
+                            return aux[t];
+                        });
+                    return chart;
+                }
             );
 
-            data = [{
-                key: MOOC.trans.course.started,
+            chartData = [{
+                key: MOOC.trans.started,
                 values: []
             }, {
-                key: MOOC.trans.course.completed,
+                key: MOOC.trans.completed,
                 values: []
             }, {
-                key: MOOC.trans.course.passed,
+                key: MOOC.trans.passed,
                 values: []
             }];
 
             this.model.get("units").each(function (unit, idx) {
-                data[0].values.push({
+                chartData[0].values.push({
                     x: unit.get("title"),
                     y: unit.get("started")
                 });
-                data[1].values.push({
+                chartData[1].values.push({
                     x: unit.get("title"),
                     y: unit.get("completed")
                 });
-                data[2].values.push({
+                chartData[2].values.push({
                     x: unit.get("title"),
                     y: unit.get("passed")
                 });
             });
 
-            renderMultiBar(this.$el.find("#units .viewport")[0], data);
+            renderMultiBar(this.$el.find("#units .viewport")[0], chartData);
         },
 
         destroy: function () {
