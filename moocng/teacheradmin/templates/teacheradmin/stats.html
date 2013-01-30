@@ -30,7 +30,10 @@
             notStarted: "{% trans "Not started" %}",
             notCompleted: "{% trans "Incompleted" %}",
             notPassed: "{% trans "Not passed"%}",
-            evolution: "{% trans "Students evolution" %}"
+            evolution: "{% trans "Students evolution" %}",
+            viewed: "{% trans "Viewed" %}",
+            answered: "{% trans "Answered" %}",
+            notAnswered: "{% trans "Not answered" %}"
         };
         MOOC.init("{{ course.slug }}", {{ initial_data|safe }});
     </script>
@@ -81,11 +84,11 @@
 <h3>{% trans "Students that have..." %}</h3>
 <div class="row">
     <div class="span5" id="completed">
-        <h4>{% trans "...completed the course"%}</h4>
+        <h4>{% trans "...completed the unit"%}</h4>
         <div class="pie viewport"></div>
     </div>
     <div class="span5" id="passed" class="hide">
-        <h4>{% trans "...passed the course"%}</h4>
+        <h4>{% trans "...passed the unit"%}</h4>
         <div class="pie viewport"></div>
     </div>
 </div>
@@ -103,6 +106,28 @@
     </div>
 </div>
 <div class="row"><div class="span10" id="kq-buttons"></div></div>
+</script>
+
+<script id="kq-tpl" type="text/template">
+<h2 id="kq-title">{% trans "Nugget" %}: </h2>
+<h3>{% trans "Students that have..." %}</h3>
+<div class="row">
+    <div class="span5" id="answered">
+        <h4>{% trans "...answered the question"%}</h4>
+        <div class="pie viewport"></div>
+    </div>
+    <div class="span5" id="passed" class="hide">
+        <h4>{% trans "...passed the question"%}</h4>
+        <div class="pie viewport"></div>
+    </div>
+</div>
+<h3>{% trans "Students evolution..." %}</h3>
+<div class="row">
+    <div class="span10" id="tendencies">
+        <h4>{% trans "...in the question"%}</h4>
+        <div class="viewport"></div>
+    </div>
+</div>
 </script>
 
 <div class="loading backdrop hide"></div>

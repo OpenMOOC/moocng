@@ -310,7 +310,9 @@ if (_.isUndefined(window.MOOC)) {
                     y: kq.get("passed")
                 });
 
-                buttons.append("<a href='#unit" + self.model.get("id") + "/kq" + kq.get("id") + "' class='btn'>" + title + "</a>");
+                if (kq.get("answered") >= 0) {
+                    buttons.append("<a href='#unit" + self.model.get("id") + "/kq" + kq.get("id") + "' class='btn'>" + title + "</a>");
+                }
             });
 
             renderMultiBar(this.$el.find("#kqs .viewport")[0], chartData);
@@ -327,13 +329,63 @@ if (_.isUndefined(window.MOOC)) {
 
         initialize: function () {
             _.bindAll(this, "render", "destroy");
+            this.template = $("#kq-tpl").text();
         },
 
         render: function () {
-            // TODO
+            this.$el.html(this.template);
+            var data = this.model.getData(),
+                self = this,
+                chartData,
+                aux;
+
+            aux = this.$el.find("#kq-title");
+            aux.text(aux.text() + this.model.get("title"));
+
+            renderPie(
+                this.$el.find("#answered .viewport")[0],
+                [MOOC.trans.notAnswered, MOOC.trans.answered],
+                [data.viewed, data.answered]
+            );
+
+            renderPie(
+                this.$el.find("#passed .viewport")[0],
+                [MOOC.trans.notPassed, MOOC.trans.passed],
+                [data.viewed, data.passed]
+            );
+
+            chartData = [{
+                key: MOOC.trans.evolution,
+                values: [
+                    { x: 0, y: data.viewed },
+                    { x: 1, y: data.answered },
+                    { x: 2, y: data.passed }
+                ]
+            }];
+
+            aux = {
+                0: MOOC.trans.viewed,
+                1: MOOC.trans.answered,
+                2: MOOC.trans.passed
+            };
+
+            renderLine(
+                this.$el.find("#tendencies .viewport")[0],
+                chartData,
+                [0, data.viewed],
+                function (chart) {
+                    chart.xAxis
+                        .tickSubdivide(false)
+                        .tickFormat(function (t) {
+                            return aux[t];
+                        });
+                    return chart;
+                }
+            );
         },
 
         destroy: function () {
+            this.$el.html("");
             // TODO
         }
     });

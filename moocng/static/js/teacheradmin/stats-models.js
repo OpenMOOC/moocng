@@ -33,6 +33,14 @@ if (_.isUndefined(window.MOOC)) {
                 answered: -1,
                 viewed: -1
             };
+        },
+
+        getData: function () {
+            return {
+                viewed: this.get("viewed"),
+                answered: this.get("answered"),
+                passed: this.get("passed")
+            };
         }
     });
 

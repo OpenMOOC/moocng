@@ -96,24 +96,22 @@ if (_.isUndefined(window.MOOC)) {
 
         unit: function (unit) {
             MOOC.ajax.showLoading();
-
-            var callback;
-
-            callback = function () {
+            var callback = function () {
                 var unitObj = MOOC.course.getUnitByID(unit);
                 if (_.isUndefined(unitObj)) {
                     restart();
+                } else {
+                    unitObj.get("kqs").fetch({
+                        success: function (kqs, response, options) {
+                            successHandler(MOOC.views.Unit, unitObj);
+                        },
+                        error: function (kqs, xhr, options) {
+                            cleanView();
+                            MOOC.ajax.hideLoading();
+                            MOOC.ajax.showAlert("generic");
+                        }
+                    });
                 }
-                unitObj.get("kqs").fetch({
-                    success: function (kqs, response, options) {
-                        successHandler(MOOC.views.Unit, unitObj);
-                    },
-                    error: function (kqs, xhr, options) {
-                        cleanView();
-                        MOOC.ajax.hideLoading();
-                        MOOC.ajax.showAlert("generic");
-                    }
-                });
             };
 
             if (MOOC.course.get("units").length > 0) {
@@ -132,9 +130,47 @@ if (_.isUndefined(window.MOOC)) {
 
         kq: function (unit, kq) {
             MOOC.ajax.showLoading();
-            var kqObj = MOOC.course.getKQByID(unit, kq);
-            // TODO kqObj is undefined
-            successHandler(MOOC.views.KQ, kqObj);
+            var callback = function () {
+                    var kqObj = MOOC.course.getKQByID(unit, kq);
+                    if (_.isUndefined(kqObj)) {
+                        restart();
+                    } else {
+                        successHandler(MOOC.views.KnowledgeQuantum, kqObj);
+                    }
+                },
+                kqObj = MOOC.course.getKQByID(unit, kq),
+                unitObj,
+                unitCB;
+
+            if (_.isUndefined(kqObj)) {
+                unitObj = MOOC.course.getUnitByID(unit);
+                unitCB = function () {
+                    var unitObj = MOOC.course.getUnitByID(unit);
+                    unitObj.get("kqs").fetch({
+                        success: function (kqs, response, options) {
+                            callback();
+                        },
+                        error: function (kqs, xhr, options) {
+                            restart ();
+                        }
+                    });
+                };
+
+                if (_.isUndefined(unitObj)) {
+                    MOOC.course.get("units").fetch({
+                        success: function (units, response, options) {
+                            unitCB();
+                        },
+                        error: function (units, xhr, options) {
+                            restart();
+                        }
+                    });
+                } else {
+                    unitCB();
+                }
+            } else {
+                callback();
+            }
         }
     });
 
