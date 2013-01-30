@@ -46,34 +46,13 @@ if (_.isUndefined(window.MOOC)) {
             });
         },
 
-        renderBar = function (viewport, labels, values, key) {
-            var data = _.zip(labels, values);
-            if (_.isUndefined(key)) {
-                key = "";
-            }
-            nv.addGraph(function () {
-                var chart = nv.models.discreteBarChart()
-                    .x(function (d) { return d[0]; }) // label
-                    .y(function (d) { return d[1]; }) // value
-                    .staggerLabels(false)
-                    .tooltips(true)
-                    .showValues(true);
-
-                d3.select(viewport).append("svg")
-                    .datum([{
-                        key: key,
-                        values: data
-                    }]).transition().duration(750)
-                    .call(chart);
-
-                nv.utils.windowResize(chart.update);
-                return chart;
-            });
-        },
-
-        renderMultiBar = function (viewport, data) {
+        renderMultiBar = function (viewport, data, callback) {
             nv.addGraph(function () {
                 var chart = nv.models.multiBarChart();
+
+                if (!_.isUndefined(callback)) {
+                    chart = callback(chart);
+                }
 
                 d3.select(viewport).append("svg")
                     .datum(data)
@@ -96,7 +75,9 @@ if (_.isUndefined(window.MOOC)) {
 
                 chart = chart.showLegend(showLegend)
                     .yDomain(yDomain);
-                chart = callback(chart);
+                if (!_.isUndefined(callback)) {
+                    chart = callback(chart);
+                }
 
                 d3.select(viewport).append("svg")
                     .datum(data)
@@ -119,6 +100,7 @@ if (_.isUndefined(window.MOOC)) {
         render: function () {
             var data = this.model.getData(),
                 chartData,
+                unitsNav,
                 aux;
             this.$el.html(this.template);
 
@@ -189,22 +171,40 @@ if (_.isUndefined(window.MOOC)) {
                 values: []
             }];
 
+            unitsNav = this.$el.find("#units-navigation");
+
             this.model.get("units").each(function (unit, idx) {
+                var title = unit.get("title");
+
                 chartData[0].values.push({
-                    x: unit.get("title"),
+                    x: title,
                     y: unit.get("started")
                 });
                 chartData[1].values.push({
-                    x: unit.get("title"),
+                    x: title,
                     y: unit.get("completed")
                 });
                 chartData[2].values.push({
-                    x: unit.get("title"),
+                    x: title,
                     y: unit.get("passed")
                 });
+
+                unitsNav.append("<li><a href='#unit" + unit.get("id") + "'>" + MOOC.trans.unit + " " + idx + ": " + title + "</a></li>");
             });
 
-            renderMultiBar(this.$el.find("#units .viewport")[0], chartData);
+            renderMultiBar(
+                this.$el.find("#units .viewport")[0],
+                chartData,
+                function (chart) {
+                    chart.xAxis.tickFormat(function (t) {
+                        if (t.length > 15) {
+                            return t.substring(0, 12) + "...";
+                        }
+                        return t;
+                    });
+                    return chart;
+                }
+            );
         },
 
         destroy: function () {
@@ -222,13 +222,10 @@ if (_.isUndefined(window.MOOC)) {
             this.$el.html(this.template);
             var data = this.model.getData(),
                 self = this,
+                kqsNav,
                 chartData,
-                buttons,
                 aux;
 
-            this.$el.find("#go-back").click(function (evt) {
-                MOOC.router.navigate("", { trigger: true });
-            });
             aux = this.$el.find("#unit-title");
             aux.text(aux.text() + this.model.get("title"));
 
@@ -290,7 +287,7 @@ if (_.isUndefined(window.MOOC)) {
                 values: []
             }];
 
-            buttons = this.$el.find("#kq-buttons");
+            kqsNav = this.$el.find("#kqs-navigation");
 
             this.model.get("kqs").each(function (kq, idx) {
                 var title = kq.get("title");
@@ -309,11 +306,23 @@ if (_.isUndefined(window.MOOC)) {
                 });
 
                 if (kq.get("answered") >= 0) {
-                    buttons.append("<a href='#unit" + self.model.get("id") + "/kq" + kq.get("id") + "' class='btn'>" + title + "</a>");
+                    kqsNav.append("<li><a href='#unit" + self.model.get("id") + "/kq" + kq.get("id") + "'>" + MOOC.trans.nugget + " " + idx + ": " + title + "</a></li>");
                 }
             });
 
-            renderMultiBar(this.$el.find("#kqs .viewport")[0], chartData);
+            renderMultiBar(
+                this.$el.find("#kqs .viewport")[0],
+                chartData,
+                function (chart) {
+                    chart.xAxis.tickFormat(function (t) {
+                        if (t.length > 15) {
+                            return t.substring(0, 12) + "...";
+                        }
+                        return t;
+                    });
+                    return chart;
+                }
+            );
         },
 
         destroy: function () {
@@ -330,14 +339,11 @@ if (_.isUndefined(window.MOOC)) {
         render: function () {
             this.$el.html(this.template);
             var data = this.model.getData(),
-                self = this,
                 chartData,
                 aux;
 
-            this.$el.find("#go-back").click(function (evt) {
-                var url = "unit" + self.model.collection.unit.get("id");
-                MOOC.router.navigate(url, { trigger: true });
-            });
+            this.$el.find("#go-back").attr("href", "#unit" + this.model.collection.unit.get("id"));
+
             aux = this.$el.find("#kq-title");
             aux.text(aux.text() + this.model.get("title"));
 

@@ -412,6 +412,12 @@ input[type="checkbox"] {
     height: 350px;
 }
 
+.teacheradmin-stats .stats-navigation {
+    margin-left: 20px;
+    position: relative;
+    top: -3px;
+}
+
 #complaints .errorlist {
     color: red;
     padding-top: 10px;
