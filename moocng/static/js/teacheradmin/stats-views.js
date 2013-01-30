@@ -220,13 +220,104 @@ if (_.isUndefined(window.MOOC)) {
 
         initialize: function () {
             _.bindAll(this, "render", "destroy");
+            this.template = $("#unit-tpl").text();
         },
 
         render: function () {
-            // TODO
+            this.$el.html(this.template);
+            var data = this.model.getData(),
+                self = this,
+                chartData,
+                buttons,
+                aux;
+
+            aux = this.$el.find("#unit-title");
+            aux.text(aux.text() + this.model.get("title"));
+
+            if (!_.isUndefined(data.passed)) {
+                this.$el.find("#passed").removeClass("hide");
+                renderPie(
+                    this.$el.find("#passed .viewport")[0],
+                    [MOOC.trans.notPassed, MOOC.trans.passed],
+                    [data.started - data.passed, data.passed]
+                );
+            } else {
+                // Just one pies
+                this.$el.find("#completed").removeClass("span5").addClass("span10");
+            }
+
+            renderPie(
+                this.$el.find("#completed .viewport")[0],
+                [MOOC.trans.notCompleted, MOOC.trans.completed],
+                [data.started - data.completed, data.completed]
+            );
+
+            chartData = [{
+                key: MOOC.trans.evolution,
+                values: [
+                    { x: 0, y: data.started },
+                    { x: 1, y: data.completed },
+                    { x: 2, y: data.passed }
+                ]
+            }];
+
+            aux = {
+                0: MOOC.trans.started,
+                1: MOOC.trans.completed,
+                2: MOOC.trans.passed
+            };
+
+            renderLine(
+                this.$el.find("#tendencies .viewport")[0],
+                chartData,
+                [0, data.started],
+                function (chart) {
+                    chart.xAxis
+                        .tickSubdivide(false)
+                        .tickFormat(function (t) {
+                            return aux[t];
+                        });
+                    return chart;
+                }
+            );
+
+            chartData = [{
+                key: MOOC.trans.viewed,
+                values: []
+            }, {
+                key: MOOC.trans.answered,
+                values: []
+            }, {
+                key: MOOC.trans.passed,
+                values: []
+            }];
+
+            buttons = this.$el.find("#kq-buttons");
+
+            this.model.get("kqs").each(function (kq, idx) {
+                var title = kq.get("title");
+
+                chartData[0].values.push({
+                    x: title,
+                    y: kq.get("viewed")
+                });
+                chartData[1].values.push({
+                    x: title,
+                    y: kq.get("answered")
+                });
+                chartData[2].values.push({
+                    x: title,
+                    y: kq.get("passed")
+                });
+
+                buttons.append("<a href='#unit" + self.model.get("id") + "/kq" + kq.get("id") + "' class='btn'>" + title + "</a>");
+            });
+
+            renderMultiBar(this.$el.find("#kqs .viewport")[0], chartData);
         },
 
         destroy: function () {
+            this.$el.html("");
             // TODO
         }
     });

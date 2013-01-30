@@ -22,7 +22,7 @@ if (_.isUndefined(window.MOOC)) {
 (function ($, Backbone, _) {
     "use strict";
 
-    var cleanView, successHandler;
+    var cleanView, successHandler, restart;
 
     MOOC.ajax = {
         hostA: "/course/",
@@ -70,6 +70,15 @@ if (_.isUndefined(window.MOOC)) {
         MOOC.lastView.render();
     };
 
+    restart = function () {
+        cleanView();
+        MOOC.ajax.hideLoading();
+        MOOC.ajax.showAlert("generic");
+        setTimeout(function () {
+            MOOC.router.navigate("", { trigger: true });
+        }, 500);
+    };
+
     MOOC.App = Backbone.Router.extend({
         course: function () {
             MOOC.ajax.showLoading();
@@ -87,25 +96,42 @@ if (_.isUndefined(window.MOOC)) {
 
         unit: function (unit) {
             MOOC.ajax.showLoading();
-            unit = unit.split("unit")[1];
-            var unitObj = MOOC.course.getUnitByID(unit);
-            // TODO unitObj is undefined
-            unitObj.get("kqs").fetch({
-                success: function (kqs, response, options) {
-                    successHandler(MOOC.views.Unit, unitObj);
-                },
-                error: function (kqs, xhr, options) {
-                    cleanView();
-                    MOOC.ajax.hideLoading();
-                    MOOC.ajax.showAlert("generic");
+
+            var callback;
+
+            callback = function () {
+                var unitObj = MOOC.course.getUnitByID(unit);
+                if (_.isUndefined(unitObj)) {
+                    restart();
                 }
-            });
+                unitObj.get("kqs").fetch({
+                    success: function (kqs, response, options) {
+                        successHandler(MOOC.views.Unit, unitObj);
+                    },
+                    error: function (kqs, xhr, options) {
+                        cleanView();
+                        MOOC.ajax.hideLoading();
+                        MOOC.ajax.showAlert("generic");
+                    }
+                });
+            };
+
+            if (MOOC.course.get("units").length > 0) {
+                callback();
+            } else {
+                MOOC.course.get("units").fetch({
+                    success: function (units, response, options) {
+                        callback();
+                    },
+                    error: function (kqs, xhr, options) {
+                        restart();
+                    }
+                });
+            }
         },
 
         kq: function (unit, kq) {
             MOOC.ajax.showLoading();
-            unit = unit.split("unit")[1];
-            kq = kq.split("kq")[1];
             var kqObj = MOOC.course.getKQByID(unit, kq);
             // TODO kqObj is undefined
             successHandler(MOOC.views.KQ, kqObj);

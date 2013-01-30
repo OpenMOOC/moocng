@@ -61,6 +61,19 @@ if (_.isUndefined(window.MOOC)) {
             };
         },
 
+        getData: function () {
+            var result = {
+                started: this.get("started"),
+                completed: this.get("completed")
+            };
+
+            if (this.get("passed") >= 0) {
+                result.passed = this.get("passed");
+            }
+
+            return result;
+        },
+
         initialize: function () {
             this.get("kqs").unit = this;
         },

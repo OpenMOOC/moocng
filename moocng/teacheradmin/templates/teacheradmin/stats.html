@@ -63,10 +63,46 @@
 </div>
 <div class="row">
     <div class="span10" id="units">
-        <h4>{% trans "...per module"%}</h4>
+        <h4>{% trans "...per unit"%}</h4>
         <div class="viewport"></div>
     </div>
 </div>
+<div class="row">
+    <div class="span10">
+        {% for unit in course.unit_set.all %}
+            <a href="#unit{{ unit.id }}" class="btn">{{ unit.title }}</a>
+        {% endfor %}
+    </div>
+</div>
+</script>
+
+<script id="unit-tpl" type="text/template">
+<h2 id="unit-title">{% trans "Unit" %}: </h2>
+<h3>{% trans "Students that have..." %}</h3>
+<div class="row">
+    <div class="span5" id="completed">
+        <h4>{% trans "...completed the course"%}</h4>
+        <div class="pie viewport"></div>
+    </div>
+    <div class="span5" id="passed" class="hide">
+        <h4>{% trans "...passed the course"%}</h4>
+        <div class="pie viewport"></div>
+    </div>
+</div>
+<h3>{% trans "Students evolution..." %}</h3>
+<div class="row">
+    <div class="span10" id="tendencies">
+        <h4>{% trans "...in the unit"%}</h4>
+        <div class="viewport"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="span10" id="kqs">
+        <h4>{% trans "...per nugget"%}</h4>
+        <div class="viewport"></div>
+    </div>
+</div>
+<div class="row"><div class="span10" id="kq-buttons"></div></div>
 </script>
 
 <div class="loading backdrop hide"></div>

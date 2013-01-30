@@ -407,7 +407,8 @@ input[type="checkbox"] {
 }
 
 .teacheradmin-stats #tendencies .viewport svg,
-.teacheradmin-stats #units .viewport svg {
+.teacheradmin-stats #units .viewport svg,
+.teacheradmin-stats #kqs .viewport svg {
     height: 350px;
 }
 

@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-30 04:43-0600\n"
+"POT-Creation-Date: 2013-01-30 05:50-0600\n"
 "PO-Revision-Date: 2012-09-18 10:35+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -378,7 +378,8 @@ msgstr "módulo"
 msgid "units"
 msgstr "módulos"
 
-#: courses/models.py:155 teacheradmin/templates/teacheradmin/units.html:47
+#: courses/models.py:155 teacheradmin/templates/teacheradmin/stats.html:81
+#: teacheradmin/templates/teacheradmin/units.html:47
 msgid "Unit"
 msgstr "Módulo"
 
@@ -656,7 +657,7 @@ msgstr "Comentarios del profesor"
 
 #: courses/templates/courses/classroom.html:103
 #: courses/templates/courses/progress.html:64
-#: teacheradmin/templates/teacheradmin/stats.html:76
+#: teacheradmin/templates/teacheradmin/stats.html:112
 #: teacheradmin/templates/teacheradmin/teachers.html:30
 #: teacheradmin/templates/teacheradmin/teachers.html:34
 #: teacheradmin/templates/teacheradmin/teachers.html:38
@@ -1092,6 +1093,7 @@ msgid "Students evolution"
 msgstr "Evolución de los estudiantes"
 
 #: teacheradmin/templates/teacheradmin/stats.html:42
+#: teacheradmin/templates/teacheradmin/stats.html:81
 msgid "Students that have..."
 msgstr "Estudiantes que han..."
 
@@ -1100,14 +1102,17 @@ msgid "...started the course"
 msgstr "...comenzado el curso"
 
 #: teacheradmin/templates/teacheradmin/stats.html:49
+#: teacheradmin/templates/teacheradmin/stats.html:84
 msgid "...completed the course"
 msgstr "...completado el curso"
 
 #: teacheradmin/templates/teacheradmin/stats.html:53
+#: teacheradmin/templates/teacheradmin/stats.html:88
 msgid "...passed the course"
 msgstr "...aprobado el curso"
 
 #: teacheradmin/templates/teacheradmin/stats.html:57
+#: teacheradmin/templates/teacheradmin/stats.html:92
 msgid "Students evolution..."
 msgstr "Evolución de los estudiantes..."
 
@@ -1116,10 +1121,18 @@ msgid "...in general"
 msgstr "...en general"
 
 #: teacheradmin/templates/teacheradmin/stats.html:66
-msgid "...per module"
+msgid "...per unit"
 msgstr "...por módulo"
 
-#: teacheradmin/templates/teacheradmin/stats.html:77
+#: teacheradmin/templates/teacheradmin/stats.html:95
+msgid "...in the unit"
+msgstr "...en el módulo"
+
+#: teacheradmin/templates/teacheradmin/stats.html:101
+msgid "...per nugget"
+msgstr "...por píldora"
+
+#: teacheradmin/templates/teacheradmin/stats.html:113
 #: teacheradmin/templates/teacheradmin/teachers.html:39
 #: teacheradmin/templates/teacheradmin/units.html:180
 msgid "Something went wrong, please try again later."
