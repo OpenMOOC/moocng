@@ -42,6 +42,7 @@
 
 {% block section %}
 <script id="course-tpl" type="text/template">
+<h2>{% trans "General statistics of the course" %}</h2>
 <h3>{% trans "Students that have..." %}</h3>
 <div class="row">
     <div class="span3" id="started">
@@ -80,6 +81,7 @@
 </script>
 
 <script id="unit-tpl" type="text/template">
+<button id="go-back" class="btn"><i class="icon-chevron-left"></i> {% trans "Go back to course statistics" %}</button>
 <h2 id="unit-title">{% trans "Unit" %}: </h2>
 <h3>{% trans "Students that have..." %}</h3>
 <div class="row">
@@ -109,6 +111,7 @@
 </script>
 
 <script id="kq-tpl" type="text/template">
+<button id="go-back" class="btn"><i class="icon-chevron-left"></i> {% trans "Go back to unit statistics" %}</button>
 <h2 id="kq-title">{% trans "Nugget" %}: </h2>
 <h3>{% trans "Students that have..." %}</h3>
 <div class="row">

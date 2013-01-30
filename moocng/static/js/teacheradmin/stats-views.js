@@ -111,8 +111,6 @@ if (_.isUndefined(window.MOOC)) {
     MOOC.views = {};
 
     MOOC.views.Course = Backbone.View.extend({
-        events: {},
-
         initialize: function () {
             _.bindAll(this, "render", "destroy");
             this.template = $("#course-tpl").text();
@@ -211,13 +209,10 @@ if (_.isUndefined(window.MOOC)) {
 
         destroy: function () {
             this.$el.html("");
-            // TODO
         }
     });
 
     MOOC.views.Unit = Backbone.View.extend({
-        events: {},
-
         initialize: function () {
             _.bindAll(this, "render", "destroy");
             this.template = $("#unit-tpl").text();
@@ -231,6 +226,9 @@ if (_.isUndefined(window.MOOC)) {
                 buttons,
                 aux;
 
+            this.$el.find("#go-back").click(function (evt) {
+                MOOC.router.navigate("", { trigger: true });
+            });
             aux = this.$el.find("#unit-title");
             aux.text(aux.text() + this.model.get("title"));
 
@@ -320,13 +318,10 @@ if (_.isUndefined(window.MOOC)) {
 
         destroy: function () {
             this.$el.html("");
-            // TODO
         }
     });
 
     MOOC.views.KnowledgeQuantum = Backbone.View.extend({
-        events: {},
-
         initialize: function () {
             _.bindAll(this, "render", "destroy");
             this.template = $("#kq-tpl").text();
@@ -339,6 +334,10 @@ if (_.isUndefined(window.MOOC)) {
                 chartData,
                 aux;
 
+            this.$el.find("#go-back").click(function (evt) {
+                var url = "unit" + self.model.collection.unit.get("id");
+                MOOC.router.navigate(url, { trigger: true });
+            });
             aux = this.$el.find("#kq-title");
             aux.text(aux.text() + this.model.get("title"));
 
@@ -386,7 +385,6 @@ if (_.isUndefined(window.MOOC)) {
 
         destroy: function () {
             this.$el.html("");
-            // TODO
         }
     });
 
