@@ -302,6 +302,16 @@ MOOCNG_THEME = {
 #    'cert_banner': u'',
     }
 
+
+ENABLED_COMUNICATIONS = (
+    'feedback',
+    'incidence',
+    'rights',
+    'unsubscribe',
+    'others'
+)
+
+
 #SHOW_TOS = True
 
 FFMPEG = '/usr/bin/ffmpeg'

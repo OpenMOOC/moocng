@@ -15,14 +15,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-31 10:08-0600\n"
+"POT-Creation-Date: 2013-01-31 10:29-0600\n"
 "PO-Revision-Date: 2012-09-18 10:35+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
-"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: es_ES\n"
 
 #: settings.py:73
 msgid "English"
@@ -121,39 +121,23 @@ msgstr ""
 "El usuario \"<b>%(first_name)s %(last_name)s</b>\" tiene los siguientes "
 "premios:"
 
-#: complaints/forms.py:20
-msgid "Rights violation"
-msgstr "Violación de derechos"
-
-#: complaints/forms.py:21
-msgid "Feedback / Comment"
-msgstr "Sugerencia / Comentario"
-
-#: complaints/forms.py:22
-msgid "Remove account"
-msgstr "Eliminar cuenta"
-
 #: complaints/forms.py:23
-msgid "Other"
-msgstr "Otro"
-
-#: complaints/forms.py:26
 msgid "Username"
 msgstr "Nombre de usuario"
 
-#: complaints/forms.py:27 teacheradmin/models.py:28
+#: complaints/forms.py:24 teacheradmin/models.py:28
 msgid "Email"
 msgstr "Correo electrónico"
 
-#: complaints/forms.py:28
+#: complaints/forms.py:25
 msgid "Communication type"
 msgstr "Tipo de comunicación"
 
-#: complaints/forms.py:29 teacheradmin/forms.py:49
+#: complaints/forms.py:26 teacheradmin/forms.py:49
 msgid "Message"
 msgstr "Mensaje"
 
-#: complaints/forms.py:30
+#: complaints/forms.py:27
 msgid ""
 "I have read and agree with the terms of use (<a href=\"/tos\">See Terms of "
 "Use</a>)"
@@ -161,9 +145,45 @@ msgstr ""
 "He leído y estoy de acuerdo con los términos de uso (<a href=\"/tos\">Ver "
 "Términos de Uso</a>)"
 
-#: complaints/forms.py:32
+#: complaints/forms.py:29
 msgid "You must accept the Terms of Use"
 msgstr "Debe aceptar los Términos de Uso"
+
+#: complaints/options.py:18
+msgid "Feedback / Comment"
+msgstr "Sugerencia / Comentario"
+
+#: complaints/options.py:19
+msgid "Incidence"
+msgstr "Incidencia"
+
+#: complaints/options.py:20
+msgid "Metodology"
+msgstr "Metodología"
+
+#: complaints/options.py:21
+msgid "Certification"
+msgstr "Certificación"
+
+#: complaints/options.py:22
+msgid "Platform"
+msgstr "Plataforma"
+
+#: complaints/options.py:23
+msgid "Registration"
+msgstr "Registro"
+
+#: complaints/options.py:24
+msgid "Rights violation"
+msgstr "Violación de derechos"
+
+#: complaints/options.py:25
+msgid "Remove account"
+msgstr "Eliminar cuenta"
+
+#: complaints/options.py:26
+msgid "Other"
+msgstr "Otro"
 
 #: complaints/templates/complaints.html:16
 #: complaints/templates/complaints_sent.html:16 templates/base.html:87
@@ -183,16 +203,16 @@ msgstr ""
 "apropiado. Pronto contactaremos con usted para informarle del estado del "
 "proceso."
 
-#: courses/admin.py:172 courses/admin.py:219 courses/admin.py:265
+#: courses/admin.py:173 courses/admin.py:220 courses/admin.py:266
 #, python-format
 msgid "%(name)s object with primary key %(key)r does not exist."
 msgstr "El objeto %(name)s con clave primaria %(key)r no existe."
 
-#: courses/admin.py:190
+#: courses/admin.py:191
 msgid "Edit options for question"
 msgstr "Editar las opciones de la pregunta"
 
-#: courses/admin.py:226
+#: courses/admin.py:227
 #, python-format
 msgid "Option %(option)d for question %(question)s does not exist."
 msgstr "La opción %(option)d de la pregunta %(question)s no existe."
@@ -205,17 +225,17 @@ msgstr "Comunicados del %(course_title)s"
 #: courses/feeds.py:35
 #, python-format
 msgid ""
-"Announcements of the online course \"%(course_title)s\" on the platform "
-"\"%(site_name)s\"."
+"Announcements of the online course \"%(course_title)s\" on the platform \"%"
+"(site_name)s\"."
 msgstr ""
-"Comunicados del curso online \"%(course_title)s\" en la plataforma "
-"\"%(site_name)s\"."
+"Comunicados del curso online \"%(course_title)s\" en la plataforma \"%"
+"(site_name)s\"."
 
-#: courses/forms.py:30
+#: courses/forms.py:37
 msgid "The deadline date is mandatory for homework and exams."
 msgstr "La fecha de finalización es obligatoria para las tareas y los examenes"
 
-#: courses/forms.py:31
+#: courses/forms.py:38
 msgid "The start date is later than the deadline."
 msgstr "La fecha de comienzo es posterior a la fecha de finalización"
 
@@ -992,8 +1012,8 @@ msgstr "Has sido invitado a ser profesor en \"%s\""
 #: teacheradmin/utils.py:41
 #, python-format
 msgid ""
-"Hello, you have been removed as teacher from the course \"%(course)s\" by "
-"%(host)s.\n"
+"Hello, you have been removed as teacher from the course \"%(course)s\" by %"
+"(host)s.\n"
 "\n"
 "Best regards,\n"
 "%(site)s's team"

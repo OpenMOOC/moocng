@@ -16,16 +16,13 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
+from moocng.complaints.options import comunication_options
 
-COMUNICATION_TYPE = (('rights',_('Rights violation')),
-                     ('feedback',_('Feedback / Comment')),
-                     ('unsubscribe',_('Remove account')),
-                     ('other',_('Other')))
 
 class ComplaintsForm(forms.Form):
     username = forms.CharField(label=_('Username'))
     sender = forms.EmailField(label=_('Email'))
-    communication_type = forms.ChoiceField(label=_('Communication type'), choices=COMUNICATION_TYPE)
+    communication_type = forms.ChoiceField(label=_('Communication type'), choices=comunication_options())
     message = forms.CharField(label=_('Message'), widget=forms.Textarea())
     tos = forms.BooleanField(label=mark_safe(_('I have read and agree with the terms of use (<a href="/tos">See Terms of Use</a>)')),
                             required=True,
