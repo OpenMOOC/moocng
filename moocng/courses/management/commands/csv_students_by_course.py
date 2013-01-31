@@ -71,7 +71,7 @@ class Command(BaseCommand):
                 row = []
                 for field in headers:
                     fieldvalue = getattr(student, field)
-                    row.append(h.unescape(fieldvalue.encode("utf-8")))
+                    row.append(h.unescape(fieldvalue.encode("ascii", "ignore")))
                 course_csv.writerow(row)
 
             course_fileinfo = ZipInfo("%s.csv" % course.slug)
