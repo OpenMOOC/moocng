@@ -16,6 +16,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from tinymce.models import HTMLField
+
 from moocng.courses.models import Course
 
 
@@ -44,7 +46,7 @@ class MassiveEmail(models.Model):
                                     blank=False, null=False)
     subject = models.CharField(verbose_name=_(u'Subject'), max_length=100,
                                blank=False, null=False)
-    message = models.TextField(verbose_name=_(u'Message body'))
+    message = HTMLField(verbose_name=_(u'Content'))
 
     class Meta:
         verbose_name = _(u'massive email')
