@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-30 10:55-0600\n"
+"POT-Creation-Date: 2013-01-31 10:08-0600\n"
 "PO-Revision-Date: 2012-09-18 10:35+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -141,7 +141,7 @@ msgstr "Otro"
 msgid "Username"
 msgstr "Nombre de usuario"
 
-#: complaints/forms.py:27 teacheradmin/models.py:26
+#: complaints/forms.py:27 teacheradmin/models.py:28
 msgid "Email"
 msgstr "Correo electrónico"
 
@@ -149,7 +149,7 @@ msgstr "Correo electrónico"
 msgid "Communication type"
 msgstr "Tipo de comunicación"
 
-#: complaints/forms.py:29
+#: complaints/forms.py:29 teacheradmin/forms.py:49
 msgid "Message"
 msgstr "Mensaje"
 
@@ -309,12 +309,14 @@ msgstr "Título"
 
 #: courses/models.py:101
 #: courses/templates/admin/courses/question/options.html:90
+#: teacheradmin/models.py:49
+#: teacheradmin/templates/teacheradmin/emails.html:74
 #: teacheradmin/templates/teacheradmin/question.html:69
 msgid "Content"
 msgstr "Contenido"
 
-#: courses/models.py:102 courses/models.py:121 teacheradmin/models.py:28
-#: teacheradmin/templates/teacheradmin/stats.html:48
+#: courses/models.py:102 courses/models.py:121 teacheradmin/models.py:30
+#: teacheradmin/models.py:42 teacheradmin/templates/teacheradmin/stats.html:48
 #: teacheradmin/templates/teacheradmin/stats.html:89
 #: teacheradmin/templates/teacheradmin/stats.html:127
 msgid "Course"
@@ -932,13 +934,34 @@ msgstr "No hay certificación disponible para este curso"
 msgid "You are not enrolled in any course"
 msgstr "No estás matriculado en ningún curso"
 
-#: teacheradmin/models.py:24
+#: teacheradmin/forms.py:45 teacheradmin/models.py:47
+#: teacheradmin/templates/teacheradmin/emails.html:72
+msgid "Subject"
+msgstr "Asunto"
+
+#: teacheradmin/models.py:26
 msgid "Host"
 msgstr "Anfitrión"
 
-#: teacheradmin/models.py:30
+#: teacheradmin/models.py:32 teacheradmin/models.py:45
 msgid "Date and time"
 msgstr "Fecha y hora"
+
+#: teacheradmin/models.py:36
+msgid "invitation"
+msgstr "invitación"
+
+#: teacheradmin/models.py:37
+msgid "invitations"
+msgstr "invitaciones"
+
+#: teacheradmin/models.py:52
+msgid "massive email"
+msgstr "correo electrónico masivo"
+
+#: teacheradmin/models.py:53
+msgid "massive emails"
+msgstr "correos electrónicos masivos"
 
 #: teacheradmin/utils.py:28
 #, python-format
@@ -994,6 +1017,14 @@ msgstr "La Píldora con el id %s no existe"
 msgid "There is a announce with the same title"
 msgstr "Ya hay un comunicado con ese mismo título"
 
+#: teacheradmin/views.py:528
+msgid ""
+"The email has been queued, and it will be send in batches to every student "
+"in the course."
+msgstr ""
+"El correo ha sido encolado, y se enviará a todos los estudiantes del curso "
+"por grupos."
+
 #: teacheradmin/templates/teacheradmin/announcement_view.html:12
 msgid "Date"
 msgstr "Fecha"
@@ -1033,6 +1064,41 @@ msgstr "Lo sentimos"
 #: teacheradmin/templates/teacheradmin/base_teacheradmin.html:41
 msgid "But this section is not available yet."
 msgstr "Pero esta sección aún no está disponible."
+
+#: teacheradmin/templates/teacheradmin/emails.html:36
+msgid "Send an email to every student"
+msgstr "Envíe un correo a todos los alumnos"
+
+#: teacheradmin/templates/teacheradmin/emails.html:38
+msgid "Be aware!"
+msgstr "¡Cuidado!"
+
+#: teacheradmin/templates/teacheradmin/emails.html:39
+#, python-format
+msgid ""
+"You are about to send an email to <strong>%(students)s students</strong>."
+msgstr ""
+"Va a enviar un correo electrónico a <strong>%(students)s alumnos</strong>."
+
+#: teacheradmin/templates/teacheradmin/emails.html:44
+msgid "Send"
+msgstr "Enviar"
+
+#: teacheradmin/templates/teacheradmin/emails.html:54
+msgid "Previous emails"
+msgstr "Correos ya enviados"
+
+#: teacheradmin/templates/teacheradmin/emails.html:59
+msgid "There aren't massive emails sent yet."
+msgstr "No se ha enviado aún ningún correo electrónico masivo."
+
+#: teacheradmin/templates/teacheradmin/emails.html:69
+msgid "Sent at"
+msgstr "Enviado el"
+
+#: teacheradmin/templates/teacheradmin/emails.html:78
+msgid "Close"
+msgstr "Cerrar"
 
 #: teacheradmin/templates/teacheradmin/info.html:29
 msgid "Errors"

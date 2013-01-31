@@ -14,6 +14,7 @@
 
 from django import forms
 from django.forms.util import ErrorDict
+from django.utils.translation import ugettext as _
 
 from tinymce.widgets import TinyMCE
 
@@ -37,13 +38,15 @@ class CourseForm(forms.ModelForm):
 
 class MassiveEmailForm(forms.ModelForm):
 
-    subject = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'span10',
-        'maxlength': 100,
-    }))
-    message = forms.CharField(widget=TinyMCE(attrs={
-        'class': 'span10',
-    }))
+    subject = forms.CharField(widget=forms.TextInput(
+        attrs={
+            'class': 'span10',
+            'maxlength': 100,
+        }), label=_('Subject'))
+    message = forms.CharField(widget=TinyMCE(
+        attrs={
+            'class': 'span10',
+        }), label=_('Message'))
 
     class Meta:
         model = MassiveEmail
