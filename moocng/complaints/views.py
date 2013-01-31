@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from django.core.mail import mail_managers
+from moocng.complaints.utils import mail_managers_with_headers
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from moocng.complaints.forms import ComplaintsForm
@@ -22,12 +22,16 @@ def complaints(request):
     if request.method == 'POST':
         form = ComplaintsForm(request.POST)
         if form.is_valid():
+            sender = form.cleaned_data['sender']
+            if request.user.is_authenticated():
+                sender = request.user.email
             communication_type = form.cleaned_data['communication_type']
             subject = "%s | %s <%s>" % (communication_type.title(),
                                         form.cleaned_data['username'],
-                                        form.cleaned_data['sender'])
+                                        sender)
             message = form.cleaned_data['message']
-            mail_managers(subject, message)
+            headers = {'Reply-To': sender}
+            mail_managers_with_headers(subject, message, headers=headers)
             return HttpResponseRedirect('/complaints/sent')
     else:
         if request.user.is_authenticated():
