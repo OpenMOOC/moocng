@@ -25,7 +25,7 @@ class InvitationAdmin(admin.ModelAdmin):
 
 class MassiveEmailAdmin(admin.ModelAdmin):
 
-    list_display = ('course', 'subject', 'datetime')
+    list_display = ('subject', 'datetime', 'course')
     list_filter = ('course', )
 
 

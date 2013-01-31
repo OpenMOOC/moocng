@@ -12,14 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from django.forms import ModelForm
+from django import forms
 from django.forms.util import ErrorDict
+
+from tinymce.widgets import TinyMCE
 
 from moocng.courses.models import Course
 from moocng.teacheradmin.models import MassiveEmail
 
 
-class CourseForm(ModelForm):
+class CourseForm(forms.ModelForm):
 
     class Meta:
         model = Course
@@ -33,7 +35,15 @@ class CourseForm(ModelForm):
         return errors
 
 
-class MassiveEmailForm(ModelForm):
+class MassiveEmailForm(forms.ModelForm):
+
+    subject = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'span10',
+        'maxlength': 100,
+    }))
+    message = forms.CharField(widget=TinyMCE(attrs={
+        'class': 'span10',
+    }))
 
     class Meta:
         model = MassiveEmail
