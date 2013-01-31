@@ -21,7 +21,14 @@ from django.utils.translation import ugettext_lazy as _
 
 from tinymce.widgets import TinyMCE
 
-from moocng.courses.models import Unit, Attachment, Announcement
+from moocng.courses.models import Unit, Attachment, Announcement, Course
+
+
+class CourseForm(ModelForm):
+
+    class Meta:
+        model = Course
+        exclude = ('students', 'teachers', 'owner')
 
 
 class UnitForm(ModelForm):
