@@ -525,11 +525,14 @@ def teacheradmin_emails(request, course_slug):
             form.instance.datetime = datetime.now()
             form.save()
             # TODO send the email through celery
+            messages.success(request, _("The email has been queued, and it will be send in batches to every student in the course."))
+            return HttpResponseRedirect(reverse('teacheradmin_stats', args=[course_slug]))
+    else:
+        form = MassiveEmailForm()
 
-    form = MassiveEmailForm()
     return render_to_response('teacheradmin/emails.html', {
         'course': course,
         'is_enrolled': is_enrolled,
         'students': students,
-        'form': form
+        'form': form,
     }, context_instance=RequestContext(request))
