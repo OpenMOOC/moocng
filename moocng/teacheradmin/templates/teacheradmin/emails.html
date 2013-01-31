@@ -3,3 +3,36 @@
 {% load i18n %}
 
 {% block nav-teacheradmin-emails %}active{% endblock %}
+
+{% block mainclass %}teacheradmin-emails{% endblock %}
+
+{% block section %}
+<div class="row">
+    <div class="span10">
+        <h2>{% trans "Send an email to every student"%}</h2>
+        <div class="alert alert-block">
+            <h4>{% trans "Be aware!" %}</h4>
+            {% blocktrans %}You are about to send an email to <strong>{{ students }} students</strong>.{% endblocktrans %}
+        </div>
+        <form method="POST">{% csrf_token %}
+            {{ form }}
+            <div class="form-actions">
+                <input type="submit" class="btn btn-primary" value="{% trans "Send" %}" />
+            </div>
+        </form>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="span10">
+        <h2>{% trans "Previous emails" %}</h2>
+        <ul>
+            {% for email in course.massive_emails.all %}
+            <li>{{ email.datetime }}: {{ email.subject }}</li>
+            {% empty %}
+            <li>{% trans "There aren't massive emails sent yet." %}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

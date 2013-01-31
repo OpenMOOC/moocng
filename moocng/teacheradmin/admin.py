@@ -14,7 +14,7 @@
 
 from django.contrib import admin
 
-from moocng.teacheradmin.models import Invitation
+from moocng.teacheradmin.models import Invitation, MassiveEmail
 
 
 class InvitationAdmin(admin.ModelAdmin):
@@ -23,4 +23,11 @@ class InvitationAdmin(admin.ModelAdmin):
     list_filter = ('course', )
 
 
+class MassiveEmailAdmin(admin.ModelAdmin):
+
+    list_display = ('course', 'subject', 'datetime')
+    list_filter = ('course', )
+
+
 admin.site.register(Invitation, InvitationAdmin)
+admin.site.register(MassiveEmail, MassiveEmailAdmin)

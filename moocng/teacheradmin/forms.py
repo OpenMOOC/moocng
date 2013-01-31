@@ -16,6 +16,7 @@ from django.forms import ModelForm
 from django.forms.util import ErrorDict
 
 from moocng.courses.models import Course
+from moocng.teacheradmin.models import MassiveEmail
 
 
 class CourseForm(ModelForm):
@@ -30,3 +31,10 @@ class CourseForm(ModelForm):
             name = self.fields[k].label
             errors[name] = v
         return errors
+
+
+class MassiveEmailForm(ModelForm):
+
+    class Meta:
+        model = MassiveEmail
+        exclude = ('course', 'datetime')

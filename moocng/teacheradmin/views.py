@@ -36,7 +36,7 @@ from moocng.courses.forms import AnnouncementForm
 from moocng.courses.utils import (UNIT_BADGE_CLASSES, calculate_course_mark,
                                   calculate_unit_mark, calculate_kq_mark)
 from moocng.teacheradmin.decorators import is_teacher_or_staff
-from moocng.teacheradmin.forms import CourseForm
+from moocng.teacheradmin.forms import CourseForm, MassiveEmailForm
 from moocng.teacheradmin.models import Invitation
 from moocng.teacheradmin.utils import (send_invitation,
                                        send_removed_notification)
@@ -516,8 +516,20 @@ def teacheradmin_announcements_delete(request, course_slug, announ_slug):
 def teacheradmin_emails(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     is_enrolled = course.students.filter(id=request.user.id).exists()
+    students = course.students.count()
 
+    if request.method == 'POST':
+        form = MassiveEmailForm(request.POST)
+        if form.is_valid():
+            form.instance.course = course
+            form.instance.datetime = datetime.now()
+            form.save()
+            # TODO send the email through celery
+
+    form = MassiveEmailForm()
     return render_to_response('teacheradmin/emails.html', {
         'course': course,
         'is_enrolled': is_enrolled,
+        'students': students,
+        'form': form
     }, context_instance=RequestContext(request))
