@@ -60,7 +60,7 @@ jQuery(document).ready(function () {
                         }));
                     });
             },
-            minLength: 1
+            minLength: 3
         });
 
         removeTeacher = function (evt) {
