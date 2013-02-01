@@ -15,14 +15,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-31 10:29-0600\n"
+"POT-Creation-Date: 2013-02-01 07:27-0600\n"
 "PO-Revision-Date: 2012-09-18 10:35+0200\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
+"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es_ES\n"
 
 #: settings.py:73
 msgid "English"
@@ -225,11 +225,11 @@ msgstr "Comunicados del %(course_title)s"
 #: courses/feeds.py:35
 #, python-format
 msgid ""
-"Announcements of the online course \"%(course_title)s\" on the platform \"%"
-"(site_name)s\"."
+"Announcements of the online course \"%(course_title)s\" on the platform "
+"\"%(site_name)s\"."
 msgstr ""
-"Comunicados del curso online \"%(course_title)s\" en la plataforma \"%"
-"(site_name)s\"."
+"Comunicados del curso online \"%(course_title)s\" en la plataforma "
+"\"%(site_name)s\"."
 
 #: courses/forms.py:37
 msgid "The deadline date is mandatory for homework and exams."
@@ -285,7 +285,7 @@ msgstr "Fecha de fin"
 msgid "Teachers"
 msgstr "Profesores"
 
-#: courses/models.py:52
+#: courses/models.py:52 courses/templates/courses/add.html:41
 msgid "Teacher owner"
 msgstr "Profesor propietario"
 
@@ -503,20 +503,46 @@ msgid "options"
 msgstr "opciones"
 
 #: courses/views.py:68
+msgid "Only administrators can create courses"
+msgstr "Sólo los administradores pueden crear cursos"
+
+#: courses/views.py:79 courses/views.py:89
+msgid ""
+"NOT FOUND: That user doesn't exists, the owner must be an user of the "
+"platform"
+msgstr ""
+"NO ENCONTRADO: El usuario no exist, el propietario de un curso ha de ser un "
+"usuario de la plataforma"
+
+#: courses/views.py:84
+msgid "BAD REQUEST: The owner must be a name plus ID or an email"
+msgstr ""
+"PETICIÓN INCORRECTA: El propietario debe definirse mediante un nombre más "
+"ID, o un correo electrónico"
+
+#: courses/views.py:95
+msgid "BAD REQUEST: The name can't be an empty string"
+msgstr "PETICIÓN INCORRECTA: El nombre del curso no puede ser una cadena vacía"
+
+#: courses/views.py:98
+msgid "To fill"
+msgstr "A rellenar"
+
+#: courses/views.py:127
 #, python-format
 msgid "Congratulations, you have successfully enroll in the course %(course)s"
 msgstr "Enhorabuena, te has matriculado correctamente en el curso %(course)s"
 
-#: courses/views.py:74
+#: courses/views.py:133
 #, python-format
 msgid "You have successfully unenroll in the course %(course)s"
 msgstr "Te has desmatriculado correctamente del curso %(course)s"
 
-#: courses/views.py:97 courses/views.py:138
+#: courses/views.py:156 courses/views.py:197
 msgid "You are not enrolled in this course"
 msgstr "No estás matriculado en este curso"
 
-#: courses/views.py:121 courses/views.py:162
+#: courses/views.py:180 courses/views.py:221
 msgid "You are enrolled in this course but it has not yet begun"
 msgstr "Estás matriculado en este curso pero no ha empezado aún"
 
@@ -553,7 +579,7 @@ msgstr "Inicio"
 #: courses/templates/admin/courses/question/options.html:41
 #: courses/templates/admin/courses/question/options.html:65
 #: teacheradmin/templates/teacheradmin/question.html:44
-#: teacheradmin/templates/teacheradmin/teachers.html:77
+#: teacheradmin/templates/teacheradmin/teachers.html:78
 #: teacheradmin/templates/teacheradmin/units.html:26
 msgid "Add"
 msgstr "Añadir"
@@ -630,6 +656,29 @@ msgid_plural "Please correct the errors below."
 msgstr[0] "Por favor, corrija el error mostrado debajo."
 msgstr[1] "Por favor, corrija los errores mostrados debajo."
 
+#: courses/templates/courses/add.html:37
+#: courses/templates/courses/include.useractions.html:32
+msgid "Create course"
+msgstr "Crear un curso"
+
+#: courses/templates/courses/add.html:38
+msgid "Course name"
+msgstr "Nombre del curso"
+
+#: courses/templates/courses/add.html:42
+#: teacheradmin/templates/teacheradmin/teachers.html:77
+msgid "Name or email"
+msgstr "Nombre o correo electrónico"
+
+#: courses/templates/courses/add.html:45
+#: teacheradmin/templates/teacheradmin/emails.html:44
+msgid "Send"
+msgstr "Enviar"
+
+#: courses/templates/courses/add.html:46
+msgid "Cancel"
+msgstr "Cancelar"
+
 #: courses/templates/courses/announcement.html:9
 msgid "Published on:"
 msgstr "Publicado el:"
@@ -689,9 +738,9 @@ msgstr "Comentarios del profesor"
 #: courses/templates/courses/classroom.html:103
 #: courses/templates/courses/progress.html:64
 #: teacheradmin/templates/teacheradmin/stats.html:156
-#: teacheradmin/templates/teacheradmin/teachers.html:30
-#: teacheradmin/templates/teacheradmin/teachers.html:34
-#: teacheradmin/templates/teacheradmin/teachers.html:38
+#: teacheradmin/templates/teacheradmin/teachers.html:31
+#: teacheradmin/templates/teacheradmin/teachers.html:35
+#: teacheradmin/templates/teacheradmin/teachers.html:39
 #: teacheradmin/templates/teacheradmin/units.html:179
 #: teacheradmin/templates/teacheradmin/units.html:183
 #: teacheradmin/templates/teacheradmin/units.html:187
@@ -793,11 +842,7 @@ msgstr "Cambiar contraseña"
 msgid "Admin interface"
 msgstr "Interfaz de administración"
 
-#: courses/templates/courses/include.useractions.html:33
-msgid "Create course"
-msgstr "Crear un curso"
-
-#: courses/templates/courses/include.useractions.html:37
+#: courses/templates/courses/include.useractions.html:36
 msgid "Log out"
 msgstr "Terminar sesión"
 
@@ -914,8 +959,8 @@ msgid "Incorrect"
 msgstr "Incorrecto"
 
 #: courses/templates/courses/progress.html:71
-#: teacheradmin/templates/teacheradmin/teachers.html:11
-#: teacheradmin/templates/teacheradmin/teachers.html:60
+#: teacheradmin/templates/teacheradmin/teachers.html:13
+#: teacheradmin/templates/teacheradmin/teachers.html:61
 msgid "Pending"
 msgstr "Pendiente"
 
@@ -1012,8 +1057,8 @@ msgstr "Has sido invitado a ser profesor en \"%s\""
 #: teacheradmin/utils.py:41
 #, python-format
 msgid ""
-"Hello, you have been removed as teacher from the course \"%(course)s\" by %"
-"(host)s.\n"
+"Hello, you have been removed as teacher from the course \"%(course)s\" by "
+"%(host)s.\n"
 "\n"
 "Best regards,\n"
 "%(site)s's team"
@@ -1028,16 +1073,16 @@ msgstr ""
 msgid "You have been removed as teacher from \"%s\""
 msgstr "Ya no eres profesor de \"%s\""
 
-#: teacheradmin/views.py:236
+#: teacheradmin/views.py:237
 #, python-format
 msgid "The KQ with the %s id doesn't exists"
 msgstr "La Píldora con el id %s no existe"
 
-#: teacheradmin/views.py:487
+#: teacheradmin/views.py:488
 msgid "There is a announce with the same title"
 msgstr "Ya hay un comunicado con ese mismo título"
 
-#: teacheradmin/views.py:528
+#: teacheradmin/views.py:543
 msgid ""
 "The email has been queued, and it will be send in batches to every student "
 "in the course."
@@ -1100,10 +1145,6 @@ msgid ""
 msgstr ""
 "Va a enviar un correo electrónico a <strong>%(students)s alumnos</strong>."
 
-#: teacheradmin/templates/teacheradmin/emails.html:44
-msgid "Send"
-msgstr "Enviar"
-
 #: teacheradmin/templates/teacheradmin/emails.html:54
 msgid "Previous emails"
 msgstr "Correos ya enviados"
@@ -1133,8 +1174,8 @@ msgstr ""
 "fallos y pruebe de nuevo:"
 
 #: teacheradmin/templates/teacheradmin/info.html:36
-#: teacheradmin/templates/teacheradmin/teachers.html:22
-#: teacheradmin/templates/teacheradmin/teachers.html:26
+#: teacheradmin/templates/teacheradmin/teachers.html:23
+#: teacheradmin/templates/teacheradmin/teachers.html:27
 #: teacheradmin/templates/teacheradmin/units.html:171
 #: teacheradmin/templates/teacheradmin/units.html:175
 msgid "Success"
@@ -1272,46 +1313,42 @@ msgid "...in the question"
 msgstr "...en la pregunta"
 
 #: teacheradmin/templates/teacheradmin/stats.html:157
-#: teacheradmin/templates/teacheradmin/teachers.html:39
+#: teacheradmin/templates/teacheradmin/teachers.html:40
 #: teacheradmin/templates/teacheradmin/units.html:180
 msgid "Something went wrong, please try again later."
 msgstr "Algo ha ido mal, por favor pruebe de nuevo más tarde."
 
-#: teacheradmin/templates/teacheradmin/teachers.html:12
-#: teacheradmin/templates/teacheradmin/teachers.html:51
+#: teacheradmin/templates/teacheradmin/teachers.html:14
+#: teacheradmin/templates/teacheradmin/teachers.html:52
 msgid "Owner"
 msgstr "Propietario"
 
-#: teacheradmin/templates/teacheradmin/teachers.html:23
+#: teacheradmin/templates/teacheradmin/teachers.html:24
 msgid "The teacher has been added to the course or invited."
 msgstr "El profesor ha sido añadido o invitado al curso."
 
-#: teacheradmin/templates/teacheradmin/teachers.html:27
+#: teacheradmin/templates/teacheradmin/teachers.html:28
 msgid "The teacher has been removed from the course."
 msgstr "El profesor ha eliminado del curso."
 
-#: teacheradmin/templates/teacheradmin/teachers.html:31
+#: teacheradmin/templates/teacheradmin/teachers.html:32
 msgid ""
 "That teacher doesn't exists. Please, introduce a valid user or an email."
 msgstr ""
 "Ese profesor no existe. Por favor, introduza un usuario válido o un correo "
 "electrónico."
 
-#: teacheradmin/templates/teacheradmin/teachers.html:35
+#: teacheradmin/templates/teacheradmin/teachers.html:36
 msgid "The email introduced has already received an invitation."
 msgstr "El email introducido ya ha sido invitado a este curso."
 
-#: teacheradmin/templates/teacheradmin/teachers.html:41
+#: teacheradmin/templates/teacheradmin/teachers.html:42
 msgid "Reload"
 msgstr "Recargar"
 
-#: teacheradmin/templates/teacheradmin/teachers.html:54
+#: teacheradmin/templates/teacheradmin/teachers.html:55
 msgid "Transfer ownership"
 msgstr "Transferir propiedad"
-
-#: teacheradmin/templates/teacheradmin/teachers.html:76
-msgid "Name or email"
-msgstr "Nombre o correo electrónico"
 
 #: teacheradmin/templates/teacheradmin/units.html:24
 msgid "Nothing"
