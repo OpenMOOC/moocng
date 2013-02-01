@@ -32,6 +32,7 @@ urlpatterns = patterns(
 
     url(r'^transcript/$', 'transcript', name='transcript'),
 
+    url(r'^course/add$', 'course_add', name='course_add'),
     url(r'^course/(?P<course_slug>[-\w]+)/$', 'course_overview',
         name='course_overview'),
     url(r'^course/(?P<course_slug>[-\w]+)/classroom/$', 'course_classroom',

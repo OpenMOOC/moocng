@@ -13,16 +13,22 @@
 # limitations under the License.
 
 from datetime import date
+import re
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.flatpages.models import FlatPage
 from django.contrib.flatpages.views import render_flatpage
 from django.contrib.messages import success
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.core.validators import validate_email
+from django.http import (HttpResponseRedirect, HttpResponseForbidden,
+                         HttpResponse)
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
+from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
 
 from moocng.badges.models import Award
@@ -45,6 +51,59 @@ def flatpage(request, page=""):
     fpage = get_object_or_404(FlatPage, url__exact=("/%s-%s/" % (page, lang)),
                               sites__id__exact=settings.SITE_ID)
     return render_flatpage(request, fpage)
+
+
+name_and_id_regex = re.compile('[^\(]+\((\d+)\)')
+
+
+@login_required
+def course_add(request):
+    allow_public = False
+    try:
+        allow_public = settings.ALLOW_PUBLIC_COURSE_CREATION
+    except AttributeError:
+        pass
+
+    if not allow_public and not request.user.is_staff:
+        return HttpResponseForbidden(_("Only administrators can create courses"))
+
+    if request.method == 'POST':
+        if 'course_owner' in request.POST:
+            email_or_id = request.POST['course_owner']
+            try:
+                validate_email(email_or_id)
+                # is an email
+                try:
+                    owner = User.objects.get(email=email_or_id)
+                except (User.DoesNotExist):
+                    return HttpResponse(_('NOT FOUND: That user doesn\'t exists, the owner must be an user of the platform'), status=404)
+            except ValidationError:
+                # is name plus id
+                owner_id = name_and_id_regex.search(email_or_id)
+                if owner_id is None:
+                    return HttpResponse(_('BAD REQUEST: The owner must be a name plus ID or an email'), status=400)
+                try:
+                    owner_id = owner_id.groups()[0]
+                    owner = User.objects.get(id=owner_id)
+                except (User.DoesNotExist):
+                    return HttpResponse(_('NOT FOUND: That user doesn\'t exists, the owner must be an user of the platform'), status=404)
+        else:
+            owner = request.user
+
+        name = request.POST['course_name']
+        if (name == u''):
+            return HttpResponse(_('BAD REQUEST: The name can\'t be an empty string'), status=400)
+
+        course = Course(name=name, owner=owner, slug=slugify(name),
+                        description=_('To fill'))
+        course.save()
+        course.teachers.add(owner)
+        course.save()
+
+        return HttpResponseRedirect(reverse('teacheradmin_info', args=[course.slug]))
+
+    return render_to_response('courses/add.html', {},
+                              context_instance=RequestContext(request))
 
 
 def course_overview(request, course_slug):

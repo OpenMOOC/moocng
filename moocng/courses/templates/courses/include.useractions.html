@@ -29,8 +29,7 @@
       {% if user.is_staff or sandbox %}
       {% if sandbox %}<li class="divider"></li>{% endif %}
       <li>
-        <!-- TODO -->
-        <a href="/admin/courses/course/add">{% trans "Create course" %}</a>
+        <a href="{% url course_add %}">{% trans "Create course" %}</a>
       </li>
       {% endif %}
       <li class="divider"></li>
