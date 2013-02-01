@@ -38,6 +38,7 @@ from moocng.courses.utils import (UNIT_BADGE_CLASSES, calculate_course_mark,
 from moocng.teacheradmin.decorators import is_teacher_or_staff
 from moocng.teacheradmin.forms import CourseForm, MassiveEmailForm
 from moocng.teacheradmin.models import Invitation
+from moocng.teacheradmin.tasks import send_massive_email_task
 from moocng.teacheradmin.utils import (send_invitation,
                                        send_removed_notification)
 from moocng.videos.tasks import process_video_task
@@ -524,7 +525,21 @@ def teacheradmin_emails(request, course_slug):
             form.instance.course = course
             form.instance.datetime = datetime.now()
             form.save()
-            # TODO send the email through celery
+
+            batch = 30
+            try:
+                batch = settings.MASSIVE_EMAIL_BATCH_SIZE
+            except AttributeError:
+                pass
+
+            batches = (course.students.count() / batch) + 1
+            students = course.students.all()
+            for i in range(batches):
+                init = batch * i
+                end = init + batch
+                students_ids = [s.id for s in students[init:end]]
+                send_massive_email_task.delay(form.instance.id, students_ids)
+
             messages.success(request, _("The email has been queued, and it will be send in batches to every student in the course."))
             return HttpResponseRedirect(reverse('teacheradmin_stats', args=[course_slug]))
     else:

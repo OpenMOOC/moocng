@@ -340,6 +340,8 @@ ASKBOT_URL_TEMPLATE = 'https://questions.example.com/%s/'
 
 CERTIFICATE_URL = 'http://example.com/idcourse/%(courseid)s/email/%(email)s'  # Example, to be overwritten in local settings
 
+MASSIVE_EMAIL_BATCH_SIZE = 30
+
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 LOGIN_URL = '/saml2/login/'
 LOGIN_REDIRECT_URL = '/'

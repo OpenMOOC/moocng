@@ -16,7 +16,7 @@ import logging
 
 from django.conf import settings
 from django.contrib.sites.models import get_current_site
-from django.core.mail import send_mail
+from django.core.mail import send_mail, get_connection, EmailMultiAlternatives
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -53,3 +53,19 @@ def send_mail_wrapper(subject, message, to):
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, to)
     except IOError as ex:
         logger.error('The notification "%s" to %s could not be sent because of %s' % (subject, str(to), str(ex)))
+
+
+def send_mass_mail_wrapper(subject, message, recipients, html_content=False):
+    mails = []
+    content = message
+    if html_content:
+        content = ""
+    for to in recipients:
+        email = EmailMultiAlternatives(subject, content, settings.DEFAULT_FROM_EMAIL, [to])
+        if html_content:
+            email.attach_alternative(message, "text/html")
+        mails.append(email)
+    try:
+        get_connection().send_messages(mails)
+    except IOError as ex:
+        logger.error('The massive email "%s" to %s could not be sent because of %s' % (subject, recipients, str(ex)))
