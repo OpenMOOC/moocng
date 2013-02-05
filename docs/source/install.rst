@@ -10,7 +10,7 @@ right after this one.
 Prerequisites
 -------------
 
-The minimum version of Python needed to run moocng is 2.7.
+The minimum version of Python needed to run moocng is 2.6.
 
 In the process of installing moocng, both in the standard installation and
 the development installation, it is necessary that some libraries already
