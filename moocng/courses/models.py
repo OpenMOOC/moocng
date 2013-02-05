@@ -113,7 +113,7 @@ class Announcement(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('announcement_detail', [self.course.slug, self.slug])
+        return ('announcement_detail', [self.course.slug, self.id, self.slug])
 
 
 class Unit(Sortable):

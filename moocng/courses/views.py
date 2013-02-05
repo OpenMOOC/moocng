@@ -229,9 +229,9 @@ def course_progress(request, course_slug):
     }, context_instance=RequestContext(request))
 
 
-def announcement_detail(request, course_slug, announcement_slug):
+def announcement_detail(request, course_slug, announcement_id, announcement_slug):
     course = get_object_or_404(Course, slug=course_slug)
-    announcement = get_object_or_404(Announcement, slug=announcement_slug)
+    announcement = get_object_or_404(Announcement, id=announcement_id)
 
     return render_to_response('courses/announcement.html', {
         'course': course,
