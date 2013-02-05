@@ -39,7 +39,7 @@ urlpatterns = patterns(
         name='course_classroom'),
     url(r'^course/(?P<course_slug>[-\w]+)/progress/$', 'course_progress',
         name='course_progress'),
-    url(r'^course/(?P<course_slug>[-\w]+)/announcement/(?P<announcement_id>[-\w]+)/(?P<announcement_slug>[-\w]+)$',
+    url(r'^course/(?P<course_slug>[-\w]+)/announcement/(?P<announcement_id>(\d+))/(?P<announcement_slug>[-\w]+)$',
         'announcement_detail', name='announcement_detail'),
     url(r'^course/(?P<course_slug>[-\w]+)/announcements_feed/$',
         AnnouncementFeed(), name='announcements_feed'),
