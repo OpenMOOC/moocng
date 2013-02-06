@@ -72,4 +72,47 @@ to these nuggets.
 Progress
 ========
 
-TODO
+In the progress view of the courses is where the student can check how is he
+doing. It's an overview of the student's scores, per unit.
+
+There are two different progress bars in the view, one shows the *completion*
+percentage of the unit, and the other shows the *correct* percentage of the
+unit.
+
+Completion
+----------
+
+The completion percentage is based on the student's activity. It counts the
+number of nuggets in the unit, and the number of nuggets viewed by the student.
+Each nuggets is ponderated based on its normalized weight, and then the
+viewed or *completion* percentage is calculated.
+
+**The completion percentage of a unit is the ponderated weights of the viewed
+nuggets**.
+
+Correction
+----------
+
+The *correct* percentage is based on the nuggets correction, which depends on
+the nuggets having or not a question associated.
+
+If a nugget has a question, then the nugget is correct if the question is
+correct. There are not partially correct questions, the student must answer
+perfectly the whole question.
+
+If a nugget doesn't have a question, then the nugget is correct if the student
+has viewed the nugget's video.
+
+The percentage showed in the progress bar is calculated using the previous
+conditions and ponderated weights of the nugget.
+
+So, **the correction percentage of a unit is the ponderated weights of the
+correct nuggets, a nugget is correct if its question is answered perfectly (if
+any) or if its video is viewed (if there is no question)**.
+
+Nuggets
+-------
+
+The list of the unit's nuggets is showed under the progress bars. And it shows
+the **correction state of each nugget**, following the previously explained
+criteria.
