@@ -14,7 +14,7 @@ Welcome to MOOCNG's documentation!
 TODO: add description about moocng
 
 
-Administration manual
+Administration Manual
 =====================
 
 .. toctree::
@@ -26,7 +26,10 @@ Administration manual
 User Manual
 ===========
 
+.. toctree::
+   :maxdepth: 2
 
+   teacher_manual
 
 Support and Development
 =======================
