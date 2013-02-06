@@ -39,16 +39,16 @@ unit's weight**.
 Every unit counts?
 ~~~~~~~~~~~~~~~~~~
 
-There are three types of units: **normal**, **homeworks** and **exams**.
+There are three types of units: **normal**, **homework** and **exams**.
 
 In a regular course the *normal* units are irrelevant when calculating the
 course score. Because of this, their weights are automatically assumed as
 zero, even if something else was specified when they were created by the
-teachers. **In a regular course, only homeworks and exams counts**.
+teachers. **In a regular course, only homework and exams counts**.
 
 It is possible to specify that the *normal* units counts as well as the
-*homeworks* or *exams*. This is knows as the old way of scoring courses, and
-only an administrator of the system can activate this mode for a course.
+*homework* or *exams*. This is knows as the *old method* of scoring courses,
+and only an administrator of the system can activate this mode for a course.
 
 *Homeworks* and *exams* are identical when the scores are calculated. The
 system expects the teachers to assign bigger weights to the *exams*.
@@ -116,3 +116,120 @@ Nuggets
 The list of the unit's nuggets is showed under the progress bars. And it shows
 the **correction state of each nugget**, following the previously explained
 criteria.
+
+Example
+=======
+
+Our example course has two units with some nuggets:
+
+- Unit A - Normal (15%)
+
+  - Nugget A1 (30%)
+  - Nugget A2 - Question A2Q (70%)
+
+- Unit B - Exam (35%)
+
+  - Nugget B1 (0%)
+  - Nugget B2 - Question B2Q (50%)
+  - Nugget B3 - Question B3Q (50%)
+
+Let's see how the progress and score would be calculated for Bob, a student of
+our course.
+
+Bob enrolls in our course, and since he is very enthusiastic he starts
+immediately with the first unit, the unit A.
+
+The unit A is a *normal* unit, meaning that the scores in this course are
+irrelevant for the course final score, unless the *old scoring method* is
+activated for the course, which is not the case.
+
+He starts viewing the video of the first nugget (A1). When the video is
+finished he goes to the progress view to check if his activity has been
+recorded.
+
+In the progress view two bars are shown, and both are at 30%. The nugget
+weights 30%, and after normalization the weight stays at 30%, since the weights
+of the A unit sum a 100%. No normalization is needed in this case.
+
+The nugget doesn't have a question, so viewed and correct are the same here.
+
+After checking his progress, Bob returns to the classroom view to watch the
+next nugget (A2). This time there is a question after the nugget to help Bob
+realize his understanding of the concepts explained in unit A.
+
+He answers it but fails, he hasn't properly understood one of the concepts
+explained. He gets his answers immediately corrected and his mistake shown
+because the unit is a *normal* one, without start or end dates, and the
+questions of these units are no intend to be use as an evaluation tool, but
+as reinforce of the student learning.
+
+Bob goes to the progress view one more time, and now he sees that the
+completion bar for the unit A is at 100%, but the correction bar is at 30%. He
+goes back to the classroom and answers properly to the question this time,
+since it is not homework or a exam, he can change his answer as many times as
+he wants to. Now at the progress view he can see both bars at 100%.
+
+Happy with these results, Bob navigates to the transcript view and checks his
+scores. He has a 0. He understands that he has only completed a normal unit,
+that doesn't count for the course score.
+
+.. note::
+
+   If the *old scoring method* were activated for the course, Bob would have
+   found something different at the transcript view. Normal units would count,
+   so the system would have taken the unit ponderated score and showed it. The
+   unit has a weight of 15%, which when normalized changes to 30%. This happens
+   because the both units don't sum a 100%, just a 50%. Since the unit
+   ponderated weight is 30%, and Bob scored a 10 in the unit, the ponderated
+   score would have been 3 over 10. And that would have been shown instead of
+   0 if the *old method* was activated.
+
+Bob goes again to the classroom and starts the next and last unit of the
+course, the exam (B). But it happens that the exam doesn't start until the next
+day, and will be open only 24 hours. This is a short course. Bob prepares
+himself for the next day and goes to rest.
+
+The next day Bob starts the exam. He views the first nugget (B1) which is an
+introduction. The weight of the nugget is 0%, so nor the completion or the
+correction bars advance in the progress view after he viewing the video.
+
+He starts with the first question of the exam, the nugget B2. He answers the
+question (B2Q) but his answer doesn't get corrected. He won't see the
+correction until the end date for the exam is reached. He can change his answer
+before that date, but he won't see a correction until after.
+
+He answers as best as he knows, and then goes to the progress view. The
+completion bar is at 50% and the correction bar at 0%. This doesn't mean that
+Bob has answered wrongly, it's just that the unit is an exam, and until the
+end date is reached no information about correction is shown.
+
+Bob goes back to the classroom and answers the last question. At the progress
+view the completion bar is now at 100%, but the correction bar stays at 0%. He
+needs to wait until the next day to see the value of the correction bar.
+
+Bob goes to rest, and wait for the due date of the exam. Hoping that he has
+gotten the answer right.
+
+The next day he goes to the transcript and he sees that he has a 5 over 10.
+Sadly he had a mistake in one of the two questions. Then he goes to the
+classroom to see what mistake has he made. He goes to the questions of the
+exam and sees that he had the first question (B2Q) wrong. He changes his answer
+and send it again, and this time the system corrects him but warns him that the
+new answer won't be stored. The exams can only be answered between the start
+and end dates.
+
+.. note::
+
+   If the *old scoring method* was activated, then he would have a 6.5 over 10
+   instead. The unit A would count, and Bob scored a 10 in that unit. Unit A
+   normalized weight is a 30%, so the 10 becomes a 3. Bob have scored a 5 in
+   unit B, which normalized weight is 70%, so the 5 becomes a 3.5. The sum of
+   the unit's normalized scores (3 and 3.5) results in a 6.5 over 10.
+
+Bob checks the progress view and sees that for unit A both bars, completion and
+correction, are at 100%. But for unit B the correction is at 50%, and the
+completion at 100%.
+
+Bob has completed the course now, and he has learned from his mistakes. He goes
+and enrolls in another interesting course, hoping to achieve a perfect score
+this time.
