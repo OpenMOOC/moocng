@@ -1,33 +1,61 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7 ie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8 ie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9 ie" lang="en"> <![endif]-->
+<!--[if gt IE 8]> <html class="no-js ie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-{% load i18n %}
+  <title>Server error (500)</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
 
-{% block title %}{% trans 'Server error (500)' %}{% endblock %}
+  <meta name="viewport" content="width=device-width">
 
-{% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
+  <link rel="icon" href="/favicon.ico"/>
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/css/moocng.css">
 
-{% block content %}
-<div class="media-box">
-  <a href="#">
-    <img src="{{ theme.top_banner }}" alt="" />
-  </a>
-</div>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="/static/js/libs/jquery-1.7.2.min.js"><\/script>')</script>
+  <script src="/static/js/libs/modernizr-2.5.3.min.js"></script>
+  <script src="/static/js/libs/bootstrap.min.js"></script>
+</head>
+  <body>
+    <div class="container">
+      <header>
+        <hgroup>
+          <h1 class="logo"><a href="/" class="hide-text"><img src="/static/img/logo.png" alt="{{ site.name }}" />Example.com</a></h1>
+          <h2 class="small pull-left">Knowledge for the masses</h2>
+        </hgroup>
+        <ul class="unstyled pull-right" id="meta-buttons">
+          <li><a href="/" class="btn btn-link">Home</a></li>
+          |
+          <li><a href="/faq/" class="btn btn-link">FAQ</a></li>
+          |
+          <li><a href="/methodology/" class="btn btn-link">Methodology</a></li>
+        </ul>
+        <div class="clearfix"></div>
+      </header>
+      <div role="main">
+        <h1>Server Error (500)</h1>
+        <p>We are having technical problems at this moment.</p>
 
-<div class="row">
-  <section class="span8">
+        <p>We apologize for any inconvenience this may cause to you.</p>
 
-	<h1>{% trans 'Server Error <em>(500)</em>' %}</h1>
+        <p>We are working on the fix and we hope to improve the service very soon.</p>
 
-	<p>{% trans "There's been an error. It's been reported to the site administrators via e-mail and should be fixed shortly. Thanks for your patience." %}</p>
-
-  </section>
-  <div class="span4">
-    <div class="media-box">
-      <img src="{{ theme.right_banner1 }}" alt="" />
+        <p>Thank you for your patience.</p>
+      </div>
+      <footer>
+        <ul>
+          <li><a href="/legal/">Legal</a></li>
+          <li><a href="/copyright/">&copy; Example.com. All rights reserved</a></li>
+          <li><a href="/complaints/#complaints">Contact</a></li>
+        </ul>
+      </footer>
     </div>
-    <div class="media-box">
-      <img src="{{ theme.right_banner2 }}" alt="" />
-    </div>
-  </div>
-</div>
-{% endblock %}
+  </body>
+</html>
