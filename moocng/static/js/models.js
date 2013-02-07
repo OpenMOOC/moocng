@@ -94,7 +94,12 @@ MOOC.models.Option = Backbone.Model.extend({
         if (optiontype === 'l') {
             result = true;
         } else if (optiontype === 't') {
-            result = solution.toLowerCase() === reply.get('value').toLowerCase();
+            if (_.isString(reply.get("value"))) {
+                result = solution.toLowerCase() === reply.get('value').toLowerCase();
+            } else {
+                // This shouldn't happen
+                result = false;
+            }
         } else {
             if (solution.toLowerCase() === "true") {
                 result = reply.get('value') === true;
