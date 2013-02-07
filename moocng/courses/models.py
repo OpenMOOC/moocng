@@ -270,6 +270,6 @@ class Option(models.Model):
         if self.optiontype == 'l':
             return True
         elif self.optiontype == 't':
-            return reply == self.solution
+            return reply.lower() == self.solution.lower()
         else:
             return bool(reply) == (self.solution.lower() == u'true')
