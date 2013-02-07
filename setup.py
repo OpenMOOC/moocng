@@ -72,5 +72,6 @@ setup(
         'djangosaml2==0.7.0',
         'PIL>=1.1.7',
         'django_compressor==1.1.2',
+        'python-memcached==1.48',
         ],
 )

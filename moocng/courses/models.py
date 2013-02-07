@@ -23,10 +23,10 @@ from adminsortable.fields import SortableForeignKey
 from tinymce.models import HTMLField
 
 from moocng.badges.models import Badge
+from moocng.courses.cache import invalidate_template_fragment
 from moocng.courses.fields import PercentField
 from moocng.videos.tasks import process_video_task
 from moocng.videos.utils import extract_YT_video_id
-
 
 class Course(Sortable):
 
@@ -94,6 +94,16 @@ def handle_course_m2m_changed(sender, instance, action, **kwargs):
 signals.m2m_changed.connect(handle_course_m2m_changed, sender=Course.teachers.through)
 
 
+def course_invalidate_cache(sender, instance, **kwargs):
+    invalidate_template_fragment('course_list')
+    invalidate_template_fragment('course_overview_main_info', instance.id)
+    invalidate_template_fragment('course_overview_secondary_info', instance.id)
+
+
+signals.post_save.connect(course_invalidate_cache, sender=Course)
+signals.post_delete.connect(course_invalidate_cache, sender=Course)
+
+
 class Announcement(models.Model):
 
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
@@ -114,6 +124,14 @@ class Announcement(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('announcement_detail', [self.course.slug, self.id, self.slug])
+
+
+def announcement_invalidate_cache(sender, instance, **kwargs):
+    invalidate_template_fragment('course_overview_secondary_info', instance.course.id)
+
+
+signals.post_save.connect(announcement_invalidate_cache, sender=Announcement)
+signals.post_delete.connect(announcement_invalidate_cache, sender=Announcement)
 
 
 class Unit(Sortable):
@@ -147,6 +165,14 @@ class Unit(Sortable):
 
     def __unicode__(self):
         return u'%s - %s (%s)' % (self.course, self.title, self.unittype)
+
+
+def unit_invalidate_cache(sender, instance, **kwargs):
+    invalidate_template_fragment('course_overview_secondary_info', instance.course.id)
+
+
+signals.post_save.connect(unit_invalidate_cache, sender=Unit)
+signals.post_delete.connect(unit_invalidate_cache, sender=Unit)
 
 
 class KnowledgeQuantum(Sortable):

@@ -1,6 +1,6 @@
 {% extends "courses/base_course.html" %}
 
-{% load gravatar i18n %}
+{% load cache gravatar i18n %}
 
 {% block nav-course-overview %}class="active"{% endblock %}
 
@@ -12,6 +12,8 @@
 <h1>{{ course.name }}</h1>
 
 <div class="row">
+
+    {% cache 3600 course_overview_main_info course.id %}
     <div class="span8">
         {% if course.promotion_video %}
             <div class="media-box">
@@ -45,6 +47,7 @@
             </div>
         {% endif %}
     </div>
+    {% endcache %}
 
     <div class="span4">
         {% if is_enrolled %}
@@ -82,6 +85,7 @@
             </div>
         {% endif %}
 
+        {% cache 3600 course_overview_secondary_info course.id %}
         <div class="box">
             <h2>{% trans "Teachers" %}</h2>
             <ul class="unstyled">
@@ -157,6 +161,9 @@
                 <li class="pull-left"><a href="mailto:?subject=Look at this great course&amp;body={{ request.build_absolute_uri }}" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/email.png" alt="Share through email" /></a></li>
             </ul>
         </div>
+
+        {% endcache %}
+
     </div>
 </div>
 {% endblock %}

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load i18n %}
+{% load cache i18n %}
 
 {% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
 
@@ -15,6 +15,7 @@
   <section class="span8">
     <h1 class="content-title">{% trans "Courses" %}</h1>
 
+    {% cache 3600 course_list %}
     {% for course in courses %}
     <div class="box">
       <h2><a href="{{ course.get_absolute_url }}">{{ course.name }}</a></h2>
@@ -22,6 +23,7 @@
       <p class="box-footer"><a href="{{ course.get_absolute_url }}">{% trans "More information about this course" %}</a></p>
     </div>
     {% endfor %}
+    {% endcache %}
 
   </section>
   <div class="span4">
