@@ -15,11 +15,14 @@
 # limitations under the License.
 
 from cgi import escape
+import logging
 
 from django.core.exceptions import ValidationError
 from tastypie.validation import Validation
 
 from moocng.courses.models import Question, Option
+
+logger = logging.getLogger(__name__)
 
 
 class AnswerValidation(Validation):
@@ -39,13 +42,23 @@ class AnswerValidation(Validation):
                 question = Question.objects.get(id=questionID)
                 for reply in bundle.data['replyList']:
                     option = question.option_set.get(id=reply['option'])
+                    msg = None
+
                     if (option.optiontype == 't') and (not isinstance(reply['value'], basestring)):
-                        raise ValidationError(self._gen_message(request.user.username, reply, 'text'))
+                        msg = self._gen_message(request.user.username, reply, 'text')
                     elif (option.optiontype in ['c', 'r']) and (not isinstance(reply['value'], bool)):
-                        raise ValidationError(self._gen_message(request.user.username, reply, 'boolean'))
+                        msg = self._gen_message(request.user.username, reply, 'boolean')
+
+                    if msg is not None:
+                        logger.error(msg)
+                        raise ValidationError(msg)
             except Question.DoesNotExist:
-                raise ValidationError('Question %s does not exist' % questionID)
+                msg = 'Question %s does not exist' % questionID
+                logger.error(msg)
+                raise ValidationError(msg)
             except Option.DoesNotExist:
-                raise ValidationError('Option %s does not exist' % reply['option'])
+                msg = 'Option %s does not exist' % reply['option']
+                logger.error(msg)
+                raise ValidationError(msg)
 
         return {}
