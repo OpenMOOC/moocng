@@ -17,7 +17,22 @@ from django.utils.hashcompat import md5_constructor
 from django.utils.http import urlquote
 
 
-def invalidate_template_fragment(fragment, *variables):
+def get_template_fragment_key(fragment, *variables):
     args = md5_constructor(u':'.join([urlquote(var) for var in variables]))
-    cache_key = 'template.cache.%s.%s' % (fragment, args.hexdigest())
-    cache.delete(cache_key)
+    return 'template.cache.%s.%s' % (fragment, args.hexdigest())
+
+
+def invalidate_template_fragment(fragment, *variables):
+    cache_key = get_template_fragment_key(fragment, *variables)
+    if cache.has_key(cache_key):
+        cache.delete(cache_key)
+
+
+def get_flatpage_key(flatpage):
+    return get_template_fragment_key('flatpage', flatpage.url)
+
+
+def invalidate_flatpage(flatpage):
+    cache_key = get_flatpage_key(flatpage)
+    if cache.has_key(cache_key):
+        cache.delete(cache_key)

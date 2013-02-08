@@ -13,7 +13,10 @@
 # limitations under the License.
 
 from django.conf.urls import include, patterns, url
+from django.contrib.flatpages.models import FlatPage
+from django.db.models import signals
 
+from moocng.courses.cache import invalidate_flatpage
 from moocng.courses.feeds import AnnouncementFeed
 
 
@@ -48,3 +51,11 @@ urlpatterns = patterns(
     url(r'^course/(?P<course_slug>[-\w]+)/teacheradmin/',
         include('moocng.teacheradmin.urls')),
 )
+
+
+def flatpage_invalidate_cache(sender, instance, **kwargs):
+    invalidate_flatpage(instance)
+
+
+signals.post_save.connect(flatpage_invalidate_cache, sender=FlatPage)
+signals.post_delete.connect(flatpage_invalidate_cache, sender=FlatPage)

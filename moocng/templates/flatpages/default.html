@@ -1,10 +1,16 @@
 {% extends "base.html" %}
 
+{% load cache %}
+
 {% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
 
 {% block content %}
+
+    {% cache 3600 flatpage flatpage.url %}
     <h1>{{ flatpage.title }}</h1>
-	<div class="mb20">
+<div class="mb20">
     {{ flatpage.content }}
-	</div>
+</div>
+    {% endcache %}
+
 {% endblock %}
