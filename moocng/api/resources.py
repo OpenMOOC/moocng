@@ -39,6 +39,7 @@ from moocng.api.authorization import (PublicReadTeachersModifyAuthorization,
                                       #ApiKeyAuthorization,
                                       is_api_key_authorized)
 from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
+from moocng.api.validation import AnswerValidation
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment, Course)
 from moocng.courses.utils import normalize_kq_weight, calculate_course_mark
@@ -359,6 +360,7 @@ class AnswerResource(MongoResource):
         filtering = {
             "question": ('exact'),
         }
+        validation = AnswerValidation()
 
     def obj_get_list(self, request=None, **kwargs):
         user = self._get_or_create_user(request, **kwargs)
