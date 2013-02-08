@@ -26,13 +26,3 @@ def invalidate_template_fragment(fragment, *variables):
     cache_key = get_template_fragment_key(fragment, *variables)
     if cache.has_key(cache_key):
         cache.delete(cache_key)
-
-
-def get_flatpage_key(flatpage):
-    return get_template_fragment_key('flatpage', flatpage.url)
-
-
-def invalidate_flatpage(flatpage):
-    cache_key = get_flatpage_key(flatpage)
-    if cache.has_key(cache_key):
-        cache.delete(cache_key)
