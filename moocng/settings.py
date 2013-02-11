@@ -182,6 +182,7 @@ INSTALLED_APPS = (
     'tinymce',
     'tastypie',
     'compressor',
+    'moocng.contact',
     'moocng.courses',
     'moocng.portal',
     'moocng.videos',
