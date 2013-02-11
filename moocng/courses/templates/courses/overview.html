@@ -1,6 +1,6 @@
 {% extends "courses/base_course.html" %}
 
-{% load gravatar i18n %}
+{% load gravatar i18n enrollment_tags %}
 
 {% block nav-course-overview %}class="active"{% endblock %}
 
@@ -47,24 +47,20 @@
     </div>
 
     <div class="span4">
+      <div class="box action-box">
         {% if is_enrolled %}
-            <div class="alert alert-success">
-                <strong>{% trans "You are enrolled in this course" %}</strong>
-                    <form method="post" action="{% url course_overview course.slug %}">{% csrf_token %}
-                        <input type="submit" class="btn btn-medium btn-primary" value="{% trans "Unenroll me" %}" />
-                    </form>
-            </div>
+        <div class="alert alert-success">
+          <strong>{% trans "You are enrolled in this course" %}</strong>
+          {% unenroll_button course %}
+        </div>
         {% else %}
-            <div style="text-align: center">
-                {% if user.is_authenticated %}
-                    <form method="post" action="{% url course_overview course.slug %}">{% csrf_token %}
-                        <input type="submit" class="btn btn-large btn-primary" value="{% trans "Enroll me in this course" %}" />
-                    </form>
-                {% else %}
-                    <a href="{{ registry_url }}" class="btn btn-large btn-primary mb20">{% blocktrans with site_name=site.name %}Register in {{ site_name }} to enroll in this course{% endblocktrans %}</a>
-                {% endif %}
-            </div>
+          {% if user.is_authenticated %}
+            {% enroll_button course %}
+          {% else %}
+            <a href="{{ registry_url }}" class="btn btn-large btn-primary">{% blocktrans with site_name=site.name %}Register in {{ site_name }} to enroll in this course{% endblocktrans %}</a>
+          {% endif %}
         {% endif %}
+      </div>
 
         {% if course.certification_available %}
             <div style="text-align: center">
