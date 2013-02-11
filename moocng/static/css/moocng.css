@@ -316,6 +316,11 @@ input[type="checkbox"] {
     margin: -4px 0 0;
 }
 
+.errorlist {
+    color: red;
+    padding-top: 10px;
+}
+
 .teacheradmin-units .ui-state-highlight {
     min-height: 30px;
     margin-bottom: 10px;
@@ -416,28 +421,4 @@ input[type="checkbox"] {
     margin-left: 20px;
     position: relative;
     top: -3px;
-}
-
-#complaints .errorlist {
-    color: red;
-    padding-top: 10px;
-}
-
-#complaints label[for=id_tos] {
-    display: inline;
-}
-
-#complaints .btn {
-    clear: both;
-    display: block !important;
-}
-
-#id_tos {
-    float: left;
-    margin-right: 5px;
-    margin-top: 2px;
-}
-
-.errorlist {
-    color: red;
 }
