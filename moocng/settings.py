@@ -188,6 +188,7 @@ INSTALLED_APPS = (
     'moocng.videos',
     'moocng.teacheradmin',
     'moocng.badges',
+    'moocng.enrollment',
     'djangosaml2',
     'south',
     # Uncomment the next line to enable admin documentation:
@@ -326,6 +327,12 @@ USER_API_KEY = '123456789'
 # A list with the slugs of the courses that use the old qualification system
 # where the normal units counted
 COURSES_USING_OLD_TRANSCRIPT = []
+
+# Enrollment methods
+ENROLLMENT_METHODS = (
+    'moocng.enrollment.methods.FreeEnrollment',
+    )
+
 
 # Celery settings
 import djcelery

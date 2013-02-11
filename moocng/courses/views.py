@@ -20,7 +20,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.flatpages.models import FlatPage
 from django.contrib.flatpages.views import render_flatpage
-from django.contrib.messages import success
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import validate_email
@@ -118,22 +117,6 @@ def course_overview(request, course_slug):
     else:
         is_enrolled = False
         is_teacher = False
-
-    if request.method == 'POST':
-        if not is_enrolled:
-            course.students.add(request.user)
-            course.save()
-            success(request,
-                    _(u'Congratulations, you have successfully enroll in the course %(course)s')
-                    % {'course': unicode(course)})
-        else:
-            course.students.remove(request.user)
-            course.save()
-            success(request,
-                    _(u'You have successfully unenroll in the course %(course)s')
-                    % {'course': unicode(course)})
-        return HttpResponseRedirect(reverse('course_overview',
-                                            args=(course.slug, )))
 
     announcements = Announcement.objects.filter(course=course).order_by('datetime').reverse()[:5]
 

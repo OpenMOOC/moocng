@@ -103,6 +103,12 @@ footer ul li {
     margin-bottom: 20px;
 }
 
+.action-box {
+    background-color: transparent;
+    box-shadow: none;
+    text-align: center;
+}
+
 .box h2 {
     border-bottom: 1px solid #dddddd;
     margin-bottom: 0.5em;
