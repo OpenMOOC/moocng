@@ -44,7 +44,6 @@ urlpatterns = patterns(
         kwargs={'next_page': settings.LOGOUT_REDIRECT_URL}),
     url(r'^saml2/', include('djangosaml2.urls')),
 
-    url(r'^complaints/', include('moocng.complaints.urls')),
     url(r'^contact/', include('moocng.contact.urls')),
 )
 

@@ -186,7 +186,6 @@ INSTALLED_APPS = (
     'moocng.courses',
     'moocng.portal',
     'moocng.videos',
-    'moocng.complaints',
     'moocng.teacheradmin',
     'moocng.badges',
     'djangosaml2',
