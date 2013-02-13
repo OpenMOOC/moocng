@@ -183,11 +183,11 @@ INSTALLED_APPS = (
     'tastypie',
     'compressor',
     'moocng.contact',
+    'moocng.badges',  # this must be defined before moocng.courses
     'moocng.courses',
     'moocng.portal',
     'moocng.videos',
     'moocng.teacheradmin',
-    'moocng.badges',
     'moocng.enrollment',
     'djangosaml2',
     'south',
