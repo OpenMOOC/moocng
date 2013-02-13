@@ -9,7 +9,7 @@
 {% block nav-teacheradmin-info %}active{% endblock %}
 
 {% block section %}
-<form action="" method="post">{% csrf_token %}
+<form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
     {{ form.non_field_errors }}
     <div class="row">
         <div class="span5">
@@ -17,18 +17,24 @@
                 {{ form.name.errors }}
                 {{ form.name.label_tag }}
                 {{ form.name }}
-                {% if form.name.help_text %}<span>{{ form.name.help_text }}</span>{% endif %}
+                {% if form.name.help_text %}<span class="help-inline">{{ form.name.help_text }}</span>{% endif %}
             <p>
                 {{ form.promotion_video.errors }}
                 {{ form.promotion_video.label_tag }}
                 {{ form.promotion_video }}
-                {% if form.promotion_video.help_text %}<span>{{ form.promotion_video.help_text }}</span>{% endif %}
+                {% if form.promotion_video.help_text %}<span class="help-inline">{{ form.promotion_video.help_text }}</span>{% endif %}
             </p>
             <p>
                 {{ form.enrollment_method.errors }}
                 {{ form.enrollment_method.label_tag }}
                 {{ form.enrollment_method }}
-                {% if form.enrollment_method.help_text %}<span>{{ form.enrollment_method.help_text }}</span>{% endif %}
+                {% if form.enrollment_method.help_text %}<span class="help-inline">{{ form.enrollment_method.help_text }}</span>{% endif %}
+            </p>
+            <p>
+                {{ form.threshold.errors }}
+                {{ form.threshold.label_tag }}
+                {{ form.threshold }}
+                {% if form.threshold.help_text %}<span class="help-inline">{{ form.threshold.help_text }}</span>{% endif %}
             </p>
         </div>
         <div class="span5">
@@ -36,53 +42,62 @@
                 {{ form.start_date.errors }}
                 {{ form.start_date.label_tag }}
                 {{ form.start_date }}
-                {% if form.start_date.help_text %}<span>{{ form.start_date.help_text }}</span>{% endif %}
+                {% if form.start_date.help_text %}<span class="help-inline">{{ form.start_date.help_text }}</span>{% endif %}
             </p>
             <p>
                 {{ form.end_date.errors }}
                 {{ form.end_date.label_tag }}
                 {{ form.end_date }}
-                {% if form.end_date.help_text %}<span>{{ form.end_date.help_text }}</span>{% endif %}
+                {% if form.end_date.help_text %}<span class="help-inline">{{ form.end_date.help_text }}</span>{% endif %}
             </p>
             <p>
-                {{ form.threshold.errors }}
-                {{ form.threshold.label_tag }}
-                {{ form.threshold }}
-                {% if form.threshold.help_text %}<span>{{ form.threshold.help_text }}</span>{% endif %}
+                {{ form.certification_available.errors }}
+                <label for="id_certification_available" style="margin: 32px 0;">
+                  <input id="id_certification_available" type="checkbox" name="certification_available">
+                  {% trans "Certification available" %}
+                </label>
+                {% if form.certification_available.help_text %}<span class="help-inline">{{ form.certification_available.help_text }}</span>{% endif %}
             </p>
+            <p>
+                {{ form.certification_banner.errors }}
+                {{ form.certification_banner.label_tag }}
+                {{ form.certification_banner }}
+                {% if form.certification_banner.help_text %}<span class="help-inline">{{ form.certification_banner.help_text }}</span>{% endif %}
+            </p>
+
         </div>
     </div>
     <p>
         {{ form.description.errors }}
         {{ form.description.label_tag }}
         {{ form.description }}
-        {% if form.description.help_text %}<span>{{ form.description.help_text }}</span>{% endif %}
+        {% if form.description.help_text %}<span class="help-block">{{ form.description.help_text }}</span>{% endif %}
     </p>
     <p>
         {{ form.requirements.errors }}
         {{ form.requirements.label_tag }}
         {{ form.requirements }}
-        {% if form.requirements.help_text %}<span>{{ form.requirements.help_text }}</span>{% endif %}
+        {% if form.requirements.help_text %}<span class="help-block">{{ form.requirements.help_text }}</span>{% endif %}
     </p>
     <p>
         {{ form.intended_audience.errors }}
         {{ form.intended_audience.label_tag }}
         {{ form.intended_audience }}
-        {% if form.intended_audience.help_text %}<span>{{ form.intended_audience.help_text }}</span>{% endif %}
+        {% if form.intended_audience.help_text %}<span class="help-block">{{ form.intended_audience.help_text }}</span>{% endif %}
     </p>
     <p>
         {{ form.estimated_effort.errors }}
         {{ form.estimated_effort.label_tag }}
         {{ form.estimated_effort }}
-        {% if form.estimated_effort.help_text %}<span>{{ form.estimated_effort.help_text }}</span>{% endif %}
+        {% if form.estimated_effort.help_text %}<span class="help-block">{{ form.estimated_effort.help_text }}</span>{% endif %}
     </p>
     <p>
         {{ form.learning_goals.errors }}
         {{ form.learning_goals.label_tag }}
         {{ form.learning_goals }}
-        {% if form.learning_goals.help_text %}<span>{{ form.learning_goals.help_text }}</span>{% endif %}
+        {% if form.learning_goals.help_text %}<span class="help-block">{{ form.learning_goals.help_text }}</span>{% endif %}
     </p>
-    <p>
+    <p class="form-actions">
       <input type="submit" class="btn btn-primary" value="{% trans "Save" %}" />
     </p>
 </form>
