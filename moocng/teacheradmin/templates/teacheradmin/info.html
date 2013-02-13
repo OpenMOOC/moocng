@@ -52,52 +52,69 @@
             </p>
         </div>
     </div>
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a href="#tab-description" data-toggle="tab">{{ form.description.label }}</a>
+        </li>
+        <li>
+            <a href="#tab-requirements" data-toggle="tab">{{ form.requirements.label }}</a>
+        </li>
+        <li>
+            <a href="#tab-intended_audience" data-toggle="tab">{{ form.intended_audience.label }}</a>
+        </li>
+        <li>
+            <a href="#tab-estimated_effort" data-toggle="tab">{{ form.estimated_effort.label }}</a>
+        </li>
+        <li>
+            <a href="#tab-learning_goals" data-toggle="tab">{{ form.learning_goals.label }}</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="tab-description">
+            {{ form.description.errors }}
+            {{ form.description.label_tag }}
+            {{ form.description }}
+            {% if form.description.help_text %}<span class="help-block">{{ form.description.help_text }}</span>{% endif %}
+        </div>
+        <div class="tab-pane" id="tab-requirements">
+            {{ form.requirements.errors }}
+            {{ form.requirements.label_tag }}
+            {{ form.requirements }}
+            {% if form.requirements.help_text %}<span class="help-block">{{ form.requirements.help_text }}</span>{% endif %}
+        </div>
+        <div class="tab-pane" id="tab-intended_audience">
+            {{ form.intended_audience.errors }}
+            {{ form.intended_audience.label_tag }}
+            {{ form.intended_audience }}
+            {% if form.intended_audience.help_text %}<span class="help-block">{{ form.intended_audience.help_text }}</span>{% endif %}
+        </div>
+        <div class="tab-pane" id="tab-estimated_effort">
+            {{ form.estimated_effort.errors }}
+            {{ form.estimated_effort.label_tag }}
+            {{ form.estimated_effort }}
+            {% if form.estimated_effort.help_text %}<span class="help-block">{{ form.estimated_effort.help_text }}</span>{% endif %}
+        </div>
+        <div class="tab-pane" id="tab-learning_goals">
+            {{ form.learning_goals.errors }}
+            {{ form.learning_goals.label_tag }}
+            {{ form.learning_goals }}
+            {% if form.learning_goals.help_text %}<span class="help-block">{{ form.learning_goals.help_text }}</span>{% endif %}
+        </div>
+    </div>
     <p>
-        {{ form.description.errors }}
-        {{ form.description.label_tag }}
-        {{ form.description }}
-        {% if form.description.help_text %}<span class="help-block">{{ form.description.help_text }}</span>{% endif %}
+        {{ form.certification_available.errors }}
+        <label for="id_certification_available" style="margin: 32px 0;">
+          {{ form.certification_available }}
+          {% trans "Certification available" %}
+        </label>
+        {% if form.certification_available.help_text %}<span class="help-inline">{{ form.certification_available.help_text }}</span>{% endif %}
     </p>
     <p>
-        {{ form.requirements.errors }}
-        {{ form.requirements.label_tag }}
-        {{ form.requirements }}
-        {% if form.requirements.help_text %}<span class="help-block">{{ form.requirements.help_text }}</span>{% endif %}
+        {{ form.certification_banner.errors }}
+        {{ form.certification_banner.label_tag }}
+        {{ form.certification_banner }}
+        {% if form.certification_banner.help_text %}<span class="help-inline">{{ form.certification_banner.help_text }}</span>{% endif %}
     </p>
-    <p>
-        {{ form.intended_audience.errors }}
-        {{ form.intended_audience.label_tag }}
-        {{ form.intended_audience }}
-        {% if form.intended_audience.help_text %}<span class="help-block">{{ form.intended_audience.help_text }}</span>{% endif %}
-    </p>
-    <p>
-        {{ form.estimated_effort.errors }}
-        {{ form.estimated_effort.label_tag }}
-        {{ form.estimated_effort }}
-        {% if form.estimated_effort.help_text %}<span class="help-block">{{ form.estimated_effort.help_text }}</span>{% endif %}
-    </p>
-    <p>
-        {{ form.learning_goals.errors }}
-        {{ form.learning_goals.label_tag }}
-        {{ form.learning_goals }}
-        {% if form.learning_goals.help_text %}<span class="help-block">{{ form.learning_goals.help_text }}</span>{% endif %}
-    </p>
-            <p>
-                {{ form.certification_available.errors }}
-                <label for="id_certification_available" style="margin: 32px 0;">
-                  {{ form.certification_available }}
-                  {% trans "Certification available" %}
-                </label>
-                {% if form.certification_available.help_text %}<span class="help-inline">{{ form.certification_available.help_text }}</span>{% endif %}
-            </p>
-            <p>
-                {{ form.certification_banner.errors }}
-                {{ form.certification_banner.label_tag }}
-                {{ form.certification_banner }}
-                {% if form.certification_banner.help_text %}<span class="help-inline">{{ form.certification_banner.help_text }}</span>{% endif %}
-            </p>
-
-
     <p class="form-actions">
       <input type="submit" class="btn btn-primary" value="{% trans "Save" %}" />
     </p>
