@@ -43,13 +43,9 @@ class CourseForm(forms.ModelForm):
             elif isinstance(widget, forms.widgets.Textarea):
                 widget.mce_attrs['width'] = '780'  # bootstrap span10
 
-    def get_pretty_errors(self):
-        errors = ErrorDict()
-        for k, v in self.errors.items():
-            name = self.fields[k].label
-            errors[name] = v
-        return errors
-
+            elif isinstance(widget, forms.widgets.ClearableFileInput):
+                # In bootstrap the <input checkbox> must be inside the <label>
+                widget.template_with_clear = u'<label for="%(clear_checkbox_id)s">%(clear)s %(clear_checkbox_label)s</label>'
 
 class MassiveEmailForm(forms.ModelForm):
 

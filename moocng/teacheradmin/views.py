@@ -427,7 +427,7 @@ def teacheradmin_info(request, course_slug):
     is_enrolled = course.students.filter(id=request.user.id).exists()
 
     if request.method == 'POST':
-        form = CourseForm(data=request.POST, instance=course)
+        form = CourseForm(data=request.POST, files=request.FILES, instance=course)
         if form.is_valid():
             form.save()
             messages.success(request, _(u"Your changes were saved."))

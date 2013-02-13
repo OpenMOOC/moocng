@@ -30,12 +30,6 @@
                 {{ form.enrollment_method }}
                 {% if form.enrollment_method.help_text %}<span class="help-inline">{{ form.enrollment_method.help_text }}</span>{% endif %}
             </p>
-            <p>
-                {{ form.threshold.errors }}
-                {{ form.threshold.label_tag }}
-                {{ form.threshold }}
-                {% if form.threshold.help_text %}<span class="help-inline">{{ form.threshold.help_text }}</span>{% endif %}
-            </p>
         </div>
         <div class="span5">
             <p>
@@ -51,20 +45,11 @@
                 {% if form.end_date.help_text %}<span class="help-inline">{{ form.end_date.help_text }}</span>{% endif %}
             </p>
             <p>
-                {{ form.certification_available.errors }}
-                <label for="id_certification_available" style="margin: 32px 0;">
-                  <input id="id_certification_available" type="checkbox" name="certification_available">
-                  {% trans "Certification available" %}
-                </label>
-                {% if form.certification_available.help_text %}<span class="help-inline">{{ form.certification_available.help_text }}</span>{% endif %}
+                {{ form.threshold.errors }}
+                {{ form.threshold.label_tag }}
+                {{ form.threshold }}
+                {% if form.threshold.help_text %}<span class="help-inline">{{ form.threshold.help_text }}</span>{% endif %}
             </p>
-            <p>
-                {{ form.certification_banner.errors }}
-                {{ form.certification_banner.label_tag }}
-                {{ form.certification_banner }}
-                {% if form.certification_banner.help_text %}<span class="help-inline">{{ form.certification_banner.help_text }}</span>{% endif %}
-            </p>
-
         </div>
     </div>
     <p>
@@ -97,6 +82,22 @@
         {{ form.learning_goals }}
         {% if form.learning_goals.help_text %}<span class="help-block">{{ form.learning_goals.help_text }}</span>{% endif %}
     </p>
+            <p>
+                {{ form.certification_available.errors }}
+                <label for="id_certification_available" style="margin: 32px 0;">
+                  {{ form.certification_available }}
+                  {% trans "Certification available" %}
+                </label>
+                {% if form.certification_available.help_text %}<span class="help-inline">{{ form.certification_available.help_text }}</span>{% endif %}
+            </p>
+            <p>
+                {{ form.certification_banner.errors }}
+                {{ form.certification_banner.label_tag }}
+                {{ form.certification_banner }}
+                {% if form.certification_banner.help_text %}<span class="help-inline">{{ form.certification_banner.help_text }}</span>{% endif %}
+            </p>
+
+
     <p class="form-actions">
       <input type="submit" class="btn btn-primary" value="{% trans "Save" %}" />
     </p>
