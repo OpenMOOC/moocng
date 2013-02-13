@@ -435,10 +435,13 @@ def teacheradmin_info(request, course_slug):
             success = True
         else:
             errors = form.get_pretty_errors()
+    else:
+        form = CourseForm(instance=course)
 
     return render_to_response('teacheradmin/info.html', {
         'course': course,
         'is_enrolled': is_enrolled,
+        'form': form,
         'errors': errors,
         'success': success,
     }, context_instance=RequestContext(request))

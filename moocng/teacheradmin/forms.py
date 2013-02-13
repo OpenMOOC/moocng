@@ -28,6 +28,21 @@ class CourseForm(forms.ModelForm):
         model = Course
         exclude = ('slug', 'teachers', 'owner', 'students')
 
+    def __init__(self, *args, **kwargs):
+        super(CourseForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            widget = field.widget
+
+            if isinstance(widget, forms.widgets.TextInput):
+                widget.attrs['class'] = 'input-xlarge'
+
+            elif isinstance(widget, forms.widgets.DateInput):
+                widget.attrs['class'] = 'input-xlarge'
+                widget.attrs['placeholder'] = 'YYYY-MM-DD'
+
+            elif isinstance(widget, forms.widgets.Textarea):
+                widget.mce_attrs['width'] = '780'  # bootstrap span10
+
     def get_pretty_errors(self):
         errors = ErrorDict()
         for k, v in self.errors.items():

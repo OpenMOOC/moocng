@@ -4,21 +4,6 @@
 
 {% block extraheader %}
 <script type="text/javascript" src="{{ STATIC_URL }}tiny_mce/tiny_mce.js"></script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        tinyMCE.init({
-            mode: "textareas",
-            plugins: "paste,searchreplace",
-            width: "780", // bootstrap span10
-            theme: "advanced",
-            theme_advanced_resizing : true,
-            theme_advanced_toolbar_location: "top",
-            theme_advanced_buttons1: "bold,italic,underline,strikethrough,separator,undo,redo,separator,cleanup,separator,bullist,numlist",
-            theme_advanced_buttons2: "",
-            theme_advanced_buttons3: ""
-        });
-    });
-</script>
 {% endblock %}
 
 {% block nav-teacheradmin-info %}active{% endblock %}
@@ -40,19 +25,56 @@
 <form action="" method="post">{% csrf_token %}
     <div class="row">
         <div class="span5">
-            <p><label for="id_name">{% trans "Name" %}:</label> <input id="id_name" type="text" name="name" value="{{ course.name }}" maxlength="200" class="input-xlarge" /></p>
-            <p><label for="id_promotion_video">{% trans "Promotion video" %}:</label> <input id="id_promotion_video" type="url" name="promotion_video" maxlength="200" value="{{ course.promotion_video }}" class="input-xlarge" /></p>
+            <p>
+                {{ form.name.errors }}
+                <label for="id_name">{% trans "Name" %}:</label>
+                {{ form.name }}
+            <p>
+                {{ form.promotion_video.errors }}
+                <label for="id_promotion_video">{% trans "Promotion video" %}:</label>
+                {{ form.promotion_video }}
+            </p>
         </div>
         <div class="span5">
-            <p><label for="id_start_date">{% trans "Start date" %}:</label> <input type="date" name="start_date" id="id_start_date" value="{{ course.start_date|date:"Y-m-d" }}" placeholder="YYYY-MM-DD" class="input-xlarge" /></p>
-            <p><label for="id_end_date">{% trans "End date" %}:</label> <input type="date" name="end_date" id="id_end_date" value="{{ course.end_date|date:"Y-m-d" }}" placeholder="YYYY-MM-DD" class="input-xlarge" /></p>
+            <p>
+                {{ form.start_date.errors }}
+                <label for="id_start_date">{% trans "Start date" %}:</label>
+                {{ form.start_date }}
+            </p>
+            <p>
+                {{ form.end_date.errors }}
+                <label for="id_end_date">{% trans "End date" %}:</label>
+                {{ form.end_date }}
+            </p>
         </div>
     </div>
-    <p><label for="id_description">{% trans "Description" %}:</label> <textarea rows="10" cols="40" name="description" id="id_description">{{ course.description }}</textarea></p>
-    <p><label for="id_requirements">{% trans "Requirements" %}:</label> <textarea rows="10" cols="40" name="requirements" id="id_requirements">{{ course.requirements }}</textarea></p>
-    <p><label for="id_intended_audience">{% trans "Intended audience" %}:</label> <textarea rows="10" cols="40" name="intended_audience" id="id_intended_audience">{{ course.intended_audience }}</textarea></p>
-    <p><label for="id_estimated_effort">{% trans "Estimated effort" %}:</label> <textarea rows="10" cols="40" name="estimated_effort" id="id_estimated_effort">{{ course.estimated_effort }}</textarea></p>
-    <p><label for="id_learning_goals">{% trans "Learning goals" %}:</label> <textarea rows="10" cols="40" name="learning_goals" id="id_learning_goals">{{ course.learning_goals }}</textarea></p>
-    <input type="submit" value="{% trans "Save" %}" />
+    <p>
+        {{ form.description.errors }}
+        <label for="id_description">{% trans "Description" %}:</label>
+        {{ form.description }}
+    </p>
+    <p>
+        {{ form.requirements.errors }}
+        <label for="id_requirements">{% trans "Requirements" %}:</label>
+        {{ form.requirements }}
+    </p>
+    <p>
+        {{ form.intended_audience.errors }}
+        <label for="id_intended_audience">{% trans "Intended audience" %}:</label>
+        {{ form.intended_audience }}
+    </p>
+    <p>
+        {{ form.estimated_effort.errors }}
+        <label for="id_estimated_effort">{% trans "Estimated effort" %}:</label>
+        {{ form.estimated_effort }}
+    </p>
+    <p>
+        {{ form.learning_goals.errors }}
+        <label for="id_learning_goals">{% trans "Learning goals" %}:</label>
+        {{ form.learning_goals }}
+    </p>
+    <p>
+      <input type="submit" class="btn btn-primary" value="{% trans "Save" %}" />
+    </p>
 </form>
 {% endblock %}
