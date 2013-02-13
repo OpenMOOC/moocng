@@ -9,20 +9,8 @@
 {% block nav-teacheradmin-info %}active{% endblock %}
 
 {% block section %}
-{% if errors %}
-<div class="alert alert-error">
-    <h4>{% trans "Errors" %}</h4>
-    <p>{% trans "There were problems with some data you introduced, please fix them and try again:" %}</p>
-    {{ errors }}
-</div>
-{% else %}{% if success %}
-<div class="alert alert-success">
-    <button type="button" class="close" data-dismiss="alert">×</button>
-    <h4>{% trans "Success" %}</h4>
-    <p>{% trans "Your changes were saved." %}</p>
-</div>
-{% endif %}{% endif %}
 <form action="" method="post">{% csrf_token %}
+    {{ form.non_field_errors }}
     <div class="row">
         <div class="span5">
             <p>

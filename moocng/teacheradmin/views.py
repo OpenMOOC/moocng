@@ -425,16 +425,17 @@ def teacheradmin_teachers_transfer(request, course_slug):
 def teacheradmin_info(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     is_enrolled = course.students.filter(id=request.user.id).exists()
-    errors = ''
-    success = False
 
     if request.method == 'POST':
         form = CourseForm(data=request.POST, instance=course)
         if form.is_valid():
             form.save()
-            success = True
+            messages.success(request, _(u"Your changes were saved."))
+
+            return HttpResponseRedirect(reverse('teacheradmin_info',
+                                                args=[course_slug]))
         else:
-            errors = form.get_pretty_errors()
+            messages.error(request, _(u"There were problems with some data you introduced, please fix them and try again."))
     else:
         form = CourseForm(instance=course)
 
@@ -442,8 +443,6 @@ def teacheradmin_info(request, course_slug):
         'course': course,
         'is_enrolled': is_enrolled,
         'form': form,
-        'errors': errors,
-        'success': success,
     }, context_instance=RequestContext(request))
 
 
