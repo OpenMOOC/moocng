@@ -1,5 +1,6 @@
 {% load i18n %}
-
-<form method="post" action="{% url free_enrollment course.slug %}">{% csrf_token %}
-  <input type="submit" class="btn btn-large btn-primary" value="{% trans "Enroll me in this course" %}" />
-</form>
+<div class="box action-box">
+  <form method="post" action="{% url free_enrollment course.slug %}">{% csrf_token %}
+    <input type="submit" class="btn btn-large btn-primary" value="{% trans "Enroll me in this course" %}" />
+  </form>
+</div>

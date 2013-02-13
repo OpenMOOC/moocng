@@ -50,20 +50,22 @@
     {% endcache %}
 
     <div class="span4">
-      <div class="box action-box">
         {% if is_enrolled %}
-        <div class="alert alert-success">
-          <strong>{% trans "You are enrolled in this course" %}</strong>
-          {% unenroll_button course %}
+        <div class="box action-box">
+            <div class="alert alert-success">
+                <strong>{% trans "You are enrolled in this course" %}</strong>
+                {% unenroll_button course %}
+            </div>
         </div>
         {% else %}
           {% if user.is_authenticated %}
             {% enroll_button course %}
           {% else %}
-            <a href="{{ registry_url }}" class="btn btn-large btn-primary">{% blocktrans with site_name=site.name %}Register in {{ site_name }} to enroll in this course{% endblocktrans %}</a>
+          <div class="box action-box">
+              <a href="{{ registry_url }}" class="btn btn-large btn-primary">{% blocktrans with site_name=site.name %}Register in {{ site_name }} to enroll in this course{% endblocktrans %}</a>
+          </div>
           {% endif %}
         {% endif %}
-      </div>
 
         {% if course.certification_available %}
             <div style="text-align: center">
