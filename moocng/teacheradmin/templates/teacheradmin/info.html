@@ -15,55 +15,55 @@
         <div class="span5">
             <p>
                 {{ form.name.errors }}
-                <label for="id_name">{% trans "Name" %}:</label>
+                {{ form.name.label_tag }}
                 {{ form.name }}
             <p>
                 {{ form.promotion_video.errors }}
-                <label for="id_promotion_video">{% trans "Promotion video" %}:</label>
+                {{ form.promotion_video.label_tag }}
                 {{ form.promotion_video }}
             </p>
             <p>
                 {{ form.enrollment_method.errors }}
-                <label for="id_enrollment_method">{% trans "Enrollment method" %}:</label>
+                {{ form.enrollment_method.label_tag }}
                 {{ form.enrollment_method }}
             </p>
         </div>
         <div class="span5">
             <p>
                 {{ form.start_date.errors }}
-                <label for="id_start_date">{% trans "Start date" %}:</label>
+                {{ form.start_date.label_tag }}
                 {{ form.start_date }}
             </p>
             <p>
                 {{ form.end_date.errors }}
-                <label for="id_end_date">{% trans "End date" %}:</label>
+                {{ form.end_date.label_tag }}
                 {{ form.end_date }}
             </p>
         </div>
     </div>
     <p>
         {{ form.description.errors }}
-        <label for="id_description">{% trans "Description" %}:</label>
+        {{ form.description.label_tag }}
         {{ form.description }}
     </p>
     <p>
         {{ form.requirements.errors }}
-        <label for="id_requirements">{% trans "Requirements" %}:</label>
+        {{ form.requirements.label_tag }}
         {{ form.requirements }}
     </p>
     <p>
         {{ form.intended_audience.errors }}
-        <label for="id_intended_audience">{% trans "Intended audience" %}:</label>
+        {{ form.intended_audience.label_tag }}
         {{ form.intended_audience }}
     </p>
     <p>
         {{ form.estimated_effort.errors }}
-        <label for="id_estimated_effort">{% trans "Estimated effort" %}:</label>
+        {{ form.estimated_effort.label_tag }}
         {{ form.estimated_effort }}
     </p>
     <p>
         {{ form.learning_goals.errors }}
-        <label for="id_learning_goals">{% trans "Learning goals" %}:</label>
+        {{ form.learning_goals.label_tag }}
         {{ form.learning_goals }}
     </p>
     <p>
