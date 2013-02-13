@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator
 from django.db import models
 from django.db import transaction
 from django.db.models import signals
@@ -24,7 +25,6 @@ from tinymce.models import HTMLField
 
 from moocng.badges.models import Badge
 from moocng.courses.cache import invalidate_template_fragment
-from moocng.courses.fields import PercentField
 from moocng.enrollment import enrollment_methods
 from moocng.videos.tasks import process_video_task
 from moocng.videos.utils import extract_YT_video_id
@@ -164,8 +164,10 @@ class Unit(Sortable):
                                                 u'the students will be able '
                                                 u'to modify their answers, '
                                                 u"but won't see the solution"))
-    weight = PercentField(verbose_name=_(u'Weight'), null=False, default=0,
-                          help_text='0-100%')
+    weight = models.SmallIntegerField(verbose_name=_(u'Weight'), null=False,
+                                      default=0,
+                                      help_text='0-100%',
+                                      validators=[MaxValueValidator(100)])
 
     class Meta(Sortable.Meta):
         verbose_name = _(u'unit')
@@ -187,8 +189,10 @@ class KnowledgeQuantum(Sortable):
 
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
     unit = SortableForeignKey(Unit, verbose_name=_(u'Unit'))
-    weight = PercentField(verbose_name=_(u'Weight'), null=False, default=0,
-                          help_text='0-100%')
+    weight = models.SmallIntegerField(verbose_name=_(u'Weight'), null=False,
+                                      default=0,
+                                      help_text='0-100%',
+                                      validators=[MaxValueValidator(100)])
     video = models.URLField(verbose_name=_(u'Video'))
     teacher_comments = HTMLField(verbose_name=_(u'Teacher comments'),
                                  blank=True, null=False)
