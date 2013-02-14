@@ -16,6 +16,7 @@ from datetime import date
 import re
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.flatpages.models import FlatPage
@@ -24,8 +25,7 @@ from django.contrib.sites.models import get_current_site
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import validate_email
-from django.http import (HttpResponseRedirect, HttpResponseForbidden,
-                         HttpResponse)
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.template.defaultfilters import slugify
@@ -77,23 +77,27 @@ def course_add(request):
                 try:
                     owner = User.objects.get(email=email_or_id)
                 except (User.DoesNotExist):
-                    return HttpResponse(_('NOT FOUND: That user doesn\'t exists, the owner must be an user of the platform'), status=404)
+                    messages.error(request, _('That user doesn\'t exists, the owner must be an user of the platform'))
+                    return HttpResponseRedirect(reverse('course_add'))
             except ValidationError:
                 # is name plus id
                 owner_id = name_and_id_regex.search(email_or_id)
                 if owner_id is None:
-                    return HttpResponse(_('BAD REQUEST: The owner must be a name plus ID or an email'), status=400)
+                    messages.error(request, _('The owner must be a name plus ID or an email'))
+                    return HttpResponseRedirect(reverse('course_add'))
                 try:
                     owner_id = owner_id.groups()[0]
                     owner = User.objects.get(id=owner_id)
                 except (User.DoesNotExist):
-                    return HttpResponse(_('NOT FOUND: That user doesn\'t exists, the owner must be an user of the platform'), status=404)
+                    messages.error(request, _('That user doesn\'t exists, the owner must be an user of the platform'))
+                    return HttpResponseRedirect(reverse('course_add'))
         else:
             owner = request.user
 
         name = request.POST['course_name']
         if (name == u''):
-            return HttpResponse(_('BAD REQUEST: The name can\'t be an empty string'), status=400)
+            messages.error(request, _('The name can\'t be an empty string'))
+            return HttpResponseRedirect(reverse('course_add'))
 
         course = Course.objects.create(name=name, owner=owner,
                                        slug=slugify(name),
@@ -109,6 +113,7 @@ def course_add(request):
             }
             send_mail_wrapper(subject, message, [owner.email])
 
+        messages.success(request, _('The course was successfully created'))
         return HttpResponseRedirect(reverse('teacheradmin_info', args=[course.slug]))
 
     return render_to_response('courses/add.html', {},
