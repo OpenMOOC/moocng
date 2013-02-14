@@ -193,5 +193,35 @@ jQuery(document).ready(function () {
                 }
             });
         });
+
+        $("table#teachers tbody").sortable({
+            handle: '.cell-drag-handle',
+            opacity: 0.7
+        }).on('sortstop', function (evt, ui) {
+            var new_order = $(this).children("tr").map(function (index, element) {
+                return $(element).children("td").eq(0).text();
+            }).get();
+            $.ajax(MOOC.basePath + "reorder", {
+                data: JSON.stringify(new_order),
+                headers: {
+                    "X-CSRFToken": csrftoken
+                },
+                contentType: "application/json",
+                dataType: "json",
+                type: "POST",
+                success: function (data, textStatus, jqXHR) {
+                    $("#reordered.alert-success").show();
+                    setTimeout(function () {
+                        $(".alert-success").hide();
+                    }, MOOC.alertTime);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $("#generic").show();
+                    setTimeout(function () {
+                        $(".alert-error").hide();
+                    }, MOOC.alertTime);
+                }
+            });
+        });
     }(jQuery));
 });

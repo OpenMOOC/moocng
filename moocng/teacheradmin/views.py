@@ -411,6 +411,32 @@ def teacheradmin_teachers_transfer(request, course_slug):
 
 
 @is_teacher_or_staff
+def teacheradmin_teachers_reorder(request, course_slug):
+    course = get_object_or_404(Course, slug=course_slug)
+
+    try:
+        new_order = simplejson.loads(request.raw_post_data)
+    except ValueError:
+        return HttpResponse(status=400)
+
+    response = HttpResponse()
+
+    cts_map = dict([(cts.id, cts)
+                    for cts in CourseTeacher.objects.filter(course=course)])
+
+    for i, course_teacher_id in enumerate(new_order):
+        cid = int(course_teacher_id)
+        ct = cts_map.get(cid, None)
+        if ct is None:
+            return HttpResponse(status=404)
+        else:
+            ct.order = i
+            ct.save()
+
+    return response
+
+
+@is_teacher_or_staff
 def teacheradmin_info(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     is_enrolled = course.students.filter(id=request.user.id).exists()

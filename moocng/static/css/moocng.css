@@ -433,3 +433,8 @@ input[type="checkbox"] {
     position: relative;
     top: -3px;
 }
+
+.cell-drag-handle {
+    cursor: move;
+    width: 16px;
+}
