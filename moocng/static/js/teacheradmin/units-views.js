@@ -297,6 +297,7 @@ if (_.isUndefined(window.MOOC)) {
                 kq.save(null, {
                     success: function (model, response) {
                         MOOC.ajax.hideLoading();
+                        model.set("new", true);
                         MOOC.router.navigate("kq" + model.get("id"), {
                             trigger: true
                         });
