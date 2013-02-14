@@ -97,13 +97,15 @@ if (_.isUndefined(window.MOOC)) {
             },
 
             render: function () {
-                var node = this.$el;
+                var node = this.$el,
+                    listNode;
                 $(".viewport").addClass("hide");
-                node.html("");
+                node.html("<div id='unit-list-container'></div>");
+                listNode = node.find('#unit-list-container');
                 this.model.each(function (unit) {
                     var view = MOOC.views.unitViews[unit.get("id")],
                         el = $("<div id='unit" + unit.get("id") + "' class='unit ui-widget ui-widget-content ui-helper-clearfix ui-corner-all'></div>")[0];
-                    node.append(el);
+                    listNode.append(el);
                     if (_.isUndefined(view)) {
                         view = new MOOC.views.Unit({
                             model: unit,
@@ -120,7 +122,8 @@ if (_.isUndefined(window.MOOC)) {
                     "<i class='icon-plus'></i> " + MOOC.trans.add + " " +
                     MOOC.trans.unit.unit + "</button>",
                     { classes: "mb20 align-right" }));
-                $("#units-container").off("sortstop").sortable(sortableOptions)
+                $("#unit-list-container").off("sortstop")
+                    .sortable(sortableOptions)
                     .on("sortstop", this.sortingHandler);
                 $("#units-container").removeClass("hide");
                 return this;
