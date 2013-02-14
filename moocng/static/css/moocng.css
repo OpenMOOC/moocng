@@ -383,6 +383,11 @@ input[type="checkbox"] {
     margin-right: 10px;
 }
 
+.teacheradmin-units label.required:before {
+    content: "* ";
+    color: red;
+}
+
 .teacheradmin-units div.loading.backdrop,
 .teacheradmin-stats div.loading.backdrop {
     z-index: 99999999;

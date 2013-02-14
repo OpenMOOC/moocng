@@ -47,7 +47,7 @@
     <legend>{% trans "Unit" %}</legend>
     <div class="row">
         <div class="span4">
-            <label for="title">{% trans "Title" %}</label>
+            <label for="title" class="required">{% trans "Title" %}</label>
             <input id="title" type="text" name="title" maxlength="200" class="input-xlarge" required="required" />
         </div>
         <div class="span4">
@@ -59,7 +59,7 @@
             </select>
         </div>
         <div class="span2">
-            <label for="weight">{% trans "Weight" %}</label>
+            <label for="weight" class="required">{% trans "Weight" %}</label>
             <div class="input-append">
                 <input type="number" min="0" max="100" step="1" name="weight" id="weight" class="input-mini" required="required" />
                 <span class="add-on">%</span>
@@ -90,15 +90,15 @@
     <legend>{% trans "Nugget" %}</legend>
     <div class="row">
         <div class="span4">
-            <label for="kqtitle">{% trans "Title" %}</label>
+            <label for="kqtitle" class="required">{% trans "Title" %}</label>
             <input id="kqtitle" type="text" name="kqtitle" maxlength="200" class="input-xlarge" required="required" />
         </div>
         <div class="span4">
-            <label for="kqvideo">{% trans "Video ID" %}</label>
+            <label for="kqvideo" class="required">{% trans "Video ID" %}</label>
             <input id="kqvideo" type="text" name="kqvideo" maxlength="200" class="input-xlarge" required="required" />
         </div>
         <div class="span2">
-            <label for="kqweight">{% trans "Weight" %}</label>
+            <label for="kqweight" class="required">{% trans "Weight" %}</label>
             <div class="input-append">
                 <input type="number" min="0" max="100" step="1" name="kqweight" id="kqweight" class="input-mini" required="required" />
                 <span class="add-on">%</span>
@@ -141,7 +141,7 @@
                 </div>
             </div>
             <div class="span5">
-                <label for="questionvideo">{% trans "Solution Video ID" %}</label>
+                <label for="questionvideo" class="required">{% trans "Solution Video ID" %}</label>
                 <input id="questionvideo" type="text" name="questionvideo" maxlength="200" class="span5" required="required" />
             </div>
         </div>
