@@ -49,6 +49,7 @@ class Course(Sortable):
     end_date = models.DateField(verbose_name=_(u'End date'),
                                 blank=True, null=True)
     teachers = models.ManyToManyField(User, verbose_name=_(u'Teachers'),
+                                      through='CourseTeacher',
                                       related_name='courses_as_teacher')
     owner = models.ForeignKey(User, verbose_name=_(u'Teacher owner'),
                               related_name='courses_as_owner', blank=False,
@@ -110,6 +111,16 @@ def course_invalidate_cache(sender, instance, **kwargs):
 
 signals.post_save.connect(course_invalidate_cache, sender=Course)
 signals.post_delete.connect(course_invalidate_cache, sender=Course)
+
+
+class CourseTeacher(Sortable):
+
+    teacher = models.ForeignKey(User, verbose_name=_(u'Teacher'))
+    course = SortableForeignKey(Course, verbose_name=_(u'Course'))
+
+    class Meta(Sortable.Meta):
+        verbose_name = _(u'course teacher')
+        verbose_name_plural = _(u'course teachers')
 
 
 class Announcement(models.Model):

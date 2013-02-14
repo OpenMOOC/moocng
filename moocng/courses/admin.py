@@ -36,6 +36,7 @@ from adminsortable.admin import SortableAdmin
 from moocng.courses.forms import UnitForm, AttachmentForm, CourseForm
 from moocng.courses.models import Course, Announcement, Unit, KnowledgeQuantum
 from moocng.courses.models import Question, Option, Attachment
+from moocng.courses.models import CourseTeacher
 from moocng.courses.widgets import ImageReadOnlyWidget
 from moocng.videos.tasks import process_video_task
 
@@ -48,6 +49,11 @@ class CourseAdmin(SortableAdmin):
     form = CourseForm
     prepopulated_fields = {'slug': ('name', )}
     filter_horizontal = ('teachers', 'students')
+
+
+class CourseTeacherAdmin(SortableAdmin):
+
+    list_display = ('course', 'teacher')
 
 
 class AnnouncementAdmin(admin.ModelAdmin):
@@ -279,6 +285,7 @@ class OptionAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Course, CourseAdmin)
+admin.site.register(CourseTeacher, CourseTeacherAdmin)
 admin.site.register(Announcement, AnnouncementAdmin)
 admin.site.register(Unit, UnitAdmin)
 admin.site.register(KnowledgeQuantum, KnowledgeQuantumAdmin)
