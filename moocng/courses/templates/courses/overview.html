@@ -86,22 +86,14 @@
         {% cache 3600 course_overview_secondary_info course.id %}
         <div class="box">
             <h2>{% trans "Teachers" %}</h2>
-            <ul class="unstyled">
+            <ul class="unstyled clearfix">
+            {% for course_teacher in course_teachers %}
                 <li class="teacher">
-                    {% gravatar_img_for_user course.owner 50 %}
-                    <strong>{% firstof course.owner.get_full_name course.owner.username %}</strong>
+                  {% gravatar_img_for_user course_teacher.teacher 50 %}
+                  <strong>{% firstof course_teacher.teacher.get_full_name course_teacher.teacher.username %}</strong>
                 </li>
-
-            {% for teacher in course.teachers.all %}
-                {% if teacher.username != course.owner.username %}
-                    <li class="teacher">
-                        {% gravatar_img_for_user teacher 50 %}
-                        <strong>{% firstof teacher.get_full_name teacher.username %}</strong>
-                    </li>
-                {% endif %}
             {% endfor %}
             </ul>
-            <div class="visual-clear"></div>
         </div>
 
         <div class="box">

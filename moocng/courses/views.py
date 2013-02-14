@@ -133,6 +133,7 @@ def course_overview(request, course_slug):
         is_enrolled = False
         is_teacher = False
 
+    course_teachers = CourseTeacher.objects.filter(course=course)
     announcements = Announcement.objects.filter(course=course).order_by('datetime').reverse()[:5]
 
     return render_to_response('courses/overview.html', {
@@ -141,6 +142,7 @@ def course_overview(request, course_slug):
         'show_material': show_material,
         'is_teacher': is_teacher,
         'request': request,
+        'course_teachers': course_teachers,
         'announcements': announcements,
     }, context_instance=RequestContext(request))
 

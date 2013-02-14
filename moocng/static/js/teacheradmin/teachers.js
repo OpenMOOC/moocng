@@ -131,7 +131,7 @@ jQuery(document).ready(function () {
                     if (data.pending === false) {
                         html = "<tr>" +
                             "<td class='hide'>" + data.id + "</td>" +
-                            "<td class='hide'>" + data.order + "</td>" +
+                            "<td class='cell-drag-handle'><i class='icon-th'></i></td>" +
                             "<td>" + data.gravatar +"</td>" +
                             "<td>" + data.name + "</td>" +
                             "<td class='ownership'></td>" +

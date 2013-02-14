@@ -55,7 +55,7 @@
         {% for course_teacher in course_teachers %}
         <tr>
             <td class="hide">{{ course_teacher.id }}</td>
-            <td class="cell-drag-handle"><i class="icon-th pointer"></i></td>
+            <td class="cell-drag-handle"><i class="icon-th"></i></td>
             <td>{% gravatar_img_for_user course_teacher.teacher 20 %}</td>
             <td>{% user_screen_name course_teacher.teacher %}</td>
             <td class="ownership">
