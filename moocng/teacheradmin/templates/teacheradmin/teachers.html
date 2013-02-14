@@ -1,6 +1,6 @@
 {% extends "teacheradmin/base_teacheradmin.html" %}
 
-{% load i18n gravatar compress user_screen_name %}
+{% load i18n gravatar compress %}
 
 {% block nav-teacheradmin-teachers %}active{% endblock %}
 
@@ -57,7 +57,7 @@
             <td class="hide">{{ course_teacher.id }}</td>
             <td class="cell-drag-handle"><i class="icon-th"></i></td>
             <td>{% gravatar_img_for_user course_teacher.teacher 20 %}</td>
-            <td>{% user_screen_name course_teacher.teacher %}</td>
+            <td>{% firstof course_teacher.teacher.get_full_name course_teacher.teacher.username %}</td>
             <td class="ownership">
             {% if course_teacher.teacher.id == course.owner.id %}
                 <span class='label label-info owner'>{% trans "Owner" %}</span>
