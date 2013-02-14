@@ -6,9 +6,11 @@
 
 {% block content %}
 <div class="media-box">
+{% if theme.top_banner %}
   <a href="#">
     <img src="{{ theme.top_banner }}" alt="" />
   </a>
+{% endif%}
 </div>
 
 <div class="row">
