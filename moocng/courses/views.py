@@ -20,6 +20,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.flatpages.models import FlatPage
 from django.contrib.flatpages.views import render_flatpage
+from django.contrib.sites.models import get_current_site
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import validate_email
@@ -35,6 +36,7 @@ from moocng.courses.models import Course, CourseTeacher, Announcement
 from moocng.courses.utils import (calculate_course_mark, get_unit_badge_class,
                                   show_material_checker, is_course_ready,
                                   is_teacher as is_teacher_test)
+from moocng.teacheradmin.utils import send_mail_wrapper
 
 
 def home(request):
@@ -93,10 +95,19 @@ def course_add(request):
         if (name == u''):
             return HttpResponse(_('BAD REQUEST: The name can\'t be an empty string'), status=400)
 
-        course = Course(name=name, owner=owner, slug=slugify(name),
-                        description=_('To fill'))
-        course.save()
+        course = Course.objects.create(name=name, owner=owner,
+                                       slug=slugify(name),
+                                       description=_('To fill'))
         CourseTeacher.objects.create(course=course, teacher=owner)
+
+        if not allow_public:
+            subject = _('Your course "%s" has been created') % name
+            message = _('Dear %(user)s\n\nYour course "%(course)s" has been created, and you have been assigned as the teacher owner. You can now access to the course administration interface and start adding content.\n\nBest regards,\n%(site)s\'s team') % {
+                'user': owner.get_full_name(),
+                'course': name,
+                'site': get_current_site(request).name,
+            }
+            send_mail_wrapper(subject, message, [owner.email])
 
         return HttpResponseRedirect(reverse('teacheradmin_info', args=[course.slug]))
 
