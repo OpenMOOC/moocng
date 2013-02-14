@@ -31,7 +31,7 @@ from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
 
 from moocng.badges.models import Award
-from moocng.courses.models import Course, Announcement
+from moocng.courses.models import Course, CourseTeacher, Announcement
 from moocng.courses.utils import (calculate_course_mark, get_unit_badge_class,
                                   show_material_checker, is_course_ready,
                                   is_teacher as is_teacher_test)
@@ -96,8 +96,7 @@ def course_add(request):
         course = Course(name=name, owner=owner, slug=slugify(name),
                         description=_('To fill'))
         course.save()
-        course.teachers.add(owner)
-        course.save()
+        CourseTeacher.objects.create(course=course, teacher=owner)
 
         return HttpResponseRedirect(reverse('teacheradmin_info', args=[course.slug]))
 
