@@ -1,6 +1,6 @@
 {% extends "teacheradmin/base_teacheradmin.html" %}
 
-{% load i18n gravatar compress %}
+{% load i18n gravatar compress user_screen_name %}
 
 {% block nav-teacheradmin-teachers %}active{% endblock %}
 
@@ -39,30 +39,26 @@
     <h4>{% trans "Error" %}</h4>
     <p>{% trans "Something went wrong, please try again later." %}</p>
 </div>
-<p class="align-right"><button id="reload" class="btn">{% trans "Reload" %}</button></p>
-<table class="table table-striped">
+<table class="table table-striped" id="teachers">
+    <caption>{% trans "Current teachers" %}</caption>
     <tbody>
-        {% for teacher in teachers %}
+        {% for course_teacher in course_teachers %}
         <tr>
-            <td class="hide">{{ teacher.id }}</td>
-            <td>{{ teacher.gravatar|safe }}</td>
-            <td>{{ teacher.username }}</a></td>
+            <td class="hide">{{ course_teacher.id }}</td>
+            <td class="hide">{{ course_teacher.order }}</td>
+            <td>{% gravatar_img_for_user course_teacher.teacher 20 %}</td>
+            <td>{% user_screen_name course_teacher.teacher %}</td>
             <td class="ownership">
-            {% if teacher.id == course.owner.id %}
+            {% if course_teacher.teacher.id == course.owner.id %}
                 <span class='label label-info owner'>{% trans "Owner" %}</span>
             {% else %}
-                {% if request.user.id == course.owner.id and teacher.id >= 0%}
+                {% if request.user.id == course.owner.id %}
                     <button class='btn btn-mini make-owner'>{% trans "Transfer ownership" %}</button>
                 {% endif %}
             {% endif %}
             </td>
-            <td>
-            {% if teacher.id < 0 %}
-                <span class='label label-warning'>{% trans "Pending" %}</span>
-            {% endif %}
-            </td>
             <td class="align-right">
-                {% if teacher.id != course.owner.id %}
+                {% if course_teacher.teacher.id != course.owner.id %}
                 <i class="icon-remove pointer"></i>
                 {% endif %}
             </td>
@@ -70,6 +66,22 @@
         {% endfor %}
     </tbody>
 </table>
+{% if invitations %}
+<table class="table table-striped" id="invitations">
+    <caption>{% trans "Invited teachers who are not registered yet" %}</caption>
+    <tbody>
+        {% for invitation in invitations %}
+        <tr>
+            <td>{% gravatar_img_for_email invitation.email 20 %}</td>
+            <td>{{ invitation.email }}</td>
+            <td class="align-right">
+                <i class="icon-remove pointer"></i>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
 
 <form action="" method="post" class="form-inline">
     <fieldset>

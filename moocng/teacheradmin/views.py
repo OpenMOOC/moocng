@@ -297,24 +297,11 @@ def teacheradmin_teachers(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     is_enrolled = course.students.filter(id=request.user.id).exists()
 
-    teachers = course.teachers.all()
-    teachers = [{
-                'id': t.id,
-                'username': t.get_full_name() or t.username,
-                'gravatar': gravatar_img_for_email(t.email, 20),
-                } for t in teachers]
-    invitations = Invitation.objects.filter(course=course)
-    invitations = [{
-                   'id': -1,
-                   'username': inv.email,
-                   'gravatar': '',
-                   } for inv in invitations]
-    teachers.extend(invitations)
-
     return render_to_response('teacheradmin/teachers.html', {
         'course': course,
         'is_enrolled': is_enrolled,
-        'teachers': teachers,
+        'course_teachers': CourseTeacher.objects.filter(course=course),
+        'invitations': Invitation.objects.filter(course=course),
         'request': request,
     }, context_instance=RequestContext(request))
 
@@ -337,17 +324,13 @@ def teacheradmin_teachers_delete(request, course_slug, email_or_id):
     except ValidationError:
         # is an id
         try:
-            user = User.objects.get(id=email_or_id)
-            if user == course.owner:
+            ct = CourseTeacher.objects.get(id=email_or_id)
+            if ct.teacher == course.owner:
                 response = HttpResponse(status=401)
             else:
-                try:
-                    ct = CourseTeacher.objects.get(course=course, teacher=user)
-                    ct.delete()
-                    send_removed_notification(request, user.email, course)
-                except CourseTeacher.DoesNotExist:
-                    pass
-        except (ValueError, User.DoesNotExist):
+                ct.delete()
+                send_removed_notification(request, ct.teacher.email, course)
+        except (ValueError, CourseTeacher.DoesNotExist):
             response = HttpResponse(status=404)
 
     return response
@@ -375,26 +358,28 @@ def teacheradmin_teachers_invite(request, course_slug):
             response = HttpResponse(status=404)
 
     if user is not None:
-        CourseTeacher.objects.create(course=course, teacher=user)
+        ct = CourseTeacher.objects.create(course=course, teacher=user)
         name = user.get_full_name()
         if not name:
             name = user.username
         data = {
-            'id': user.id,
+            'id': ct.id,
+            'order': ct.order,
             'name': name,
+            'gravatar': gravatar_img_for_email(user.email, 20),
             'pending': False
         }
         response = HttpResponse(simplejson.dumps(data),
                                 mimetype='application/json')
     elif response is None:
-        if Invitation.objects.filter(email=email_or_id).filter(course=course).count() == 0:
+        if Invitation.objects.filter(email=email_or_id, course=course).count() == 0:
             invitation = Invitation(host=request.user, email=email_or_id,
                                     course=course, datetime=datetime.now())
             invitation.save()
             send_invitation(request, invitation)
             data = {
-                'id': -1,
                 'name': email_or_id,
+                'gravatar': gravatar_img_for_email(email_or_id, 20),
                 'pending': True
             }
             response = HttpResponse(simplejson.dumps(data),

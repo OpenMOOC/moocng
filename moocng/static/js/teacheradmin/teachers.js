@@ -64,12 +64,14 @@ jQuery(document).ready(function () {
         });
 
         removeTeacher = function (evt) {
-            var row = $(evt.target).parent().parent(),
-                id = parseInt($(row.children()[0]).text(), 10),
-                email = $(row.children()[2]).text();
+            var id, table, row = $(evt.target).parent().parent();
 
-            if (id < 0) {
-                id = email;
+            table = row.parents('table').attr('id');
+
+            if (table === 'teachers') {
+                id = parseInt(row.children().eq(0).text(), 10)
+            } else if (table === 'invitations') {
+                id = row.children().eq(1).text();
             }
 
             $.ajax(MOOC.basePath + id + "/", {
@@ -125,17 +127,28 @@ jQuery(document).ready(function () {
                 dataType: "json",
                 type: "POST",
                 success: function (data, textStatus, jqXHR) {
-                    var html = "<tr><td class='hide'>" + data.id + "</td>" +
-                            "<td></td><td>" + data.name + "</td>" +
-                            "<td class='ownership'></td><td>";
-                    if (data.pending) {
-                        html += "<span class='label label-warning'>" +
-                            MOOC.pending + "</span>";
+                    var html;
+                    if (data.pending === false) {
+                        html = "<tr>" +
+                            "<td class='hide'>" + data.id + "</td>" +
+                            "<td class='hide'>" + data.order + "</td>" +
+                            "<td>" + data.gravatar +"</td>" +
+                            "<td>" + data.name + "</td>" +
+                            "<td class='ownership'></td>" +
+                            "<td class='align-right'><i class='icon-remove pointer'></i></td>" +
+                            "</tr>";
+                        $("table#teachers > tbody").append(html);
+                        $("table#teachers .icon-remove").off("click").click(removeTeacher);
+                    } else {
+                        html = "<tr>" +
+                            "<td>" + data.gravatar +"</td>" +
+                            "<td>" + data.name + "</td>" +
+                            "<td class='align-right'><i class='icon-remove pointer'></i></td>" +
+                            "</tr>";
+                        $("table#invitations > tbody").append(html);
+                        $("table#invitations .icon-remove").off("click").click(removeTeacher);
                     }
-                    html += "</td><td class='align-right'>" +
-                            "<i class='icon-remove pointer'></i></td></r>";
-                    $("table > tbody").append(html);
-                    $("table .icon-remove").off("click").click(removeTeacher);
+
                     $("#added.alert-success").show();
                     setTimeout(function () {
                         $(".alert-success").hide();
@@ -179,10 +192,6 @@ jQuery(document).ready(function () {
                     }, MOOC.alertTime);
                 }
             });
-        });
-
-        $("#reload").click(function () {
-            window.location.reload(true);
         });
     }(jQuery));
 });
