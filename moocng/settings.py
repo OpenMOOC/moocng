@@ -189,6 +189,7 @@ INSTALLED_APPS = (
     'moocng.videos',
     'moocng.teacheradmin',
     'moocng.enrollment',
+    'moocng.api',
     'djangosaml2',
     'south',
     # Uncomment the next line to enable admin documentation:
