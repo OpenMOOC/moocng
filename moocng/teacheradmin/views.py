@@ -30,8 +30,8 @@ from django.utils.translation import ugettext as _
 from gravatar.templatetags.gravatar import gravatar_img_for_email
 
 from moocng.api.mongodb import get_db
-from moocng.courses.models import (Course, KnowledgeQuantum, Option,
-                                   Announcement, Unit)
+from moocng.courses.models import (Course, CourseTeacher, KnowledgeQuantum,
+                                   Option, Announcement, Unit)
 from moocng.courses.forms import AnnouncementForm
 from moocng.courses.utils import (UNIT_BADGE_CLASSES, calculate_course_mark,
                                   calculate_unit_mark, calculate_kq_mark)
@@ -341,8 +341,12 @@ def teacheradmin_teachers_delete(request, course_slug, email_or_id):
             if user == course.owner:
                 response = HttpResponse(status=401)
             else:
-                course.teachers.remove(user)
-                send_removed_notification(request, user.email, course)
+                try:
+                    ct = CourseTeacher.objects.get(course=course, teacher=user)
+                    ct.delete()
+                    send_removed_notification(request, user.email, course)
+                except CourseTeacher.DoesNotExist:
+                    pass
         except (ValueError, User.DoesNotExist):
             response = HttpResponse(status=404)
 
@@ -371,7 +375,7 @@ def teacheradmin_teachers_invite(request, course_slug):
             response = HttpResponse(status=404)
 
     if user is not None:
-        course.teachers.add(user)
+        CourseTeacher.objects.create(course=course, teacher=user)
         name = user.get_full_name()
         if not name:
             name = user.username
