@@ -84,6 +84,31 @@ if (_.isUndefined(window.MOOC)) {
 
         stripTags = function (str) {
             return str.replace(/<\/?[^>]+>/ig, '');
+        },
+
+        extractVideoID = function (video_url) {
+            if (video_url[video_url.length - 1] === '/') {
+                // Remove trailing '/'
+                video_url = video_url.substring(0, video_url.length - 1);
+            }
+            video_url = video_url.split('/');
+            video_url = video_url[video_url.length - 1];
+            if (video_url.indexOf('=') > 0) {
+                if (video_url.indexOf("watch") === 0) {
+                    // Long url, remove "watch?"
+                    video_url = video_url.substring(video_url.indexOf('?') + 1);
+                    // Look for 'v' parameter
+                    video_url = _.find(video_url.split('&'), function (parameter) {
+                        return parameter.indexOf("v=") === 0;
+                    });
+                    // Remove "v="
+                    video_url = video_url.substring(2);
+                } else {
+                    // Short url, remove all parameters
+                    video_url = video_url.substring(0, video_url.indexOf('?'));
+                }
+            }
+            return video_url;
         };
 
     MOOC.views = {
@@ -499,13 +524,13 @@ if (_.isUndefined(window.MOOC)) {
                 $(".viewport").addClass("hide");
                 this.$el.html($("#edit-kq-tpl").text());
                 this.$el.find("input#kqtitle").val(this.model.get("title"));
-                this.$el.find("input#kqvideo").val(this.model.get("videoID"));
+                this.$el.find("input#kqvideo").val("http://youtu.be/" + this.model.get("videoID"));
                 this.$el.find("input#kqweight").val(this.model.get("normalized_weight"));
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
                     this.$el.find("#noquestion").addClass("hide");
                     this.$el.find("#question").removeClass("hide").find("img").attr("src", question.get("lastFrame"));
-                    this.$el.find("#questionvideo").val(question.get("solution"));
+                    this.$el.find("#questionvideo").val("http://youtu.be/" + question.get("solution"));
                     if (!question.get("use_last_frame")) {
                         this.$el.find("#last-frame").addClass("hide");
                         this.$el.find("#no-last-frame").removeClass("hide");
@@ -571,13 +596,13 @@ if (_.isUndefined(window.MOOC)) {
 
                 this.model.unset("new");
                 this.model.set("title", this.$el.find("input#kqtitle").val());
-                this.model.set("videoID", this.$el.find("input#kqvideo").val());
+                this.model.set("videoID", extractVideoID(this.$el.find("input#kqvideo").val()));
                 this.model.set("normalized_weight", parseInt(this.$el.find("input#kqweight").val(), 10));
                 this.model.set("supplementary_material", tinyMCE.get("kqsupplementary").getContent());
                 this.model.set("teacher_comments", tinyMCE.get("kqcomments").getContent());
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
-                    question.set("solution", this.$el.find("#questionvideo").val());
+                    question.set("solution", extractVideoID(this.$el.find("#questionvideo").val()));
                     question.save(null, {
                         success: function () {
                             secondAjax();

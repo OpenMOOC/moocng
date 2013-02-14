@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-14 08:33-0600\n"
-"PO-Revision-Date: 2013-02-14 15:35+0100\n"
+"POT-Creation-Date: 2013-02-14 09:56-0600\n"
+"PO-Revision-Date: 2013-02-13 11:30+0100\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
 "Language: es_ES\n"
@@ -1404,8 +1404,8 @@ msgid "Back"
 msgstr "Atrás"
 
 #: teacheradmin/templates/teacheradmin/units.html:97
-msgid "Video ID"
-msgstr "ID del vídeo"
+msgid "Video url"
+msgstr "Url del vídeo"
 
 #: teacheradmin/templates/teacheradmin/units.html:121
 msgid "Save changes and add a question to this nugget"
@@ -1449,8 +1449,8 @@ msgid "Use the last frame"
 msgstr "Usar la última imagen"
 
 #: teacheradmin/templates/teacheradmin/units.html:144
-msgid "Solution Video ID"
-msgstr "ID del vídeo con la solución"
+msgid "Solution video url"
+msgstr "Url del vídeo con la solución"
 
 #: teacheradmin/templates/teacheradmin/units.html:150
 msgid "Save changes and edit question's options"
