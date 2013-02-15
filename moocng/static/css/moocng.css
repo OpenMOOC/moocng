@@ -388,6 +388,11 @@ input[type="checkbox"] {
     color: red;
 }
 
+.teacheradmin-units .nav-tabs > .active > a,
+.teacheradmin-units .nav-tabs > .active > a:hover {
+    background-color: #f1f1f1;
+}
+
 .teacheradmin-units div.loading.backdrop,
 .teacheradmin-stats div.loading.backdrop {
     z-index: 99999999;

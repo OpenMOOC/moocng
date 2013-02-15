@@ -45,19 +45,39 @@ if (_.isUndefined(window.MOOC)) {
             });
             $.when.apply(null, promises).done(callback).fail(errorHandler);
         },
-        loadQuestion = function (kq, callback) {
-            var url = kq.get("question").replace("question", "privquestion");
-            $.ajax(url, {
-                success: function (data, textStatus, jqXHR) {
-                    var question = new MOOC.models.Question({
-                        id: parseInt(data.id, 10),
-                        lastFrame: data.last_frame,
-                        solution: data.solutionID,
-                        use_last_frame: data.use_last_frame
-                    });
-                    kq.set("questionInstance", question);
-                }
-            }).done(callback).fail(errorHandler);
+        loadKQDetails = function (kq, callback) {
+            var promises = [],
+                questionUrl;
+
+            if (kq.has("question") && !kq.has("questionInstance")) {
+                questionUrl = kq.get("question").replace("question", "privquestion");
+                promises.push($.ajax(questionUrl, {
+                    success: function (data, textStatus, jqXHR) {
+                        var question = new MOOC.models.Question({
+                            id: parseInt(data.id, 10),
+                            lastFrame: data.last_frame,
+                            solution: data.solutionID,
+                            use_last_frame: data.use_last_frame
+                        });
+                        kq.set("questionInstance", question);
+                    }
+                }));
+            }
+
+            if (!kq.has("attachmentList")) {
+                promises.push($.ajax(MOOC.ajax.host + "attachment/?format=json&kq=" + kq.get("id"), {
+                    success: function (data, textStatus, jqXHR) {
+                        var attachmentList = new MOOC.models.AttachmentList(
+                            _.map(data.objects, function (attachment) {
+                                return { url: attachment.attachment };
+                            })
+                        );
+                        kq.set("attachmentList", attachmentList);
+                    }
+                }));
+            }
+
+            $.when.apply(null, promises).done(callback).fail(errorHandler);
         };
 
     MOOC.ajax = {
@@ -180,12 +200,8 @@ if (_.isUndefined(window.MOOC)) {
                     MOOC.ajax.hideLoading();
                 };
 
-                if (kqObj.has("question")) {
-                    if (kqObj.has("questionInstance")) {
-                        callback();
-                    } else {
-                        loadQuestion(kqObj, callback);
-                    }
+                if ((kqObj.has("question") && !kqObj.has("questionInstance")) || !kqObj.has("attachmentList")) {
+                    loadKQDetails(kqObj, callback);
                 } else {
                     callback();
                 }

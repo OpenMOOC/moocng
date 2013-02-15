@@ -209,9 +209,8 @@ class AttachmentResource(ModelResource):
     class Meta:
         queryset = Attachment.objects.all()
         resource_name = 'attachment'
-        allowed_methods = ['get']
         authentication = DjangoAuthentication()
-        authorization = DjangoAuthorization()
+        authorization = PublicReadTeachersModifyAuthorization()
         filtering = {
             "kq": ('exact'),
         }

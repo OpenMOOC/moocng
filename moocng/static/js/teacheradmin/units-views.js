@@ -1,4 +1,4 @@
-/*jslint vars: false, browser: true, nomen: true */
+/*jslint vars: false, browser: true, nomen: true, regexp: true */
 /*global MOOC:true, _, jQuery, Backbone, tinyMCE */
 
 // Copyright 2012 Rooter Analysis S.L.
@@ -520,16 +520,18 @@ if (_.isUndefined(window.MOOC)) {
             },
 
             render: function () {
-                var question;
+                var $attachments,
+                    question;
                 $(".viewport").addClass("hide");
                 this.$el.html($("#edit-kq-tpl").text());
+
                 this.$el.find("input#kqtitle").val(this.model.get("title"));
                 this.$el.find("input#kqvideo").val("http://youtu.be/" + this.model.get("videoID"));
                 this.$el.find("input#kqweight").val(this.model.get("normalized_weight"));
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
                     this.$el.find("#noquestion").addClass("hide");
-                    this.$el.find("#question").removeClass("hide").find("img").attr("src", question.get("lastFrame"));
+                    this.$el.find("#question-tab").removeClass("hide").find("img").attr("src", question.get("lastFrame"));
                     this.$el.find("#questionvideo").val("http://youtu.be/" + question.get("solution"));
                     if (!question.get("use_last_frame")) {
                         this.$el.find("#last-frame").addClass("hide");
@@ -540,6 +542,16 @@ if (_.isUndefined(window.MOOC)) {
                         $("button#force-process").removeClass("hide");
                     }
                 }
+
+                $attachments = this.$el.find("#attachment-list");
+                this.model.get("attachmentList").each(function (attachment) {
+                    var view = new MOOC.views.Attachment({
+                        model: attachment,
+                        el: $attachments[0]
+                    });
+                    view.render();
+                });
+
                 while (tinyMCE.editors.length > 0) {
                     tinyMCE.editors[0].remove();
                 }
@@ -734,6 +746,17 @@ if (_.isUndefined(window.MOOC)) {
             }
         }),
 
-        kqEditorView: undefined
+        kqEditorView: undefined,
+
+        Attachment: Backbone.View.extend({
+            render: function () {
+                var html = "<li><a href='" + this.model.get("url") + "' target='_blank'>",
+                    parts = this.model.get("url").split('/');
+                html += parts[parts.length - 1];
+                html += "</a></li>";
+                this.$el.append(html);
+                return this;
+            }
+        })
     };
 }(jQuery, Backbone, _));

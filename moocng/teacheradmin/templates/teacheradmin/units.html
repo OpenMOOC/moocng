@@ -86,8 +86,12 @@
 </script>
 <script id="edit-kq-tpl" type="text/template">
 <form>
-    <fieldset>
-    <legend>{% trans "Nugget" %}</legend>
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#nugget" data-toggle="tab">{% trans "Nugget" %}</a></li>
+        <li><a href="#attachments" data-toggle="tab">{% trans "Attachments" %}</a></li>
+        <li id="question-tab" class="hide"><a href="#question" data-toggle="tab">{% trans "Question" %}</a></li>
+    </ul>
+    <div class="tab-content"><fieldset class="tab-pane active" id="nugget">
     <div class="row">
         <div class="span4">
             <label for="kqtitle" class="required">{% trans "Title" %}</label>
@@ -115,51 +119,50 @@
             <textarea id="kqcomments" name="kqcomments" class="span5" rows="5"></textarea>
         </div>
     </div>
-    </fieldset>
     <div id="noquestion" class="row mb20">
         <div class="span10 align-right">
             <button id="addquestion" class="btn btn-primary">{% trans "Save changes and add a question to this nugget" %}</button>
         </div>
     </div>
-    <div id="question" class="hide">
-        <fieldset>
-        <legend>{% trans "Question" %}</legend>
-        <div class="row">
-            <div class="span5">
-                <div id="last-frame">
-                    <label>{% trans "Nugget's video last frame" %}</label>
-                    <img src="" alt="{% trans "Nugget's video last frame" %}" class="mb10" />
-                    <p><button id="dont-use-last-frame" class="btn" title="{% trans "Use a blank canvas instead" %}">{% trans "Don't use the last frame" %}</button></p>
-                    <p><button id="force-process" class="hide btn">{% trans "Force processing the nugget's video" %}</button></p>
-                </div>
-                <div id="no-last-frame" class="hide">
-                    <div class="alert alert-info">
-                        <h4>{% trans "Using blank canvas" %}</h4>
-                        <p>{% trans "You are using a blank canvas for the question instead of the last frame of the nugget's video." %}</p>
-                    </div>
-                    <p><button id="use-last-frame" class="btn" title="{% trans "Use the last frame of the nugget's video" %}">{% trans "Use the last frame" %}</button></p>
-                </div>
+    </fieldset>
+    <fieldset class="tab-pane" id="attachments">
+        <ul id="attachment-list"></ul>
+    </fieldset>
+    <fieldset class="tab-pane" id="question">
+    <div class="row">
+        <div class="span5">
+            <div id="last-frame">
+                <label>{% trans "Nugget's video last frame" %}</label>
+                <img src="" alt="{% trans "Nugget's video last frame" %}" class="mb10" />
+                <p><button id="dont-use-last-frame" class="btn" title="{% trans "Use a blank canvas instead" %}">{% trans "Don't use the last frame" %}</button></p>
+                <p><button id="force-process" class="hide btn">{% trans "Force processing the nugget's video" %}</button></p>
             </div>
-            <div class="span5">
-                <label for="questionvideo" class="required">{% trans "Solution video url" %}</label>
-                <input id="questionvideo" type="text" name="questionvideo" maxlength="200" class="span5" required="required" />
+            <div id="no-last-frame" class="hide">
+                <div class="alert alert-info">
+                    <h4>{% trans "Using blank canvas" %}</h4>
+                    <p>{% trans "You are using a blank canvas for the question instead of the last frame of the nugget's video." %}</p>
+                </div>
+                <p><button id="use-last-frame" class="btn" title="{% trans "Use the last frame of the nugget's video" %}">{% trans "Use the last frame" %}</button></p>
             </div>
         </div>
-        <div class="row">
-            <div class="align-right span10">
-                <button id="go2options" class="btn btn-primary">{% trans "Save changes and edit question's options" %}</button>
-                <button id="delete-question" class="btn btn-danger">{% trans "Remove the question from this nugget" %}</button>
-            </div>
+        <div class="span5">
+            <label for="questionvideo" class="required">{% trans "Solution video url" %}</label>
+            <input id="questionvideo" type="text" name="questionvideo" maxlength="200" class="span5" required="required" />
         </div>
-        </fieldset>
     </div>
+    <div class="row">
+        <div class="align-right span10">
+            <button id="go2options" class="btn btn-primary">{% trans "Save changes and edit question's options" %}</button>
+            <button id="delete-question" class="btn btn-danger">{% trans "Remove the question from this nugget" %}</button>
+        </div>
+    </div>
+    </fieldset></div>
     <fieldset>
-    <legend>{% trans "Nugget actions" %}</legend>
-    <div class="row"><div class="span10 align-right">
+    <div class="row"><div class="span10 align-right"><div class="form-actions">
         <button id="save-kq" class="btn btn-primary"><i class="icon icon-white icon-ok"></i> {% trans "Save" %}</button>
         <button id="delete-kq" class="btn btn-danger"><i class="icon icon-white icon-remove"></i> {% trans "Delete" %}</button>
         <button class="btn back"><i class="icon icon-arrow-left"></i> {% trans "Back" %}</button>
-    </div></div>
+    </div></div></div>
     </fieldset>
 </form>
 </script>
