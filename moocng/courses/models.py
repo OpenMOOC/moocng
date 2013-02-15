@@ -126,7 +126,7 @@ class CourseTeacher(Sortable):
 class Announcement(models.Model):
 
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
-    slug = models.SlugField(verbose_name=_(u'Slug'), unique=True)
+    slug = models.SlugField(verbose_name=_(u'Slug'))
     content = HTMLField(verbose_name=_(u'Content'))
     course = models.ForeignKey(Course, verbose_name=_(u'Course'))
     datetime = models.DateTimeField(

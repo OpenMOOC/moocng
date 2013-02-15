@@ -15,7 +15,6 @@
 import os
 
 from django.forms import ModelForm, ValidationError
-from django.forms.widgets import DateTimeInput
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 

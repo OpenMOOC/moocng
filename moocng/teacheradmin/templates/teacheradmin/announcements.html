@@ -10,13 +10,13 @@
     <tbody>
       {% for announcement in announcements %}
       <tr>
-        <td><a href="{% url teacheradmin_announcements_view course_slug=course.slug announ_slug=announcement.slug %}">{{ announcement.title }}</a></td>
+        <td><a href="{% url teacheradmin_announcements_view course_slug=course.slug announ_id=announcement.id announ_slug=announcement.slug %}">{{ announcement.title }}</a></td>
         <td>{{ announcement.datetime }}</td>
         <td><a class="btn btn-small pull-right"
-              href="{% url teacheradmin_announcements_delete course_slug=course.slug announ_slug=announcement.slug %}">
+              href="{% url teacheradmin_announcements_delete course_slug=course.slug announ_id=announcement.id announ_slug=announcement.slug %}">
             <i class="icon-remove"></i></a>
             <a class="btn btn-small pull-right"
-              href="{% url teacheradmin_announcements_edit course_slug=course.slug announ_slug=announcement.slug %}">
+              href="{% url teacheradmin_announcements_edit course_slug=course.slug announ_id=announcement.id announ_slug=announcement.slug %}">
             <i class="icon-edit"></i></a>
         </td>
       </tr>

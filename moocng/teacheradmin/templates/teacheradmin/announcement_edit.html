@@ -10,9 +10,12 @@
 
 <form method="post">{% csrf_token %}
   {{ form }}
-
   <div class="form-actions">
-    <button type="submit" class="btn">{% trans "Submit" %}</button>
+    {% if announcement %}
+    <input type="submit" class="btn btn-primary" value="{% trans 'Save changes' %}" />
+    {% else %}
+    <input type="submit" class="btn btn-primary" value="{% trans 'Create announcement' %}" />
+    {% endif %}
   </div>
 
 </form>

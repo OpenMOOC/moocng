@@ -13,7 +13,6 @@
 # limitations under the License.
 
 from django import forms
-from django.forms.util import ErrorDict
 from django.utils.translation import ugettext as _
 
 from tinymce.widgets import TinyMCE

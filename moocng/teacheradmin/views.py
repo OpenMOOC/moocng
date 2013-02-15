@@ -475,8 +475,8 @@ def teacheradmin_announcements(request, course_slug):
 
 
 @is_teacher_or_staff
-def teacheradmin_announcements_view(request, course_slug, announ_slug):
-    announcement = get_object_or_404(Announcement, slug=announ_slug, course__slug=course_slug)
+def teacheradmin_announcements_view(request, course_slug, announ_id, announ_slug):
+    announcement = get_object_or_404(Announcement, id=announ_id)
     course = announcement.course
     is_enrolled = course.students.filter(id=request.user.id).exists()
     return render_to_response('teacheradmin/announcement_view.html', {
@@ -487,28 +487,28 @@ def teacheradmin_announcements_view(request, course_slug, announ_slug):
 
 
 @is_teacher_or_staff
-def teacheradmin_announcements_edit(request, course_slug, announ_slug=None):
+def teacheradmin_announcements_add_or_edit(request, course_slug, announ_id=None, announ_slug=None):
 
-    if announ_slug is None:
+    if announ_id is None:
         announcement = None
+        course = get_object_or_404(Course, slug=course_slug)
     else:
-        announcement = get_object_or_404(Announcement, slug=announ_slug, course__slug=course_slug)
+        announcement = get_object_or_404(Announcement, id=announ_id)
+        course = announcement.course
 
-    course = get_object_or_404(Course, slug=course_slug)
     is_enrolled = course.students.filter(id=request.user.id).exists()
 
     if request.method == 'POST':
-        form = AnnouncementForm(request.POST, request.FILES, instance=announcement)
+        form = AnnouncementForm(request.POST, instance=announcement)
         if form.is_valid():
-            form.instance.slug = slugify(form.instance.title)
-            if Announcement.objects.filter(slug=form.instance.slug).exists():
-                messages.error(request, _("There is a announce with the same title"))
-            else:
-                if not announcement:
-                    form.instance.course = course
-                form.save()
+            announcement = form.save(commit=False)
+            announcement.slug = slugify(announcement.title)
+            announcement.course = course
+            announcement.save()
 
-                return HttpResponseRedirect(reverse("teacheradmin_announcements_view", args=[course_slug, form.instance.slug]))
+            return HttpResponseRedirect(
+                reverse("teacheradmin_announcements_view",
+                        args=[course_slug, announcement.id, announcement.slug]))
 
     else:
         form = AnnouncementForm(instance=announcement)
@@ -516,15 +516,15 @@ def teacheradmin_announcements_edit(request, course_slug, announ_slug=None):
     return render_to_response('teacheradmin/announcement_edit.html', {
         'course': course,
         'is_enrolled': is_enrolled,
-        'announcement': announcement,
         'form': form,
+        'announcement': announcement,
     }, context_instance=RequestContext(request))
 
 
 @is_teacher_or_staff
-def teacheradmin_announcements_delete(request, course_slug, announ_slug):
+def teacheradmin_announcements_delete(request, course_slug, announ_id, announ_slug):
 
-    announcement = get_object_or_404(Announcement, slug=announ_slug, course__slug=course_slug)
+    announcement = get_object_or_404(Announcement, id=announ_id)
     announcement.delete()
 
     return HttpResponseRedirect(reverse("teacheradmin_announcements", args=[course_slug]))
