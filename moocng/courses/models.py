@@ -82,6 +82,10 @@ class Course(Sortable):
     class Meta(Sortable.Meta):
         verbose_name = _(u'course')
         verbose_name_plural = _(u'courses')
+        permissions = (
+            ("can_list_allcourses", _("Can list courses of an user")),
+            ("can_list_passedcourses", _("Can list passed courses of an user")),
+        )
 
     def __unicode__(self):
         return self.name
