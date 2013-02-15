@@ -502,7 +502,11 @@ def teacheradmin_announcements_add_or_edit(request, course_slug, announ_id=None,
         form = AnnouncementForm(request.POST, instance=announcement)
         if form.is_valid():
             announcement = form.save(commit=False)
-            announcement.slug = slugify(announcement.title)
+            slug = slugify(announcement.title)
+            max_length = announcement._meta.get_field_by_name('slug')[0].max_length
+            if len(slug) >= max_length:
+                slug = slug[:max_length - 1]
+            announcement.slug = slug
             announcement.course = course
             announcement.save()
 
