@@ -1,0 +1,29 @@
+{% extends "teacheradmin/base_teacheradmin.html" %}
+
+{% load i18n %}
+
+{% block nav-teacheradmin-categories %}active{% endblock %}
+
+{% block mainclass %}teacheradmin-categories{% endblock %}
+
+{% block section %}
+{% for cat_list in categories %}
+<div class="row"><form method="POST">{% csrf_token %}
+    {% for category in cat_list %}
+        <div class="span2">
+            {% if category.cat.icon %}
+            <p><img src="{{category.cat.icon.url}}" alt="{% trans "Category's icon" %}" /></p>
+            {% else %}
+            <p><img src="{{ STATIC_URL }}/img/no-image.png" alt="{% trans "This category doesn't have an icon" %}" title="{% trans "This category doesn't have an icon" %}" /></p>
+            {% endif %}
+            <p><label for="cat-{{ category.cat.slug }}" class="pointer">
+                <input type="checkbox" name="cat-{{ category.cat.slug }}" id="cat-{{ category.cat.slug }}" {% if category.checked %} checked {% endif %} /> {{ category.cat.name }}
+            </label></p>
+        </div>
+    {% endfor %}
+</div>
+{% endfor %}
+<div class="row"><div class="span10 form-actions">
+    <input type="submit" class="btn btn-primary" value="{% trans "Save" %}" />
+</div></div></form>
+{% endblock %}

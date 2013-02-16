@@ -35,6 +35,7 @@ from moocng.courses.models import (Course, CourseTeacher, KnowledgeQuantum,
 from moocng.courses.forms import AnnouncementForm
 from moocng.courses.utils import (UNIT_BADGE_CLASSES, calculate_course_mark,
                                   calculate_unit_mark, calculate_kq_mark)
+from moocng.categories.models import Category
 from moocng.teacheradmin.decorators import is_teacher_or_staff
 from moocng.teacheradmin.forms import CourseForm, MassiveEmailForm
 from moocng.teacheradmin.models import Invitation
@@ -458,6 +459,52 @@ def teacheradmin_info(request, course_slug):
         'course': course,
         'is_enrolled': is_enrolled,
         'form': form,
+    }, context_instance=RequestContext(request))
+
+
+@is_teacher_or_staff
+def teacheradmin_categories(request, course_slug):
+    course = get_object_or_404(Course, slug=course_slug)
+    is_enrolled = course.students.filter(id=request.user.id).exists()
+
+    if request.method == 'POST':
+        category_list = []
+        for key in request.POST.keys():
+            if key.startswith('cat-'):
+                slug = key[4:]
+                try:
+                    category = Category.objects.get(slug=slug)
+                    category_list.append(category)
+                except Category.DoesNotExist:
+                    messages.error(request, _(u'There were problems with some data you introduced, please fix them and try again.'))
+                    return HttpResponseRedirect(
+                        reverse('teacheradmin_categories', args=[course_slug]))
+        course.categories.clear()
+        course.categories.add(*category_list)
+        course.save()
+        messages.success(request, _(u"Your changes were saved."))
+        return HttpResponseRedirect(reverse('teacheradmin_categories',
+                                            args=[course_slug]))
+
+    counter = 0
+    categories = []
+    aux = []
+    for cat in Category.objects.all():
+        counter += 1
+        aux.append({
+            'cat': cat,
+            'checked': cat in course.categories.all(),
+        })
+        if counter % 5 == 0:
+            categories.append(aux)
+            aux = []
+    if len(aux) < 5:
+        categories.append(aux)
+
+    return render_to_response('teacheradmin/categories.html', {
+        'course': course,
+        'is_enrolled': is_enrolled,
+        'categories': categories,
     }, context_instance=RequestContext(request))
 
 

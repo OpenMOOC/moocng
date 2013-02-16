@@ -7,7 +7,7 @@
     <div class="span6 offset3 category-box">
         {% if category.icon %}
         <div class="row"><div class="span2 offset2">
-            <img src="{{category.icon.url}}" />
+            <img src="{{category.icon.url}}" alt="{% trans "Category's icon" %}" />
         </div></div>
         {% endif %}
         <h1>{{ category.name }}</h1>

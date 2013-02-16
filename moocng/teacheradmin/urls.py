@@ -42,6 +42,9 @@ urlpatterns = patterns(
 
     url(r'^info/$', 'teacheradmin_info', name='teacheradmin_info'),
 
+    url(r'^categories/$', 'teacheradmin_categories',
+        name='teacheradmin_categories'),
+
     url(r'^announcements/$', 'teacheradmin_announcements',
         name='teacheradmin_announcements'),
     url(r'^announcements/add',
