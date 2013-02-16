@@ -47,6 +47,8 @@ urlpatterns = patterns(
     url(r'^saml2/', include('djangosaml2.urls')),
 
     url(r'^contact/', include('moocng.contact.urls')),
+
+    url(r'^category/', include('moocng.categories.urls')),
 )
 
 if settings.DEBUG:

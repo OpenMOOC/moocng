@@ -141,6 +141,13 @@
         </div>
 
         <div class="box">
+            <h2>{% trans "Categories" %}</h2>
+            <ul>{% for category in course.categories.all %}
+                <li><a href="{% url category category_slug=category.slug %}">{{ category.name }}</a></li>
+            {% endfor %}</ul>
+        </div>
+
+        <div class="box">
             <h2>{% trans "Share" %}</h2>
             <ul id="share">
                 <li class="pull-left"><a href="https://twitter.com/share" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/twitter.png" alt="Share in Twitter" /></a></li>

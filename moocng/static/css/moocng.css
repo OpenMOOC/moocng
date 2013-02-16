@@ -322,6 +322,10 @@ input[type="checkbox"] {
     margin: -4px 0 0;
 }
 
+.category-box {
+    text-align: center;
+}
+
 .errorlist {
     color: red;
     padding-top: 10px;
