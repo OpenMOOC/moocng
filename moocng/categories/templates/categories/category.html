@@ -15,8 +15,8 @@
 </div>
 <div class="row"><div class="span8 offset2">
     {% if category.courses.all %}
-        <ul>{% for course in category.courses.all %}
-            <li><a href="{% url course_overview course_slug=course.slug %}">{{ course.name }}</a></li>
+        <ul class="unstyled">{% for course in category.courses.all %}
+            <li class="box"><h3><a href="{% url course_overview course_slug=course.slug %}">{{ course.name }}</a></h3></li>
         {% endfor %}</ul>
     {% else %}
         <div class="alert alert-info">
