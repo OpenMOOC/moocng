@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-16 14:10-0600\n"
+"POT-Creation-Date: 2013-02-17 05:41-0600\n"
 "PO-Revision-Date: 2013-02-13 11:30+0100\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -160,26 +160,31 @@ msgstr "Nombre"
 msgid "Slug"
 msgstr "Slug"
 
-#: categories/models.py:12 categories/templates/categories/category.html:10
+#: categories/models.py:12 categories/templates/categories/category.html:11
+#: categories/templates/categories/category.html:22
 #: teacheradmin/templates/teacheradmin/categories.html:15
 msgid "Category's icon"
 msgstr "Icono de la categoría"
 
-#: categories/models.py:18
+#: categories/models.py:15 courses/templates/courses/home.html:18
+msgid "Courses"
+msgstr "Cursos"
+
+#: categories/models.py:19
 msgid "category"
 msgstr "categoría"
 
-#: categories/models.py:19
+#: categories/models.py:20
 msgid "categories"
 msgstr "categorías"
 
-#: categories/templates/categories/category.html:23
+#: categories/templates/categories/category.html:37
 msgid "Empty"
 msgstr "Vacío"
 
-#: categories/templates/categories/category.html:24
-msgid "There are no courses with this category associated yet."
-msgstr "No hay cursos aún que tengan esta categoría asociado."
+#: categories/templates/categories/category.html:38
+msgid "There are no courses with this category or categories associated yet."
+msgstr "No hay cursos aún que tengan esta categoría o categorías asociada."
 
 #: contact/forms.py:25
 msgid "Username"
@@ -867,10 +872,6 @@ msgid ""
 msgstr ""
 "Este vídeo no está disponible aún. Por favor, espere hasta alcanzar la fecha "
 "límite del módulo."
-
-#: courses/templates/courses/home.html:18
-msgid "Courses"
-msgstr "Cursos"
 
 #: courses/templates/courses/home.html:25
 msgid "More information about this course"

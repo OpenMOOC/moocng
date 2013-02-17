@@ -322,8 +322,14 @@ input[type="checkbox"] {
     margin: -4px 0 0;
 }
 
-.category-box {
+.category-box,
+.category-box-liquid {
     text-align: center;
+}
+
+.category-box-liquid img {
+    max-width: 140px;
+    margin: 0 5px;
 }
 
 .errorlist {

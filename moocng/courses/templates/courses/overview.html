@@ -143,7 +143,7 @@
         <div class="box">
             <h2>{% trans "Categories" %}</h2>
             <ul>{% for category in course.categories.all %}
-                <li><a href="{% url category category_slug=category.slug %}">{{ category.name }}</a></li>
+                <li><a href="{% url category categories=category.slug %}">{{ category.name }}</a></li>
             {% endfor %}</ul>
         </div>
 

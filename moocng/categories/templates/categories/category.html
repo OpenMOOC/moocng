@@ -3,25 +3,39 @@
 {% load i18n %}
 
 {% block content %}
-<div class="row">
-    <div class="span6 offset3 category-box">
-        {% if category.icon %}
-        <div class="row"><div class="span2 offset2">
-            <img src="{{category.icon.url}}" alt="{% trans "Category's icon" %}" />
-        </div></div>
-        {% endif %}
-        <h1>{{ category.name }}</h1>
+{% if one_category %}
+    <div class="row">
+        <div class="span6 offset3 category-box">
+            {% if categories.0.icon %}
+            <div class="row"><div class="span2 offset2">
+                <img src="{{categories.0.icon.url}}" alt="{% trans "Category's icon" %}" />
+            </div></div>
+            {% endif %}
+            <h1>{{ categories.0.name }}</h1>
+        </div>
     </div>
-</div>
+{% else %}
+    <div class="row"><div class="span12">
+        {% for cat in categories %}
+            <div class="inlineb category-box-liquid">
+                {% if cat.icon %}
+                    <img src="{{cat.icon.url}}" alt="{% trans "Category's icon" %}" />
+                {% endif %}
+                <p><h1>{{ cat.name }}</h1></p>
+            </div>
+        {% endfor %}
+    </div></div>
+{% endif %}
+
 <div class="row"><div class="span8 offset2">
-    {% if category.courses.all %}
-        <ul class="unstyled">{% for course in category.courses.all %}
+    {% if courses %}
+        <ul class="unstyled">{% for course in courses %}
             <li class="box"><h3><a href="{% url course_overview course_slug=course.slug %}">{{ course.name }}</a></h3></li>
         {% endfor %}</ul>
     {% else %}
         <div class="alert alert-info">
             <h4>{% trans "Empty" %}</h4>
-            <p>{% trans "There are no courses with this category associated yet." %}</p>
+            <p>{% trans "There are no courses with this category or categories associated yet." %}</p>
         </div>
     {% endif %}
 </div></div>
