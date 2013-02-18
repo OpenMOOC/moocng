@@ -29,13 +29,13 @@ logger = logging.getLogger(__name__)
 class UserApiAdmin(SortableAdmin):
 
     readonly_fields = ('key',)
+    actions = ['change_key']
 
-def change_key(modeladmin, request, queryset):
-    for apikey in queryset:
-        apikey.key = unicode(uuid.uuid4())
-        apikey.save()
+    def change_key(modeladmin, request, queryset):
+        for apikey in queryset:
+            apikey.key = unicode(uuid.uuid4())
+            apikey.save()
 
-change_key.short_description = _("Change key of selected %(verbose_name_plural)s")
+    change_key.short_description = _("Change key of selected %(verbose_name_plural)s")
 
 admin.site.register(UserApi, UserApiAdmin)
-admin.site.add_action(change_key, 'change_key')
