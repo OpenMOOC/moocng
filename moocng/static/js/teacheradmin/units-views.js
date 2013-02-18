@@ -109,7 +109,29 @@ if (_.isUndefined(window.MOOC)) {
                 }
             }
             return video_url;
-        };
+        },
+
+        getCookie = function (name) {
+            var cookieValue = null,
+                cookies,
+                i,
+                cookie;
+
+            if (document.cookie && document.cookie !== '') {
+                cookies = document.cookie.split(';');
+                for (i = 0; i < cookies.length; i += 1) {
+                    cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        },
+
+        csrftoken = getCookie("csrftoken");
 
     MOOC.views = {
         List: Backbone.View.extend({
@@ -544,13 +566,18 @@ if (_.isUndefined(window.MOOC)) {
                 }
 
                 $attachments = this.$el.find("#attachment-list");
-                this.model.get("attachmentList").each(function (attachment) {
-                    var view = new MOOC.views.Attachment({
-                        model: attachment,
-                        el: $attachments[0]
+                if (this.model.get("attachmentList").length > 0) {
+                    this.model.get("attachmentList").each(function (attachment) {
+                        var view = new MOOC.views.Attachment({
+                            model: attachment,
+                            el: $attachments[0]
+                        });
+                        view.render();
                     });
-                    view.render();
-                });
+                } else {
+                    $attachments.addClass("hide");
+                    this.$el.find("#attachment-empty").removeClass("hide");
+                }
 
                 while (tinyMCE.editors.length > 0) {
                     tinyMCE.editors[0].remove();
@@ -587,16 +614,78 @@ if (_.isUndefined(window.MOOC)) {
                 MOOC.ajax.showLoading();
 
                 var question,
-                    secondAjax;
+                    saveKQAjax,
+                    saveAttachmentsAjax;
 
-                secondAjax = _.bind(function () {
+                saveAttachmentsAjax = _.bind(function (input) {
+                    var self = this,
+                        fakeForm,
+                        cb;
+
+                    cb = function () {
+                        if (!_.isUndefined(callback)) {
+                            callback();
+                        } else {
+                            self.render();
+                            self.$el.find("#attachments-tab a").trigger("click");
+                            MOOC.ajax.hideLoading();
+                        }
+                    };
+
+                    if (input.files) {
+                        fakeForm = new FormData();
+                        fakeForm.append("attachment", input.files[0]);
+                        $.ajax(window.location.pathname + "attachment?kq=" + this.model.get("id"), {
+                            type: "POST",
+                            headers: {
+                                "X-CSRFToken": csrftoken
+                            },
+                            data: fakeForm,
+                            processData: false,
+                            contentType: false,
+                            success: function () {
+                                MOOC.ajax.showAlert("saved");
+                                $.ajax(MOOC.ajax.host + "attachment/?format=json&kq=" + self.model.get("id"), {
+                                    success: function (data, textStatus, jqXHR) {
+                                        var attachmentList = new MOOC.models.AttachmentList(
+                                            _.map(data.objects, function (attachment) {
+                                                return { url: attachment.attachment };
+                                            })
+                                        );
+                                        self.model.set("attachmentList", attachmentList);
+                                        cb();
+                                    },
+                                    error: function () {
+                                        MOOC.ajax.hideLoading();
+                                        MOOC.ajax.showAlert("generic");
+                                    }
+                                });
+                            },
+                            error: function () {
+                                MOOC.ajax.hideLoading();
+                                MOOC.ajax.showAlert("generic");
+                            }
+                        });
+                    } else {
+                        MOOC.ajax.showAlert("generic");
+                        cb();
+                    }
+                }, this);
+
+                saveKQAjax = _.bind(function () {
+                    var self = this;
                     this.model.save(null, {
                         success: function () {
-                            MOOC.ajax.showAlert("saved");
-                            if (!_.isUndefined(callback)) {
-                                callback();
+                            var $input = self.$el.find("div.fileupload input[type='file']");
+                            if ($input.val() !== "") {
+                                saveAttachmentsAjax($input[0]);
                             } else {
-                                MOOC.ajax.hideLoading();
+                                MOOC.ajax.showAlert("saved");
+                                if (!_.isUndefined(callback)) {
+                                    callback();
+                                } else {
+                                    MOOC.ajax.hideLoading();
+                                }
                             }
                         },
                         error: function () {
@@ -617,7 +706,7 @@ if (_.isUndefined(window.MOOC)) {
                     question.set("solution", extractVideoID(this.$el.find("#questionvideo").val()));
                     question.save(null, {
                         success: function () {
-                            secondAjax();
+                            saveKQAjax();
                         },
                         error: function () {
                             MOOC.ajax.hideLoading();
@@ -625,7 +714,7 @@ if (_.isUndefined(window.MOOC)) {
                         }
                     });
                 } else {
-                    secondAjax();
+                    saveKQAjax();
                 }
             },
 

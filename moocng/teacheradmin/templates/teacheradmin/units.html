@@ -8,6 +8,7 @@
 
 {% block extraheader %}
     <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui-1.9.2.custom.min.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-fileupload.min.css">
 {% endblock %}
 
 {% block extrajs %}
@@ -16,6 +17,7 @@
     <script src="{{ STATIC_URL }}js/libs/backbone-0.9.2.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}tiny_mce/tiny_mce.js"></script>
 {% compress js %}
+    <script src="{{ STATIC_URL }}js/libs/bootstrap-fileupload.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/models.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/teacheradmin/units-views.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/teacheradmin/units-routes.js" type="text/javascript"></script>
@@ -88,7 +90,7 @@
 <form>
     <ul class="nav nav-tabs">
         <li class="active"><a href="#nugget" data-toggle="tab">{% trans "Nugget" %}</a></li>
-        <li><a href="#attachments" data-toggle="tab">{% trans "Attachments" %}</a></li>
+        <li id="attachments-tab"><a href="#attachments" data-toggle="tab">{% trans "Attachments" %}</a></li>
         <li id="question-tab" class="hide"><a href="#question" data-toggle="tab">{% trans "Question" %}</a></li>
     </ul>
     <div class="tab-content"><fieldset class="tab-pane active" id="nugget">
@@ -126,7 +128,21 @@
     </div>
     </fieldset>
     <fieldset class="tab-pane" id="attachments">
+        <div class="fileupload fileupload-new" data-provides="fileupload">
+            <div class="input-append">
+                <div class="uneditable-input span3">
+                    <i class="icon-file fileupload-exists"></i> <span class="fileupload-preview"></span>
+                </div>
+                <span class="btn btn-file">
+                    <span class="fileupload-new">{% trans "Select file" %}</span>
+                    <span class="fileupload-exists">{% trans "Change" %}</span>
+                    <input type="file" />
+                </span>
+                <a href="#" class="btn fileupload-exists" data-dismiss="fileupload">{% trans "Remove" %}</a>
+            </div>
+        </div>
         <ul id="attachment-list"></ul>
+        <div class="alert alert-info hide" id="attachment-empty">{% trans "There are no attachments yet." %}</div>
     </fieldset>
     <fieldset class="tab-pane" id="question">
     <div class="row">

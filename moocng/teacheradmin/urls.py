@@ -25,6 +25,8 @@ urlpatterns = patterns(
     url(r'^units/$', 'teacheradmin_units', name='teacheradmin_units'),
     url(r'^units/forcevideoprocess$', 'teacheradmin_units_forcevideoprocess',
         name='teacheradmin_units_forcevideoprocess'),
+    url(r'^units/attachment$', 'teacheradmin_units_attachment',
+        name='teacheradmin_units_attachment'),
     url(r'^units/question/(?P<kq_id>\d+)$', 'teacheradmin_units_question',
         name='teacheradmin_units_question'),
     url(r'^units/question/(?P<kq_id>\d+)/(?P<option_id>\d+)$',

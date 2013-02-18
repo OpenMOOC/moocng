@@ -31,7 +31,7 @@ from gravatar.templatetags.gravatar import gravatar_img_for_email
 
 from moocng.api.mongodb import get_db
 from moocng.courses.models import (Course, CourseTeacher, KnowledgeQuantum,
-                                   Option, Announcement, Unit)
+                                   Option, Announcement, Unit, Attachment)
 from moocng.courses.forms import AnnouncementForm
 from moocng.courses.utils import (UNIT_BADGE_CLASSES, calculate_course_mark,
                                   calculate_unit_mark, calculate_kq_mark)
@@ -215,6 +215,22 @@ def teacheradmin_units_forcevideoprocess(request, course_slug):
     question_list = kq.question_set.all()
     if len(question_list) > 0:
         process_video_task.delay(question_list[0].id)
+    return HttpResponse()
+
+
+@is_teacher_or_staff
+def teacheradmin_units_attachment(request, course_slug):
+    if not 'kq' in request.GET:
+        return HttpResponse(status=400)
+    kq = get_object_or_404(KnowledgeQuantum, id=request.GET['kq'])
+
+    if not('attachment' in request.FILES.keys()):
+        return HttpResponse(status=400)
+
+    uploaded_file = request.FILES['attachment']
+    attachment = Attachment(attachment=uploaded_file, kq=kq)
+    attachment.save()
+
     return HttpResponse()
 
 
