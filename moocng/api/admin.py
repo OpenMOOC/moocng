@@ -31,7 +31,7 @@ class UserApiAdmin(SortableAdmin):
     readonly_fields = ('key',)
     actions = ['change_key']
 
-    def change_key(modeladmin, request, queryset):
+    def change_key(self, request, queryset):
         for apikey in queryset:
             apikey.key = unicode(uuid.uuid4())
             apikey.save()
