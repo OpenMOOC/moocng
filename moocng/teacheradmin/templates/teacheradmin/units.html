@@ -141,7 +141,12 @@
                 <a href="#" class="btn fileupload-exists" data-dismiss="fileupload">{% trans "Remove" %}</a>
             </div>
         </div>
-        <ul id="attachment-list"></ul>
+        <table id="attachment-list" class="table table-striped">
+            <thead>
+                <th>{% trans "File name" %}</th><th class="center">{% trans "Remove" %}</th>
+            </thead>
+            <tbody></tbody>
+        </table>
         <div class="alert alert-info hide" id="attachment-empty">{% trans "There are no attachments yet." %}</div>
     </fieldset>
     <fieldset class="tab-pane" id="question">

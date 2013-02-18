@@ -570,7 +570,7 @@ if (_.isUndefined(window.MOOC)) {
                     this.model.get("attachmentList").each(function (attachment) {
                         var view = new MOOC.views.Attachment({
                             model: attachment,
-                            el: $attachments[0]
+                            el: $attachments.find("tbody")[0]
                         });
                         view.render();
                     });
@@ -649,7 +649,10 @@ if (_.isUndefined(window.MOOC)) {
                                     success: function (data, textStatus, jqXHR) {
                                         var attachmentList = new MOOC.models.AttachmentList(
                                             _.map(data.objects, function (attachment) {
-                                                return { url: attachment.attachment };
+                                                return {
+                                                    id: parseInt(attachment.id, 10),
+                                                    url: attachment.attachment
+                                                };
                                             })
                                         );
                                         self.model.set("attachmentList", attachmentList);
@@ -838,13 +841,47 @@ if (_.isUndefined(window.MOOC)) {
         kqEditorView: undefined,
 
         Attachment: Backbone.View.extend({
+            events: {
+                "click i.icon-remove": "remove"
+            },
+
+            initialize: function () {
+                _.bindAll(this, "render", "remove");
+            },
+
             render: function () {
-                var html = "<li><a href='" + this.model.get("url") + "' target='_blank'>",
+                var html = "<tr id='attachment-" + this.model.get("id") + "'><td><a href='" + this.model.get("url") + "' target='_blank'>",
                     parts = this.model.get("url").split('/');
                 html += parts[parts.length - 1];
-                html += "</a></li>";
+                html += "</a></td><td class='center'><i class='icon-remove pointer'></i></td></tr>";
                 this.$el.append(html);
                 return this;
+            },
+
+            remove: function (evt) {
+                var $el = $(evt.target).parent().parent(),
+                    id = $el.attr("id").split('-')[1],
+                    rows = $el.parent().find("tr").length;
+                MOOC.ajax.showLoading();
+                $.ajax(window.location.pathname + "attachment?attachment=" + id, {
+                    type: "DELETE",
+                    headers: {
+                        "X-CSRFToken": csrftoken
+                    },
+                    success: function () {
+                        var $table = $el.parent().parent();
+                        $el.fadeOut().remove();
+                        MOOC.ajax.hideLoading();
+                        MOOC.ajax.showAlert("saved");
+                        if (rows === 1) {
+                            $table.hide().parent().find("#attachment-empty").show();
+                        }
+                    },
+                    error: function () {
+                        MOOC.ajax.hideLoading();
+                        MOOC.ajax.showAlert("generic");
+                    }
+                });
             }
         })
     };

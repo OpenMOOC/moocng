@@ -403,6 +403,11 @@ input[type="checkbox"] {
     background-color: #f1f1f1;
 }
 
+.teacheradmin-units table th.center,
+.teacheradmin-units table td.center {
+    text-align: center;
+}
+
 .teacheradmin-units div.loading.backdrop,
 .teacheradmin-stats div.loading.backdrop {
     z-index: 99999999;

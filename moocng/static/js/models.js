@@ -268,6 +268,7 @@ MOOC.models.Attachment = Backbone.Model.extend({
     defaults: function () {
         "use strict";
         return {
+            id: -1,
             url: null
         };
     }

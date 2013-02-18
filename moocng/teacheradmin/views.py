@@ -220,18 +220,31 @@ def teacheradmin_units_forcevideoprocess(request, course_slug):
 
 @is_teacher_or_staff
 def teacheradmin_units_attachment(request, course_slug):
-    if not 'kq' in request.GET:
+    if request.method == 'POST':
+        if not 'kq' in request.GET:
+            return HttpResponse(status=400)
+        kq = get_object_or_404(KnowledgeQuantum, id=request.GET['kq'])
+
+        if not('attachment' in request.FILES.keys()):
+            return HttpResponse(status=400)
+
+        uploaded_file = request.FILES['attachment']
+        attachment = Attachment(attachment=uploaded_file, kq=kq)
+        attachment.save()
+
+        return HttpResponse()
+
+    elif request.method == 'DELETE':
+        if not 'attachment' in request.GET:
+            return HttpResponse(status=400)
+
+        attachment = get_object_or_404(Attachment, id=request.GET['attachment'])
+        attachment.delete()
+
+        return HttpResponse()
+
+    else:
         return HttpResponse(status=400)
-    kq = get_object_or_404(KnowledgeQuantum, id=request.GET['kq'])
-
-    if not('attachment' in request.FILES.keys()):
-        return HttpResponse(status=400)
-
-    uploaded_file = request.FILES['attachment']
-    attachment = Attachment(attachment=uploaded_file, kq=kq)
-    attachment.save()
-
-    return HttpResponse()
 
 
 @is_teacher_or_staff

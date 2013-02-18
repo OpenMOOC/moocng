@@ -69,7 +69,10 @@ if (_.isUndefined(window.MOOC)) {
                     success: function (data, textStatus, jqXHR) {
                         var attachmentList = new MOOC.models.AttachmentList(
                             _.map(data.objects, function (attachment) {
-                                return { url: attachment.attachment };
+                                return {
+                                    id: parseInt(attachment.id, 10),
+                                    url: attachment.attachment
+                                };
                             })
                         );
                         kq.set("attachmentList", attachmentList);
