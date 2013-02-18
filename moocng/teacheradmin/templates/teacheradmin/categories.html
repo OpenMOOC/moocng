@@ -7,6 +7,7 @@
 {% block mainclass %}teacheradmin-categories{% endblock %}
 
 {% block section %}
+{% if categories %}
 {% for cat_list in categories %}
 <div class="row"><form method="POST">{% csrf_token %}
     {% for category in cat_list %}
@@ -26,4 +27,10 @@
 <div class="row"><div class="span10 form-actions">
     <input type="submit" class="btn btn-primary" value="{% trans "Save" %}" />
 </div></div></form>
+{% else %}
+<div class="alert alert-info">
+    <h4>{% trans "Empty" %}</h4>
+    <p>{% trans "There aren't categories defined yet, please contact an administrator." %}</p>
+</div>
+{% endif %}
 {% endblock %}

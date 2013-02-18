@@ -498,7 +498,7 @@ def teacheradmin_categories(request, course_slug):
         if counter % 5 == 0:
             categories.append(aux)
             aux = []
-    if len(aux) < 5:
+    if len(aux) < 5 and len(aux) > 0:
         categories.append(aux)
 
     return render_to_response('teacheradmin/categories.html', {

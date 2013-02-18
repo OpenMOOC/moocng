@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-17 05:41-0600\n"
+"POT-Creation-Date: 2013-02-18 02:50-0600\n"
 "PO-Revision-Date: 2013-02-13 11:30+0100\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -148,7 +148,7 @@ msgstr ""
 "premios:"
 
 #: categories/admin.py:11
-#: teacheradmin/templates/teacheradmin/categories.html:17
+#: teacheradmin/templates/teacheradmin/categories.html:18
 msgid "This category doesn't have an icon"
 msgstr "Esta categoría no tiene un icono asociado"
 
@@ -162,7 +162,7 @@ msgstr "Slug"
 
 #: categories/models.py:12 categories/templates/categories/category.html:11
 #: categories/templates/categories/category.html:22
-#: teacheradmin/templates/teacheradmin/categories.html:15
+#: teacheradmin/templates/teacheradmin/categories.html:16
 msgid "Category's icon"
 msgstr "Icono de la categoría"
 
@@ -179,6 +179,7 @@ msgid "categories"
 msgstr "categorías"
 
 #: categories/templates/categories/category.html:37
+#: teacheradmin/templates/teacheradmin/categories.html:32
 msgid "Empty"
 msgstr "Vacío"
 
@@ -809,9 +810,9 @@ msgstr "Comentarios del profesor"
 #: teacheradmin/templates/teacheradmin/teachers.html:41
 #: teacheradmin/templates/teacheradmin/teachers.html:45
 #: teacheradmin/templates/teacheradmin/teachers.html:49
-#: teacheradmin/templates/teacheradmin/units.html:182
-#: teacheradmin/templates/teacheradmin/units.html:186
-#: teacheradmin/templates/teacheradmin/units.html:190
+#: teacheradmin/templates/teacheradmin/units.html:185
+#: teacheradmin/templates/teacheradmin/units.html:189
+#: teacheradmin/templates/teacheradmin/units.html:193
 msgid "Error"
 msgstr "Error"
 
@@ -998,12 +999,12 @@ msgstr "Comunicados"
 msgid "Syllabus"
 msgstr "Temario"
 
-#: courses/templates/courses/overview.html:144
+#: courses/templates/courses/overview.html:145
 #: teacheradmin/templates/teacheradmin/base_teacheradmin.html:30
 msgid "Categories"
 msgstr "Categorías"
 
-#: courses/templates/courses/overview.html:151
+#: courses/templates/courses/overview.html:153
 msgid "Share"
 msgstr "Comparte"
 
@@ -1229,12 +1230,18 @@ msgstr "Lo sentimos"
 msgid "But this section is not available yet."
 msgstr "Pero esta sección aún no está disponible."
 
-#: teacheradmin/templates/teacheradmin/categories.html:27
+#: teacheradmin/templates/teacheradmin/categories.html:28
 #: teacheradmin/templates/teacheradmin/info.html:119
 #: teacheradmin/templates/teacheradmin/units.html:81
-#: teacheradmin/templates/teacheradmin/units.html:162
+#: teacheradmin/templates/teacheradmin/units.html:165
 msgid "Save"
 msgstr "Guardar"
+
+#: teacheradmin/templates/teacheradmin/categories.html:33
+msgid "There aren't categories defined yet, please contact an administrator."
+msgstr ""
+"No hay aún ninguna categoría definida, por favor, contacte con un "
+"administrador."
 
 #: teacheradmin/templates/teacheradmin/emails.html:36
 msgid "Send an email to every student"
@@ -1390,7 +1397,7 @@ msgstr "...en la pregunta"
 
 #: teacheradmin/templates/teacheradmin/stats.html:157
 #: teacheradmin/templates/teacheradmin/teachers.html:50
-#: teacheradmin/templates/teacheradmin/units.html:183
+#: teacheradmin/templates/teacheradmin/units.html:186
 msgid "Something went wrong, please try again later."
 msgstr "Algo ha ido mal, por favor pruebe de nuevo más tarde."
 
@@ -1402,8 +1409,8 @@ msgstr "Propietario"
 #: teacheradmin/templates/teacheradmin/teachers.html:29
 #: teacheradmin/templates/teacheradmin/teachers.html:33
 #: teacheradmin/templates/teacheradmin/teachers.html:37
-#: teacheradmin/templates/teacheradmin/units.html:174
-#: teacheradmin/templates/teacheradmin/units.html:178
+#: teacheradmin/templates/teacheradmin/units.html:177
+#: teacheradmin/templates/teacheradmin/units.html:181
 msgid "Success"
 msgstr "Éxito"
 
@@ -1467,12 +1474,12 @@ msgid "Exam"
 msgstr "Examen"
 
 #: teacheradmin/templates/teacheradmin/units.html:82
-#: teacheradmin/templates/teacheradmin/units.html:163
+#: teacheradmin/templates/teacheradmin/units.html:166
 msgid "Delete"
 msgstr "Borrar"
 
 #: teacheradmin/templates/teacheradmin/units.html:83
-#: teacheradmin/templates/teacheradmin/units.html:164
+#: teacheradmin/templates/teacheradmin/units.html:167
 msgid "Back"
 msgstr "Atrás"
 
@@ -1488,28 +1495,36 @@ msgstr "Url del vídeo"
 msgid "Save changes and add a question to this nugget"
 msgstr "Guardar cambios y añadir una pregunta a esta píldora"
 
-#: teacheradmin/templates/teacheradmin/units.html:135
-#: teacheradmin/templates/teacheradmin/units.html:136
+#: teacheradmin/templates/teacheradmin/units.html:129
+msgid "Upload an attachment"
+msgstr "Suba un adjunto"
+
+#: teacheradmin/templates/teacheradmin/units.html:132
+msgid "There are no attachments yet."
+msgstr "No hay aún ningún fichero adjunto."
+
+#: teacheradmin/templates/teacheradmin/units.html:138
+#: teacheradmin/templates/teacheradmin/units.html:139
 msgid "Nugget's video last frame"
 msgstr "Último fotograma del vídeo de la píldora"
 
-#: teacheradmin/templates/teacheradmin/units.html:137
+#: teacheradmin/templates/teacheradmin/units.html:140
 msgid "Use a blank canvas instead"
 msgstr "Usar en su lugar un lienzo blanco"
 
-#: teacheradmin/templates/teacheradmin/units.html:137
+#: teacheradmin/templates/teacheradmin/units.html:140
 msgid "Don't use the last frame"
 msgstr "No usar la última imagen"
 
-#: teacheradmin/templates/teacheradmin/units.html:138
+#: teacheradmin/templates/teacheradmin/units.html:141
 msgid "Force processing the nugget's video"
 msgstr "Forzar el procesado del vídeo de la píldora"
 
-#: teacheradmin/templates/teacheradmin/units.html:142
+#: teacheradmin/templates/teacheradmin/units.html:145
 msgid "Using blank canvas"
 msgstr "Se está usando un lienzo blanco"
 
-#: teacheradmin/templates/teacheradmin/units.html:143
+#: teacheradmin/templates/teacheradmin/units.html:146
 msgid ""
 "You are using a blank canvas for the question instead of the last frame of "
 "the nugget's video."
@@ -1517,42 +1532,42 @@ msgstr ""
 "Estás usando un lienzo blanco para el fondo de la pregunta, en lugar de usar "
 "la última imagen del vídeo de la píldora."
 
-#: teacheradmin/templates/teacheradmin/units.html:145
+#: teacheradmin/templates/teacheradmin/units.html:148
 msgid "Use the last frame of the nugget's video"
 msgstr "Usar la última imagen del vídeo de la píldora"
 
-#: teacheradmin/templates/teacheradmin/units.html:145
+#: teacheradmin/templates/teacheradmin/units.html:148
 msgid "Use the last frame"
 msgstr "Usar la última imagen"
 
-#: teacheradmin/templates/teacheradmin/units.html:149
+#: teacheradmin/templates/teacheradmin/units.html:152
 msgid "Solution video url"
 msgstr "Url del vídeo con la solución"
 
-#: teacheradmin/templates/teacheradmin/units.html:155
+#: teacheradmin/templates/teacheradmin/units.html:158
 msgid "Save changes and edit question's options"
 msgstr "Guardar cambios y editar las opciones de la pregunta"
 
-#: teacheradmin/templates/teacheradmin/units.html:156
+#: teacheradmin/templates/teacheradmin/units.html:159
 msgid "Remove the question from this nugget"
 msgstr "Borrar la pregunta de esta píldora"
 
-#: teacheradmin/templates/teacheradmin/units.html:175
+#: teacheradmin/templates/teacheradmin/units.html:178
 msgid "The changes were saved successfully."
 msgstr "Sus cambios han sido guardados con éxito."
 
-#: teacheradmin/templates/teacheradmin/units.html:179
+#: teacheradmin/templates/teacheradmin/units.html:182
 msgid ""
 "A task for processing the video has been queued. Refresh in a few moments."
 msgstr ""
 "Se ha encolado una tarea para procesar el vídeo. Recargue la páginas en unos "
 "minutos."
 
-#: teacheradmin/templates/teacheradmin/units.html:187
+#: teacheradmin/templates/teacheradmin/units.html:190
 msgid "A required field is empty."
 msgstr "Un campo obligatorio está vacío."
 
-#: teacheradmin/templates/teacheradmin/units.html:191
+#: teacheradmin/templates/teacheradmin/units.html:194
 msgid "This item is new and must be saved before going back."
 msgstr "Este elemento es nuevo, y debe ser guardado antes de volver."
 
