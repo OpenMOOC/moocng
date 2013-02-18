@@ -359,7 +359,12 @@ def teacheradmin_teachers_invite(request, course_slug):
             response = HttpResponse(status=404)
 
     if user is not None:
-        ct = CourseTeacher.objects.create(course=course, teacher=user)
+        try:
+            ct = CourseTeacher.objects.get(course=course, teacher=user)
+            return HttpResponse(status=409)
+        except CourseTeacher.DoesNotExist:
+            ct = CourseTeacher.objects.create(course=course, teacher=user)
+
         name = user.get_full_name()
         if not name:
             name = user.username
