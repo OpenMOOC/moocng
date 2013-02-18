@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -19,6 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 from tinymce.models import HTMLField
 
 from moocng.courses.models import Course
+from moocng.teacheradmin.managers import MassiveEmailManager
 
 
 class Invitation(models.Model):
@@ -44,10 +46,27 @@ class MassiveEmail(models.Model):
                                null=False)
     datetime = models.DateTimeField(verbose_name=_(u'Date and time'),
                                     blank=False, null=False)
-    subject = models.CharField(verbose_name=_(u'Subject'), max_length=100,
+    subject = models.CharField(verbose_name=_(u'Subject'), max_length=200,
                                blank=False, null=False)
     message = HTMLField(verbose_name=_(u'Content'))
+
+    objects = MassiveEmailManager()
 
     class Meta:
         verbose_name = _(u'massive email')
         verbose_name_plural = _(u'massive emails')
+
+
+    def send_in_batches(self, email_send_task):
+        try:
+            batch = settings.MASSIVE_EMAIL_BATCH_SIZE
+        except AttributeError:
+            batch = 30
+
+        students = self.course.students.all()
+        batches = (students.count() / batch) + 1
+        for i in range(batches):
+            init = batch * i
+            end = init + batch
+            students_ids = [s.id for s in students[init:end]]
+            email_send_task.delay(self.id, students_ids)

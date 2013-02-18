@@ -32,7 +32,7 @@ def send_massive_email_task(email_id, students_ids):
         logger.error('Email with ID %d does not exists' % email_id)
         return
 
-    print "massive email, students %s email %s" % (students_ids, email.subject)
+    logger.debug("massive email, students %s email %s" % (students_ids, email.subject))
 
     recipients = []
     missing = []

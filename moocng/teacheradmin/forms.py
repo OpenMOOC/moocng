@@ -13,10 +13,11 @@
 # limitations under the License.
 
 from django import forms
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from tinymce.widgets import TinyMCE
 
+from moocng.courses.forms import AnnouncementForm as CoursesAnnouncementForm
 from moocng.courses.models import Course
 from moocng.teacheradmin.models import MassiveEmail
 
@@ -45,6 +46,17 @@ class CourseForm(forms.ModelForm):
             elif isinstance(widget, forms.widgets.ClearableFileInput):
                 # In bootstrap the <input checkbox> must be inside the <label>
                 widget.template_with_clear = u'<label for="%(clear_checkbox_id)s">%(clear)s %(clear_checkbox_label)s</label>'
+
+
+class AnnouncementForm(CoursesAnnouncementForm):
+
+    send_email = forms.BooleanField(
+        required=False,
+        label=_(u'Send the announcement via email to all the students in this course'),
+        initial=False,
+        help_text=_(u'Please use this with caution as some courses has many students'),
+        )
+
 
 class MassiveEmailForm(forms.ModelForm):
 

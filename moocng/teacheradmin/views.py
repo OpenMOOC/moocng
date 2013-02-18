@@ -32,13 +32,13 @@ from gravatar.templatetags.gravatar import gravatar_img_for_email
 from moocng.api.mongodb import get_db
 from moocng.courses.models import (Course, CourseTeacher, KnowledgeQuantum,
                                    Option, Announcement, Unit, Attachment)
-from moocng.courses.forms import AnnouncementForm
 from moocng.courses.utils import (UNIT_BADGE_CLASSES, calculate_course_mark,
                                   calculate_unit_mark, calculate_kq_mark)
 from moocng.categories.models import Category
 from moocng.teacheradmin.decorators import is_teacher_or_staff
-from moocng.teacheradmin.forms import CourseForm, MassiveEmailForm
-from moocng.teacheradmin.models import Invitation
+from moocng.teacheradmin.forms import (CourseForm, AnnouncementForm,
+                                       MassiveEmailForm)
+from moocng.teacheradmin.models import Invitation, MassiveEmail
 from moocng.teacheradmin.tasks import send_massive_email_task
 from moocng.teacheradmin.utils import (send_invitation,
                                        send_removed_notification)
@@ -578,6 +578,14 @@ def teacheradmin_announcements_add_or_edit(request, course_slug, announ_id=None,
             announcement.course = course
             announcement.save()
 
+            if form.cleaned_data['send_email']:
+                me = MassiveEmail.objects.create_from_announcement(announcement)
+                me.send_in_batches(send_massive_email_task)
+                messages.success(
+                    request,
+                    _("The email has been queued, and it will be send in batches to every student in the course."),
+                    )
+
             return HttpResponseRedirect(
                 reverse("teacheradmin_announcements_view",
                         args=[course_slug, announcement.id, announcement.slug]))
@@ -615,19 +623,7 @@ def teacheradmin_emails(request, course_slug):
             form.instance.datetime = datetime.now()
             form.save()
 
-            batch = 30
-            try:
-                batch = settings.MASSIVE_EMAIL_BATCH_SIZE
-            except AttributeError:
-                pass
-
-            batches = (course.students.count() / batch) + 1
-            students = course.students.all()
-            for i in range(batches):
-                init = batch * i
-                end = init + batch
-                students_ids = [s.id for s in students[init:end]]
-                send_massive_email_task.delay(form.instance.id, students_ids)
+            form.instance.send_in_batches(send_massive_email_task)
 
             messages.success(request, _("The email has been queued, and it will be send in batches to every student in the course."))
             return HttpResponseRedirect(reverse('teacheradmin_stats', args=[course_slug]))
