@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404
 
 from moocng.courses.models import Course
 from moocng.courses.utils import is_teacher
+from moocng.decorators import user_passes_test
 
 
 def is_teacher_or_staff(original_function=None):
