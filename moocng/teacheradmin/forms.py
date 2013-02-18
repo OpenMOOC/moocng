@@ -19,6 +19,7 @@ from tinymce.widgets import TinyMCE
 
 from moocng.courses.forms import AnnouncementForm as CoursesAnnouncementForm
 from moocng.courses.models import Course
+from moocng.forms import BootstrapMixin
 from moocng.teacheradmin.models import MassiveEmail
 
 
@@ -48,7 +49,7 @@ class CourseForm(forms.ModelForm):
                 widget.template_with_clear = u'<label for="%(clear_checkbox_id)s">%(clear)s %(clear_checkbox_label)s</label>'
 
 
-class AnnouncementForm(CoursesAnnouncementForm):
+class AnnouncementForm(CoursesAnnouncementForm, BootstrapMixin):
 
     send_email = forms.BooleanField(
         required=False,

@@ -458,3 +458,8 @@ input[type="checkbox"] {
     cursor: move;
     width: 16px;
 }
+
+.controls > .checkbox,
+.controls > .radio {
+    line-height: 5px;
+}
