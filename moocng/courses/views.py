@@ -162,7 +162,6 @@ def course_classroom(request, course_slug):
             'course': course,
             'is_enrolled': is_enrolled,
             'ask_admin': ask_admin,
-            'complaints_url': reverse('complaints'),
         }, context_instance=RequestContext(request))
 
     units = []

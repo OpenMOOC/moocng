@@ -9,11 +9,11 @@
         <p>
         {% blocktrans with course_name=course.name %}The course "{{ course_name }}" has no content.{% endblocktrans %}
         {% if ask_admin %}
-            {% blocktrans %}Consider <a href="{{ complaints_url }}">getting in touch with an administrator</a>.{% endblocktrans %}
+            {% blocktrans %}Consider <a href="{% url contact %}">getting in touch with an administrator</a>.{% endblocktrans %}
         {% else %}
             {% blocktrans with date=course.start_date %}It starts in {{ date }}.{% endblocktrans %}
             </p><p>
-            {% blocktrans %}Please, use this <a href="{{ complaints_url }}">contact form</a> if you have any questions.{% endblocktrans %}
+            {% blocktrans %}Please, use this <a href="{% url contact %}">contact form</a> if you have any questions.{% endblocktrans %}
         {% endif %}
         </p>
     </section>
