@@ -15,8 +15,10 @@
 # limitations under the License.
 
 from tastypie.authentication import Authentication
+from tastypie.http import HttpUnauthorized
 
 from moocng.courses.models import Course
+from moocng.api.models import UserApi
 from moocng.courses.utils import is_teacher
 
 
@@ -41,13 +43,60 @@ class TeacherAuthentication(Authentication):
 class ApiKeyAuthentication(Authentication):
 
     def is_authenticated(self, request, **kwargs):
-        key = request.GET.get('key', 'nope')
-        if key == settings.USER_API_KEY:
-            return True
-        else:
-            return False
+        key = request.GET.get('key', None)
+        if key:
+            userapi = UserApi.objects.filter(key=key)
+            if userapi:
+                request.user = userapi[0].user
+                return True
+        return False
 
     def get_identifier(self, request):
-        # TODO Create a new table in the database with user- key association
-        # delete the USER_API_KEY of the settings and use that instead
-        return request.user.username
+        key = request.GET.get('key', None)
+        if key:
+            userapi = UserApi.objects.filter(key=key)
+            if userapi:
+                return userapi[0].user
+        return 'nouser'
+
+# TODO. This class belong tastypie 0.9.11
+# (commit 5e8850434ef1c8672b0a22953bd7cc0def6347f8)
+class MultiAuthentication(object):
+    """
+    An authentication backend that tries a number of backends in order.
+    """
+    def __init__(self, *backends, **kwargs):
+        #super((MultiAuthentication, self).__init__(**kwargs))
+        self.backends = backends
+
+    def is_authenticated(self, request, **kwargs):
+        """
+        Identifies if the user is authenticated to continue or not.
+
+        Should return either ``True`` if allowed, ``False`` if not or an
+        ``HttpResponse`` if you need something custom.
+        """
+        unauthorized = False
+
+        for backend in self.backends:
+            check = backend.is_authenticated(request, **kwargs)
+
+            if check:
+                if isinstance(check, HttpUnauthorized):
+                    unauthorized = unauthorized or check
+                else:
+                    request._authentication_backend = backend
+                    return check
+
+        return unauthorized
+
+    def get_identifier(self, request):
+        """
+        Provides a unique string identifier for the requestor.
+
+        This implementation returns a combination of IP address and hostname.
+        """
+        try:
+            return request._authentication_backend.get_identifier(request)
+        except AttributeError:
+            return 'nouser'

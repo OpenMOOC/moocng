@@ -23,6 +23,11 @@ from moocng.courses.models import Course
 from moocng.courses.utils import is_teacher
 
 
+PERMISSIONS = {
+    'get_courses': 'can_list_allcourses',
+    'passed_courses': 'can_list_passedcourses'
+}
+
 class PublicReadTeachersModifyAuthorization(Authorization):
 
     def is_authorized(self, request, object=None):
@@ -42,21 +47,13 @@ class TeacherAuthorization(Authorization):
                  request.user.is_staff))
 
 
-class ApiKeyAuthorization(Authorization):
-    def is_authorized(self, request, object=None):
-        key = request.GET.get('key', 'nope')
-        if key == settings.USER_API_KEY:
-            return True
-        else:
-            return False
-
-
-def is_api_key_authorized(original_function=None):
-    auth = ApiKeyAuthorization()
+def check_permission(original_function=None):
 
     def decorated(resource, request, *args, **kwargs):
-        if auth.is_authorized(request):
-            return original_function(resource, request, **kwargs)
+        if original_function.func_name in PERMISSIONS:
+            required_perm = PERMISSIONS.get(original_function.func_name)
+            if request.user.has_perm(required_perm):
+                return original_function(resource, request, **kwargs)
         else:
             return HttpResponse("Unauthorized", status=401)
 

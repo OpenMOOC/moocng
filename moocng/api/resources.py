@@ -19,9 +19,6 @@ import re
 
 from tastypie import fields
 from tastypie.resources import ModelResource
-# TODO replace the tastypie-openmooc with a new version with
-# the MultiAuthentication functionality
-#from tastypie.authentication import MultiAuthentication
 from tastypie.authorization import DjangoAuthorization
 
 from django.conf import settings
@@ -32,12 +29,12 @@ from django.db.models.fields.files import ImageFieldFile
 from django.http import HttpResponse
 
 from moocng.api.authentication import (DjangoAuthentication,
-                                       TeacherAuthentication)
-                                       #ApiKeyAuthentication)
+                                       TeacherAuthentication,
+                                       ApiKeyAuthentication,
+                                       MultiAuthentication)
 from moocng.api.authorization import (PublicReadTeachersModifyAuthorization,
                                       TeacherAuthorization,
-                                      #ApiKeyAuthorization,
-                                      is_api_key_authorized)
+                                      check_permission)
 from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
 from moocng.api.validation import AnswerValidation
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
@@ -53,7 +50,7 @@ class CourseResource(ModelResource):
         resource_name = 'course'
         allowed_methods = ['get']
         excludes = ['certification_banner']
-        authentication = DjangoAuthentication()
+        authentication = MultiAuthentication(DjangoAuthentication(), ApiKeyAuthentication())
         authorization = DjangoAuthorization()
 
 
@@ -471,29 +468,16 @@ class ActivityResource(MongoResource):
         return {course_id: {'kqs': []}}
 
 
-#class UserResource(ModelResource):
-    #class Meta:
-        #queryset = User.objects.all()
-        #resource_name = 'user'
-        #authorization = ApiKeyAuthorization()
-        #allowed_methods = ['get']
-        #fields = ['id', 'email']
-        #filtering = {
-            #'email': ('exact'),
-        #}
-
-
 class UserResource(ModelResource):
 
     class Meta:
         resource_name = 'user'
         queryset = User.objects.all()
         allowed_methods = ['get']
-# TODO       authentication = MultiAuthentication(TeacherAuthentication(),
-#                                             ApiKeyAuthentication)
-        authentication = DjangoAuthentication()
+        authentication = MultiAuthentication(TeacherAuthentication(),
+                                             ApiKeyAuthentication())
         authorization = DjangoAuthorization()
-        fields = ['id', 'first_name', 'last_name', 'email']
+        fields = ['id', 'email', 'first_name', 'last_name']
         filtering = {
             'first_name': ['istartswith'],
             'last_name': ['istartswith'],
@@ -550,7 +534,7 @@ class UserResource(ModelResource):
             request, to_be_serialized)
         return resource.create_response(request, to_be_serialized)
 
-    @is_api_key_authorized
+    @check_permission
     def get_courses(self, request, **kwargs):
         obj = self.get_object(request, kwargs)
         if isinstance(obj, HttpResponse):
@@ -558,7 +542,7 @@ class UserResource(ModelResource):
         courses = obj.courses_as_student.all()
         return self.alt_get_list(request, courses)
 
-    @is_api_key_authorized
+    @check_permission
     def get_passed_courses(self, request, **kwargs):
         obj = self.get_object(request, kwargs)
         if isinstance(obj, HttpResponse):
