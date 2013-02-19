@@ -14,13 +14,23 @@
 
 
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 
 from moocng.contact.models import CommunicationType
+from moocng.forms import BootstrapMixin
 
 
-class ContactForm(forms.Form):
+def get_terms_of_use_link():
+    from django.core.urlresolvers import reverse
+    link = reverse('tos')
+    text = ugettext('See Terms of Use')
+    return mark_safe('<a href="%s">%s</a>' % (link, force_unicode(text)))
+
+
+class ContactForm(forms.Form, BootstrapMixin):
 
     username = forms.CharField(label=_(u'Username'))
     sender = forms.EmailField(label=_(u'Email'))
@@ -35,7 +45,16 @@ class ContactForm(forms.Form):
         widget=forms.Textarea(attrs={'class': 'input-xxlarge'}),
         )
     tos = forms.BooleanField(
-        label=mark_safe(_('I have read and agree with the terms of use (<a href="/tos">See Terms of Use</a>)')),
+        label=mark_safe(_('I have read and agree with the terms of use')),
+        help_text=_('See Terms of Use'),
         required=True,
         error_messages={'required': _('You must accept the Terms of Use')},
         )
+
+    def __init__(self, *args, **kwargs):
+        super(ContactForm, self).__init__(*args, **kwargs)
+
+        # the help_text can not be computed at import time because
+        # it needs to call reverse() and that would create circular
+        # imports
+        self.fields['tos'].help_text = get_terms_of_use_link()
