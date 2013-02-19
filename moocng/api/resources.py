@@ -257,6 +257,14 @@ class QuestionResource(ModelResource):
             return None
         return extract_YT_video_id(bundle.obj.solution_video)
 
+    def dehydrate_solution_text(self, bundle):
+        # Only return solution if the deadline has been reached, or there is
+        # no deadline
+        unit = bundle.obj.kq.unit
+        if unit.unittype != 'n' and unit.deadline > datetime.now(unit.deadline.tzinfo):
+            return None
+        return bundle.obj.solution_text
+
     def dehydrate_last_frame(self, bundle):
         try:
             return bundle.obj.last_frame.url
