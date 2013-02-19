@@ -38,7 +38,7 @@ class Command(BaseCommand):
                     action='store',
                     dest='translatepositions',
                     default=False,
-                    help="Transalte options positions"
+                    help="Transalte options positions (from new to old)")
     )
 
     def error(self, message):
