@@ -7,7 +7,6 @@ from django.db import models
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        import pdb; pdb.set_trace()
         ct, created = orm['contenttypes.ContentType'].objects.get_or_create(
             model='course', app_label='courses', name='course')
         perm, created = orm['auth.permission'].objects.get_or_create(
