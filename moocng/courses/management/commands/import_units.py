@@ -34,6 +34,11 @@ class Command(BaseCommand):
                     dest='filename',
                     default="",
                     help="Filename to save the course (without file extension)"),
+        make_option('-t', '--translatepositions',
+                    action='store',
+                    dest='translatepositions',
+                    default=False,
+                    help="Transalte options positions"
     )
 
     def error(self, message):
@@ -69,15 +74,18 @@ class Command(BaseCommand):
         del o_dict["fields"]["question"]
         if "text" in o_dict["fields"]:
             del o_dict["fields"]["text"]
+
         option = question.option_set.create(**o_dict["fields"])
-        img_height = option.question.last_frame.height
-        img_width = option.question.last_frame.width
 
-        option.x = translate_position(img_width, IMG_FIXED_W, option.x)
-        option.y = translate_position(img_height, IMG_FIXED_H, option.y)
+        if self.options.get("translatepositions", False):
+            img_height = option.question.last_frame.height
+            img_width = option.question.last_frame.width
 
-        option.height = translate_position(img_height, IMG_FIXED_H, option.height)
-        option.width = translate_position(img_width, IMG_FIXED_W, option.width)
+            option.x = translate_position(img_width, IMG_FIXED_W, option.x)
+            option.y = translate_position(img_height, IMG_FIXED_H, option.y)
+
+            option.height = translate_position(img_height, IMG_FIXED_H, option.height)
+            option.width = translate_position(img_width, IMG_FIXED_W, option.width)
 
         option.save()
         return option
