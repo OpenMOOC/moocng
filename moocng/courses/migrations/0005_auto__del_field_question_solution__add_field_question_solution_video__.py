@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-import datetime
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
 
 
 class Migration(SchemaMigration):
@@ -13,14 +11,13 @@ class Migration(SchemaMigration):
 
         # Adding field 'Question.solution_video'
         db.add_column('courses_question', 'solution_video',
-                      self.gf('django.db.models.fields.URLField')(max_length=200, null=True, blank=True),
+                      self.gf('django.db.models.fields.URLField')(max_length=200, null=False, blank=True),
                       keep_default=False)
 
         # Adding field 'Question.solution_text'
         db.add_column('courses_question', 'solution_text',
-                      self.gf('tinymce.models.HTMLField')(null=True, blank=True),
+                      self.gf('tinymce.models.HTMLField')(null=False, blank=True),
                       keep_default=False)
-
 
     def backwards(self, orm):
 
@@ -31,7 +28,6 @@ class Migration(SchemaMigration):
 
         # Deleting field 'Question.solution_text'
         db.delete_column('courses_question', 'solution_text')
-
 
     models = {
         'auth.group': {

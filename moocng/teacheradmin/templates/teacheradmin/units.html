@@ -151,10 +151,11 @@
     </fieldset>
     <fieldset class="tab-pane" id="question">
     <div class="row">
-        <div class="span5">
+        <div class="span10">
+            <legend>{% trans "Question's background" %}</legend>
             <div id="last-frame">
-                <label>{% trans "Nugget's video last frame" %}</label>
-                <img src="" alt="{% trans "Nugget's video last frame" %}" class="mb10" />
+                <p>{% trans "Nugget's video last frame" %}</p>
+                <p><img src="" alt="{% trans "Nugget's video last frame" %}" style="max-width: 400px;" /></p>
                 <p><button id="dont-use-last-frame" class="btn" title="{% trans "Use a blank canvas instead" %}">{% trans "Don't use the last frame" %}</button></p>
                 <p><button id="force-process" class="hide btn">{% trans "Force processing the nugget's video" %}</button></p>
             </div>
@@ -166,9 +167,30 @@
                 <p><button id="use-last-frame" class="btn" title="{% trans "Use the last frame of the nugget's video" %}">{% trans "Use the last frame" %}</button></p>
             </div>
         </div>
-        <div class="span5">
-            <label for="questionvideo" class="required">{% trans "Solution video url" %}</label>
-            <input id="questionvideo" type="text" name="questionvideo" maxlength="200" class="span5" required="required" />
+    </div>
+    <div class="row">
+        <div class="span10">
+            <legend>{% trans "Question's solution" %}</legend>
+            <div class="row mb10">
+                <div class="span10">
+                    <div class="btn-group">
+                        <button class="btn active" id="use-solution-video-btn">{% trans "Use a video as solution" %}</button>
+                        <button class="btn" id="use-solution-text-btn">{% trans "Use a text as solution" %}</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb20" id="use-solution-video">
+                <div class="span10">
+                    <label for="questionvideo" class="required">{% trans "Solution video url" %}</label>
+                    <input id="questionvideo" type="text" name="questionvideo" maxlength="200" class="span5" required="required" />
+                </div>
+            </div>
+            <div class="row mb20 hide" id="use-solution-text">
+                <div class="span10">
+                    <label for="solution-text" class="required">{% trans "Solution text" %}</label>
+                    <textarea name="solution-text" id="solution-text" class="span10" rows="10"></textarea>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row">

@@ -176,10 +176,14 @@ MOOC.models.Question = Backbone.Model.extend({
         model2send.unset("lastFrame");
         if (model.has("solutionVideo") && model.get("solutionVideo") !== "") {
             model2send.set("solutionID", model.get("solutionVideo"));
+        } else {
+            model2send.set("solutionID", "");
         }
         model2send.unset("solutionVideo");
         if (model.has("solutionText") && model.get("solutionText") !== "") {
             model2send.set("solution_text", model.get("solutionText"));
+        } else {
+            model2send.set("solution_text", "");
         }
         model2send.unset("solutionText");
         model2send.unset("optionList");

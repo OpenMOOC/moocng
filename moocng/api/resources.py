@@ -298,8 +298,10 @@ class PrivateQuestionResource(ModelResource):
 
     def hydrate_solutionID(self, bundle):
         if 'solutionID' in bundle.data and bundle.data['solutionID'] is not None:
-            video = 'http://youtu.be/' + bundle.data['solutionID']
-            bundle.data['solution_video'] = video
+            if bundle.data['solutionID'] != '':
+                bundle.data['solution_video'] = 'http://youtu.be/' + bundle.data['solutionID']
+            else:
+                bundle.data['solution_video'] = ''
         return bundle
 
 

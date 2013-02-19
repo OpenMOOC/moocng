@@ -251,12 +251,12 @@ class Question(models.Model):
         help_text=_(u'If this belongs to a homework or an exam, then the '
                     u'stundents won\'t see this video until the deadline is '
                     u'reached.'),
-        blank=True, null=True)
+        blank=True, null=False)
     solution_text = HTMLField(
         verbose_name=_(u'Solution text'),
         help_text=_(u'If the solution video is specified then this text will '
                     u'be ignored.'),
-        blank=True, null=True)
+        blank=True, null=False)
     last_frame = models.ImageField(
         verbose_name=_(u"Last frame of the nugget's video"),
         upload_to='questions', blank=True)
