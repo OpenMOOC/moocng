@@ -551,19 +551,23 @@ if (_.isUndefined(window.MOOC)) {
                 this.$el.html($("#edit-kq-tpl").text());
 
                 this.$el.find("input#kqtitle").val(this.model.get("title"));
-                this.$el.find("input#kqvideo").val("http://youtu.be/" + this.model.get("videoID"));
+                if (this.model.has("videoID") && this.model.get("videoID") !== "") {
+                    this.$el.find("input#kqvideo").val("http://youtu.be/" + this.model.get("videoID"));
+                }
                 this.$el.find("input#kqweight").val(this.model.get("normalized_weight"));
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
                     this.$el.find("#noquestion").addClass("hide");
                     this.$el.find("#question-tab").removeClass("hide");
                     this.$el.find("#question img").attr("src", question.get("lastFrame"));
-                    if (question.has("solutionVideo")) {
+                    if (question.has("solutionVideo") && question.get("solutionVideo") !== "") {
                         this.$el.find("button#use-solution-video-btn").trigger("click");
                     } else {
                         this.$el.find("button#use-solution-text-btn").trigger("click");
                     }
-                    this.$el.find("#questionvideo").val("http://youtu.be/" + question.get("solutionVideo"));
+                    if (question.has("solutionVideo") && question.get("solutionVideo") !== "") {
+                        this.$el.find("#questionvideo").val("http://youtu.be/" + question.get("solutionVideo"));
+                    }
                     this.$el.find("textarea#solution-text").val(question.get("solutionText"));
                     if (!question.get("use_last_frame")) {
                         this.$el.find("#last-frame").addClass("hide");
