@@ -7,8 +7,9 @@ from django.db import models
 class Migration(DataMigration):
 
     def forwards(self, orm):
+        import pdb; pdb.set_trace()
         ct, created = orm['contenttypes.ContentType'].objects.get_or_create(
-            model='course')
+            model='course', app_label='courses', name='course')
         perm, created = orm['auth.permission'].objects.get_or_create(
             content_type=ct, codename='can_list_allcourses', name='Can list courses of an user')
         perm, created = orm['auth.permission'].objects.get_or_create(
@@ -16,7 +17,7 @@ class Migration(DataMigration):
 
     def backwards(self, orm):
 	ct = orm['contenttypes.ContentType'].objects.get(
-            model='course')
+            model='course', app_label='courses', name='course')
 	aux_perms = orm['auth.permission'].objects.filter(content_type=ct, codename='can_list_allcourses')
         if aux_perms:
             aux_perms[0].delete()	
