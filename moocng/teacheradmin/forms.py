@@ -19,7 +19,7 @@ from tinymce.widgets import TinyMCE
 
 from moocng.courses.forms import AnnouncementForm as CoursesAnnouncementForm
 from moocng.courses.models import Course
-from moocng.forms import BootstrapMixin
+from moocng.forms import BootstrapMixin, BootstrapClearableFileInput, HTML5DateInput
 from moocng.teacheradmin.models import MassiveEmail
 
 
@@ -28,25 +28,23 @@ class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
         exclude = ('slug', 'teachers', 'owner', 'students')
+        widgets = {
+            'start_date': HTML5DateInput(),
+            'end_date': HTML5DateInput(),
+            'certification_banner': BootstrapClearableFileInput(),
+            }
+
 
     def __init__(self, *args, **kwargs):
         super(CourseForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             widget = field.widget
 
-            if isinstance(widget, forms.widgets.TextInput):
+            if isinstance(widget, (forms.widgets.TextInput, forms.widgets.DateInput)):
                 widget.attrs['class'] = 'input-xlarge'
-
-            elif isinstance(widget, forms.widgets.DateInput):
-                widget.attrs['class'] = 'input-xlarge'
-                widget.attrs['placeholder'] = 'YYYY-MM-DD'
 
             elif isinstance(widget, forms.widgets.Textarea):
                 widget.mce_attrs['width'] = '780'  # bootstrap span10
-
-            elif isinstance(widget, forms.widgets.ClearableFileInput):
-                # In bootstrap the <input checkbox> must be inside the <label>
-                widget.template_with_clear = u'<label for="%(clear_checkbox_id)s">%(clear)s %(clear_checkbox_label)s</label>'
 
 
 class AnnouncementForm(CoursesAnnouncementForm, BootstrapMixin):

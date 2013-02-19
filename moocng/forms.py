@@ -119,3 +119,18 @@ class BootstrapMixin(object):
                 # hidden fields.
                 output.append(str_hidden)
         return mark_safe(u'\n'.join(output))
+
+
+class BootstrapClearableFileInput(forms.widgets.ClearableFileInput):
+
+    template_with_clear = u'<label for="%(clear_checkbox_id)s">%(clear)s %(clear_checkbox_label)s</label>'
+
+
+class HTML5DateInput(forms.widgets.DateInput):
+
+    input_type = 'date'
+
+
+class HTML5DateTimeInput(forms.widgets.DateTimeInput):
+
+    input_type = 'datetime'

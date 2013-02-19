@@ -313,10 +313,6 @@ code {
     border: 1px solid #E1E1E8;
 }
 
-input[type="checkbox"] {
-    margin: -4px 0 0;
-}
-
 .category-box,
 .category-box-liquid {
     text-align: center;
@@ -452,9 +448,4 @@ input[type="checkbox"] {
 .cell-drag-handle {
     cursor: move;
     width: 16px;
-}
-
-.controls > .checkbox,
-.controls > .radio {
-    line-height: 5px;
 }
