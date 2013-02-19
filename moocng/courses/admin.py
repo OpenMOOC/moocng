@@ -95,7 +95,7 @@ ensure_csrf_cookie_m = method_decorator(ensure_csrf_cookie)
 
 class QuestionAdmin(admin.ModelAdmin):
 
-    list_display = ('kq', 'solution')
+    list_display = ('kq', 'solution_video')
     list_filter = ('kq', )
     formfield_overrides = {
         models.ImageField: {'widget': ImageReadOnlyWidget},

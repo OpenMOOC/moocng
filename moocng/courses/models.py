@@ -246,15 +246,20 @@ class Question(models.Model):
 
     kq = models.ForeignKey(KnowledgeQuantum, unique=True,
                            verbose_name=_(u'Nugget'))
-    solution = models.URLField(verbose_name=_(u'Solution video'),
-                               help_text=_(u'If this belongs to a homework or '
-                                           u'an exam, then the stundents '
-                                           u"won't see this video until the "
-                                           u'deadline is reached.'))
+    solution_video = models.URLField(
+        verbose_name=_(u'Solution video'),
+        help_text=_(u'If this belongs to a homework or an exam, then the '
+                    u'stundents won\'t see this video until the deadline is '
+                    u'reached.'),
+        blank=True, null=True)
+    solution_text = HTMLField(
+        verbose_name=_(u'Solution text'),
+        help_text=_(u'If the solution video is specified then this text will '
+                    u'be ignored.'),
+        blank=True, null=True)
     last_frame = models.ImageField(
         verbose_name=_(u"Last frame of the nugget's video"),
         upload_to='questions', blank=True)
-
     use_last_frame = models.BooleanField(
         verbose_name=_(u'Use the last frame of the video'),
         help_text=_(u'Chooses if the nugget\'s video last frame is used, or a '

@@ -554,7 +554,7 @@ if (_.isUndefined(window.MOOC)) {
                     question = this.model.get("questionInstance");
                     this.$el.find("#noquestion").addClass("hide");
                     this.$el.find("#question-tab").removeClass("hide").find("img").attr("src", question.get("lastFrame"));
-                    this.$el.find("#questionvideo").val("http://youtu.be/" + question.get("solution"));
+                    this.$el.find("#questionvideo").val("http://youtu.be/" + question.get("solutionVideo"));
                     if (!question.get("use_last_frame")) {
                         this.$el.find("#last-frame").addClass("hide");
                         this.$el.find("#no-last-frame").removeClass("hide");
@@ -706,7 +706,7 @@ if (_.isUndefined(window.MOOC)) {
                 this.model.set("teacher_comments", tinyMCE.get("kqcomments").getContent());
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
-                    question.set("solution", extractVideoID(this.$el.find("#questionvideo").val()));
+                    question.set("solutionVideo", extractVideoID(this.$el.find("#questionvideo").val()));
                     question.save(null, {
                         success: function () {
                             saveKQAjax();

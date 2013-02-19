@@ -241,13 +241,13 @@ class QuestionResource(ModelResource):
             Q(kq__unit__start__isnull=False, kq__unit__start__lte=datetime.now)
         )
 
-    def dehydrate_solution(self, bundle):
+    def dehydrate_solution_video(self, bundle):
         # Only return solution if the deadline has been reached, or there is
         # no deadline
         unit = bundle.obj.kq.unit
         if unit.unittype != 'n' and unit.deadline > datetime.now(unit.deadline.tzinfo):
             return None
-        return bundle.obj.solution
+        return bundle.obj.solution_video
 
     def dehydrate_solutionID(self, bundle):
         # Only return solution if the deadline has been reached, or there is
@@ -255,7 +255,7 @@ class QuestionResource(ModelResource):
         unit = bundle.obj.kq.unit
         if unit.unittype != 'n' and unit.deadline > datetime.now(unit.deadline.tzinfo):
             return None
-        return extract_YT_video_id(bundle.obj.solution)
+        return extract_YT_video_id(bundle.obj.solution_video)
 
     def dehydrate_last_frame(self, bundle):
         try:
@@ -279,7 +279,7 @@ class PrivateQuestionResource(ModelResource):
         }
 
     def dehydrate_solutionID(self, bundle):
-        return extract_YT_video_id(bundle.obj.solution)
+        return extract_YT_video_id(bundle.obj.solution_video)
 
     def dehydrate_last_frame(self, bundle):
         try:
@@ -299,7 +299,7 @@ class PrivateQuestionResource(ModelResource):
     def hydrate_solutionID(self, bundle):
         if 'solutionID' in bundle.data and bundle.data['solutionID'] is not None:
             video = 'http://youtu.be/' + bundle.data['solutionID']
-            bundle.data['solution'] = video
+            bundle.data['solution_video'] = video
         return bundle
 
 
@@ -331,19 +331,19 @@ class OptionResource(ModelResource):
         return super(OptionResource, self).dispatch(request_type, request,
                                                     **kwargs)
 
-    def dehydrate_solution(self, bundle):
-        # Only return the solution if the user has given an answer
+    def dehydrate_solution_video(self, bundle):
+        # Only return the solution_video if the user has given an answer
         # If there is a deadline, then only return the solution if the deadline
         # has been reached too
-        solution = None
+        solution_video = None
         if self.user:
             answer = self.user['questions'].get(
                 unicode(bundle.obj.question.id), None)
             if answer is not None:
                 unit = bundle.obj.question.kq.unit
                 if unit.unittype == 'n' or not(unit.deadline and datetime.now(unit.deadline.tzinfo) < unit.deadline):
-                    solution = bundle.obj.solution
-        return solution
+                    solution_video = bundle.obj.solution_video
+        return solution_video
 
 
 class AnswerResource(MongoResource):

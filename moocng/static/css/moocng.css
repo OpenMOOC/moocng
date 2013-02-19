@@ -307,6 +307,12 @@ div#course-name {
     text-align: center;
 }
 
+.classroom .solution-wrapper {
+    padding: 10px;
+    border: 1px solid #e5e5e5;
+    min-height: 350px;  /* it's 372 counting the padding and border*/
+}
+
 .announcement div.content {
     margin-top: 30px;
 }

@@ -15,14 +15,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-18 10:20-0600\n"
+"POT-Creation-Date: 2013-02-19 03:29-0600\n"
 "PO-Revision-Date: 2013-02-18 14:00+0100\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
+"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es_ES\n"
 
 #: settings.py:73
 msgid "English"
@@ -273,11 +273,11 @@ msgstr "Comunicados del %(course_title)s"
 #: courses/feeds.py:35
 #, python-format
 msgid ""
-"Announcements of the online course \"%(course_title)s\" on the platform \"%"
-"(site_name)s\"."
+"Announcements of the online course \"%(course_title)s\" on the platform "
+"\"%(site_name)s\"."
 msgstr ""
-"Comunicados del curso online \"%(course_title)s\" en la plataforma \"%"
-"(site_name)s\"."
+"Comunicados del curso online \"%(course_title)s\" en la plataforma "
+"\"%(site_name)s\"."
 
 #: courses/forms.py:36
 msgid "The deadline date is mandatory for homework and exams."
@@ -413,7 +413,7 @@ msgstr "comunicado"
 msgid "announcements"
 msgstr "comunicados"
 
-#: courses/models.py:169 courses/models.py:308
+#: courses/models.py:169 courses/models.py:313
 #: courses/templates/admin/courses/question/options.html:77
 #: teacheradmin/templates/teacheradmin/question.html:56
 #: teacheradmin/templates/teacheradmin/units.html:56
@@ -500,11 +500,11 @@ msgstr "Píldora"
 msgid "Attachment"
 msgstr "Adjunto"
 
-#: courses/models.py:249
+#: courses/models.py:250
 msgid "Solution video"
 msgstr "Vídeo con la solución"
 
-#: courses/models.py:250
+#: courses/models.py:251
 msgid ""
 "If this belongs to a homework or an exam, then the stundents won't see this "
 "video until the deadline is reached."
@@ -512,48 +512,58 @@ msgstr ""
 "Si esta pregunta pertenece a una tarea o examen, entonces los alumnos no "
 "podrán ver este vídeo mientras no se haya alcanzado la fecha límite."
 
-#: courses/models.py:255
+#: courses/models.py:256
+msgid "Solution text"
+msgstr "Solución en modo text"
+
+#: courses/models.py:257
+msgid "If the solution video is specified then this text will be ignored."
+msgstr ""
+"Si la solución en modo vídeo se ha especificado, entonces este texto será "
+"ignorado."
+
+#: courses/models.py:261
 msgid "Last frame of the nugget's video"
 msgstr "Última imagen del vídeo de la píldora"
 
-#: courses/models.py:259
+#: courses/models.py:264
 msgid "Use the last frame of the video"
 msgstr "Usar la última imagen del vídeo"
 
-#: courses/models.py:260
+#: courses/models.py:265
 msgid ""
 "Chooses if the nugget's video last frame is used, or a white canvas instead."
 msgstr ""
 "Determina si se hace uso del último cuadro del vídeo de la píldora, o si en "
 "su lugar se usa un lienzo en blanco."
 
-#: courses/models.py:265
+#: courses/models.py:270
 msgid "question"
 msgstr "pregunta"
 
-#: courses/models.py:266
+#: courses/models.py:271
 msgid "questions"
 msgstr "preguntas"
 
-#: courses/models.py:296 teacheradmin/templates/teacheradmin/units.html:94
+#: courses/models.py:301 teacheradmin/templates/teacheradmin/units.html:94
 msgid "Question"
 msgstr "Pregunta"
 
-#: courses/models.py:311
+#: courses/models.py:316
 #: courses/templates/admin/courses/question/options.html:89
 #: teacheradmin/templates/teacheradmin/question.html:68
 msgid "Solution"
 msgstr "Solución"
 
-#: courses/models.py:312
+#: courses/models.py:317
 msgid "Label text"
 msgstr "Texto de la etiqueta"
 
-#: courses/models.py:316
+#: courses/models.py:321
 msgid "option"
 msgstr "opción"
 
-#: courses/models.py:317
+#: courses/models.py:322
 msgid "options"
 msgstr "opciones"
 
@@ -1151,8 +1161,8 @@ msgstr "Has sido invitado a ser profesor en \"%s\""
 #: teacheradmin/utils.py:41
 #, python-format
 msgid ""
-"Hello, you have been removed as teacher from the course \"%(course)s\" by %"
-"(host)s.\n"
+"Hello, you have been removed as teacher from the course \"%(course)s\" by "
+"%(host)s.\n"
 "\n"
 "Best regards,\n"
 "%(site)s's team"

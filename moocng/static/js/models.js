@@ -121,7 +121,8 @@ MOOC.models.Question = Backbone.Model.extend({
         "use strict";
         return {
             lastFrame: null, // of the KnowledgeQuantum's video
-            solution: null,
+            solutionVideo: null,
+            solutionText: null,
             optionList: null,
             answer: null,
             use_last_frame: true
@@ -138,7 +139,7 @@ MOOC.models.Question = Backbone.Model.extend({
         return {
             id: parseInt(resp.id, 10),
             lastFrame: resp.last_frame,
-            solution: resp.solutionID,
+            solutionVideo: resp.solutionID,
             use_last_frame: resp.use_last_frame
         };
     },
@@ -173,10 +174,14 @@ MOOC.models.Question = Backbone.Model.extend({
             model2send.url = MOOC.models.detailUrlToCollection(model.url());
         }
         model2send.unset("lastFrame");
-        if (model.has("solution")) {
-            model2send.set("solutionID", model.get("solution"));
+        if (model.has("solutionVideo") && model.get("solutionVideo") !== "") {
+            model2send.set("solutionID", model.get("solutionVideo"));
         }
-        model2send.unset("solution");
+        model2send.unset("solutionVideo");
+        if (model.has("solutionText") && model.get("solutionText") !== "") {
+            model2send.set("solution_text", model.get("solutionText"));
+        }
+        model2send.unset("solutionText");
         model2send.unset("optionList");
         model2send.unset("answer");
         Backbone.sync(method, model2send, options);

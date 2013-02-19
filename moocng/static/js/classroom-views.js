@@ -246,9 +246,12 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 var question = new MOOC.models.Question({
                         id: data.id,
                         lastFrame: data.last_frame,
-                        solution: data.solutionID,
+                        solutionVideo: data.solutionID,
                         use_last_frame: data.use_last_frame
                     });
+                if (data.solution_text !== "") {
+                    question.set("solutionText", data.solution_text);
+                }
                 kqObj.set("questionInstance", question);
                 // Load Options for Question
                 MOOC.ajax.getOptionsByQuestion(question.get("id"), function (data, textStatus, jqXHR) {
@@ -367,11 +370,14 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         toExecute.push(_.bind(function (callback) {
             var height = this.getVideoHeight(),
                 unit = MOOC.models.course.getByKQ(this.model),
+                questionInstance = this.model.get("questionInstance"),
                 html = "";
 
-            if (!_.isNull(this.model.get("questionInstance").get("solution"))) {
+            if (questionInstance.has("solutionText")) {
+                html = "<div class='solution-wrapper white'>" + questionInstance.get("solutionText") + "</div>";
+            } else if (questionInstance.has("solutionVideo")) {
                 html = '<iframe id="ytplayer" width="100%" height="' + height + 'px" ';
-                html += 'src="//www.youtube.com/embed/' + this.model.get("questionInstance").get("solution");
+                html += 'src="//www.youtube.com/embed/' + this.model.get("questionInstance").get("solutionVideo");
                 html += '?rel=0&origin=' + MOOC.host + '" frameborder="0" allowfullscreen></iframe>';
             } else {
                 MOOC.alerts.show(MOOC.alerts.INFO, MOOC.trans.api.solutionNotReadyTitle, MOOC.trans.api.solutionNotReady);
