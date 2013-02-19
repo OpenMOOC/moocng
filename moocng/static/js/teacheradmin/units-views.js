@@ -553,7 +553,8 @@ if (_.isUndefined(window.MOOC)) {
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
                     this.$el.find("#noquestion").addClass("hide");
-                    this.$el.find("#question-tab").removeClass("hide").find("img").attr("src", question.get("lastFrame"));
+                    this.$el.find("#question-tab").removeClass("hide");
+                    this.$el.find("#question img").attr("src", question.get("lastFrame"));
                     this.$el.find("#questionvideo").val("http://youtu.be/" + question.get("solution"));
                     if (!question.get("use_last_frame")) {
                         this.$el.find("#last-frame").addClass("hide");
