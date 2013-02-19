@@ -49,7 +49,7 @@ class Command(BaseCommand):
                     default="",
                     help="Filename to save the course (without file extension)"),
         make_option('-t', '--translatepositions',
-                    action='store',
+                    action='store_true',
                     dest='translatepositions',
                     default=False,
                     help="Transalte options positions (from new to old)")
@@ -109,6 +109,9 @@ class Command(BaseCommand):
                                              a_dict, "kq", ["attachment"])
 
     def handle(self, *args, **options):
+
+        self.options = options
+
         if not options["course"]:
             raise CommandError("--course / -c course_slug is required")
 
