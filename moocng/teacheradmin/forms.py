@@ -59,18 +59,12 @@ class AnnouncementForm(CoursesAnnouncementForm, BootstrapMixin):
         )
 
 
-class MassiveEmailForm(forms.ModelForm):
-
-    subject = forms.CharField(widget=forms.TextInput(
-        attrs={
-            'class': 'span10',
-            'maxlength': 100,
-        }), label=_('Subject'))
-    message = forms.CharField(widget=TinyMCE(
-        attrs={
-            'class': 'span10',
-        }), label=_('Message'))
+class MassiveEmailForm(forms.ModelForm, BootstrapMixin):
 
     class Meta:
         model = MassiveEmail
         exclude = ('course', 'datetime')
+        widgets = {
+            'subject': forms.TextInput(attrs={'class': 'span10'}),
+            'message': TinyMCE(attrs={'class': 'span10'}),
+            }
