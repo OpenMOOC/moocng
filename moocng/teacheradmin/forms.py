@@ -61,7 +61,7 @@ class MassiveEmailForm(forms.ModelForm, BootstrapMixin):
 
     class Meta:
         model = MassiveEmail
-        exclude = ('course', 'datetime')
+        exclude = ('course', )
         widgets = {
             'subject': forms.TextInput(attrs={'class': 'span10'}),
             'message': TinyMCE(attrs={'class': 'span10'}),

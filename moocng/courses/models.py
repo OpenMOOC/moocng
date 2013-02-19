@@ -133,9 +133,8 @@ class Announcement(models.Model):
     slug = models.SlugField(verbose_name=_(u'Slug'))
     content = HTMLField(verbose_name=_(u'Content'))
     course = models.ForeignKey(Course, verbose_name=_(u'Course'))
-    datetime = models.DateTimeField(
-        verbose_name=_(u'Datetime'),
-        help_text=_(u"Use format:  DD/MM/AAAA 00:00"))
+    datetime = models.DateTimeField(verbose_name=_(u'Datetime'),
+                                    auto_now_add=True, editable=False)
 
     class Meta:
         verbose_name = _(u'announcement')
