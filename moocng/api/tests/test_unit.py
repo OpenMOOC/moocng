@@ -79,11 +79,11 @@ class UnitsTestCase(ApiTestCase):
         course = self.create_test_basic_course(owner)
         self.check_test_get_units(course, is_possible=True)
 
-    def test_get_units_certificator(self):
+    def test_get_units_userkey(self):
         owner = self.create_test_user_owner()
 
         certuser = self.create_test_user_user()
-        self.client = self.apikey_login_user(self.client, certuser)
+        self.client = self.apikey_login_user(self.client, key)
 
         # Test public course
         course = self.create_test_basic_course(owner)
@@ -257,11 +257,11 @@ class UnitTestCase(ApiTestCase):
         course = self.create_test_basic_course(owner)
         self.check_test_get_unit(course, is_possible=True)
 
-    def test_get_unit_certificator(self):
+    def test_get_unit_userkey(self):
         owner = self.create_test_user_owner()
 
         certuser = self.create_test_user_user()
-        self.client = self.apikey_login_user(self.client, certuser)
+        self.client = self.apikey_login_user(self.client, key)
 
         # Test public course
         course = self.create_test_basic_course(owner)

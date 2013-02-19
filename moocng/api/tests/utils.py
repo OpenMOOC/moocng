@@ -16,9 +16,11 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.test import TestCase
 
+from moocng.api.models import UserApi
 from moocng.api.mongodb import MongoDB
 from moocng.api.tests.outputs import API_DESCRIPTION
-from moocng.courses.models import Course, Unit
+from moocng.courses.models import Course, Unit, CourseTeacher
+
 
 def get_mongodb():
     """ GetDB - simple function to wrap getting a database
@@ -42,6 +44,7 @@ class ApiTestCase(TestCase):
         super(ApiTestCase, self).setUp()
         self.mongodb = get_mongodb()
         for collection in self.up_collections:
+            self.mongodb.database.drop_collection(collection)
             self.mongodb.database.create_collection(collection)
 
     def tearDown(self):
@@ -77,10 +80,9 @@ class ApiTestCase(TestCase):
         client.login(username=user.username, password='%s123456' %(user.username))
         return client
 
-    def apikey_login_user(self, client ,user):
-        # TODO: Use apikey authentication
-        client.login(username=user.username, password='%s123456' %(user.username))
-        return client
+    def generate_apikeyuser(self, user, key):
+        apikeyuser = UserApi.objects.create(user=user, key=key)
+        return apikeyuser
 
     def create_test_basic_course(self, owner, teacher=None, student=None, name=None):
         if not name:
@@ -91,7 +93,7 @@ class ApiTestCase(TestCase):
                              owner=owner)
         test_course.save()
         if teacher:
-            test_course.teachers.add(teacher)    
+            CourseTeacher.objects.create(course=test_course, teacher=teacher)
         if student:
             test_course.students.add(student)
         test_course.save()

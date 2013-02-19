@@ -34,7 +34,7 @@ from moocng.api.authentication import (DjangoAuthentication,
                                        MultiAuthentication)
 from moocng.api.authorization import (PublicReadTeachersModifyAuthorization,
                                       TeacherAuthorization,
-                                      check_permission)
+                                      UserResourceAuthorization)
 from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
 from moocng.api.validation import AnswerValidation
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
@@ -476,7 +476,7 @@ class UserResource(ModelResource):
         allowed_methods = ['get']
         authentication = MultiAuthentication(TeacherAuthentication(),
                                              ApiKeyAuthentication())
-        authorization = DjangoAuthorization()
+        authorization = UserResourceAuthorization()
         fields = ['id', 'email', 'first_name', 'last_name']
         filtering = {
             'first_name': ['istartswith'],
@@ -534,16 +534,19 @@ class UserResource(ModelResource):
             request, to_be_serialized)
         return resource.create_response(request, to_be_serialized)
 
-    @check_permission
     def get_courses(self, request, **kwargs):
+        self.is_authenticated(request)
+        self.is_authorized(request)
         obj = self.get_object(request, kwargs)
         if isinstance(obj, HttpResponse):
             return obj
         courses = obj.courses_as_student.all()
         return self.alt_get_list(request, courses)
 
-    @check_permission
     def get_passed_courses(self, request, **kwargs):
+        # In tastypie, the override_urls don't call Authentication/Authorization
+        self.is_authenticated(request)
+        self.is_authorized(request)
         obj = self.get_object(request, kwargs)
         if isinstance(obj, HttpResponse):
             return obj

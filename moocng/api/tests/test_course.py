@@ -112,11 +112,11 @@ class CoursesTestCase(ApiTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, BASIC_COURSES)
 
-    def test_get_courses_certificator(self):
+    def test_get_courses_userkey(self):
         owner = self.create_test_user_owner()
 
         certuser = self.create_test_user_user()
-        self.client = self.apikey_login_user(self.client, certuser)
+        self.client = self.apikey_login_user(self.client, key)
 
         response = self.client.get('/api/%s/course/%s' % (self.api_name, self.format_append))
         self.assertEqual(response.status_code, 200)
@@ -216,11 +216,11 @@ class CourseTestCase(ApiTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, BASIC_COURSE)
 
-    def test_get_course_certificator(self):
+    def test_get_course_userkey(self):
         owner = self.create_test_user_owner()
 
         certuser = self.create_test_user_user()
-        self.client = self.apikey_login_user(self.client, certuser)
+        self.client = self.apikey_login_user(self.client, key)
 
         response = self.client.get('/api/%s/course/1/%s' % (self.api_name, self.format_append))
         self.assertEqual(response.status_code, 404)
@@ -365,11 +365,11 @@ class CourseTestCase(ApiTestCase):
         response = self.client.put('/api/%s/course/1/%s' % (self.api_name, self.format_append), simplejson.loads(BASIC_COURSE))
         self.assertEqual(response.status_code, 405)
 
-    def test_put_course_certificator(self):
+    def test_put_course_userkey(self):
         owner = self.create_test_user_owner()
 
         certuser = self.create_test_user_user()
-        self.client = self.apikey_login_user(self.client, certuser)
+        self.client = self.apikey_login_user(self.client, key)
 
         self.create_test_basic_course(owner)
 
@@ -441,11 +441,11 @@ class CourseTestCase(ApiTestCase):
         response = self.client.delete('/api/%s/course/1/%s' % (self.api_name, self.format_append), simplejson.loads(BASIC_COURSE))
         self.assertEqual(response.status_code, 405)
 
-    def test_delete_course_certificator(self):
+    def test_delete_course_userkey(self):
         owner = self.create_test_user_owner()
 
         certuser = self.create_test_user_user()
-        self.client = self.apikey_login_user(self.client, certuser)
+        self.client = self.apikey_login_user(self.client, key)
 
         self.create_test_basic_course(owner)
 

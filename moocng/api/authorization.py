@@ -15,6 +15,7 @@
 # limitations under the License.
 
 from django.conf import settings
+from django.core.urlresolvers import resolve
 from django.http import HttpResponse
 
 from tastypie.authorization import Authorization
@@ -24,8 +25,8 @@ from moocng.courses.utils import is_teacher
 
 
 PERMISSIONS = {
-    'get_courses': 'can_list_allcourses',
-    'passed_courses': 'can_list_passedcourses'
+    'get_courses_as_student': 'course.can_list_allcourses',
+    'get_passed_courses_as_student': 'course.can_list_passedcourses'
 }
 
 class PublicReadTeachersModifyAuthorization(Authorization):
@@ -47,14 +48,12 @@ class TeacherAuthorization(Authorization):
                  request.user.is_staff))
 
 
-def check_permission(original_function=None):
+class UserResourceAuthorization(Authorization):
 
-    def decorated(resource, request, *args, **kwargs):
-        if original_function.func_name in PERMISSIONS:
-            required_perm = PERMISSIONS.get(original_function.func_name)
-            if request.user.has_perm(required_perm):
-                return original_function(resource, request, **kwargs)
-        else:
-            return HttpResponse("Unauthorized", status=401)
-
-    return decorated
+    def is_authorized(self, request, object=None):
+        if request.method == 'GET':
+            url_name = resolve(request.path).url_name
+            if url_name in PERMISSIONS.keys():
+                required_perm = PERMISSIONS.get(url_name)
+                return request.user.has_perm(required_perm)
+        return False;
