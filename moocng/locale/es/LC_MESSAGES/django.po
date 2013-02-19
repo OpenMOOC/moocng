@@ -15,14 +15,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-18 10:20-0600\n"
-"PO-Revision-Date: 2013-02-18 14:00+0100\n"
+"POT-Creation-Date: 2013-02-19 03:25-0600\n"
+"PO-Revision-Date: 2013-02-19 12:24+0100\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
+"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es_ES\n"
 
 #: settings.py:73
 msgid "English"
@@ -186,31 +186,31 @@ msgstr "Vacío"
 msgid "There are no courses with this category or categories associated yet."
 msgstr "No hay cursos aún que tengan esta categoría o categorías asociada."
 
-#: contact/forms.py:25
+#: contact/forms.py:29 contact/forms.py:49
+msgid "See Terms of Use"
+msgstr "Ver los Términos de uso"
+
+#: contact/forms.py:35
 msgid "Username"
 msgstr "Nombre de usuario"
 
-#: contact/forms.py:26 teacheradmin/models.py:30
+#: contact/forms.py:36 teacheradmin/models.py:30
 msgid "Email"
 msgstr "Correo electrónico"
 
-#: contact/forms.py:28
+#: contact/forms.py:38
 msgid "Communication type"
 msgstr "Tipo de comunicación"
 
-#: contact/forms.py:34 teacheradmin/forms.py:71
+#: contact/forms.py:44
 msgid "Message"
 msgstr "Mensaje"
 
-#: contact/forms.py:38
-msgid ""
-"I have read and agree with the terms of use (<a href=\"/tos\">See Terms of "
-"Use</a>)"
-msgstr ""
-"He leído y estoy de acuerdo con los términos de uso (<a href=\"/tos\">Ver "
-"Términos de Uso</a>)"
+#: contact/forms.py:48
+msgid "I have read and agree with the terms of use"
+msgstr "He leído y estoy de acuerdo con los términos de uso"
 
-#: contact/forms.py:40
+#: contact/forms.py:51
 msgid "You must accept the Terms of Use"
 msgstr "Debe aceptar los Términos de Uso"
 
@@ -273,11 +273,11 @@ msgstr "Comunicados del %(course_title)s"
 #: courses/feeds.py:35
 #, python-format
 msgid ""
-"Announcements of the online course \"%(course_title)s\" on the platform \"%"
-"(site_name)s\"."
+"Announcements of the online course \"%(course_title)s\" on the platform "
+"\"%(site_name)s\"."
 msgstr ""
-"Comunicados del curso online \"%(course_title)s\" en la plataforma \"%"
-"(site_name)s\"."
+"Comunicados del curso online \"%(course_title)s\" en la plataforma "
+"\"%(site_name)s\"."
 
 #: courses/forms.py:36
 msgid "The deadline date is mandatory for homework and exams."
@@ -611,11 +611,11 @@ msgstr ""
 msgid "The course was successfully created"
 msgstr "El curso se ha creado con éxito"
 
-#: courses/views.py:156 courses/views.py:197
+#: courses/views.py:156 courses/views.py:196
 msgid "You are not enrolled in this course"
 msgstr "No estás matriculado en este curso"
 
-#: courses/views.py:180 courses/views.py:221
+#: courses/views.py:179 courses/views.py:220
 msgid "You are enrolled in this course but it has not yet begun"
 msgstr "Estás matriculado en este curso pero no ha empezado aún"
 
@@ -836,11 +836,11 @@ msgstr "Respuesta enviada"
 
 #: courses/templates/courses/classroom.html:110
 msgid "Congratulations, you got it right!"
-msgstr "¡Enhorabuena, acertaste!"
+msgstr "Respuesta correcta, buen trabajo"
 
 #: courses/templates/courses/classroom.html:111
 msgid "Wrong answer, good luck next time."
-msgstr "Respuesta erróna, suerte para la próxima vez."
+msgstr "Lo siento, la respuesta es errónea."
 
 #: courses/templates/courses/classroom.html:112
 msgid ""
@@ -921,27 +921,24 @@ msgstr "Este curso no está listo aún"
 msgid "The course \"%(course_name)s\" has no content."
 msgstr "El curso \"%(course_name)s\" no tiene contenido."
 
-#: courses/templates/courses/no_content.html:12
+#: courses/templates/courses/no_content.html:13
 #, python-format
 msgid ""
-"Consider <a href=\"%(complaints_url)s\">getting in touch with an "
-"administrator</a>."
-msgstr ""
-"Considere <a href=\"%(complaints_url)s\">contactar con un administrador</a>."
+"Consider <a href=\"%(contact_url)s\">getting in touch with an administrator</"
+"a>."
+msgstr "Considere <a href=\"%(contact_url)s\">contactar con un administrador</a>."
 
-#: courses/templates/courses/no_content.html:14
+#: courses/templates/courses/no_content.html:15
 #, python-format
 msgid "It starts in %(date)s."
 msgstr "Comienza el %(date)s."
 
-#: courses/templates/courses/no_content.html:16
+#: courses/templates/courses/no_content.html:17
 #, python-format
 msgid ""
-"Please, use this <a href=\"%(complaints_url)s\">contact form</a> if you have "
+"Please, use this <a href=\"%(contact_url)s\">contact form</a> if you have "
 "any questions."
-msgstr ""
-"Por favor, use este <a href=\"%(complaints_url)s\">formulario de contacto</"
-"a> si tiene alguna pregunta."
+msgstr "Por favor, use este <a href=\"%(contact_url)s\">formulario de contacto</a> si tiene alguna pregunta."
 
 #: courses/templates/courses/overview.html:25
 msgid "Course summary"
@@ -1083,20 +1080,15 @@ msgstr "Matricúlame en este curso"
 msgid "Unenroll me"
 msgstr "Desmatricúlame"
 
-#: teacheradmin/forms.py:55
+#: teacheradmin/forms.py:56
 msgid "Send the announcement via email to all the students in this course"
 msgstr "Enviar comunicado via email a todos los estudiantes de este curso"
 
-#: teacheradmin/forms.py:57
+#: teacheradmin/forms.py:58
 msgid "Please use this with caution as some courses has many students"
 msgstr ""
 "Por favor use esto con cuidado ya que algunos cursos tienen muchos "
 "estudiantes"
-
-#: teacheradmin/forms.py:67 teacheradmin/models.py:49
-#: teacheradmin/templates/teacheradmin/emails.html:72
-msgid "Subject"
-msgstr "Asunto"
 
 #: teacheradmin/models.py:28
 msgid "Host"
@@ -1113,6 +1105,11 @@ msgstr "invitación"
 #: teacheradmin/models.py:39
 msgid "invitations"
 msgstr "invitaciones"
+
+#: teacheradmin/models.py:49
+#: teacheradmin/templates/teacheradmin/emails.html:72
+msgid "Subject"
+msgstr "Asunto"
 
 #: teacheradmin/models.py:56
 msgid "massive email"
@@ -1151,8 +1148,8 @@ msgstr "Has sido invitado a ser profesor en \"%s\""
 #: teacheradmin/utils.py:41
 #, python-format
 msgid ""
-"Hello, you have been removed as teacher from the course \"%(course)s\" by %"
-"(host)s.\n"
+"Hello, you have been removed as teacher from the course \"%(course)s\" by "
+"%(host)s.\n"
 "\n"
 "Best regards,\n"
 "%(site)s's team"
@@ -1636,9 +1633,3 @@ msgstr "Sitio de administración de moocng"
 #: templates/admin/base_site.html:7
 msgid "moocng administration"
 msgstr "Administración de moocng"
-
-#~ msgid "Upload an attachment"
-#~ msgstr "Suba un adjunto"
-
-#~ msgid "There is a announce with the same title"
-#~ msgstr "Ya hay un comunicado con ese mismo título"
