@@ -21,8 +21,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db.models import signals
 from django.utils import simplejson
 
-from moocng.courses.models import (Course, KnowledgeQuantum,
-                                   Question, Option)
+from moocng.courses.models import Course, KnowledgeQuantum, Question
 
 from moocng.courses.models import handle_kq_post_save, handle_question_post_save
 
