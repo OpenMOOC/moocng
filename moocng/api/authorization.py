@@ -23,8 +23,8 @@ from moocng.courses.utils import is_teacher
 
 
 PERMISSIONS = {
-    'get_courses_as_student': 'course.can_list_allcourses',
-    'get_passed_courses_as_student': 'course.can_list_passedcourses'
+    'get_courses_as_student': 'courses.can_list_allcourses',
+    'get_passed_courses_as_student': 'courses.can_list_passedcourses'
 }
 
 
@@ -50,9 +50,13 @@ class TeacherAuthorization(Authorization):
 class UserResourceAuthorization(Authorization):
 
     def is_authorized(self, request, object=None):
+        # We check if the method is GET here instead of relaying in the
+        # tastypie allowed_methods property because of the overrided urls,
+        # those ignore the allowed_methods restriction
         if request.method == 'GET':
             url_name = resolve(request.path).url_name
             if url_name in PERMISSIONS.keys():
                 required_perm = PERMISSIONS.get(url_name)
                 return request.user.has_perm(required_perm)
+            return True
         return False
