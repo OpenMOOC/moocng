@@ -33,7 +33,8 @@
                 width: 100,
                 height: 12,
                 solution: '',
-                text: ""
+                text: "",
+                feedback: ""
             };
         }
     });

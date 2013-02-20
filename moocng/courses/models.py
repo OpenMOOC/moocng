@@ -316,6 +316,9 @@ class Option(models.Model):
     solution = models.CharField(verbose_name=_(u'Solution'), max_length=200)
     text = models.CharField(verbose_name=_(u'Label text'), max_length=500,
                             blank=True, null=True)
+    feedback = models.CharField(
+        verbose_name=_(u'Solution feedback for the student'), max_length=200,
+        blank=True, null=False)
 
     class Meta:
         verbose_name = _(u'option')
