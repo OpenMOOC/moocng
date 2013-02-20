@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import uuid
+
 from django.utils import simplejson
 
 from moocng.api.tests.utils import ApiTestCase
@@ -115,7 +117,10 @@ class CoursesTestCase(ApiTestCase):
     def test_get_courses_userkey(self):
         owner = self.create_test_user_owner()
 
-        certuser = self.create_test_user_user()
+        user = self.create_test_user_user()
+        key = str(uuid.uuid4())
+        self.generate_apikeyuser(user, key)
+
         self.client = self.apikey_login_user(self.client, key)
 
         response = self.client.get('/api/%s/course/%s' % (self.api_name, self.format_append))
@@ -219,7 +224,10 @@ class CourseTestCase(ApiTestCase):
     def test_get_course_userkey(self):
         owner = self.create_test_user_owner()
 
-        certuser = self.create_test_user_user()
+        user = self.create_test_user_user()
+        key = str(uuid.uuid4())
+        self.generate_apikeyuser(user, key)
+
         self.client = self.apikey_login_user(self.client, key)
 
         response = self.client.get('/api/%s/course/1/%s' % (self.api_name, self.format_append))
@@ -293,9 +301,12 @@ class CourseTestCase(ApiTestCase):
         response = self.client.post('/api/%s/course/%s' % (self.api_name, self.format_append), simplejson.loads(BASIC_COURSE))
         self.assertEqual(response.status_code, 405)
 
-    def test_create_course_certificator(self):
-        certuser = self.create_test_user_user()
-        self.client = self.apikey_login_user(self.client, certuser)
+    def test_create_course_userkey(self):
+        user = self.create_test_user_user()
+        key = str(uuid.uuid4())
+        self.generate_apikeyuser(user, key)
+
+        self.client = self.apikey_login_user(self.client, user)
 
         response = self.client.post('/api/%s/course/%s' % (self.api_name, self.format_append), simplejson.loads(BASIC_COURSE))
         self.assertEqual(response.status_code, 405)
@@ -368,7 +379,10 @@ class CourseTestCase(ApiTestCase):
     def test_put_course_userkey(self):
         owner = self.create_test_user_owner()
 
-        certuser = self.create_test_user_user()
+        user = self.create_test_user_user()
+        key = str(uuid.uuid4())
+        self.generate_apikeyuser(user, key)
+
         self.client = self.apikey_login_user(self.client, key)
 
         self.create_test_basic_course(owner)
@@ -444,7 +458,10 @@ class CourseTestCase(ApiTestCase):
     def test_delete_course_userkey(self):
         owner = self.create_test_user_owner()
 
-        certuser = self.create_test_user_user()
+        user = self.create_test_user_user()
+        key = str(uuid.uuid4())
+        self.generate_apikeyuser(user, key)
+
         self.client = self.apikey_login_user(self.client, key)
 
         self.create_test_basic_course(owner)

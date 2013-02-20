@@ -15,10 +15,10 @@
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.test import TestCase
+from django.core.exceptions import ImproperlyConfigured
 
 from moocng.api.models import UserApi
 from moocng.api.mongodb import MongoDB
-from moocng.api.tests.outputs import API_DESCRIPTION
 from moocng.courses.models import Course, Unit, CourseTeacher
 
 
@@ -37,7 +37,7 @@ class ApiTestCase(TestCase):
 
     api_name = 'v1'
     format_append = '?format=json'
-    up_collections =  ('answers', 'activity')
+    up_collections = ('answers', 'activity')
     down_collections = ('answers', 'activity')
 
     def setUp(self):
@@ -49,35 +49,35 @@ class ApiTestCase(TestCase):
 
     def tearDown(self):
         super(ApiTestCase, self).tearDown()
-        for collection in self.down_collections: 
+        for collection in self.down_collections:
             self.mongodb.database.drop_collection(collection)
 
     def create_test_user_admin(self):
-        return User.objects.create_superuser('admin', 'admin@example.com', 'admin123456');
+        return User.objects.create_superuser('admin', 'admin@example.com', 'admin123456')
 
     def create_test_user_teacher1(self):
-        return User.objects.create_user('teacher1', 'teacher1@example.com', 'teacher1123456');
-        
+        return User.objects.create_user('teacher1', 'teacher1@example.com', 'teacher1123456')
+
     def create_test_user_teacher2(self):
-        return User.objects.create_user('teacher2', 'teacher2@example.com', 'teacher2123456');
+        return User.objects.create_user('teacher2', 'teacher2@example.com', 'teacher2123456')
 
     def create_test_user_alum1(self):
-        return User.objects.create_user('alum1', 'alum1@example.com', 'alum1123456');
+        return User.objects.create_user('alum1', 'alum1@example.com', 'alum1123456')
 
     def create_test_user_alum2(self):
-        return User.objects.create_user('alum2', 'alum2@example.com', 'alum2123456');
+        return User.objects.create_user('alum2', 'alum2@example.com', 'alum2123456')
 
     def create_test_user_owner(self):
-        return User.objects.create_user('owner', 'owner@example.com', 'owner123456');
+        return User.objects.create_user('owner', 'owner@example.com', 'owner123456')
 
     def create_test_user_user(self):
-        return User.objects.create_user('user', 'user@example.com', 'user123456');
+        return User.objects.create_user('user', 'user@example.com', 'user123456')
 
     def create_test_user_test(self):
-        return User.objects.create_user('test', 'test@example.com', 'test123456');
+        return User.objects.create_user('test', 'test@example.com', 'test123456')
 
-    def django_login_user(self, client ,user):
-        client.login(username=user.username, password='%s123456' %(user.username))
+    def django_login_user(self, client, user):
+        client.login(username=user.username, password='%s123456' % (user.username))
         return client
 
     def generate_apikeyuser(self, user, key):
@@ -114,6 +114,6 @@ class ApiTestCase(TestCase):
             test_unit.deadline = deadline
         if weight:
             test_unit.weight = weight
-        
+
         test_unit.save()
         return test_unit

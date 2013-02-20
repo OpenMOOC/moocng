@@ -13,6 +13,6 @@
 # limitations under the License.
 
 from moocng.api.tests.test_api import ServicesTestCase
-#from moocng.api.tests.test_course import CoursesTestCase, CourseTestCase
-#from moocng.api.tests.test_unit import UnitsTestCase, UnitTestCase
+from moocng.api.tests.test_course import CoursesTestCase, CourseTestCase
+from moocng.api.tests.test_unit import UnitsTestCase, UnitTestCase
 from moocng.api.tests.test_user import UserTestCase

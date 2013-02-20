@@ -11,6 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 
+import uuid
+
 from datetime import datetime, timedelta
 
 from django.utils.timezone import utc
@@ -18,7 +20,7 @@ from django.utils import simplejson
 
 from moocng.api.tests.utils import ApiTestCase
 
-from moocng.api.tests.outputs import (NO_OBJECTS, BASIC_UNITS, BASIC_UNIT)
+from moocng.api.tests.outputs import (BASIC_UNITS, BASIC_UNIT)
 
 
 class UnitsTestCase(ApiTestCase):
@@ -82,13 +84,15 @@ class UnitsTestCase(ApiTestCase):
     def test_get_units_userkey(self):
         owner = self.create_test_user_owner()
 
-        certuser = self.create_test_user_user()
+        user = self.create_test_user_user()
+        key = str(uuid.uuid4())
+        self.generate_apikeyuser(user, key)
+
         self.client = self.apikey_login_user(self.client, key)
 
         # Test public course
         course = self.create_test_basic_course(owner)
         self.check_test_get_units(course, is_possible=True)
-
 
     # Auxiliary function
     def check_test_get_units(self, course, is_possible=False):
@@ -108,7 +112,7 @@ class UnitsTestCase(ApiTestCase):
         # strftime('%Y-%m-%dT%H:%M:%S%z')
         start = now + timedelta(days=1)
         deadline = now + timedelta(days=2)
-        
+
         unit.unittype = 'h'
         unit.start = start
         unit.deadline = deadline
@@ -117,7 +121,7 @@ class UnitsTestCase(ApiTestCase):
         aux_basic_units['objects'][0]['unittype'] = u'h'
         aux_basic_units['objects'][0]['start'] = unicode(start.isoformat())
         aux_basic_units['objects'][0]['deadline'] = unicode(deadline.isoformat())
-        
+
         response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
         if is_possible:
             self.assertEqual(response.status_code, 200)
@@ -128,7 +132,7 @@ class UnitsTestCase(ApiTestCase):
         unit.unittype = 'e'
         aux_basic_units['objects'][0]['unittype'] = u'e'
         unit.save()
- 
+
         response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
         if is_possible:
             self.assertEqual(response.status_code, 200)
@@ -148,7 +152,7 @@ class UnitsTestCase(ApiTestCase):
         aux_basic_units['objects'][0]['unittype'] = u'h'
         aux_basic_units['objects'][0]['start'] = unicode(start.isoformat())
         aux_basic_units['objects'][0]['deadline'] = unicode(deadline.isoformat())
-        
+
         response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
         if is_possible:
             self.assertEqual(response.status_code, 200)
@@ -159,7 +163,7 @@ class UnitsTestCase(ApiTestCase):
         unit.unittype = 'e'
         aux_basic_units['objects'][0]['unittype'] = u'e'
         unit.save()
- 
+
         response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
         if is_possible:
             self.assertEqual(response.status_code, 200)
@@ -168,8 +172,8 @@ class UnitsTestCase(ApiTestCase):
             self.assertEqual(response.status_code, 401)
 
         # Test units with start and deadline, referenced date after deadline
-        start = now - timedelta(days=2) 
-        deadline = now - timedelta(days=1) 
+        start = now - timedelta(days=2)
+        deadline = now - timedelta(days=1)
 
         unit.unittype = 'h'
         unit.start = start
@@ -190,7 +194,7 @@ class UnitsTestCase(ApiTestCase):
         unit.unittype = 'e'
         aux_basic_units['objects'][0]['unittype'] = u'e'
         unit.save()
- 
+
         response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
         if is_possible:
             self.assertEqual(response.status_code, 200)
@@ -260,7 +264,10 @@ class UnitTestCase(ApiTestCase):
     def test_get_unit_userkey(self):
         owner = self.create_test_user_owner()
 
-        certuser = self.create_test_user_user()
+        user = self.create_test_user_user()
+        key = str(uuid.uuid4())
+        self.generate_apikeyuser(user, key)
+
         self.client = self.apikey_login_user(self.client, key)
 
         # Test public course
@@ -285,7 +292,7 @@ class UnitTestCase(ApiTestCase):
         # strftime('%Y-%m-%dT%H:%M:%S%z')
         start = now + timedelta(days=1)
         deadline = now + timedelta(days=2)
-        
+
         unit.unittype = 'h'
         unit.start = start
         unit.deadline = deadline
@@ -294,7 +301,7 @@ class UnitTestCase(ApiTestCase):
         aux_basic_unit['unittype'] = u'h'
         aux_basic_unit['start'] = unicode(start.isoformat())
         aux_basic_unit['deadline'] = unicode(deadline.isoformat())
-        
+
         response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
         if is_possible:
             self.assertEqual(response.status_code, 200)
@@ -305,7 +312,7 @@ class UnitTestCase(ApiTestCase):
         unit.unittype = 'e'
         aux_basic_unit['unittype'] = u'e'
         unit.save()
- 
+
         response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
         if is_possible:
             self.assertEqual(response.status_code, 200)
@@ -325,7 +332,7 @@ class UnitTestCase(ApiTestCase):
         aux_basic_unit['unittype'] = u'h'
         aux_basic_unit['start'] = unicode(start.isoformat())
         aux_basic_unit['deadline'] = unicode(deadline.isoformat())
-        
+
         response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
         if is_possible:
             self.assertEqual(response.status_code, 200)
@@ -336,7 +343,7 @@ class UnitTestCase(ApiTestCase):
         unit.unittype = 'e'
         aux_basic_unit['unittype'] = u'e'
         unit.save()
- 
+
         response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
         if is_possible:
             self.assertEqual(response.status_code, 200)
@@ -345,8 +352,8 @@ class UnitTestCase(ApiTestCase):
             self.assertEqual(response.status_code, 401)
 
         # Test unit with start and deadline, referenced date after deadline
-        start = now - timedelta(days=2) 
-        deadline = now - timedelta(days=1) 
+        start = now - timedelta(days=2)
+        deadline = now - timedelta(days=1)
 
         unit.unittype = 'h'
         unit.start = start
@@ -367,7 +374,7 @@ class UnitTestCase(ApiTestCase):
         unit.unittype = 'e'
         aux_basic_unit['unittype'] = u'e'
         unit.save()
- 
+
         response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
         if is_possible:
             self.assertEqual(response.status_code, 200)
