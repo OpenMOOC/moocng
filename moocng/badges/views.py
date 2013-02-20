@@ -28,11 +28,12 @@ def user_badges(request, user_pk, mode):
     try:
         award_list = Award.objects.filter(user=user)
         return render_to_response('badges/user_badges.html', {
-        'award_list': award_list,
-        'user': user,
+            'award_list': award_list,
+            'user': user,
         }, context_instance=RequestContext(request))
     except Award.DoesNotExist:
         return HttpResponse(status=404)
+
 
 def user_badge(request, badge_slug, user_pk, mode):
     badge = get_object_or_404(Badge, slug=badge_slug)
@@ -43,11 +44,12 @@ def user_badge(request, badge_slug, user_pk, mode):
     try:
         award = get_object_or_404(Award, badge=badge, user=user)
         return render_to_response('badges/user_badge.html', {
-        'award': award,
-        'user': user,
-    }, context_instance=RequestContext(request))
+            'award': award,
+            'user': user,
+        }, context_instance=RequestContext(request))
     except Award.DoesNotExist:
         return HttpResponse(status=404)
+
 
 def badge_image(request, badge_slug, user_pk, mode):
     badge = get_object_or_404(Badge, slug=badge_slug)

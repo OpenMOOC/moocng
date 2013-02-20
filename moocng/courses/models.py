@@ -29,6 +29,7 @@ from moocng.enrollment import enrollment_methods
 from moocng.videos.tasks import process_video_task
 from moocng.videos.utils import extract_YT_video_id
 
+
 class Course(Sortable):
 
     name = models.CharField(verbose_name=_(u'Name'), max_length=200)
@@ -63,7 +64,8 @@ class Course(Sortable):
         verbose_name=_(u'Pass threshold'),
         max_digits=4, decimal_places=2,
         blank=True, null=True, help_text="0.00 - 10.00")
-    certification_available = models.BooleanField(default=False,
+    certification_available = models.BooleanField(
+        default=False,
         verbose_name=_(u'Certification available'))
     certification_banner = models.ImageField(
         verbose_name=_(u'Certification banner'),
@@ -71,13 +73,11 @@ class Course(Sortable):
     completion_badge = models.ForeignKey(
         Badge, blank=True, null=True, verbose_name=_(u'Completion badge'),
         related_name='course', unique=True)
-
     enrollment_method = models.CharField(
         verbose_name=_(u'Enrollment method'),
         choices=enrollment_methods.get_choices(),
         max_length=200,
-        default='free',
-        )
+        default='free')
 
     class Meta(Sortable.Meta):
         verbose_name = _(u'course')

@@ -39,17 +39,17 @@ class ContactForm(forms.Form, BootstrapMixin):
         required=True,
         queryset=CommunicationType.objects.all(),
         empty_label=None,
-        )
+    )
     message = forms.CharField(
         label=_(u'Message'),
         widget=forms.Textarea(attrs={'class': 'input-xxlarge'}),
-        )
+    )
     tos = forms.BooleanField(
         label=_('I have read and agree with the terms of use'),
         help_text=_('See Terms of Use'),
         required=True,
         error_messages={'required': _('You must accept the Terms of Use')},
-        )
+    )
 
     def __init__(self, *args, **kwargs):
         super(ContactForm, self).__init__(*args, **kwargs)

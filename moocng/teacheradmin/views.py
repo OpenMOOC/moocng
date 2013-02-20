@@ -597,7 +597,7 @@ def teacheradmin_announcements_add_or_edit(request, course_slug, announ_id=None,
                 messages.success(
                     request,
                     _("The email has been queued, and it will be send in batches to every student in the course."),
-                    )
+                )
 
             return HttpResponseRedirect(
                 reverse("teacheradmin_announcements_view",

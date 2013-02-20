@@ -46,6 +46,5 @@ def send_contact_message(communication_type, sender_username, sender_email,
         to,
         connection=connection,
         headers=headers,
-        )
+    )
     mail.send(fail_silently=fail_silently)
-

@@ -35,12 +35,12 @@ class Saml2BackendExtension(Saml2Backend):
                                 force_save=True)
         user_pendings = Invitation.objects.filter(email=user.email)
         for user_pending in user_pendings:
-	        user_pending.course.teachers.add(user)
-	        user_pending.delete()
+            user_pending.course.teachers.add(user)
+            user_pending.delete()
         return user
 
     def update_user(self, user, attributes, attribute_mapping,
-                force_save=False):
+                    force_save=False):
         """Update a user with a set of attributes and returns the updated user.
 
         By default it uses a mapping defined in the settings constant

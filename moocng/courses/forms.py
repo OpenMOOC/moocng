@@ -72,6 +72,5 @@ class AnnouncementForm(ModelForm):
         exclude = ('slug', 'course',)
         widgets = {
             'title': TextInput(attrs={'class': 'input-xxlarge'}),
-            'content': TinyMCE(attrs={'class':'input-xxlarge'}),
+            'content': TinyMCE(attrs={'class': 'input-xxlarge'}),
         }
-

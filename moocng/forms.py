@@ -24,7 +24,7 @@ class BootstrapMixin(object):
 
     def as_bootstrap(self):
         "Helper function for outputting HTML. Used by as_table(), as_ul(), as_p()."
-        top_errors = self.non_field_errors() # Errors that should be displayed above all fields.
+        top_errors = self.non_field_errors()  # Errors that should be displayed above all fields.
         output, hidden_fields = [], []
         normal_row = u'<div%(html_class_attr)s>%(label)s<div class="controls">%(field)s%(help_text)s</div>%(errors)s</div>'
         boolean_row = u'<div%(html_class_attr)s><div class="controls">%(label_and_field)s%(help_text)s</div>%(errors)s</div>'
@@ -36,7 +36,7 @@ class BootstrapMixin(object):
             html_class_attr = ''
             bf = self[name]
             is_boolean = isinstance(field, forms.fields.BooleanField)
-            bf_errors = self.error_class([conditional_escape(error) for error in bf.errors]) # Escape and cache in local variable.
+            bf_errors = self.error_class([conditional_escape(error) for error in bf.errors])  # Escape and cache in local variable.
             if bf.is_hidden:
                 if bf_errors:
                     top_errors.extend([u'(Hidden field %s) %s' % (name, force_unicode(e)) for e in bf_errors])
@@ -81,24 +81,24 @@ class BootstrapMixin(object):
 
                 if is_boolean:
                     output.append(boolean_row % {
-                            'errors': errors,
-                            'label_and_field': force_unicode(label),
-                            'help_text': help_text,
-                            'html_class_attr': html_class_attr
-                            })
+                        'errors': errors,
+                        'label_and_field': force_unicode(label),
+                        'help_text': help_text,
+                        'html_class_attr': html_class_attr
+                    })
                 else:
                     output.append(normal_row % {
-                            'errors': errors,
-                            'label': force_unicode(label),
-                            'field': unicode(bf),
-                            'help_text': help_text,
-                            'html_class_attr': html_class_attr
-                            })
+                        'errors': errors,
+                        'label': force_unicode(label),
+                        'field': unicode(bf),
+                        'help_text': help_text,
+                        'html_class_attr': html_class_attr
+                    })
 
         if top_errors:
             output.insert(0, error_row % force_unicode(top_errors))
 
-        if hidden_fields: # Insert any hidden fields in the last row.
+        if hidden_fields:  # Insert any hidden fields in the last row.
             str_hidden = u''.join(hidden_fields)
             if output:
                 last_row = output[-1]
@@ -110,7 +110,7 @@ class BootstrapMixin(object):
                     # not be able to conscript the last row for our purposes,
                     # so insert a new, empty row.
                     last_row = (normal_row % {'errors': '', 'label': '',
-                                              'field': '', 'help_text':'',
+                                              'field': '', 'help_text': '',
                                               'html_class_attr': html_class_attr})
                     output.append(last_row)
                 output[-1] = last_row[:-len(row_ender)] + str_hidden + row_ender

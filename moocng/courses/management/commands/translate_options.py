@@ -23,14 +23,14 @@ IMG_FIXED_W = 620
 IMG_FIXED_H = 372
 
 
-def translate_backward_position(max_s, max_t,  s):
+def translate_backward_position(max_s, max_t, s):
     t = (s * (float(max_s) / float(max_t)))
     return int(round(t * 1.15))
 
 
-def translate_forward_position(max_s, max_t,  s):
+def translate_forward_position(max_s, max_t, s):
     t = (s * (float(max_s) / float(max_t)))
-    return int(round(t * (1/1.15)))
+    return int(round(t * (1 / 1.15)))
 
 
 class Command(BaseCommand):

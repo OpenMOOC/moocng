@@ -30,7 +30,7 @@ IMG_FIXED_W = 620
 IMG_FIXED_H = 372
 
 
-def translate_position(max_s, max_t,  s):
+def translate_position(max_s, max_t, s):
     t = (s * (float(max_s) / float(max_t)))
     return int(round(t * 1.15))
 

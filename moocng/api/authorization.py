@@ -27,6 +27,7 @@ PERMISSIONS = {
     'get_passed_courses_as_student': 'course.can_list_passedcourses'
 }
 
+
 class PublicReadTeachersModifyAuthorization(Authorization):
 
     def is_authorized(self, request, object=None):
@@ -54,4 +55,4 @@ class UserResourceAuthorization(Authorization):
             if url_name in PERMISSIONS.keys():
                 required_perm = PERMISSIONS.get(url_name)
                 return request.user.has_perm(required_perm)
-        return False;
+        return False

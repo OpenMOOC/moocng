@@ -58,7 +58,6 @@ class MassiveEmail(models.Model):
         verbose_name = _(u'massive email')
         verbose_name_plural = _(u'massive emails')
 
-
     def send_in_batches(self, email_send_task):
         try:
             batch = settings.MASSIVE_EMAIL_BATCH_SIZE

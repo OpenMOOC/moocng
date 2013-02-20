@@ -96,9 +96,9 @@ def idp_urls(request):
     except AttributeError:
         changepw_url = '#'
     context = {
-            'registry_url': registry_url,
-            'profile_url': profile_url,
-            'changepw_url': changepw_url,
+        'registry_url': registry_url,
+        'profile_url': profile_url,
+        'changepw_url': changepw_url,
     }
     return context
 

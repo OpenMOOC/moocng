@@ -32,8 +32,7 @@ class CourseForm(forms.ModelForm):
             'start_date': HTML5DateInput(),
             'end_date': HTML5DateInput(),
             'certification_banner': BootstrapClearableFileInput(),
-            }
-
+        }
 
     def __init__(self, *args, **kwargs):
         super(CourseForm, self).__init__(*args, **kwargs)
@@ -54,7 +53,7 @@ class AnnouncementForm(CoursesAnnouncementForm, BootstrapMixin):
         label=_(u'Send the announcement via email to all the students in this course'),
         initial=False,
         help_text=_(u'Please use this with caution as some courses has many students'),
-        )
+    )
 
 
 class MassiveEmailForm(forms.ModelForm, BootstrapMixin):

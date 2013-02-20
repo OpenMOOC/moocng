@@ -49,7 +49,7 @@ class Command(BaseCommand):
         self.tar.add(filefield.file.name, filefield.name)
 
     def properties_dict(self, obj):
-        data = serializers.serialize("json", [obj],  use_natural_keys=True)
+        data = serializers.serialize("json", [obj], use_natural_keys=True)
         _dict = simplejson.loads(data)[0]
         return _dict
 

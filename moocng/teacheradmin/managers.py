@@ -23,5 +23,4 @@ class MassiveEmailManager(models.Manager):
             datetime=announcement.datetime,
             subject=announcement.title,
             message=announcement.content,
-            )
-
+        )

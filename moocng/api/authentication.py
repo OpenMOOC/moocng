@@ -59,6 +59,7 @@ class ApiKeyAuthentication(Authentication):
                 return userapi[0].user
         return 'nouser'
 
+
 # TODO. This class belong tastypie 0.9.11
 # (commit 5e8850434ef1c8672b0a22953bd7cc0def6347f8)
 class MultiAuthentication(object):
