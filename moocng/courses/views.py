@@ -34,7 +34,7 @@ from django.utils.translation import ugettext as _
 from moocng.badges.models import Award
 from moocng.courses.models import Course, CourseTeacher, Announcement
 from moocng.courses.utils import (calculate_course_mark, get_unit_badge_class,
-                                  show_material_checker, is_course_ready,
+                                  is_course_ready,
                                   is_teacher as is_teacher_test)
 from moocng.teacheradmin.utils import send_mail_wrapper
 
@@ -123,12 +123,9 @@ def course_add(request):
 def course_overview(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
 
-    show_material = False
     if request.user.is_authenticated():
         is_enrolled = course.students.filter(id=request.user.id).exists()
         is_teacher = is_teacher_test(request.user, course)
-        if is_enrolled:
-            show_material = show_material_checker(course, request.user)
     else:
         is_enrolled = False
         is_teacher = False
@@ -139,7 +136,6 @@ def course_overview(request, course_slug):
     return render_to_response('courses/overview.html', {
         'course': course,
         'is_enrolled': is_enrolled,
-        'show_material': show_material,
         'is_teacher': is_teacher,
         'request': request,
         'course_teachers': course_teachers,
@@ -174,15 +170,10 @@ def course_classroom(request, course_slug):
         }
         units.append(unit)
 
-    show_material = show_material_checker(course, request.user)
-    if not show_material:
-        return HttpResponseForbidden(_('You are enrolled in this course but it has not yet begun') + course.start_date.strftime(' (%d / %m / %Y)'))
-
     return render_to_response('courses/classroom.html', {
         'course': course,
         'unit_list': units,
         'is_enrolled': is_enrolled,
-        'show_material': show_material,
         'is_teacher': is_teacher_test(request.user, course),
     }, context_instance=RequestContext(request))
 
@@ -202,7 +193,6 @@ def course_progress(request, course_slug):
             'course': course,
             'is_enrolled': is_enrolled,
             'ask_admin': ask_admin,
-            'complaints_url': reverse('complaints'),
         }, context_instance=RequestContext(request))
 
     units = []
@@ -215,15 +205,10 @@ def course_progress(request, course_slug):
         }
         units.append(unit)
 
-    show_material = show_material_checker(course, request.user)
-    if not show_material:
-        return HttpResponseForbidden(_('You are enrolled in this course but it has not yet begun') + course.start_date.strftime(' (%d / %m / %Y)'))
-
     return render_to_response('courses/progress.html', {
         'course': course,
         'unit_list': units,
         'is_enrolled': is_enrolled,  # required due course nav templatetag
-        'show_material': show_material,
         'is_teacher': is_teacher_test(request.user, course),
     }, context_instance=RequestContext(request))
 
