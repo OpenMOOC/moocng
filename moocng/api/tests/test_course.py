@@ -121,15 +121,13 @@ class CoursesTestCase(ApiTestCase):
         key = str(uuid.uuid4())
         self.generate_apikeyuser(user, key)
 
-        self.client = self.apikey_login_user(self.client, key)
-
-        response = self.client.get('/api/%s/course/%s' % (self.api_name, self.format_append))
+        response = self.client.get('/api/%s/course/%s&key=%s' % (self.api_name, self.format_append, key))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, NO_OBJECTS)
 
         self.create_test_basic_course(owner)
 
-        response = self.client.get('/api/%s/course/%s' % (self.api_name, self.format_append))
+        response = self.client.get('/api/%s/course/%s&key=%s' % (self.api_name, self.format_append, key))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, BASIC_COURSES)
 
@@ -228,14 +226,12 @@ class CourseTestCase(ApiTestCase):
         key = str(uuid.uuid4())
         self.generate_apikeyuser(user, key)
 
-        self.client = self.apikey_login_user(self.client, key)
-
-        response = self.client.get('/api/%s/course/1/%s' % (self.api_name, self.format_append))
+        response = self.client.get('/api/%s/course/1/%s&key=%s' % (self.api_name, self.format_append, key))
         self.assertEqual(response.status_code, 404)
 
         self.create_test_basic_course(owner)
 
-        response = self.client.get('/api/%s/course/1/%s' % (self.api_name, self.format_append))
+        response = self.client.get('/api/%s/course/1/%s&key=%s' % (self.api_name, self.format_append, key))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, BASIC_COURSE)
 
@@ -306,9 +302,7 @@ class CourseTestCase(ApiTestCase):
         key = str(uuid.uuid4())
         self.generate_apikeyuser(user, key)
 
-        self.client = self.apikey_login_user(self.client, user)
-
-        response = self.client.post('/api/%s/course/%s' % (self.api_name, self.format_append), simplejson.loads(BASIC_COURSE))
+        response = self.client.post('/api/%s/course/%s&key=%s' % (self.api_name, self.format_append, key), simplejson.loads(BASIC_COURSE))
         self.assertEqual(response.status_code, 405)
 
     # Update course
@@ -383,11 +377,9 @@ class CourseTestCase(ApiTestCase):
         key = str(uuid.uuid4())
         self.generate_apikeyuser(user, key)
 
-        self.client = self.apikey_login_user(self.client, key)
-
         self.create_test_basic_course(owner)
 
-        response = self.client.put('/api/%s/course/1/%s' % (self.api_name, self.format_append), simplejson.loads(BASIC_COURSE))
+        response = self.client.put('/api/%s/course/1/%s&key=%s' % (self.api_name, self.format_append, key), simplejson.loads(BASIC_COURSE))
         self.assertEqual(response.status_code, 405)
 
     # Delete course
@@ -462,9 +454,7 @@ class CourseTestCase(ApiTestCase):
         key = str(uuid.uuid4())
         self.generate_apikeyuser(user, key)
 
-        self.client = self.apikey_login_user(self.client, key)
-
         self.create_test_basic_course(owner)
 
-        response = self.client.delete('/api/%s/course/1/%s' % (self.api_name, self.format_append), simplejson.loads(BASIC_COURSE))
+        response = self.client.delete('/api/%s/course/1/%s&key=%s' % (self.api_name, self.format_append, key), simplejson.loads(BASIC_COURSE))
         self.assertEqual(response.status_code, 405)

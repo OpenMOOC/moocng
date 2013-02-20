@@ -17,9 +17,9 @@ API_DESCRIPTION = '{"activity": {"list_endpoint": "/api/v1/activity/", "schema":
 
 NO_OBJECTS = '{"meta": {"limit": 0, "offset": 0, "total_count": 0}, "objects": []}'
 
-BASIC_COURSES = '{"meta": {"limit": 0, "offset": 0, "total_count": 1}, "objects": [{"certification_available": false, "description": "test_basic_description", "end_date": null, "estimated_effort": "", "id": "1", "intended_audience": "", "learning_goals": "", "name": "test_basic_course", "order": 1, "promotion_video": "", "requirements": "", "resource_uri": "/api/v1/course/1/", "slug": "test_basic_course", "start_date": null, "threshold": null}]}'
+BASIC_COURSES = '{"meta": {"limit": 0, "offset": 0, "total_count": 1}, "objects": [{"certification_available": false, "description": "test_basic_description", "end_date": null, "enrollment_method": "free", "estimated_effort": "", "id": "1", "intended_audience": "", "learning_goals": "", "name": "test_basic_course", "order": 1, "promotion_video": "", "requirements": "", "resource_uri": "/api/v1/course/1/", "slug": "test_basic_course", "start_date": null, "threshold": null}]}'
 
-BASIC_COURSE = '{"certification_available": false, "description": "test_basic_description", "end_date": null, "estimated_effort": "", "id": "1", "intended_audience": "", "learning_goals": "", "name": "test_basic_course", "order": 1, "promotion_video": "", "requirements": "", "resource_uri": "/api/v1/course/1/", "slug": "test_basic_course", "start_date": null, "threshold": null}'
+BASIC_COURSE = '{"certification_available": false, "description": "test_basic_description", "end_date": null, "enrollment_method": "free", "estimated_effort": "", "id": "1", "intended_audience": "", "learning_goals": "", "name": "test_basic_course", "order": 1, "promotion_video": "", "requirements": "", "resource_uri": "/api/v1/course/1/", "slug": "test_basic_course", "start_date": null, "threshold": null}'
 
 BASIC_UNITS = '{"meta": {"limit": 0, "offset": 0, "total_count": 1}, "objects": [{"course": "/api/v1/course/1/", "deadline": null, "id": "1", "order": 1, "resource_uri": "/api/v1/unit/1/", "start": null, "title": "test_basic_unit", "unittype": "n", "weight": 0}]}'
 

@@ -88,17 +88,18 @@ class UnitsTestCase(ApiTestCase):
         key = str(uuid.uuid4())
         self.generate_apikeyuser(user, key)
 
-        self.client = self.apikey_login_user(self.client, key)
-
         # Test public course
         course = self.create_test_basic_course(owner)
-        self.check_test_get_units(course, is_possible=True)
+        self.check_test_get_units(course, is_possible=True, key=key)
 
     # Auxiliary function
-    def check_test_get_units(self, course, is_possible=False):
+    def check_test_get_units(self, course, is_possible=False, key=None):
         # Test units with no start, no deadline (only normal units)
         unit = self.create_test_basic_unit(course, 'n')
-        response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
+        if key:
+            response = self.client.get('/api/%s/unit/%s&key=%s' % (self.api_name, self.format_append, key))
+        else:
+            response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
         if is_possible:
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.content, BASIC_UNITS)
@@ -268,17 +269,15 @@ class UnitTestCase(ApiTestCase):
         key = str(uuid.uuid4())
         self.generate_apikeyuser(user, key)
 
-        self.client = self.apikey_login_user(self.client, key)
-
         # Test public course
         course = self.create_test_basic_course(owner)
-        self.check_test_get_unit(course, is_possible=True)
+        self.check_test_get_unit(course, is_possible=True, key=key)
 
     # Auxiliary function
-    def check_test_get_unit(self, course, is_possible=False):
+    def check_test_get_unit(self, course, is_possible=False, key=None):
         # Test unit with no start, no deadline (normal unit)
         unit = self.create_test_basic_unit(course, 'n')
-        response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
+        response = self.client.get('/api/%s/unit/1/%s&key=%s' % (self.api_name, self.format_append, key))
         if is_possible:
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.content, BASIC_UNIT)
