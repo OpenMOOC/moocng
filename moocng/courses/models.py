@@ -99,14 +99,6 @@ class Course(Sortable):
             return extract_YT_video_id(self.promotion_video)
 
 
-def handle_course_m2m_changed(sender, instance, action, **kwargs):
-    if action.startswith('post') and not instance.teachers.filter(id=instance.owner.id).exists():
-        instance.teachers.add(instance.owner)
-
-
-signals.m2m_changed.connect(handle_course_m2m_changed, sender=Course.teachers.through)
-
-
 def course_invalidate_cache(sender, instance, **kwargs):
     invalidate_template_fragment('course_list')
     invalidate_template_fragment('course_overview_main_info', instance.id)
