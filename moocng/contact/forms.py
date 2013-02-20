@@ -45,7 +45,7 @@ class ContactForm(forms.Form, BootstrapMixin):
         widget=forms.Textarea(attrs={'class': 'input-xxlarge'}),
         )
     tos = forms.BooleanField(
-        label=mark_safe(_('I have read and agree with the terms of use')),
+        label=_('I have read and agree with the terms of use'),
         help_text=_('See Terms of Use'),
         required=True,
         error_messages={'required': _('You must accept the Terms of Use')},
