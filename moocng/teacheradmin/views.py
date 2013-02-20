@@ -436,10 +436,10 @@ def teacheradmin_teachers_transfer(request, course_slug):
     response = HttpResponse()
 
     try:
-        user = User.objects.get(id=ident)
+        user = CourseTeacher.objects.get(id=ident).teacher
         course.owner = user
         course.save()
-    except (ValueError, User.DoesNotExist):
+    except (ValueError, CourseTeacher.DoesNotExist):
         response = HttpResponse(status=404)
 
     return response
