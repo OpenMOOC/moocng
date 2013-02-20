@@ -17,7 +17,6 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.models import SiteProfileNotAvailable
 from django.core.exceptions import ObjectDoesNotExist
 from djangosaml2.backends import Saml2Backend
-from moocng.courses.models import Course
 from moocng.teacheradmin.models import Invitation
 
 
