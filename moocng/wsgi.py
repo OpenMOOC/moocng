@@ -23,6 +23,9 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "moocng.settings")
 #from django.core.wsgi import get_wsgi_application
 #application = get_wsgi_application()
 
+import warnings
+warnings.simplefilter("ignore")
+
 
 # Apply WSGI middleware here.
 # from helloworld.wsgi import HelloWorldApplication
