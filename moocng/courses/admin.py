@@ -189,6 +189,7 @@ class QuestionAdmin(admin.ModelAdmin):
                     'id': opt.id,
                     'optiontype': opt.optiontype,
                     'solution': opt.solution,
+                    'feedback': opt.feedback,
                     'text': opt.text,
                     'x': opt.x, 'y': opt.y,
                     'width': opt.width, 'height': opt.height,
@@ -252,6 +253,8 @@ class QuestionAdmin(admin.ModelAdmin):
                 'id': option.id,
                 'optiontype': option.optiontype,
                 'solution': option.solution,
+                'feedback': option.feedback,
+                'text': option.text,
                 'x': option.x, 'y': option.y,
                 'width': option.width, 'height': option.height,
             }
