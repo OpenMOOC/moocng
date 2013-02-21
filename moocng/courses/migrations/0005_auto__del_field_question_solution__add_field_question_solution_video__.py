@@ -11,13 +11,21 @@ class Migration(SchemaMigration):
 
         # Adding field 'Question.solution_video'
         db.add_column('courses_question', 'solution_video',
-                      self.gf('django.db.models.fields.URLField')(max_length=200, null=False, blank=True),
+                      self.gf('django.db.models.fields.URLField')(default='', max_length=200, blank=True),
                       keep_default=False)
 
         # Adding field 'Question.solution_text'
         db.add_column('courses_question', 'solution_text',
-                      self.gf('tinymce.models.HTMLField')(null=False, blank=True),
+                      self.gf('tinymce.models.HTMLField')(default='', blank=True),
                       keep_default=False)
+
+        # Adding field 'Option.feedback'
+        db.add_column('courses_option', 'feedback',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=200, blank=True),
+                      keep_default=False)
+
+        # Changing field 'Announcement.datetime'
+        db.alter_column('courses_announcement', 'datetime', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True))
 
     def backwards(self, orm):
 
@@ -28,6 +36,12 @@ class Migration(SchemaMigration):
 
         # Deleting field 'Question.solution_text'
         db.delete_column('courses_question', 'solution_text')
+
+        # Deleting field 'Option.feedback'
+        db.delete_column('courses_option', 'feedback')
+
+        # Changing field 'Announcement.datetime'
+        db.alter_column('courses_announcement', 'datetime', self.gf('django.db.models.fields.DateTimeField')())
 
     models = {
         'auth.group': {
@@ -80,7 +94,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Announcement'},
             'content': ('tinymce.models.HTMLField', [], {}),
             'course': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['courses.Course']"}),
-            'datetime': ('django.db.models.fields.DateTimeField', [], {}),
+            'datetime': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '200'})
@@ -134,6 +148,7 @@ class Migration(SchemaMigration):
         },
         'courses.option': {
             'Meta': {'object_name': 'Option'},
+            'feedback': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'height': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '12'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'optiontype': ('django.db.models.fields.CharField', [], {'default': "'t'", 'max_length': '1'}),
@@ -149,8 +164,8 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'kq': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['courses.KnowledgeQuantum']", 'unique': 'True'}),
             'last_frame': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'blank': 'True'}),
-            'solution_text': ('tinymce.models.HTMLField', [], {'null': 'True', 'blank': 'True'}),
-            'solution_video': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
+            'solution_text': ('tinymce.models.HTMLField', [], {'blank': 'True'}),
+            'solution_video': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
             'use_last_frame': ('django.db.models.fields.BooleanField', [], {'default': 'True'})
         },
         'courses.unit': {
