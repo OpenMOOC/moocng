@@ -259,6 +259,10 @@ img.award {
     position: absolute;
 }
 
+.classroom #kq-video .btn {
+    padding: 3px;
+}
+
 .classroom #kq-video textarea.text {
     border: 0;
     background: transparent;
