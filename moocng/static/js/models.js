@@ -70,7 +70,8 @@ MOOC.models.Option = Backbone.Model.extend({
             width: 100,
             height: 12,
             solution: null,
-            text: ""
+            text: "",
+            feedback: null
         };
     },
 

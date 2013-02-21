@@ -338,19 +338,29 @@ class OptionResource(ModelResource):
         return super(OptionResource, self).dispatch(request_type, request,
                                                     **kwargs)
 
-    def dehydrate_solution_video(self, bundle):
-        # Only return the solution_video if the user has given an answer
+    def dehydrate_solution(self, bundle):
+        # Only return the solution if the user has given an answer
         # If there is a deadline, then only return the solution if the deadline
         # has been reached too
-        solution_video = None
+        solution = None
         if self.user:
             answer = self.user['questions'].get(
                 unicode(bundle.obj.question.id), None)
             if answer is not None:
                 unit = bundle.obj.question.kq.unit
                 if unit.unittype == 'n' or not(unit.deadline and datetime.now(unit.deadline.tzinfo) < unit.deadline):
-                    solution_video = bundle.obj.solution_video
-        return solution_video
+                    solution = bundle.obj.solution
+        return solution
+
+    def dehydrate_feedback(self, bundle):
+        # Only return the feedback if the user has given an answer
+        feedback = None
+        if self.user:
+            answer = self.user['questions'].get(
+                unicode(bundle.obj.question.id), None)
+            if answer is not None:
+                feedback = bundle.obj.feedback
+        return feedback
 
 
 class AnswerResource(MongoResource):

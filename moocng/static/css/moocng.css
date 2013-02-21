@@ -254,7 +254,8 @@ img.award {
 }
 
 .classroom #kq-video input,
-.classroom #kq-video textarea {
+.classroom #kq-video textarea,
+.classroom #kq-video .btn {
     position: absolute;
 }
 
