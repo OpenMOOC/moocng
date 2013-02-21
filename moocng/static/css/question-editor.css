@@ -18,6 +18,14 @@
     display: none;
 }
 
+select {
+    margin: 0;
+}
+
+form {
+    margin: 10px 0;
+}
+
 fieldset {
     border: 0;
     position: relative;
@@ -48,17 +56,6 @@ fieldset .out {
     background-color: #ff8888;
 }
 
-.palette {
-    float: left;
-    padding: 6px;
-}
-
-#option-properties {
-    margin-top: 1em;
-    width: 100%;
-    border-collapse: collapse;
-}
-
-#option-properties td, #option-properties th {
-    border: 1px solid #aaaaaa;
+.no-margin {
+    margin: 0;
 }
