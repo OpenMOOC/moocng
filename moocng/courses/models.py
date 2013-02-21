@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
+
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator
 from django.db import models
@@ -28,6 +30,8 @@ from moocng.courses.cache import invalidate_template_fragment
 from moocng.enrollment import enrollment_methods
 from moocng.videos.tasks import process_video_task
 from moocng.videos.utils import extract_YT_video_id
+
+logger = logging.getLogger(__name__)
 
 
 class Course(Sortable):
@@ -314,6 +318,10 @@ class Option(models.Model):
         if self.optiontype == 'l':
             return True
         elif self.optiontype == 't':
-            return reply.lower() == self.solution.lower()
+            if not hasattr(reply, 'lower'):
+                logger.error('Error at option %s - Value %s - Solution %s' % (str(self.id), str(reply), self.solution))
+                return True
+            else:
+                return reply.lower() == self.solution.lower()
         else:
             return bool(reply) == (self.solution.lower() == u'true')
