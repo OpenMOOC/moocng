@@ -236,6 +236,7 @@ if (_.isUndefined(window.MOOC)) {
             render: function () {
                 var node = this.$el,
                     sortOpts,
+                    sortedKQs,
                     header,
                     add,
                     html;
@@ -256,8 +257,11 @@ if (_.isUndefined(window.MOOC)) {
                 node.html(html);
 
                 node = node.find(".kq-container");
-                if (this.model.get("knowledgeQuantumList")) {
-                    this.model.get("knowledgeQuantumList").each(function (kq) {
+                if (this.model.has("knowledgeQuantumList")) {
+                    sortedKQs = this.model.get("knowledgeQuantumList").sortBy(function (kq) {
+                        return kq.get("order");
+                    });
+                    _.each(sortedKQs, function (kq) {
                         var view = MOOC.views.kqViews[kq.get("id")],
                             el = $("<div id='kq" + kq.get("id") + "' class='kq ui-widget ui-widget-content ui-helper-clearfix ui-corner-all'></div>")[0];
                         node.append(el);
@@ -345,6 +349,7 @@ if (_.isUndefined(window.MOOC)) {
                     success: function (model, response) {
                         MOOC.ajax.hideLoading();
                         model.set("new", true);
+                        model.set("order", response.order);
                         MOOC.router.navigate("kq" + model.get("id"), {
                             trigger: true
                         });

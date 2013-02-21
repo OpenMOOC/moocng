@@ -39,7 +39,7 @@ $(document).ready(function () {
             {% blocktrans %}You are about to send an email to <strong>{{ students }} students</strong>.{% endblocktrans %}
         </div>
         <form method="POST">{% csrf_token %}
-            {{ form }}
+            {{ form.as_bootstrap }}
             <div class="form-actions">
                 <input type="submit" class="btn btn-primary" value="{% trans "Send" %}" />
             </div>

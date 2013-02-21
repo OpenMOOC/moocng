@@ -32,7 +32,8 @@ class Invitation(models.Model):
     course = models.ForeignKey(Course, verbose_name=_(u'Course'), blank=False,
                                null=False)
     datetime = models.DateTimeField(verbose_name=_(u'Date and time'),
-                                    blank=False, null=False)
+                                    blank=False, null=False,
+                                    auto_now_add=True, editable=False)
 
     class Meta:
         verbose_name = _(u'invitation')
@@ -45,7 +46,8 @@ class MassiveEmail(models.Model):
                                related_name='massive_emails', blank=False,
                                null=False)
     datetime = models.DateTimeField(verbose_name=_(u'Date and time'),
-                                    blank=False, null=False)
+                                    blank=False, null=False,
+                                    auto_now_add=True, editable=False)
     subject = models.CharField(verbose_name=_(u'Subject'), max_length=200,
                                blank=False, null=False)
     message = HTMLField(verbose_name=_(u'Content'))
@@ -55,7 +57,6 @@ class MassiveEmail(models.Model):
     class Meta:
         verbose_name = _(u'massive email')
         verbose_name_plural = _(u'massive emails')
-
 
     def send_in_batches(self, email_send_task):
         try:

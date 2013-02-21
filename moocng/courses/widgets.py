@@ -17,7 +17,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
 
-
 class ImageReadOnlyWidget(Widget):
 
     def render(self, name, value, attrs=None):
@@ -35,4 +34,3 @@ class ImageReadOnlyWidget(Widget):
                 return _(u'Unknown error')
         else:
             return mark_safe(u'<img src="%s" />' % value.url)
-

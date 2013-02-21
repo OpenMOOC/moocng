@@ -436,10 +436,10 @@ def teacheradmin_teachers_transfer(request, course_slug):
     response = HttpResponse()
 
     try:
-        user = User.objects.get(id=ident)
+        user = CourseTeacher.objects.get(id=ident).teacher
         course.owner = user
         course.save()
-    except (ValueError, User.DoesNotExist):
+    except (ValueError, CourseTeacher.DoesNotExist):
         response = HttpResponse(status=404)
 
     return response
@@ -597,7 +597,7 @@ def teacheradmin_announcements_add_or_edit(request, course_slug, announ_id=None,
                 messages.success(
                     request,
                     _("The email has been queued, and it will be send in batches to every student in the course."),
-                    )
+                )
 
             return HttpResponseRedirect(
                 reverse("teacheradmin_announcements_view",

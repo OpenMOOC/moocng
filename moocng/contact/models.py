@@ -22,12 +22,12 @@ class CommunicationType(models.Model):
     title = models.CharField(
         verbose_name=_(u'Title'),
         max_length=200,
-        )
+    )
     destination = models.EmailField(
         verbose_name=_(u'Email address to send this communications'),
         null=False,
         blank=True,
-        )
+    )
 
     class Meta:
         verbose_name = _(u'communication type')

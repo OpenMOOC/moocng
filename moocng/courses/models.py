@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
+
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator
 from django.db import models
@@ -28,6 +30,9 @@ from moocng.courses.cache import invalidate_template_fragment
 from moocng.enrollment import enrollment_methods
 from moocng.videos.tasks import process_video_task
 from moocng.videos.utils import extract_YT_video_id
+
+logger = logging.getLogger(__name__)
+
 
 class Course(Sortable):
 
@@ -63,7 +68,8 @@ class Course(Sortable):
         verbose_name=_(u'Pass threshold'),
         max_digits=4, decimal_places=2,
         blank=True, null=True, help_text="0.00 - 10.00")
-    certification_available = models.BooleanField(default=False,
+    certification_available = models.BooleanField(
+        default=False,
         verbose_name=_(u'Certification available'))
     certification_banner = models.ImageField(
         verbose_name=_(u'Certification banner'),
@@ -71,13 +77,11 @@ class Course(Sortable):
     completion_badge = models.ForeignKey(
         Badge, blank=True, null=True, verbose_name=_(u'Completion badge'),
         related_name='course', unique=True)
-
     enrollment_method = models.CharField(
         verbose_name=_(u'Enrollment method'),
         choices=enrollment_methods.get_choices(),
         max_length=200,
-        default='free',
-        )
+        default='free')
 
     class Meta(Sortable.Meta):
         verbose_name = _(u'course')
@@ -97,14 +101,6 @@ class Course(Sortable):
     def get_embeded_code_for_promotion_video(self):
         if self.promotion_video:
             return extract_YT_video_id(self.promotion_video)
-
-
-def handle_course_m2m_changed(sender, instance, action, **kwargs):
-    if action.startswith('post') and not instance.teachers.filter(id=instance.owner.id).exists():
-        instance.teachers.add(instance.owner)
-
-
-signals.m2m_changed.connect(handle_course_m2m_changed, sender=Course.teachers.through)
 
 
 def course_invalidate_cache(sender, instance, **kwargs):
@@ -133,9 +129,8 @@ class Announcement(models.Model):
     slug = models.SlugField(verbose_name=_(u'Slug'))
     content = HTMLField(verbose_name=_(u'Content'))
     course = models.ForeignKey(Course, verbose_name=_(u'Course'))
-    datetime = models.DateTimeField(
-        verbose_name=_(u'Datetime'),
-        help_text=_(u"Use format:  DD/MM/AAAA 00:00"))
+    datetime = models.DateTimeField(verbose_name=_(u'Datetime'),
+                                    auto_now_add=True, editable=False)
 
     class Meta:
         verbose_name = _(u'announcement')
@@ -331,6 +326,10 @@ class Option(models.Model):
         if self.optiontype == 'l':
             return True
         elif self.optiontype == 't':
-            return reply.lower() == self.solution.lower()
+            if not hasattr(reply, 'lower'):
+                logger.error('Error at option %s - Value %s - Solution %s' % (str(self.id), str(reply), self.solution))
+                return True
+            else:
+                return reply.lower() == self.solution.lower()
         else:
             return bool(reply) == (self.solution.lower() == u'true')

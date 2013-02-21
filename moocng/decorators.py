@@ -49,7 +49,7 @@ def user_passes_test(test_func, login_url=None, redirect_field_name=REDIRECT_FIE
                                                            settings.LOGIN_URL)[:2]
             current_scheme, current_netloc = urlparse.urlparse(path)[:2]
             if ((not login_scheme or login_scheme == current_scheme) and
-                (not login_netloc or login_netloc == current_netloc)):
+                    (not login_netloc or login_netloc == current_netloc)):
                 path = request.get_full_path()
             return redirect_to_login(path, login_url, redirect_field_name)
         return _wrapped_view

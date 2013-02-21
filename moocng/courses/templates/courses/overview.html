@@ -131,11 +131,7 @@
             <h2>{% trans "Syllabus" %}</h2>
             <ul>
                 {% for unit in course.unit_set.all %}
-                     {% if show_material %}
-                        <li><a href="{% url course_overview course.slug %}classroom/#unit{{ unit.id }}">{{ unit.title }}</a></li>
-                     {% else %}
-                        <li>{{ unit.title }}</li>
-                     {% endif %}
+                <li><a href="{% url course_overview course.slug %}classroom/#unit{{ unit.id }}">{{ unit.title }}</a></li>
                 {% endfor %}
             </ul>
         </div>
@@ -160,9 +156,7 @@
                 <li class="pull-left"><a href="mailto:?subject=Look at this great course&amp;body={{ request.build_absolute_uri }}" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/email.png" alt="Share through email" /></a></li>
             </ul>
         </div>
-
         {% endcache %}
-
     </div>
 </div>
 {% endblock %}

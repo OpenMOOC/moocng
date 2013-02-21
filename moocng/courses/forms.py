@@ -14,7 +14,7 @@
 
 import os
 
-from django.forms import ModelForm, ValidationError
+from django.forms import ModelForm, ValidationError, TextInput
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 
@@ -71,6 +71,6 @@ class AnnouncementForm(ModelForm):
         model = Announcement
         exclude = ('slug', 'course',)
         widgets = {
-                'content': TinyMCE(attrs={'cols':80, 'class':'input-xxlarge'}),
+            'title': TextInput(attrs={'class': 'input-xxlarge'}),
+            'content': TinyMCE(attrs={'class': 'input-xxlarge'}),
         }
-

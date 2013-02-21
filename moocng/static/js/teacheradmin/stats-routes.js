@@ -151,7 +151,7 @@ if (_.isUndefined(window.MOOC)) {
                             callback();
                         },
                         error: function (kqs, xhr, options) {
-                            restart ();
+                            restart();
                         }
                     });
                 };

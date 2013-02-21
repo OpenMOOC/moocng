@@ -9,7 +9,7 @@
 {{ form.media }}
 
 <form method="post">{% csrf_token %}
-  {{ form }}
+  {{ form.as_bootstrap }}
   <div class="form-actions">
     {% if announcement %}
     <input type="submit" class="btn btn-primary" value="{% trans 'Save changes' %}" />

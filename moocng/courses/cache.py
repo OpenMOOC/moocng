@@ -24,5 +24,5 @@ def get_template_fragment_key(fragment, *variables):
 
 def invalidate_template_fragment(fragment, *variables):
     cache_key = get_template_fragment_key(fragment, *variables)
-    if cache.has_key(cache_key):
+    if cache_key in cache:
         cache.delete(cache_key)

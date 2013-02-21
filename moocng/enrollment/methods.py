@@ -14,7 +14,7 @@ class FreeEnrollment(BaseEnrollment):
         'moocng.enrollment.views',
         url(r'^free-enroll/(?P<course_slug>[-\w]+)/$', 'free_enrollment', name='free_enrollment'),
         url(r'^free-unenroll/(?P<course_slug>[-\w]+)/$', 'free_unenrollment', name='free_unenrollment'),
-        )
+    )
 
     def render_enrollment_button(self, context, course):
         tpl = template.loader.get_template('enrollment/free_enrollment_button.html')

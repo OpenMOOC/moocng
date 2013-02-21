@@ -14,13 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from django.conf import settings
-from django.http import HttpResponse
+from django.core.urlresolvers import resolve
 
 from tastypie.authorization import Authorization
 
 from moocng.courses.models import Course
 from moocng.courses.utils import is_teacher
+
+
+PERMISSIONS = {
+    'get_courses_as_student': 'courses.can_list_allcourses',
+    'get_passed_courses_as_student': 'courses.can_list_passedcourses'
+}
 
 
 class PublicReadTeachersModifyAuthorization(Authorization):
@@ -42,22 +47,16 @@ class TeacherAuthorization(Authorization):
                  request.user.is_staff))
 
 
-class ApiKeyAuthorization(Authorization):
+class UserResourceAuthorization(Authorization):
+
     def is_authorized(self, request, object=None):
-        key = request.GET.get('key', 'nope')
-        if key == settings.USER_API_KEY:
+        # We check if the method is GET here instead of relaying in the
+        # tastypie allowed_methods property because of the overrided urls,
+        # those ignore the allowed_methods restriction
+        if request.method == 'GET':
+            url_name = resolve(request.path).url_name
+            if url_name in PERMISSIONS.keys():
+                required_perm = PERMISSIONS.get(url_name)
+                return request.user.has_perm(required_perm)
             return True
-        else:
-            return False
-
-
-def is_api_key_authorized(original_function=None):
-    auth = ApiKeyAuthorization()
-
-    def decorated(resource, request, *args, **kwargs):
-        if auth.is_authorized(request):
-            return original_function(resource, request, **kwargs)
-        else:
-            return HttpResponse("Unauthorized", status=401)
-
-    return decorated
+        return False

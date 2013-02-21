@@ -69,7 +69,7 @@ jQuery(document).ready(function () {
             table = row.parents('table').attr('id');
 
             if (table === 'teachers') {
-                id = parseInt(row.children().eq(0).text(), 10)
+                id = parseInt(row.children().eq(0).text(), 10);
             } else if (table === 'invitations') {
                 id = row.children().eq(1).text();
             }
@@ -132,7 +132,7 @@ jQuery(document).ready(function () {
                         html = "<tr>" +
                             "<td class='hide'>" + data.id + "</td>" +
                             "<td class='cell-drag-handle'><i class='icon-th'></i></td>" +
-                            "<td>" + data.gravatar +"</td>" +
+                            "<td>" + data.gravatar + "</td>" +
                             "<td>" + data.name + "</td>" +
                             "<td class='ownership'></td>" +
                             "<td class='align-right'><i class='icon-remove pointer'></i></td>" +
@@ -141,7 +141,7 @@ jQuery(document).ready(function () {
                         $("table#teachers .icon-remove").off("click").click(removeTeacher);
                     } else {
                         html = "<tr>" +
-                            "<td>" + data.gravatar +"</td>" +
+                            "<td>" + data.gravatar + "</td>" +
                             "<td>" + data.name + "</td>" +
                             "<td class='align-right'><i class='icon-remove pointer'></i></td>" +
                             "</tr>";

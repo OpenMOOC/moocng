@@ -37,7 +37,6 @@ class Command(BaseCommand):
             for course in Course.objects.all():
                 self._invalidate_course_cache(course)
 
-
     def _invalidate_course_cache(self, course):
         self.stdout.write('Invalidating cache for %s\n' % course)
 

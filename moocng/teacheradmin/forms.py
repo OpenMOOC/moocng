@@ -19,6 +19,7 @@ from tinymce.widgets import TinyMCE
 
 from moocng.courses.forms import AnnouncementForm as CoursesAnnouncementForm
 from moocng.courses.models import Course
+from moocng.forms import BootstrapMixin, BootstrapClearableFileInput, HTML5DateInput
 from moocng.teacheradmin.models import MassiveEmail
 
 
@@ -27,49 +28,40 @@ class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
         exclude = ('slug', 'teachers', 'owner', 'students')
+        widgets = {
+            'start_date': HTML5DateInput(),
+            'end_date': HTML5DateInput(),
+            'certification_banner': BootstrapClearableFileInput(),
+        }
 
     def __init__(self, *args, **kwargs):
         super(CourseForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             widget = field.widget
 
-            if isinstance(widget, forms.widgets.TextInput):
+            if isinstance(widget, (forms.widgets.TextInput, forms.widgets.DateInput)):
                 widget.attrs['class'] = 'input-xlarge'
-
-            elif isinstance(widget, forms.widgets.DateInput):
-                widget.attrs['class'] = 'input-xlarge'
-                widget.attrs['placeholder'] = 'YYYY-MM-DD'
 
             elif isinstance(widget, forms.widgets.Textarea):
                 widget.mce_attrs['width'] = '780'  # bootstrap span10
 
-            elif isinstance(widget, forms.widgets.ClearableFileInput):
-                # In bootstrap the <input checkbox> must be inside the <label>
-                widget.template_with_clear = u'<label for="%(clear_checkbox_id)s">%(clear)s %(clear_checkbox_label)s</label>'
 
-
-class AnnouncementForm(CoursesAnnouncementForm):
+class AnnouncementForm(CoursesAnnouncementForm, BootstrapMixin):
 
     send_email = forms.BooleanField(
         required=False,
         label=_(u'Send the announcement via email to all the students in this course'),
         initial=False,
         help_text=_(u'Please use this with caution as some courses has many students'),
-        )
+    )
 
 
-class MassiveEmailForm(forms.ModelForm):
-
-    subject = forms.CharField(widget=forms.TextInput(
-        attrs={
-            'class': 'span10',
-            'maxlength': 100,
-        }), label=_('Subject'))
-    message = forms.CharField(widget=TinyMCE(
-        attrs={
-            'class': 'span10',
-        }), label=_('Message'))
+class MassiveEmailForm(forms.ModelForm, BootstrapMixin):
 
     class Meta:
         model = MassiveEmail
-        exclude = ('course', 'datetime')
+        exclude = ('course', )
+        widgets = {
+            'subject': forms.TextInput(attrs={'class': 'input-xxlarge'}),
+            'message': TinyMCE(attrs={'class': 'input-xxlarge'}),
+        }

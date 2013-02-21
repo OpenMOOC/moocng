@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import uuid
+
 from django.utils import simplejson
 
 from moocng.api.tests.utils import ApiTestCase
@@ -112,19 +114,20 @@ class CoursesTestCase(ApiTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, BASIC_COURSES)
 
-    def test_get_courses_certificator(self):
+    def test_get_courses_userkey(self):
         owner = self.create_test_user_owner()
 
-        certuser = self.create_test_user_user()
-        self.client = self.apikey_login_user(self.client, certuser)
+        user = self.create_test_user_user()
+        key = str(uuid.uuid4())
+        self.generate_apikeyuser(user, key)
 
-        response = self.client.get('/api/%s/course/%s' % (self.api_name, self.format_append))
+        response = self.client.get('/api/%s/course/%s&key=%s' % (self.api_name, self.format_append, key))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, NO_OBJECTS)
 
         self.create_test_basic_course(owner)
 
-        response = self.client.get('/api/%s/course/%s' % (self.api_name, self.format_append))
+        response = self.client.get('/api/%s/course/%s&key=%s' % (self.api_name, self.format_append, key))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, BASIC_COURSES)
 
@@ -216,18 +219,19 @@ class CourseTestCase(ApiTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, BASIC_COURSE)
 
-    def test_get_course_certificator(self):
+    def test_get_course_userkey(self):
         owner = self.create_test_user_owner()
 
-        certuser = self.create_test_user_user()
-        self.client = self.apikey_login_user(self.client, certuser)
+        user = self.create_test_user_user()
+        key = str(uuid.uuid4())
+        self.generate_apikeyuser(user, key)
 
-        response = self.client.get('/api/%s/course/1/%s' % (self.api_name, self.format_append))
+        response = self.client.get('/api/%s/course/1/%s&key=%s' % (self.api_name, self.format_append, key))
         self.assertEqual(response.status_code, 404)
 
         self.create_test_basic_course(owner)
 
-        response = self.client.get('/api/%s/course/1/%s' % (self.api_name, self.format_append))
+        response = self.client.get('/api/%s/course/1/%s&key=%s' % (self.api_name, self.format_append, key))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, BASIC_COURSE)
 
@@ -293,11 +297,12 @@ class CourseTestCase(ApiTestCase):
         response = self.client.post('/api/%s/course/%s' % (self.api_name, self.format_append), simplejson.loads(BASIC_COURSE))
         self.assertEqual(response.status_code, 405)
 
-    def test_create_course_certificator(self):
-        certuser = self.create_test_user_user()
-        self.client = self.apikey_login_user(self.client, certuser)
+    def test_create_course_userkey(self):
+        user = self.create_test_user_user()
+        key = str(uuid.uuid4())
+        self.generate_apikeyuser(user, key)
 
-        response = self.client.post('/api/%s/course/%s' % (self.api_name, self.format_append), simplejson.loads(BASIC_COURSE))
+        response = self.client.post('/api/%s/course/%s&key=%s' % (self.api_name, self.format_append, key), simplejson.loads(BASIC_COURSE))
         self.assertEqual(response.status_code, 405)
 
     # Update course
@@ -365,15 +370,16 @@ class CourseTestCase(ApiTestCase):
         response = self.client.put('/api/%s/course/1/%s' % (self.api_name, self.format_append), simplejson.loads(BASIC_COURSE))
         self.assertEqual(response.status_code, 405)
 
-    def test_put_course_certificator(self):
+    def test_put_course_userkey(self):
         owner = self.create_test_user_owner()
 
-        certuser = self.create_test_user_user()
-        self.client = self.apikey_login_user(self.client, certuser)
+        user = self.create_test_user_user()
+        key = str(uuid.uuid4())
+        self.generate_apikeyuser(user, key)
 
         self.create_test_basic_course(owner)
 
-        response = self.client.put('/api/%s/course/1/%s' % (self.api_name, self.format_append), simplejson.loads(BASIC_COURSE))
+        response = self.client.put('/api/%s/course/1/%s&key=%s' % (self.api_name, self.format_append, key), simplejson.loads(BASIC_COURSE))
         self.assertEqual(response.status_code, 405)
 
     # Delete course
@@ -441,13 +447,14 @@ class CourseTestCase(ApiTestCase):
         response = self.client.delete('/api/%s/course/1/%s' % (self.api_name, self.format_append), simplejson.loads(BASIC_COURSE))
         self.assertEqual(response.status_code, 405)
 
-    def test_delete_course_certificator(self):
+    def test_delete_course_userkey(self):
         owner = self.create_test_user_owner()
 
-        certuser = self.create_test_user_user()
-        self.client = self.apikey_login_user(self.client, certuser)
+        user = self.create_test_user_user()
+        key = str(uuid.uuid4())
+        self.generate_apikeyuser(user, key)
 
         self.create_test_basic_course(owner)
 
-        response = self.client.delete('/api/%s/course/1/%s' % (self.api_name, self.format_append), simplejson.loads(BASIC_COURSE))
+        response = self.client.delete('/api/%s/course/1/%s&key=%s' % (self.api_name, self.format_append, key), simplejson.loads(BASIC_COURSE))
         self.assertEqual(response.status_code, 405)
