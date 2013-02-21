@@ -437,6 +437,7 @@ class ActivityResource(MongoResource):
         filtering = {
             "unit": ('exact'),
         }
+        validation = AnswerValidation()
 
     def obj_update(self, bundle, request=None, **kwargs):
         user = self._get_or_create_user(request, **kwargs)
