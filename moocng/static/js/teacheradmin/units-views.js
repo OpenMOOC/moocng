@@ -567,8 +567,11 @@ if (_.isUndefined(window.MOOC)) {
                     this.$el.find("#question img").attr("src", question.get("lastFrame"));
                     if (question.has("solutionVideo") && question.get("solutionVideo") !== "") {
                         this.$el.find("button#use-solution-video-btn").trigger("click");
-                    } else {
+                    } else if (question.has("solutionText") && question.get("solutionText") !== "") {
                         this.$el.find("button#use-solution-text-btn").trigger("click");
+                    } else {
+                        // Default
+                        this.$el.find("button#use-solution-video-btn").trigger("click");
                     }
                     if (question.has("solutionVideo") && question.get("solutionVideo") !== "") {
                         this.$el.find("#questionvideo").val("http://youtu.be/" + question.get("solutionVideo"));
