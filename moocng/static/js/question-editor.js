@@ -33,7 +33,8 @@
                 width: 100,
                 height: 12,
                 solution: '',
-                text: ""
+                text: "",
+                feedback: ""
             };
         }
     });
@@ -250,6 +251,7 @@
                 .find('#option-id').html(this.model.get('id')).end()
                 .find('#option-optiontype').change(this.change_property_handler(['optiontype', false])).val(this.model.get('optiontype')).end()
                 .find('#option-solution').change(this.change_property_handler(['solution', false])).val(solution).end()
+                .find('#option-feedback').change(this.change_property_handler(['feedback', false])).val(this.model.get("feedback")).end()
                 .find('#option-x').change(this.change_property_handler(['x', true])).val(this.model.get('x')).end()
                 .find('#option-y').change(this.change_property_handler(['y', true])).val(this.model.get('y'));
 
@@ -268,16 +270,19 @@
                     .find("#option-solution").val(this.model.get("text")).end()
                     .find("#solution-title").addClass("hide").end()
                     .find("#content-title").removeClass("hide");
+                this.$el.find("#option-feedback").parent().parent().addClass("hide");
             } else {
                 this.$el
                     .find("#solution-title").removeClass("hide").end()
                     .find("#content-title").addClass("hide");
+                this.$el.find("#option-feedback").parent().parent().removeClass("hide");
             }
         },
 
         unbind_change: function () {
             this.$el.find("#option-optiontype").unbind('change');
             this.$el.find("#option-solution").unbind('change');
+            this.$el.find("#option-feedback").unbind('change');
             this.$el.find("#option-x").unbind('change');
             this.$el.find("#option-y").unbind('change');
             this.$el.find("#option-width").unbind('change');
@@ -300,6 +305,7 @@
                 .find('#option-id').html('').end()
                 .find('#option-optiontype').val('').end()
                 .find('#option-solution').val('').end()
+                .find('#option-feedback').val('').end()
                 .find('#option-x').val('').end()
                 .find('#option-y').val('').end()
                 .find('#option-width').val('').end()

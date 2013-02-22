@@ -56,7 +56,8 @@ if (_.isUndefined(window.MOOC)) {
                         var question = new MOOC.models.Question({
                             id: parseInt(data.id, 10),
                             lastFrame: data.last_frame,
-                            solution: data.solutionID,
+                            solutionVideo: data.solutionID,
+                            solutionText: data.solution_text,
                             use_last_frame: data.use_last_frame
                         });
                         kq.set("questionInstance", question);

@@ -246,14 +246,17 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 var question = new MOOC.models.Question({
                         id: data.id,
                         lastFrame: data.last_frame,
-                        solution: data.solutionID,
+                        solutionVideo: data.solutionID,
                         use_last_frame: data.use_last_frame
                     });
+                if (data.solution_text !== "") {
+                    question.set("solutionText", data.solution_text);
+                }
                 kqObj.set("questionInstance", question);
                 // Load Options for Question
                 MOOC.ajax.getOptionsByQuestion(question.get("id"), function (data, textStatus, jqXHR) {
                     var options = _.map(data.objects, function (opt) {
-                        return new MOOC.models.Option(_.pick(opt, "id", "optiontype", "x", "y", "width", "height", "solution", "text"));
+                        return new MOOC.models.Option(_.pick(opt, "id", "optiontype", "x", "y", "width", "height", "solution", "text", "feedback"));
                     });
                     question.set("optionList", new MOOC.models.OptionList(options));
                 });
@@ -367,11 +370,14 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         toExecute.push(_.bind(function (callback) {
             var height = this.getVideoHeight(),
                 unit = MOOC.models.course.getByKQ(this.model),
+                questionInstance = this.model.get("questionInstance"),
                 html = "";
 
-            if (!_.isNull(this.model.get("questionInstance").get("solution"))) {
+            if (questionInstance.has("solutionText")) {
+                html = "<div class='solution-wrapper white'>" + questionInstance.get("solutionText") + "</div>";
+            } else if (questionInstance.has("solutionVideo")) {
                 html = '<iframe id="ytplayer" width="100%" height="' + height + 'px" ';
-                html += 'src="//www.youtube.com/embed/' + this.model.get("questionInstance").get("solution");
+                html += 'src="//www.youtube.com/embed/' + this.model.get("questionInstance").get("solutionVideo");
                 html += '?rel=0&origin=' + MOOC.host + '" frameborder="0" allowfullscreen></iframe>';
             } else {
                 MOOC.alerts.show(MOOC.alerts.INFO, MOOC.trans.api.solutionNotReadyTitle, MOOC.trans.api.solutionNotReady);
@@ -512,11 +518,13 @@ MOOC.views.Question = Backbone.View.extend({
         // Set the solution for each option.
         // As there is an answer already, the options will have the solution included
         var self = this, answer = this.model.get('answer'),
-            load_reply = function (oid, solution) {
+            load_reply = function (oid, solution, feedback) {
                 var view = MOOC.views.optionViews[oid],
-                    reply = answer.getReply(oid);
+                    reply = answer.getReply(oid),
+                    model = self.model.get('optionList').get(oid);
                 view.setReply(reply);
-                self.model.get('optionList').get(oid).set('solution', solution);
+                model.set('solution', solution);
+                model.set("feedback", feedback);
                 view.render();
             },
             show_result_msg = function () {
@@ -540,13 +548,13 @@ MOOC.views.Question = Backbone.View.extend({
         if (fetch_solutions) {
             MOOC.ajax.getOptionsByQuestion(this.model.get("id"), function (data, textStatus, jqXHR) {
                 _.each(data.objects, function (opt) {
-                    load_reply(opt.id, opt.solution);
+                    load_reply(opt.id, opt.solution, opt.feedback);
                 });
                 show_result_msg();
             });
         } else {
             this.model.get('optionList').each(function (opt_obj) {
-                load_reply(opt_obj.get('id'), opt_obj.get('solution'));
+                load_reply(opt_obj.get('id'), opt_obj.get('solution'), opt_obj.get("feedback"));
                 show_result_msg();
             });
         }
@@ -589,7 +597,11 @@ MOOC.views.Option = Backbone.View.extend({
                 id: 'option' + this.model.get('id')
             },
             widthScale = 540 / 620,
-            heightScale = 324 / 372;
+            heightScale = 324 / 372,
+            top,
+            left,
+            feedbackBtn,
+            correct;
 
         if (optiontype === 't') {
             width = Math.floor(this.model.get('width') / widthScale) + 'px;';
@@ -600,9 +612,11 @@ MOOC.views.Option = Backbone.View.extend({
             height = height + 'px;';
         }
 
+        top = Math.floor(this.model.get('y') / heightScale);
+        left = Math.floor(this.model.get('x') / widthScale);
         attributes.style = [
-            'top: ' + Math.floor(this.model.get('y') / heightScale) + 'px;',
-            'left: ' + Math.floor(this.model.get('x') / widthScale) + 'px;'
+            'top: ' + top + 'px;',
+            'left: ' + left + 'px;'
         ];
         if (optiontype === 'l') {
             attributes.cols = this.model.get("width");
@@ -623,23 +637,42 @@ MOOC.views.Option = Backbone.View.extend({
             attributes.name = 'radio';
         }
 
+        this.$el.find("#" + attributes.id).remove();
+        this.$el.find("#" + attributes.id + "-fb").remove();
+
         if (this.reply && this.reply.get('option') === this.model.get('id') && optiontype !== 'l') {
+            correct = false;
             if (optiontype === 't') {
                 attributes.value = this.reply.get('value');
                 if (!(_.isUndefined(solution) || _.isNull(solution))) {
-                    attributes['class'] = this.model.isCorrect(this.reply) ? 'correct' : 'incorrect';
+                    correct = this.model.isCorrect(this.reply);
+                    attributes['class'] = correct ? 'correct' : 'incorrect';
                 }
             } else {
                 if (this.reply.get('value')) {
                     attributes.checked = 'checked';
                 }
                 if (!(_.isUndefined(solution) || _.isNull(solution))) {
-                    attributes['class'] = this.model.isCorrect(this.reply) ? 'correct' : 'incorrect';
+                    correct = this.model.isCorrect(this.reply);
+                    attributes['class'] = correct ? 'correct' : 'incorrect';
                 }
             }
+
+            if (!correct && this.model.has("feedback") && this.model.get("feedback") !== "") {
+                feedbackBtn = $("<button class='btn btn-warning' id='" + attributes.id + "-fb'><i class='icon-info-sign'></i></button>");
+                feedbackBtn.css("top", (top - 4) + "px");
+                feedbackBtn.css("left", (left - 32) + "px");
+                feedbackBtn.popover({
+                    trigger: "click",
+                    placement: "top",
+                    content: this.model.get("feedback")
+                });
+                this.$el.append(feedbackBtn);
+            }
         }
-        this.$el.find("#" + attributes.id).remove();
+
         this.$el.append(this.make(tag, attributes, content));
+
 
         return this;
     }

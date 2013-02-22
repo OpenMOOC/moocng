@@ -535,6 +535,8 @@ if (_.isUndefined(window.MOOC)) {
                 "click button#dont-use-last-frame": "useBlankCanvas",
                 "click button#use-last-frame": "useLastFrame",
                 "click button#delete-question": "removeQuestion",
+                "click button#use-solution-video-btn": "toggleSolution",
+                "click button#use-solution-text-btn": "toggleSolution",
                 "click button#go2options": "go2options",
                 "click button#save-kq": "save",
                 "click button#delete-kq": "remove",
@@ -543,7 +545,8 @@ if (_.isUndefined(window.MOOC)) {
 
             initialize: function () {
                 _.bindAll(this, "render", "save", "remove", "goBack",
-                    "checkRequired", "useBlankCanvas", "useLastFrame");
+                    "checkRequired", "useBlankCanvas", "useLastFrame",
+                    "toggleSolution");
             },
 
             render: function () {
@@ -553,14 +556,27 @@ if (_.isUndefined(window.MOOC)) {
                 this.$el.html($("#edit-kq-tpl").text());
 
                 this.$el.find("input#kqtitle").val(this.model.get("title"));
-                this.$el.find("input#kqvideo").val("http://youtu.be/" + this.model.get("videoID"));
+                if (this.model.has("videoID") && this.model.get("videoID") !== "") {
+                    this.$el.find("input#kqvideo").val("http://youtu.be/" + this.model.get("videoID"));
+                }
                 this.$el.find("input#kqweight").val(this.model.get("normalized_weight"));
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
                     this.$el.find("#noquestion").addClass("hide");
                     this.$el.find("#question-tab").removeClass("hide");
                     this.$el.find("#question img").attr("src", question.get("lastFrame"));
-                    this.$el.find("#questionvideo").val("http://youtu.be/" + question.get("solution"));
+                    if (question.has("solutionVideo") && question.get("solutionVideo") !== "") {
+                        this.$el.find("button#use-solution-video-btn").trigger("click");
+                    } else if (question.has("solutionText") && question.get("solutionText") !== "") {
+                        this.$el.find("button#use-solution-text-btn").trigger("click");
+                    } else {
+                        // Default
+                        this.$el.find("button#use-solution-video-btn").trigger("click");
+                    }
+                    if (question.has("solutionVideo") && question.get("solutionVideo") !== "") {
+                        this.$el.find("#questionvideo").val("http://youtu.be/" + question.get("solutionVideo"));
+                    }
+                    this.$el.find("textarea#solution-text").val(question.get("solutionText"));
                     if (!question.get("use_last_frame")) {
                         this.$el.find("#last-frame").addClass("hide");
                         this.$el.find("#no-last-frame").removeClass("hide");
@@ -591,9 +607,23 @@ if (_.isUndefined(window.MOOC)) {
                 this.$el.find("textarea#kqsupplementary").val(this.model.get("supplementary_material"));
                 this.$el.find("textarea#kqcomments").val(this.model.get("teacher_comments"));
                 tinyMCE.init({
-                    mode: "textareas",
+                    mode: "exact",
                     plugins: "paste,searchreplace",
                     width: "380", // bootstrap span5
+                    elements: "kqsupplementary, kqcomments",
+                    theme: "advanced",
+                    theme_advanced_resizing : true,
+                    theme_advanced_toolbar_location: "top",
+                    theme_advanced_buttons1: "bold,italic,underline,strikethrough,separator,undo,redo,separator,cleanup,separator,bullist,numlist",
+                    theme_advanced_buttons2: "",
+                    theme_advanced_buttons3: ""
+                });
+                tinyMCE.init({
+                    mode: "exact",
+                    plugins: "paste,searchreplace",
+                    width: "780", // bootstrap span10
+                    height: "250",
+                    elements: "solution-text",
                     theme: "advanced",
                     theme_advanced_resizing : true,
                     theme_advanced_toolbar_location: "top",
@@ -712,7 +742,13 @@ if (_.isUndefined(window.MOOC)) {
                 this.model.set("teacher_comments", tinyMCE.get("kqcomments").getContent());
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
-                    question.set("solution", extractVideoID(this.$el.find("#questionvideo").val()));
+                    if (this.$el.find("#use-solution-video-btn").is(".active")) {
+                        question.set("solutionVideo", extractVideoID(this.$el.find("#questionvideo").val()));
+                        question.set("solutionText", null);
+                    } else {
+                        question.set("solutionVideo", null);
+                        question.set("solutionText", tinyMCE.get("solution-text").getContent());
+                    }
                     question.save(null, {
                         success: function () {
                             saveKQAjax();
@@ -794,6 +830,21 @@ if (_.isUndefined(window.MOOC)) {
                 this.$el.find("#last-frame").removeClass("hide");
                 this.$el.find("#no-last-frame").addClass("hide");
                 question.set("use_last_frame", true);
+            },
+
+            toggleSolution: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                var id = evt.target.id,
+                    toShow = id.split("-btn")[0],
+                    toHide = "use-solution-video";
+                if (toShow.indexOf("video") > 0) {
+                    toHide = "use-solution-text";
+                }
+                this.$el.find("#" + toShow).removeClass("hide");
+                this.$el.find("#" + toShow + "-btn").addClass("active");
+                this.$el.find("#" + toHide).addClass("hide");
+                this.$el.find("#" + toHide + "-btn").removeClass("active");
             },
 
             removeQuestion: function (evt) {

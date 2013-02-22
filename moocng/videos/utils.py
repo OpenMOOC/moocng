@@ -16,6 +16,8 @@ import urlparse
 
 
 def extract_YT_video_id(url):
+    if url is None:
+        return u'None'
     parsed_url = urlparse.urlparse(url)
     if parsed_url.path != u'/watch':
         # short YT url
