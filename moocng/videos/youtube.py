@@ -153,6 +153,7 @@ class YouTube(object):
     _video_url = None
     title = None
     videos = []
+    _signature_re = re.compile('\w+\.\w+')
     # fmt was an undocumented URL parameter that allowed selecting
     # YouTube quality mode without using player user interface.
 
@@ -304,7 +305,15 @@ class YouTube(object):
 
             for idx in range(len(video_urls)):
                 url = video_urls[idx]
-                signature = video_signatures[idx]
+                if isinstance(video_signatures, basestring):
+                    signature = video_signatures
+                else:
+                    signature = video_signatures[idx]
+                signature = self._signature_re.search(signature)
+                if signature is not None:
+                    signature = signature.group(0)
+                else:
+                    continue
                 try:
                     fmt, data = self._extract_fmt(url)
                     filename = "%s.%s" % (self.filename, data['extension'])
