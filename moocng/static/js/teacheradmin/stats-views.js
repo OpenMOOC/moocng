@@ -192,6 +192,13 @@ if (_.isUndefined(window.MOOC)) {
                 unitsNav.append("<li><a href='#unit" + unit.get("id") + "'>" + MOOC.trans.unit + " " + idx + ": " + title + "</a></li>");
             });
 
+            if (unitsNav.find("li").length === 0) {
+                unitsNav.prev().addClass("disabled").click(function (evt) {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                });
+            }
+
             renderMultiBar(
                 this.$el.find("#units .viewport")[0],
                 chartData,
@@ -309,6 +316,13 @@ if (_.isUndefined(window.MOOC)) {
                     kqsNav.append("<li><a href='#unit" + self.model.get("id") + "/kq" + kq.get("id") + "'>" + MOOC.trans.nugget + " " + idx + ": " + title + "</a></li>");
                 }
             });
+
+            if (kqsNav.find("li").length === 0) {
+                kqsNav.prev().addClass("disabled").click(function (evt) {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                });
+            }
 
             renderMultiBar(
                 this.$el.find("#kqs .viewport")[0],
