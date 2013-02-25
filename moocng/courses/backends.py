@@ -18,6 +18,7 @@ from django.contrib.auth.models import SiteProfileNotAvailable
 from django.core.exceptions import ObjectDoesNotExist
 from djangosaml2.backends import Saml2Backend
 from moocng.teacheradmin.models import Invitation
+from moocng.courses.permissions import moocng_has_perm
 
 
 class Saml2BackendExtension(Saml2Backend):
@@ -83,3 +84,6 @@ class Saml2BackendExtension(Saml2Backend):
             profile.save()
 
         return user
+
+    def has_perm(self, user_obj, perm, obj=None):
+        return moocng_has_perm(user_obj, perm, obj=None)

@@ -27,7 +27,6 @@ PERMISSIONS = {
     'get_passed_courses_as_student': 'courses.can_list_passedcourses'
 }
 
-
 class PublicReadTeachersModifyAuthorization(Authorization):
 
     def is_authorized(self, request, object=None):
@@ -46,6 +45,37 @@ class TeacherAuthorization(Authorization):
                 (is_teacher(request.user, Course.objects.all()) or
                  request.user.is_staff))
 
+
+class ResourceAuthorization(Authorization):
+
+    def is_authorized(self, request, object=None):
+        # Tasypie always return object = None
+        # resources.py  function dispatch  422
+        # TODO. Rewrite Tastypie to return get_obj()
+        klass = self.resource_meta.object_class
+
+        if klass and getattr(klass, '_meta', None):
+            if request.method == 'GET':
+                if object:
+                    permission_code = '%s.get.%s' % (klass._meta.app_label,
+                        klass._meta.module_name)
+                else:
+                    permission_code = '%s.list.%s' % (klass._meta.app_label,
+                        klass._meta.module_name)
+            else:
+                permission_codes = {
+                    'POST': '%s.add_%s',
+                    'PUT': '%s.change_%s',
+                    'DELETE': '%s.delete_%s',
+                }
+                    # cannot map request method to permission code name
+                if request.method in permission_codes:
+                    permission_code = permission_codes[request.method] % (
+                        klass._meta.app_label,
+                        klass._meta.module_name)
+            return request.user.has_perm(permission_code, object)
+        return False
+        
 
 class UserResourceAuthorization(Authorization):
 

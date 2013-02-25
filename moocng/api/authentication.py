@@ -22,6 +22,14 @@ from moocng.api.models import UserApi
 from moocng.courses.utils import is_teacher
 
 
+class AnonymousUserAuthentication(Authentication):
+    def is_authenticated(self, request, **kwargs):
+        return request.user.is_anonymous()
+
+    def get_identifier(self, request):
+        return ''
+
+
 class DjangoAuthentication(Authentication):
 
     def is_authenticated(self, request, **kwargs):
