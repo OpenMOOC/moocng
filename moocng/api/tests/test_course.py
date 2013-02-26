@@ -17,8 +17,8 @@ import uuid
 from django.utils import simplejson
 
 from moocng.api.tests.utils import ApiTestCase
-from moocng.api.tests.outputs import (NO_OBJECTS, BASIC_COURSES, BASIC_COURSE,
-                                      BASIC_COURSE)
+from moocng.courses.models import Course
+from moocng.api.tests.outputs import (NO_OBJECTS, BASIC_COURSES, BASIC_COURSE)
 
 
 class CoursesTestCase(ApiTestCase):
@@ -257,7 +257,7 @@ class CourseTestCase(ApiTestCase):
 
     # Create course
     def test_create_course_annonymous(self):
-        user = self.create_test_user_user()
+        self.create_test_user_user()
         response = self.client.post('/api/%s/course/%s' % (self.api_name, self.format_append), BASIC_COURSE, content_type='application/json')
         self.assertEqual(response.status_code, 401)
 
@@ -295,6 +295,8 @@ class CourseTestCase(ApiTestCase):
 
         response = self.client.post('/api/%s/course/%s' % (self.api_name, self.format_append), BASIC_COURSE, content_type='application/json')
         self.assertEqual(response.status_code, 201)
+
+        self.assertEqual(Course.objects.filter(id=1).count(), 1)
 
     def test_create_course_userkey(self):
         user = self.create_test_user_user()
@@ -346,8 +348,17 @@ class CourseTestCase(ApiTestCase):
 
         self.create_test_basic_course(owner, teacher=teacher1)
 
-        response = self.client.put('/api/%s/course/1/%s' % (self.api_name, self.format_append), BASIC_COURSE, content_type='application/json')
+        new_data = simplejson.loads(BASIC_COURSE)
+        new_data['description'] = "test_basic_description2"
+        new_data['requirements'] = "test_basic_requirements"
+        UPDATED_COURSE = simplejson.dumps(new_data)
+
+        response = self.client.put('/api/%s/course/1/%s' % (self.api_name, self.format_append), UPDATED_COURSE, content_type='application/json')
         self.assertEqual(response.status_code, 204)
+
+        course = Course.objects.get(id=1)
+        self.assertEqual(course.description, u'test_basic_description2')
+        self.assertEqual(course.requirements, u'test_basic_requirements')
 
     def test_put_course_owner(self):
         owner = self.create_test_user_owner()
@@ -355,8 +366,17 @@ class CourseTestCase(ApiTestCase):
 
         self.create_test_basic_course(owner)
 
-        response = self.client.put('/api/%s/course/1/%s' % (self.api_name, self.format_append), BASIC_COURSE, content_type='application/json')
+        new_data = simplejson.loads(BASIC_COURSE)
+        new_data['description'] = "test_basic_description2"
+        new_data['requirements'] = "test_basic_requirements"
+        UPDATED_COURSE = simplejson.dumps(new_data)
+
+        response = self.client.put('/api/%s/course/1/%s' % (self.api_name, self.format_append), UPDATED_COURSE, content_type='application/json')
         self.assertEqual(response.status_code, 204)
+
+        course = Course.objects.get(id=1)
+        self.assertEqual(course.description, u'test_basic_description2')
+        self.assertEqual(course.requirements, u'test_basic_requirements')
 
     def test_put_course_admin(self):
         owner = self.create_test_user_owner()
@@ -366,8 +386,17 @@ class CourseTestCase(ApiTestCase):
 
         self.create_test_basic_course(owner)
 
-        response = self.client.put('/api/%s/course/1/%s' % (self.api_name, self.format_append), BASIC_COURSE, content_type='application/json')
+        new_data = simplejson.loads(BASIC_COURSE)
+        new_data['description'] = "test_basic_description2"
+        new_data['requirements'] = "test_basic_requirements"
+        UPDATED_COURSE = simplejson.dumps(new_data)
+
+        response = self.client.put('/api/%s/course/1/%s' % (self.api_name, self.format_append), UPDATED_COURSE, content_type='application/json')
         self.assertEqual(response.status_code, 204)
+
+        course = Course.objects.get(id=1)
+        self.assertEqual(course.description, u'test_basic_description2')
+        self.assertEqual(course.requirements, u'test_basic_requirements')
 
     def test_put_course_userkey(self):
         owner = self.create_test_user_owner()
@@ -387,7 +416,7 @@ class CourseTestCase(ApiTestCase):
 
         self.create_test_basic_course(owner)
 
-        response = self.client.delete('/api/%s/course/1/%s' % (self.api_name, self.format_append), BASIC_COURSE, content_type='application/json')
+        response = self.client.delete('/api/%s/course/1/%s' % (self.api_name, self.format_append))
         self.assertEqual(response.status_code, 401)
 
     def test_delete_course_user(self):
@@ -398,7 +427,7 @@ class CourseTestCase(ApiTestCase):
 
         self.create_test_basic_course(owner)
 
-        response = self.client.delete('/api/%s/course/1/%s' % (self.api_name, self.format_append), BASIC_COURSE, content_type='application/json')
+        response = self.client.delete('/api/%s/course/1/%s' % (self.api_name, self.format_append))
         self.assertEqual(response.status_code, 401)
 
     def test_delete_course_alum(self):
@@ -409,7 +438,7 @@ class CourseTestCase(ApiTestCase):
 
         self.create_test_basic_course(owner, student=alum1)
 
-        response = self.client.delete('/api/%s/course/1/%s' % (self.api_name, self.format_append), BASIC_COURSE, content_type='application/json')
+        response = self.client.delete('/api/%s/course/1/%s' % (self.api_name, self.format_append))
         self.assertEqual(response.status_code, 401)
 
     def test_delete_course_teacher(self):
@@ -420,7 +449,7 @@ class CourseTestCase(ApiTestCase):
 
         self.create_test_basic_course(owner, teacher=teacher1)
 
-        response = self.client.delete('/api/%s/course/1/%s' % (self.api_name, self.format_append), simplejson.loads(BASIC_COURSE))
+        response = self.client.delete('/api/%s/course/1/%s' % (self.api_name, self.format_append))
         self.assertEqual(response.status_code, 401)
 
     def test_delete_course_owner(self):
@@ -429,11 +458,10 @@ class CourseTestCase(ApiTestCase):
 
         self.create_test_basic_course(owner)
 
-        response = self.client.delete('/api/%s/course/1/%s' % (self.api_name, self.format_append), BASIC_COURSE, content_type='application/json')
+        response = self.client.delete('/api/%s/course/1/%s' % (self.api_name, self.format_append))
         self.assertEqual(response.status_code, 204)
 
-        response = self.client.get('/api/%s/course/1/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(Course.objects.filter(id=1).count(), 0)
 
     def test_delete_course_admin(self):
         owner = self.create_test_user_owner()
@@ -443,11 +471,10 @@ class CourseTestCase(ApiTestCase):
 
         self.create_test_basic_course(owner)
 
-        response = self.client.delete('/api/%s/course/1/%s' % (self.api_name, self.format_append), BASIC_COURSE, content_type='application/json')
+        response = self.client.delete('/api/%s/course/1/%s' % (self.api_name, self.format_append))
         self.assertEqual(response.status_code, 204)
 
-        response = self.client.get('/api/%s/course/1/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(Course.objects.filter(id=1).count(), 0)
 
     def test_delete_course_userkey(self):
         owner = self.create_test_user_owner()
@@ -458,5 +485,5 @@ class CourseTestCase(ApiTestCase):
 
         self.create_test_basic_course(owner)
 
-        response = self.client.delete('/api/%s/course/1/%s&key=%s' % (self.api_name, self.format_append, key), BASIC_COURSE, content_type='application/json')
+        response = self.client.delete('/api/%s/course/1/%s&key=%s' % (self.api_name, self.format_append, key))
         self.assertEqual(response.status_code, 401)

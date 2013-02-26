@@ -27,9 +27,10 @@ PERMISSIONS = {
     'get_passed_courses_as_student': 'courses.can_list_passedcourses'
 }
 
+
 class PublicReadTeachersModifyAuthorization(Authorization):
 
-    def is_authorized(self, request, object=None):
+    def is_authorized(self, request, obj=None):
         if request.method == 'GET':
             return request.user.is_authenticated()
         else:
@@ -40,7 +41,7 @@ class PublicReadTeachersModifyAuthorization(Authorization):
 
 class TeacherAuthorization(Authorization):
 
-    def is_authorized(self, request, object=None):
+    def is_authorized(self, request, obj=None):
         return (request.user.is_authenticated() and
                 (is_teacher(request.user, Course.objects.all()) or
                  request.user.is_staff))
@@ -48,7 +49,7 @@ class TeacherAuthorization(Authorization):
 
 class ResourceAuthorization(Authorization):
 
-    def is_authorized(self, request, object=None):
+    def is_authorized(self, request, obj=None):
         # Tasypie always return object = None
         # resources.py  function dispatch  422
         # TODO. Rewrite Tastypie to return get_obj()
@@ -56,11 +57,11 @@ class ResourceAuthorization(Authorization):
 
         if klass and getattr(klass, '_meta', None):
             if request.method == 'GET':
-                if object:
-                    permission_code = '%s.get.%s' % (klass._meta.app_label,
+                if obj:
+                    permission_code = '%s.get_%s' % (klass._meta.app_label,
                         klass._meta.module_name)
                 else:
-                    permission_code = '%s.list.%s' % (klass._meta.app_label,
+                    permission_code = '%s.list_%s' % (klass._meta.app_label,
                         klass._meta.module_name)
             else:
                 permission_codes = {
@@ -73,13 +74,13 @@ class ResourceAuthorization(Authorization):
                     permission_code = permission_codes[request.method] % (
                         klass._meta.app_label,
                         klass._meta.module_name)
-            return request.user.has_perm(permission_code, object)
+            return request.user.has_perm(permission_code, obj)
         return False
-        
+
 
 class UserResourceAuthorization(Authorization):
 
-    def is_authorized(self, request, object=None):
+    def is_authorized(self, request, obj=None):
         # We check if the method is GET here instead of relaying in the
         # tastypie allowed_methods property because of the overrided urls,
         # those ignore the allowed_methods restriction

@@ -23,22 +23,22 @@ def moocng_has_perm(user, permission_code, obj):
     return False
 
 
-def check_mooc_courses_permission(user, permission_code, obj):
+def check_mooc_courses_permission(user, permission_code, course):
     # TODO. Reviewer. Mod slug perm
-    if permission_code in  ['courses.list.course', 'courses.get.course']:
+    if permission_code in  ['courses.list_course', 'courses.get_course']:
         return True
-    elif permission_code == 'courses.add.course':
-        if user.is_staff():
+    elif permission_code == 'courses.add_course':
+        if user.is_staff:
             return True
         else:
             return False
-    elif permission_code == 'courses.change.course':
-        if user.is_staff() or is_teacher(user, obj) or is_course_owner(user, course):
+    elif permission_code == 'courses.change_course':
+        if user.is_staff or is_course_teacher(user, course) or is_course_owner(user, course):
             return True
         else:
             return False
-    elif permission_code == 'courses.delete.course':
-        if user.is_staff() or is_course_owner(user, course):
+    elif permission_code == 'courses.delete_course':
+        if user.is_staff or is_course_owner(user, course):
             return True
         else:
             return False
@@ -48,10 +48,17 @@ def check_mooc_courses_permission(user, permission_code, obj):
 def check_mooc_units_permission(user, permission_code, obj):
     pass
 
+
 # Exists is_teacher in moocng.courses.utils, but check all courses
 def is_course_teacher(user, course):
-    return course.teachers.filter(id=user.id).exists()
+    if course:
+        return course.teachers.filter(id=user.id).exists()
+    else:
+        return False
+
 
 def is_course_owner(user, course):
-    return course.owner == user
-
+    if course:
+        return course.owner == user
+    else:
+        return False

@@ -86,4 +86,4 @@ class Saml2BackendExtension(Saml2Backend):
         return user
 
     def has_perm(self, user_obj, perm, obj=None):
-        return moocng_has_perm(user_obj, perm, obj=None)
+        return moocng_has_perm(user_obj, perm, obj)
