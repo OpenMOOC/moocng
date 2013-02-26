@@ -6,14 +6,6 @@ from south.v2 import SchemaMigration
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting field 'Question.solution'
-        db.delete_column('courses_question', 'solution')
-
-        # Adding field 'Question.solution_video'
-        db.add_column('courses_question', 'solution_video',
-                      self.gf('django.db.models.fields.URLField')(default='', max_length=200, blank=True),
-                      keep_default=False)
-
         # Adding field 'Question.solution_text'
         db.add_column('courses_question', 'solution_text',
                       self.gf('tinymce.models.HTMLField')(default='', blank=True),
@@ -26,6 +18,10 @@ class Migration(SchemaMigration):
 
         # Changing field 'Announcement.datetime'
         db.alter_column('courses_announcement', 'datetime', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True))
+
+        db.rename_column("courses_question", "solution", "solution_video")
+        db.alter_column("courses_question", "solution_video",
+                        self.gf('django.db.models.fields.URLField')(default='', max_length=200, blank=True))
 
     def backwards(self, orm):
 
