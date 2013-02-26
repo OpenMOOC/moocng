@@ -87,6 +87,7 @@ if (_.isUndefined(window.MOOC)) {
         },
 
         extractVideoID = function (video_url) {
+            video_url = $.trim(video_url);
             if (video_url[video_url.length - 1] === '/') {
                 // Remove trailing '/'
                 video_url = video_url.substring(0, video_url.length - 1);
@@ -481,7 +482,7 @@ if (_.isUndefined(window.MOOC)) {
                 }
                 MOOC.ajax.showLoading();
                 this.model.unset("new");
-                this.model.set("title", this.$el.find("input#title").val());
+                this.model.set("title", $.trim(this.$el.find("input#title").val()));
                 this.model.set("type", this.$el.find("select#type").val());
                 this.model.set("weight", parseInt(this.$el.find("input#weight").val(), 10));
                 this.model.set("start", this.$el.find("input#start_date").val());
@@ -735,7 +736,7 @@ if (_.isUndefined(window.MOOC)) {
                 }, this);
 
                 this.model.unset("new");
-                this.model.set("title", this.$el.find("input#kqtitle").val());
+                this.model.set("title", $.trim(this.$el.find("input#kqtitle").val()));
                 this.model.set("videoID", extractVideoID(this.$el.find("input#kqvideo").val()));
                 this.model.set("normalized_weight", parseInt(this.$el.find("input#kqweight").val(), 10));
                 this.model.set("supplementary_material", tinyMCE.get("kqsupplementary").getContent());
