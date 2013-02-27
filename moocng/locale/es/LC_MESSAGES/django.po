@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-22 07:13-0600\n"
+"POT-Creation-Date: 2013-02-26 06:32-0600\n"
 "PO-Revision-Date: 2013-02-19 12:24+0100\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -1044,34 +1044,40 @@ msgstr "Pendiente"
 msgid "Mark"
 msgstr "Calificación"
 
-#: courses/templates/courses/transcript.html:27
+#: courses/templates/courses/transcript.html:18
+#, python-format
+msgid "You need at least a <strong>%(threshold)s to pass</strong> this course."
+msgstr ""
+"Necesitas al menos un <strong>%(threshold)s para aprobar</strong> este curso."
+
+#: courses/templates/courses/transcript.html:30
 msgid "Congratulations, you have completed"
 msgstr "Enhorabuena, has completado"
 
-#: courses/templates/courses/transcript.html:27
+#: courses/templates/courses/transcript.html:30
 msgid "Here is a badge!"
 msgstr "¡Aquí tienes una medalla!"
 
-#: courses/templates/courses/transcript.html:35
+#: courses/templates/courses/transcript.html:38
 msgid "I want a certificate of completion for this course"
 msgstr "Quiero un certificado de finalización para este curso"
 
-#: courses/templates/courses/transcript.html:36
+#: courses/templates/courses/transcript.html:39
 msgid "Read more"
 msgstr "Leer más"
 
-#: courses/templates/courses/transcript.html:40
+#: courses/templates/courses/transcript.html:42
 msgid ""
 "You need to complete the course before asking for a certificate of "
 "completion."
 msgstr ""
 "Debes completar el curso antes de solicitar un certificado de finalización."
 
-#: courses/templates/courses/transcript.html:43
+#: courses/templates/courses/transcript.html:45
 msgid "No certificate available for this course."
 msgstr "No hay certificación disponible para este curso"
 
-#: courses/templates/courses/transcript.html:47
+#: courses/templates/courses/transcript.html:49
 msgid "You are not enrolled in any course"
 msgstr "No estás matriculado en ningún curso"
 
