@@ -71,7 +71,7 @@ class UserResource(ModelResource):
         else:
             return self.get_object_list(request)
 
-    def override_urls(self):
+    def prepend_urls(self):
         return [
             url(r"^(?P<resource_name>%s)/(?P<pk>[^/]+)/allcourses/$" % self._meta.resource_name,
                 self.wrap_view('get_courses'), name="get_courses_as_student"),
@@ -113,7 +113,6 @@ class UserResource(ModelResource):
 
     def get_courses(self, request, **kwargs):
         self.is_authenticated(request)
-        self.is_authorized(request)
         obj = self.get_object(request, kwargs)
         if isinstance(obj, HttpResponse):
             return obj
@@ -121,9 +120,7 @@ class UserResource(ModelResource):
         return self.alt_get_list(request, courses)
 
     def get_passed_courses(self, request, **kwargs):
-        # In tastypie, the override_urls don't call Authentication/Authorization
         self.is_authenticated(request)
-        self.is_authorized(request)
         obj = self.get_object(request, kwargs)
         if isinstance(obj, HttpResponse):
             return obj
