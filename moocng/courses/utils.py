@@ -44,6 +44,7 @@ def calculate_course_mark(course, user):
 
 
 def calculate_unit_mark(unit, user, use_old_calculus=False):
+    # TODO Optimize per student
     from moocng.courses.models import KnowledgeQuantum
     unit_kqs = KnowledgeQuantum.objects.filter(unit=unit)
     unit_mark = 0
@@ -60,6 +61,7 @@ def calculate_unit_mark(unit, user, use_old_calculus=False):
 
 
 def calculate_kq_mark(kq, user):
+    # TODO Optimize per student
     from moocng.courses.models import Question
     try:
         db = get_db()
