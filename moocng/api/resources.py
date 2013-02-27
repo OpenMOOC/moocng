@@ -147,7 +147,9 @@ class CourseResource(ModelResource):
         resource_name = 'course'
         excludes = ['certification_banner']
         authentication = MultiAuthentication(DjangoAuthentication(), ApiKeyAuthentication(), AnonymousUserAuthentication())
-        authorization = ResourceAuthorization()
+        # TODO. Rollback, The new API don't work with the old tastypie version
+        #authorization = ResourceAuthorization()
+        authorization = DjangoAuthorization()
 
 
 class UnitResource(ModelResource):
@@ -157,7 +159,9 @@ class UnitResource(ModelResource):
         queryset = Unit.objects.all()
         resource_name = 'unit'
         authentication = MultiAuthentication(DjangoAuthentication(), ApiKeyAuthentication(), AnonymousUserAuthentication())
-        authorization = ResourceAuthorization()
+        # TODO. Rollback, The new API don't work with the old tastypie version
+        #authorization = ResourceAuthorization()
+        authorization = PublicReadTeachersModifyAuthorization()
         always_return_data = True
         filtering = {
             "course": ('exact'),
