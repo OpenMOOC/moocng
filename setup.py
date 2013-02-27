@@ -65,7 +65,7 @@ setup(
         'django-celery==3.0.11',
         'django-gravatar==0.1.0',
         'django-tinymce==1.5.1b2',
-        'django-tastypie==0.9.11-openmooc',
+        'django-tastypie==0.9.12',
         'South==0.7.6',
         'psycopg2==2.4.2',
         'pymongo==2.2.1',
