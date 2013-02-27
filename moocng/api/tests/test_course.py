@@ -16,8 +16,8 @@ import uuid
 
 from django.utils import simplejson
 
-from moocng.api.tests.utils import ApiTestCase
 from moocng.courses.models import Course
+from moocng.api.tests.utils import ApiTestCase
 from moocng.api.tests.outputs import (NO_OBJECTS, BASIC_COURSES, BASIC_COURSE)
 
 

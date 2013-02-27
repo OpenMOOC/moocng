@@ -19,7 +19,6 @@ from django.utils.timezone import utc
 from django.utils import simplejson
 
 from moocng.api.tests.utils import ApiTestCase
-
 from moocng.api.tests.outputs import (BASIC_UNITS, BASIC_UNIT)
 
 
@@ -380,3 +379,46 @@ class UnitTestCase(ApiTestCase):
             self.assertEqual(simplejson.loads(response.content), aux_basic_unit)
         else:
             self.assertEqual(response.status_code, 401)
+
+    # Create
+    def test_create_unit_annonymous(self):
+        # TODO: Check all the possible units
+        owner = self.create_test_user_owner()
+        self.create_test_basic_course(owner)
+
+        response = self.client.post('/api/%s/unit/%s' % (self.api_name, self.format_append), BASIC_UNIT, content_type='application/json')
+        self.assertEqual(response.status_code, 401)
+
+    def test_create_unit_user(self):
+        owner = self.create_test_user_owner()
+
+        user = self.create_test_user_user()
+        self.client = self.django_login_user(self.client, user)
+
+        self.create_test_basic_course(owner)
+
+        response = self.client.post('/api/%s/unit/%s' % (self.api_name, self.format_append), BASIC_UNIT, content_type='application/json')
+        self.assertEqual(response.status_code, 401)
+
+    def test_create_unit_alum(self):
+        owner = self.create_test_user_owner()
+
+        alum1 = self.create_test_user_alum1()
+        self.client = self.django_login_user(self.client, alum1)
+
+        self.create_test_basic_course(owner)
+
+        response = self.client.post('/api/%s/unit/%s' % (self.api_name, self.format_append), BASIC_UNIT, content_type='application/json')
+        self.assertEqual(response.status_code, 401)
+
+    def test_create_unit_userkey(self):
+        owner = self.create_test_user_owner()
+
+        user = self.create_test_user_user()
+        key = str(uuid.uuid4())
+        self.generate_apikeyuser(user, key)
+
+        self.create_test_basic_course(owner)
+
+        response = self.client.post('/api/%s/unit/%s' % (self.api_name, self.format_append), BASIC_UNIT, content_type='application/json')
+        self.assertEqual(response.status_code, 401)

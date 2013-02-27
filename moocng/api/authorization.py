@@ -53,6 +53,7 @@ class ResourceAuthorization(Authorization):
         # Tasypie always return object = None
         # resources.py  function dispatch  422
         # TODO. Rewrite Tastypie to return get_obj()
+
         klass = self.resource_meta.object_class
 
         if klass and getattr(klass, '_meta', None):

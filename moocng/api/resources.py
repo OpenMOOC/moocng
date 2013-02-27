@@ -156,8 +156,8 @@ class UnitResource(ModelResource):
     class Meta:
         queryset = Unit.objects.all()
         resource_name = 'unit'
-        authentication = DjangoAuthentication()
-        authorization = PublicReadTeachersModifyAuthorization()
+        authentication = MultiAuthentication(DjangoAuthentication(), ApiKeyAuthentication(), AnonymousUserAuthentication())
+        authorization = ResourceAuthorization()
         always_return_data = True
         filtering = {
             "course": ('exact'),
