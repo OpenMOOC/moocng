@@ -132,7 +132,18 @@ if (_.isUndefined(window.MOOC)) {
             return cookieValue;
         },
 
-        csrftoken = getCookie("csrftoken");
+        csrftoken = getCookie("csrftoken"),
+
+        tinyMCEOptions = {
+            mode: "exact",
+            plugins: "paste,searchreplace",
+            theme: "advanced",
+            theme_advanced_resizing : true,
+            theme_advanced_toolbar_location: "top",
+            theme_advanced_buttons1: "bold,italic,underline,strikethrough,separator,link,unlink,separator,undo,redo,copy,paste,separator,cleanup,separator,bullist,numlist",
+            theme_advanced_buttons2: "",
+            theme_advanced_buttons3: ""
+        };
 
     MOOC.views = {
         List: Backbone.View.extend({
@@ -552,7 +563,8 @@ if (_.isUndefined(window.MOOC)) {
 
             render: function () {
                 var $attachments,
-                    question;
+                    question,
+                    options;
                 $(".viewport").addClass("hide");
                 this.$el.html($("#edit-kq-tpl").text());
 
@@ -607,31 +619,17 @@ if (_.isUndefined(window.MOOC)) {
                 }
                 this.$el.find("textarea#kqsupplementary").val(this.model.get("supplementary_material"));
                 this.$el.find("textarea#kqcomments").val(this.model.get("teacher_comments"));
-                tinyMCE.init({
-                    mode: "exact",
-                    plugins: "paste,searchreplace",
+                options = _.extend(_.clone(tinyMCEOptions), {
                     width: "380", // bootstrap span5
-                    elements: "kqsupplementary, kqcomments",
-                    theme: "advanced",
-                    theme_advanced_resizing : true,
-                    theme_advanced_toolbar_location: "top",
-                    theme_advanced_buttons1: "bold,italic,underline,strikethrough,separator,undo,redo,separator,cleanup,separator,bullist,numlist",
-                    theme_advanced_buttons2: "",
-                    theme_advanced_buttons3: ""
+                    elements: "kqsupplementary, kqcomments"
                 });
-                tinyMCE.init({
-                    mode: "exact",
-                    plugins: "paste,searchreplace",
+                tinyMCE.init(options);
+                options = _.extend(_.clone(tinyMCEOptions), {
                     width: "780", // bootstrap span10
                     height: "250",
-                    elements: "solution-text",
-                    theme: "advanced",
-                    theme_advanced_resizing : true,
-                    theme_advanced_toolbar_location: "top",
-                    theme_advanced_buttons1: "bold,italic,underline,strikethrough,separator,undo,redo,separator,cleanup,separator,bullist,numlist",
-                    theme_advanced_buttons2: "",
-                    theme_advanced_buttons3: ""
+                    elements: "solution-text"
                 });
+                tinyMCE.init(options);
                 $("#kq-editor").removeClass("hide");
                 return this;
             },
