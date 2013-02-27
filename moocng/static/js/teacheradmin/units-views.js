@@ -369,7 +369,6 @@ if (_.isUndefined(window.MOOC)) {
         KQ: Backbone.View.extend({
             events: {
                 "click button.kqedit": "toKQEditor",
-                "
             },
 
             initialize: function () {
@@ -398,7 +397,7 @@ if (_.isUndefined(window.MOOC)) {
                     this.model.get("videoID") + "?rel=0&controls=0&origin=" +
                     MOOC.host + "' frameborder='0'></iframe>";
 
-                video_thumbnail = "<a href='#player-" + this.model.get("videoID") + "'>" +
+                video_thumbnail = "<a class='thumbnail' href='#player-" + this.model.id + "'>" +
                                   "<img class='youtube-thumbnail' src='//img.youtube.com/vi/" +
                                     this.model.get("videoID") + "/1.jpg'/></a>";
 
