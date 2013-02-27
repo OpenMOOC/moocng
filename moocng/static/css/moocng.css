@@ -420,6 +420,9 @@ code {
     width: 106px;
 }
 
+#media-player {
+    width: 660px;
+}
 
 .teacheradmin-units div.loading.backdrop,
 .teacheradmin-stats div.loading.backdrop {

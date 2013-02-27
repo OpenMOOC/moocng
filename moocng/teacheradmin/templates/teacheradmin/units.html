@@ -210,6 +210,19 @@
 </form>
 </script>
 
+
+<script id="modal-video-player-tpl" type="text/template">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="media-player-label"><%= title %></h3>
+  </div>
+  <div class="modal-body">
+    <iframe width="620px" height="372" src="//www.youtube.com/embed/<%= videoID %>?rel=0&controls=0&origin="<%= host %>" frameborder='0'></iframe>
+  </div>
+</script>
+
+
+
 <div class="loading backdrop hide"></div>
 <div class="loading indicator hide"></div>
 
@@ -237,4 +250,8 @@
 <div id="units-container" class="viewport"></div>
 <div id="unit-editor" class="viewport hide"></div>
 <div id="kq-editor" class="viewport hide"></div>
+
+<div id="media-player" class="modal hide fade" tabindex="-1" role="dialog"
+     aria-labelledby="media-player-label" aria-hidden="true">
+</div>
 {% endblock %}
