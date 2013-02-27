@@ -367,7 +367,8 @@ if (_.isUndefined(window.MOOC)) {
 
         KQ: Backbone.View.extend({
             events: {
-                "click button.kqedit": "toKQEditor"
+                "click button.kqedit": "toKQEditor",
+                "
             },
 
             initialize: function () {
@@ -378,6 +379,7 @@ if (_.isUndefined(window.MOOC)) {
                 var html,
                     header,
                     iframe,
+                    video_thumbnail,
                     data;
 
                 header = "<h4>" + this.model.get("title") + "</h4><button " +
@@ -395,13 +397,20 @@ if (_.isUndefined(window.MOOC)) {
                     this.model.get("videoID") + "?rel=0&controls=0&origin=" +
                     MOOC.host + "' frameborder='0'></iframe>";
 
+                video_thumbnail = "<a href='#player-" + this.model.get("videoID") + "'>" +
+                                  "<img class='youtube-thumbnail' src='//img.youtube.com/vi/" +
+                                    this.model.get("videoID") + "/1.jpg'/></a>";
+
                 data = "<p>" + MOOC.trans.kq.teacher_comments + ": " +
                     truncate(_.escape(stripTags(this.model.get("teacher_comments")))) + "</p>" +
                     "<p>" + MOOC.trans.kq.supplementary_material + ": " +
                     truncate(_.escape(stripTags(this.model.get("supplementary_material")))) + "<p/>";
 
+
+                // inlineb(iframe, { style: "margin-left: 30px;" }) +
+
                 html = inlineb({ classes: "drag-handle" }) +
-                    inlineb(iframe, { style: "margin-left: 30px;" }) +
+                    inlineb(video_thumbnail, { style: "margin-left: 30px;" }) +
                     inlineb(block(header), block(data), { classes: "kq-right" });
 
                 this.$el.html(html);
@@ -411,6 +420,10 @@ if (_.isUndefined(window.MOOC)) {
                 MOOC.router.navigate("kq" + this.model.get("id"), {
                     trigger: true
                 });
+            },
+
+            openVideoPlayer: function (evt) {
+
             }
         }),
 
