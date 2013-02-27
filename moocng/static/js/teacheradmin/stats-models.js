@@ -36,11 +36,18 @@ if (_.isUndefined(window.MOOC)) {
         },
 
         getData: function () {
-            return {
-                viewed: this.get("viewed"),
-                answered: this.get("answered"),
-                passed: this.get("passed")
+            var result = {
+                viewed: this.get("viewed")
             };
+
+            if (this.get("answered") >= 0) {
+                result.answered = this.get("answered");
+            }
+            if (this.get("passed") >= 0) {
+                result.passed = this.get("passed");
+            }
+
+            return result;
         }
     });
 
