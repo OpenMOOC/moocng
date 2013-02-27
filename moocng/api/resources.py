@@ -85,10 +85,13 @@ class UserResource(ModelResource):
             if not kwargs['pk'].isdigit():
                 kwargs['email'] = kwargs['pk']
                 del kwargs['pk']
-            obj = self.cached_obj_get(request=request,
+            basic_bundle = self.build_bundle(request=request)
+            obj = self.cached_obj_get(bundle=basic_bundle,
                                       **self.remove_api_resource_names(kwargs))
         except self.Meta.object_class.DoesNotExist:
             return HttpResponse(status=404)
+        except MultipleObjectsReturned:
+            return http.HttpMultipleChoices("More than one resource is found at this URI.")
         return obj
 
     def alt_get_list(self, request, courses):
@@ -98,7 +101,7 @@ class UserResource(ModelResource):
                                                 options=request.GET)
         paginator = resource._meta.paginator_class(
             request.GET, sorted_objects,
-            resource_uri=resource.get_resource_list_uri(),
+            resource_uri=resource.get_resource_uri(),
             limit=resource._meta.limit)
         to_be_serialized = paginator.page()
 

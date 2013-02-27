@@ -18,6 +18,8 @@ from datetime import datetime, timedelta
 from django.utils.timezone import utc
 from django.utils import simplejson
 
+from tastypie.serializers import Serializer
+
 from moocng.api.tests.utils import ApiTestCase
 from moocng.api.tests.outputs import (BASIC_UNITS, BASIC_UNIT)
 
@@ -118,11 +120,14 @@ class UnitsTestCase(ApiTestCase):
         unit.deadline = deadline
         unit.save()
 
+        serializer = Serializer()
+
         aux_basic_units['objects'][0]['unittype'] = u'h'
-        aux_basic_units['objects'][0]['start'] = unicode(start.isoformat())
-        aux_basic_units['objects'][0]['deadline'] = unicode(deadline.isoformat())
+        aux_basic_units['objects'][0]['start'] = unicode(serializer.format_datetime(start))
+        aux_basic_units['objects'][0]['deadline'] = unicode(serializer.format_datetime(deadline))
 
         response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
+
         if is_possible:
             self.assertEqual(response.status_code, 200)
             self.assertEqual(simplejson.loads(response.content), aux_basic_units)
@@ -150,8 +155,8 @@ class UnitsTestCase(ApiTestCase):
         unit.save()
 
         aux_basic_units['objects'][0]['unittype'] = u'h'
-        aux_basic_units['objects'][0]['start'] = unicode(start.isoformat())
-        aux_basic_units['objects'][0]['deadline'] = unicode(deadline.isoformat())
+        aux_basic_units['objects'][0]['start'] = unicode(serializer.format_datetime(start))
+        aux_basic_units['objects'][0]['deadline'] = unicode(serializer.format_datetime(deadline))
 
         response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
         if is_possible:
@@ -181,8 +186,8 @@ class UnitsTestCase(ApiTestCase):
         unit.save()
 
         aux_basic_units['objects'][0]['unittype'] = u'h'
-        aux_basic_units['objects'][0]['start'] = unicode(start.isoformat())
-        aux_basic_units['objects'][0]['deadline'] = unicode(deadline.isoformat())
+        aux_basic_units['objects'][0]['start'] = unicode(serializer.format_datetime(start))
+        aux_basic_units['objects'][0]['deadline'] = unicode(serializer.format_datetime(deadline))
 
         response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
         if is_possible:
@@ -296,9 +301,11 @@ class UnitTestCase(ApiTestCase):
         unit.deadline = deadline
         unit.save()
 
+        serializer = Serializer()
+
         aux_basic_unit['unittype'] = u'h'
-        aux_basic_unit['start'] = unicode(start.isoformat())
-        aux_basic_unit['deadline'] = unicode(deadline.isoformat())
+        aux_basic_unit['start'] = unicode(serializer.format_datetime(start))
+        aux_basic_unit['deadline'] = unicode(serializer.format_datetime(deadline))
 
         response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
         if is_possible:
@@ -328,8 +335,8 @@ class UnitTestCase(ApiTestCase):
         unit.save()
 
         aux_basic_unit['unittype'] = u'h'
-        aux_basic_unit['start'] = unicode(start.isoformat())
-        aux_basic_unit['deadline'] = unicode(deadline.isoformat())
+        aux_basic_unit['start'] = unicode(serializer.format_datetime(start))
+        aux_basic_unit['deadline'] = unicode(serializer.format_datetime(deadline))
 
         response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
         if is_possible:
@@ -359,8 +366,8 @@ class UnitTestCase(ApiTestCase):
         unit.save()
 
         aux_basic_unit['unittype'] = u'h'
-        aux_basic_unit['start'] = unicode(start.isoformat())
-        aux_basic_unit['deadline'] = unicode(deadline.isoformat())
+        aux_basic_unit['start'] = unicode(serializer.format_datetime(start))
+        aux_basic_unit['deadline'] = unicode(serializer.format_datetime(deadline))
 
         response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
         if is_possible:
