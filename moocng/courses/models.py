@@ -241,15 +241,20 @@ class Question(models.Model):
 
     kq = models.ForeignKey(KnowledgeQuantum, unique=True,
                            verbose_name=_(u'Nugget'))
-    solution = models.URLField(verbose_name=_(u'Solution video'),
-                               help_text=_(u'If this belongs to a homework or '
-                                           u'an exam, then the stundents '
-                                           u"won't see this video until the "
-                                           u'deadline is reached.'))
+    solution_video = models.URLField(
+        verbose_name=_(u'Solution video'),
+        help_text=_(u'If this belongs to a homework or an exam, then the '
+                    u'stundents won\'t see this video until the deadline is '
+                    u'reached.'),
+        blank=True, null=False)
+    solution_text = HTMLField(
+        verbose_name=_(u'Solution text'),
+        help_text=_(u'If the solution video is specified then this text will '
+                    u'be ignored.'),
+        blank=True, null=False)
     last_frame = models.ImageField(
         verbose_name=_(u"Last frame of the nugget's video"),
         upload_to='questions', blank=True)
-
     use_last_frame = models.BooleanField(
         verbose_name=_(u'Use the last frame of the video'),
         help_text=_(u'Chooses if the nugget\'s video last frame is used, or a '
@@ -306,6 +311,9 @@ class Option(models.Model):
     solution = models.CharField(verbose_name=_(u'Solution'), max_length=200)
     text = models.CharField(verbose_name=_(u'Label text'), max_length=500,
                             blank=True, null=True)
+    feedback = models.CharField(
+        verbose_name=_(u'Solution feedback for the student'), max_length=200,
+        blank=True, null=False)
 
     class Meta:
         verbose_name = _(u'option')

@@ -34,7 +34,7 @@
 {% block section %}
 <div id="content-main">
 
-<div class="palette">
+<div>
   <select class="input-medium" id="option-optiontype-creation">
     <option value="l">{% trans "Label" %}</option>
     <option value="t">{% trans "Input text" %}</option>
@@ -42,62 +42,9 @@
     <option value="r">{% trans "Radio" %}</option>
   </select>
   <button id="add-option" class="btn">{% trans "Add" %}</button>
-  <table id="option-properties" class="table table-bordered table-condensed">
-    <thead>
-      <th>{% trans "Property" %}</th>
-      <th>{% trans "Value" %}</th>
-    </thead>
-    <tbody>
-      <tr>
-        <td>{% trans "Id" %}</td>
-        <td id="option-id"></td>
-      </tr>
-      <tr>
-        <td>{% trans "Type" %}</td>
-        <td>
-          <select class="input-small" id="option-optiontype">
-            <option value="l">{% trans "Label" %}</option>
-            <option value="t">{% trans "Input text" %}</option>
-            <option value="c">{% trans "Checkbox" %}</option>
-            <option value="r">{% trans "Radio" %}</option>
-          </select>
-        </td>
-      </tr>
-      <tr>
-        <td>
-            <span id="solution-title">{% trans "Solution" %}</span>
-            <span id="content-title" class="hide">{% trans "Content" %}</span>
-        </td>
-        <td><input class="input-small" type="text" id="option-solution" /></td>
-      </tr>
-      <tr>
-        <td>x</td>
-        <td><input class="input-small" type="number" min="0" id="option-x" /></td>
-      </tr>
-      <tr>
-        <td>y</td>
-        <td><input class="input-small" type="number" min="0" id="option-y" /></td>
-      </tr>
-      <tr>
-        <td>{% trans "width" %}</td>
-        <td><input class="input-small" type="number" min="1" id="option-width" /></td>
-      </tr>
-      <tr>
-        <td>{% trans "height" %}</td>
-        <td><input class="input-small" type="number" min="1" id="option-height" /></td>
-      </tr>
-    </tbody>
-    <tfooter>
-      <tr>
-        <td colspan="2">
-          <button id="remove-option" class="btn btn-danger">{% trans "Remove" %}</button>
-        </td>
-      </tr>
-  </table>
 </div>
 
 <form action="{{ form_url }}" method="post">{% csrf_token %}{% block form_top %}{% endblock %}
-
 <fieldset>
 {%if original.use_last_frame %}
     {% if original.last_frame %}
@@ -108,6 +55,66 @@
 {% endif %}
 </fieldset>
 </form>
+
+<div class="span7 no-margin">
+<table id="option-properties" class="table table-bordered table-striped table-condensed">
+    <thead>
+        <th>{% trans "Property" %}</th>
+        <th>{% trans "Value" %}</th>
+        <th>{% trans "Property" %}</th>
+        <th>{% trans "Value" %}</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{% trans "Id" %}</td>
+            <td id="option-id"></td>
+            <td>{% trans "Type" %}</td>
+            <td>
+                <select class="input-medium" id="option-optiontype">
+                <option value="l">{% trans "Label" %}</option>
+                <option value="t">{% trans "Input text" %}</option>
+                <option value="c">{% trans "Checkbox" %}</option>
+                <option value="r">{% trans "Radio" %}</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>x</td>
+            <td><input class="input-small" type="number" min="0" id="option-x" /></td>
+            <td>y</td>
+            <td><input class="input-small" type="number" min="0" id="option-y" /></td>
+        </tr>
+        <tr>
+            <td>{% trans "width" %}</td>
+            <td><input class="input-small" type="number" min="1" id="option-width" /></td>
+            <td>{% trans "height" %}</td>
+            <td><input class="input-small" type="number" min="1" id="option-height" /></td>
+        </tr>
+        <thead>
+            <th>{% trans "Property" %}</th>
+            <th colspan="3">{% trans "Value" %}</th>
+        </thead>
+        <tr>
+            <td>
+                <span id="solution-title">{% trans "Solution" %}</span>
+                <span id="content-title" class="hide">{% trans "Content" %}</span>
+            </td>
+            <td colspan="3"><input type="text" class="input-xlarge" id="option-solution" /></td>
+        </tr>
+        <tr>
+            <td>{% trans "Feedback" %}</td>
+            <td colspan="3"><input type="text" class="input-xlarge" id="option-feedback" maxlength="200" /></td>
+        </tr>
+    </tbody>
+    <tfooter>
+        <tr>
+            <td colspan="4">
+                <button id="remove-option" class="btn btn-danger">{% trans "Remove" %}</button>
+            </td>
+        </tr>
+    </tfooter>
+</table>
+</div>
 
 </div>
 

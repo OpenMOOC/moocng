@@ -134,10 +134,14 @@ if (_.isUndefined(window.MOOC)) {
                 values: [
                     { x: 0, y: data.enrolled },
                     { x: 1, y: data.started },
-                    { x: 2, y: data.completed },
-                    { x: 3, y: data.passed }
+                    { x: 2, y: data.completed }
                 ]
             }];
+
+            // If the course has no threshold then there is no passed field
+            if (!_.isUndefined(data.passed)) {
+                chartData[0].values.push({ x: 3, y: data.passed });
+            }
 
             aux = {
                 0: MOOC.trans.enrolled,
@@ -166,10 +170,16 @@ if (_.isUndefined(window.MOOC)) {
             }, {
                 key: MOOC.trans.completed,
                 values: []
-            }, {
-                key: MOOC.trans.passed,
-                values: []
             }];
+
+            // If the course doesn't have a passed field then the units doesn't
+            // have it either
+            if (!_.isUndefined(data.passed)) {
+                chartData.push({
+                    key: MOOC.trans.passed,
+                    values: []
+                });
+            }
 
             unitsNav = this.$el.find("#units-navigation");
 
@@ -184,13 +194,22 @@ if (_.isUndefined(window.MOOC)) {
                     x: title,
                     y: unit.get("completed")
                 });
-                chartData[2].values.push({
-                    x: title,
-                    y: unit.get("passed")
-                });
+                if (chartData.length > 2) {
+                    chartData[2].values.push({
+                        x: title,
+                        y: unit.get("passed")
+                    });
+                }
 
                 unitsNav.append("<li><a href='#unit" + unit.get("id") + "'>" + MOOC.trans.unit + " " + idx + ": " + title + "</a></li>");
             });
+
+            if (unitsNav.find("li").length === 0) {
+                unitsNav.prev().addClass("disabled").click(function (evt) {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                });
+            }
 
             renderMultiBar(
                 this.$el.find("#units .viewport")[0],
@@ -251,10 +270,13 @@ if (_.isUndefined(window.MOOC)) {
                 key: MOOC.trans.evolution,
                 values: [
                     { x: 0, y: data.started },
-                    { x: 1, y: data.completed },
-                    { x: 2, y: data.passed }
+                    { x: 1, y: data.completed }
                 ]
             }];
+
+            if (!_.isUndefined(data.passed)) {
+                chartData[0].values.push({ x: 2, y: data.passed });
+            }
 
             aux = {
                 0: MOOC.trans.started,
@@ -290,25 +312,48 @@ if (_.isUndefined(window.MOOC)) {
             kqsNav = this.$el.find("#kqs-navigation");
 
             this.model.get("kqs").each(function (kq, idx) {
-                var title = kq.get("title");
+                var title = kq.get("title"),
+                    kqId = kq.get("id"),
+                    aux;
+
+                kq = kq.getData();
 
                 chartData[0].values.push({
                     x: title,
-                    y: kq.get("viewed")
-                });
-                chartData[1].values.push({
-                    x: title,
-                    y: kq.get("answered")
-                });
-                chartData[2].values.push({
-                    x: title,
-                    y: kq.get("passed")
+                    y: kq.viewed
                 });
 
-                if (kq.get("answered") >= 0) {
-                    kqsNav.append("<li><a href='#unit" + self.model.get("id") + "/kq" + kq.get("id") + "'>" + MOOC.trans.nugget + " " + idx + ": " + title + "</a></li>");
+                // Some kqs doesn't have a question
+                aux = kq.answered;
+                if (_.isUndefined(aux)) {
+                    aux = 0;
+                }
+                chartData[1].values.push({
+                    x: title,
+                    y: aux
+                });
+
+                // Some kqs doesn't have a question
+                aux = kq.passed;
+                if (_.isUndefined(aux)) {
+                    aux = 0;
+                }
+                chartData[2].values.push({
+                    x: title,
+                    y: aux
+                });
+
+                if (!_.isUndefined(kq.answered)) {
+                    kqsNav.append("<li><a href='#unit" + self.model.get("id") + "/kq" + kqId + "'>" + MOOC.trans.nugget + " " + idx + ": " + title + "</a></li>");
                 }
             });
+
+            if (kqsNav.find("li").length === 0) {
+                kqsNav.prev().addClass("disabled").click(function (evt) {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                });
+            }
 
             renderMultiBar(
                 this.$el.find("#kqs .viewport")[0],
@@ -353,21 +398,27 @@ if (_.isUndefined(window.MOOC)) {
                 [data.viewed, data.answered]
             );
 
-            renderPie(
-                this.$el.find("#passed .viewport")[0],
-                [MOOC.trans.notPassed, MOOC.trans.passed],
-                [data.viewed, data.passed]
-            );
+            if (!_.isUndefined(data.passed)) {
+                this.$el.find("#answered").removeClass("span10").addClass("span5");
+                this.$el.find("#passed").removeClass("hide");
+                renderPie(
+                    this.$el.find("#passed .viewport")[0],
+                    [MOOC.trans.notPassed, MOOC.trans.passed],
+                    [data.viewed, data.passed]
+                );
+            }
 
             chartData = [{
                 key: MOOC.trans.evolution,
                 values: [
                     { x: 0, y: data.viewed },
-                    { x: 1, y: data.answered },
-                    { x: 2, y: data.passed }
+                    { x: 1, y: data.answered }
                 ]
             }];
 
+            if (!_.isUndefined(data.passed)) {
+                chartData[0].values.push({ x: 2, y: data.passed });
+            }
             aux = {
                 0: MOOC.trans.viewed,
                 1: MOOC.trans.answered,

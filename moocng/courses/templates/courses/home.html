@@ -29,12 +29,16 @@
 
   </section>
   <div class="span4">
-    <div class="media-box">
-      <img src="{{ theme.right_banner1 }}" alt="" />
-    </div>
-    <div class="media-box">
-      <img src="{{ theme.right_banner2 }}" alt="" />
-    </div>
+    {% if theme.right_banner1 %}
+        <div class="media-box">
+            <img src="{{ theme.right_banner1 }}" alt="" />
+        </div>
+    {% endif %}
+    {% if theme.right_banner2 %}
+        <div class="media-box">
+            <img src="{{ theme.right_banner2 }}" alt="" />
+        </div>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

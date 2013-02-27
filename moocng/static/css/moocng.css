@@ -254,8 +254,13 @@ img.award {
 }
 
 .classroom #kq-video input,
-.classroom #kq-video textarea {
+.classroom #kq-video textarea,
+.classroom #kq-video .btn {
     position: absolute;
+}
+
+.classroom #kq-video .btn {
+    padding: 3px;
 }
 
 .classroom #kq-video textarea.text {
@@ -300,6 +305,13 @@ img.award {
 
 .classroom #kq-q-buttons {
     text-align: center;
+}
+
+.classroom .solution-wrapper {
+    padding: 10px;
+    border: 1px solid #e5e5e5;
+    height: 350px;  /* it's 372 counting the padding and border*/
+    overflow: auto;
 }
 
 .announcement div.content {

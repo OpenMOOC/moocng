@@ -334,13 +334,13 @@ class QuestionResource(ModelResource):
             Q(kq__unit__start__isnull=False, kq__unit__start__lte=datetime.now)
         )
 
-    def dehydrate_solution(self, bundle):
+    def dehydrate_solution_video(self, bundle):
         # Only return solution if the deadline has been reached, or there is
         # no deadline
         unit = bundle.obj.kq.unit
         if unit.unittype != 'n' and unit.deadline > datetime.now(unit.deadline.tzinfo):
             return None
-        return bundle.obj.solution
+        return bundle.obj.solution_video
 
     def dehydrate_solutionID(self, bundle):
         # Only return solution if the deadline has been reached, or there is
@@ -348,7 +348,15 @@ class QuestionResource(ModelResource):
         unit = bundle.obj.kq.unit
         if unit.unittype != 'n' and unit.deadline > datetime.now(unit.deadline.tzinfo):
             return None
-        return extract_YT_video_id(bundle.obj.solution)
+        return extract_YT_video_id(bundle.obj.solution_video)
+
+    def dehydrate_solution_text(self, bundle):
+        # Only return solution if the deadline has been reached, or there is
+        # no deadline
+        unit = bundle.obj.kq.unit
+        if unit.unittype != 'n' and unit.deadline > datetime.now(unit.deadline.tzinfo):
+            return None
+        return bundle.obj.solution_text
 
     def dehydrate_last_frame(self, bundle):
         try:
@@ -372,7 +380,7 @@ class PrivateQuestionResource(ModelResource):
         }
 
     def dehydrate_solutionID(self, bundle):
-        return extract_YT_video_id(bundle.obj.solution)
+        return extract_YT_video_id(bundle.obj.solution_video)
 
     def dehydrate_last_frame(self, bundle):
         try:
@@ -391,8 +399,10 @@ class PrivateQuestionResource(ModelResource):
 
     def hydrate_solutionID(self, bundle):
         if 'solutionID' in bundle.data and bundle.data['solutionID'] is not None:
-            video = 'http://youtu.be/' + bundle.data['solutionID']
-            bundle.data['solution'] = video
+            if bundle.data['solutionID'] != '':
+                bundle.data['solution_video'] = 'http://youtu.be/' + bundle.data['solutionID']
+            else:
+                bundle.data['solution_video'] = ''
         return bundle
 
 
@@ -437,6 +447,16 @@ class OptionResource(ModelResource):
                 if unit.unittype == 'n' or not(unit.deadline and datetime.now(unit.deadline.tzinfo) < unit.deadline):
                     solution = bundle.obj.solution
         return solution
+
+    def dehydrate_feedback(self, bundle):
+        # Only return the feedback if the user has given an answer
+        feedback = None
+        if self.user:
+            answer = self.user['questions'].get(
+                unicode(bundle.obj.question.id), None)
+            if answer is not None:
+                feedback = bundle.obj.feedback
+        return feedback
 
 
 class AnswerResource(MongoResource):

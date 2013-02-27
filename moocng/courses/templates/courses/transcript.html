@@ -14,6 +14,9 @@
     <div class="box" id="{{ course_info.course.slug }}" name="{{ course_info.course.slug }}">
       <h2><a href="{{ course_info.course.get_absolute_url }}">{{ course_info.course.name }}</a></h2>
       <p>{% trans "Mark" %}: <b>{{ course_info.mark|floatformat:"-2" }}</b>/10 </p>
+        {% if course_info.course.threshold %}
+            <p>{% blocktrans with threshold=course_info.course.threshold %}You need at least a <strong>{{ threshold }} to pass</strong> this course.{% endblocktrans %}</p>
+        {% endif %}
         {% if course_info.units_info %}
             <ul>
             {% for unit_info in course_info.units_info %}
@@ -35,7 +38,6 @@
                 <p><a target="_new" href="{{ course_info.cert_url }}" class="btn btn-success">{% trans "I want a certificate of completion for this course" %}</a>
                     <a target="_new" href="{% url cert %}" ><small>{% trans "Read more" %}</small></a>
                 </p>
-                
             {% else %}
                 <p>{% trans "You need to complete the course before asking for a certificate of completion." %}</p>
             {% endif %}

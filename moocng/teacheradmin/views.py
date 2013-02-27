@@ -57,29 +57,28 @@ def teacheradmin_stats(request, course_slug):
         'completed': 0
     }
 
-    if course.threshold is not None:
-        # if the course doesn't support certification, then don't return the
-        # 'passed' stat since it doesn't apply
-        data['passed'] = 0
-        for student in course.students.all():
-            if calculate_course_mark(course, student)[0] >= float(course.threshold):
-                data['passed'] += 1
+    # if course.threshold is not None:
+    #     # if the course doesn't support certification, then don't return the
+    #     # 'passed' stat since it doesn't apply
+    #     data['passed'] = 0
+    #     for student in course.students.all():
+    #         if calculate_course_mark(course, student)[0] >= float(course.threshold):
+    #             data['passed'] += 1
 
-    units = course.unit_set.all()
-    kqs = 0
-    for unit in units:
-        kqs += unit.knowledgequantum_set.count()
+    kqs = [str(kq.id)
+           for kq in KnowledgeQuantum.objects.filter(unit__course=course)]
 
-    for student in course.students.all():
-        user_activity_list = activity.find_one({'user': student.id}, safe=True)
+    data["completed"] = activity.find({
+        "courses.%s" % course.id: {"$exists": True},
+        "courses.%s.kqs" % course.id: {"$all": kqs}
+    }).count()
+    print data["completed"]
 
-        if user_activity_list is not None:
-            visited_kqs = user_activity_list.get('courses', {}).get(unicode(course.id), {}).get('kqs', [])
-
-            if len(visited_kqs) > 0:
-                data['started'] += 1
-            if len(visited_kqs) == kqs:
-                data['completed'] += 1
+    data["started"] = activity.find({
+        "courses.%s" % course.id: {
+            "$exists": True
+        }
+    }).count()
 
     return render_to_response('teacheradmin/stats.html', {
         'course': course,
@@ -106,31 +105,29 @@ def teacheradmin_stats_units(request, course_slug):
             'completed': 0
         }
 
-        if course.threshold is not None:
-            # if the course doesn't support certification, then don't return
-            # the 'passed' stat since it doesn't apply
-            unit_data['passed'] = 0
-            for student in course.students.all():
-                if calculate_unit_mark(unit, student, use_old_calculus)[0] >= float(course.threshold):
-                    unit_data['passed'] += 1
+        # if course.threshold is not None:
+        #     # if the course doesn't support certification, then don't return
+        #     # the 'passed' stat since it doesn't apply
+        #     unit_data['passed'] = 0
+        #     for student in course.students.all():
+        #         if calculate_unit_mark(unit, student, use_old_calculus)[0] >= float(course.threshold):
+        #             unit_data['passed'] += 1
 
-        kqs = [kq.id for kq in unit.knowledgequantum_set.all()]
-        for student in course.students.all():
-            user_activity_list = activity.find_one({'user': student.id}, safe=True)
+        kqs = [str(kq.id) for kq in unit.knowledgequantum_set.all()]
 
-            if user_activity_list is not None:
-                visited_kqs = user_activity_list.get('courses', {}).get(unicode(course.id), {}).get('kqs', [])
+        unit_data["completed"] = activity.find({
+            "courses.%s" % course.id: {"$exists": True},
+            "courses.%s.kqs" % course.id: {
+                "$all": kqs
+            }
+        }).count()
 
-                started = 0
-                completed = 0
-                for kq in visited_kqs:
-                    if int(kq) in kqs:
-                        started = 1
-                        completed += 1
-
-                unit_data['started'] += started
-                if len(kqs) == completed:
-                    unit_data['completed'] += 1
+        unit_data["started"] = activity.find({
+            "courses.%s" % course.id: {"$exists": True},
+            "courses.%s.kqs" % course.id: {
+                "$in": kqs
+            }
+        }).count()
 
         data.append(unit_data)
 
@@ -163,30 +160,24 @@ def teacheradmin_stats_kqs(request, course_slug):
             question = kq.question_set.all()[0]
             kq_data['answered'] = 0
 
-            if course.threshold is not None:
-                # if the course doesn't support certification, then don't
-                # return the 'passed' stat since it doesn't apply
-                kq_data['passed'] = 0
-                for student in course.students.all():
-                    if calculate_kq_mark(kq, student) >= float(course.threshold):
-                        kq_data['passed'] += 1
+            # if course.threshold is not None:
+            #     # if the course doesn't support certification, then don't
+            #     # return the 'passed' stat since it doesn't apply
+            #     kq_data['passed'] = 0
+            #     for student in course.students.all():
+            #         if calculate_kq_mark(kq, student) >= float(course.threshold):
+            #             kq_data['passed'] += 1
 
-        for student in course.students.all():
-            user_activity_list = activity.find_one({'user': student.id}, safe=True)
+        kq_data["viewed"] = activity.find({
+            "courses.%s.kqs" % course.id: str(kq.id)
+        }).count()
 
-            if user_activity_list is not None:
-                visited_kqs = user_activity_list.get('courses', {}).get(unicode(course.id), {}).get('kqs', [])
-                visited_kqs = [int(vkq) for vkq in visited_kqs]
-
-                if kq.id in visited_kqs:
-                    kq_data['viewed'] += 1
-
-            if question is not None:
-                user_answer_list = answers.find_one({'user': student.id}, safe=True)
-                if user_answer_list is not None:
-                    answer = user_answer_list.get('questions', {}).get(unicode(question.id))
-                    if answer:
-                        kq_data['answered'] += 1
+        for question in kq.question_set.all():
+            kq_data["answered"] = answers.find({
+                "questions.%s" % question.id: {
+                    "$exists": True
+                }
+            }).count()
 
         data.append(kq_data)
 
@@ -277,6 +268,7 @@ def teacheradmin_units_question(request, course_slug, kq_id):
                 'id': opt.id,
                 'optiontype': opt.optiontype,
                 'solution': opt.solution,
+                'feedback': opt.feedback,
                 'text': opt.text,
                 'x': opt.x, 'y': opt.y,
                 'width': opt.width, 'height': opt.height,
@@ -315,6 +307,8 @@ def teacheradmin_units_option(request, course_slug, kq_id, option_id):
             'id': option.id,
             'optiontype': option.optiontype,
             'solution': option.solution,
+            'feedback': option.feedback,
+            'text': option.text,
             'x': option.x, 'y': option.y,
             'width': option.width, 'height': option.height,
         }
