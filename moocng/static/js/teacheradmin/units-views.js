@@ -670,7 +670,7 @@ if (_.isUndefined(window.MOOC)) {
                     if (input.files) {
                         fakeForm = new FormData();
                         fakeForm.append("attachment", input.files[0]);
-                        $.ajax(window.location.pathname + "attachment?kq=" + this.model.get("id"), {
+                        $.ajax(window.location.pathname + "attachment/?kq=" + this.model.get("id"), {
                             type: "POST",
                             headers: {
                                 "X-CSRFToken": csrftoken
@@ -801,7 +801,7 @@ if (_.isUndefined(window.MOOC)) {
                 evt.preventDefault();
                 evt.stopPropagation();
                 MOOC.ajax.showLoading();
-                $.ajax(window.location.pathname + "forcevideoprocess?kq=" + this.model.get("id"), {
+                $.ajax(window.location.pathname + "forcevideoprocess/?kq=" + this.model.get("id"), {
                     success: function () {
                         MOOC.ajax.hideLoading();
                         MOOC.ajax.showAlert("forced");
@@ -919,7 +919,7 @@ if (_.isUndefined(window.MOOC)) {
                     id = $el.attr("id").split('-')[1],
                     rows = $el.parent().find("tr").length;
                 MOOC.ajax.showLoading();
-                $.ajax(window.location.pathname + "attachment?attachment=" + id, {
+                $.ajax(window.location.pathname + "attachment/?attachment=" + id, {
                     type: "DELETE",
                     headers: {
                         "X-CSRFToken": csrftoken

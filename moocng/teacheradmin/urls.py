@@ -36,7 +36,7 @@ urlpatterns = patterns(
         'teacheradmin_units_option', name='teacheradmin_units_option'),
 
     url(r'^teachers/$', 'teacheradmin_teachers', name='teacheradmin_teachers'),
-    url(r'^teachers/(?P<email_or_id>[^/]+)/$', 'teacheradmin_teachers_delete',
+    url(r'^teachers/delete/(?P<email_or_id>[^/]+)/$', 'teacheradmin_teachers_delete',
         name='teacheradmin_teachers_delete'),
     url(r'^teachers/invite/$', 'teacheradmin_teachers_invite',
         name='teacheradmin_teachers_invite'),

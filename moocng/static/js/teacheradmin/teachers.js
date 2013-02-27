@@ -74,7 +74,7 @@ jQuery(document).ready(function () {
                 id = row.children().eq(1).text();
             }
 
-            $.ajax(MOOC.basePath + id + "/", {
+            $.ajax(MOOC.basePath + "delete/" + id + "/", {
                 headers: {
                     "X-CSRFToken": csrftoken
                 },
@@ -117,7 +117,7 @@ jQuery(document).ready(function () {
                 }
             }
 
-            $.ajax(MOOC.basePath + "invite", {
+            $.ajax(MOOC.basePath + "invite/", {
                 data: {
                     data: data
                 },
@@ -167,7 +167,7 @@ jQuery(document).ready(function () {
             var data = $(evt.target).parent().parent().children()[0],
                 originalOwner = $("table span.label.owner").parent().parent();
             data = $(data).text();
-            $.ajax(MOOC.basePath + "transfer", {
+            $.ajax(MOOC.basePath + "transfer/", {
                 data: {
                     data: data
                 },
@@ -201,7 +201,7 @@ jQuery(document).ready(function () {
             var new_order = $(this).children("tr").map(function (index, element) {
                 return $(element).children("td").eq(0).text();
             }).get();
-            $.ajax(MOOC.basePath + "reorder", {
+            $.ajax(MOOC.basePath + "reorder/", {
                 data: JSON.stringify(new_order),
                 headers: {
                     "X-CSRFToken": csrftoken
