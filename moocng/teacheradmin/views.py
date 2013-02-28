@@ -508,6 +508,8 @@ def teacheradmin_categories(request, course_slug):
                     messages.error(request, _(u'There were problems with some data you introduced, please fix them and try again.'))
                     return HttpResponseRedirect(
                         reverse('teacheradmin_categories', args=[course_slug]))
+        admin_cats = course.categories.filter(only_admins=True)
+        category_list.extend(admin_cats)
         course.categories.clear()
         course.categories.add(*category_list)
         course.save()
