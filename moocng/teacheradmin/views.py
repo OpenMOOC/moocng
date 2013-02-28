@@ -501,7 +501,8 @@ def teacheradmin_categories(request, course_slug):
             if key.startswith('cat-'):
                 slug = key[4:]
                 try:
-                    category = Category.objects.get(slug=slug)
+                    category = Category.objects.get(slug=slug,
+                                                    only_admins=False)
                     category_list.append(category)
                 except Category.DoesNotExist:
                     messages.error(request, _(u'There were problems with some data you introduced, please fix them and try again.'))
@@ -517,7 +518,7 @@ def teacheradmin_categories(request, course_slug):
     counter = 0
     categories = []
     aux = []
-    for cat in Category.objects.all():
+    for cat in Category.objects.filter(only_admins=False):
         counter += 1
         aux.append({
             'cat': cat,

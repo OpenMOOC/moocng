@@ -14,6 +14,9 @@ class Category(models.Model):
     courses = models.ManyToManyField(Course, related_name='categories',
                                      verbose_name=_(u'Courses'),
                                      blank=True, null=True)
+    only_admins = models.BooleanField(
+        verbose_name=_(u'Only administrators can asign this category'),
+        default=False)
 
     class Meta:
         verbose_name = _(u'category')
