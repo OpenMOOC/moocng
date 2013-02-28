@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-26 06:32-0600\n"
+"POT-Creation-Date: 2013-02-28 13:23-0600\n"
 "PO-Revision-Date: 2013-02-19 12:24+0100\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -151,38 +151,68 @@ msgstr ""
 msgid "This category doesn't have an icon"
 msgstr "Esta categoría no tiene un icono asociado"
 
-#: categories/models.py:9 courses/models.py:39
+#: categories/models.py:10 courses/models.py:39
 msgid "Name"
 msgstr "Nombre"
 
-#: categories/models.py:11 courses/models.py:40 courses/models.py:129
+#: categories/models.py:12 courses/models.py:40 courses/models.py:129
 msgid "Slug"
 msgstr "Slug"
 
-#: categories/models.py:12 categories/templates/categories/category.html:11
-#: categories/templates/categories/category.html:22
+#: categories/models.py:14 categories/templates/categories/category.html:15
+#: categories/templates/categories/category.html:25
 #: teacheradmin/templates/teacheradmin/categories.html:16
 msgid "Category's icon"
 msgstr "Icono de la categoría"
 
-#: categories/models.py:15 courses/templates/courses/home.html:18
+#: categories/models.py:16
+msgid "The image dimensions should be 140px x 140px"
+msgstr "Las dimensiones de la imagen deberían ser 140px x 140px"
+
+#: categories/models.py:18
+msgid "Background banner for the category's header"
+msgstr "Imagen de fondo para la cabecera de la categoría"
+
+#: categories/models.py:20
+msgid "The image dimensions should be 940px x 240px"
+msgstr "Las dimensiones de la imagen deberían ser 940px x 240px"
+
+#: categories/models.py:22 courses/templates/courses/home.html:18
 msgid "Courses"
 msgstr "Cursos"
 
-#: categories/models.py:19
+#: categories/models.py:25
+msgid "Only administrators can asign this category"
+msgstr "Sólo los administradores pueden asignar esta categoría"
+
+#: categories/models.py:29
 msgid "category"
 msgstr "categoría"
 
-#: categories/models.py:20
+#: categories/models.py:30
 msgid "categories"
 msgstr "categorías"
 
-#: categories/templates/categories/category.html:37
+#: categories/templates/categories/category.html:12
+msgid "Category's background banner"
+msgstr "Fondo de la categoría"
+
+#: categories/templates/categories/category.html:45
+#: courses/templates/courses/overview.html:104
+msgid "Classes Start"
+msgstr "Inicio de las Clases"
+
+#: categories/templates/categories/category.html:48
+#: courses/templates/courses/overview.html:107
+msgid "Classes End"
+msgstr "Final de las Clases"
+
+#: categories/templates/categories/category.html:58
 #: teacheradmin/templates/teacheradmin/categories.html:32
 msgid "Empty"
 msgstr "Vacío"
 
-#: categories/templates/categories/category.html:38
+#: categories/templates/categories/category.html:59
 msgid "There are no courses with this category or categories associated yet."
 msgstr "No hay cursos aún que tengan esta categoría o categorías asociada."
 
@@ -993,14 +1023,6 @@ msgstr "Información"
 msgid "Course Code"
 msgstr "Código del Curso"
 
-#: courses/templates/courses/overview.html:104
-msgid "Classes Start"
-msgstr "Inicio de las Clases"
-
-#: courses/templates/courses/overview.html:107
-msgid "Classes End"
-msgstr "Final de las Clases"
-
 #: courses/templates/courses/overview.html:110
 msgid "Estimated Effort"
 msgstr "Esfuerzo Estimado"
@@ -1187,16 +1209,16 @@ msgstr ""
 msgid "You have been removed as teacher from \"%s\""
 msgstr "Ya no eres profesor de \"%s\""
 
-#: teacheradmin/views.py:267
+#: teacheradmin/views.py:258
 #, python-format
 msgid "The KQ with the %s id doesn't exists"
 msgstr "La Píldora con el id %s no existe"
 
-#: teacheradmin/views.py:486 teacheradmin/views.py:522
+#: teacheradmin/views.py:477 teacheradmin/views.py:516
 msgid "Your changes were saved."
 msgstr "Sus cambios han sido guardados."
 
-#: teacheradmin/views.py:491 teacheradmin/views.py:516
+#: teacheradmin/views.py:482 teacheradmin/views.py:508
 msgid ""
 "There were problems with some data you introduced, please fix them and try "
 "again."
@@ -1204,7 +1226,7 @@ msgstr ""
 "Hubo problemas con algunos de los datos introducidos, por favor, corrija los "
 "fallos y pruebe de nuevo."
 
-#: teacheradmin/views.py:602 teacheradmin/views.py:644
+#: teacheradmin/views.py:596 teacheradmin/views.py:638
 msgid ""
 "The email has been queued, and it will be send in batches to every student "
 "in the course."

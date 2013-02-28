@@ -6,12 +6,20 @@ from south.v2 import SchemaMigration
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Adding field 'Category.banner'
+        db.add_column('categories_category', 'banner',
+                      self.gf('django.db.models.fields.files.ImageField')(max_length=100, null=True, blank=True),
+                      keep_default=False)
+
         # Adding field 'Category.only_admins'
         db.add_column('categories_category', 'only_admins',
                       self.gf('django.db.models.fields.BooleanField')(default=False),
                       keep_default=False)
 
     def backwards(self, orm):
+        # Deleting field 'Category.banner'
+        db.delete_column('categories_category', 'banner')
+
         # Deleting field 'Category.only_admins'
         db.delete_column('categories_category', 'only_admins')
 
@@ -57,6 +65,7 @@ class Migration(SchemaMigration):
         },
         'categories.category': {
             'Meta': {'object_name': 'Category'},
+            'banner': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'courses': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'categories'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['courses.Course']"}),
             'icon': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),

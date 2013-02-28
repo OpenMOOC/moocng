@@ -7,11 +7,12 @@
 {% block content %}
 {% if one_category %}
     <div class="row">
-        <div class="span6 offset3 category-box">
+        <div class="span12 category-box">
+            {% if categories.0.banner %}
+                <div class="banner"><img src="{{ categories.0.banner.url }}" alt="{% trans "Category's background banner" %}" /></div>
+            {% endif %}
             {% if categories.0.icon %}
-            <div class="row"><div class="span2 offset2">
-                <img src="{{categories.0.icon.url}}" alt="{% trans "Category's icon" %}" />
-            </div></div>
+                <img class="icon {% if categories.0.banner %}center{% endif %}" src="{{categories.0.icon.url}}" alt="{% trans "Category's icon" %}" />
             {% endif %}
             <h1>{{ categories.0.name }}</h1>
         </div>
@@ -19,9 +20,9 @@
 {% else %}
     <div class="row"><div class="span12">
         {% for cat in categories %}
-            <div class="inlineb category-box-liquid">
+            <div class="inlineb category-box liquid">
                 {% if cat.icon %}
-                    <img src="{{cat.icon.url}}" alt="{% trans "Category's icon" %}" />
+                    <img class="icon" src="{{cat.icon.url}}" alt="{% trans "Category's icon" %}" />
                 {% endif %}
                 <p><h1>{{ cat.name }}</h1></p>
             </div>
