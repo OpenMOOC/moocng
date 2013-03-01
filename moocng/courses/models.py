@@ -123,6 +123,15 @@ class CourseTeacher(Sortable):
         verbose_name_plural = _(u'course teachers')
 
 
+def courseteacher_invalidate_cache(sender, instance, **kwargs):
+    invalidate_template_fragment('course_overview_secondary_info',
+                                 instance.course.id)
+
+signals.post_save.connect(courseteacher_invalidate_cache, sender=CourseTeacher)
+signals.post_delete.connect(courseteacher_invalidate_cache,
+                            sender=CourseTeacher)
+
+
 class Announcement(models.Model):
 
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
