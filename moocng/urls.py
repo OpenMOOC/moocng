@@ -42,14 +42,21 @@ urlpatterns = patterns(
     url(r'^api/', include('moocng.api.urls')),
     url(r'^badges/', include('moocng.badges.urls')),
 
-    url(r'^saml2/ls/$', 'djangosaml2.views.logout_service', name='saml2_ls',
-        kwargs={'next_page': settings.LOGOUT_REDIRECT_URL}),
-    url(r'^saml2/', include('djangosaml2.urls')),
-
     url(r'^contact/', include('moocng.contact.urls')),
 
     url(r'^category/', include('moocng.categories.urls')),
 )
+
+if settings.AUTH_TYPE == 'saml2':
+    urlpatterns += patterns('',
+        url(r'^saml2/ls/$', 'djangosaml2.views.logout_service', name='saml2_ls',
+            kwargs={'next_page': settings.LOGOUT_REDIRECT_URL}),
+        url(r'^saml2/', include('djangosaml2.urls'))
+    )
+elif settings.AUTH_TYPE == 'dbauth':
+    urlpatterns += patterns('',
+        url(r'^dbauth/', include('moocng.dbauth.urls'))
+    )
 
 if settings.DEBUG:
     from django.views.static import serve

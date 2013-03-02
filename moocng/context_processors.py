@@ -95,10 +95,23 @@ def idp_urls(request):
         changepw_url = settings.CHANGEPW_URL
     except AttributeError:
         changepw_url = '#'
+
+    try:
+        login_url = settings.LOGIN_URL
+    except AttributeError:
+        login_url = '#'
+
+    try:
+        logout_url = settings.LOGOUT_URL
+    except AttributeError:
+        logout_url = '#'
+
     context = {
         'registry_url': registry_url,
         'profile_url': profile_url,
         'changepw_url': changepw_url,
+        'login_url': login_url,
+        'logout_url': logout_url,
     }
     return context
 
