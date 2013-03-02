@@ -3,6 +3,14 @@ import os
 
 BASEDIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
+SAML_CREATE_UNKNOWN_USER = True
+SAML_ATTRIBUTE_MAPPING = {
+    'mail': ('username', 'email', ),
+    'cn': ('first_name', ),
+    'sn': ('last_name', ),
+    'eduPersonAffiliation': ('groups', ),
+    }
+
 SAML_CONFIG = {
     # full path to the xmlsec1 binary programm
     'xmlsec_binary': '/usr/bin/xmlsec1',

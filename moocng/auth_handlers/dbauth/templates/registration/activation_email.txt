@@ -1,0 +1,8 @@
+{% load i18n %}{% load url from future %}
+{% trans "Welcome to {{site.name}}" %}
+
+{% trans "Click the button to confirm your email." %}
+
+http://{{site.domain}}{% url "registration_activate" activation_key %}
+
+{% trans "The team of {{site.name}}" %}
