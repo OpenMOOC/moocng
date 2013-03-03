@@ -21,7 +21,7 @@
     {% for course in courses %}
     <div class="box">
       <h2><a href="{{ course.get_absolute_url }}">{{ course.name }}</a></h2>
-      {{ course.description|safe|truncatewords:60 }}
+      {{ course.description|safe|truncatewords_html:60 }}
       <p class="box-footer"><a href="{{ course.get_absolute_url }}">{% trans "More information about this course" %}</a></p>
     </div>
     {% endfor %}
