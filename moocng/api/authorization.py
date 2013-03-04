@@ -81,14 +81,38 @@ class ResourceAuthorization(Authorization):
 
 class UserResourceAuthorization(Authorization):
 
-    def is_authorized(self, request, obj=None):
-        # We check if the method is GET here instead of relaying in the
-        # tastypie allowed_methods property because of the overrided urls,
-        # those ignore the allowed_methods restriction
-        if request.method == 'GET':
-            url_name = resolve(request.path).url_name
-            if url_name in PERMISSIONS.keys():
-                required_perm = PERMISSIONS.get(url_name)
-                return request.user.has_perm(required_perm)
-            return True
+    def read_list(self, object_list, bundle):
+        return object_list
+
+    def read_detail(self, object_list, bundle):
+        if bundle:
+            #TODO owners and teachers should see user info
+            has_get_permission = bundle.obj.id == bundle.request.user.id or  \
+                             bundle.request.user.is_staff
+            if not has_get_permission:
+                url_name = resolve(bundle.request.path).url_name
+                if url_name in PERMISSIONS.keys():
+                    required_perm = PERMISSIONS.get(url_name)
+                    return bundle.request.user.has_perm(required_perm)
+                else:
+                    # If can_list_allcourses then can get user info
+                    return bundle.request.user.has_perm('courses.can_list_allcourses')
         return False
+
+    def create_list(self, object_list, bundle):
+        return []
+
+    def create_detail(self, object_list, bundle):
+        raise Unauthorized("You are not allowed to access that resource.")
+
+    def update_list(self, object_list, bundle):
+        return []
+
+    def update_detail(self, object_list, bundle):
+        raise Unauthorized("You are not allowed to access that resource.")
+
+    def delete_list(self, object_list, bundle):
+        return []
+
+    def delete_detail(self, object_list, bundle):
+        raise Unauthorized("You are not allowed to access that resource.")

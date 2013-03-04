@@ -20,6 +20,7 @@ import re
 from tastypie import fields
 from tastypie.resources import ModelResource
 from tastypie.authorization import DjangoAuthorization
+from tastypie.http import HttpMultipleChoices
 
 from django.conf import settings
 from django.conf.urls import url
@@ -27,6 +28,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.db.models.fields.files import ImageFieldFile
 from django.http import HttpResponse
+from django.core.exceptions import MultipleObjectsReturned
 
 from moocng.api.authentication import (AnonymousUserAuthentication,
                                        DjangoAuthentication,
@@ -35,7 +37,7 @@ from moocng.api.authentication import (AnonymousUserAuthentication,
                                        MultiAuthentication)
 from moocng.api.authorization import (PublicReadTeachersModifyAuthorization,
                                       TeacherAuthorization,
-                                      ResourceAuthorization,
+#                                      ResourceAuthorization,
                                       UserResourceAuthorization)
 from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
 from moocng.api.validation import AnswerValidation
@@ -80,18 +82,17 @@ class UserResource(ModelResource):
                 name="get_passed_courses_as_student"),
         ]
 
-    def get_object(self, request, kwargs):
+    def get_object(self, bundle, kwargs):
         try:
             if not kwargs['pk'].isdigit():
                 kwargs['email'] = kwargs['pk']
                 del kwargs['pk']
-            basic_bundle = self.build_bundle(request=request)
-            obj = self.cached_obj_get(bundle=basic_bundle,
+            obj = self.cached_obj_get(bundle=bundle,
                                       **self.remove_api_resource_names(kwargs))
         except self.Meta.object_class.DoesNotExist:
             return HttpResponse(status=404)
         except MultipleObjectsReturned:
-            return http.HttpMultipleChoices("More than one resource is found at this URI.")
+            return HttpMultipleChoices("More than one resource is found at this URI.")
         return obj
 
     def alt_get_list(self, request, courses):
@@ -116,7 +117,9 @@ class UserResource(ModelResource):
 
     def get_courses(self, request, **kwargs):
         self.is_authenticated(request)
-        obj = self.get_object(request, kwargs)
+        bundle = self.build_bundle(request=request)
+        self.authorized_read_detail([], bundle)
+        obj = self.get_object(bundle, kwargs)
         if isinstance(obj, HttpResponse):
             return obj
         courses = obj.courses_as_student.all()
@@ -124,7 +127,9 @@ class UserResource(ModelResource):
 
     def get_passed_courses(self, request, **kwargs):
         self.is_authenticated(request)
-        obj = self.get_object(request, kwargs)
+        bundle = self.build_bundle(request=request)
+        self.authorized_read_detail([], bundle)
+        obj = self.get_object(bundle, kwargs)
         if isinstance(obj, HttpResponse):
             return obj
         courses = obj.courses_as_student.all()

@@ -37,9 +37,6 @@ class UserTestCase(ApiTestCase):
         user = self.create_test_user_user()
         self.client = self.django_login_user(self.client, user)
 
-        response = self.client.get('/api/%s/user/2/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 401)
-
         self.create_test_user_test()
         response = self.client.get('/api/%s/user/2/%s' % (self.api_name, self.format_append))
         self.assertEqual(response.status_code, 401)
@@ -48,9 +45,6 @@ class UserTestCase(ApiTestCase):
         alum1 = self.create_test_user_alum1()
         self.client = self.django_login_user(self.client, alum1)
 
-        response = self.client.get('/api/%s/user/2/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 401)
-
         self.create_test_user_test()
         response = self.client.get('/api/%s/user/2/%s' % (self.api_name, self.format_append))
         self.assertEqual(response.status_code, 401)
@@ -58,9 +52,6 @@ class UserTestCase(ApiTestCase):
     def test_get_user_teacher(self):
         teacher1 = self.create_test_user_teacher1()
         self.client = self.django_login_user(self.client, teacher1)
-
-        response = self.client.get('/api/%s/user/2/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 404)
 
         self.create_test_user_test()
         response = self.client.get('/api/%s/user/2/%s' % (self.api_name, self.format_append))
@@ -71,9 +62,6 @@ class UserTestCase(ApiTestCase):
         owner = self.create_test_user_owner()
         self.client = self.django_login_user(self.client, owner)
 
-        response = self.client.get('/api/%s/user/2/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 404)
-
         self.create_test_user_test()
         response = self.client.get('/api/%s/user/2/%s' % (self.api_name, self.format_append))
         self.assertEqual(response.status_code, 200)
@@ -82,9 +70,6 @@ class UserTestCase(ApiTestCase):
     def test_get_user_admin(self):
         admin = self.create_test_user_admin()
         self.client = self.django_login_user(self.client, admin)
-
-        response = self.client.get('/api/%s/user/2/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 404)
 
         self.create_test_user_test()
         response = self.client.get('/api/%s/user/2/%s' % (self.api_name, self.format_append))
@@ -97,9 +82,6 @@ class UserTestCase(ApiTestCase):
         key = str(uuid.uuid4())
         self.generate_apikeyuser(user, key)
 
-        response = self.client.get('/api/%s/user/2/%s&key=%s' % (self.api_name, self.format_append, key))
-        self.assertEqual(response.status_code, 404)
-
         self.create_test_user_test()
         response = self.client.get('/api/%s/user/2/%s&key=%s' % (self.api_name, self.format_append, key))
         self.assertEqual(response.status_code, 401)
@@ -109,9 +91,6 @@ class UserTestCase(ApiTestCase):
 
         key = str(uuid.uuid4())
         self.generate_apikeyuser(certuser, key)
-
-        response = self.client.get('/api/%s/user/2/%s&key=%s' % (self.api_name, self.format_append, key))
-        self.assertEqual(response.status_code, 404)
 
         self.create_test_user_test()
         response = self.client.get('/api/%s/user/2/%s&key=%s' % (self.api_name, self.format_append, key))
