@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from django.contrib.auth.decorators import login_required
+
+#from moocng.peerreview.models import PeerReviewAssignment
 
 
-@login_required
-def course_reviews(request):
-    pass
+def course_has_peer_review_assignments(course):
+    return True
+    # return PeerReviewAssignment.objects.filter(
+    #     knowledge_quantum__unit__course=course).count() > 0

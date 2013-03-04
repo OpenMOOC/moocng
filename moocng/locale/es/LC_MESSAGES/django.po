@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-28 13:23-0600\n"
-"PO-Revision-Date: 2013-02-19 12:24+0100\n"
+"POT-Creation-Date: 2013-03-04 10:58-0600\n"
+"PO-Revision-Date: 2013-03-04 17:58+0100\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
 "Language: es_ES\n"
@@ -155,7 +155,7 @@ msgstr "Esta categoría no tiene un icono asociado"
 msgid "Name"
 msgstr "Nombre"
 
-#: categories/models.py:12 courses/models.py:40 courses/models.py:129
+#: categories/models.py:12 courses/models.py:40 courses/models.py:138
 msgid "Slug"
 msgstr "Slug"
 
@@ -244,8 +244,8 @@ msgstr "He leído y estoy de acuerdo con los términos de uso"
 msgid "You must accept the Terms of Use"
 msgstr "Debe aceptar los Términos de Uso"
 
-#: contact/models.py:23 courses/models.py:128 courses/models.py:156
-#: courses/models.py:200 teacheradmin/templates/teacheradmin/units.html:52
+#: contact/models.py:23 courses/models.py:137 courses/models.py:165
+#: courses/models.py:209 teacheradmin/templates/teacheradmin/units.html:52
 #: teacheradmin/templates/teacheradmin/units.html:99
 msgid "Title"
 msgstr "Título"
@@ -403,7 +403,7 @@ msgstr "Puede listar los cursos aprobados"
 msgid "Teacher"
 msgstr "Profesor"
 
-#: courses/models.py:119 courses/models.py:131 courses/models.py:157
+#: courses/models.py:119 courses/models.py:140 courses/models.py:166
 #: teacheradmin/models.py:32 teacheradmin/models.py:45
 #: teacheradmin/templates/teacheradmin/stats.html:48
 #: teacheradmin/templates/teacheradmin/stats.html:89
@@ -419,7 +419,7 @@ msgstr "profesor del curso"
 msgid "course teachers"
 msgstr "profesores de los cursos"
 
-#: courses/models.py:130
+#: courses/models.py:139
 #: courses/templates/admin/courses/question/options.html:151
 #: teacheradmin/models.py:53
 #: teacheradmin/templates/teacheradmin/emails.html:74
@@ -427,30 +427,30 @@ msgstr "profesores de los cursos"
 msgid "Content"
 msgstr "Contenido"
 
-#: courses/models.py:132
+#: courses/models.py:141
 msgid "Datetime"
 msgstr "Fecha y hora"
 
-#: courses/models.py:136
+#: courses/models.py:145
 msgid "announcement"
 msgstr "comunicado"
 
-#: courses/models.py:137
+#: courses/models.py:146
 msgid "announcements"
 msgstr "comunicados"
 
-#: courses/models.py:164 courses/models.py:308
+#: courses/models.py:173 courses/models.py:317
 #: courses/templates/admin/courses/question/options.html:122
 #: teacheradmin/templates/teacheradmin/question.html:71
 #: teacheradmin/templates/teacheradmin/units.html:56
 msgid "Type"
 msgstr "Tipo"
 
-#: courses/models.py:166
+#: courses/models.py:175
 msgid "Start"
 msgstr "Fecha de inicio"
 
-#: courses/models.py:168
+#: courses/models.py:177
 msgid ""
 "Until this date is reached, no contents of this module will be shown to the "
 "students."
@@ -458,11 +458,11 @@ msgstr ""
 "Mientras no se alcance esta fecha, no se mostrarán los contenidos de este "
 "módulo a los alumnos."
 
-#: courses/models.py:171
+#: courses/models.py:180
 msgid "Deadline"
 msgstr "Fecha límite"
 
-#: courses/models.py:173
+#: courses/models.py:182
 msgid ""
 "Until this date is reached, the students will be able to modify their "
 "answers, but won't see the solution"
@@ -470,21 +470,21 @@ msgstr ""
 "Mientras no se alcance esta fecha, los alumnos podrán modificar sus "
 "respuestas, pero no ver las soluciones."
 
-#: courses/models.py:177 courses/models.py:202
+#: courses/models.py:186 courses/models.py:211
 #: teacheradmin/templates/teacheradmin/units.html:64
 #: teacheradmin/templates/teacheradmin/units.html:107
 msgid "Weight"
 msgstr "Peso"
 
-#: courses/models.py:183 teacheradmin/templates/teacheradmin/units.html:31
+#: courses/models.py:192 teacheradmin/templates/teacheradmin/units.html:31
 msgid "unit"
 msgstr "módulo"
 
-#: courses/models.py:184
+#: courses/models.py:193
 msgid "units"
 msgstr "módulos"
 
-#: courses/models.py:201 teacheradmin/templates/teacheradmin/stats.html:37
+#: courses/models.py:210 teacheradmin/templates/teacheradmin/stats.html:37
 #: teacheradmin/templates/teacheradmin/stats.html:90
 #: teacheradmin/templates/teacheradmin/stats.html:92
 #: teacheradmin/templates/teacheradmin/stats.html:128
@@ -492,29 +492,29 @@ msgstr "módulos"
 msgid "Unit"
 msgstr "Módulo"
 
-#: courses/models.py:206
+#: courses/models.py:215
 msgid "Video"
 msgstr "Vídeo"
 
-#: courses/models.py:207
+#: courses/models.py:216
 msgid "Teacher comments"
 msgstr "Comentarios del Profesor"
 
-#: courses/models.py:210 courses/templates/courses/classroom.html:65
+#: courses/models.py:219 courses/templates/courses/classroom.html:65
 #: teacheradmin/templates/teacheradmin/units.html:35
 #: teacheradmin/templates/teacheradmin/units.html:116
 msgid "Supplementary material"
 msgstr "Material suplementario"
 
-#: courses/models.py:214 teacheradmin/templates/teacheradmin/units.html:36
+#: courses/models.py:223 teacheradmin/templates/teacheradmin/units.html:36
 msgid "nugget"
 msgstr "píldora"
 
-#: courses/models.py:215
+#: courses/models.py:224
 msgid "nuggets"
 msgstr "píldoras"
 
-#: courses/models.py:235 courses/models.py:243
+#: courses/models.py:244 courses/models.py:252
 #: teacheradmin/templates/teacheradmin/stats.html:38
 #: teacheradmin/templates/teacheradmin/stats.html:129
 #: teacheradmin/templates/teacheradmin/stats.html:131
@@ -522,15 +522,15 @@ msgstr "píldoras"
 msgid "Nugget"
 msgstr "Píldora"
 
-#: courses/models.py:236
+#: courses/models.py:245
 msgid "Attachment"
 msgstr "Adjunto"
 
-#: courses/models.py:245
+#: courses/models.py:254
 msgid "Solution video"
 msgstr "Vídeo con la solución"
 
-#: courses/models.py:246
+#: courses/models.py:255
 msgid ""
 "If this belongs to a homework or an exam, then the stundents won't see this "
 "video until the deadline is reached."
@@ -538,61 +538,61 @@ msgstr ""
 "Si esta pregunta pertenece a una tarea o examen, entonces los alumnos no "
 "podrán ver este vídeo mientras no se haya alcanzado la fecha límite."
 
-#: courses/models.py:251 teacheradmin/templates/teacheradmin/units.html:190
+#: courses/models.py:260 teacheradmin/templates/teacheradmin/units.html:190
 msgid "Solution text"
 msgstr "Texto con la solución"
 
-#: courses/models.py:252
+#: courses/models.py:261
 msgid "If the solution video is specified then this text will be ignored."
 msgstr ""
 "Si se especifica el vídeo con la solución entonces este texto será ignorado."
 
-#: courses/models.py:256
+#: courses/models.py:265
 msgid "Last frame of the nugget's video"
 msgstr "Última imagen del vídeo de la píldora"
 
-#: courses/models.py:259
+#: courses/models.py:268
 msgid "Use the last frame of the video"
 msgstr "Usar la última imagen del vídeo"
 
-#: courses/models.py:260
+#: courses/models.py:269
 msgid ""
 "Chooses if the nugget's video last frame is used, or a white canvas instead."
 msgstr ""
 "Determina si se hace uso del último cuadro del vídeo de la píldora, o si en "
 "su lugar se usa un lienzo en blanco."
 
-#: courses/models.py:265
+#: courses/models.py:274
 msgid "question"
 msgstr "pregunta"
 
-#: courses/models.py:266
+#: courses/models.py:275
 msgid "questions"
 msgstr "preguntas"
 
-#: courses/models.py:296 teacheradmin/templates/teacheradmin/units.html:94
+#: courses/models.py:305 teacheradmin/templates/teacheradmin/units.html:94
 msgid "Question"
 msgstr "Pregunta"
 
-#: courses/models.py:311
+#: courses/models.py:320
 #: courses/templates/admin/courses/question/options.html:150
 #: teacheradmin/templates/teacheradmin/question.html:99
 msgid "Solution"
 msgstr "Solución"
 
-#: courses/models.py:312
+#: courses/models.py:321
 msgid "Label text"
 msgstr "Texto de la etiqueta"
 
-#: courses/models.py:315
+#: courses/models.py:324
 msgid "Solution feedback for the student"
 msgstr "Ayuda para el estudiante"
 
-#: courses/models.py:319
+#: courses/models.py:328
 msgid "option"
 msgstr "opción"
 
-#: courses/models.py:320
+#: courses/models.py:329
 msgid "options"
 msgstr "opciones"
 
@@ -830,7 +830,11 @@ msgstr "Debates"
 msgid "Progress"
 msgstr "Progreso"
 
-#: courses/templates/courses/base_course.html:29
+#: courses/templates/courses/base_course.html:31
+msgid "Reviews"
+msgstr "Revisiones"
+
+#: courses/templates/courses/base_course.html:38
 #: teacheradmin/templates/teacheradmin/base_teacheradmin.html:17
 msgid "Course administration"
 msgstr "Administración del curso"

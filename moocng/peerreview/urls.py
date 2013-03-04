@@ -12,9 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from django.contrib.auth.decorators import login_required
+from django.conf.urls import patterns, url
 
 
-@login_required
-def course_reviews(request):
-    pass
+urlpatterns = patterns(
+    'moocng.peerreview.views',
+
+    url(r'^course/(?P<course_slug>[-\w]+)/reviews/$', 'course_reviews',
+        name='course_reviews'),
+)

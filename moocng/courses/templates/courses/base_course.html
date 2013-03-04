@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load i18n askboturl %}
+{% load i18n askboturl cache peer_review_tags %}
 
 {% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
 
@@ -23,6 +23,15 @@
   <li {% block nav-course-progress %}{% endblock %}>
     <a href="{% url course_progress course.slug %}">{% trans "Progress" %}</a>
   </li>
+
+  {% get_current_language as LANGUAGE_CODE %}
+  {% cache 3600 course_has_peer_review_assignments LANGUAGE_CODE %}
+  {% if_has_peer_review_assignments course %}
+  <li {% block nav-course-reviews %}{% endblock %}>
+    <a href="{% url course_reviews course.slug %}">{% trans "Reviews" %}</a>
+  </li>
+  {% endif_has_peer_review_assignments %}
+  {% endcache %}
 
   {% if is_teacher or user.is_staff %}
   <li class="pull-right">
