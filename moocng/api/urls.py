@@ -30,6 +30,8 @@ v1_api.register(resources.AnswerResource())
 v1_api.register(resources.ActivityResource())
 v1_api.register(resources.CourseResource())
 v1_api.register(resources.UserResource())
+v1_api.register(resources.PeerReviewAssignmentResource())
+v1_api.register(resources.EvaluationCriterion())
 
 urlpatterns = patterns(
     '',
