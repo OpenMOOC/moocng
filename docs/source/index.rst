@@ -50,6 +50,15 @@ To check out the repository with ``git`` use this command:
  git clone git://github.com/OpenMOOC/moocng.git
 
 
+Development Doc
+===============
+
+.. toctree::
+   :maxdepth: 2
+
+   mongo_structure
+
+
 Indices and tables
 ==================
 
