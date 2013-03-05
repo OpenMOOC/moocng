@@ -133,7 +133,7 @@ After a while you will have a bunch of new packages inside
 */var/www/moocng/lib/python2.7/site-packages/*
 
 Tastypie
-~~~~~~~~
+........
 
 Note: If you already have installed the official tastypie you need to execute first:
 
@@ -164,7 +164,7 @@ Installation steps:
 
 
 FFmpeg
-~~~~~~
+......
 
 FFmpeg is an extra dependence of moocng, and we'll install it through system
 package system. FFmpeg is used to extract the last frame from YouTube's videos.
