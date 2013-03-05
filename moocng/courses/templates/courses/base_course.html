@@ -31,7 +31,7 @@
   {% endif_has_peer_review_assignments %}
 
   {% if is_teacher or user.is_staff %}
-  <li class="pull-right">
+  <li class="pull-right{% block nav-course-admin %}{% endblock %}">
     <a href="{% url teacheradmin_index course.slug %}">{% trans "Course administration" %}</a>
   </li>
   {% endif %}

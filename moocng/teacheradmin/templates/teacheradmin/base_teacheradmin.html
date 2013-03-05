@@ -1,22 +1,8 @@
-{% extends "base.html" %}
+{% extends "courses/base_course.html" %}
 
-{% load i18n askboturl %}
+{% load i18n %}
 
-{% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
-
-{% block nav %}
-<ul class="nav nav-pills">
-    <li><a href="{% url course_overview course.slug %}">{% trans "Overview" %}</a></li>
-    {% if is_enrolled %}
-        <li><a href="{% url course_classroom course.slug %}">{% trans "Classes" %}</a></li>
-    {% endif %}
-    <li><a href="{% askboturl course.slug %}">{% trans "Discussion" %}</a></li>
-    {% if is_enrolled %}
-        <li><a href="{% url course_progress course.slug %}">{% trans "Progress" %}</a></li>
-    {% endif %}
-    <li class="active pull-right"><a href="{% url teacheradmin_index course.slug %}">{% trans "Course administration" %}</a></li>
-</ul>
-{% endblock %}
+{% block nav-course-admin %} active{% endblock %}
 
 {% block content %}
 <h1>{{ course.name }}</h1>
