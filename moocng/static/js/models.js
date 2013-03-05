@@ -393,16 +393,26 @@ MOOC.models.Unit = Backbone.Model.extend({
 
     parse: function (resp, xhr) {
         "use strict";
-        var result = {};
+        var result = {},
+            start = new Date(),
+            deadline = new Date();
+
         if (!_.isNull(resp)) {
+            if (resp.start) {
+                start = new Date(resp.start);
+            }
+            if (resp.deadline) {
+                deadline = new Date(resp.deadline);
+            }
+
             result = {
                 id: parseInt(resp.id, 10),
                 order: resp.order,
                 title: resp.title,
                 type: resp.unittype,
                 weight: parseInt(resp.weight, 10),
-                start: new Date(resp.start),
-                deadline: new Date(resp.deadline)
+                start: start,
+                deadline: deadline
             };
         }
         return result;
