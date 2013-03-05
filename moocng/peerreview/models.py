@@ -25,7 +25,7 @@ from moocng.courses.models import KnowledgeQuantum
 class PeerReviewAssignment(models.Model):
     description = HTMLField(verbose_name=_(u'Description'),
                             blank=True, null=False)
-    minimum_reviewers = models.PositiveSmallIntegerField()
+    minimum_reviewers = models.PositiveSmallIntegerField(verbose_name=_(u'Minimum reviewers'))
     knowledge_quantum = models.ForeignKey(KnowledgeQuantum,
                                           verbose_name=_(u'Knowledge quantum'),
                                           blank=False, null=False)
