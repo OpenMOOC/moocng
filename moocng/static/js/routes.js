@@ -144,12 +144,13 @@ MOOC.App = Backbone.Router.extend({
 
         toExecute.push(function (callback) {
             var view = MOOC.views.kqViews[kq],
-                cb = _.bind(view.loadQuestion, view);
+                cb = _.bind(view.loadExercise, view);
             cb = async.apply(cb, { data: 0 });
             // data: 0 because YT.PlayerState.ENDED = 0s
             _.bind(view.repeatedlyCheckIfPlayer, view)(cb);
             callback();
         });
+
         async.series(toExecute);
     },
 
@@ -168,6 +169,30 @@ MOOC.App = Backbone.Router.extend({
             MOOC.views.kqViews[kq].loadSolution();
             callback();
         });
+
+        async.series(toExecute);
+    },
+
+    kqP: function (unit, kq) {
+        "use strict";
+        unit = parseInt(unit, 10);
+        kq = parseInt(kq, 10);
+        var toExecute = this.kqSteps(unit, kq, false);
+
+        toExecute.push(function (callback) {
+            MOOC.views.kqViews[kq].loadPeerReviewData();
+            callback();
+        });
+
+        toExecute.push(function (callback) {
+            var view = MOOC.views.kqViews[kq],
+                cb = _.bind(view.loadExercise, view);
+            cb = async.apply(cb, { data: 0 });
+            // data: 0 because YT.PlayerState.ENDED = 0s
+            _.bind(view.repeatedlyCheckIfPlayer, view)(cb);
+            callback();
+        });
+
         async.series(toExecute);
     },
 
@@ -184,6 +209,7 @@ MOOC.App = Backbone.Router.extend({
                                   "supplementary_material", "question", "order",
                                   "correct", "completed", "normalized_weight");
                 data.id = parseInt(data.id, 10);
+                data.peerReview = kq.peer_review_assignment;
                 return data;
             }));
 
@@ -222,6 +248,7 @@ MOOC.init = function (course_id, KQRoute) {
         MOOC.router.route("unit:unit/kq:kq", "kq");
         MOOC.router.route("unit:unit/kq:kq/q", "kqQ");
         MOOC.router.route("unit:unit/kq:kq/a", "kqA");
+        MOOC.router.route("unit:unit/kq:kq/p", "kqP");
 
         MOOC.models.activity = new MOOC.models.Activity({id: course_id});
         MOOC.models.activity.fetch();

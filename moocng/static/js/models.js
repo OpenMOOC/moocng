@@ -32,6 +32,49 @@ MOOC.models = {
     }
 };
 
+MOOC.models.EvaluationCriterion = Backbone.Model.extend({
+    defaults: {
+        id: -1,
+        order: -1,
+        description: ""
+    },
+
+    parse: function (resp, xhr) {
+        "use strict";
+        return _.pick(resp, "id", "order", "description");
+    },
+
+    url: function () {
+        "use strict";
+        return MOOC.ajax.getAbsoluteUrl("evaluation_criterion/") + this.get("id") + "/";
+    }
+});
+
+MOOC.models.EvaluationCriterionList = Backbone.Collection.extend({
+    model: MOOC.models.EvaluationCriterion,
+    assignment: null,
+
+    url: function () {
+        "use strict";
+        return MOOC.ajax.getAbsoluteUrl("evaluation_criterion/") + "?assignment=" + this.assignment;
+    }
+});
+
+MOOC.models.PeerReviewAssignment = Backbone.Model.extend({
+    defaults: {
+        id: -1,
+        description: "",
+        minimum_reviewers: null,
+        criterionList: new MOOC.models.EvaluationCriterionList(),
+        knowledgeQuantum: null
+    },
+
+    url: function () {
+        "use strict";
+        return MOOC.ajax.getAbsoluteUrl("peer_review_assignment/") + this.get("id") + "/";
+    }
+});
+
 MOOC.models.Activity = Backbone.Model.extend({
     defaults: {
         kqs: []
@@ -302,7 +345,9 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
             completed: false,
             correct: null,
             attachmentList: null,
-            normalized_weight: 0
+            normalized_weight: 0,
+            peerReview: null, // Optional
+            peerReviewInstance: null
         };
     },
 
@@ -314,6 +359,7 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
     parse: function (resp, xhr) {
         "use strict";
         resp.id = parseInt(resp.id, 10);
+        // TODO peerReview
         return resp;
     },
 
@@ -328,6 +374,8 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
         model2send.unset("correct");
         model2send.unset("questionInstance");
         model2send.unset("attachmentList");
+        // TODO peerReview
+        model2send.unset("peerReviewInstance");
         if (model.get("order") < 0) {
             model2send.unset("order");
         }

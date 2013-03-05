@@ -76,10 +76,10 @@ class KnowledgeQuantumResource(ModelResource):
                                   'question_set', related_name='kq',
                                   readonly=True, null=True)
     peer_review_assignment = fields.ToManyField(
-                            'moocng.api.resources.PeerReviewAssignmentResource',
-                            'peerreviewassignment_set',
-                            related_name='peer_review_assignment',
-                            readonly=True, null=True)
+        'moocng.api.resources.PeerReviewAssignmentResource',
+        'peerreviewassignment_set',
+        related_name='peer_review_assignment',
+        readonly=True, null=True)
     videoID = fields.CharField(readonly=True)
     correct = fields.BooleanField(readonly=True)
     completed = fields.BooleanField(readonly=True)
@@ -182,10 +182,10 @@ class PrivateKnowledgeQuantumResource(ModelResource):
                                   'question_set', related_name='kq',
                                   readonly=True, null=True)
     peer_review_assignment = fields.ToManyField(
-                            'moocng.api.resources.PeerReviewAssignmentResource',
-                            'peerreviewassignment_set',
-                            related_name='peer_review_assignment',
-                            readonly=True, null=True)
+        'moocng.api.resources.PeerReviewAssignmentResource',
+        'peerreviewassignment_set',
+        related_name='peer_review_assignment',
+        readonly=True, null=True)
     videoID = fields.CharField()
     normalized_weight = fields.IntegerField()
 
@@ -258,9 +258,9 @@ class PeerReviewAssignmentResource(ModelResource):
     def get_object_list(self, request):
         objects = super(PeerReviewAssignmentResource, self).get_object_list(request)
         return objects.filter(
-            Q(kq__unit__unittype='n') |
-            Q(kq__unit__start__isnull=True) |
-            Q(kq__unit__start__isnull=False, kq__unit__start__lte=datetime.now)
+            Q(knowledge_quantum__unit__unittype='n') |
+            Q(knowledge_quantum__unit__start__isnull=True) |
+            Q(knowledge_quantum__unit__start__isnull=False, knowledge_quantum__unit__start__lte=datetime.now)
         )
 
 

@@ -92,6 +92,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
         if (this.model.has("question")) {
             this.loadQuestionData();
+        } else if (this.model.has("peerReview")) {
+            this.loadPeerReviewData();
         }
         this.repeatedlyCheckIfPlayer();
 
@@ -212,7 +214,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         if (MOOC.YTready) {
             this.player = new YT.Player("ytplayer", {
                 events: {
-                    onStateChange: _.bind(this.loadQuestion, this)
+                    onStateChange: _.bind(this.loadExercise, this)
                 }
             });
             if (!_.isUndefined(callback)) {
@@ -285,11 +287,36 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         }
     },
 
-    loadQuestion: function (evt) {
+    loadPeerReviewData: function () {
+        "use strict";
+        var kqObj = this.model;
+        if (!kqObj.has("peerReviewInstance")) {
+            // Load Peer Review Data
+            MOOC.ajax.getResource(kqObj.get("peerReview"), function (data, textStatus, jqXHR) {
+                var peerReviewObj = new MOOC.models.PeerReviewAssignment({
+                    id: data.id,
+                    description: data.description,
+                    minimum_reviewers: data.minimum_reviewers,
+                    knowledgeQuantum: kqObj
+                });
+                // Load Evalutation Criteria
+                peerReviewObj.get("criterionList").assignment = peerReviewObj.get("id");
+                peerReviewObj.get("criterionList").fetch({
+                    success: function (collection, resp, options) {
+                        // Don't set the peerReviewInstance until the 
+                        // evaluation criteria is loaded
+                        kqObj.set("peerReviewInstance", peerReviewObj);
+                    }
+                });
+            });
+        }
+    },
+
+    loadExercise: function (evt) {
         "use strict";
         if (evt.data === YT.PlayerState.ENDED) {
             var model = this.model,
-                toExecute;
+                toExecute = [];
 
             // Mark kq as "viewed"
             MOOC.models.activity.addKQ(String(model.get("id")), function () {
@@ -301,8 +328,6 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
             // We can't assume the question exists
             if (model.has("question")) {
-                toExecute = [];
-
                 if (!this.model.has("questionInstance")) {
                     toExecute.push(async.apply(this.setupListernerFor, this.model, "questionInstance"));
                 }
@@ -343,11 +368,40 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     }
                     // We need to destroy the iframe with a callback because the
                     // question view needs to read the width/height of the video
+                    // TODO not anymore?
                     view.render(_.bind(this.destroyVideo, this));
+
+                    // TODO callback();
+                }, this));
+            } else if (model.has("peerReview")) {
+                toExecute = [];
+
+                if (!this.model.has("peerReviewInstance")) {
+                    toExecute.push(async.apply(this.setupListernerFor, this.model, "peerReviewInstance"));
+                }
+
+                toExecute.push(_.bind(function (callback) {
+                    var peerReviewObj = this.model.get("peerReviewInstance"),
+                        view = MOOC.views.peerReviewViews[peerReviewObj.get("id")];
+
+                    if (_.isUndefined(view)) {
+                        view = new MOOC.views.PeerReviewAssignment({
+                            model: peerReviewObj,
+                            el: $("#kq-video")[0]
+                        });
+                        MOOC.views.peerReviewViews[peerReviewObj.get("id")] = view;
+                    }
+
+                    this.destroyVideo();
+
+                    view.render();
+
+                    callback();
                 }, this));
 
-                async.series(toExecute);
             }
+
+            async.series(toExecute);
         }
 
         return this;
@@ -691,3 +745,14 @@ MOOC.views.Attachment = Backbone.View.extend({
         return this;
     }
 });
+
+MOOC.views.PeerReviewAssignment = Backbone.View.extend({
+    render: function () {
+        "use strict";
+        // TODO
+        this.$el.append("<p>TODO: Here goes a peer review form.</p>");
+        return this;
+    }
+});
+
+MOOC.views.peerReviewViews = {};
