@@ -13,8 +13,21 @@
 # limitations under the License.
 
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, render_to_response
+from django.template import RequestContext
+
+
+from moocng.courses.models import Course
+from moocng.peerreview.utils import course_get_peer_review_assignments
 
 
 @login_required
-def course_reviews(request):
-    pass
+def course_reviews(request, course_slug):
+    course = get_object_or_404(Course, slug=course_slug)
+
+    assignments = course_get_peer_review_assignments(course)
+
+    return render_to_response('peerreview/reviews.html', {
+            'course': course,
+            'assignments': assignments,
+            }, context_instance=RequestContext(request))
