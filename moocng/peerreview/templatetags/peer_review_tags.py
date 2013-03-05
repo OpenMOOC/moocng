@@ -15,6 +15,7 @@
 
 from django import template
 
+from moocng.mongodb import get_db
 from moocng.peerreview.utils import course_has_peer_review_assignments
 
 register = template.Library()
@@ -60,3 +61,24 @@ def if_has_peer_review_assignments(parser, token):
     return IfHasPeerReviewAssignmentsNode(course, nodelist_true, nodelist_false)
 
 
+@register.inclusion_tag('peerreview/pending_reviews.html')
+def pending_reviews(peer_review_assignment, user):
+    db = get_db()
+    peer_review_reviews = db.get_collection('peer_review_reviews')
+    reviews = peer_review_reviews.find({
+            'reviewer': user.id,
+            'kq': peer_review_assignment.knowledge_quantum.id,
+            })
+    peer_review_submissions = db.get_collection('peer_review_submissions')
+    assigned = peer_review_submissions.find({
+            'assigned_to': user.id,
+            'kq': peer_review_assignment.knowledge_quantum.id,
+            })
+    done = reviews.count()
+    pending = peer_review_assignment.minimum_reviewers - done
+    return {
+        'reviews': reviews,
+        'assigned': assigned,
+        'done': done,
+        'pending': pending,
+        }

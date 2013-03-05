@@ -1,0 +1,42 @@
+{% load i18n %}
+
+{% if done %}
+<h5>{% trans "Assignments already reviewed" %}</h5>
+
+<ul>
+  {% for review in reviews %}
+  <li>{% blocktrans with created=review.created %}Assignment reviewed on {{ created }}.{% endblocktrans %}</li>
+  {% endfor %}
+</ul>
+
+{% endif %}
+
+{% if pending > 0 %}
+
+<p>{% blocktrans %}You still need to review {{ pending }} more assignments.{% endblocktrans %}</p>
+
+{% else %}
+
+<p>{% trans "Contratulations, you have reviewed the minimum number of required assignments. Thank you so much for your amazing team work." %}</p>
+
+{% endif %}
+
+{% if assigned.count > 0 %}
+
+<p>{% trans "You are currently reviewing the following assignments:" %}</p>
+
+<ul>
+  {% for assign in assigned %}
+  <li>{% blocktrans with created=assign.created %}Assignment submited on {{ created }}.{% endblocktrans %}
+    <a href="">{% trans "Finish reviewing it." %}</a>
+  </li>
+  {% endfor %}
+</ul>
+
+{% else %}
+
+<form action="" method="post">{% csrf_token %}
+  <input type="submit" class="btn btn-primary" value='{% trans "Review another assignment" %}' />
+</form>
+
+{% endif %}

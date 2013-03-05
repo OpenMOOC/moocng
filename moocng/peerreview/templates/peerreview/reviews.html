@@ -1,0 +1,29 @@
+{% extends "courses/base_course.html" %}
+
+{% load i18n peer_review_tags %}
+
+{% block nav-course-reviews %}class="active"{% endblock %}
+
+{% block content %}
+
+<h2>{% trans "Reviews" %}</h2>
+
+{% if assignments %}
+
+  {% regroup assignments by knowledge_quantum.unit as unit_list %}
+  {% for unit in unit_list %}
+    <h3>{{ unit.grouper.title }}</h3>
+    {% for pra in unit.list %}
+      <h4>{{ pra.knowledge_quantum.title }}</h4>
+      {% pending_reviews pra user %}
+    {% endfor %}
+  {% endfor %}
+
+{% else %}
+
+<p>{% trans "This course does not have any Peer Review Assignment" %}.<p>
+
+<p><a href="{% url home %}">{% trans "You can try enrolling in another course" %}.</a></p>
+{% endif %}
+
+{% endblock %}
