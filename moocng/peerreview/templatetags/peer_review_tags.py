@@ -65,7 +65,7 @@ def if_has_peer_review_assignments(parser, token):
 def pending_reviews(peer_review_assignment, user):
     db = get_db()
     peer_review_reviews = db.get_collection('peer_review_reviews')
-    reviews = peer_review_reviews.find({
+    reviewed = peer_review_reviews.find({
             'reviewer': user.id,
             'kq': peer_review_assignment.knowledge_quantum.id,
             })
@@ -74,11 +74,9 @@ def pending_reviews(peer_review_assignment, user):
             'assigned_to': user.id,
             'kq': peer_review_assignment.knowledge_quantum.id,
             })
-    done = reviews.count()
-    pending = peer_review_assignment.minimum_reviewers - done
+    pending = peer_review_assignment.minimum_reviewers - reviewed.count()
     return {
-        'reviews': reviews,
+        'reviewed': reviewed,
         'assigned': assigned,
-        'done': done,
         'pending': pending,
         }
