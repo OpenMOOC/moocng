@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-04 10:58-0600\n"
-"PO-Revision-Date: 2013-03-04 17:58+0100\n"
+"POT-Creation-Date: 2013-03-05 07:01-0600\n"
+"PO-Revision-Date: 2013-03-05 14:07+0100\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
 "Language: es_ES\n"
@@ -159,8 +159,7 @@ msgstr "Nombre"
 msgid "Slug"
 msgstr "Slug"
 
-#: categories/models.py:14 categories/templates/categories/category.html:15
-#: categories/templates/categories/category.html:25
+#: categories/models.py:14 categories/templates/categories/category.html:14
 #: teacheradmin/templates/teacheradmin/categories.html:16
 msgid "Category's icon"
 msgstr "Icono de la categoría"
@@ -193,26 +192,26 @@ msgstr "categoría"
 msgid "categories"
 msgstr "categorías"
 
-#: categories/templates/categories/category.html:12
+#: categories/templates/categories/category.html:11
 msgid "Category's background banner"
 msgstr "Fondo de la categoría"
 
-#: categories/templates/categories/category.html:45
+#: categories/templates/categories/category.html:32
 #: courses/templates/courses/overview.html:104
 msgid "Classes Start"
 msgstr "Inicio de las Clases"
 
-#: categories/templates/categories/category.html:48
+#: categories/templates/categories/category.html:35
 #: courses/templates/courses/overview.html:107
 msgid "Classes End"
 msgstr "Final de las Clases"
 
-#: categories/templates/categories/category.html:58
+#: categories/templates/categories/category.html:45
 #: teacheradmin/templates/teacheradmin/categories.html:32
 msgid "Empty"
 msgstr "Vacío"
 
-#: categories/templates/categories/category.html:59
+#: categories/templates/categories/category.html:46
 msgid "There are no courses with this category or categories associated yet."
 msgstr "No hay cursos aún que tengan esta categoría o categorías asociada."
 
@@ -317,7 +316,7 @@ msgstr "La fecha de finalización es obligatoria para las tareas y los examenes"
 msgid "The start date is later than the deadline."
 msgstr "La fecha de comienzo es posterior a la fecha de finalización"
 
-#: courses/models.py:41
+#: courses/models.py:41 peerreview/models.py:29 peerreview/models.py:55
 msgid "Description"
 msgstr "Descripción"
 
@@ -514,7 +513,7 @@ msgstr "píldora"
 msgid "nuggets"
 msgstr "píldoras"
 
-#: courses/models.py:244 courses/models.py:252
+#: courses/models.py:244 courses/models.py:252 peerreview/models.py:33
 #: teacheradmin/templates/teacheradmin/stats.html:38
 #: teacheradmin/templates/teacheradmin/stats.html:129
 #: teacheradmin/templates/teacheradmin/stats.html:131
@@ -830,11 +829,12 @@ msgstr "Debates"
 msgid "Progress"
 msgstr "Progreso"
 
-#: courses/templates/courses/base_course.html:31
+#: courses/templates/courses/base_course.html:29
+#: peerreview/templates/peerreview/reviews.html:9
 msgid "Reviews"
 msgstr "Revisiones"
 
-#: courses/templates/courses/base_course.html:38
+#: courses/templates/courses/base_course.html:35
 #: teacheradmin/templates/teacheradmin/base_teacheradmin.html:17
 msgid "Course administration"
 msgstr "Administración del curso"
@@ -1128,6 +1128,75 @@ msgstr "Matricúlame en este curso"
 #: enrollment/templates/enrollment/free_unenrollment_button.html:3
 msgid "Unenroll me"
 msgstr "Desmatricúlame"
+
+#: peerreview/models.py:31
+msgid "Minimum reviewers"
+msgstr "Revisores mínimos"
+
+#: peerreview/models.py:38
+msgid "peer review assignment"
+msgstr "actividad revisada por compañeros"
+
+#: peerreview/models.py:39
+msgid "peer review assignments"
+msgstr "actividades revisadas por compañeros"
+
+#: peerreview/models.py:54
+msgid "Peer review assignment"
+msgstr "Actividad revisada por compañeros"
+
+#: peerreview/models.py:59
+msgid "evaluation criterion"
+msgstr "Criterio de evaluación"
+
+#: peerreview/models.py:60
+msgid "evaluation criteria"
+msgstr "Criterios de evalación"
+
+#: peerreview/templates/peerreview/pending_reviews.html:4
+msgid "Assignments already reviewed"
+msgstr "Actividades ya revisadas"
+
+#: peerreview/templates/peerreview/pending_reviews.html:8
+#, python-format
+msgid "Assignment reviewed on %(created)s."
+msgstr "Actividad revisada el %(created)s."
+
+#: peerreview/templates/peerreview/pending_reviews.html:16
+#, python-format
+msgid "You still need to review %(pending)s more assignments."
+msgstr "Aún tienes que revisar %(pending)s actividades más."
+
+#: peerreview/templates/peerreview/pending_reviews.html:20
+msgid ""
+"Contratulations, you have reviewed the minimum number of required "
+"assignments. Thank you so much for your amazing team work."
+msgstr "Enhorabuena, ya has revisado el número mínimo obligatorio de actividades. Muchas gracias por tu increible trabajo en grupo."
+
+#: peerreview/templates/peerreview/pending_reviews.html:26
+msgid "You are currently reviewing the following assignments:"
+msgstr "Actualmente estás revisando las siguientes actividades:"
+
+#: peerreview/templates/peerreview/pending_reviews.html:30
+#, python-format
+msgid "Assignment submited on %(created)s."
+msgstr "Actividad enviada el %(created)s."
+
+#: peerreview/templates/peerreview/pending_reviews.html:31
+msgid "Finish reviewing it."
+msgstr "Terminar de revisarla."
+
+#: peerreview/templates/peerreview/pending_reviews.html:39
+msgid "Review another assignment"
+msgstr "Revisar otra actividad"
+
+#: peerreview/templates/peerreview/reviews.html:24
+msgid "This course does not have any Peer Review Assignment"
+msgstr "Este curso no tiene ningúna actividad a revisar por compañeros"
+
+#: peerreview/templates/peerreview/reviews.html:26
+msgid "You can try enrolling in another course"
+msgstr "Puedes probar matriculándote en otro curso"
 
 #: teacheradmin/forms.py:53
 msgid "Send the announcement via email to all the students in this course"
