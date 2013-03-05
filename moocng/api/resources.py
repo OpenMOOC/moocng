@@ -39,7 +39,7 @@ from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
 from moocng.api.validation import AnswerValidation
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment, Course)
-#from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
+from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
 from moocng.courses.utils import normalize_kq_weight, calculate_course_mark
 from moocng.videos.utils import extract_YT_video_id
 
@@ -221,7 +221,7 @@ class PeerReviewAssignmentResource(ModelResource):
     kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
 
     class Meta:
-        #queryset = PeerReviewAssignment.objects.all()
+        queryset = PeerReviewAssignment.objects.all()
         resource_name = 'peer_review_assignment'
         allowed_methods = ['get']
         authentication = DjangoAuthentication()
@@ -235,7 +235,7 @@ class EvaluationCriterion(ModelResource):
     assignment = fields.ToOneField(PeerReviewAssignmentResource, 'assignment')
 
     class Meta:
-        #queryset = EvaluationCriterion.objects.all()
+        queryset = EvaluationCriterion.objects.all()
         resource_name = 'evaluation_criterion'
         allowed_methods = ['get']
         authentication = DjangoAuthentication()
