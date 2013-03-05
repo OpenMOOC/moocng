@@ -14,12 +14,15 @@
 
 
 from django.db import models
+from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
 
 from adminsortable.models import Sortable
 from tinymce.models import HTMLField
 
 from moocng.courses.models import KnowledgeQuantum
+from moocng.peerreview import cache
+from moocng.peerreview.managers import PeerReviewAssignmentManager
 
 
 class PeerReviewAssignment(models.Model):
@@ -29,10 +32,21 @@ class PeerReviewAssignment(models.Model):
     knowledge_quantum = models.ForeignKey(KnowledgeQuantum,
                                           verbose_name=_(u'Nugget'),
                                           blank=False, null=False)
+    objects = PeerReviewAssignmentManager()
 
     class Meta:
         verbose_name = _(u'peer review assignment')
         verbose_name_plural = _(u'peer review assignments')
+
+
+def invalidate_cache(sender, instance, **kwargs):
+    course = instance.knowledge_quantum.unit.course
+    cache.invalidate_course_has_peer_review_assignment_in_cache(course)
+
+
+signals.post_save.connect(invalidate_cache, sender=PeerReviewAssignment)
+signals.post_delete.connect(invalidate_cache, sender=PeerReviewAssignment)
+
 
 
 class EvaluationCriterion(Sortable):

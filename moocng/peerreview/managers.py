@@ -12,19 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from moocng.peerreview import cache
-from moocng.peerreview.models import PeerReviewAssignment
+from django.db import models
 
 
-def course_get_peer_review_assignments(course):
-    return PeerReviewAssignment.objects.from_course(course)
+class PeerReviewAssignmentManager(models.Manager):
 
-
-def course_has_peer_review_assignments(course):
-    result = cache.get_course_has_peer_review_assignments_from_cache(course)
-    if result is None:
-        assignments = course_get_peer_review_assignments(course)
-        result = assignments.count() > 0
-        cache.set_course_has_peer_review_assignments_in_cache(course, result)
-
-    return result
+    def from_course(self, course):
+        return self.get_query_set().filter(knowledge_quantum__unit__course=course)
