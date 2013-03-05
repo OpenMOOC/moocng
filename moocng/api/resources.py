@@ -35,12 +35,13 @@ from moocng.api.authentication import (DjangoAuthentication,
 from moocng.api.authorization import (PublicReadTeachersModifyAuthorization,
                                       TeacherAuthorization,
                                       UserResourceAuthorization)
-from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
+from moocng.api.mongodb import get_user, MongoObj, MongoResource
 from moocng.api.validation import AnswerValidation
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment, Course)
-from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
 from moocng.courses.utils import normalize_kq_weight, calculate_course_mark
+from moocng.mongodb import get_db
+from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
 from moocng.videos.utils import extract_YT_video_id
 
 

@@ -18,7 +18,7 @@ from datetime import datetime, date
 
 from django.conf import settings
 
-from moocng.api.mongodb import get_db
+from moocng.mongodb import get_db
 from moocng.courses.models import Course
 
 
