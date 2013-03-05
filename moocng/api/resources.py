@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+            # -*- coding: utf-8 -*-
 
 # Copyright 2012 Rooter Analysis S.L.
 #
@@ -74,6 +74,11 @@ class KnowledgeQuantumResource(ModelResource):
     question = fields.ToManyField('moocng.api.resources.QuestionResource',
                                   'question_set', related_name='kq',
                                   readonly=True, null=True)
+    peer_review_assignment = fields.ToManyField(
+                            'moocng.api.resources.PeerReviewAssignmentResource',
+                            'peerreviewassignment_set',
+                            related_name='peer_review_assignment',
+                            readonly=True, null=True)
     videoID = fields.CharField(readonly=True)
     correct = fields.BooleanField(readonly=True)
     completed = fields.BooleanField(readonly=True)
@@ -114,6 +119,13 @@ class KnowledgeQuantumResource(ModelResource):
             return None
         else:
             return question[0]
+
+    def dehydrate_peer_review_assignment(self, bundle):
+        peer_review_assignment = bundle.data['peer_review_assignment']
+        if len(peer_review_assignment) == 0:
+            return None
+        else:
+            return peer_review_assignment[0]
 
     def dehydrate_videoID(self, bundle):
         return extract_YT_video_id(bundle.obj.video)
@@ -168,6 +180,11 @@ class PrivateKnowledgeQuantumResource(ModelResource):
     question = fields.ToManyField('moocng.api.resources.QuestionResource',
                                   'question_set', related_name='kq',
                                   readonly=True, null=True)
+    peer_review_assignment = fields.ToManyField(
+                            'moocng.api.resources.PeerReviewAssignmentResource',
+                            'peerreviewassignment_set',
+                            related_name='peer_review_assignment',
+                            readonly=True, null=True)
     videoID = fields.CharField()
     normalized_weight = fields.IntegerField()
 
@@ -185,11 +202,18 @@ class PrivateKnowledgeQuantumResource(ModelResource):
         return normalize_kq_weight(bundle.obj)
 
     def dehydrate_question(self, bundle):
-        question = bundle.data['question']
+        question = bundle.data['question'] 
         if len(question) == 0:
             return None
         else:
             return question[0]
+
+    def dehydrate_peer_review_assignment(self, bundle):
+        peer_review_assignment = bundle.data['peer_review_assignment']
+        if len(peer_review_assignment) == 0:
+            return None
+        else:
+            return peer_review_assignment[0]
 
     def dehydrate_videoID(self, bundle):
         return extract_YT_video_id(bundle.obj.video)
@@ -229,6 +253,14 @@ class PeerReviewAssignmentResource(ModelResource):
         filtering = {
             "knowledge_quantum": ('exact'),
         }
+
+    def get_object_list(self, request):
+        objects = super(PeerReviewAssignmentResource, self).get_object_list(request)
+        return objects.filter(
+            Q(kq__unit__unittype='n') |
+            Q(kq__unit__start__isnull=True) |
+            Q(kq__unit__start__isnull=False, kq__unit__start__lte=datetime.now)
+        )
 
 
 class EvaluationCriterion(ModelResource):
