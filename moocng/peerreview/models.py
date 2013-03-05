@@ -27,7 +27,7 @@ class PeerReviewAssignment(models.Model):
                             blank=True, null=False)
     minimum_reviewers = models.PositiveSmallIntegerField(verbose_name=_(u'Minimum reviewers'))
     knowledge_quantum = models.ForeignKey(KnowledgeQuantum,
-                                          verbose_name=_(u'Knowledge quantum'),
+                                          verbose_name=_(u'Nugget'),
                                           blank=False, null=False)
 
     class Meta:
