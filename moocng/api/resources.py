@@ -1,4 +1,4 @@
-            # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 # Copyright 2012 Rooter Analysis S.L.
 #
@@ -203,7 +203,7 @@ class PrivateKnowledgeQuantumResource(ModelResource):
         return normalize_kq_weight(bundle.obj)
 
     def dehydrate_question(self, bundle):
-        question = bundle.data['question'] 
+        question = bundle.data['question']
         if len(question) == 0:
             return None
         else:
@@ -264,7 +264,7 @@ class PeerReviewAssignmentResource(ModelResource):
         )
 
 
-class EvaluationCriterion(ModelResource):
+class EvaluationCriterionResource(ModelResource):
     assignment = fields.ToOneField(PeerReviewAssignmentResource, 'assignment')
 
     class Meta:
