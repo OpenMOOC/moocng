@@ -207,9 +207,9 @@ MOOC.App = Backbone.Router.extend({
             unitObj.get("knowledgeQuantumList").reset(_.map(data.objects, function (kq) {
                 var data = _.pick(kq, "id", "title", "videoID", "teacher_comments",
                                   "supplementary_material", "question", "order",
-                                  "correct", "completed", "normalized_weight");
+                                  "correct", "completed", "normalized_weight",
+                                  "peer_review_assignment");
                 data.id = parseInt(data.id, 10);
-                data.peerReview = kq.peer_review_assignment;
                 return data;
             }));
 

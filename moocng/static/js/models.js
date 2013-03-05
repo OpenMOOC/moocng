@@ -346,8 +346,8 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
             correct: null,
             attachmentList: null,
             normalized_weight: 0,
-            peerReview: null, // Optional
-            peerReviewInstance: null
+            peer_review_assignment: null, // Optional
+            peerReviewAssignmentInstance: null
         };
     },
 
@@ -359,8 +359,6 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
     parse: function (resp, xhr) {
         "use strict";
         resp.id = parseInt(resp.id, 10);
-        resp.peerReview = resp.peer_review_assignment;
-        delete resp.peer_review_assignment;
         delete resp.resource_uri;
         delete resp.unit;
         delete resp.video;
@@ -379,9 +377,7 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
         model2send.unset("correct");
         model2send.unset("questionInstance");
         model2send.unset("attachmentList");
-        model2send.set("peer_review_assignment", model.get("peerReview"));
-        model2send.unset("peerReview");
-        model2send.unset("peerReviewInstance");
+        model2send.unset("peerReviewAssignmentInstance");
         if (model.get("order") < 0) {
             model2send.unset("order");
         }

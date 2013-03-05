@@ -27,7 +27,8 @@ MOOC.views.Unit = Backbone.View.extend({
     events: {
         "click li span.kq": "showKQ",
         "click li span.q": "showQ",
-        "click li span.a": "showA"
+        "click li span.a": "showA",
+        "click li span.pr": "showPR"
     },
 
     render: function () {
@@ -37,8 +38,10 @@ MOOC.views.Unit = Backbone.View.extend({
             css_class = MOOC.models.activity.hasKQ(kq.get('id')) ? ' label-info' : '';
             html += '<li id="kq' + kq.get("id") + '"><span class="kq label' + css_class + '" title="' + kq.get("title") + '">' + kq.truncateTitle(25) + '</span>';
             if (kq.has("question")) {
-                html += ' <span class="q label">' + MOOC.trans.classroom.q + '</span> ';
-                html += '/ <span class="a label">' + MOOC.trans.classroom.a + '</span>';
+                html += ' <span class="q label" title="' + MOOC.trans.classroom.qTooltip + '">' + MOOC.trans.classroom.q + '</span> ';
+                html += '/ <span class="a label" title="' + MOOC.trans.classroom.aTooltip + '">' + MOOC.trans.classroom.a + '</span>';
+            } else if (kq.has("peer_review_assignment")) {
+                html += ' <span class="pr label" title="' + MOOC.trans.classroom.prTooltip + '">' + MOOC.trans.classroom.pr + '</span>';
             }
             html += '</li>';
         });
@@ -63,6 +66,12 @@ MOOC.views.Unit = Backbone.View.extend({
         "use strict";
         var kq = $(evt.target).parent().attr("id").split("kq")[1];
         MOOC.router.navigate(this.id + "/kq" + kq + "/a", { trigger: true });
+    },
+
+    showPR: function (evt) {
+        "use strict";
+        var kq = $(evt.target).parent().attr("id").split("kq")[1];
+        MOOC.router.navigate(this.id + "/kq" + kq + "/p", { trigger: true });
     }
 });
 
@@ -92,7 +101,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
         if (this.model.has("question")) {
             this.loadQuestionData();
-        } else if (this.model.has("peerReview")) {
+        } else if (this.model.has("peer_review_assignment")) {
             this.loadPeerReviewData();
         }
         this.repeatedlyCheckIfPlayer();
@@ -290,9 +299,9 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
     loadPeerReviewData: function () {
         "use strict";
         var kqObj = this.model;
-        if (!kqObj.has("peerReviewInstance")) {
+        if (!kqObj.has("peerReviewAssignmentInstance")) {
             // Load Peer Review Data
-            MOOC.ajax.getResource(kqObj.get("peerReview"), function (data, textStatus, jqXHR) {
+            MOOC.ajax.getResource(kqObj.get("peer_review_assignment"), function (data, textStatus, jqXHR) {
                 var peerReviewObj = new MOOC.models.PeerReviewAssignment({
                     id: data.id,
                     description: data.description,
@@ -303,9 +312,9 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 peerReviewObj.get("criterionList").assignment = peerReviewObj.get("id");
                 peerReviewObj.get("criterionList").fetch({
                     success: function (collection, resp, options) {
-                        // Don't set the peerReviewInstance until the 
+                        // Don't set the peerReviewAssignmentInstance until the
                         // evaluation criteria is loaded
-                        kqObj.set("peerReviewInstance", peerReviewObj);
+                        kqObj.set("peerReviewAssignmentInstance", peerReviewObj);
                     }
                 });
             });
@@ -373,23 +382,23 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
                     // TODO callback();
                 }, this));
-            } else if (model.has("peerReview")) {
+            } else if (model.has("peer_review_assignment")) {
                 toExecute = [];
 
-                if (!this.model.has("peerReviewInstance")) {
-                    toExecute.push(async.apply(this.setupListernerFor, this.model, "peerReviewInstance"));
+                if (!this.model.has("peerReviewAssignmentInstance")) {
+                    toExecute.push(async.apply(this.setupListernerFor, this.model, "peerReviewAssignmentInstance"));
                 }
 
                 toExecute.push(_.bind(function (callback) {
-                    var peerReviewObj = this.model.get("peerReviewInstance"),
-                        view = MOOC.views.peerReviewViews[peerReviewObj.get("id")];
+                    var peerReviewObj = this.model.get("peerReviewAssignmentInstance"),
+                        view = MOOC.views.peerReviewAssignmentViews[peerReviewObj.get("id")];
 
                     if (_.isUndefined(view)) {
                         view = new MOOC.views.PeerReviewAssignment({
                             model: peerReviewObj,
                             el: $("#kq-video")[0]
                         });
-                        MOOC.views.peerReviewViews[peerReviewObj.get("id")] = view;
+                        MOOC.views.peerReviewAssignmentViews[peerReviewObj.get("id")] = view;
                     }
 
                     this.destroyVideo();
@@ -755,4 +764,4 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
     }
 });
 
-MOOC.views.peerReviewViews = {};
+MOOC.views.peerReviewAssignmentViews = {};
