@@ -12,19 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from moocng.peerreview import cache
-from moocng.peerreview.models import PeerReviewAssignment
+from django.core.cache import cache
 
 
-def course_get_peer_review_assignments(course):
-    return PeerReviewAssignment.objects.from_course(course)
+def get_course_key(course):
+    return 'course_%d_has_peer_review_assignments' % course.id
 
 
-def course_has_peer_review_assignments(course):
-    result = cache.get_course_has_peer_review_assignments_from_cache(course)
-    if result is None:
-        assignments = course_get_peer_review_assignments(course)
-        result = assignments.count() > 0
-        cache.set_course_has_peer_review_assignments_in_cache(course, result)
+def get_course_has_peer_review_assignments_from_cache(course):
+    return cache.get(get_course_key(course))
 
-    return result
+
+def set_course_has_peer_review_assignments_in_cache(course, has_pra):
+    cache.set(get_course_key(course), has_pra, 3600)
+
+
+def invalidate_course_has_peer_review_assignment_in_cache(course):
+    cache.delete(get_course_key(course))
