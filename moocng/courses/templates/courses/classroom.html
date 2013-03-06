@@ -11,6 +11,34 @@
 {% endblock %}
 
 {% block content %}
+<script id="peer-review-tpl" type="text/template">
+    <div class='solution-wrapper white'><form>
+        <div id='pr-description'></div>
+
+        <p class="align-right">
+            <button class='btn' id='pr-view-criteria'>{% trans "View the evaluation criteria" %}</button>
+        </p>
+
+        <label for='pr_submission'><b>{% trans "Write your submission here:" %}</b></label>
+        <textarea id='pr_submission' name='pr_submission'></textarea>
+
+        <label for='pr_file'><b>{% trans "Attach a file to your submission:" %}</b></label>
+        <div class='fileupload fileupload-new' data-provides='fileupload'>
+            <div class='input-append'>
+                <div class='uneditable-input span3'>
+                    <i class='icon-file fileupload-exists'></i> <span class='fileupload-preview'></span>
+                </div>
+                <span class='btn btn-file'>
+                <span class='fileupload-new'>{% trans "Select file" %}</span>
+                <span class='fileupload-exists'>{% trans "Change" %}</span>
+                    <input type='file' name='pr_file' />
+                </span>
+                <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'>{% trans "Remove" %}</a>
+            </div>
+        </div>
+    </form></div>
+</script>
+
 <div class="row"><div class="span8">
     <h2 id="kq-title"></h2>
 </div></div>
@@ -116,12 +144,7 @@
                 answersSent: "{% trans "Answers sent" %}",
                 answersCorrect: "{% trans "Congratulations, you got it right!" %}",
                 answersIncorrect: "{% trans "Wrong answer, good luck next time." %}",
-                answersUnknown: "{% trans "Your answers were stored, but can't be corrected until the deadline is reached." %}",
-                prSubmission: "{% trans "Write your submission here:" %}",
-                prFile: "{% trans "Attach a file to your submission:" %}",
-                prFileSelect: "{% trans "Select file" %}",
-                prFileChange: "{% trans "Change" %}",
-                prFileRemove: "{% trans "Remove" %}"
+                answersUnknown: "{% trans "Your answers were stored, but can't be corrected until the deadline is reached." %}"
             },
             api: {
                 unitNotReadyTitle: "{% trans "The module is not ready" %}",

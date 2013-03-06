@@ -746,36 +746,32 @@ MOOC.views.Attachment = Backbone.View.extend({
 });
 
 MOOC.views.PeerReviewAssignment = Backbone.View.extend({
+    events: {
+        "click button#pr-view-criteria": "viewCriteria"
+    },
+
+    initialize: function () {
+        "use strict";
+        _.bindAll(this, "render", "getTemplate", "viewCriteria");
+    },
+
+    template: undefined,
+
+    getTemplate: function () {
+        "use strict";
+        if (_.isUndefined(this.template)) {
+            this.template = $("#peer-review-tpl").text();
+        }
+        return this.template;
+    },
+
     render: function () {
         "use strict";
         var tinyMCEOptions,
-            html;
+            html = this.getTemplate();
 
-        html = "<div class='solution-wrapper white'><form>";
-        html += "<div>" + this.model.get("description") + "</div>";
-
-        html += "<label for='pr_submission'><b>" + MOOC.trans.classroom.prSubmission + "</b></label>";
-        html += "<textarea id='pr_submission' name='pr_submission'></textarea>";
-
-        html += "<label for='pr_file'><b>" + MOOC.trans.classroom.prFile + "</b></label>";
-        html += "<div class='fileupload fileupload-new' data-provides='fileupload'>";
-        html += "   <div class='input-append'>";
-        html += "       <div class='uneditable-input span3'>";
-        html += "           <i class='icon-file fileupload-exists'></i> <span class='fileupload-preview'></span>";
-        html += "       </div>";
-        html += "       <span class='btn btn-file'>";
-        html += "       <span class='fileupload-new'>" + MOOC.trans.classroom.prFileSelect + "</span>";
-        html += "       <span class='fileupload-exists'>" + MOOC.trans.classroom.prFileChange + "</span>";
-        html += "          <input type='file' name='pr_file' />";
-        html += "       </span>";
-        html += "       <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'>" + MOOC.trans.classroom.prFileRemove + "</a>";
-        html += "   </div>";
-        html += "</div>";
-
-        html += "</form></div>";
-
-        this.$el.removeClass("question");
-        this.$el.html(html);
+        this.$el.removeClass("question").html(html);
+        this.$el.find("#pr-description").html(this.model.get("description"));
 
         tinyMCEOptions = {
             mode: "exact",
@@ -793,6 +789,13 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
         tinyMCE.init(tinyMCEOptions);
 
         return this;
+    },
+
+    viewCriteria: function (evt) {
+        "use strict";
+        evt.preventDefault();
+        evt.stopPropagation();
+        // TODO
     }
 });
 
