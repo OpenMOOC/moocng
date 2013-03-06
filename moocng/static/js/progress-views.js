@@ -107,13 +107,13 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             score = 1.4;
             badge_class = (score >= 2.5) ? 'success' : 'important';
 
-            html.push('<span class="badge badge-' + badge_class + ' pull-right"><i class="icon-exclamation-sign icon-white" title="This score will not be applied to your final score until you get the minimum number of reviews"></i> ' + score + '</span>');
+            html.push('<span class="badge badge-' + badge_class + ' pull-right"><i class="icon-exclamation-sign icon-white" title="' + MOOC.trans.progress.score_dont_apply + '"></i> ' + score + '</span>');
 
             if (this.reviews.length > 0) {
                 html.push('<table class="table table-stripped table-bordered">');
-                html.push('<caption>Current reviews</caption>');
+                html.push('<caption>' + MOOC.trans.progress.current_reviews + '</caption>');
                 html.push('<thead><tr>');
-                html.push('<th>#</th><th>Date</th><th>Score</th>');
+                html.push('<th>#</th><th>' + MOOC.trans.progress.date + '</th><th>Score</th>');
                 html.push('</tr></thead>');
                 html.push('<tbody>');
                 _.each(this.reviews, function (review, index) {
@@ -126,10 +126,10 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 html.push('</tbody>');
                 html.push('</table>');
             } else {
-                html.push('<p>You have not received any review yet</p>');
+                html.push('<p>' + MOOC.trans.progress.no_reviews_yet + '</p>');
             }
 
-            html.push('<p>Minimum number of reviews: <strong>' +  '3' + '</strong></p>');
+            html.push('<p>' + MOOC.trans.progress.minimum_reviews + ': <strong>' +  '3' + '</strong></p>');
         } else {
 
             if (this.model.get('completed')) {
