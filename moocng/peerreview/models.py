@@ -16,6 +16,7 @@
 from django.db import models
 from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 
 from adminsortable.models import Sortable
 from tinymce.models import HTMLField
@@ -38,6 +39,8 @@ class PeerReviewAssignment(models.Model):
         verbose_name = _(u'peer review assignment')
         verbose_name_plural = _(u'peer review assignments')
 
+    def __unicode__(self):
+        return ugettext(u'Peer review assignment - {0}').format(self.id)
 
 def invalidate_cache(sender, instance, **kwargs):
     course = instance.kq.unit.course
