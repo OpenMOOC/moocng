@@ -288,29 +288,29 @@ class PeerReviewSubmissionsResource(MongoResource):
         authorization = DjangoAuthorization()
         allowed_methods = ['get', 'post']
         filtering = {
-            "author": ('exact'),
             "kq": ('exact'),
         }
 
     def obj_get_list(self, request=None, **kwargs):
-        # TODO
-        user_data = self._get_or_create_user(request, **kwargs)
-        author = request.GET.get('author', None)
+
+        author = request.GET.get('author', unicode(request.user.id))
         kq = request.GET.get('kq', None)
 
+        mongo_query = dict(author=author)
+
+        if kq:
+            mongo_query["kq"] = kq
+
+        query_results = self._collection.find(mongo_query)
+
         results = []
-        #results= get_peer_review_submissions(user_data, author, kq)
+
+        for query_item in query_results:
+            obj = MongoObj(initial=query_item)
+            obj.uuid = query_item["_id"]
+            results.append(obj)
 
         return results
-
-    def obj_create(self, bundle, request=None, **kwargs):
-        # TODO
-        user_data = self._get_or_create_user(request, **kwargs)
-
-        bundle = self.full_hydrate(bundle)
-        #bundle = create_peer_review_submissions(user_data, bundle)
-
-        return bundle
 
 
 class PeerReviewReviewsResource(MongoResource):
@@ -323,16 +323,17 @@ class PeerReviewReviewsResource(MongoResource):
         authorization = DjangoAuthorization()
         allowed_methods = ['get']
         filtering = {
-            "author": ('exact'),
             "reviewer": ('exact'),
             "kq": ('exact'),
+            "unit": ('exact'),
+            "course": ('exact'),
             "submission_id": ('exact'),
         }
 
     def obj_get_list(self, request=None, **kwargs):
         # TODO
-        user_data = self._get_or_create_user(request, **kwargs)
-        author = request.GET.get('author', None)
+        # user_data = self._get_or_create_user(request, **kwargs)
+        author = request.GET.get('author', request.user.id)
         kq = request.GET.get('kq', None)
         reviewer = request.GET.get('reviewer', None)
         submission_id = request.GET.get('submission_id', None)
