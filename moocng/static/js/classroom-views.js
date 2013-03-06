@@ -170,6 +170,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 url = "unit" + unit.get("id") + "/kq" + aux.get("id");
                 if (answer && aux.has("question")) {
                     url += "/a";
+                } else if (answer && aux.has("peer_review_assignment")) {
+                    url += "/p";
                 }
                 return url;
             }
@@ -180,17 +182,24 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         if (/#[\w\/]+\/q/.test(path)) { // Viewing question
             target = next ? "answer" : "same";
         } else if (/#[\w\/]+\/a/.test(path)) { // Viewing answer
-            target = next ? "next" : "question";
+            target = next ? "next" : "exercise";
+        } else if (/#[\w\/]+\/p/.test(path)) { // Viewing peer review
+            target = next ? "next" : "same";
         } else { // Viewing kq
-            target = next ? "question" : "prev";
+            target = next ? "exercise" : "prev";
         }
-        if (target === "question" && !kq.has("question")) {
+        if (target === "exercise" && !kq.has("question") && !kq.has("peer_review_assignment")) {
             target = "next";
         }
 
         switch (target) {
-        case "question":
-            url = "unit" + unit.get("id") + "/kq" + kq.get("id") + "/q";
+        case "exercise":
+            url = "unit" + unit.get("id") + "/kq" + kq.get("id");
+            if (kq.has("question")) {
+                url += "/q";
+            } else { // peer review
+                url += "/p";
+            }
             break;
         case "answer":
             url = "unit" + unit.get("id") + "/kq" + kq.get("id") + "/a";
@@ -391,7 +400,11 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
                 toExecute.push(_.bind(function (callback) {
                     var peerReviewObj = this.model.get("peerReviewAssignmentInstance"),
-                        view = MOOC.views.peerReviewAssignmentViews[peerReviewObj.get("id")];
+                        view = MOOC.views.peerReviewAssignmentViews[peerReviewObj.get("id")],
+                        unit = MOOC.models.course.getByKQ(this.model);
+
+                    this.setEventForNavigation("#kq-previous", unit, this.model, false);
+                    this.setEventForNavigation("#kq-next", unit, this.model, true);
 
                     if (_.isUndefined(view)) {
                         view = new MOOC.views.PeerReviewAssignment({
