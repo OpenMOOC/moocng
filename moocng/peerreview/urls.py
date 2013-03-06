@@ -20,4 +20,6 @@ urlpatterns = patterns(
 
     url(r'^course/(?P<course_slug>[-\w]+)/reviews/$', 'course_reviews',
         name='course_reviews'),
+    url(r'^course/(?P<course_slug>[-\w]+)/reviews/(?P<review_id>\d+)/assign', 'course_review_assign',
+        name='course_review_assign'),
 )
