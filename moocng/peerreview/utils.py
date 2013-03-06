@@ -28,3 +28,22 @@ def course_has_peer_review_assignments(course):
         cache.set_course_has_peer_review_assignments_in_cache(course, result)
 
     return result
+
+
+def kq_get_peer_review_score(kq, author, ppr):
+    """ppr is peer_review_reviews mongo collection"""
+
+    reviews = ppr.find({
+        "kq": unicode(kq.id),
+        "author": unicode(2)
+    })
+
+    if not reviews:
+        return 0
+
+    average = 0
+    for review in reviews:
+        average += (float(sum([c[1] for c in review["criteria"]]) /
+                    len(review["criteria"])))
+
+    return (average / reviews.count())

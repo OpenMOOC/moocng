@@ -46,6 +46,7 @@ from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
 from moocng.courses.utils import normalize_kq_weight, calculate_course_mark
 from moocng.mongodb import get_db
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
+from moocng.peerreview.utils import kq_get_peer_review_score
 from moocng.videos.utils import extract_YT_video_id
 
 
@@ -84,6 +85,7 @@ class KnowledgeQuantumResource(ModelResource):
         'peerreviewassignment_set',
         related_name='peer_review_assignment',
         readonly=True, null=True)
+    peer_review_score = fields.IntegerField(readonly=True)
     videoID = fields.CharField(readonly=True)
     correct = fields.BooleanField(readonly=True)
     completed = fields.BooleanField(readonly=True)
@@ -111,6 +113,7 @@ class KnowledgeQuantumResource(ModelResource):
         db = get_db()
         self.user_answers = get_user(request, db.get_collection('answers'))
         self.user_activity = get_user(request, db.get_collection('activity'))
+        self.peer_review_reviews = db.get_collection('peer_review_reviews')
         return super(KnowledgeQuantumResource, self).dispatch(request_type,
                                                               request,
                                                               **kwargs)
@@ -131,6 +134,12 @@ class KnowledgeQuantumResource(ModelResource):
             return None
         else:
             return peer_review_assignment[0]
+
+    def dehydrate_peer_review_score(self, bundle):
+        if bundle.obj.peerreviewassignment_set.exists():
+            return kq_get_peer_review_score(bundle.obj, bundle.request.user.id,
+                                            self.peer_review_reviews)
+        return 0
 
     def dehydrate_videoID(self, bundle):
         return extract_YT_video_id(bundle.obj.video)
