@@ -1,5 +1,5 @@
 /*jslint vars: false, browser: true, nomen: true */
-/*global MOOC: true, Backbone, $, _, YT, async */
+/*global MOOC: true, Backbone, $, _, YT, async, tinyMCE */
 
 // Copyright 2012 Rooter Analysis S.L.
 //
@@ -80,8 +80,7 @@ MOOC.views.unitViews = {};
 MOOC.views.KnowledgeQuantum = Backbone.View.extend({
     render: function () {
         "use strict";
-        var height = this.getVideoHeight(),
-            player,
+        var player,
             html,
             unit,
             order,
@@ -90,11 +89,11 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             comments,
             supplementary;
 
-        html = '<iframe id="ytplayer" width="100%" height="' + height + 'px" ';
+        html = '<iframe id="ytplayer" width="620px" height="372px" ';
         html += 'src="//www.youtube.com/embed/' + this.model.get("videoID");
         html += '?rel=0&origin=' + MOOC.host;
         html += '" frameborder="0" allowfullscreen></iframe>';
-        $("#kq-video").html(html);
+        $("#kq-video").removeClass("question").html(html);
 
         $("#kq-q-buttons").addClass("hide");
         $("#kq-next-container").addClass("offset4");
@@ -133,24 +132,6 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         }, this));
 
         return this;
-    },
-
-    getVideoHeight: function () {
-        "use strict";
-        var width = $("#kq-video").css("width"),
-            height;
-
-        if (width.indexOf('p') > 0) {
-            width = parseInt(width.split('p')[0], 10);
-        } else {
-            width = parseInt(width, 10);
-        }
-        height = Math.round((width * 6) / 10);
-        if (height < 200) {
-            height = 200;
-        }
-
-        return height;
     },
 
     setEventForNavigation: function (selector, unit, kq, next) {
@@ -384,12 +365,11 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                         });
                         MOOC.views.questionViews[question.get("id")] = view;
                     }
-                    // We need to destroy the iframe with a callback because the
-                    // question view needs to read the width/height of the video
-                    // TODO not anymore?
-                    view.render(_.bind(this.destroyVideo, this));
 
-                    // TODO callback();
+                    this.destroyVideo();
+                    view.render();
+
+                    callback();
                 }, this));
             } else if (model.has("peer_review_assignment")) {
                 toExecute = [];
@@ -401,7 +381,14 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 toExecute.push(_.bind(function (callback) {
                     var peerReviewObj = this.model.get("peerReviewAssignmentInstance"),
                         view = MOOC.views.peerReviewAssignmentViews[peerReviewObj.get("id")],
+                        path = window.location.hash.substring(1),
                         unit = MOOC.models.course.getByKQ(this.model);
+
+                    $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
+                    if (!(/[\w\/]+\/p/.test(path))) {
+                        path = path + "/p";
+                        MOOC.router.navigate(path, { trigger: false });
+                    }
 
                     this.setEventForNavigation("#kq-previous", unit, this.model, false);
                     this.setEventForNavigation("#kq-next", unit, this.model, true);
@@ -415,7 +402,6 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     }
 
                     this.destroyVideo();
-
                     view.render();
 
                     callback();
@@ -444,23 +430,21 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         }
 
         toExecute.push(_.bind(function (callback) {
-            var height = this.getVideoHeight(),
-                unit = MOOC.models.course.getByKQ(this.model),
+            var unit = MOOC.models.course.getByKQ(this.model),
                 questionInstance = this.model.get("questionInstance"),
                 html = "";
 
             if (questionInstance.has("solutionText")) {
                 html = "<div class='solution-wrapper white'>" + questionInstance.get("solutionText") + "</div>";
             } else if (questionInstance.has("solutionVideo")) {
-                html = '<iframe id="ytplayer" width="100%" height="' + height + 'px" ';
+                html = '<iframe id="ytplayer" width="620px" height="372px" ';
                 html += 'src="//www.youtube.com/embed/' + this.model.get("questionInstance").get("solutionVideo");
                 html += '?rel=0&origin=' + MOOC.host + '" frameborder="0" allowfullscreen></iframe>';
             } else {
                 MOOC.alerts.show(MOOC.alerts.INFO, MOOC.trans.api.solutionNotReadyTitle, MOOC.trans.api.solutionNotReady);
             }
 
-            $("#kq-video").html(html);
-            $("#kq-video").css("height", "auto");
+            $("#kq-video").removeClass("question").html(html);
             $("#kq-q-buttons").addClass("hide");
             $("#kq-next-container").addClass("offset4");
             $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
@@ -478,13 +462,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
     destroyVideo: function () {
         "use strict";
-        var node = $("#kq-video"),
-            height = node.css("height");
-
-        if (!_.isUndefined(height)) {
-            node.css("height", height);
-        }
-        node.empty();
+        $("#kq-video").empty();
         this.player = null;
     }
 });
@@ -492,7 +470,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 MOOC.views.kqViews = {};
 
 MOOC.views.Question = Backbone.View.extend({
-    render: function (destroyPlayer) {
+    render: function () {
         "use strict";
         var kqPath = window.location.hash.substring(1, window.location.hash.length - 2), // Remove trailing /q
             answer = this.model.get('answer'),
@@ -505,9 +483,8 @@ MOOC.views.Question = Backbone.View.extend({
         } else {
             html = "<div class='white' style='width: 620px; height: 372px;'></div>";
         }
-        destroyPlayer();
         this.$el.html(html);
-        this.$el.css("height", "auto");
+        this.$el.addClass("question");
 
         $("#kq-q-buttons").removeClass("hide");
 
@@ -771,8 +748,50 @@ MOOC.views.Attachment = Backbone.View.extend({
 MOOC.views.PeerReviewAssignment = Backbone.View.extend({
     render: function () {
         "use strict";
-        // TODO
-        this.$el.append("<p>TODO: Here goes a peer review form.</p>");
+        var tinyMCEOptions,
+            html;
+
+        html = "<div class='solution-wrapper white'><form>";
+        html += "<div>" + this.model.get("description") + "</div>";
+
+        html += "<label for='pr_submission'><b>" + MOOC.trans.classroom.prSubmission + "</b></label>";
+        html += "<textarea id='pr_submission' name='pr_submission'></textarea>";
+
+        html += "<label for='pr_file'><b>" + MOOC.trans.classroom.prFile + "</b></label>";
+        html += "<div class='fileupload fileupload-new' data-provides='fileupload'>";
+        html += "   <div class='input-append'>";
+        html += "       <div class='uneditable-input span3'>";
+        html += "           <i class='icon-file fileupload-exists'></i> <span class='fileupload-preview'></span>";
+        html += "       </div>";
+        html += "       <span class='btn btn-file'>";
+        html += "       <span class='fileupload-new'>" + MOOC.trans.classroom.prFileSelect + "</span>";
+        html += "       <span class='fileupload-exists'>" + MOOC.trans.classroom.prFileChange + "</span>";
+        html += "          <input type='file' name='pr_file' />";
+        html += "       </span>";
+        html += "       <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'>" + MOOC.trans.classroom.prFileRemove + "</a>";
+        html += "   </div>";
+        html += "</div>";
+
+        html += "</form></div>";
+
+        this.$el.removeClass("question");
+        this.$el.html(html);
+
+        tinyMCEOptions = {
+            mode: "exact",
+            elements: "pr_submission",
+            plugins: "paste,searchreplace",
+            width: "583",
+            height: "250",
+            theme: "advanced",
+            theme_advanced_resizing : true,
+            theme_advanced_toolbar_location: "top",
+            theme_advanced_buttons1: "bold,italic,underline,strikethrough,separator,link,unlink,separator,undo,redo,copy,paste,separator,cleanup,separator,bullist,numlist",
+            theme_advanced_buttons2: "",
+            theme_advanced_buttons3: ""
+        };
+        tinyMCE.init(tinyMCEOptions);
+
         return this;
     }
 });
