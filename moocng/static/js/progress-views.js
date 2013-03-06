@@ -108,21 +108,27 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             badge_class = (score >= 2.5) ? 'success' : 'important';
 
             html.push('<span class="badge badge-' + badge_class + ' pull-right"><i class="icon-exclamation-sign icon-white" title="This score will not be applied to your final score until you get the minimum number of reviews"></i> ' + score + '</span>');
-            html.push('<table class="table table-stripped table-bordered">');
-            html.push('<caption>Current reviews</caption>');
-            html.push('<thead><tr>');
-            html.push('<th>#</th><th>Date</th><th>Score</th>');
-            html.push('</tr></thead>');
-            html.push('<tbody>');
-            _.each(this.reviews, function (review, index) {
-                html.push('<tr>');
-                html.push('<td>' + (index + 1)  + '</td>');
-                html.push('<td>' + review.get('created')  + '</td>');
-                html.push('<td><a class="btn btn-small pull-right" href="#"><i class="icon-eye-open"></i> View details</a>' + review.get('score')  + '</td>');
-                html.push('</tr>');
-            });
-            html.push('</tbody>');
-            html.push('</table>');
+
+            if (this.reviews.length > 0) {
+                html.push('<table class="table table-stripped table-bordered">');
+                html.push('<caption>Current reviews</caption>');
+                html.push('<thead><tr>');
+                html.push('<th>#</th><th>Date</th><th>Score</th>');
+                html.push('</tr></thead>');
+                html.push('<tbody>');
+                _.each(this.reviews, function (review, index) {
+                    html.push('<tr>');
+                    html.push('<td>' + (index + 1)  + '</td>');
+                    html.push('<td>' + review.get('created')  + '</td>');
+                    html.push('<td><a class="btn btn-small pull-right" href="#"><i class="icon-eye-open"></i> View details</a>' + review.get('score')  + '</td>');
+                    html.push('</tr>');
+                });
+                html.push('</tbody>');
+                html.push('</table>');
+            } else {
+                html.push('<p>You have not received any review yet</p>');
+            }
+
             html.push('<p>Minimum number of reviews: <strong>' +  '3' + '</strong></p>');
         } else {
 
