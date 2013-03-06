@@ -1171,7 +1171,7 @@ msgstr "Criterio de evaluación"
 
 #: peerreview/models.py:60
 msgid "evaluation criteria"
-msgstr "Criterios de evalación"
+msgstr "Criterios de evaluación"
 
 #: peerreview/templates/peerreview/pending_reviews.html:4
 msgid "Assignments already reviewed"
