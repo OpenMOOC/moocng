@@ -548,6 +548,7 @@ if (_.isUndefined(window.MOOC)) {
                 "click button#dont-use-last-frame": "useBlankCanvas",
                 "click button#use-last-frame": "useLastFrame",
                 "click button#delete-question": "removeQuestion",
+                "click button#delete-peer-review-assignment": "removePeerReviewAssignment",
                 "click button#use-solution-video-btn": "toggleSolution",
                 "click button#use-solution-text-btn": "toggleSolution",
                 "click button#go2options": "go2options",
@@ -883,6 +884,33 @@ if (_.isUndefined(window.MOOC)) {
                     success: function () {
                         view.model.set("questionInstance", null);
                         view.model.set("question", null);
+                        view.model.save(null, {
+                            success: function () {
+                                MOOC.ajax.hideLoading();
+                                view.render();
+                            },
+                            error: function () {
+                                MOOC.ajax.hideLoading();
+                                MOOC.ajax.showAlert("generic");
+                            }
+                        });
+                    },
+                    error: function () {
+                        MOOC.ajax.hideLoading();
+                        MOOC.ajax.showAlert("generic");
+                    }
+                });
+            },
+
+            removePeerReviewAssignment: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                MOOC.ajax.showLoading();
+                var view = this;
+                this.model.get("peerReviewAssignmentInstance").destroy({
+                    success: function () {
+                        view.model.set("peerReviewAssignmentInstance", null);
+                        view.model.set("peer_review_assignment", null);
                         view.model.save(null, {
                             success: function () {
                                 MOOC.ajax.hideLoading();
