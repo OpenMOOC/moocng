@@ -14,12 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 from datetime import datetime
 import re
 
+from bson import ObjectId
+
 from tastypie import fields
-from tastypie.resources import ModelResource
 from tastypie.authorization import DjangoAuthorization
+from tastypie.exceptions import NotFound
+from tastypie.resources import ModelResource
 
 from django.conf import settings
 from django.conf.urls import url
@@ -331,17 +335,37 @@ class PeerReviewReviewsResource(MongoResource):
         }
 
     def obj_get_list(self, request=None, **kwargs):
-        # TODO
-        # user_data = self._get_or_create_user(request, **kwargs)
-        author = request.GET.get('author', request.user.id)
-        kq = request.GET.get('kq', None)
-        reviewer = request.GET.get('reviewer', None)
-        submission_id = request.GET.get('submission_id', None)
+        mongo_query = {
+            "author": request.GET.get('author', unicode(request.user.id))
+        }
+
+        for key in self._meta.filtering.keys():
+            if key in request.GET:
+                mongo_query[key] = request.GET.get(key)
+
+        query_results = self._collection.find(mongo_query)
 
         results = []
-        #results= get_peer_review_reviews(user_data, author, kq, reviewer, submission_id)
+
+        for query_item in query_results:
+            obj = MongoObj(initial=query_item)
+            obj.uuid = query_item["_id"]
+            results.append(obj)
 
         return results
+
+    def obj_get(self, request=None, **kwargs):
+
+        query = dict(_id=ObjectId(kwargs['pk']))
+
+        mongo_item = self._collection.find_one(query)
+
+        if mongo_item is None:
+            raise NotFound('Invalid resource lookup data provided')
+
+        obj = MongoObj(initial=mongo_item)
+        obj.uuid = kwargs['pk']
+        return obj
 
 
 class QuestionResource(ModelResource):
