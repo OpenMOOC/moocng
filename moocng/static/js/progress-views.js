@@ -30,13 +30,18 @@ MOOC.views.Unit = Backbone.View.extend({
 
     initialize: function () {
         "use strict";
-        var collection = this.model.get('knowledgeQuantumList');
+        var unit = this.model, collection = unit.get('knowledgeQuantumList');
         this._kqViews = collection.map(function (kq) {
-            var kqView = MOOC.views.kqViews[kq.id];
+            var kqView = MOOC.views.kqViews[kq.id], reviews = null;
             if (_.isUndefined(kqView)) {
+                if (kq.get('peer_review_assignment') !== null) {
+                    reviews = unit.getPeerReviewReviewsForKq(kq);
+                }
+
                 MOOC.views.kqViews[kq.id] = new MOOC.views.KnowledgeQuantum({
                     model: kq,
-                    id: "kq" + kq.id
+                    id: "kq" + kq.id,
+                    reviews: reviews
                 });
                 kqView = MOOC.views.kqViews[kq.id];
             }
@@ -84,19 +89,52 @@ MOOC.views.unitViews = {};
 MOOC.views.KnowledgeQuantum = Backbone.View.extend({
     tagName: "li",
 
+    initialize: function (options) {
+        "use strict";
+        this.reviews = options.reviews;
+    },
+
     render: function () {
         "use strict";
         var html = [
                 "<b>" + this.model.truncateTitle(40) + "</b>"
-            ];
-        if (this.model.get('completed')) {
-            if (this.model.get("correct")) {
-                html.push('<span class="badge badge-success pull-right"><i class="icon-ok icon-white"></i> ' + MOOC.views.capitalize(MOOC.trans.progress.correct) + '</span>');
-            } else {
-                html.push('<span class="badge badge-important pull-right"><i class="icon-remove icon-white"></i> ' + MOOC.trans.progress.incorrect + '</span>');
-            }
+            ],
+            peer_review,
+            score,
+            badge_class;
+
+        if (this.reviews !== null) {
+            score = 1.4;
+            badge_class = (score >= 2.5) ? 'success' : 'important';
+
+            html.push('<span class="badge badge-' + badge_class + ' pull-right"><i class="icon-exclamation-sign icon-white" title="This score will not be applied to your final score until you get the minimum number of reviews"></i> ' + score + '</span>');
+            html.push('<table class="table table-stripped table-bordered">');
+            html.push('<caption>Current reviews</caption>');
+            html.push('<thead><tr>');
+            html.push('<th>#</th><th>Date</th><th>Score</th>');
+            html.push('</tr></thead>');
+            html.push('<tbody>');
+            _.each(this.reviews, function (review, index) {
+                html.push('<tr>');
+                html.push('<td>' + (index + 1)  + '</td>');
+                html.push('<td>' + review.get('created')  + '</td>');
+                html.push('<td><a class="btn btn-small pull-right" href="#"><i class="icon-eye-open"></i> View details</a>' + review.get('score')  + '</td>');
+                html.push('</tr>');
+            });
+            html.push('</tbody>');
+            html.push('</table>');
+            html.push('<p>Minimum number of reviews: <strong>' +  '3' + '</strong></p>');
         } else {
-            html.push('<span class="badge pull-right">' + MOOC.trans.progress.pending + '</span>');
+
+            if (this.model.get('completed')) {
+                if (this.model.get("correct")) {
+                    html.push('<span class="badge badge-success pull-right"><i class="icon-ok icon-white"></i> ' + MOOC.views.capitalize(MOOC.trans.progress.correct) + '</span>');
+                } else {
+                    html.push('<span class="badge badge-important pull-right"><i class="icon-remove icon-white"></i> ' + MOOC.trans.progress.incorrect + '</span>');
+                }
+            } else {
+                html.push('<span class="badge pull-right">' + MOOC.trans.progress.pending + '</span>');
+            }
         }
 
         this.$el.attr("title", this.model.get('title'));

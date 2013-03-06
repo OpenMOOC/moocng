@@ -331,6 +331,26 @@ MOOC.models.AttachmentList = Backbone.Collection.extend({
     model: MOOC.models.Attachment
 });
 
+MOOC.models.PeerReviewReview  = Backbone.Model.extend({
+    defaults: function () {
+        "use strict";
+        return {
+            kq: null,
+            created: null,
+            criteria: [],
+            comment: null,
+            score: 0
+        };
+    }
+});
+
+MOOC.models.PeerReviewReviewList  = Backbone.Collection.extend({
+    model: MOOC.models.PeerReviewReview,
+
+    url: MOOC.ajax.getAbsoluteUrl('peer_review_reviews')
+});
+
+
 MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
     defaults: function () {
         "use strict";
@@ -432,7 +452,8 @@ MOOC.models.Unit = Backbone.Model.extend({
             type: 'n',
             weight: 0,
             start: null,
-            deadline: null
+            deadline: null,
+            peerReviewReviewList: null
         };
     },
 
@@ -493,6 +514,11 @@ MOOC.models.Unit = Backbone.Model.extend({
             result = 0;
         }
         return result;
+    },
+
+    getPeerReviewReviewsForKq: function (kq) {
+        "use strict";
+        return this.get('peerReviewReviewList').where({kq: kq.id});
     }
 });
 

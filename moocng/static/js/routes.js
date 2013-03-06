@@ -202,7 +202,9 @@ MOOC.App = Backbone.Router.extend({
         var unitID = unitObj.get("id");
 
         MOOC.ajax.getKQsByUnit(unitID, function (data, textStatus, jqXHR) {
-            var unitView;
+            var unitView, hasPeerReviews, peerReviewReviewList, createView;
+
+            hasPeerReviews = false;
 
             unitObj.get("knowledgeQuantumList").reset(_.map(data.objects, function (kq) {
                 var data = _.pick(kq, "id", "title", "videoID", "teacher_comments",
@@ -210,20 +212,39 @@ MOOC.App = Backbone.Router.extend({
                                   "correct", "completed", "normalized_weight",
                                   "peer_review_assignment");
                 data.id = parseInt(data.id, 10);
+                if (data.peer_review_assignment !== null) {
+                    hasPeerReviews = true;
+                }
                 return data;
             }));
 
-            unitView = MOOC.views.unitViews[unitID];
-            if (_.isUndefined(unitView)) {
-                unitView = new MOOC.views.Unit({
-                    model: unitObj,
-                    id: "unit" + unitID,
-                    el: $("#unit" + unitID + "-container")[0]
+
+            createView = function () {
+                unitView = MOOC.views.unitViews[unitID];
+                if (_.isUndefined(unitView)) {
+                    unitView = new MOOC.views.Unit({
+                        model: unitObj,
+                        id: "unit" + unitID,
+                        el: $("#unit" + unitID + "-container")[0]
+                    });
+                    MOOC.views.unitViews[unitID] = unitView;
+                }
+
+                callback();
+            };
+
+
+            if (hasPeerReviews) {
+                peerReviewReviewList = new MOOC.models.PeerReviewReviewList();
+                unitObj.set('peerReviewReviewList', peerReviewReviewList);
+                peerReviewReviewList.fetch({
+                    data: {'unit': unitID},
+                    success: createView
                 });
-                MOOC.views.unitViews[unitID] = unitView;
+            } else {
+                createView();
             }
 
-            callback();
         });
     },
 
