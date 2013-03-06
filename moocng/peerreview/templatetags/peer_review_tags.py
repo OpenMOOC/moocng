@@ -62,7 +62,7 @@ def if_has_peer_review_assignments(parser, token):
 
 
 @register.inclusion_tag('peerreview/pending_reviews.html')
-def pending_reviews(peer_review_assignment, user):
+def pending_reviews(peer_review_assignment, user, course):
     db = get_db()
     peer_review_reviews = db.get_collection('peer_review_reviews')
     reviewed = peer_review_reviews.find({
@@ -79,4 +79,6 @@ def pending_reviews(peer_review_assignment, user):
         'reviewed': reviewed,
         'assigned': assigned,
         'pending': pending,
+        'peer_review_assignment_id': peer_review_assignment.id,
+        'course_slug': course.slug
         }

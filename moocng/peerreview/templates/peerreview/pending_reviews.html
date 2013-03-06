@@ -35,7 +35,7 @@
 
 {% else %}
 
-<form action="" method="post">{% csrf_token %}
+<form action="{% url course_review_assign course_slug peer_review_assignment_id %}" method="post">{% csrf_token %}
   <input type="submit" class="btn btn-primary" value='{% trans "Review another assignment" %}' />
 </form>
 
