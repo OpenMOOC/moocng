@@ -544,6 +544,7 @@ if (_.isUndefined(window.MOOC)) {
         KQEditor: Backbone.View.extend({
             events: {
                 "click button#addquestion": "addQuestion",
+                "click button#addpeerreviewassignment": "addPeerReviewAssignment",
                 "click button#force-process": "forceProcess",
                 "click button#dont-use-last-frame": "useBlankCanvas",
                 "click button#use-last-frame": "useLastFrame",
@@ -605,6 +606,7 @@ if (_.isUndefined(window.MOOC)) {
                 if (this.model.has("peer_review_assignment") && this.model.has("peerReviewAssignmentInstance")) {
                     var assignment = this.model.get("peerReviewAssignmentInstance");
                     this.$el.find("#peer-review-assignment-tab").removeClass("hide");
+                    this.$el.find("#nopeerreviewassignment").addClass("hide");
                     this.$el.find("#reviewdescription").val(assignment.get("description"));
                     this.$el.find("#reviewminreviews").val(assignment.get("minimum_reviewers"));
                 }
@@ -721,6 +723,12 @@ if (_.isUndefined(window.MOOC)) {
                 }, this);
 
                 saveKQAjax = _.bind(function () {
+                    this.model.unset("new");
+                    this.model.set("title", $.trim(this.$el.find("input#kqtitle").val()));
+                    this.model.set("videoID", extractVideoID(this.$el.find("input#kqvideo").val()));
+                    this.model.set("normalized_weight", parseInt(this.$el.find("input#kqweight").val(), 10));
+                    this.model.set("supplementary_material", tinyMCE.get("kqsupplementary").getContent());
+                    this.model.set("teacher_comments", tinyMCE.get("kqcomments").getContent());
                     var self = this;
                     this.model.save(null, {
                         success: function () {
@@ -746,8 +754,11 @@ if (_.isUndefined(window.MOOC)) {
                 savePeerReviewAjax = _.bind(function () {
                    if (this.model.has("peerReviewAssignmentInstance")) {
                         var assignment = this.model.get("peerReviewAssignmentInstance");
-                        assignment.set("description", tinyMCE.get("reviewdescription").getContent());
-                        assignment.set("minimum_reviewers", parseInt(this.$el.find("input#reviewminreviews").val(), 10));
+                        var self = this;
+                        if (assignment.has("id")) {
+                            assignment.set("description", tinyMCE.get("reviewdescription").getContent());
+                            assignment.set("minimum_reviewers", parseInt(this.$el.find("input#reviewminreviews").val(), 10));
+                        }
                         assignment.save(null, {
                             success: function () {
                                 saveKQAjax();
@@ -762,12 +773,6 @@ if (_.isUndefined(window.MOOC)) {
                     }
                 }, this);
 
-                this.model.unset("new");
-                this.model.set("title", $.trim(this.$el.find("input#kqtitle").val()));
-                this.model.set("videoID", extractVideoID(this.$el.find("input#kqvideo").val()));
-                this.model.set("normalized_weight", parseInt(this.$el.find("input#kqweight").val(), 10));
-                this.model.set("supplementary_material", tinyMCE.get("kqsupplementary").getContent());
-                this.model.set("teacher_comments", tinyMCE.get("kqcomments").getContent());
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
                     if (this.$el.find("#use-solution-video-btn").is(".active")) {
@@ -823,6 +828,39 @@ if (_.isUndefined(window.MOOC)) {
                 this.save(evt, _.bind(function () {
                     this.render();
                     MOOC.ajax.hideLoading();
+                }, this));
+            },
+
+            addPeerReviewAssignment: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                if (!this.checkRequired()) {
+                    MOOC.ajax.showAlert("required");
+                    return;
+                }
+                var peer_review_assignment = new MOOC.models.PeerReviewAssignment();
+                peer_review_assignment.set("kq", this.model.url().replace('/privkq', '/kq'));
+                peer_review_assignment.set("description", "");
+                peer_review_assignment.set("minimum_reviewers", "0");
+                this.model.set("peerReviewAssignmentInstance", peer_review_assignment);
+
+                var self = this;
+                this.save(evt, _.bind(function () {
+                    self.model.fetch({
+                        success: function() {
+                            var reviewUrl = self.model.get("peer_review_assignment").split("/");
+                            var createdId = reviewUrl.pop();
+                            while (isNaN(parseInt(createdId, 10)))
+                                createdId = reviewUrl.pop();
+                            self.model.get("peerReviewAssignmentInstance").set("id", parseInt(createdId, 10))
+                            self.render();
+                            MOOC.ajax.hideLoading();
+                        },
+                        error: function() {
+                            MOOC.ajax.hideLoading();
+                            MOOC.ajax.showAlert("generic");
+                        }
+                    });
                 }, this));
             },
 
