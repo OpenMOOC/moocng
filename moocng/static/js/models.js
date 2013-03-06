@@ -19,13 +19,6 @@ if (_.isUndefined(window.MOOC)) {
     window.MOOC = {};
 }
 
-MOOC.models.TastyPieCollection = Backbone.Collection.extend({
-    parse: function (resp, xhr) {
-        "use strict";
-        return resp.objects;
-    }
-});
-
 MOOC.models = {
     detailUrlToCollection: function (url) {
         "use strict";
@@ -38,6 +31,13 @@ MOOC.models = {
         return result + "/";
     }
 };
+
+MOOC.models.TastyPieCollection = Backbone.Collection.extend({
+    parse: function (resp, xhr) {
+        "use strict";
+        return resp.objects;
+    }
+});
 
 MOOC.models.EvaluationCriterion = Backbone.Model.extend({
     defaults: {
