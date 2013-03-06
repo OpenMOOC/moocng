@@ -19,10 +19,11 @@ from datetime import datetime
 import re
 
 from bson import ObjectId
+from bson.errors import InvalidId
 
 from tastypie import fields
 from tastypie.authorization import DjangoAuthorization
-from tastypie.exceptions import NotFound
+from tastypie.exceptions import NotFound, BadRequest
 from tastypie.resources import ModelResource
 
 from django.conf import settings
@@ -325,6 +326,22 @@ class PeerReviewSubmissionsResource(MongoResource):
 
         return results
 
+    def obj_get(self, request=None, **kwargs):
+
+        try:
+            query = dict(_id=ObjectId(kwargs['pk']))
+        except InvalidId:
+            raise BadRequest('Invalid ObjectId provided')
+
+        mongo_item = self._collection.find_one(query)
+
+        if mongo_item is None:
+            raise NotFound('Invalid resource lookup data provided')
+
+        obj = MongoObj(initial=mongo_item)
+        obj.uuid = kwargs['pk']
+        return obj
+
 
 class PeerReviewReviewsResource(MongoResource):
     class Meta:
@@ -365,7 +382,10 @@ class PeerReviewReviewsResource(MongoResource):
 
     def obj_get(self, request=None, **kwargs):
 
-        query = dict(_id=ObjectId(kwargs['pk']))
+        try:
+            query = dict(_id=ObjectId(kwargs['pk']))
+        except InvalidId:
+            raise BadRequest('Invalid ObjectId provided')
 
         mongo_item = self._collection.find_one(query)
 

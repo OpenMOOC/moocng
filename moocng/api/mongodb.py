@@ -18,6 +18,7 @@ from tastypie.resources import Resource
 
 from moocng.mongodb import get_db
 
+
 def get_user(request, collection):
     return collection.find_one({'user': request.user.id}, safe=True)
 
