@@ -18,7 +18,6 @@ from tastypie.resources import Resource
 
 from moocng.mongodb import get_db
 
-
 def get_user(request, collection):
     return collection.find_one({'user': request.user.id}, safe=True)
 
@@ -110,6 +109,10 @@ class MongoResource(Resource):
         return get_or_create_user(request, self._collection,
                                   self._meta.datakey,
                                   self._initial(request, **kwargs))
+
+    def dehydrate(self, bundle):
+        bundle.data.update(bundle.obj.to_dict())
+        return bundle
 
     def _initial(self, request, **kwargs):
         return {}
