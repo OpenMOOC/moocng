@@ -35,14 +35,14 @@ def course_review_assign(request, course_slug, review_id):
     review = get_object_or_404(PeerReviewAssignment, id=review_id)
     user_id = request.user.id
 
-    if review.knowledge_quantum.unit.course != course:
+    if review.kq.unit.course != course:
         messages.error(request, _('The selected peer review assignment is not part of this course.'))
         return HttpResponseRedirect(reverse('course_reviews', args=[course_slug]))
 
     collection = get_db().get_collection('peer_review_submissions')
 
     submission = collection.find({
-        'kq': review.knowledge_quantum.id,
+        'kq': review.kq.id,
         'assigned_to': user_id
     })
     if submission.count() > 0:
@@ -50,7 +50,7 @@ def course_review_assign(request, course_slug, review_id):
         return HttpResponseRedirect(reverse('course_reviews', args=[course_slug]))
 
     submission = collection.find({
-        'kq': review.knowledge_quantum.id,
+        'kq': review.kq.id,
         'assigned_to': {
             '$exists': False
         },
