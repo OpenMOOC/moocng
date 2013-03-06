@@ -13,7 +13,7 @@ class Migration(SchemaMigration):
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('description', self.gf('tinymce.models.HTMLField')(blank=True)),
             ('minimum_reviewers', self.gf('django.db.models.fields.PositiveSmallIntegerField')()),
-            ('knowledge_quantum', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['courses.KnowledgeQuantum'])),
+            ('kq', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['courses.KnowledgeQuantum'])),
         ))
         db.send_create_signal('peerreview', ['PeerReviewAssignment'])
 
@@ -145,7 +145,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'PeerReviewAssignment'},
             'description': ('tinymce.models.HTMLField', [], {'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'knowledge_quantum': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['courses.KnowledgeQuantum']"}),
+            'kq': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['courses.KnowledgeQuantum']"}),
             'minimum_reviewers': ('django.db.models.fields.PositiveSmallIntegerField', [], {})
         }
     }

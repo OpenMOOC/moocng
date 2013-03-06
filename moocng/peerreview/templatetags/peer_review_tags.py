@@ -67,12 +67,12 @@ def pending_reviews(peer_review_assignment, user):
     peer_review_reviews = db.get_collection('peer_review_reviews')
     reviewed = peer_review_reviews.find({
             'reviewer': user.id,
-            'kq': peer_review_assignment.knowledge_quantum.id,
+            'kq': peer_review_assignment.kq.id,
             })
     peer_review_submissions = db.get_collection('peer_review_submissions')
     assigned = peer_review_submissions.find({
             'assigned_to': user.id,
-            'kq': peer_review_assignment.knowledge_quantum.id,
+            'kq': peer_review_assignment.kq.id,
             })
     pending = peer_review_assignment.minimum_reviewers - reviewed.count()
     return {

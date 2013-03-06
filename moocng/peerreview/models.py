@@ -29,9 +29,9 @@ class PeerReviewAssignment(models.Model):
     description = HTMLField(verbose_name=_(u'Description'),
                             blank=True, null=False)
     minimum_reviewers = models.PositiveSmallIntegerField(verbose_name=_(u'Minimum reviewers'))
-    knowledge_quantum = models.ForeignKey(KnowledgeQuantum,
-                                          verbose_name=_(u'Nugget'),
-                                          blank=False, null=False)
+    kq = models.ForeignKey(KnowledgeQuantum,
+                           verbose_name=_(u'Nugget'),
+                           blank=False, null=False)
     objects = PeerReviewAssignmentManager()
 
     class Meta:
@@ -40,13 +40,12 @@ class PeerReviewAssignment(models.Model):
 
 
 def invalidate_cache(sender, instance, **kwargs):
-    course = instance.knowledge_quantum.unit.course
+    course = instance.kq.unit.course
     cache.invalidate_course_has_peer_review_assignment_in_cache(course)
 
 
 signals.post_save.connect(invalidate_cache, sender=PeerReviewAssignment)
 signals.post_delete.connect(invalidate_cache, sender=PeerReviewAssignment)
-
 
 
 class EvaluationCriterion(Sortable):

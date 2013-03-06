@@ -243,7 +243,7 @@ class AttachmentResource(ModelResource):
 
 
 class PeerReviewAssignmentResource(ModelResource):
-    kq = fields.ToOneField(KnowledgeQuantumResource, 'knowledge_quantum')
+    kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
 
     class Meta:
         queryset = PeerReviewAssignment.objects.all()
@@ -252,15 +252,15 @@ class PeerReviewAssignmentResource(ModelResource):
         authentication = DjangoAuthentication()
         authorization = DjangoAuthorization()
         filtering = {
-            "knowledge_quantum": ('exact'),
+            "kq": ('exact'),
         }
 
     def get_object_list(self, request):
         objects = super(PeerReviewAssignmentResource, self).get_object_list(request)
         return objects.filter(
-            Q(knowledge_quantum__unit__unittype='n') |
-            Q(knowledge_quantum__unit__start__isnull=True) |
-            Q(knowledge_quantum__unit__start__isnull=False, knowledge_quantum__unit__start__lte=datetime.now)
+            Q(kq__unit__unittype='n') |
+            Q(kq__unit__start__isnull=True) |
+            Q(kq__unit__start__isnull=False, kq__unit__start__lte=datetime.now)
         )
 
 

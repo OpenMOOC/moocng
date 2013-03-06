@@ -10,11 +10,11 @@
 
 {% if assignments %}
 
-  {% regroup assignments by knowledge_quantum.unit as unit_list %}
+  {% regroup assignments by kq.unit as unit_list %}
   {% for unit in unit_list %}
     <h3>{{ unit.grouper.title }}</h3>
     {% for pra in unit.list %}
-      <h4>{{ pra.knowledge_quantum.title }}</h4>
+      <h4>{{ pra.kq.title }}</h4>
       {% pending_reviews pra user %}
     {% endfor %}
   {% endfor %}

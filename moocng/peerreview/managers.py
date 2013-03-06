@@ -18,4 +18,4 @@ from django.db import models
 class PeerReviewAssignmentManager(models.Manager):
 
     def from_course(self, course):
-        return self.get_query_set().filter(knowledge_quantum__unit__course=course)
+        return self.get_query_set().filter(kq__unit__course=course)
