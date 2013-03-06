@@ -166,9 +166,9 @@ class Unit(Sortable):
     course = SortableForeignKey(Course, verbose_name=_(u'Course'))
 
     UNIT_TYPES = (
-        ('n', u'Normal'),
-        ('h', u'Homeworks'),
-        ('e', u'Exam'),
+        ('n', _(u'Normal')),
+        ('h', _(u'Homework')),
+        ('e', _(u'Exam')),
     )
     unittype = models.CharField(verbose_name=_(u'Type'), choices=UNIT_TYPES,
                                 max_length=1, default=UNIT_TYPES[0][0])
@@ -194,6 +194,11 @@ class Unit(Sortable):
 
     def __unicode__(self):
         return u'%s - %s (%s)' % (self.course, self.title, self.unittype)
+
+    def get_unit_type_name(self):
+        for t in self.UNIT_TYPES:
+            if t[0] == self.unittype:
+                return t[1]
 
 
 def unit_invalidate_cache(sender, instance, **kwargs):

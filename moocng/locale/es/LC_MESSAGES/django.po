@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-05 07:01-0600\n"
+"POT-Creation-Date: 2013-03-06 04:35-0600\n"
 "PO-Revision-Date: 2013-03-05 14:07+0100\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -346,7 +346,7 @@ msgid "End date"
 msgstr "Fecha de fin"
 
 #: courses/models.py:56 courses/templates/courses/overview.html:88
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:28
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:14
 msgid "Teachers"
 msgstr "Profesores"
 
@@ -437,6 +437,18 @@ msgstr "comunicado"
 #: courses/models.py:146
 msgid "announcements"
 msgstr "comunicados"
+
+#: courses/models.py:169 teacheradmin/templates/teacheradmin/units.html:58
+msgid "Normal"
+msgstr "Normal"
+
+#: courses/models.py:170 teacheradmin/templates/teacheradmin/units.html:59
+msgid "Homework"
+msgstr "Tareas"
+
+#: courses/models.py:171 teacheradmin/templates/teacheradmin/units.html:60
+msgid "Exam"
+msgstr "Examen"
 
 #: courses/models.py:173 courses/models.py:317
 #: courses/templates/admin/courses/question/options.html:122
@@ -569,7 +581,8 @@ msgstr "pregunta"
 msgid "questions"
 msgstr "preguntas"
 
-#: courses/models.py:305 teacheradmin/templates/teacheradmin/units.html:94
+#: courses/models.py:305 courses/templates/courses/classroom.html:105
+#: teacheradmin/templates/teacheradmin/units.html:94
 msgid "Question"
 msgstr "Pregunta"
 
@@ -649,7 +662,7 @@ msgstr ""
 msgid "The course was successfully created"
 msgstr "El curso se ha creado con éxito"
 
-#: courses/views.py:152 courses/views.py:187
+#: courses/views.py:152 courses/views.py:189
 msgid "You are not enrolled in this course"
 msgstr "No estás matriculado en este curso"
 
@@ -810,22 +823,18 @@ msgid "Go back to Course Overview"
 msgstr "Volver a la vista General del Curso"
 
 #: courses/templates/courses/base_course.html:12
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:9
 msgid "Overview"
 msgstr "General"
 
 #: courses/templates/courses/base_course.html:16
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:11
 msgid "Classes"
 msgstr "Clases"
 
 #: courses/templates/courses/base_course.html:20
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:13
 msgid "Discussion"
 msgstr "Debates"
 
 #: courses/templates/courses/base_course.html:24
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:15
 msgid "Progress"
 msgstr "Progreso"
 
@@ -835,7 +844,6 @@ msgid "Reviews"
 msgstr "Revisiones"
 
 #: courses/templates/courses/base_course.html:35
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:17
 msgid "Course administration"
 msgstr "Administración del curso"
 
@@ -878,23 +886,35 @@ msgstr "Error desconocido al hacer la petición ajax"
 msgid "Q"
 msgstr "P"
 
-#: courses/templates/courses/classroom.html:105
+#: courses/templates/courses/classroom.html:106
 msgid "A"
 msgstr "R"
 
-#: courses/templates/courses/classroom.html:106
+#: courses/templates/courses/classroom.html:107
+msgid "Answer"
+msgstr "Respuesta"
+
+#: courses/templates/courses/classroom.html:108
+msgid "PR"
+msgstr "ARC"
+
+#: courses/templates/courses/classroom.html:109
+msgid "Peer Review"
+msgstr "Actividad Revisada por Compañeros"
+
+#: courses/templates/courses/classroom.html:110
 msgid "Answers sent"
 msgstr "Respuesta enviada"
 
-#: courses/templates/courses/classroom.html:107
+#: courses/templates/courses/classroom.html:111
 msgid "Congratulations, you got it right!"
 msgstr "Respuesta correcta, buen trabajo"
 
-#: courses/templates/courses/classroom.html:108
+#: courses/templates/courses/classroom.html:112
 msgid "Wrong answer, good luck next time."
 msgstr "Lo siento, la respuesta es errónea."
 
-#: courses/templates/courses/classroom.html:109
+#: courses/templates/courses/classroom.html:113
 msgid ""
 "Your answers were stored, but can't be corrected until the deadline is "
 "reached."
@@ -902,12 +922,12 @@ msgstr ""
 "Sus respuestas han sido almacenadas, pero no podrán ser corregidas hasta que "
 "se alcance la fecha límite."
 
-#: courses/templates/courses/classroom.html:112
+#: courses/templates/courses/classroom.html:116
 #: courses/templates/courses/progress.html:71
 msgid "The module is not ready"
 msgstr "El módulo no está listo"
 
-#: courses/templates/courses/classroom.html:113
+#: courses/templates/courses/classroom.html:117
 #: courses/templates/courses/progress.html:72
 msgid ""
 "This module has no nuggets. Probably the start date hasn't been reached yet."
@@ -915,11 +935,11 @@ msgstr ""
 "Este módulo no tiene píldoras. Probablemente aún no se ha alcanzado la fecha "
 "de inicio."
 
-#: courses/templates/courses/classroom.html:114
+#: courses/templates/courses/classroom.html:118
 msgid "The solution is not available"
 msgstr "La solución no se encuentra disponible"
 
-#: courses/templates/courses/classroom.html:115
+#: courses/templates/courses/classroom.html:119
 msgid "Please wait until the deadline of the module."
 msgstr "Por favor, espere hasta alcanzar la fecha límite del módulo."
 
@@ -1019,7 +1039,7 @@ msgid "Register in %(site_name)s to get a certification in this course"
 msgstr "Registrarme en %(site_name)s para obtener un certificado en este curso"
 
 #: courses/templates/courses/overview.html:100
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:27
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:13
 msgid "Information"
 msgstr "Información"
 
@@ -1032,7 +1052,7 @@ msgid "Estimated Effort"
 msgstr "Esfuerzo Estimado"
 
 #: courses/templates/courses/overview.html:118
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:31
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:17
 msgid "Announcements"
 msgstr "Comunicados"
 
@@ -1041,7 +1061,7 @@ msgid "Syllabus"
 msgstr "Temario"
 
 #: courses/templates/courses/overview.html:141
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:30
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:16
 msgid "Categories"
 msgstr "Categorías"
 
@@ -1171,7 +1191,9 @@ msgstr "Aún tienes que revisar %(pending)s actividades más."
 msgid ""
 "Contratulations, you have reviewed the minimum number of required "
 "assignments. Thank you so much for your amazing team work."
-msgstr "Enhorabuena, ya has revisado el número mínimo obligatorio de actividades. Muchas gracias por tu increible trabajo en grupo."
+msgstr ""
+"Enhorabuena, ya has revisado el número mínimo obligatorio de actividades. "
+"Muchas gracias por tu increible trabajo en grupo."
 
 #: peerreview/templates/peerreview/pending_reviews.html:26
 msgid "You are currently reviewing the following assignments:"
@@ -1327,31 +1349,31 @@ msgstr "No hay aún ningún comunicado"
 msgid "Add announcement"
 msgstr "Añadir comunicado"
 
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:26
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:12
 msgid "Course edition"
 msgstr "Edición del curso"
 
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:29
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:15
 msgid "Units"
 msgstr "Módulos"
 
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:32
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:18
 msgid "Extra"
 msgstr "Extra"
 
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:33
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:19
 msgid "Statistics"
 msgstr "Estadísticas"
 
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:34
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:20
 msgid "Send mail"
 msgstr "Enviar correo"
 
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:41
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:27
 msgid "We are sorry"
 msgstr "Lo sentimos"
 
-#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:42
+#: teacheradmin/templates/teacheradmin/base_teacheradmin.html:28
 msgid "But this section is not available yet."
 msgstr "Pero esta sección aún no está disponible."
 
@@ -1585,18 +1607,6 @@ msgstr "Editar"
 #: teacheradmin/templates/teacheradmin/units.html:37
 msgid "It has a question"
 msgstr "Tiene una pregunta"
-
-#: teacheradmin/templates/teacheradmin/units.html:58
-msgid "Normal"
-msgstr "Normal"
-
-#: teacheradmin/templates/teacheradmin/units.html:59
-msgid "Homework"
-msgstr "Tareas"
-
-#: teacheradmin/templates/teacheradmin/units.html:60
-msgid "Exam"
-msgstr "Examen"
 
 #: teacheradmin/templates/teacheradmin/units.html:84
 #: teacheradmin/templates/teacheradmin/units.html:206
