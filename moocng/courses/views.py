@@ -167,6 +167,7 @@ def course_classroom(request, course_slug):
             'title': u.title,
             'unittype': u.unittype,
             'badge_class': get_unit_badge_class(u),
+            'badge_tooltip': u.get_unit_type_name(),
         }
         units.append(unit)
 

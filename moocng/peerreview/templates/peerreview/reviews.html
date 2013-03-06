@@ -15,7 +15,7 @@
     <h3>{{ unit.grouper.title }}</h3>
     {% for pra in unit.list %}
       <h4>{{ pra.kq.title }}</h4>
-      {% pending_reviews pra user %}
+      {% pending_reviews pra user course %}
     {% endfor %}
   {% endfor %}
 

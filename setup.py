@@ -68,7 +68,7 @@ setup(
         'django-tastypie==0.9.11-openmooc',
         'South==0.7.6',
         'psycopg2==2.4.2',
-        'pymongo==2.2.1',
+        'pymongo==2.4.2',
         'djangosaml2==0.7.0',
         'PIL>=1.1.7',
         'django_compressor==1.1.2',

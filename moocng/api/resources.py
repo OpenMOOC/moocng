@@ -278,6 +278,71 @@ class EvaluationCriterionResource(ModelResource):
         }
 
 
+class PeerReviewSubmissionsResource(MongoResource):
+    class Meta:
+        resource_name = 'peer_review_submissions'
+        collection = 'peer_review_submissions'
+        datakey = 'peer_review_submissions'
+        object_class = MongoObj
+        authentication = DjangoAuthentication()
+        authorization = DjangoAuthorization()
+        allowed_methods = ['get', 'post']
+        filtering = {
+            "author": ('exact'),
+            "kq": ('exact'),
+        }
+
+    def obj_get_list(self, request=None, **kwargs):
+        # TODO
+        user_data = self._get_or_create_user(request, **kwargs)
+        author = request.GET.get('author', None)
+        kq = request.GET.get('kq', None)
+
+        results = []
+        #results= get_peer_review_submissions(user_data, author, kq)
+
+        return results
+
+    def obj_create(self, bundle, request=None, **kwargs):
+        # TODO
+        user_data = self._get_or_create_user(request, **kwargs)
+
+        bundle = self.full_hydrate(bundle)
+        #bundle = create_peer_review_submissions(user_data, bundle)
+
+        return bundle
+
+
+class PeerReviewReviewsResource(MongoResource):
+    class Meta:
+        resource_name = 'peer_review_reviews'
+        collection = 'peer_review_reviews'
+        datakey = 'peer_review_reviews'
+        object_class = MongoObj
+        authentication = DjangoAuthentication()
+        authorization = DjangoAuthorization()
+        allowed_methods = ['get']
+        filtering = {
+            "author": ('exact'),
+            "reviewer": ('exact'),
+            "kq": ('exact'),
+            "submission_id": ('exact'),
+        }
+
+    def obj_get_list(self, request=None, **kwargs):
+        # TODO
+        user_data = self._get_or_create_user(request, **kwargs)
+        author = request.GET.get('author', None)
+        kq = request.GET.get('kq', None)
+        reviewer = request.GET.get('reviewer', None)
+        submission_id = request.GET.get('submission_id', None)
+
+        results = []
+        #results= get_peer_review_reviews(user_data, author, kq, reviewer, submission_id)
+
+        return results
+
+
 class QuestionResource(ModelResource):
     kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
     solutionID = fields.CharField(readonly=True)
