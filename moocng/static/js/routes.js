@@ -238,7 +238,17 @@ MOOC.App = Backbone.Router.extend({
                 unitObj.set('peerReviewReviewList', peerReviewReviewList);
                 peerReviewReviewList.fetch({
                     data: { 'unit': unitID },
-                    success: createView
+                    success: function () {
+                        var peerReviewAssignmentList = new MOOC.models.PeerReviewAssignmentList();
+                        peerReviewAssignmentList.fetch({
+                            data: { 'unit': unitID },
+                            success: function () {
+                                var knowledgeQuantumList = unitObj.get('knowledgeQuantumList');
+                                knowledgeQuantumList.setPeerReviewAssignments(peerReviewAssignmentList);
+                                createView();
+                            }
+                        });
+                    }
                 });
             } else {
                 createView();

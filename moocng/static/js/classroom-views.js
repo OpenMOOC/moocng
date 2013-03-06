@@ -295,12 +295,11 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 var peerReviewObj = new MOOC.models.PeerReviewAssignment({
                     id: data.id,
                     description: data.description,
-                    minimum_reviewers: data.minimum_reviewers,
-                    knowledgeQuantum: kqObj
+                    minimum_reviewers: data.minimum_reviewers
                 });
                 // Load Evalutation Criteria
-                peerReviewObj.get("criterionList").assignment = peerReviewObj.get("id");
-                peerReviewObj.get("criterionList").fetch({
+                peerReviewObj.get("_criterionList").assignment = peerReviewObj.get("id");
+                peerReviewObj.get("_criterionList").fetch({
                     success: function (collection, resp, options) {
                         // Don't set the peerReviewAssignmentInstance until the
                         // evaluation criteria is loaded

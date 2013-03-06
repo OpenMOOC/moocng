@@ -94,20 +94,31 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         this.reviews = options.reviews;
     },
 
+    render_badge: function (minimum_reviewers) {
+        "use strict";
+        var icon = '', score = 1.4, badge_class = '';
+
+        if (this.reviews.length < minimum_reviewers) {
+            icon = '<i class="icon-exclamation-sign icon-white" title="' + MOOC.trans.progress.score_dont_apply + '"></i>';
+        }
+
+        badge_class = (score >= 2.5) ? 'success' : 'important';
+
+        return '<span class="badge badge-' + badge_class + ' pull-right">' + icon + score + '</span>';
+    },
+
     render: function () {
         "use strict";
         var html = [
                 "<b>" + this.model.truncateTitle(40) + "</b>"
             ],
             peer_review,
-            score,
-            badge_class;
+            minimum_reviewers;
 
         if (this.reviews !== null) {
-            score = 1.4;
-            badge_class = (score >= 2.5) ? 'success' : 'important';
+            minimum_reviewers = this.model.get('peerReviewAssignmentInstance').get('minimum_reviewers');
 
-            html.push('<span class="badge badge-' + badge_class + ' pull-right"><i class="icon-exclamation-sign icon-white" title="' + MOOC.trans.progress.score_dont_apply + '"></i> ' + score + '</span>');
+            html.push(this.render_badge(minimum_reviewers));
 
             if (this.reviews.length > 0) {
                 html.push('<table class="table table-stripped table-bordered">');
@@ -129,7 +140,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 html.push('<p>' + MOOC.trans.progress.no_reviews_yet + '</p>');
             }
 
-            html.push('<p>' + MOOC.trans.progress.minimum_reviews + ': <strong>' +  '3' + '</strong></p>');
+            html.push('<p>' + MOOC.trans.progress.minimum_reviews + ': <strong>' +  minimum_reviewers + '</strong></p>');
         } else {
 
             if (this.model.get('completed')) {

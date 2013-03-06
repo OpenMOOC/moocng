@@ -19,6 +19,13 @@ if (_.isUndefined(window.MOOC)) {
     window.MOOC = {};
 }
 
+MOOC.models.TastyPieCollection = Backbone.Collection.extend({
+    parse: function (resp, xhr) {
+        "use strict";
+        return resp.objects;
+    }
+});
+
 MOOC.models = {
     detailUrlToCollection: function (url) {
         "use strict";
@@ -50,7 +57,7 @@ MOOC.models.EvaluationCriterion = Backbone.Model.extend({
     }
 });
 
-MOOC.models.EvaluationCriterionList = Backbone.Collection.extend({
+MOOC.models.EvaluationCriterionList = MOOC.models.TastyPieCollection.extend({
     model: MOOC.models.EvaluationCriterion,
     assignment: null,
 
@@ -65,8 +72,9 @@ MOOC.models.PeerReviewAssignment = Backbone.Model.extend({
         id: -1,
         description: "",
         minimum_reviewers: null,
-        criterionList: new MOOC.models.EvaluationCriterionList(),
-        knowledgeQuantum: null
+        kq: null,
+
+        _criterionList: new MOOC.models.EvaluationCriterionList()
     },
 
     url: function () {
@@ -75,8 +83,14 @@ MOOC.models.PeerReviewAssignment = Backbone.Model.extend({
     }
 });
 
+MOOC.models.PeerReviewAssignmentList = MOOC.models.TastyPieCollection.extend({
+    model: MOOC.models.PeerReviewAssignment,
+    url: MOOC.ajax.getAbsoluteUrl('peer_review_assignment/')
+});
+
 MOOC.models.Activity = Backbone.Model.extend({
     defaults: {
+        id: -1,
         kqs: []
     },
 
@@ -104,18 +118,16 @@ MOOC.models.Activity = Backbone.Model.extend({
 });
 
 MOOC.models.Option = Backbone.Model.extend({
-    defaults: function () {
-        "use strict";
-        return {
-            optiontype: 't',
-            x: 0,
-            y: 0,
-            width: 100,
-            height: 12,
-            solution: null,
-            text: "",
-            feedback: null
-        };
+    defaults: {
+        id: -1,
+        optiontype: 't',
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 12,
+        solution: null,
+        text: "",
+        feedback: null
     },
 
     /**
@@ -156,21 +168,19 @@ MOOC.models.Option = Backbone.Model.extend({
     }
 });
 
-MOOC.models.OptionList  = Backbone.Collection.extend({
+MOOC.models.OptionList  = MOOC.models.TastyPieCollection.extend({
     model: MOOC.models.Option
 });
 
 MOOC.models.Question = Backbone.Model.extend({
-    defaults: function () {
-        "use strict";
-        return {
-            lastFrame: null, // of the KnowledgeQuantum's video
-            solutionVideo: null,
-            solutionText: null,
-            optionList: null,
-            answer: null,
-            use_last_frame: true
-        };
+    defaults: {
+        id: -1,
+        lastFrame: null, // of the KnowledgeQuantum's video
+        solutionVideo: null,
+        solutionText: null,
+        optionList: null,
+        answer: null,
+        use_last_frame: true
     },
 
     url: function () {
@@ -287,6 +297,7 @@ MOOC.models.Question = Backbone.Model.extend({
 /* An answer is a student submission to a question */
 MOOC.models.Answer = Backbone.Model.extend({
     defaults: {
+        id: -1,
         date: null,
         replyList: null
     },
@@ -308,67 +319,61 @@ MOOC.models.Answer = Backbone.Model.extend({
 /* A reply is a student value for an option */
 MOOC.models.Reply = Backbone.Model.extend({
     defaults: {
+        id: -1,
         option: null,
         value: null
     }
 });
 
-MOOC.models.ReplyList = Backbone.Collection.extend({
+MOOC.models.ReplyList = MOOC.models.TastyPieCollection.extend({
     model: MOOC.models.Reply
 });
 
 MOOC.models.Attachment = Backbone.Model.extend({
-    defaults: function () {
-        "use strict";
-        return {
-            id: -1,
-            url: null
-        };
+    defaults: {
+        id: -1,
+        url: null
     }
 });
 
-MOOC.models.AttachmentList = Backbone.Collection.extend({
+MOOC.models.AttachmentList = MOOC.models.TastyPieCollection.extend({
     model: MOOC.models.Attachment
 });
 
 MOOC.models.PeerReviewReview  = Backbone.Model.extend({
-    defaults: function () {
-        "use strict";
-        return {
-            kq: null,
-            created: null,
-            criteria: [],
-            comment: null,
-            score: 0
-        };
+    defaults: {
+        id: -1,
+        kq: null,
+        created: null,
+        criteria: [],
+        comment: null,
+        score: 0
     }
 });
 
-MOOC.models.PeerReviewReviewList  = Backbone.Collection.extend({
+MOOC.models.PeerReviewReviewList  = MOOC.models.TastyPieCollection.extend({
     model: MOOC.models.PeerReviewReview,
 
-    url: MOOC.ajax.getAbsoluteUrl('peer_review_reviews')
+    url: MOOC.ajax.getAbsoluteUrl('peer_review_reviews/')
 });
 
 
 MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
-    defaults: function () {
-        "use strict";
-        return {
-            order: -1,
-            title: null,
-            videoID: null,
-            teacher_comments: null,
-            supplementary_material: null,
-            question: null, // Optional
-            questionInstance: null,
-            completed: false,
-            correct: null,
-            attachmentList: null,
-            normalized_weight: 0,
-            peer_review_assignment: null, // Optional
-            peerReviewAssignmentInstance: null
-        };
+    defaults: {
+        id: -1,
+        order: -1,
+        title: null,
+        videoID: null,
+        teacher_comments: null,
+        supplementary_material: null,
+        question: null, // Optional
+        questionInstance: null,
+        completed: false,
+        correct: null,
+        attachmentList: null,
+        normalized_weight: 0,
+        peer_review_assignment: null, // Optional
+        peerReviewAssignmentInstance: null
     },
 
     url: function () {
@@ -426,7 +431,7 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
     }
 });
 
-MOOC.models.KnowledgeQuantumList  = Backbone.Collection.extend({
+MOOC.models.KnowledgeQuantumList  = MOOC.models.TastyPieCollection.extend({
     model: MOOC.models.KnowledgeQuantum,
 
     comparator: function (kq) {
@@ -439,22 +444,32 @@ MOOC.models.KnowledgeQuantumList  = Backbone.Collection.extend({
         return this.find(function (kq) {
             return position === kq.get("order");
         });
+    },
+
+    setPeerReviewAssignments: function (peerReviewAssignmentList) {
+        "use strict";
+        peerReviewAssignmentList.each(function (pra) {
+            this.each(function (kq) {
+                if (pra.get('kq') === kq.url()) {
+                    kq.set('peerReviewAssignmentInstance', pra);
+                }
+            });
+        }, this);
     }
+
 });
 
 MOOC.models.Unit = Backbone.Model.extend({
-    defaults: function () {
-        "use strict";
-        return {
-            order: -1,
-            knowledgeQuantumList: null,
-            title: "",
-            type: 'n',
-            weight: 0,
-            start: null,
-            deadline: null,
-            peerReviewReviewList: null
-        };
+    defaults: {
+        id: -1,
+        order: -1,
+        knowledgeQuantumList: null,
+        title: "",
+        type: 'n',
+        weight: 0,
+        start: null,
+        deadline: null,
+        peerReviewReviewList: null
     },
 
     url: function () {
@@ -522,18 +537,13 @@ MOOC.models.Unit = Backbone.Model.extend({
     }
 });
 
-MOOC.models.UnitList = Backbone.Collection.extend({
+MOOC.models.UnitList = MOOC.models.TastyPieCollection.extend({
     model: MOOC.models.Unit,
     courseId: -1,
 
     url: function () {
         "use strict";
         return MOOC.ajax.getAbsoluteUrl("unit/") + "?course=" + this.courseId;
-    },
-
-    parse: function (resp, xhr) {
-        "use strict";
-        return resp.objects;
     },
 
     getByKQ: function (kqID) {
