@@ -93,6 +93,7 @@
         <li class="active"><a href="#nugget" data-toggle="tab">{% trans "Nugget" %}</a></li>
         <li id="attachments-tab"><a href="#attachments" data-toggle="tab">{% trans "Attachments" %}</a></li>
         <li id="question-tab" class="hide"><a href="#question" data-toggle="tab">{% trans "Question" %}</a></li>
+        <li id="peer-review-assignment-tab" class="hide"><a href="#peer-review-assignment" data-toggle="tab">{% trans "Peer review" %}</a></li>
     </ul>
     <div class="tab-content"><fieldset class="tab-pane active" id="nugget">
     <div class="row">
@@ -198,6 +199,20 @@
         <div class="align-right span10">
             <button id="go2options" class="btn btn-primary">{% trans "Save changes and edit question's options" %}</button>
             <button id="delete-question" class="btn btn-danger">{% trans "Remove the question from this nugget" %}</button>
+        </div>
+    </div>
+    </fieldset>
+    <fieldset class="tab-pane" id="peer-review-assignment">
+    <div class="row">
+        <div class="span5">
+            <label for="reviewdescription" class="required">{% trans "Assignment description" %}</label>
+            <textarea id="reviewdescription" name="reviewdescription" class="span5" rows="5"></textarea>
+        </div>
+        <div class="span2">
+            <label for="reviewminreviews" class="required">{% trans "Minimun reviewers" %}</label>
+            <div class="input-append">
+                <input type="number" min="0" max="100" step="1" name="reviewminreviews" id="reviewminreviews" class="input-mini" required="required" />
+            </div>
         </div>
     </div>
     </fieldset></div>

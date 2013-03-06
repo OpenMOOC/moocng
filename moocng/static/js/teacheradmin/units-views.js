@@ -2,6 +2,7 @@
 /*global MOOC:true, _, jQuery, Backbone, tinyMCE */
 
 // Copyright 2012 Rooter Analysis S.L.
+// Copyright (c) 2013 Grupo Opentia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -600,6 +601,13 @@ if (_.isUndefined(window.MOOC)) {
                     }
                 }
 
+                if (this.model.has("peer_review_assignment") && this.model.has("peerReviewAssignmentInstance")) {
+                    var assignment = this.model.get("peerReviewAssignmentInstance");
+                    this.$el.find("#peer-review-assignment-tab").removeClass("hide");
+                    this.$el.find("#reviewdescription").val(assignment.get("description"));
+                    this.$el.find("#reviewminreviews").val(assignment.get("minimum_reviewers"));
+                }
+
                 $attachments = this.$el.find("#attachment-list");
                 if (this.model.get("attachmentList").length > 0) {
                     this.model.get("attachmentList").each(function (attachment) {
@@ -621,7 +629,7 @@ if (_.isUndefined(window.MOOC)) {
                 this.$el.find("textarea#kqcomments").val(this.model.get("teacher_comments"));
                 options = _.extend(_.clone(tinyMCEOptions), {
                     width: "380", // bootstrap span5
-                    elements: "kqsupplementary, kqcomments"
+                    elements: "kqsupplementary, kqcomments, reviewdescription"
                 });
                 tinyMCE.init(options);
                 options = _.extend(_.clone(tinyMCEOptions), {
@@ -650,7 +658,8 @@ if (_.isUndefined(window.MOOC)) {
 
                 var question,
                     saveKQAjax,
-                    saveAttachmentsAjax;
+                    saveAttachmentsAjax,
+                    savePeerReviewAjax;
 
                 saveAttachmentsAjax = _.bind(function (input) {
                     var self = this,
@@ -733,6 +742,25 @@ if (_.isUndefined(window.MOOC)) {
                     });
                 }, this);
 
+                savePeerReviewAjax = _.bind(function () {
+                   if (this.model.has("peerReviewAssignmentInstance")) {
+                        var assignment = this.model.get("peerReviewAssignmentInstance");
+                        assignment.set("description", tinyMCE.get("reviewdescription").getContent());
+                        assignment.set("minimum_reviewers", parseInt(this.$el.find("input#reviewminreviews").val(), 10));
+                        assignment.save(null, {
+                            success: function () {
+                                saveKQAjax();
+                            },
+                            error: function () {
+                                MOOC.ajax.hideLoading();
+                                MOOC.ajax.showAlert("generic");
+                            }
+                        });
+                    } else {
+                        saveKQAjax();
+                    }
+                }, this);
+
                 this.model.unset("new");
                 this.model.set("title", $.trim(this.$el.find("input#kqtitle").val()));
                 this.model.set("videoID", extractVideoID(this.$el.find("input#kqvideo").val()));
@@ -750,7 +778,7 @@ if (_.isUndefined(window.MOOC)) {
                     }
                     question.save(null, {
                         success: function () {
-                            saveKQAjax();
+                            savePeerReviewAjax();
                         },
                         error: function () {
                             MOOC.ajax.hideLoading();
@@ -758,7 +786,7 @@ if (_.isUndefined(window.MOOC)) {
                         }
                     });
                 } else {
-                    saveKQAjax();
+                    savePeerReviewAjax();
                 }
             },
 

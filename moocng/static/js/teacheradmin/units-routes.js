@@ -2,6 +2,7 @@
 /*global MOOC:true, _, jQuery, Backbone */
 
 // Copyright 2012 Rooter Analysis S.L.
+// Copyright (c) 2013 Grupo Opentia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +37,7 @@ if (_.isUndefined(window.MOOC)) {
                             var data = _.pick(kq, "id", "title", "videoID",
                                 "teacher_comments", "supplementary_material",
                                 "question", "order", "correct", "completed",
-                                "normalized_weight");
+                                "normalized_weight", "peer_review_assignment");
                             data.id = parseInt(data.id, 10);
                             return data;
                         }));
@@ -61,6 +62,20 @@ if (_.isUndefined(window.MOOC)) {
                             use_last_frame: data.use_last_frame
                         });
                         kq.set("questionInstance", question);
+                    }
+                }));
+            }
+
+            if (kq.has("peer_review_assignment") && !kq.has("peerReviewAssignmentInstance")) {
+                promises.push($.ajax(kq.get("peer_review_assignment").replace("peer_review_assignment", "privpeer_review_assignment"), {
+                    success: function (data, textStatus, jqXHR) {
+                        var peer_review_assignment = new MOOC.models.PeerReviewAssignment({
+                            id: parseInt(data.id, 10),
+                            description: data.description,
+                            minimum_reviewers: data.minimum_reviewers,
+                            knowledgeQuantum: data.kq
+                        });
+                        kq.set("peerReviewAssignmentInstance", peer_review_assignment);
                     }
                 }));
             }
@@ -236,6 +251,9 @@ if (_.isUndefined(window.MOOC)) {
         };
         MOOC.models.KnowledgeQuantum.prototype.url = function () {
             return MOOC.ajax.getAbsoluteUrl("privkq/") + this.get("id") + "/";
+        };
+        MOOC.models.PeerReviewAssignment.prototype.url = function () {
+            return MOOC.ajax.getAbsoluteUrl("privpeer_review_assignment/") + this.get("id") + "/";
         };
 
         MOOC.router = new MOOC.App();
