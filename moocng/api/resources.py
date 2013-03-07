@@ -289,7 +289,22 @@ class EvaluationCriterionResource(ModelResource):
         authorization = DjangoAuthorization()
         filtering = {
             "assignment": ('exact'),
+            "unit":  ('exact'),
         }
+
+    def obj_get_list(self, request=None, **kwargs):
+
+        assignment = request.GET.get('assignment', None)
+        unit = request.GET.get('unit', None)
+
+        if not assignment is None:
+            results = EvaluationCriterion.objects.filter(assignment_id=assignment)
+        elif not unit is None:
+            results = EvaluationCriterion.objects.filter(assignment__kq__unit_id=unit)
+        else:
+            results = EvaluationCriterion.objects.all()
+
+        return results
 
 
 class PeerReviewSubmissionsResource(MongoResource):
