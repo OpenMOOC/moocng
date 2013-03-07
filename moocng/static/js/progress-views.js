@@ -92,6 +92,19 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
     initialize: function (options) {
         "use strict";
         this.reviews = options.reviews;
+
+        this._prrViews = _.map(this.reviews, function (review, index) {
+            var prrView = MOOC.views.peerReviewReviewViews[review.id];
+            if (_.isUndefined(prrView)) {
+
+                MOOC.views.peerReviewReviewViews[review.id] = new MOOC.views.PeerReviewReview({
+                    model: review,
+                    index: index
+                });
+                prrView = MOOC.views.peerReviewReviewViews[review.id];
+            }
+            return prrView;
+        });
     },
 
     render_badge: function (minimum_reviewers) {
@@ -126,15 +139,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 html.push('<thead><tr>');
                 html.push('<th>#</th><th>' + MOOC.trans.progress.date + '</th><th>Score</th>');
                 html.push('</tr></thead>');
-                html.push('<tbody>');
-                _.each(this.reviews, function (review, index) {
-                    html.push('<tr>');
-                    html.push('<td>' + (index + 1)  + '</td>');
-                    html.push('<td>' + review.get('created')  + '</td>');
-                    html.push('<td><a class="btn btn-small pull-right" href="#"><i class="icon-eye-open"></i> View details</a>' + review.get('score')  + '</td>');
-                    html.push('</tr>');
-                });
-                html.push('</tbody>');
+                html.push('<tbody></tbody>');
                 html.push('</table>');
             } else {
                 html.push('<p>' + MOOC.trans.progress.no_reviews_yet + '</p>');
@@ -156,8 +161,64 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
         this.$el.attr("title", this.model.get('title'));
         this.$el.html(html.join(""));
+
+        if (this.reviews !== null) {
+            _.each(this._prrViews, function (prrView) {
+                this.$('table tbody').append(prrView.render().el);
+            }, this);
+        }
+
         return this;
     }
 });
 
 MOOC.views.kqViews = {};
+
+
+MOOC.views.PeerReviewReview = Backbone.View.extend({
+    tagName: "tr",
+
+    events: {
+        "click td a": "show_details"
+    },
+
+    initialize: function (options) {
+        "use strict";
+        this.index = options.index;
+    },
+
+    render: function () {
+        "use strict";
+        var html = [];
+
+        html.push('<td>' + (this.index + 1)  + '</td>');
+        html.push('<td>' + this.model.get('created')  + '</td>');
+        html.push('<td><a class="btn btn-small pull-right" href="#"><i class="icon-eye-open"></i> View details</a>' + this.model.get('score')  + '</td>');
+
+        this.$el.html(html.join(""));
+        return this;
+    },
+
+    show_details: function (event) {
+        "use strict";
+        var criteria = '';
+        event.preventDefault();
+
+        criteria = _.map(this.model.get('criteria'), function (criterion, index) {
+            var html = ["<tr>"];
+            html.push("<td>" + (index + 1) + "</td>");
+            html.push("<td>" + criterion[0] + "</td>");
+            html.push("<td>" + criterion[1] + "</td>");
+            html.push("</tr>");
+            return html.join("");
+        });
+
+        $("#review-details-modal")
+            .find("time").text(this.model.get('created')).end()
+            .find("tbody").html(criteria.join("")).end()
+            .find("blockquote").text(this.model.get('comment')).end()
+            .modal('show');
+    }
+});
+
+MOOC.views.peerReviewReviewViews = {};

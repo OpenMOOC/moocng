@@ -361,7 +361,7 @@ MOOC.models.PeerReviewReview  = Backbone.Model.extend({
 MOOC.models.PeerReviewReviewList  = MOOC.models.TastyPieCollection.extend({
     model: MOOC.models.PeerReviewReview,
 
-    url: MOOC.ajax.getAbsoluteUrl('peer_review_reviews/')
+    url: '/patata' //MOOC.ajax.getAbsoluteUrl('peer_review_reviews/')
 });
 
 
