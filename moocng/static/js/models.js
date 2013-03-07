@@ -43,12 +43,13 @@ MOOC.models.EvaluationCriterion = Backbone.Model.extend({
     defaults: {
         id: -1,
         order: -1,
-        description: ""
+        description: "",
+        assignment: null
     },
 
     parse: function (resp, xhr) {
         "use strict";
-        return _.pick(resp, "id", "order", "description");
+        return _.pick(resp, "id", "order", "description", "assignment");
     },
 
     url: function () {
@@ -60,11 +61,7 @@ MOOC.models.EvaluationCriterion = Backbone.Model.extend({
 MOOC.models.EvaluationCriterionList = MOOC.models.TastyPieCollection.extend({
     model: MOOC.models.EvaluationCriterion,
     assignment: null,
-
-    url: function () {
-        "use strict";
-        return MOOC.ajax.getAbsoluteUrl("evaluation_criterion/") + "?assignment=" + this.assignment;
-    }
+    url: MOOC.ajax.getAbsoluteUrl("evaluation_criterion/")
 });
 
 MOOC.models.PeerReviewAssignment = Backbone.Model.extend({
@@ -361,7 +358,7 @@ MOOC.models.PeerReviewReview  = Backbone.Model.extend({
 MOOC.models.PeerReviewReviewList  = MOOC.models.TastyPieCollection.extend({
     model: MOOC.models.PeerReviewReview,
 
-    url: '/patata' //MOOC.ajax.getAbsoluteUrl('peer_review_reviews/')
+    url: MOOC.ajax.getAbsoluteUrl('peer_review_reviews/')
 });
 
 
@@ -453,12 +450,28 @@ MOOC.models.KnowledgeQuantumList  = MOOC.models.TastyPieCollection.extend({
         });
     },
 
-    setPeerReviewAssignments: function (peerReviewAssignmentList) {
+    setPeerReviewAssignmentList: function (peerReviewAssignmentList) {
         "use strict";
         peerReviewAssignmentList.each(function (pra) {
             this.each(function (kq) {
                 if (pra.get('kq') === kq.url()) {
                     kq.set('peerReviewAssignmentInstance', pra);
+                }
+            });
+        }, this);
+    },
+
+    setEvaluationCriterionList: function (evaluationCriterionList) {
+        "use strict";
+        evaluationCriterionList.each(function (ec) {
+            this.each(function (kq) {
+                var pra = kq.get('peerReviewAssignmentInstance'),
+                    criterionList;
+                if (pra !== null) {
+                    if (ec.get('assignment') === pra.url()) {
+                        criterionList = pra.get('_criterionList');
+                        criterionList.add(ec);
+                    }
                 }
             });
         }, this);

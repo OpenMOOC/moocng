@@ -91,6 +91,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
     initialize: function (options) {
         "use strict";
+        var pra = this.model.get('peerReviewAssignmentInstance');
         this.reviews = options.reviews;
 
         this._prrViews = _.map(this.reviews, function (review, index) {
@@ -99,7 +100,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
                 MOOC.views.peerReviewReviewViews[review.id] = new MOOC.views.PeerReviewReview({
                     model: review,
-                    index: index
+                    index: index,
+                    peerReviewAssignment: pra
                 });
                 prrView = MOOC.views.peerReviewReviewViews[review.id];
             }
@@ -185,6 +187,7 @@ MOOC.views.PeerReviewReview = Backbone.View.extend({
     initialize: function (options) {
         "use strict";
         this.index = options.index;
+        this.peerReviewAssignment = options.peerReviewAssignment;
     },
 
     render: function () {
@@ -205,13 +208,14 @@ MOOC.views.PeerReviewReview = Backbone.View.extend({
         event.preventDefault();
 
         criteria = _.map(this.model.get('criteria'), function (criterion, index) {
-            var html = ["<tr>"];
+            var html = ["<tr>"], criterionObj = null;
+            criterionObj = this.peerReviewAssignment.get('_criterionList').at(index);
             html.push("<td>" + (index + 1) + "</td>");
-            html.push("<td>" + criterion[0] + "</td>");
+            html.push("<td>" + criterionObj.get('description') + "</td>");
             html.push("<td>" + criterion[1] + "</td>");
             html.push("</tr>");
             return html.join("");
-        });
+        }, this);
 
         $("#review-details-modal")
             .find("time").text(this.model.get('created')).end()
