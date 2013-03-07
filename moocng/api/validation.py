@@ -20,7 +20,9 @@ import logging
 from django.core.exceptions import ValidationError
 from tastypie.validation import Validation
 
+
 from moocng.courses.models import Question, Option
+from moocng.mongodb import get_db
 
 logger = logging.getLogger(__name__)
 
@@ -62,3 +64,30 @@ class AnswerValidation(Validation):
                 raise ValidationError(msg)
 
         return {}
+
+
+class PeerReviewSubmissionsResourceValidation(Validation):
+
+    def is_valid(self, bundle, request):
+        if not bundle.data or not ("kq" in bundle.data):
+            return {'__all__': 'Expected kq id'}
+
+        errors = {}
+
+        db = get_db()
+        collection = db.get_collection("peer_review_submissions")
+
+        exists = collection.find({
+            "kq": bundle.data["kq"],
+            "author": unicode(request.user.id)
+        })
+
+        if exists.count() > 0:
+            msg = "Already exists a submission for kq=%s and user=%s" % (
+                bundle.data["kq"],
+                request.user.id)
+            logger.error(msg)
+            errors["kq"] = [msg]
+            errors["author"] = [msg]
+
+        return errors

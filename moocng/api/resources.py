@@ -41,7 +41,8 @@ from moocng.api.authorization import (PublicReadTeachersModifyAuthorization,
                                       TeacherAuthorization,
                                       UserResourceAuthorization)
 from moocng.api.mongodb import get_user, MongoObj, MongoResource
-from moocng.api.validation import AnswerValidation
+from moocng.api.validation import (AnswerValidation,
+                                   PeerReviewSubmissionsResourceValidation)
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment, Course)
 from moocng.courses.utils import normalize_kq_weight, calculate_course_mark
@@ -300,6 +301,7 @@ class PeerReviewSubmissionsResource(MongoResource):
         object_class = MongoObj
         authentication = DjangoAuthentication()
         authorization = DjangoAuthorization()
+        validation = PeerReviewSubmissionsResourceValidation()
         allowed_methods = ['get', 'post']
         filtering = {
             "kq": ('exact'),
@@ -341,6 +343,31 @@ class PeerReviewSubmissionsResource(MongoResource):
         obj = MongoObj(initial=mongo_item)
         obj.uuid = kwargs['pk']
         return obj
+
+    def obj_create(self, bundle, request=None, **kwargs):
+
+        bundle = self.full_hydrate(bundle)
+
+        if "bundle" not in bundle.data and "reviews" not in bundle.data:
+            kq = KnowledgeQuantum.objects.get(id=int(bundle.data["kq"]))
+
+            if "unit" not in bundle.data:
+                bundle.data["unit"] = unicode(kq.unit.id)
+
+            if "course" not in bundle.data:
+                bundle.data["course"] = unicode(kq.unit.course.id)
+
+        if "created" not in bundle.data:
+            bundle.data["created"] = datetime.now().isoformat()
+
+        bundle.data["reviews"] = 0
+        bundle.data["author"] = unicode(request.user.id)
+
+        self._collection.insert(bundle.data, safe=True)
+
+        bundle.uuid = bundle.obj.uuid
+
+        return bundle
 
 
 class PeerReviewReviewsResource(MongoResource):
