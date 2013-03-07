@@ -88,7 +88,6 @@ MOOC.models.PeerReviewAssignmentList = MOOC.models.TastyPieCollection.extend({
 
 MOOC.models.Activity = Backbone.Model.extend({
     defaults: {
-        id: -1,
         kqs: []
     },
 
@@ -117,7 +116,6 @@ MOOC.models.Activity = Backbone.Model.extend({
 
 MOOC.models.Option = Backbone.Model.extend({
     defaults: {
-        id: -1,
         optiontype: 't',
         x: 0,
         y: 0,
@@ -172,7 +170,6 @@ MOOC.models.OptionList  = MOOC.models.TastyPieCollection.extend({
 
 MOOC.models.Question = Backbone.Model.extend({
     defaults: {
-        id: -1,
         lastFrame: null, // of the KnowledgeQuantum's video
         solutionVideo: null,
         solutionText: null,
@@ -295,7 +292,6 @@ MOOC.models.Question = Backbone.Model.extend({
 /* An answer is a student submission to a question */
 MOOC.models.Answer = Backbone.Model.extend({
     defaults: {
-        id: -1,
         date: null,
         replyList: null
     },
@@ -317,7 +313,6 @@ MOOC.models.Answer = Backbone.Model.extend({
 /* A reply is a student value for an option */
 MOOC.models.Reply = Backbone.Model.extend({
     defaults: {
-        id: -1,
         option: null,
         value: null
     }
@@ -340,7 +335,6 @@ MOOC.models.AttachmentList = MOOC.models.TastyPieCollection.extend({
 
 MOOC.models.PeerReviewReview  = Backbone.Model.extend({
     defaults: {
-        id: -1,
         kq: null,
         created: null,
         criteria: [],
@@ -358,7 +352,6 @@ MOOC.models.PeerReviewReviewList  = MOOC.models.TastyPieCollection.extend({
 
 MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
     defaults: {
-        id: -1,
         order: -1,
         title: null,
         videoID: null,
@@ -475,7 +468,6 @@ MOOC.models.KnowledgeQuantumList  = MOOC.models.TastyPieCollection.extend({
 
 MOOC.models.Unit = Backbone.Model.extend({
     defaults: {
-        id: -1,
         order: -1,
         knowledgeQuantumList: null,
         title: "",
