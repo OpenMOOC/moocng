@@ -747,7 +747,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
     initialize: function () {
         "use strict";
         _.bindAll(this, "render", "getTemplate", "getCriteriaModal",
-            "viewCriteria", "submit");
+            "viewCriteria", "submit", "supportFileAPI", "uploadFile");
     },
 
     template: undefined,
@@ -873,11 +873,13 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
     },
 
     supportFileAPI: function (fileInput) {
+        "use strict";
         // TODO check browser support of file related features needed to upload the file to S3
         return true;
     },
 
     uploadFile: function (fileInput, callback) {
+        "use strict";
         var fileUrl = "TODO";
         // TODO upload file to the cloud, then invoke callback with the file url or id
         callback(fileUrl);
