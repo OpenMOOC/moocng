@@ -292,19 +292,37 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         if (!kqObj.has("peerReviewAssignmentInstance")) {
             // Load Peer Review Data
             MOOC.ajax.getResource(kqObj.get("peer_review_assignment"), function (data, textStatus, jqXHR) {
-                var peerReviewObj = new MOOC.models.PeerReviewAssignment({
-                    id: data.id,
-                    description: data.description,
-                    minimum_reviewers: data.minimum_reviewers
-                });
+                var ajaxCounter = 0,
+                    peerReviewObj = new MOOC.models.PeerReviewAssignment({
+                        id: data.id,
+                        description: data.description,
+                        minimum_reviewers: data.minimum_reviewers
+                    }),
+                    callback;
+
+                callback = function () {
+                    if (ajaxCounter === 2) {
+                        // Don't set the peerReviewAssignmentInstance until the
+                        // evaluation criteria is loaded and the submitted flag
+                        // set
+                        kqObj.set("peerReviewAssignmentInstance", peerReviewObj);
+                    }
+                };
+
                 peerReviewObj.set("_knowledgeQuantumInstance", kqObj);
+                MOOC.ajax.getPRSubmission(kqObj.get("id"), function (data, textStatus, jqXHR) {
+                    if (data.objects.length > 0) {
+                        peerReviewObj.set("_submitted", true);
+                    }
+                    ajaxCounter += 1;
+                    callback();
+                });
                 // Load Evalutation Criteria
                 peerReviewObj.get("_criterionList").assignment = peerReviewObj.get("id");
                 peerReviewObj.get("_criterionList").fetch({
                     success: function (collection, resp, options) {
-                        // Don't set the peerReviewAssignmentInstance until the
-                        // evaluation criteria is loaded
-                        kqObj.set("peerReviewAssignmentInstance", peerReviewObj);
+                        ajaxCounter += 1;
+                        callback();
                     }
                 });
             });
@@ -770,41 +788,58 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
         return this.modal;
     },
 
-    render: function () {
+    render: function (justSent) {
         "use strict";
-        var kqPath = window.location.hash.substring(1, window.location.hash.length - 2), // Remove trailing /p
-            html = this.getTemplate(),
-            tinyMCEOptions;
+        var kqPath,
+            html;
 
-        this.$el.removeClass("question").html(html);
-        this.$el.find("#pr-description").html(this.model.get("description"));
+        if (this.model.get("_submitted")) {
+            $("#kq-q-buttons").addClass("hide");
+            $("#kq-next-container").addClass("offset4");
 
-        tinyMCEOptions = {
-            mode: "exact",
-            elements: "pr_submission",
-            plugins: "paste,searchreplace",
-            width: "583",
-            height: "250",
-            theme: "advanced",
-            theme_advanced_resizing : true,
-            theme_advanced_toolbar_location: "top",
-            theme_advanced_buttons1: "bold,italic,underline,strikethrough,separator,link,unlink,separator,undo,redo,copy,paste,separator,cleanup,separator,bullist,numlist",
-            theme_advanced_buttons2: "",
-            theme_advanced_buttons3: ""
-        };
-        tinyMCE.init(tinyMCEOptions);
+            html = [
+                "<div class='alert alert-block'>",
+                "<h4>" + MOOC.trans.classroom.prSent + "</h4>"
+            ];
+            if (justSent) {
+                html.push("<p>" + MOOC.trans.classroom.prJust.replace("%(minimum_reviewers)s", this.model.get("minimum_reviewers")) + "</p>");
+                html.push("<p><a href='" + MOOC.urls.prReview + "'>" + MOOC.trans.classroom.prReview + "</a>.</p>");
+            } else {
+                html.push(MOOC.trans.classroom.prAlready);
+                html.push("<p><a href='" + MOOC.urls.prReview + "'>" + MOOC.trans.classroom.prReview + "</a>.</p>");
+                html.push("<p><a href='" + MOOC.urls.prProgress + "'>" + MOOC.trans.classroom.prProgress + "</a>.</p>");
+            }
+            html.push("</div>");
 
-        $("#kq-q-buttons").removeClass("hide");
-        if (this.model.isActive()) {
-            $("#kq-q-submit").attr("disabled", false);
+            this.$el.removeClass("question").html(html.join(""));
         } else {
-            $("#kq-q-submit").attr("disabled", "disabled");
+            kqPath = window.location.hash.substring(1, window.location.hash.length - 2); // Remove trailing /p
+
+            this.$el.removeClass("question").html(this.getTemplate());
+            this.$el.find("#pr-description").html(this.model.get("description"));
+
+            tinyMCE.init({
+                mode: "exact",
+                elements: "pr_submission",
+                plugins: "paste,searchreplace",
+                width: "583",
+                height: "250",
+                theme: "advanced",
+                theme_advanced_resizing : true,
+                theme_advanced_toolbar_location: "top",
+                theme_advanced_buttons1: "bold,italic,underline,strikethrough,separator,link,unlink,separator,undo,redo,copy,paste,separator,cleanup,separator,bullist,numlist",
+                theme_advanced_buttons2: "",
+                theme_advanced_buttons3: ""
+            });
+
+            $("#kq-q-buttons").removeClass("hide");
+            $("#kq-q-submit").attr("disabled", false);
+            $("#kq-q-showkq").off('click').on('click', function () {
+                MOOC.router.navigate(kqPath, { trigger: true });
+            });
+            $("#kq-q-submit").off('click').on('click', this.submit);
+            $("#kq-next-container").removeClass("offset4");
         }
-        $("#kq-q-showkq").off('click').on('click', function () {
-            MOOC.router.navigate(kqPath, { trigger: true });
-        });
-        $("#kq-q-submit").off('click').on('click', this.submit);
-        $("#kq-next-container").removeClass("offset4");
 
         return this;
     },
@@ -859,10 +894,10 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
                 submission.file = file;
             }
 
-            MOOC.ajax.sendPRSubmission(submission, function () {
-                MOOC.alerts.show(MOOC.alerts.SUCCESS, MOOC.trans.classroom.prSent, "");
-                // TODO
-            });
+            MOOC.ajax.sendPRSubmission(submission, _.bind(function () {
+                this.model.set("_submitted", true);
+                this.render(true);
+            }, this));
         }, this);
 
         if (file.files.length > 0) {

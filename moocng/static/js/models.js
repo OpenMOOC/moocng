@@ -72,18 +72,13 @@ MOOC.models.PeerReviewAssignment = Backbone.Model.extend({
         kq: null,
 
         _criterionList: new MOOC.models.EvaluationCriterionList(),
-        _knowledgeQuantumInstance: null
+        _knowledgeQuantumInstance: null,
+        _submitted: false
     },
 
     url: function () {
         "use strict";
         return MOOC.ajax.getAbsoluteUrl("peer_review_assignment/") + this.get("id") + "/";
-    },
-
-    isActive: function () {
-        "use strict";
-        // TODO
-        return true;
     }
 });
 

@@ -164,7 +164,11 @@
                 prBrowserMsg: "{% trans "You need a modern browser to send this submission, try a recent Chrome, Firefox, Opera or Safari." %}",
                 prRequired: "{% trans "Required field missing" %}",
                 prRequiredMsg: "{% trans "Please, send the text or the file. At least one of them must be filled." %}",
-                prSent: "{% trans "Submission sent" %}"
+                prSent: "{% trans "Submission sent" %}",
+                prJust: "{% trans "Thank you for sending this submission. You have now to review %(minimum_reviewers)s submissions from other students in order to get your submission scored." %}",
+                prAlready: "{% trans "You have already sent a submission for this peer review assignment. You can now review submissions from other students or check your score." %}",
+                prReview: "{% trans "Review other students submissions" %}",
+                prProgress: "{% trans "Check my progress" %}"
             },
             api: {
                 unitNotReadyTitle: "{% trans "The module is not ready" %}",
@@ -182,6 +186,10 @@
                 type: $(node).attr("unit-type")
             }));
         });
+        MOOC.urls = {
+            prReview: "{% url course_reviews course_slug=course.slug %}",
+            prProgress: "{% url course_progress course_slug=course.slug %}"
+        };
         MOOC.init({{ course.id }}, true);
     </script>
     {% endcompress %}

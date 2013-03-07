@@ -111,6 +111,15 @@ MOOC.ajax.sendPRSubmission = function (submission, callback) {
     });
 };
 
+MOOC.ajax.getPRSubmission = function (kq, callback) {
+    "use strict";
+    var url = MOOC.ajax.host + "peer_review_submissions/?kq=" + kq;
+    $.ajax(url, {
+        success: callback,
+        error: MOOC.ajax.genericError
+    });
+};
+
 MOOC.alerts = {};
 
 MOOC.alerts.ERROR = "error";
