@@ -297,6 +297,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     description: data.description,
                     minimum_reviewers: data.minimum_reviewers
                 });
+                peerReviewObj.set("_knowledgeQuantumInstance", kqObj);
                 // Load Evalutation Criteria
                 peerReviewObj.get("_criterionList").assignment = peerReviewObj.get("id");
                 peerReviewObj.get("_criterionList").fetch({
@@ -486,23 +487,17 @@ MOOC.views.Question = Backbone.View.extend({
         this.$el.addClass("question");
 
         $("#kq-q-buttons").removeClass("hide");
-
         if (this.model.isActive()) {
             $("#kq-q-submit").attr("disabled", false);
         } else {
             $("#kq-q-submit").attr("disabled", "disabled");
         }
-
-        $("#kq-q-showkq")
-            .unbind('click.QuestionView')
-            .bind('click.QuestionView', function () {
-                MOOC.router.navigate(kqPath, { trigger: true });
-            });
-        $("#kq-q-submit")
-            .unbind('click.QuestionView')
-            .bind('click.QuestionView', _.bind(function () {
-                this.submitAnswer();
-            }, this));
+        $("#kq-q-showkq").off('click').on('click', function () {
+            MOOC.router.navigate(kqPath, { trigger: true });
+        });
+        $("#kq-q-submit").off('click').on('click', _.bind(function () {
+            this.submitAnswer();
+        }, this));
         $("#kq-next-container").removeClass("offset4");
 
         this.model.get("optionList").each(function (opt) {
@@ -752,7 +747,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
     initialize: function () {
         "use strict";
         _.bindAll(this, "render", "getTemplate", "getCriteriaModal",
-            "viewCriteria");
+            "viewCriteria", "submit");
     },
 
     template: undefined,
@@ -777,8 +772,9 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
 
     render: function () {
         "use strict";
-        var tinyMCEOptions,
-            html = this.getTemplate();
+        var kqPath = window.location.hash.substring(1, window.location.hash.length - 2), // Remove trailing /p
+            html = this.getTemplate(),
+            tinyMCEOptions;
 
         this.$el.removeClass("question").html(html);
         this.$el.find("#pr-description").html(this.model.get("description"));
@@ -798,6 +794,18 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
         };
         tinyMCE.init(tinyMCEOptions);
 
+        $("#kq-q-buttons").removeClass("hide");
+        if (this.model.isActive()) {
+            $("#kq-q-submit").attr("disabled", false);
+        } else {
+            $("#kq-q-submit").attr("disabled", "disabled");
+        }
+        $("#kq-q-showkq").off('click').on('click', function () {
+            MOOC.router.navigate(kqPath, { trigger: true });
+        });
+        $("#kq-q-submit").off('click').on('click', this.submit);
+        $("#kq-next-container").removeClass("offset4");
+
         return this;
     },
 
@@ -815,6 +823,64 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
         });
         $modal.find(".modal-body").html(body);
         $modal.modal('show');
+    },
+
+    submit: function (evt) {
+        "use strict";
+        evt.preventDefault();
+        evt.stopPropagation();
+        var file = this.$el.find("form input[type=file]")[0],
+            text = tinyMCE.get("pr_submission").getContent(),
+            callback;
+
+        if (!this.supportFileAPI(file)) {
+            MOOC.alerts.show(MOOC.alerts.ERROR, MOOC.trans.classroom.prBrowser, MOOC.trans.classroom.prBrowserMsg);
+            return;
+        }
+
+        if (text === "" && file.files.length === 0) {
+            MOOC.alerts.show(MOOC.alerts.ERROR, MOOC.trans.classroom.prRequired, MOOC.trans.classroom.prRequiredMsg);
+            return;
+        }
+
+        callback = _.bind(function (file) {
+            var kq = this.model.get("_knowledgeQuantumInstance").get("id"),
+                unitObj = MOOC.models.course.getByKQ(kq),
+                submission = {
+                    kq: kq,
+                    unit: unitObj.get("id"),
+                    course: unitObj.courseId
+                };
+
+            if (text !== "") {
+                submission.text = text;
+            }
+            if (!_.isUndefined(file)) {
+                submission.file = file;
+            }
+
+            MOOC.ajax.sendPRSubmission(submission, function () {
+                MOOC.alerts.show(MOOC.alerts.SUCCESS, MOOC.trans.classroom.prSent, "");
+                // TODO
+            });
+        }, this);
+
+        if (file.files.length > 0) {
+            this.uploadFile(file, callback);
+        } else {
+            callback();
+        }
+    },
+
+    supportFileAPI: function (fileInput) {
+        // TODO check browser support of file related features needed to upload the file to S3
+        return true;
+    },
+
+    uploadFile: function (fileInput, callback) {
+        var fileUrl = "TODO";
+        // TODO upload file to the cloud, then invoke callback with the file url or id
+        callback(fileUrl);
     }
 });
 

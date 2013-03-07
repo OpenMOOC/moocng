@@ -99,6 +99,18 @@ MOOC.ajax.sendAnswer = function (answer, question_id, callback) {
     });
 };
 
+MOOC.ajax.sendPRSubmission = function (submission, callback) {
+    "use strict";
+    var url = MOOC.ajax.host + "peer_review_submissions/";
+    $.ajax(url, {
+        type: "POST",
+        data: JSON.stringify(submission),
+        contentType: "application/json",
+        success: callback,
+        error: MOOC.ajax.genericError
+    });
+};
+
 MOOC.alerts = {};
 
 MOOC.alerts.ERROR = "error";
