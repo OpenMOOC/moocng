@@ -143,6 +143,9 @@ def save_review(kq, reviewer, user_reviewed, criteria, comment):
     }, {
         "$inc": {
             "reviews": 1,
+        },
+        "$unset": {
+            "assigned_to": "",
         }
     })
 
