@@ -60,7 +60,6 @@ MOOC.models.EvaluationCriterion = Backbone.Model.extend({
 
 MOOC.models.EvaluationCriterionList = MOOC.models.TastyPieCollection.extend({
     model: MOOC.models.EvaluationCriterion,
-    assignment: null,
     url: MOOC.ajax.getAbsoluteUrl("evaluation_criterion/")
 });
 

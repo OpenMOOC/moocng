@@ -318,8 +318,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     callback();
                 });
                 // Load Evalutation Criteria
-                peerReviewObj.get("_criterionList").assignment = peerReviewObj.get("id");
                 peerReviewObj.get("_criterionList").fetch({
+                    data: { 'assignment': peerReviewObj.get("id") },
                     success: function (collection, resp, options) {
                         ajaxCounter += 1;
                         callback();
