@@ -17,6 +17,8 @@ from moocng.mongodb import get_db
 from moocng.peerreview import cache
 from moocng.peerreview.models import PeerReviewAssignment
 
+from datetime import datetime
+
 
 def course_get_peer_review_assignments(course):
     return PeerReviewAssignment.objects.from_course(course)
@@ -97,3 +99,47 @@ def kq_get_peer_review_score(kq, author, pra=None):
 
     else:
         return (average, True)
+
+
+def save_review(kq, reviewer, user_reviewed, criteria, comment):
+
+    db = get_db()
+    submissions = db.get_collection("peer_review_submissions")
+    reviews = db.get_collection("peer_review_reviews")
+
+    submission = submissions.find_one({
+        "author": unicode(user_reviewed.id),
+        "kq": unicode(kq.id)
+    })
+
+    peer_review_review = {
+        "submission_id": submission._id,
+        "author": unicode(user_reviewed.id),
+        "comment": comment,
+        "created": datetime.now().isoformat(),
+        "reviewer": unicode(reviewer.id),
+        "criteria": criteria,
+        "kq": unicode(kq.id),
+        "unit": unicode(kq.unit.id),
+        "course": unicode(kq.course.unit.id)
+    }
+
+    reviews.insert(peer_review_review)
+
+    submissions.update({
+        "author": unicode(user_reviewed.id),
+        "kq": unicode(kq.id),
+    }, {
+        "$inc": {
+            "reviews": 1,
+        }
+    })
+
+    submissions.update({
+        "author": unicode(reviewer.id),
+        "kq": unicode(kq.id),
+    }, {
+        "$inc": {
+            "author_reviews": 1,
+        }
+    })
