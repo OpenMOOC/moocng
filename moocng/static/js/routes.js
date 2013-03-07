@@ -20,16 +20,16 @@ if (_.isUndefined(window.MOOC)) {
 }
 
 MOOC.App = Backbone.Router.extend({
-    unitSteps: function (unit, inClassroomView) {
+    unitSteps: function (unit, loadFirstKQ) {
         "use strict";
         var unitObj = MOOC.models.course.get(unit),
             steps = [];
 
         if (_.isNull(unitObj.get("knowledgeQuantumList"))) {
-            steps.push(async.apply(MOOC.router.loadUnitData, unitObj, inClassroomView));
+            steps.push(async.apply(MOOC.router.loadUnitData, unitObj));
         }
 
-        if (inClassroomView) {
+        if (loadFirstKQ) {
             steps.push(function (callback) {
                 var kqObj = unitObj.get("knowledgeQuantumList").first();
                 if (_.isUndefined(kqObj)) {
@@ -196,13 +196,17 @@ MOOC.App = Backbone.Router.extend({
         async.series(toExecute);
     },
 
-    loadUnitData: function (unitObj, inClassroomView, callback) {
+    loadUnitData: function (unitObj, callback) {
         "use strict";
         unitObj.set("knowledgeQuantumList", new MOOC.models.KnowledgeQuantumList());
-        var unitID = unitObj.get("id");
+        var unitID = unitObj.get("id"),
+            inClassroomView = MOOC.router.hasHandler("unit1/kq1");
 
         MOOC.ajax.getKQsByUnit(unitID, function (data, textStatus, jqXHR) {
-            var unitView, hasPeerReviews, peerReviewReviewList, createView;
+            var unitView,
+                hasPeerReviews,
+                peerReviewReviewList,
+                createView;
 
             hasPeerReviews = false;
 

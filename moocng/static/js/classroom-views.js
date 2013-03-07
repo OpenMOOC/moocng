@@ -751,10 +751,12 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
 
     initialize: function () {
         "use strict";
-        _.bindAll(this, "render", "getTemplate", "viewCriteria");
+        _.bindAll(this, "render", "getTemplate", "getCriteriaModal",
+            "viewCriteria");
     },
 
     template: undefined,
+    modal: undefined,
 
     getTemplate: function () {
         "use strict";
@@ -762,6 +764,15 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
             this.template = $("#peer-review-tpl").text();
         }
         return this.template;
+    },
+
+    getCriteriaModal: function () {
+        "use strict";
+        if (_.isUndefined(this.modal)) {
+            this.modal = $("#evaluation-criteria");
+            this.modal.modal({ show: false });
+        }
+        return this.modal;
     },
 
     render: function () {
@@ -794,7 +805,16 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
         "use strict";
         evt.preventDefault();
         evt.stopPropagation();
-        // TODO
+        var criteria = this.model.get("_criterionList"),
+            body = "",
+            $modal;
+        if (criteria.length === 0) { return; }
+        $modal = this.getCriteriaModal();
+        criteria.each(function (criterion) {
+            body += "<p>" + criterion.get("description") + "</p>";
+        });
+        $modal.find(".modal-body").html(body);
+        $modal.modal('show');
     }
 });
 

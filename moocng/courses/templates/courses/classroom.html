@@ -16,8 +16,12 @@
         <div id='pr-description'></div>
 
         <p class="align-right">
-            <button class='btn' id='pr-view-criteria'>{% trans "View the evaluation criteria" %}</button>
+            <button class='btn' id='pr-view-criteria'><i class="icon-info-sign"></i> {% trans "View the evaluation criteria" %}</button>
         </p>
+
+        <div class="alert">
+            <b>{% trans "Remember!" %}</b> {% trans "At least one, the text or the file, must be present in the submission." %}
+        </div>
 
         <label for='pr_submission'><b>{% trans "Write your submission here:" %}</b></label>
         <textarea id='pr_submission' name='pr_submission'></textarea>
@@ -38,6 +42,17 @@
         </div>
     </form></div>
 </script>
+
+<div id="evaluation-criteria" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>{% trans "Evaluation criteria" %}</h3>
+    </div>
+    <div class="modal-body"></div>
+    <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal">Close</button>
+    </div>
+</div>
 
 <div class="row"><div class="span8">
     <h2 id="kq-title"></h2>
