@@ -139,8 +139,7 @@ class KnowledgeQuantumResource(ModelResource):
 
     def dehydrate_peer_review_score(self, bundle):
         if bundle.obj.peerreviewassignment_set.exists():
-            return kq_get_peer_review_score(bundle.obj, bundle.request.user.id,
-                                            self.peer_review_reviews)
+            return kq_get_peer_review_score(bundle.obj, bundle.request.user)
         return None
 
     def dehydrate_videoID(self, bundle):
@@ -361,6 +360,7 @@ class PeerReviewSubmissionsResource(MongoResource):
             bundle.data["created"] = datetime.now().isoformat()
 
         bundle.data["reviews"] = 0
+        bundle.data["author_reviews"] = 0
         bundle.data["author"] = unicode(request.user.id)
 
         self._collection.insert(bundle.data, safe=True)

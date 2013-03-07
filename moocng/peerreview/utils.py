@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from moocng.mongodb import get_db
+
 from moocng.peerreview import cache
 from moocng.peerreview.models import PeerReviewAssignment
 
@@ -30,22 +32,68 @@ def course_has_peer_review_assignments(course):
     return result
 
 
-def kq_get_peer_review_score(kq, author, ppr):
-    """ppr is peer_review_reviews mongo collection"""
+def kq_get_peer_review_score(kq, author, pra=None):
+    """ppr_collection is peer_review_reviews mongo collection
 
-    reviews = ppr.find({
+        Return a tuple with (score, scorable)
+        * If this kq isn't peer_review type:
+            return (None, false)
+        * If there is no submission:
+            return (0, True)
+        * If I haven't reviewed enough submissions of other students:
+            return (0, True)
+        * If nobody reviewed my submission:
+            return (None, False)
+        * If there are some reviews from other students to my submission but
+          less than the minimum the teacher wants:
+            return (Average, False)
+        * If I got enough reviews of my submission and I have reviewed enough
+          reviews of other students' submissions:
+            rerturn (Average, True)
+    """
+
+    if not pra:
+        try:
+            pra = kq.peerreviewassignment_set.get()
+        except PeerReviewAssignment.DoesNotExist:
+            return (None, False)
+
+    db = get_db()
+
+    prs_collection = db.get_collection("peer_review_submissions")
+
+    submission = prs_collection.find_one({
         "kq": unicode(kq.id),
-        "author": unicode(2)
+        "author": unicode(author.id)
     })
 
-    if reviews.count() == 0:
-        return None
+    if not submission:
+        return (0, True)
 
-    # TODO tests minimum_reviews
+    if (submission.get("author_reviews", 0) < pra.minimum_reviewers):
+        return (0, True)
 
-    average = 0
+    if (submission["reviews"] == 0):
+        return (None, False)
+
+    ppr_collection = db.get_collection("peer_review_reviews")
+
+    reviews = ppr_collection.find({
+        "kq": unicode(kq.id),
+        "author": unicode(author.id)
+    })
+
+    reviews_count = reviews.count()
+
+    sum_average = 0
     for review in reviews:
-        average += (float(sum([c[1] for c in review["criteria"]]) /
-                    len(review["criteria"])))
+        sum_average += (float(sum([c[1] for c in review["criteria"]]) /
+                        len(review["criteria"])))
+    average = sum_average / reviews_count
 
-    return (average / reviews.count())
+    if (submission["reviews"] > 0 and
+            submission.get("author_reviews", 0) < pra.minimum_reviewers):
+        return (average, False)
+
+    else:
+        return (average, True)
