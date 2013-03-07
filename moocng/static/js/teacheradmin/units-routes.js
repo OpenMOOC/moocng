@@ -67,17 +67,36 @@ if (_.isUndefined(window.MOOC)) {
             }
 
             if (kq.has("peer_review_assignment") && !kq.has("peerReviewAssignmentInstance")) {
+                var peer_review_assignment = new MOOC.models.PeerReviewAssignment();
+                var criterionList = peer_review_assignment.get("_criterionList");
+                var assignmentUrl = kq.get("peer_review_assignment").split("/");
+
+                var assignmentId = parseInt(assignmentUrl.pop());
+                while (isNaN(assignmentId))
+                    assignmentId = parseInt(assignmentUrl.pop());
+                criterionList.assignment = assignmentId;
+
                 promises.push($.ajax(kq.get("peer_review_assignment").replace("peer_review_assignment", "privpeer_review_assignment"), {
                     success: function (data, textStatus, jqXHR) {
-                        var peer_review_assignment = new MOOC.models.PeerReviewAssignment({
-                            id: parseInt(data.id, 10),
-                            description: data.description,
-                            minimum_reviewers: data.minimum_reviewers,
-                            knowledgeQuantum: data.kq
-                        });
+                        peer_review_assignment.set("id", parseInt(data.id, 10));
+                        peer_review_assignment.set("description", data.description);
+                        peer_review_assignment.set("minimum_reviewers", data.minimum_reviewers);
+                        peer_review_assignment.set("knowledgeQuantum", data.kq);
                         kq.set("peerReviewAssignmentInstance", peer_review_assignment);
-                    }
-                }));
+                }}));
+
+                promises.push($.ajax(criterionList.url().replace("peer_review_assignment", "privpeer_review_assignment"), {
+                    success: function (data, textStatus, jqXHR) {
+                        var elements = _.map(data.objects, function (attachment) {
+                            return {
+                                assignment: attachment.assignment,
+                                id: parseInt(attachment.id, 10),
+                                order: parseInt(attachment.order, 10),
+                                description: attachment.description
+                            };
+                        })
+                        criterionList.add(elements);
+                }}));
             }
 
             if (!kq.has("attachmentList")) {
