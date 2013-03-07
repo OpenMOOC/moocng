@@ -253,7 +253,10 @@ if (_.isUndefined(window.MOOC)) {
             return MOOC.ajax.getAbsoluteUrl("privkq/") + this.get("id") + "/";
         };
         MOOC.models.PeerReviewAssignment.prototype.url = function () {
-            return MOOC.ajax.getAbsoluteUrl("privpeer_review_assignment/") + this.get("id") + "/";
+            if (this.has("id"))
+                return MOOC.ajax.getAbsoluteUrl("privpeer_review_assignment/") + this.get("id") + "/";
+            else
+                return MOOC.ajax.getAbsoluteUrl("privpeer_review_assignment/");
         };
 
         MOOC.router = new MOOC.App();

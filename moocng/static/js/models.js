@@ -71,7 +71,6 @@ MOOC.models.EvaluationCriterionList = MOOC.models.TastyPieCollection.extend({
 
 MOOC.models.PeerReviewAssignment = Backbone.Model.extend({
     defaults: {
-        id: -1,
         description: "",
         minimum_reviewers: null,
         kq: null,
@@ -83,7 +82,16 @@ MOOC.models.PeerReviewAssignment = Backbone.Model.extend({
 
     url: function () {
         "use strict";
-        return MOOC.ajax.getAbsoluteUrl("peer_review_assignment/") + this.get("id") + "/";
+        if (this.has("id"))
+            return MOOC.ajax.getAbsoluteUrl("peer_review_assignment/") + this.get("id") + "/";
+        else
+            return MOOC.ajax.getAbsoluteUrl("peer_review_assignment/");
+    },
+
+    isActive: function () {
+        "use strict";
+        // TODO
+        return true;
     }
 });
 
