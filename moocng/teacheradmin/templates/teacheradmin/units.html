@@ -36,6 +36,10 @@
                 supplementary_material: "{% trans "Supplementary material" %}",
                 kq: "{% trans "nugget" %}",
                 question: "{% trans "It has a question" %}",
+            },
+            evaluationCriterion: {
+                title: "{% trans "Title:" %}",
+                description: "{% trans "Description:" %}",
             }
         };
         MOOC.init({{ course.id }}, {{ unit_badge_classes|safe }});
@@ -219,6 +223,13 @@
                 <input type="number" min="0" max="100" step="1" name="reviewminreviews" id="reviewminreviews" class="input-mini" required="required" />
             </div>
         </div>
+    </div>
+    <div class="row">
+      <div class="span10">
+        <legend>{% trans "Evaluation criterions" %}</legend>
+        <div id="reviewcriterions">
+        </div>
+      </div>
     </div>
     <div class="row">
         <div class="align-right span10">

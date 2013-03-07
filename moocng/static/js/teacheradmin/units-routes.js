@@ -87,12 +87,13 @@ if (_.isUndefined(window.MOOC)) {
 
                 promises.push($.ajax(criterionList.url().replace("peer_review_assignment", "privpeer_review_assignment"), {
                     success: function (data, textStatus, jqXHR) {
-                        var elements = _.map(data.objects, function (attachment) {
+                        var elements = _.map(data.objects, function (criterion) {
                             return {
-                                assignment: attachment.assignment,
-                                id: parseInt(attachment.id, 10),
-                                order: parseInt(attachment.order, 10),
-                                description: attachment.description
+                                assignment: criterion.assignment,
+                                id: parseInt(criterion.id, 10),
+                                title: criterion.title,
+                                order: parseInt(criterion.order, 10),
+                                description: criterion.description
                             };
                         })
                         criterionList.add(elements);
@@ -276,6 +277,12 @@ if (_.isUndefined(window.MOOC)) {
                 return MOOC.ajax.getAbsoluteUrl("privpeer_review_assignment/") + this.get("id") + "/";
             else
                 return MOOC.ajax.getAbsoluteUrl("privpeer_review_assignment/");
+        };
+        MOOC.models.EvaluationCriterion.prototype.url = function () {
+            if (this.has("id"))
+                return MOOC.ajax.getAbsoluteUrl("privevaluation_criterion/") + this.get("id") + "/";
+            else
+                return MOOC.ajax.getAbsoluteUrl("privevaluation_criterion/");
         };
 
         MOOC.router = new MOOC.App();

@@ -609,6 +609,23 @@ if (_.isUndefined(window.MOOC)) {
                     this.$el.find("#nopeerreviewassignment").addClass("hide");
                     this.$el.find("#reviewdescription").val(assignment.get("description"));
                     this.$el.find("#reviewminreviews").val(assignment.get("minimum_reviewers"));
+                    var criterionList = assignment.get("_criterionList");
+                    var criterionListDiv = this.$el.find("#reviewcriterions");
+                    criterionListDiv.empty();
+                    criterionList.each(function(criterion) {
+                        var titleInputId = "criteriontitle-"+criterion.get("id");
+                        var descriptionInputId = "criteriondescription-"+criterion.get("id");
+
+                        var titleInput = "<input type=\"text\" name=\""+titleInputId+"\" id=\""+titleInputId+"\" maxlength=\"200\" class=\"input-xlarge\" required=\"required\" />";
+                        var titleLabel = "<label for=\""+titleInputId+"\" class=\"required\">"+MOOC.trans.evaluationCriterion.title+"</label>";
+                        var descriptionInput = "<input type=\"text\" name=\""+descriptionInputId+"\" id=\""+descriptionInputId+"\" maxlength=\"200\" class=\"input-xlarge\" required=\"required\" />";
+                        var descriptionLabel = "<label for=\""+descriptionInputId+"\" class=\"required\">"+MOOC.trans.evaluationCriterion.description+"</label>";
+                        var criterionDiv = "<div class=\"row mb10\"><div class=\" span4\">"+titleLabel+titleInput+"</div><div class=\" span4\">"+descriptionLabel+descriptionInput+"</div></div>";
+
+                        criterionListDiv.append(criterionDiv);
+                        criterionListDiv.find("#"+titleInputId).val(criterion.get("title"));
+                        criterionListDiv.find("#"+descriptionInputId).val(criterion.get("description"));
+                    })
                 }
 
                 $attachments = this.$el.find("#attachment-list");
@@ -662,6 +679,7 @@ if (_.isUndefined(window.MOOC)) {
                 var question,
                     saveKQAjax,
                     saveAttachmentsAjax,
+                    savePeerReviewCriterionsAjax,
                     savePeerReviewAjax;
 
                 saveAttachmentsAjax = _.bind(function (input) {
@@ -751,6 +769,29 @@ if (_.isUndefined(window.MOOC)) {
                     });
                 }, this);
 
+                savePeerReviewCriterionsAjax = _.bind(function (i) {
+                    var assignment = this.model.get("peerReviewAssignmentInstance");
+                    var criterionList = assignment.get("_criterionList");
+                    if (i >= criterionList.size()) {
+                        saveKQAjax();
+                    } else {
+                        var criterion = criterionList.at(i);
+                        var titleInputId = "criteriontitle-"+criterion.get("id");
+                        var descriptionInputId = "criteriondescription-"+criterion.get("id");
+                        criterion.set("title", this.$el.find("#"+titleInputId).val());
+                        criterion.set("description", this.$el.find("#"+descriptionInputId).val());
+                        criterionList.at(i).save(null, {
+                            success: function() {
+                                savePeerReviewCriterionsAjax(i+1);
+                            },
+                            error: function () {
+                                MOOC.ajax.hideLoading();
+                                MOOC.ajax.showAlert("generic");
+                            }
+                        });
+                    }
+                }, this);
+
                 savePeerReviewAjax = _.bind(function () {
                    if (this.model.has("peerReviewAssignmentInstance")) {
                         var assignment = this.model.get("peerReviewAssignmentInstance");
@@ -761,7 +802,7 @@ if (_.isUndefined(window.MOOC)) {
                         }
                         assignment.save(null, {
                             success: function () {
-                                saveKQAjax();
+                                savePeerReviewCriterionsAjax(0);
                             },
                             error: function () {
                                 MOOC.ajax.hideLoading();
