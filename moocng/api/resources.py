@@ -323,8 +323,15 @@ class PeerReviewSubmissionsResource(MongoResource):
 
     def obj_get_list(self, request=None, **kwargs):
 
-        author = request.GET.get('author', unicode(request.user.id))
-        kq = request.GET.get('kq', None)
+        try:
+            author = int(request.GET.get('author', request.user.id))
+        except ValueError:
+            raise BadRequest("author must be a positive integer")
+
+        try:
+            kq = int(request.GET.get('kq', 0))
+        except ValueError:
+            raise BadRequest("kq must be a positive integer")
 
         mongo_query = dict(author=author)
 
@@ -366,17 +373,17 @@ class PeerReviewSubmissionsResource(MongoResource):
             kq = KnowledgeQuantum.objects.get(id=int(bundle.data["kq"]))
 
             if "unit" not in bundle.data:
-                bundle.data["unit"] = unicode(kq.unit.id)
+                bundle.data["unit"] = kq.unit.id
 
             if "course" not in bundle.data:
-                bundle.data["course"] = unicode(kq.unit.course.id)
+                bundle.data["course"] = kq.unit.course.id
 
         if "created" not in bundle.data:
             bundle.data["created"] = datetime.now().isoformat()
 
         bundle.data["reviews"] = 0
         bundle.data["author_reviews"] = 0
-        bundle.data["author"] = unicode(request.user.id)
+        bundle.data["author"] = request.user.id
 
         self._collection.insert(bundle.data, safe=True)
 
