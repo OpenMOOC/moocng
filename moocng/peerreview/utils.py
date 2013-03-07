@@ -38,8 +38,10 @@ def kq_get_peer_review_score(kq, author, ppr):
         "author": unicode(2)
     })
 
-    if not reviews:
-        return 0
+    if reviews.count() == 0:
+        return None
+
+    # TODO tests minimum_reviews
 
     average = 0
     for review in reviews:

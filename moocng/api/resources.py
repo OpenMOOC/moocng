@@ -141,7 +141,7 @@ class KnowledgeQuantumResource(ModelResource):
         if bundle.obj.peerreviewassignment_set.exists():
             return kq_get_peer_review_score(bundle.obj, bundle.request.user.id,
                                             self.peer_review_reviews)
-        return 0
+        return None
 
     def dehydrate_videoID(self, bundle):
         return extract_YT_video_id(bundle.obj.video)
