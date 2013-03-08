@@ -65,4 +65,4 @@ class EvaluationCriterion(Sortable):
         verbose_name_plural = _(u'evaluation criteria')
 
     def __unicode__(self):
-        return ugettext(u'{0} - EvaluationCriteria {1}').format(self.assignment, self.id)
+        return ugettext(u'{0} - EvaluationCriterion {1}').format(self.assignment.kq, self.title)
