@@ -314,6 +314,11 @@ img.award {
     overflow: auto;
 }
 
+.classroom #pr-submission {
+    width: 570px;
+    height: 220px;
+}
+
 .announcement div.content {
     margin-top: 30px;
 }

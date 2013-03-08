@@ -1,5 +1,5 @@
 /*jslint vars: false, browser: true, nomen: true */
-/*global MOOC: true, Backbone, $, _, YT, async, tinyMCE */
+/*global MOOC: true, Backbone, $, _, YT, async */
 
 // Copyright 2012 Rooter Analysis S.L.
 //
@@ -818,16 +818,17 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
                 html.push(" alert-success'>");
                 html.push("<h4>" + MOOC.trans.classroom.prSent + "</h4>");
                 html.push("<p>" + MOOC.trans.classroom.prJust.replace("#(minimum_reviewers)s", this.model.get("minimum_reviewers")) + "</p>");
-                html.push("<p><a href='" + MOOC.peerReview.urls.prReview + "'>" + MOOC.trans.classroom.prReview + "</a>.</p>");
+                html.push("</div>");
+                html.push("<p><a href='" + MOOC.peerReview.urls.prReview + "'>" + MOOC.trans.classroom.prReview + "</a></p>");
             } else {
                 unit = MOOC.models.course.getByKQ(this.model.get("_knowledgeQuantumInstance"));
                 html.push(" alert-info'>");
                 html.push("<h4>" + MOOC.trans.classroom.prSent + "</h4>");
                 html.push("<p>" + MOOC.trans.classroom.prAlready + "</p>");
-                html.push("<p><a href='" + MOOC.peerReview.urls.prReview + "'>" + MOOC.trans.classroom.prReview + "</a>.</p>");
-                html.push("<p><a href='" + MOOC.peerReview.urls.prProgress + "#unit" + unit.get("id") + "'>" + MOOC.trans.classroom.prProgress + "</a>.</p>");
+                html.push("</div>");
+                html.push("<p><a href='" + MOOC.peerReview.urls.prReview + "'>" + MOOC.trans.classroom.prReview + "</a></p>");
+                html.push("<p><a href='" + MOOC.peerReview.urls.prProgress + "#unit" + unit.get("id") + "'>" + MOOC.trans.classroom.prProgress + "</a></p>");
             }
-            html.push("</div>");
 
             this.$el.removeClass("question").html(html.join(""));
         } else {
@@ -835,30 +836,12 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
 
             this.$el.removeClass("question").html(this.getTemplate());
             this.$el.find("#pr-description").html(this.model.get("description"));
-
-            tinyMCE.init({
-                mode: "exact",
-                elements: "pr_submission",
-                plugins: "paste,searchreplace",
-                width: "583",
-                height: "250",
-                max_chars: MOOC.peerReview.settings.text_max_size,
-                setup: function (ed) {
-                    ed.onKeyDown.add(function (ed, evt) {
-                        var written = $(ed.getBody()).text().length + 1;
-                        if (written > parseInt(ed.getParam('max_chars'), 10)) {
-                            evt.preventDefault();
-                            evt.stopPropagation();
-                            return false;
-                        }
-                    });
-                },
-                theme: "advanced",
-                theme_advanced_resizing : true,
-                theme_advanced_toolbar_location: "top",
-                theme_advanced_buttons1: "bold,italic,underline,strikethrough,separator,link,unlink,separator,undo,redo,copy,paste,separator,cleanup,separator,bullist,numlist",
-                theme_advanced_buttons2: "",
-                theme_advanced_buttons3: ""
+            this.$el.find("#pr-submission").off("input propertychange").on("input propertychange", function () {
+                var $input = $(this),
+                    maxLength = $input.attr('maxlength');
+                if ($input.val().length > maxLength) {
+                    $input.val($input.val().substring(0, maxLength));
+                }
             });
 
             $("#kq-q-buttons").removeClass("hide");
@@ -904,7 +887,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
     confirmedSubmit: function () {
         "use strict";
         var file = this.$el.find("form input[type=file]")[0],
-            text = tinyMCE.get("pr_submission").getContent(),
+            text = this.$el.find("#pr-submission").val(),
             callback;
 
         if (!this.supportFileAPI(file)) {
