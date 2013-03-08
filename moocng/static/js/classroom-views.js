@@ -827,6 +827,17 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
                 plugins: "paste,searchreplace",
                 width: "583",
                 height: "250",
+                max_chars: MOOC.peerReview.settings.text_max_size,
+                setup: function (ed) {
+                    ed.onKeyDown.add(function (ed, evt) {
+                        var written = $(ed.getBody()).text().length + 1;
+                        if (written > parseInt(ed.getParam('max_chars'), 10)) {
+                            evt.preventDefault();
+                            evt.stopPropagation();
+                            return false;
+                        }
+                    });
+                },
                 theme: "advanced",
                 theme_advanced_resizing : true,
                 theme_advanced_toolbar_location: "top",

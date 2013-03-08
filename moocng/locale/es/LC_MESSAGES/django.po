@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-08 04:26-0600\n"
+"POT-Creation-Date: 2013-03-08 04:50-0600\n"
 "PO-Revision-Date: 2013-03-06 16:57+0100\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -276,7 +276,7 @@ msgid "Contact"
 msgstr "Contacto"
 
 #: contact/templates/contact/contact.html:12
-#: courses/templates/courses/classroom.html:72
+#: courses/templates/courses/classroom.html:73
 msgid "Submit"
 msgstr "Enviar"
 
@@ -512,7 +512,7 @@ msgstr "Vídeo"
 msgid "Teacher comments"
 msgstr "Comentarios del Profesor"
 
-#: courses/models.py:224 courses/templates/courses/classroom.html:113
+#: courses/models.py:224 courses/templates/courses/classroom.html:114
 #: teacheradmin/templates/teacheradmin/units.html:36
 #: teacheradmin/templates/teacheradmin/units.html:117
 msgid "Supplementary material"
@@ -583,7 +583,7 @@ msgstr "pregunta"
 msgid "questions"
 msgstr "preguntas"
 
-#: courses/models.py:310 courses/templates/courses/classroom.html:155
+#: courses/models.py:310 courses/templates/courses/classroom.html:156
 #: teacheradmin/templates/teacheradmin/units.html:95
 msgid "Question"
 msgstr "Pregunta"
@@ -787,7 +787,7 @@ msgid "Feedback"
 msgstr "Ayuda"
 
 #: courses/templates/admin/courses/question/options.html:163
-#: courses/templates/courses/classroom.html:41
+#: courses/templates/courses/classroom.html:42
 #: teacheradmin/templates/teacheradmin/question.html:112
 #: teacheradmin/templates/teacheradmin/units.html:142
 #: teacheradmin/templates/teacheradmin/units.html:147
@@ -871,44 +871,49 @@ msgstr ""
 msgid "Write your submission here:"
 msgstr "Escriba su entrega aquí:"
 
-#: courses/templates/courses/classroom.html:30
+#: courses/templates/courses/classroom.html:28
+#, python-format
+msgid "The max length of the text is %(max)s characters."
+msgstr "La longitud máxima del texto es de %(max)s caracteres."
+
+#: courses/templates/courses/classroom.html:31
 msgid "Attach a file to your submission:"
 msgstr "Adjunte un fichero a su entrega:"
 
-#: courses/templates/courses/classroom.html:37
+#: courses/templates/courses/classroom.html:38
 #: teacheradmin/templates/teacheradmin/units.html:138
 msgid "Select file"
 msgstr "Seleccione un fichero"
 
-#: courses/templates/courses/classroom.html:38
+#: courses/templates/courses/classroom.html:39
 #: teacheradmin/templates/teacheradmin/units.html:139
 msgid "Change"
 msgstr "Cambie"
 
-#: courses/templates/courses/classroom.html:50
+#: courses/templates/courses/classroom.html:51
 #: courses/templates/courses/progress.html:53
 msgid "Evaluation criteria"
 msgstr "Criterios de evaluación"
 
-#: courses/templates/courses/classroom.html:68
+#: courses/templates/courses/classroom.html:69
 msgid "Previous"
 msgstr "Anterior"
 
-#: courses/templates/courses/classroom.html:71
+#: courses/templates/courses/classroom.html:72
 msgid "Show video"
 msgstr "Mostrar vídeo"
 
-#: courses/templates/courses/classroom.html:75
+#: courses/templates/courses/classroom.html:76
 msgid "Next"
 msgstr "Siguiente"
 
-#: courses/templates/courses/classroom.html:112
+#: courses/templates/courses/classroom.html:113
 #: teacheradmin/templates/teacheradmin/units.html:35
 #: teacheradmin/templates/teacheradmin/units.html:121
 msgid "Instructor's comments"
 msgstr "Comentarios del profesor"
 
-#: courses/templates/courses/classroom.html:150
+#: courses/templates/courses/classroom.html:151
 #: courses/templates/courses/progress.html:93
 #: teacheradmin/templates/teacheradmin/stats.html:156
 #: teacheradmin/templates/teacheradmin/teachers.html:41
@@ -920,44 +925,44 @@ msgstr "Comentarios del profesor"
 msgid "Error"
 msgstr "Error"
 
-#: courses/templates/courses/classroom.html:151
+#: courses/templates/courses/classroom.html:152
 #: courses/templates/courses/progress.html:94
 msgid "Unknown error with ajax petition"
 msgstr "Error desconocido al hacer la petición ajax"
 
-#: courses/templates/courses/classroom.html:154
+#: courses/templates/courses/classroom.html:155
 msgid "Q"
 msgstr "P"
 
-#: courses/templates/courses/classroom.html:156
+#: courses/templates/courses/classroom.html:157
 msgid "A"
 msgstr "R"
 
-#: courses/templates/courses/classroom.html:157
+#: courses/templates/courses/classroom.html:158
 msgid "Answer"
 msgstr "Respuesta"
 
-#: courses/templates/courses/classroom.html:158
+#: courses/templates/courses/classroom.html:159
 msgid "PR"
 msgstr "ARC"
 
-#: courses/templates/courses/classroom.html:159
+#: courses/templates/courses/classroom.html:160
 msgid "Peer Review"
 msgstr "Actividad Revisada por Compañeros"
 
-#: courses/templates/courses/classroom.html:160
+#: courses/templates/courses/classroom.html:161
 msgid "Answers sent"
 msgstr "Respuesta enviada"
 
-#: courses/templates/courses/classroom.html:161
+#: courses/templates/courses/classroom.html:162
 msgid "Congratulations, you got it right!"
 msgstr "Respuesta correcta, buen trabajo"
 
-#: courses/templates/courses/classroom.html:162
+#: courses/templates/courses/classroom.html:163
 msgid "Wrong answer, good luck next time."
 msgstr "Lo siento, la respuesta es errónea."
 
-#: courses/templates/courses/classroom.html:163
+#: courses/templates/courses/classroom.html:164
 msgid ""
 "Your answers were stored, but can't be corrected until the deadline is "
 "reached."
@@ -965,11 +970,11 @@ msgstr ""
 "Sus respuestas han sido almacenadas, pero no podrán ser corregidas hasta que "
 "se alcance la fecha límite."
 
-#: courses/templates/courses/classroom.html:164
+#: courses/templates/courses/classroom.html:165
 msgid "Your browser is outdated"
 msgstr "Su navegador está obsoleto"
 
-#: courses/templates/courses/classroom.html:165
+#: courses/templates/courses/classroom.html:166
 msgid ""
 "You need a modern browser to send this submission, try a recent Chrome, "
 "Firefox, Opera or Safari."
@@ -977,21 +982,21 @@ msgstr ""
 "Necesitas un navegador moderno para enviar esta entrega, prueba con un "
 "Chrome, Firefox, Opera o Safari reciente."
 
-#: courses/templates/courses/classroom.html:166
+#: courses/templates/courses/classroom.html:167
 msgid "Required field missing"
 msgstr "Un campo obligatorio está vacío."
 
-#: courses/templates/courses/classroom.html:167
+#: courses/templates/courses/classroom.html:168
 msgid "Please, send the text or the file. At least one of them must be filled."
 msgstr ""
 "Por favor, envía el texto o el fichero. Al menos uno de ellos ha de estar "
 "relleno."
 
-#: courses/templates/courses/classroom.html:168
+#: courses/templates/courses/classroom.html:169
 msgid "Submission sent"
 msgstr "Entrega enviada"
 
-#: courses/templates/courses/classroom.html:169
+#: courses/templates/courses/classroom.html:170
 msgid ""
 "Thank you for sending this submission. You have now to review #"
 "(minimum_reviewers)s submissions from other students in order to get your "
@@ -1001,7 +1006,7 @@ msgstr ""
 "(minimum_reviewers)s entregas de otros estudiantes para que tu entrega se "
 "evalúe."
 
-#: courses/templates/courses/classroom.html:170
+#: courses/templates/courses/classroom.html:171
 msgid ""
 "You have already sent a submission for this peer review assignment. You can "
 "now review submissions from other students or check your score."
@@ -1009,20 +1014,20 @@ msgstr ""
 "Ya has enviado una entrega para esta actividad revisada por compañeros. "
 "Ahora puedes revisar entregas de otros compañeros o comprobar tu progreso."
 
-#: courses/templates/courses/classroom.html:171
+#: courses/templates/courses/classroom.html:172
 msgid "Review other students submissions"
 msgstr "Revisar las entregas de otros compañeros"
 
-#: courses/templates/courses/classroom.html:172
+#: courses/templates/courses/classroom.html:173
 msgid "Check my progress"
 msgstr "Comprobar mi progreso"
 
-#: courses/templates/courses/classroom.html:175
+#: courses/templates/courses/classroom.html:176
 #: courses/templates/courses/progress.html:109
 msgid "The module is not ready"
 msgstr "El módulo no está listo"
 
-#: courses/templates/courses/classroom.html:176
+#: courses/templates/courses/classroom.html:177
 #: courses/templates/courses/progress.html:110
 msgid ""
 "This module has no nuggets. Probably the start date hasn't been reached yet."
@@ -1030,11 +1035,11 @@ msgstr ""
 "Este módulo no tiene píldoras. Probablemente aún no se ha alcanzado la fecha "
 "de inicio."
 
-#: courses/templates/courses/classroom.html:177
+#: courses/templates/courses/classroom.html:178
 msgid "The solution is not available"
 msgstr "La solución no se encuentra disponible"
 
-#: courses/templates/courses/classroom.html:178
+#: courses/templates/courses/classroom.html:179
 msgid "Please wait until the deadline of the module."
 msgstr "Por favor, espere hasta alcanzar la fecha límite del módulo."
 

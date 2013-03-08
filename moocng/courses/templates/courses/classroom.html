@@ -25,6 +25,7 @@
         </div>
 
         <label for='pr_submission'><b>{% trans "Write your submission here:" %}</b></label>
+        <p>{% blocktrans with max=peer_review.text_max_size %}The max length of the text is {{ max }} characters.{% endblocktrans %}</p>
         <textarea id='pr_submission' name='pr_submission'></textarea>
 
         <label for='pr_file'><b>{% trans "Attach a file to your submission:" %}</b></label>
