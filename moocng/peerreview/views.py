@@ -139,7 +139,7 @@ def course_review_review(request, course_slug, assignment_id):
         submission_form = ReviewSubmissionForm()
         criteria_formset = EvalutionCriteriaResponseFormSet(initial=criteria_initial)
 
-    return render_to_response('peerreview/review_submission.html', {
+    return render_to_response('peerreview/review_review.html', {
             'submission': submission[0],
             'submission_form': submission_form,
             'criteria_formset': criteria_formset,
