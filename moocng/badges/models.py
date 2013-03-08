@@ -21,6 +21,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 
 
 def validate_png_image(value):
@@ -80,7 +81,7 @@ class Award(models.Model):
         verbose_name_plural = _(u'awards')
 
     def __unicode__(self):
-        return "%s awarded to %s" % (self.badge.title, self.user.username)
+        return ugettext(u'{0} awarded to {1}').format(self.badge.title, self.user.username)
 
     def get_image_url(self):
         return self.badge.image.url

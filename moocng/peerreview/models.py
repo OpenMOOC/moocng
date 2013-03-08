@@ -40,7 +40,7 @@ class PeerReviewAssignment(models.Model):
         verbose_name_plural = _(u'peer review assignments')
 
     def __unicode__(self):
-        return ugettext(u'Peer review assignment - {0}').format(self.id)
+        return self.kq.__unicode__()
 
 def invalidate_cache(sender, instance, **kwargs):
     course = instance.kq.unit.course
@@ -61,3 +61,6 @@ class EvaluationCriterion(Sortable):
     class Meta(Sortable.Meta):
         verbose_name = _(u'evaluation criterion')
         verbose_name_plural = _(u'evaluation criteria')
+
+    def __unicode__(self):
+        return ugettext(u'{0} - EvaluationCriteria {1}').format(self.kq, self.id)

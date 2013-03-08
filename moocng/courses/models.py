@@ -20,6 +20,7 @@ from django.db import models
 from django.db import transaction
 from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 
 from adminsortable.models import Sortable
 from adminsortable.fields import SortableForeignKey
@@ -280,7 +281,7 @@ class Question(models.Model):
         verbose_name_plural = _(u'questions')
 
     def __unicode__(self):
-        return u'%s - Question %d' % (self.kq, self.id)
+        return ugettext(u'{0} - Question {1}').format(self.kq, self.id)
 
     def is_correct(self, answer):
         correct = True
@@ -334,7 +335,7 @@ class Option(models.Model):
         verbose_name_plural = _(u'options')
 
     def __unicode__(self):
-        return u'%s at %s x %s' % (self.optiontype, self.x, self.y)
+        return ugettext(u'{0} at {1} x {2}').format(self.optiontype, self.x, self.y)
 
     def is_correct(self, reply):
         if self.optiontype == 'l':
