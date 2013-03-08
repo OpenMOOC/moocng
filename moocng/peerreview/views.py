@@ -143,7 +143,16 @@ def course_review_review(request, course_slug, assignment_id):
                 messages.error(request, _('Your can\'t submit two times the same review.'))
                 return HttpResponseRedirect(reverse('course_reviews', args=[course_slug]))
 
-            messages.success(request, _('Your review has been submitted.'))
+            reviews = get_db().get_collection('peer_review_reviews')
+            reviewed = reviews.find({
+                    'reviewer': user_id,
+                    'kq': assignment.kq.id,
+                    })
+            pending = assignment.minimum_reviewers - reviewed.count()
+            if pending > 0:
+                messages.success(request, _('Your review has been submitted. You have to review at least %d exercises more.') % pending)
+            else:
+                messages.success(request, _('Your review has been submitted.'))
             return HttpResponseRedirect(reverse('course_reviews', args=[course_slug]))
     else:
         submission_form = ReviewSubmissionForm()
