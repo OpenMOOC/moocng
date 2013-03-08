@@ -28,7 +28,7 @@
 <ul>
   {% for assign in assigned %}
   <li>{% blocktrans with created=assign.created %}Assignment submited on {{ created }}.{% endblocktrans %}
-    <a href="{% url course_review_submission course_slug assign.kq|floatformat:0 %}">{% trans "Finish reviewing it." %}</a>
+    <a href="{% url course_review_review course_slug peer_review_assignment_id %}">{% trans "Finish reviewing it." %}</a>
   </li>
   {% endfor %}
 </ul>

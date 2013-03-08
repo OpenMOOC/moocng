@@ -37,19 +37,19 @@ from moocng.teacheradmin.utils import send_mail_wrapper
 
 @require_POST
 @login_required
-def course_review_assign(request, course_slug, review_id):
+def course_review_assign(request, course_slug, assignment_id):
     course = get_object_or_404(Course, slug=course_slug)
-    review = get_object_or_404(PeerReviewAssignment, id=review_id)
+    assignment = get_object_or_404(PeerReviewAssignment, id=assignment_id)
     user_id = request.user.id
 
-    if review.kq.unit.course != course:
+    if assignment.kq.unit.course != course:
         messages.error(request, _('The selected peer review assignment is not part of this course.'))
         return HttpResponseRedirect(reverse('course_reviews', args=[course_slug]))
 
     collection = get_db().get_collection('peer_review_submissions')
 
     submission = collection.find({
-        'kq': review.kq.id,
+        'kq': assignment.kq.id,
         'assigned_to': user_id
     })
     if submission.count() > 0:
@@ -57,7 +57,7 @@ def course_review_assign(request, course_slug, review_id):
         return HttpResponseRedirect(reverse('course_reviews', args=[course_slug]))
 
     submission = collection.find({
-        'kq': review.kq.id,
+        'kq': assignment.kq.id,
         'assigned_to': {
             '$exists': False
         },
@@ -77,7 +77,7 @@ def course_review_assign(request, course_slug, review_id):
         return HttpResponseRedirect(reverse('course_reviews', args=[course_slug]))
     else:
         collection.update({'_id': submission[0]['_id']}, {'$set': {'assigned_to': user_id}})
-        return HttpResponseRedirect(reverse('course_review_submission', args=[course_slug, review_id]))
+        return HttpResponseRedirect(reverse('course_review_review', args=[course_slug, assignment_id]))
 
 
 @login_required
@@ -93,19 +93,19 @@ def course_reviews(request, course_slug):
 
 
 @login_required
-def course_review_submission(request, course_slug, review_id):
+def course_review_review(request, course_slug, assignment_id):
     course = get_object_or_404(Course, slug=course_slug)
-    review = get_object_or_404(PeerReviewAssignment, id=review_id)
+    assignment = get_object_or_404(PeerReviewAssignment, id=assignment_id)
     user_id = request.user.id
 
-    if review.kq.unit.course != course:
+    if assignment.kq.unit.course != course:
         messages.error(request, _('The selected peer review assignment is not part of this course.'))
         return HttpResponseRedirect(reverse('course_reviews', args=[course_slug]))
 
     collection = get_db().get_collection('peer_review_submissions')
 
     submission = collection.find({
-        'kq': review.kq.id,
+        'kq': assignment.kq.id,
         'assigned_to': user_id
     })
 
@@ -113,19 +113,22 @@ def course_review_submission(request, course_slug, review_id):
         messages.error(request, _('You don\'t have this submission assigned.'))
         return HttpResponseRedirect(reverse('course_reviews', args=[course_slug]))
 
-    submitter = User.objects.get(id=int(submission[0]['author']))
+    submission_obj = submission[0]
 
-    criteria_initial = [{'evaluation_criterion_id': criterion.id} for criterion in review.criteria.all()]
+    submitter = User.objects.get(id=int(submission_obj['author']))
+
+    criteria_initial = [{'evaluation_criterion_id': criterion.id} for criterion in assignment.criteria.all()]
     EvalutionCriteriaResponseFormSet = formset_factory(EvalutionCriteriaResponseForm, extra=0, max_num=len(criteria_initial))
 
     if request.method == "POST":
         submission_form = ReviewSubmissionForm(request.POST)
         criteria_formset = EvalutionCriteriaResponseFormSet(request.POST, initial=criteria_initial)
         if criteria_formset.is_valid() and submission_form.is_valid():
-            criteria_values = [int(form.cleaned_data['value']) for form in criteria_formset]
+            criteria_values = [(int(form.cleaned_data['evaluation_criterion_id']), int(form.cleaned_data['value'])) for form in criteria_formset]
             try:
-                save_review(review.kq, request.user, submitter, criteria_values, submission_form.cleaned_data['comments'])
-                send_mail_to_submission_owner(review, submission)
+                review = save_review(assignment.kq, request.user, submitter, criteria_values, submission_form.cleaned_data['comments'])
+                current_site_name = get_current_site(request).name
+                send_mail_to_submission_owner(current_site_name, assignment, review, submitter)
             except IntegrityError:
                 messages.error(request, _('Your can\'t submit two times the same review.'))
                 return HttpResponseRedirect(reverse('course_reviews', args=[course_slug]))
@@ -141,11 +144,11 @@ def course_review_submission(request, course_slug, review_id):
             'submission_form': submission_form,
             'criteria_formset': criteria_formset,
             'course': course,
-            'review': review,
+            'assignment': assignment,
             }, context_instance=RequestContext(request))
 
-def send_mail_to_submission_owner(review, submission):
-    subject = _(u'Your assignment "%(nugget)s" has been reviewed') % {'nugget': review.kq.title}
+def send_mail_to_submission_owner(current_site_name, assignment, review, submitter):
+    subject = _(u'Your assignment "%(nugget)s" has been reviewed') % {'nugget': assignment.kq.title}
     message = _(u""""Congratulations %(user)s
 
         The exercise you sent on %(date)s belonging the nugget "%(nugget)s has been reviewed by a classmate.
@@ -153,12 +156,12 @@ def send_mail_to_submission_owner(review, submission):
         Evaluation criteria:
 
         """) % {
-            'user': submission[0]['author'],
-            'date': submission[0]['created'],
-            'nugget': review.kq.title
+            'user': submitter,
+            'date': review['created'],
+            'nugget': assignment.kq.title
         }
 
-    for criterion in review.criteria.all():
+    for criterion in assignment.criteria.all():
         message += _(u"""- %s
             """) % criterion.description
 
@@ -167,11 +170,10 @@ def send_mail_to_submission_owner(review, submission):
 
         %(comment)s
 
-        Best regards and thank you for learning with Undecoma.es
+        Best regards and thank you for learning with %(site)s.
 
         %(site)s's team""") % {
-            'comment': submission[0]['comment'],
-            'site': get_current_site(request).name,
+            'comment': review['comment'],
+            'site': current_site_name,
     }
-    send_mail_wrapper(subject, message, [submission[0]['author'].email])
-
+    send_mail_wrapper(subject, message, [submitter.email])
