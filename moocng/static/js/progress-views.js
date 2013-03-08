@@ -111,10 +111,10 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
     render_badge: function (minimum_reviewers) {
         "use strict";
-        var icon = '', score = 1.4, badge_class = '';
+        var icon = '', score = 0, badge_class = '';
 
         if (this.reviews.length < minimum_reviewers) {
-            icon = '<i class="icon-exclamation-sign icon-white" title="' + MOOC.trans.progress.score_dont_apply + '"></i>';
+            icon = '<i class="icon-exclamation-sign icon-white" title="' + MOOC.trans.progress.score_dont_apply + '"></i> ';
         }
 
         badge_class = (score >= 2.5) ? 'success' : 'important';
