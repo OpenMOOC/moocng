@@ -15,6 +15,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.sites.models import get_current_site
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
@@ -29,6 +30,7 @@ from moocng.courses.models import Course
 from moocng.peerreview.models import PeerReviewAssignment
 from moocng.peerreview.utils import course_get_peer_review_assignments, save_review
 from moocng.peerreview.forms import ReviewSubmissionForm, EvalutionCriteriaResponseForm
+from moocng.teacheradmin.utils import send_mail_wrapper
 
 
 @require_POST
@@ -118,6 +120,7 @@ def course_review_submission(request, course_slug, review_id):
             criteria_values = [int(form.cleaned_data['value']) for form in criteria_formset]
             try:
                 save_review(review.kq, request.user, submitter, criteria_values, submission_form.cleaned_data['comments'])
+                send_mail_to_submission_owner(review, submission)
             except IntegrityError:
                 messages.error(request, _('Your can\'t submit two times the same review.'))
                 return HttpResponseRedirect(reverse('course_reviews', args=[course_slug]))
@@ -135,4 +138,35 @@ def course_review_submission(request, course_slug, review_id):
             'course': course,
             'review': review,
             }, context_instance=RequestContext(request))
+
+def send_mail_to_submission_owner(review, submission):
+    subject = _(u'Your assignment "%(nugget)s" has been reviewed') % {'nugget': review.kq.title}
+    message = _(u""""Congratulations %(user)s
+
+        The exercise you sent on %(date)s belonging the nugget "%(nugget)s has been reviewed by a classmate.
+
+        Evaluation criteria:
+
+        """) % {
+            'user': submission[0]['author'],
+            'date': submission[0]['created'],
+            'nugget': review.kq.title
+        }
+
+    for criterion in review.criteria.all():
+        message += _(u"""- %s
+            """) % criterion.description
+
+    message += _(u"""
+        Your classmate's comment:
+
+        %(comment)s
+
+        Best regards and thank you for learning with Undecoma.es
+
+        %(site)s's team""") % {
+            'comment': submission[0]['comment'],
+            'site': get_current_site(request).name,
+    }
+    send_mail_wrapper(subject, message, [submission[0]['author'].email])
 
