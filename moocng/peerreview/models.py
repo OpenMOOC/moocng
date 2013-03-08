@@ -55,6 +55,8 @@ class EvaluationCriterion(Sortable):
     assignment = models.ForeignKey(PeerReviewAssignment,
                                    verbose_name=_(u'Peer review assignment'),
                                    related_name='criteria')
+    title = models.CharField(verbose_name=_(u'Title'), max_length=100,
+                            blank=False, null=False)
     description = models.TextField(verbose_name=_(u'Description'),
                                    blank=True, null=False)
 

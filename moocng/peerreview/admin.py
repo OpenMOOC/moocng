@@ -25,12 +25,12 @@ logger = logging.getLogger(__name__)
 
 class PeerReviewAssignmentAdmin(admin.ModelAdmin):
 
-    list_display = ('id', '__unicode__', 'kq', 'minimum_reviewers')
+    list_display = ('__unicode__', 'kq', 'minimum_reviewers')
 
 
 class EvaluationCriterionAdmin(SortableAdmin):
 
-    list_display = ('id', 'assignment')
+    list_display = ('title',)
 
 
 admin.site.register(PeerReviewAssignment, PeerReviewAssignmentAdmin)
