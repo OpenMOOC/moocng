@@ -17,6 +17,7 @@
 from cgi import escape
 import logging
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from tastypie.validation import Validation
 
@@ -89,5 +90,11 @@ class PeerReviewSubmissionsResourceValidation(Validation):
             logger.error(msg)
             errors["kq"] = [msg]
             errors["author"] = [msg]
+
+        text = bundle.data.get("text", "")
+        max_text_leng = getattr(settings, "PEER_REVIEW_TEXT_MAX_SIZE", 5000)
+
+        if len(text) > max_text_leng:
+            errors["text"] = "Text is longer than %s chars" % max_text_leng
 
         return errors
