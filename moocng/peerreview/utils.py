@@ -162,3 +162,5 @@ def save_review(kq, reviewer, user_reviewed, criteria, comment):
             "author_reviews": 1,
         }
     })
+
+    return peer_review_review
