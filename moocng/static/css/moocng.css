@@ -310,7 +310,7 @@ img.award {
 .classroom .solution-wrapper {
     padding: 10px;
     border: 1px solid #e5e5e5;
-    height: 350px;  /* it's 372 counting the padding and border*/
+/*     height: 350px;  /* it's 372 counting the padding and border */
     overflow: auto;
 }
 
