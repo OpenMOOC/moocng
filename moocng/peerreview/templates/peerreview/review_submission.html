@@ -13,6 +13,9 @@
             });
             $('button.criterion_value').click(function (event) {
                 target = $(event.target);
+                if(!target.attr('data-name')) {
+                    target = $(target.parent());
+                }
                 input = $('input[name='+target.attr('data-name')+']');
                 input.val(target.attr('data-value'));
             });
@@ -49,12 +52,12 @@
                <div class="clearfix well well-small">
                    <p><a class="label" title="Prueba">{{ criterion.evaluation_criterion_id.value|get_criterion_description }}</a></p>
                    <div class="btn-group pull-right" data-toggle="buttons-radio">
-                       <button type="button" class="btn btn-warning disabled"><i class="icon-minus"></i></button>
+                       <button type="button" data-name="{{ criterion.value.html_name }}" data-value="" class="btn btn-warning criterion_value disabled"><i class="icon-minus"></i></button>
                        {% for choice in criterion.value %}
                            <button type="button" data-name="{{ criterion.value.html_name }}" data-value="{{ choice.choice_value }}" class="btn criterion_value">{{ choice.choice_label }}</button>
                        {% endfor %}
-                       <input type="hidden" class="criterion_value" name="{{ criterion.value.html_name }}" value="{{ criterion.value.value }}">
-                       <button type="button" class="btn btn-success disabled"><i class="icon-plus"></i></button>
+                       <input type="hidden" class="criterion_value" name="{{ criterion.value.html_name }}" value="{% if criterion.value.value %}{{ criterion.value.value }}{% endif %}">
+                       <button type="button" data-name="{{ criterion.value.html_name }}" data-value="" class="btn btn-success criterion_value disabled"><i class="icon-plus"></i></button>
                    </div>
                    {{ criterion.value.errors }}
                </div>
