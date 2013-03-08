@@ -108,14 +108,14 @@ def course_review_submission(request, course_slug, review_id):
 
     submitter = User.objects.get(id=int(submission[0]['author']))
 
-    criterias_initial = [{'evaluation_criteria_id': criteria.id} for criteria in review.criterias.all()]
-    EvalutionCriteriaResponseFormSet = formset_factory(EvalutionCriteriaResponseForm, extra=0, max_num=len(criterias_initial))
+    criteria_initial = [{'evaluation_criterion_id': criterion.id} for criterion in review.criteria.all()]
+    EvalutionCriteriaResponseFormSet = formset_factory(EvalutionCriteriaResponseForm, extra=0, max_num=len(criteria_initial))
 
     if request.method == "POST":
         submission_form = ReviewSubmissionForm(request.POST)
-        criterias_formset = EvalutionCriteriaResponseFormSet(request.POST, initial=criterias_initial)
-        if criterias_formset.is_valid() and submission_form.is_valid():
-            criteria_values = [int(form.cleaned_data['value']) for form in criterias_formset]
+        criteria_formset = EvalutionCriteriaResponseFormSet(request.POST, initial=criteria_initial)
+        if criteria_formset.is_valid() and submission_form.is_valid():
+            criteria_values = [int(form.cleaned_data['value']) for form in criteria_formset]
             try:
                 save_review(review.kq, request.user, submitter, criteria_values, submission_form.cleaned_data['comments'])
             except IntegrityError:
@@ -126,12 +126,13 @@ def course_review_submission(request, course_slug, review_id):
             return HttpResponseRedirect(reverse('course_reviews', args=[course_slug]))
     else:
         submission_form = ReviewSubmissionForm()
-        criterias_formset = EvalutionCriteriaResponseFormSet(initial=criterias_initial)
+        criteria_formset = EvalutionCriteriaResponseFormSet(initial=criteria_initial)
 
     return render_to_response('peerreview/review_submission.html', {
             'submission': submission[0],
             'submission_form': submission_form,
-            'criterias_formset': criterias_formset,
+            'criteria_formset': criteria_formset,
             'course': course,
             'review': review,
             }, context_instance=RequestContext(request))
+

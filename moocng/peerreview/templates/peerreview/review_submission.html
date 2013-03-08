@@ -8,10 +8,10 @@
 {% block extrajs %}
     <script type="text/javascript">
         $(document).ready(function () {
-            $('input.criteria_value').each(function (index, item) {
+            $('input.criterion_value').each(function (index, item) {
                 $(item).parent().find('button[data-value='+$(item).val()+']').addClass('active');
             });
-            $('button.criteria_value').click(function (event) {
+            $('button.criterion_value').click(function (event) {
                 target = $(event.target);
                 input = $('input[name='+target.attr('data-name')+']');
                 input.val(target.attr('data-value'));
@@ -42,21 +42,21 @@
 <form method="post">
     <div class="clearfix">
        {% csrf_token %}
-       {{ criterias_formset.management_form }}
+       {{ criteria_formset.management_form }}
        <div class="span6">
-           {% for criteria in criterias_formset %}
-               {{ criteria.evaluation_criteria_id }}
+           {% for criterion in criteria_formset %}
+               {{ criterion.evaluation_criterion_id }}
                <div class="clearfix well well-small">
-                   <p><a class="label" title="Prueba">{{ criteria.evaluation_criteria_id.value|get_criteria_description }}</a></p>
+                   <p><a class="label" title="Prueba">{{ criterion.evaluation_criterion_id.value|get_criterion_description }}</a></p>
                    <div class="btn-group pull-right" data-toggle="buttons-radio">
                        <button type="button" class="btn btn-warning disabled"><i class="icon-minus"></i></button>
-                       {% for choice in criteria.value %}
-                           <button type="button" data-name="{{ criteria.value.html_name }}" data-value="{{ choice.choice_value }}" class="btn criteria_value">{{ choice.choice_label }}</button>
+                       {% for choice in criterion.value %}
+                           <button type="button" data-name="{{ criterion.value.html_name }}" data-value="{{ choice.choice_value }}" class="btn criterion_value">{{ choice.choice_label }}</button>
                        {% endfor %}
-                       <input type="hidden" class="criteria_value" name="{{ criteria.value.html_name }}" value="{{ criteria.value.value }}">
+                       <input type="hidden" class="criterion_value" name="{{ criterion.value.html_name }}" value="{{ criterion.value.value }}">
                        <button type="button" class="btn btn-success disabled"><i class="icon-plus"></i></button>
                    </div>
-                   {{ criteria.value.errors }}
+                   {{ criterion.value.errors }}
                </div>
            {% endfor %}
        </div>

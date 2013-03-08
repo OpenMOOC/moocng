@@ -14,5 +14,5 @@ class ReviewSubmissionForm(forms.Form):
 
 
 class EvalutionCriteriaResponseForm(forms.Form):
-    evaluation_criteria_id = forms.IntegerField(widget=forms.widgets.HiddenInput)
+    evaluation_criterion_id = forms.IntegerField(widget=forms.widgets.HiddenInput)
     value = forms.ChoiceField(choices=EVALUTION_CRITERIA_CHOICES, widget=forms.widgets.RadioSelect)

@@ -86,9 +86,9 @@ def pending_reviews(peer_review_assignment, user, course):
 
 
 @register.filter
-def get_criteria_description(criteria_id):
+def get_criterion_description(criterion_id):
     try:
-        criteria = EvaluationCriterion.objects.get(id=criteria_id)
-        return criteria.description
+        criterion = EvaluationCriterion.objects.get(id=criterion_id)
+        return criterion.description
     except EvaluationCriterion.DoesNotExist:
         return ''

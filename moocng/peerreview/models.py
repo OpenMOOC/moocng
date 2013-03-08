@@ -54,7 +54,7 @@ signals.post_delete.connect(invalidate_cache, sender=PeerReviewAssignment)
 class EvaluationCriterion(Sortable):
     assignment = models.ForeignKey(PeerReviewAssignment,
                                    verbose_name=_(u'Peer review assignment'),
-                                   related_name='criterias')
+                                   related_name='criteria')
     description = models.TextField(verbose_name=_(u'Description'),
                                    blank=True, null=False)
 
