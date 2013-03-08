@@ -13,6 +13,7 @@
 {% block content %}
 <script id="peer-review-tpl" type="text/template">
     <div class='solution-wrapper white'><form>
+        <h4>{% trans "Peer review assignment" %}</h4>
         <div id='pr-description'></div>
 
         <p class="align-right">
@@ -24,6 +25,7 @@
         </div>
 
         <label for='pr_submission'><b>{% trans "Write your submission here:" %}</b></label>
+        <p>{% blocktrans with max=peer_review.text_max_size %}The max length of the text is {{ max }} characters.{% endblocktrans %}</p>
         <textarea id='pr_submission' name='pr_submission'></textarea>
 
         <label for='pr_file'><b>{% trans "Attach a file to your submission:" %}</b></label>
@@ -50,7 +52,20 @@
     </div>
     <div class="modal-body"></div>
     <div class="modal-footer">
-        <button type="button" class="btn" data-dismiss="modal">Close</button>
+        <button type="button" class="btn" data-dismiss="modal">{% trans "Close" %}</button>
+    </div>
+</div>
+
+<div id="confirm-peer-review" class="modal hide fade">
+    <div class="modal-header">
+        <h3>{% trans "Confirm submission" %}</h3>
+    </div>
+    <div class="modal-body">
+        <p>{% trans "Are you completely sure you want to submit your assignment? You can't change it later, this will be your final submission for this assignment." %}</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
+        <button type="button" class="btn btn-danger" id="pr-confirm">{% trans "Send" %}</button>
     </div>
 </div>
 
@@ -165,7 +180,7 @@
                 prRequired: "{% trans "Required field missing" %}",
                 prRequiredMsg: "{% trans "Please, send the text or the file. At least one of them must be filled." %}",
                 prSent: "{% trans "Submission sent" %}",
-                prJust: "{% trans "Thank you for sending this submission. You have now to review %(minimum_reviewers)s submissions from other students in order to get your submission scored." %}",
+                prJust: "{% trans "Thank you for sending this submission. You have now to review #(minimum_reviewers)s submissions from other students in order to get your submission scored." %}",
                 prAlready: "{% trans "You have already sent a submission for this peer review assignment. You can now review submissions from other students or check your score." %}",
                 prReview: "{% trans "Review other students submissions" %}",
                 prProgress: "{% trans "Check my progress" %}"
@@ -186,9 +201,15 @@
                 type: $(node).attr("unit-type")
             }));
         });
-        MOOC.urls = {
-            prReview: "{% url course_reviews course_slug=course.slug %}",
-            prProgress: "{% url course_progress course_slug=course.slug %}"
+        MOOC.peerReview = {
+            urls: {
+                prReview: "{% url course_reviews course_slug=course.slug %}",
+                prProgress: "{% url course_progress course_slug=course.slug %}"
+            },
+            settings: {
+                text_max_size: {{ peer_review.text_max_size }},
+                file_max_size: {{ peer_review.file_max_size }}
+            }
         };
         MOOC.init({{ course.id }}, true);
     </script>

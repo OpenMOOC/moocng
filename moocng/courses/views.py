@@ -171,11 +171,17 @@ def course_classroom(request, course_slug):
         }
         units.append(unit)
 
+    peer_review = {
+        'text_max_size': settings.PEER_REVIEW_TEXT_MAX_SIZE,
+        'file_max_size': settings.PEER_REVIEW_FILE_MAX_SIZE,
+    }
+
     return render_to_response('courses/classroom.html', {
         'course': course,
         'unit_list': units,
         'is_enrolled': is_enrolled,
         'is_teacher': is_teacher_test(request.user, course),
+        'peer_review': peer_review
     }, context_instance=RequestContext(request))
 
 

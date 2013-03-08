@@ -765,11 +765,13 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
     initialize: function () {
         "use strict";
         _.bindAll(this, "render", "getTemplate", "getCriteriaModal",
-            "viewCriteria", "submit", "supportFileAPI", "uploadFile");
+            "viewCriteria", "submit", "confirmedSubmit", "supportFileAPI",
+            "uploadFile");
     },
 
     template: undefined,
     modal: undefined,
+    confirmModal: undefined,
 
     getTemplate: function () {
         "use strict";
@@ -788,26 +790,42 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
         return this.modal;
     },
 
+    getConfirmModal: function () {
+        "use strict";
+        if (_.isUndefined(this.confirmModal)) {
+            this.confirmModal = $("#confirm-peer-review");
+            this.confirmModal.modal({
+                show: false,
+                backdrop: "static",
+                keyboard: false
+            });
+        }
+        return this.confirmModal;
+    },
+
     render: function (justSent) {
         "use strict";
         var kqPath,
-            html;
+            html,
+            unit;
 
         if (this.model.get("_submitted")) {
             $("#kq-q-buttons").addClass("hide");
             $("#kq-next-container").addClass("offset4");
 
-            html = [
-                "<div class='alert alert-block'>",
-                "<h4>" + MOOC.trans.classroom.prSent + "</h4>"
-            ];
+            html = ["<div class='alert alert-block"];
             if (justSent) {
-                html.push("<p>" + MOOC.trans.classroom.prJust.replace("%(minimum_reviewers)s", this.model.get("minimum_reviewers")) + "</p>");
-                html.push("<p><a href='" + MOOC.urls.prReview + "'>" + MOOC.trans.classroom.prReview + "</a>.</p>");
+                html.push(" alert-success'>");
+                html.push("<h4>" + MOOC.trans.classroom.prSent + "</h4>");
+                html.push("<p>" + MOOC.trans.classroom.prJust.replace("#(minimum_reviewers)s", this.model.get("minimum_reviewers")) + "</p>");
+                html.push("<p><a href='" + MOOC.peerReview.urls.prReview + "'>" + MOOC.trans.classroom.prReview + "</a>.</p>");
             } else {
-                html.push(MOOC.trans.classroom.prAlready);
-                html.push("<p><a href='" + MOOC.urls.prReview + "'>" + MOOC.trans.classroom.prReview + "</a>.</p>");
-                html.push("<p><a href='" + MOOC.urls.prProgress + "'>" + MOOC.trans.classroom.prProgress + "</a>.</p>");
+                unit = MOOC.models.course.getByKQ(this.model.get("_knowledgeQuantumInstance"));
+                html.push(" alert-info'>");
+                html.push("<h4>" + MOOC.trans.classroom.prSent + "</h4>");
+                html.push("<p>" + MOOC.trans.classroom.prAlready + "</p>");
+                html.push("<p><a href='" + MOOC.peerReview.urls.prReview + "'>" + MOOC.trans.classroom.prReview + "</a>.</p>");
+                html.push("<p><a href='" + MOOC.peerReview.urls.prProgress + "#unit" + unit.get("id") + "'>" + MOOC.trans.classroom.prProgress + "</a>.</p>");
             }
             html.push("</div>");
 
@@ -824,6 +842,17 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
                 plugins: "paste,searchreplace",
                 width: "583",
                 height: "250",
+                max_chars: MOOC.peerReview.settings.text_max_size,
+                setup: function (ed) {
+                    ed.onKeyDown.add(function (ed, evt) {
+                        var written = $(ed.getBody()).text().length + 1;
+                        if (written > parseInt(ed.getParam('max_chars'), 10)) {
+                            evt.preventDefault();
+                            evt.stopPropagation();
+                            return false;
+                        }
+                    });
+                },
                 theme: "advanced",
                 theme_advanced_resizing : true,
                 theme_advanced_toolbar_location: "top",
@@ -864,6 +893,16 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
         "use strict";
         evt.preventDefault();
         evt.stopPropagation();
+        var modal = this.getConfirmModal();
+        modal.find("#pr-confirm").off("click").on("click", _.bind(function () {
+            this.confirmedSubmit();
+            modal.modal("hide");
+        }, this));
+        modal.modal("show");
+    },
+
+    confirmedSubmit: function () {
+        "use strict";
         var file = this.$el.find("form input[type=file]")[0],
             text = tinyMCE.get("pr_submission").getContent(),
             callback;
@@ -917,6 +956,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
         "use strict";
         var fileUrl = "TODO";
         // TODO upload file to the cloud, then invoke callback with the file url or id
+        // Max file size in MB is in MOOC.peerReview.settings.file_max_size
         callback(fileUrl);
     }
 });

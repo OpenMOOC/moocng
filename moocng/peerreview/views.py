@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import pymongo
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -65,7 +67,10 @@ def course_review_assign(request, course_slug, review_id):
         'reviewers': {
             '$ne': user_id
         }
-    }).sort('reviews').limit(1)
+    }).sort([
+        ('reviews', pymongo.ASCENDING),
+        ('author_reviews', pymongo.DESCENDING),
+    ]).limit(1)
 
     if submission.count() == 0:
         messages.error(request, _('There is no submission avaliable for you at this moment. Please, try again later.'))

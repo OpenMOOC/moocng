@@ -105,6 +105,8 @@ def kq_get_peer_review_score(kq, author, pra=None):
 
 def save_review(kq, reviewer, user_reviewed, criteria, comment):
 
+    parsed_criteria = [[int(a), int(b)] for (a, b) in criteria]
+
     db = get_db()
     submissions = db.get_collection("peer_review_submissions")
     reviews = db.get_collection("peer_review_reviews")
@@ -120,7 +122,7 @@ def save_review(kq, reviewer, user_reviewed, criteria, comment):
         "comment": comment,
         "created": datetime.now().isoformat(),
         "reviewer": reviewer.id,
-        "criteria": criteria,
+        "criteria": parsed_criteria,
         "kq": kq.id,
         "unit": kq.unit.id,
         "course": kq.unit.course.id
