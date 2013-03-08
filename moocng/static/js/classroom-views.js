@@ -765,11 +765,13 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
     initialize: function () {
         "use strict";
         _.bindAll(this, "render", "getTemplate", "getCriteriaModal",
-            "viewCriteria", "submit", "supportFileAPI", "uploadFile");
+            "viewCriteria", "submit", "confirmedSubmit", "supportFileAPI",
+            "uploadFile");
     },
 
     template: undefined,
     modal: undefined,
+    confirmModal: undefined,
 
     getTemplate: function () {
         "use strict";
@@ -786,6 +788,19 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
             this.modal.modal({ show: false });
         }
         return this.modal;
+    },
+
+    getConfirmModal: function () {
+        "use strict";
+        if (_.isUndefined(this.confirmModal)) {
+            this.confirmModal = $("#confirm-peer-review");
+            this.confirmModal.modal({
+                show: false,
+                backdrop: "static",
+                keyboard: false
+            });
+        }
+        return this.confirmModal;
     },
 
     render: function (justSent) {
@@ -878,6 +893,16 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
         "use strict";
         evt.preventDefault();
         evt.stopPropagation();
+        var modal = this.getConfirmModal();
+        modal.find("#pr-confirm").off("click").on("click", _.bind(function () {
+            this.confirmedSubmit();
+            modal.modal("hide");
+        }, this));
+        modal.modal("show");
+    },
+
+    confirmedSubmit: function () {
+        "use strict";
         var file = this.$el.find("form input[type=file]")[0],
             text = tinyMCE.get("pr_submission").getContent(),
             callback;

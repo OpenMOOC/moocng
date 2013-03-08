@@ -52,7 +52,20 @@
     </div>
     <div class="modal-body"></div>
     <div class="modal-footer">
-        <button type="button" class="btn" data-dismiss="modal">Close</button>
+        <button type="button" class="btn" data-dismiss="modal">{% trans "Close" %}</button>
+    </div>
+</div>
+
+<div id="confirm-peer-review" class="modal hide fade">
+    <div class="modal-header">
+        <h3>{% trans "Confirm submission" %}</h3>
+    </div>
+    <div class="modal-body">
+        <p>{% trans "Are you completely sure you want to submit your assignment? You can't change it later, this will be your final submission for this assignment." %}</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
+        <button type="button" class="btn btn-danger" id="pr-confirm">{% trans "Send" %}</button>
     </div>
 </div>
 
