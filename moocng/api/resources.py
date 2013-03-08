@@ -278,6 +278,19 @@ class PeerReviewAssignmentResource(ModelResource):
         )
 
 
+class PrivatePeerReviewAssignmentResource(ModelResource):
+    kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
+
+    class Meta:
+        queryset = PeerReviewAssignment.objects.all()
+        resource_name = 'privpeer_review_assignment'
+        authentication = TeacherAuthentication()
+        authorization = TeacherAuthorization()
+        filtering = {
+            "kq": ('exact'),
+        }
+
+
 class EvaluationCriterionResource(ModelResource):
     assignment = fields.ToOneField(PeerReviewAssignmentResource, 'assignment')
 
@@ -303,7 +316,37 @@ class EvaluationCriterionResource(ModelResource):
             results = EvaluationCriterion.objects.filter(assignment__kq__unit_id=unit)
         else:
             results = EvaluationCriterion.objects.all()
+        return results.filter(
+            Q(assignment__kq__unit__unittype='n') |
+            Q(assignment__kq__unit__start__isnull=True) |
+            Q(assignment__kq__unit__start__isnull=False, kq__unit__start__lte=datetime.now)
+        )
 
+
+class PrivateEvaluationCriterionResource(ModelResource):
+    assignment = fields.ToOneField(PeerReviewAssignmentResource, 'assignment')
+
+    class Meta:
+        queryset = EvaluationCriterion.objects.all()
+        resource_name = 'privevaluation_criterion'
+        authentication = TeacherAuthentication()
+        authorization = TeacherAuthorization()
+        filtering = {
+            "assignment": ('exact'),
+            "unit":  ('exact'),
+        }
+
+    def obj_get_list(self, request=None, **kwargs):
+
+        assignment = request.GET.get('assignment', None)
+        unit = request.GET.get('unit', None)
+
+        if assignment is not None:
+            results = EvaluationCriterion.objects.filter(assignment_id=assignment)
+        elif unit is not None:
+            results = EvaluationCriterion.objects.filter(assignment__kq__unit_id=unit)
+        else:
+            results = EvaluationCriterion.objects.all()
         return results
 
 
