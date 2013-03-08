@@ -86,9 +86,19 @@ def course_reviews(request, course_slug):
 
     assignments = course_get_peer_review_assignments(course)
 
+    collection = get_db().get_collection('peer_review_submissions')
+    submissions = collection.find({
+            'author': request.user.id,
+            'course': course.id,
+            }, {'kq': True, '_id': False})
+    submissions = [s['kq'] for s in submissions]
+
+    user_submissions = [a.id for a in assignments if a.kq.id in submissions]
+
     return render_to_response('peerreview/reviews.html', {
             'course': course,
             'assignments': assignments,
+            'user_submissions': user_submissions,
             }, context_instance=RequestContext(request))
 
 

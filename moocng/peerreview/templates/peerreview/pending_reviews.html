@@ -35,8 +35,12 @@
 
 {% else %}
 
+{% if has_sent_submission %}
 <form action="{% url course_review_assign course_slug peer_review_assignment_id %}" method="post">{% csrf_token %}
   <input type="submit" class="btn btn-primary" value='{% trans "Review another assignment" %}' />
 </form>
+{% else %}
+<p>{% trans "You must send your submission before reviewing your classmates' ones" %}</p>
+{% endif %}
 
 {% endif %}
