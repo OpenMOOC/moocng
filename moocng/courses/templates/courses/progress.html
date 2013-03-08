@@ -42,6 +42,38 @@
         </ul>
     </div>
 </div>
+<div id="review-details-modal" class="modal hide fade">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>{% trans "Review details" %}</h3>
+  </div>
+  <div class="modal-body">
+    <p>{% trans "Review date" %}: <time datetime=""></time></p>
+    <table class="table table-stripped table-bordered">
+      <caption style="text-align: left">{% trans "Evaluation criteria" %}:</caption>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>{% trans "Description" %}</th>
+          <th>{% trans "Score" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2">{% trans "Final score" %}</td>
+          <td class="final-score"></td>
+        </tr>
+      </tfoot>
+    </table>
+    <p>{% trans "Comment" %}:</p>
+    <blockquote></blockquote>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">{% trans "Close" %}</button>
+  </div>
+</div>
 {% endblock %}
 
 {% block extrajs %}
@@ -88,6 +120,7 @@
             }));
         });
         MOOC.init({{ course.id }});
+        $("#review-details-modal").modal({show: false});
     </script>
     {% endcompress %}
 {% endblock %}

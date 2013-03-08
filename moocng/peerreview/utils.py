@@ -12,10 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from django.db import IntegrityError
+
 from moocng.mongodb import get_db
 
 from moocng.peerreview import cache
 from moocng.peerreview.models import PeerReviewAssignment
+
+from datetime import datetime
 
 
 def course_get_peer_review_assignments(course):
@@ -97,3 +101,62 @@ def kq_get_peer_review_score(kq, author, pra=None):
 
     else:
         return (average, True)
+
+
+def save_review(kq, reviewer, user_reviewed, criteria, comment):
+
+    db = get_db()
+    submissions = db.get_collection("peer_review_submissions")
+    reviews = db.get_collection("peer_review_reviews")
+
+    submission = submissions.find_one({
+        "author": user_reviewed.id,
+        "kq": kq.id
+    })
+
+    peer_review_review = {
+        "submission_id": submission.get("_id"),
+        "author": user_reviewed.id,
+        "comment": comment,
+        "created": datetime.now().isoformat(),
+        "reviewer": reviewer.id,
+        "criteria": criteria,
+        "kq": kq.id,
+        "unit": kq.unit.id,
+        "course": kq.unit.course.id
+    }
+
+    review_exists = (reviews.find({
+        "submission_id": submission.get("_id"),
+        "reviewer": reviewer.id,
+    }).count() > 0)
+
+    if review_exists:
+        raise IntegrityError("Already exist one review for this submission and"
+                             " reviewer")
+
+    reviews.insert(peer_review_review)
+
+    submissions.update({
+        "author": user_reviewed.id,
+        "kq": kq.id,
+    }, {
+        "$inc": {
+            "reviews": 1,
+        },
+        "$unset": {
+            "assigned_to": "",
+        },
+        "$push": {
+            "reviewers": reviewer.id,
+        }
+    })
+
+    submissions.update({
+        "author": reviewer.id,
+        "kq": kq.id,
+    }, {
+        "$inc": {
+            "author_reviews": 1,
+        }
+    })

@@ -28,34 +28,53 @@ def calculate_course_mark(course, user):
     if course.slug in settings.COURSES_USING_OLD_TRANSCRIPT:
         use_old_calculus = True
     total_mark = 0
-    unit_list = Unit.objects.filter(course=course)
+    if use_old_calculus:
+        course_unit_list = Unit.objects.filter(course=course)
+    else:
+        course_unit_list = Unit.objects.filter(course=course).exclude(unittype='n')
+
+    total_weight_unnormalized = 0
+    for course_unit in course_unit_list:
+        total_weight_unnormalized += course_unit.weight
+
     units_info = []
-    for unit in unit_list:
+    for unit in course_unit_list:
         unit_info = {}
-        mark, relative_mark = calculate_unit_mark(unit, user, use_old_calculus)
+        if unit.unittype == 'n' and not use_old_calculus:
+            normalized_unit_weight = 0
+            mark, relative_mark = (0, 0)
+        else:
+            normalized_unit_weight = normalize_unit_weight(unit, len(course_unit_list), total_weight_unnormalized)
+            mark, relative_mark = calculate_unit_mark(unit, user, normalized_unit_weight)
         total_mark += relative_mark
         unit_info = {
             'unit': unit,
             'mark': mark,
-            'normalized_weight': normalize_unit_weight(unit, use_old_calculus),
+            'normalized_weight': normalized_unit_weight,
         }
         units_info.append(unit_info)
     return total_mark, units_info
 
 
-def calculate_unit_mark(unit, user, use_old_calculus=False):
+def calculate_unit_mark(unit, user, normalized_unit_weight):
     # TODO Optimize per student
     from moocng.courses.models import KnowledgeQuantum
     unit_kqs = KnowledgeQuantum.objects.filter(unit=unit)
+    kqs_total_weight_unnormalized = 0
     unit_mark = 0
+    entries = []
     for unit_kq in unit_kqs:
-        mark = calculate_kq_mark(unit_kq, user)
-        if mark > 0:
-            unit_mark += mark
+        mark, use_in_total = calculate_kq_mark(unit_kq, user)
+        if use_in_total and mark is not None:
+            entries.append((unit_kq, mark))
+            kqs_total_weight_unnormalized += unit_kq.weight
+    course_unit_counter = len(entries)
+    for entry in entries:
+        normalized_kq_weight = normalize_kq_weight(entry[0], course_unit_counter, kqs_total_weight_unnormalized)
+        unit_mark += (normalized_kq_weight * entry[1]) / 100.0
     if unit_mark == 0:
         return [0, 0]
     else:
-        normalized_unit_weight = normalize_unit_weight(unit, use_old_calculus)
         # returns the absolute mark and the mark in relation with the course
         return [unit_mark, (normalized_unit_weight * unit_mark) / 100.0]
 
@@ -63,6 +82,8 @@ def calculate_unit_mark(unit, user, use_old_calculus=False):
 def calculate_kq_mark(kq, user):
     # TODO Optimize per student
     from moocng.courses.models import Question
+    from moocng.peerreview.models import PeerReviewAssignment
+    from moocng.peerreview.utils import kq_get_peer_review_score
     try:
         db = get_db()
         question = Question.objects.filter(kq=kq)
@@ -72,57 +93,55 @@ def calculate_kq_mark(kq, user):
             if user_answer_list is not None:
                 answer = user_answer_list.get('questions', {}).get(unicode(question[0].id))
                 if answer and question[0].is_correct(answer):
-                    return (normalize_kq_weight(kq) * 10.0) / 100
+                    return (10.0, True)
                 else:
                     if kq.unit.deadline is not None and kq.unit.deadline > datetime.now(kq.unit.deadline.tzinfo):
-                        return 0
+                        return (0.0, True)
         else:
-            activity = db.get_collection('activity')
-            user_activity_list = activity.find_one({'user': user.id}, safe=True)
-            if user_activity_list is not None:
-                visited_kqs = user_activity_list.get('courses', {}).get(unicode(kq.unit.course.id), {}).get('kqs', [])
-                if unicode(kq.id) in visited_kqs:
-                    return (normalize_kq_weight(kq) * 10.0) / 100
-                else:
-                    if kq.unit.deadline is not None and kq.unit.deadline > datetime.now(kq.unit.deadline.tzinfo):
-                        return 0
+            peer_review_assignment = PeerReviewAssignment.objects.filter(kq=kq)
+            if peer_review_assignment:
+                mark, use_in_total = kq_get_peer_review_score(kq, user, peer_review_assignment[0])
+                return (mark * 2.0, use_in_total)  # * 2 due peer_review range is 1-5
+            else:
+                activity = db.get_collection('activity')
+                user_activity_list = activity.find_one({'user': user.id}, safe=True)
+                if user_activity_list is not None:
+                    visited_kqs = user_activity_list.get('courses', {}).get(unicode(kq.unit.course.id), {}).get('kqs', [])
+                    if unicode(kq.id) in visited_kqs:
+                        return (10.0, True)
+                    else:
+                        if kq.unit.deadline is not None and kq.unit.deadline > datetime.now(kq.unit.deadline.tzinfo):
+                            return (0, True)
     except AttributeError:
         pass
-    return -1
+    return (0, True)
 
 
-def normalize_kq_weight(kq):
-    from moocng.courses.models import KnowledgeQuantum
-    unit_kq_list = KnowledgeQuantum.objects.filter(unit=kq.unit)
-    total_weight = 0
-    for unit_kq in unit_kq_list:
-        total_weight += unit_kq.weight
-    if total_weight == 0:
-        if len(unit_kq_list) == 0:
+def normalize_kq_weight(kq, unit_kq_counter=None, total_weight_unnormalized=None):
+    # KnowledgeQuantumResource does not send unit_kq_counter  [tastypie api]
+    if unit_kq_counter is None:
+        from moocng.courses.models import KnowledgeQuantum
+        unit_kq_list = KnowledgeQuantum.objects.filter(unit=kq.unit)
+        unit_kq_counter = len(unit_kq_list)
+        total_weight_unnormalized = 0
+        for unit_kq in unit_kq_list:
+            total_weight_unnormalized += unit_kq.weight
+
+    if total_weight_unnormalized == 0:
+        if unit_kq_counter == 0:
             return 0
         else:
-            return 100.0 / len(unit_kq_list)
-    return (kq.weight * 100.0) / total_weight
+            return 100.0 / unit_kq_counter
+    return (kq.weight * 100.0) / total_weight_unnormalized
 
 
-def normalize_unit_weight(unit, use_old_calculus=False):
-    from moocng.courses.models import Unit
-    weight = unit.weight
-    if use_old_calculus:
-        course_unit_list = Unit.objects.filter(course=unit.course)
-    else:
-        course_unit_list = Unit.objects.filter(course=unit.course).exclude(unittype='n')
-        if unit.unittype == 'n':
-            weight = 0
-    total_weight = 0
-    for course_unit in course_unit_list:
-        total_weight += course_unit.weight
-    if total_weight == 0:
-        if len(course_unit_list) == 0:
+def normalize_unit_weight(unit, course_unit_counter, total_weight_unnormalized):
+    if total_weight_unnormalized == 0:
+        if course_unit_counter == 0:
             return 0
         else:
-            return 100.0 / len(course_unit_list)
-    return (weight * 100.0) / total_weight
+            return 100.0 / course_unit_counter
+    return (unit.weight * 100.0) / total_weight_unnormalized
 
 
 def is_teacher(user, courses):

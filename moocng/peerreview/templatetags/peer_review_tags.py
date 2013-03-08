@@ -17,6 +17,7 @@ from django import template
 
 from moocng.mongodb import get_db
 from moocng.peerreview.utils import course_has_peer_review_assignments
+from moocng.peerreview.models import EvaluationCriterion
 
 register = template.Library()
 
@@ -82,3 +83,12 @@ def pending_reviews(peer_review_assignment, user, course):
         'peer_review_assignment_id': peer_review_assignment.id,
         'course_slug': course.slug
         }
+
+
+@register.filter
+def get_criteria_description(criteria_id):
+    try:
+        criteria = EvaluationCriterion.objects.get(id=criteria_id)
+        return criteria.description
+    except EvaluationCriterion.DoesNotExist:
+        return ''

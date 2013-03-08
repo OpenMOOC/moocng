@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-07 06:03-0600\n"
+"POT-Creation-Date: 2013-03-07 09:58-0600\n"
 "PO-Revision-Date: 2013-03-06 16:57+0100\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -984,12 +984,39 @@ msgstr ""
 msgid "Submission sent"
 msgstr "Entrega enviada"
 
+#: courses/templates/courses/classroom.html:168
+#, python-format
+msgid ""
+"Thank you for sending this submission. You have now to review "
+"%%(minimum_reviewers)s submissions from other students in order to get your "
+"submission scored."
+msgstr ""
+"Gracias por enviar esta entrega. Ahora tienes que revisar "
+"%%(minimum_reviewers)s entregas de otros estudiantes para que tu entrega se "
+"evalúe."
+
+#: courses/templates/courses/classroom.html:169
+msgid ""
+"You have already sent a submission for this peer review assignment. You can "
+"now review submissions from other students or check your score."
+msgstr ""
+"Ya has enviado una entrega para esta actividad revisada por compañeros. "
+"Ahora puedes revisar entregas de otros compañeros o comprobar tu progreso."
+
 #: courses/templates/courses/classroom.html:170
+msgid "Review other students submissions"
+msgstr "Revisar las entregas de otros compañeros"
+
+#: courses/templates/courses/classroom.html:171
+msgid "Check my progress"
+msgstr "Comprobar mi progreso"
+
+#: courses/templates/courses/classroom.html:174
 #: courses/templates/courses/progress.html:77
 msgid "The module is not ready"
 msgstr "El módulo no está listo"
 
-#: courses/templates/courses/classroom.html:171
+#: courses/templates/courses/classroom.html:175
 #: courses/templates/courses/progress.html:78
 msgid ""
 "This module has no nuggets. Probably the start date hasn't been reached yet."
@@ -997,11 +1024,11 @@ msgstr ""
 "Este módulo no tiene píldoras. Probablemente aún no se ha alcanzado la fecha "
 "de inicio."
 
-#: courses/templates/courses/classroom.html:172
+#: courses/templates/courses/classroom.html:176
 msgid "The solution is not available"
 msgstr "La solución no se encuentra disponible"
 
-#: courses/templates/courses/classroom.html:173
+#: courses/templates/courses/classroom.html:177
 msgid "Please wait until the deadline of the module."
 msgstr "Por favor, espere hasta alcanzar la fecha límite del módulo."
 

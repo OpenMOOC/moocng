@@ -19,6 +19,39 @@ if (_.isUndefined(window.MOOC)) {
     window.MOOC = {};
 }
 
+MOOC.io = {
+    _loadDataFromUnit: function (unitId, Model) {
+        "use strict";
+        var dfd = $.Deferred(), list = new Model();
+
+        list.fetch({
+            data: { 'unit': unitId },
+            success: function () {
+                dfd.resolve(list);
+            },
+            error: function () {
+                dfd.reject();
+            }
+        });
+
+        return dfd.promise();
+    },
+    loadPeerReviewReviewList: function (unitId) {
+        "use strict";
+        return MOOC.io._loadDataFromUnit(unitId, MOOC.models.PeerReviewReviewList);
+    },
+
+    loadPeerReviewAssignmentList: function (unitId) {
+        "use strict";
+        return MOOC.io._loadDataFromUnit(unitId, MOOC.models.PeerReviewAssignmentList);
+    },
+
+    loadEvaluationCriterionList: function (unitId) {
+        "use strict";
+        return MOOC.io._loadDataFromUnit(unitId, MOOC.models.EvaluationCriterionList);
+    }
+};
+
 MOOC.App = Backbone.Router.extend({
     unitSteps: function (unit, loadFirstKQ) {
         "use strict";
@@ -237,23 +270,23 @@ MOOC.App = Backbone.Router.extend({
             };
 
             if (!inClassroomView && hasPeerReviews) {
+
                 // Only in progress view
-                peerReviewReviewList = new MOOC.models.PeerReviewReviewList();
-                unitObj.set('peerReviewReviewList', peerReviewReviewList);
-                peerReviewReviewList.fetch({
-                    data: { 'unit': unitID },
-                    success: function () {
-                        var peerReviewAssignmentList = new MOOC.models.PeerReviewAssignmentList();
-                        peerReviewAssignmentList.fetch({
-                            data: { 'unit': unitID },
-                            success: function () {
-                                var knowledgeQuantumList = unitObj.get('knowledgeQuantumList');
-                                knowledgeQuantumList.setPeerReviewAssignments(peerReviewAssignmentList);
-                                createView();
-                            }
-                        });
-                    }
-                });
+                $.when(MOOC.io.loadPeerReviewReviewList(unitID),
+                       MOOC.io.loadPeerReviewAssignmentList(unitID),
+                       MOOC.io.loadEvaluationCriterionList(unitID))
+                    .then(function (peerReviewReviewList,
+                                    peerReviewAssignmentList,
+                                    evaluationCriterionList) {
+
+                        var knowledgeQuantumList = unitObj.get('knowledgeQuantumList');
+
+                        unitObj.set('peerReviewReviewList', peerReviewReviewList);
+                        knowledgeQuantumList.setPeerReviewAssignmentList(peerReviewAssignmentList);
+                        knowledgeQuantumList.setEvaluationCriterionList(evaluationCriterionList);
+                        createView();
+                    });
+
             } else {
                 createView();
             }
