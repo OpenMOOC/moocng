@@ -791,23 +791,26 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
     render: function (justSent) {
         "use strict";
         var kqPath,
-            html;
+            html,
+            unit;
 
         if (this.model.get("_submitted")) {
             $("#kq-q-buttons").addClass("hide");
             $("#kq-next-container").addClass("offset4");
 
-            html = [
-                "<div class='alert alert-block'>",
-                "<h4>" + MOOC.trans.classroom.prSent + "</h4>"
-            ];
+            html = ["<div class='alert alert-block"];
             if (justSent) {
-                html.push("<p>" + MOOC.trans.classroom.prJust.replace("%(minimum_reviewers)s", this.model.get("minimum_reviewers")) + "</p>");
-                html.push("<p><a href='" + MOOC.urls.prReview + "'>" + MOOC.trans.classroom.prReview + "</a>.</p>");
+                html.push(" alert-success'>");
+                html.push("<h4>" + MOOC.trans.classroom.prSent + "</h4>");
+                html.push("<p>" + MOOC.trans.classroom.prJust.replace("#(minimum_reviewers)s", this.model.get("minimum_reviewers")) + "</p>");
+                html.push("<p><a href='" + MOOC.peerReview.urls.prReview + "'>" + MOOC.trans.classroom.prReview + "</a>.</p>");
             } else {
-                html.push(MOOC.trans.classroom.prAlready);
-                html.push("<p><a href='" + MOOC.urls.prReview + "'>" + MOOC.trans.classroom.prReview + "</a>.</p>");
-                html.push("<p><a href='" + MOOC.urls.prProgress + "'>" + MOOC.trans.classroom.prProgress + "</a>.</p>");
+                unit = MOOC.models.course.getByKQ(this.model.get("_knowledgeQuantumInstance"));
+                html.push(" alert-info'>");
+                html.push("<h4>" + MOOC.trans.classroom.prSent + "</h4>");
+                html.push("<p>" + MOOC.trans.classroom.prAlready + "</p>");
+                html.push("<p><a href='" + MOOC.peerReview.urls.prReview + "'>" + MOOC.trans.classroom.prReview + "</a>.</p>");
+                html.push("<p><a href='" + MOOC.peerReview.urls.prProgress + "#unit" + unit.get("id") + "'>" + MOOC.trans.classroom.prProgress + "</a>.</p>");
             }
             html.push("</div>");
 
@@ -917,6 +920,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
         "use strict";
         var fileUrl = "TODO";
         // TODO upload file to the cloud, then invoke callback with the file url or id
+        // Max file size in MB is in MOOC.peerReview.settings.file_max_size
         callback(fileUrl);
     }
 });

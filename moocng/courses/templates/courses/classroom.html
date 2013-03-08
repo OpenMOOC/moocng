@@ -13,6 +13,7 @@
 {% block content %}
 <script id="peer-review-tpl" type="text/template">
     <div class='solution-wrapper white'><form>
+        <h4>{% trans "Peer review assignment" %}</h4>
         <div id='pr-description'></div>
 
         <p class="align-right">
@@ -165,7 +166,7 @@
                 prRequired: "{% trans "Required field missing" %}",
                 prRequiredMsg: "{% trans "Please, send the text or the file. At least one of them must be filled." %}",
                 prSent: "{% trans "Submission sent" %}",
-                prJust: "{% trans "Thank you for sending this submission. You have now to review %(minimum_reviewers)s submissions from other students in order to get your submission scored." %}",
+                prJust: "{% trans "Thank you for sending this submission. You have now to review #(minimum_reviewers)s submissions from other students in order to get your submission scored." %}",
                 prAlready: "{% trans "You have already sent a submission for this peer review assignment. You can now review submissions from other students or check your score." %}",
                 prReview: "{% trans "Review other students submissions" %}",
                 prProgress: "{% trans "Check my progress" %}"
@@ -186,9 +187,15 @@
                 type: $(node).attr("unit-type")
             }));
         });
-        MOOC.urls = {
-            prReview: "{% url course_reviews course_slug=course.slug %}",
-            prProgress: "{% url course_progress course_slug=course.slug %}"
+        MOOC.peerReview = {
+            urls: {
+                prReview: "{% url course_reviews course_slug=course.slug %}",
+                prProgress: "{% url course_progress course_slug=course.slug %}"
+            },
+            settings: {
+                text_max_size: {{ peer_review.text_max_size }},
+                file_max_size: {{ peer_review.file_max_size }}
+            }
         };
         MOOC.init({{ course.id }}, true);
     </script>

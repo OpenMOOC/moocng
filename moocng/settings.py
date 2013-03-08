@@ -354,6 +354,9 @@ CERTIFICATE_URL = 'http://example.com/idcourse/%(courseid)s/email/%(email)s'  # 
 
 MASSIVE_EMAIL_BATCH_SIZE = 30
 
+PEER_REVIEW_TEXT_MAX_SIZE = 5000 # in chars
+PEER_REVIEW_FILE_MAX_SIZE = 5 # in MB
+
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 LOGIN_URL = '/saml2/login/'
 LOGIN_REDIRECT_URL = '/'
