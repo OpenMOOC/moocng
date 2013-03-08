@@ -319,7 +319,7 @@ class EvaluationCriterionResource(ModelResource):
         return results.filter(
             Q(assignment__kq__unit__unittype='n') |
             Q(assignment__kq__unit__start__isnull=True) |
-            Q(assignment__kq__unit__start__isnull=False, kq__unit__start__lte=datetime.now)
+            Q(assignment__kq__unit__start__isnull=False, assignment__kq__unit__start__lte=datetime.now)
         )
 
 
