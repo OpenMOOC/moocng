@@ -52,13 +52,15 @@ def course_review_assign(request, course_slug, review_id):
         messages.error(request, _('You already have a submission assigned.'))
         return HttpResponseRedirect(reverse('course_reviews', args=[course_slug]))
 
-    # TODO: Filter submissions already reviewed by the user
     submission = collection.find({
         'kq': review.kq.id,
         'assigned_to': {
             '$exists': False
         },
         'author': {
+            '$ne': user_id
+        },
+        'reviewers': {
             '$ne': user_id
         }
     }).sort('reviews').limit(1)

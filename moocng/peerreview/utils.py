@@ -146,6 +146,9 @@ def save_review(kq, reviewer, user_reviewed, criteria, comment):
         },
         "$unset": {
             "assigned_to": "",
+        },
+        "$push": {
+            "reviewers": reviewer.id,
         }
     })
 
