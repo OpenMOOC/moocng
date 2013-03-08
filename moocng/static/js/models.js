@@ -41,7 +41,7 @@ MOOC.models.TastyPieCollection = Backbone.Collection.extend({
 
 MOOC.models.EvaluationCriterion = Backbone.Model.extend({
     defaults: {
-        order: -1,
+        title: "",
         description: "",
         assignment: null
     },
@@ -49,7 +49,7 @@ MOOC.models.EvaluationCriterion = Backbone.Model.extend({
     parse: function (resp, xhr) {
         "use strict";
         if (resp != null)
-            return _.pick(resp, "id", "order", "description", "assignment");
+            return _.pick(resp, "id", "order", "description", "assignment", "title");
         return resp;
     },
 

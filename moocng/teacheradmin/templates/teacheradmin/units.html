@@ -38,8 +38,9 @@
                 question: "{% trans "It has a question" %}",
             },
             evaluationCriterion: {
-                title: "{% trans "Title:" %}",
                 description: "{% trans "Description:" %}",
+                remove: "{%trans "Remove criterion" %}",
+                title: "{% trans "Title:" %}",
             }
         };
         MOOC.init({{ course.id }}, {{ unit_badge_classes|safe }});
@@ -229,10 +230,16 @@
         <legend>{% trans "Evaluation criterions" %}</legend>
         <div id="reviewcriterions">
         </div>
+        <div class="row">
+            <div class="align-right">
+                <button id="addcriterion" class="btn btn-primary">{% trans "Save changes and an evaluation criterion" %}</button>
+            </div>
+        </div>
       </div>
     </div>
+    <br />
     <div class="row">
-        <div class="align-right span10">
+        <div class="mb10 align-right span10">
             <button id="delete-peer-review-assignment" class="btn btn-danger">{% trans "Remove the peer review assignment" %}</button>
         </div>
     </div>
