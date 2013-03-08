@@ -92,3 +92,11 @@ def get_criterion_description(criterion_id):
         return criterion.description
     except EvaluationCriterion.DoesNotExist:
         return ''
+
+@register.filter
+def get_criterion_title(criterion_id):
+    try:
+        criterion = EvaluationCriterion.objects.get(id=criterion_id)
+        return criterion.title
+    except EvaluationCriterion.DoesNotExist:
+        return ''

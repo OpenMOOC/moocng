@@ -50,7 +50,7 @@
            {% for criterion in criteria_formset %}
                {{ criterion.evaluation_criterion_id }}
                <div class="clearfix well well-small">
-                   <p><a class="label" title="Prueba">{{ criterion.evaluation_criterion_id.value|get_criterion_description }}</a></p>
+                   <p><a class="label" title="{{ criterion.evaluation_criterion_id.value|get_criterion_description }}">{{ criterion.evaluation_criterion_id.value|get_criterion_title }}</a></p>
                    <div class="btn-group pull-right" data-toggle="buttons-radio">
                        <button type="button" data-name="{{ criterion.value.html_name }}" data-value="" class="btn btn-warning criterion_value disabled"><i class="icon-minus"></i></button>
                        {% for choice in criterion.value %}
