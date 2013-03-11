@@ -150,6 +150,8 @@ class KnowledgeQuantumResource(ModelResource):
         questions = bundle.obj.question_set.all()
         if questions.count() == 0:
             # no question: a kq is correct if it is completed
+            if bundle.obj.peerreviewassignment_set.exists():
+                return None
             try:
                 return self._is_completed(self.user_activity, bundle.obj)
             except AttributeError:
@@ -166,6 +168,9 @@ class KnowledgeQuantumResource(ModelResource):
             return question.is_correct(answer)
 
     def dehydrate_completed(self, bundle):
+        # TODO:
+        # Mark as completed when has peer_review, user has sent submission
+        # and user has reviewed at least minimum reviews
         try:
             return self._is_completed(self.user_activity, bundle.obj)
         except AttributeError:
