@@ -35,7 +35,8 @@ class MongoDB(object):
         self.db_uri = urlparse.urlparse(db_uri)
         self.connection = connection_factory(
             host=self.db_uri.hostname or DEFAULT_MONGODB_HOST,
-            port=self.db_uri.port or DEFAULT_MONGODB_PORT)
+            port=self.db_uri.port or DEFAULT_MONGODB_PORT,
+            tz_aware=True)
 
         if self.db_uri.path:
             self.database_name = self.db_uri.path[1:]

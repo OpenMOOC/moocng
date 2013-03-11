@@ -127,7 +127,7 @@ def save_review(kq, reviewer, user_reviewed, criteria, comment):
         "submission_id": submission.get("_id"),
         "author": user_reviewed.id,
         "comment": comment,
-        "created": datetime.now().isoformat(),
+        "created": datetime.utcnow(),
         "reviewer": reviewer.id,
         "criteria": parsed_criteria,
         "kq": kq.id,
