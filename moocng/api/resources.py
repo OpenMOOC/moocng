@@ -48,7 +48,8 @@ from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
 from moocng.courses.utils import normalize_kq_weight, calculate_course_mark
 from moocng.mongodb import get_db
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
-from moocng.peerreview.utils import kq_get_peer_review_score
+from moocng.peerreview.utils import (kq_get_peer_review_score,
+                                     get_peer_review_review_score)
 from moocng.videos.utils import extract_YT_video_id
 
 
@@ -436,6 +437,8 @@ class PeerReviewSubmissionsResource(MongoResource):
 
 
 class PeerReviewReviewsResource(MongoResource):
+    score = fields.IntegerField(readonly=True)
+
     class Meta:
         resource_name = 'peer_review_reviews'
         collection = 'peer_review_reviews'
@@ -490,6 +493,9 @@ class PeerReviewReviewsResource(MongoResource):
         obj = MongoObj(initial=mongo_item)
         obj.uuid = kwargs['pk']
         return obj
+
+    def dehydrate_score(self, bundle):
+        return get_peer_review_review_score(bundle.obj.to_dict())
 
 
 class QuestionResource(ModelResource):

@@ -37,6 +37,8 @@ def course_has_peer_review_assignments(course):
 
 
 def get_peer_review_review_score(review):
+    if len(review["criteria"]) == 0:
+        return 0
     return (float(sum(c[1] for c in review["criteria"])) /
             len(review["criteria"]))
 
