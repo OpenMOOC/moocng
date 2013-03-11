@@ -810,6 +810,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
             unit;
 
         if (this.model.get("_submitted")) {
+            // Message telling the student he has already sent the exercise
             $("#kq-q-buttons").addClass("hide");
             $("#kq-next-container").addClass("offset4");
 
@@ -832,6 +833,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
 
             this.$el.removeClass("question").html(html.join(""));
         } else {
+            // Show the peer review submission form
             kqPath = window.location.hash.substring(1, window.location.hash.length - 2); // Remove trailing /p
 
             this.$el.removeClass("question").html(this.getTemplate());
@@ -866,7 +868,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
         if (criteria.length === 0) { return; }
         $modal = this.getCriteriaModal();
         criteria.each(function (criterion) {
-            body += "<p>" + criterion.get("description") + "</p>";
+            body += "<h4>" + criterion.get("title") + "</h4><p>" + criterion.get("description") + "</p>";
         });
         $modal.find(".modal-body").html(body);
         $modal.modal('show');

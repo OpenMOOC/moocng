@@ -43,13 +43,14 @@ MOOC.models.EvaluationCriterion = Backbone.Model.extend({
     defaults: {
         id: -1,
         order: -1,
+        title: "",
         description: "",
         assignment: null
     },
 
     parse: function (resp, xhr) {
         "use strict";
-        return _.pick(resp, "id", "order", "description", "assignment");
+        return _.pick(resp, "id", "order", "title", "description", "assignment");
     },
 
     url: function () {
