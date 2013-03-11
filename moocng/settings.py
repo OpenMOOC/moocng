@@ -61,7 +61,7 @@ AWS_ACCESS_KEY_ID = ""
 AWS_SECRET_ACCESS_KEY = ""
 AWS_STORAGE_BUCKET_NAME = ""
 AWS_S3_UPLOAD_EXPIRE_TIME = (60 * 5) # 5 minutes
-AWS_S3_URL = "http://moocng.s3.amazonaws.com"
+AWS_S3_URL = "https://moocng.s3.amazonaws.com"
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
