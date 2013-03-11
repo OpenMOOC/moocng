@@ -341,6 +341,7 @@ MOOC.models.AttachmentList = MOOC.models.TastyPieCollection.extend({
 });
 
 MOOC.models.PeerReviewReview  = Backbone.Model.extend({
+    idAttribute: '_id',
     defaults: {
         kq: null,
         created: null,
