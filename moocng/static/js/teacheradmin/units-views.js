@@ -568,7 +568,12 @@ if (_.isUndefined(window.MOOC)) {
             render: function () {
                 var $attachments,
                     question,
-                    options;
+                    options,
+                    assignment,
+                    criterionList,
+                    criterionListDiv,
+                    self;
+
                 $(".viewport").addClass("hide");
                 this.$el.html($("#edit-kq-tpl").text());
 
@@ -605,40 +610,51 @@ if (_.isUndefined(window.MOOC)) {
                 }
 
                 if (this.model.has("peer_review_assignment") && this.model.has("peerReviewAssignmentInstance")) {
-                    var assignment = this.model.get("peerReviewAssignmentInstance");
+                    assignment = this.model.get("peerReviewAssignmentInstance");
                     this.$el.find("#peer-review-assignment-tab").removeClass("hide");
                     this.$el.find("#nopeerreviewassignment").addClass("hide");
                     this.$el.find("#reviewdescription").val(assignment.get("description"));
                     this.$el.find("#reviewminreviews").val(assignment.get("minimum_reviewers"));
-                    var criterionList = assignment.get("_criterionList");
-                    var criterionListDiv = this.$el.find("#reviewcriterions");
-                    var self = this;
+                    criterionList = assignment.get("_criterionList");
+                    criterionListDiv = this.$el.find("#reviewcriterions");
+                    self = this;
                     criterionListDiv.empty();
-                    criterionList.each(function(criterion) {
-                        var criterionDivId = "criterion-"+criterion.get("id");
-                        var titleInputId = "criteriontitle-"+criterion.get("id");
-                        var descriptionInputId = "criteriondescription-"+criterion.get("id");
-                        var removeBtnId = "criterionremove-"+criterion.get("id");
+                    criterionList.each(function (criterion) {
+                        var criterionDivId,
+                            titleInputId,
+                            descriptionInputId,
+                            removeBtnId,
+                            titleInput,
+                            titleLabel,
+                            descriptionInput,
+                            descriptionLabel,
+                            removeBtn,
+                            criterionDiv;
 
-                        var titleInput = "<input type=\"text\" name=\""+titleInputId+"\" id=\""+titleInputId+"\" maxlength=\"100\" class=\"input-large\" required=\"required\" />";
-                        var titleLabel = "<label for=\""+titleInputId+"\" class=\"required\">"+MOOC.trans.evaluationCriterion.title+"</label>";
-                        var descriptionInput = "<input type=\"text\" name=\""+descriptionInputId+"\" id=\""+descriptionInputId+"\" maxlength=\"200\" class=\"input-xlarge\" required=\"required\" />";
-                        var descriptionLabel = "<label for=\""+descriptionInputId+"\" class=\"required\">"+MOOC.trans.evaluationCriterion.description+"</label>";
-                        var removeBtn = "<button id=\""+removeBtnId+"\" class=\"btn btn-danger\">"+MOOC.trans.evaluationCriterion.remove+"</button>"
-                        var criterionDiv = "<div id=\"" + criterionDivId + "\">"
-                                         + "<div class=\"row mb10\"> <div class=\"span3\">" + titleLabel + titleInput + "</div>"
-                                         + "<div class=\"span4\">" +descriptionLabel + descriptionInput + "</div></div>"
-                                         + "<div class=\"row mb20\"><div class=\"align-right span10\">" + removeBtn + "</div></div></divZ";
+                        criterionDivId = "criterion-" + criterion.get("id");
+                        titleInputId = "criteriontitle-" + criterion.get("id");
+                        descriptionInputId = "criteriondescription-" + criterion.get("id");
+                        removeBtnId = "criterionremove-" + criterion.get("id");
+
+                        titleInput = "<input type=\"text\" name=\"" + titleInputId + "\" id=\"" + titleInputId + "\" maxlength=\"100\" class=\"input-large\" required=\"required\" />";
+                        titleLabel = "<label for=\"" + titleInputId + "\" class=\"required\">" + MOOC.trans.evaluationCriterion.title + "</label>";
+                        descriptionInput = "<input type=\"text\" name=\"" + descriptionInputId + "\" id=\"" + descriptionInputId + "\" maxlength=\"200\" class=\"input-xlarge\" required=\"required\" />";
+                        descriptionLabel = "<label for=\"" + descriptionInputId + "\" class=\"required\">" + MOOC.trans.evaluationCriterion.description + "</label>";
+                        removeBtn = "<button id=\"" + removeBtnId + "\" class=\"btn btn-danger\">" + MOOC.trans.evaluationCriterion.remove + "</button>";
+                        criterionDiv = "<div id=\"" + criterionDivId + "\">"
+                                       + "<div class=\"row mb10\"> <div class=\"span3\">" + titleLabel + titleInput + "</div>"
+                                       + "<div class=\"span4\">" + descriptionLabel + descriptionInput + "</div></div>"
+                                       + "<div class=\"row mb20\"><div class=\"align-right span10\">" + removeBtn + "</div></div></divZ";
 
                         criterionListDiv.append(criterionDiv);
-                        criterionListDiv.find("#"+titleInputId).val(criterion.get("title"));
-                        criterionListDiv.find("#"+descriptionInputId).val(criterion.get("description"));
-                        criterionListDiv.find("#"+removeBtnId).click(function(evt) {
+                        criterionListDiv.find("#" + titleInputId).val(criterion.get("title"));
+                        criterionListDiv.find("#" + descriptionInputId).val(criterion.get("description"));
+                        criterionListDiv.find("#" + removeBtnId).click(function (evt) {
                             evt.stopPropagation();
                             evt.preventDefault();
                             self.removePeerReviewCriterion(criterion);
                         });
-                    })
+                    });
                 }
 
                 $attachments = this.$el.find("#attachment-list");
@@ -783,19 +799,25 @@ if (_.isUndefined(window.MOOC)) {
                 }, this);
 
                 savePeerReviewCriterionsAjax = _.bind(function (i) {
-                    var assignment = this.model.get("peerReviewAssignmentInstance");
-                    var criterionList = assignment.get("_criterionList");
+                    var assignment,
+                        criterionList,
+                        criterion,
+                        titleInputId,
+                        descriptionInputId;
+
+                    assignment = this.model.get("peerReviewAssignmentInstance");
+                    criterionList = assignment.get("_criterionList");
                     if (i >= criterionList.size()) {
                         saveKQAjax();
                     } else {
-                        var criterion = criterionList.at(i);
-                        var titleInputId = "criteriontitle-"+criterion.get("id");
-                        var descriptionInputId = "criteriondescription-"+criterion.get("id");
-                        criterion.set("title", this.$el.find("#"+titleInputId).val());
-                        criterion.set("description", this.$el.find("#"+descriptionInputId).val());
+                        criterion = criterionList.at(i);
+                        titleInputId = "criteriontitle-" + criterion.get("id");
+                        descriptionInputId = "criteriondescription-" + criterion.get("id");
+                        criterion.set("title", this.$el.find("#" + titleInputId).val());
+                        criterion.set("description", this.$el.find("#" + descriptionInputId).val());
                         criterionList.at(i).save(null, {
-                            success: function() {
-                                savePeerReviewCriterionsAjax(i+1);
+                            success: function () {
+                                savePeerReviewCriterionsAjax(i + 1);
                             },
                             error: function () {
                                 MOOC.ajax.hideLoading();
@@ -806,9 +828,11 @@ if (_.isUndefined(window.MOOC)) {
                 }, this);
 
                 savePeerReviewAjax = _.bind(function () {
-                   if (this.model.has("peerReviewAssignmentInstance")) {
-                        var assignment = this.model.get("peerReviewAssignmentInstance");
-                        var self = this;
+                    if (this.model.has("peerReviewAssignmentInstance")) {
+                        var assignment,
+                            self;
+                        assignment = this.model.get("peerReviewAssignmentInstance");
+                        self = this;
                         if (assignment.has("id")) {
                             assignment.set("description", tinyMCE.get("reviewdescription").getContent());
                             assignment.set("minimum_reviewers", parseInt(this.$el.find("input#reviewminreviews").val(), 10));
@@ -893,36 +917,49 @@ if (_.isUndefined(window.MOOC)) {
                     return;
                 }
 
-                var self = this;
-                var assignment = this.model.get("peerReviewAssignmentInstance");
-                var assignmentUrl = assignment.url();
-                var newCriterion = new MOOC.models.EvaluationCriterion();
+                var self,
+                    assignment,
+                    assignmentUrl,
+                    assignmentId,
+                    criterionList,
+                    newCriterion;
 
-                this.save(evt, function() {
+                self = this;
+                assignment = this.model.get("peerReviewAssignmentInstance");
+                assignmentUrl = assignment.url();
+                newCriterion = new MOOC.models.EvaluationCriterion();
+
+                this.save(evt, function () {
                     newCriterion.set("assignment", assignmentUrl);
                     newCriterion.save(null, {
-                        success: function() {
-                            var criterionList = new MOOC.models.EvaluationCriterionList();
+                        success: function () {
+                            criterionList = new MOOC.models.EvaluationCriterionList();
                             assignmentUrl = assignmentUrl.split('/');
 
-                            peer_review_assignment.get("_criterionList").fetch({
-                                data: { 'assignment': assignment.get("id") },
-                                success: function() {
+                            assignmentId = parseInt(assignmentUrl.pop(), 10);
+                            while (isNaN(assignmentId)) {
+                                assignmentId = parseInt(assignmentUrl.pop(), 10);
+                            }
+
+                            assignment.get("_criterionList").fetch({
+                                data: { 'assignment': assignmentId },
+                                success: function () {
                                     self.render();
                                     MOOC.ajax.hideLoading();
                                 },
-                                error: function() {
+                                error: function () {
                                     MOOC.ajax.hideLoading();
                                     MOOC.ajax.showAlert("generic");
                                 }
-                            }
-                        }, error: function() {
+                            });
+                        },
+                        error: function () {
                             MOOC.ajax.hideLoading();
                             MOOC.ajax.showAlert("generic");
                         }
-                    })
+                    });
 
-                })
+                });
             },
 
             addPeerReviewAssignment: function (evt) {
@@ -932,25 +969,33 @@ if (_.isUndefined(window.MOOC)) {
                     MOOC.ajax.showAlert("required");
                     return;
                 }
-                var peer_review_assignment = new MOOC.models.PeerReviewAssignment();
+                var peer_review_assignment,
+                    self;
+
+                peer_review_assignment = new MOOC.models.PeerReviewAssignment();
                 peer_review_assignment.set("kq", this.model.url().replace('/privkq', '/kq'));
                 peer_review_assignment.set("description", "");
                 peer_review_assignment.set("minimum_reviewers", "0");
                 this.model.set("peerReviewAssignmentInstance", peer_review_assignment);
 
-                var self = this;
+                self = this;
                 this.save(evt, _.bind(function () {
                     self.model.fetch({
-                        success: function() {
-                            var reviewUrl = self.model.get("peer_review_assignment").split("/");
-                            var createdId = reviewUrl.pop();
-                            while (isNaN(parseInt(createdId, 10)))
+                        success: function () {
+                            var reviewUrl,
+                                createdId;
+                            reviewUrl = self.model.get("peer_review_assignment").split("/");
+                            createdId = reviewUrl.pop();
+
+                            while (isNaN(parseInt(createdId, 10))) {
                                 createdId = reviewUrl.pop();
-                            self.model.get("peerReviewAssignmentInstance").set("id", parseInt(createdId, 10))
+                            }
+
+                            self.model.get("peerReviewAssignmentInstance").set("id", parseInt(createdId, 10));
                             self.render();
                             MOOC.ajax.hideLoading();
                         },
-                        error: function() {
+                        error: function () {
                             MOOC.ajax.hideLoading();
                             MOOC.ajax.showAlert("generic");
                         }
@@ -1064,13 +1109,17 @@ if (_.isUndefined(window.MOOC)) {
             removePeerReviewCriterion: function (criterion) {
                 MOOC.ajax.showLoading();
                 var self = this;
-                criterion.destroy( {
+                criterion.destroy({
                     success: function () {
-                        var assignment = self.model.get("peerReviewAssignmentInstance");
-                        var criterionList = assignment.get("_criterionList");
-                        var criterionDivId = "criterion-"+criterion.get("id");
+                        var assignment,
+                            criterionList,
+                            criterionDivId;
+
+                        assignment = self.model.get("peerReviewAssignmentInstance");
+                        criterionList = assignment.get("_criterionList");
+                        criterionDivId = "criterion-" + criterion.get("id");
                         criterionList.remove(criterion);
-                        self.$el.find("#"+criterionDivId).remove();
+                        self.$el.find("#" + criterionDivId).remove();
                         MOOC.ajax.hideLoading();
                     },
                     error: function () {

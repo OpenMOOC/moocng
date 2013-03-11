@@ -48,7 +48,11 @@ if (_.isUndefined(window.MOOC)) {
         },
         loadKQDetails = function (kq, callback) {
             var promises = [],
-                questionUrl;
+                questionUrl,
+                peer_review_assignment,
+                criterionList,
+                assignmentUrl,
+                assignmentId;
 
             if (kq.has("question") && !kq.has("questionInstance")) {
                 questionUrl = kq.get("question").replace("question", "privquestion");
@@ -67,9 +71,14 @@ if (_.isUndefined(window.MOOC)) {
             }
 
             if (kq.has("peer_review_assignment") && !kq.has("peerReviewAssignmentInstance")) {
-                var peer_review_assignment = new MOOC.models.PeerReviewAssignment();
-                var criterionList = peer_review_assignment.get("_criterionList");
-                var assignmentUrl = kq.get("peer_review_assignment").split("/");
+                peer_review_assignment = new MOOC.models.PeerReviewAssignment();
+                criterionList = peer_review_assignment.get("_criterionList");
+                assignmentUrl = kq.get("peer_review_assignment").split("/");
+
+                assignmentId = parseInt(assignmentUrl.pop(), 10);
+                while (isNaN(assignmentId)) {
+                    assignmentId = parseInt(assignmentUrl.pop(), 10);
+                }
 
                 promises.push($.ajax(kq.get("peer_review_assignment").replace("peer_review_assignment", "privpeer_review_assignment"), {
                     success: function (data, textStatus, jqXHR) {
@@ -78,12 +87,13 @@ if (_.isUndefined(window.MOOC)) {
                         peer_review_assignment.set("minimum_reviewers", data.minimum_reviewers);
                         peer_review_assignment.set("knowledgeQuantum", data.kq);
                         kq.set("peerReviewAssignmentInstance", peer_review_assignment);
-                }}));
+                    }
+                }));
 
                 promises.push(
-                        peer_review_assignment.get("_criterionList").fetch({
-                            data: { 'assignment': peer_review_assignment.get("id") }
-                        })
+                    peer_review_assignment.get("_criterionList").fetch({
+                        data: { 'assignment': assignmentId }
+                    })
                 );
             }
 
@@ -260,16 +270,18 @@ if (_.isUndefined(window.MOOC)) {
             return MOOC.ajax.getAbsoluteUrl("privkq/") + this.get("id") + "/";
         };
         MOOC.models.PeerReviewAssignment.prototype.url = function () {
-            if (this.has("id"))
+            if (this.has("id")) {
                 return MOOC.ajax.getAbsoluteUrl("privpeer_review_assignment/") + this.get("id") + "/";
-            else
-                return MOOC.ajax.getAbsoluteUrl("privpeer_review_assignment/");
+            }
+
+            return MOOC.ajax.getAbsoluteUrl("privpeer_review_assignment/");
         };
         MOOC.models.EvaluationCriterion.prototype.url = function () {
-            if (this.has("id"))
+            if (this.has("id")) {
                 return MOOC.ajax.getAbsoluteUrl("privevaluation_criterion/") + this.get("id") + "/";
-            else
-                return MOOC.ajax.getAbsoluteUrl("privevaluation_criterion/");
+            }
+
+            return MOOC.ajax.getAbsoluteUrl("privevaluation_criterion/");
         };
 
         MOOC.router = new MOOC.App();
