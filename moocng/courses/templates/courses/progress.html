@@ -1,6 +1,6 @@
 {% extends "courses/base_course.html" %}
 
-{% load i18n compress %}
+{% load i18n compress peer_review_tags %}
 
 {% block nav-course-progress %}class="active"{% endblock %}
 
@@ -104,6 +104,13 @@
                 view_details: "{% trans "View details" %}",
                 no_reviews_yet: "{% trans "You have not received any review yet" %}",
                 minimum_reviews: "{% trans "Minimum number of reviews" %}"
+            },
+            evaluation_criteria: {
+                1: '{{ 1|render_criterion_value }}',
+                2: '{{ 2|render_criterion_value }}',
+                3: '{{ 3|render_criterion_value }}',
+                4: '{{ 4|render_criterion_value }}',
+                5: '{{ 5|render_criterion_value }}'
             },
             api: {
                 unitNotReadyTitle: "{% trans "The module is not ready" %}",

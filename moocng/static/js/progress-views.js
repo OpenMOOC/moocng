@@ -217,6 +217,15 @@ MOOC.views.PeerReviewReview = Backbone.View.extend({
         return this;
     },
 
+    render_evaluation_criterion_value: function (value) {
+        "use strict";
+        var label = MOOC.trans.evaluation_criteria[value];
+        if (_.isUndefined(label)) {
+            label = '';
+        }
+        return label;
+    },
+
     show_details: function (event) {
         "use strict";
         var criteria = '';
@@ -227,7 +236,7 @@ MOOC.views.PeerReviewReview = Backbone.View.extend({
             criterionObj = this.peerReviewAssignment.get('_criterionList').at(index);
             html.push("<td>" + (index + 1) + "</td>");
             html.push("<td>" + criterionObj.get('description') + "</td>");
-            html.push("<td>" + criterion[1] + "</td>");
+            html.push("<td>" + this.render_evaluation_criterion_value(criterion[1]) + "</td>");
             html.push("</tr>");
             return html.join("");
         }, this);
