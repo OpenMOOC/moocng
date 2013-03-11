@@ -13,19 +13,25 @@
 # limitations under the License.
 
 import pymongo
+import hmac
+import hashlib
+import urllib
+import time
+import base64
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.sites.models import get_current_site
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_POST
 from django.forms.formsets import formset_factory
 from django.db import IntegrityError
+from django.conf import settings
 
 from moocng.api.mongodb import get_db
 from moocng.courses.models import Course
@@ -196,3 +202,37 @@ def send_mail_to_submission_owner(current_site_name, assignment, review, submitt
             'site': current_site_name,
     }
     send_mail_wrapper(subject, message, [submitter.email])
+
+@login_required
+def get_s3_upload_url(request):
+    user = request.user
+    name = "%d/%s" % (user.id, request.GET['name']);
+    mime_type = request.GET['type']
+
+    expires = time.time() + settings.AWS_S3_UPLOAD_EXPIRE_TIME
+    amz_headers= "x-amz-acl:public-read"
+    string_to_sign = "PUT\n\n%s\n%d\n%s\n/%s/%s" % (mime_type, expires, amz_headers, settings.AWS_STORAGE_BUCKET_NAME, name)
+
+    sig = hmac.new(settings.AWS_SECRET_ACCESS_KEY, string_to_sign, hashlib.sha1).digest()
+    sig = base64.encodestring(sig).strip()
+    sig = urllib.quote(sig, safe='')
+
+    url = "%s/%s?AWSAccessKeyId=%s&Expires=%d&Signature=%s" % (
+        settings.AWS_S3_URL,
+        name,
+        settings.AWS_ACCESS_KEY_ID,
+        expires,
+        sig
+    )
+
+    return HttpResponse(urllib.quote(url));
+
+@login_required
+def get_s3_download_url(request):
+    user = request.user
+    name = "%d/%s" % (user.id, request.GET['name']);
+    mime_type = request.GET['type']
+
+    url = "%s/%s" % (settings.AWS_S3_URL, name)
+
+    return HttpResponse(urllib.quote(url));

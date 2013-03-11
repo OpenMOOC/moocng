@@ -939,11 +939,65 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
 
     uploadFile: function (fileInput, callback) {
         "use strict";
-        var fileUrl = "TODO";
-        // TODO upload file to the cloud, then invoke callback with the file url or id
-        // Max file size in MB is in MOOC.peerReview.settings.file_max_size
-        callback(fileUrl);
-    }
+        var that = this;
+        _.each(fileInput.files, function (file) {
+            that.executeOnSignedUrl(file, function (signedURL) {
+                that.uploadToS3(file, signedURL, callback);
+            });
+        });
+    },
+
+    uploadToS3: function (file, url, callback) {
+        "use strict";
+        var that = this;
+
+        $.ajax({
+            url: url,
+            type: "PUT",
+            data: file,
+            processData: false,
+            xhr: function () {
+                var myXhr = $.ajaxSettings.xhr();
+                if (myXhr.upload) {
+                    myXhr.upload.addEventListener('progress', function (event) {
+                        if (event.lengthComputable) {
+                            var percentLoaded = Math.round((event.loaded / event.total) * 100);
+                            that.setProgress(percentLoaded, percentLoaded === 100 ? 'Finalizing.' : 'Uploading.');
+                        }
+                    }, false);
+                }
+                return myXhr;
+            },
+            headers: { 'Content-Type': file.type, 'x-amz-acl': 'public-read' },
+            success: function (data) {
+                that.setProgress(100, 'Upload completed.');
+                $.ajax({
+                    url: '/s3_download_url/?name=' + file.name + '&type=' + file.type,
+                    success: function (data) {
+                        callback(decodeURIComponent(data));
+                    }
+                });
+            },
+            error: function () {
+                that.setProgress(0, 'Upload error.');
+            }
+        });
+    },
+
+    executeOnSignedUrl: function (file, callback) {
+        "use strict";
+        $.ajax({
+            url: '/s3_upload_url/?name=' + file.name + '&type=' + file.type,
+            success: function (data) {
+                callback(decodeURIComponent(data));
+            }
+        });
+    },
+
+    setProgress: function (percent, statusLabel) {
+        "use strict";
+        console.log(percent, statusLabel);
+    },
 });
 
 MOOC.views.peerReviewAssignmentViews = {};
