@@ -62,18 +62,13 @@ MOOC.models.EvaluationCriterion = Backbone.Model.extend({
 MOOC.models.EvaluationCriterionList = MOOC.models.TastyPieCollection.extend({
     model: MOOC.models.EvaluationCriterion,
 
-    assignment: null,
-
     comparator: function (criterion) {
         "use strict";
         return criterion.get("order");
     },
 
     url: function() {
-        if (this.assignment == null)
-          return MOOC.ajax.getAbsoluteUrl("evaluation_criterion/")
-        else
-          return MOOC.ajax.getAbsoluteUrl("evaluation_criterion/?assignment=")+this.assignment
+        return MOOC.ajax.getAbsoluteUrl("evaluation_criterion/");
     }
 });
 

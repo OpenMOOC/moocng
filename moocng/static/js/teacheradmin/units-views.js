@@ -904,32 +904,18 @@ if (_.isUndefined(window.MOOC)) {
                         success: function() {
                             var criterionList = new MOOC.models.EvaluationCriterionList();
                             assignmentUrl = assignmentUrl.split('/');
-                            var assignmentId = parseInt(assignmentUrl.pop());
-                            while (isNaN(assignmentId))
-                                assignmentId = parseInt(assignmentUrl.pop());
-                            criterionList.assignment = assignmentId;
 
-                            $.ajax(criterionList.url(), {
-                                success: function (data, textStatus, jqXHR) {
-                                    var elements = _.map(data.objects, function (criterion) {
-                                        return {
-                                            assignment: criterion.assignment,
-                                            id: parseInt(criterion.id, 10),
-                                            title: criterion.title,
-                                            order: parseInt(criterion.order, 10),
-                                            description: criterion.description
-                                        };
-                                    })
-                                    criterionList.add(elements);
-                                    assignment.set("_criterionList", criterionList);
+                            peer_review_assignment.get("_criterionList").fetch({
+                                data: { 'assignment': assignment.get("id") },
+                                success: function() {
                                     self.render();
                                     MOOC.ajax.hideLoading();
                                 },
-                                error: function () {
+                                error: function() {
                                     MOOC.ajax.hideLoading();
                                     MOOC.ajax.showAlert("generic");
                                 }
-                            })
+                            }
                         }, error: function() {
                             MOOC.ajax.hideLoading();
                             MOOC.ajax.showAlert("generic");

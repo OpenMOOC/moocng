@@ -71,11 +71,6 @@ if (_.isUndefined(window.MOOC)) {
                 var criterionList = peer_review_assignment.get("_criterionList");
                 var assignmentUrl = kq.get("peer_review_assignment").split("/");
 
-                var assignmentId = parseInt(assignmentUrl.pop());
-                while (isNaN(assignmentId))
-                    assignmentId = parseInt(assignmentUrl.pop());
-                criterionList.assignment = assignmentId;
-
                 promises.push($.ajax(kq.get("peer_review_assignment").replace("peer_review_assignment", "privpeer_review_assignment"), {
                     success: function (data, textStatus, jqXHR) {
                         peer_review_assignment.set("id", parseInt(data.id, 10));
@@ -85,19 +80,11 @@ if (_.isUndefined(window.MOOC)) {
                         kq.set("peerReviewAssignmentInstance", peer_review_assignment);
                 }}));
 
-                promises.push($.ajax(criterionList.url().replace("peer_review_assignment", "privpeer_review_assignment"), {
-                    success: function (data, textStatus, jqXHR) {
-                        var elements = _.map(data.objects, function (criterion) {
-                            return {
-                                assignment: criterion.assignment,
-                                id: parseInt(criterion.id, 10),
-                                title: criterion.title,
-                                order: parseInt(criterion.order, 10),
-                                description: criterion.description
-                            };
+                promises.push(
+                        peer_review_assignment.get("_criterionList").fetch({
+                            data: { 'assignment': peer_review_assignment.get("id") }
                         })
-                        criterionList.add(elements);
-                }}));
+                );
             }
 
             if (!kq.has("attachmentList")) {
