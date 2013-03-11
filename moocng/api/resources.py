@@ -454,12 +454,15 @@ class PeerReviewReviewsResource(MongoResource):
 
     def obj_get_list(self, request=None, **kwargs):
         mongo_query = {
-            "author": request.GET.get('author', unicode(request.user.id))
+            "author": request.GET.get('author', request.user.id)
         }
 
         for key in self._meta.filtering.keys():
             if key in request.GET:
-                mongo_query[key] = request.GET.get(key)
+                try:
+                    mongo_query[key] = int(request.GET.get(key))
+                except ValueError:
+                    mongo_query[key] = request.GET.get(key)
 
         query_results = self._collection.find(mongo_query)
 
