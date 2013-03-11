@@ -247,7 +247,7 @@ MOOC.App = Backbone.Router.extend({
                 var data = _.pick(kq, "id", "title", "videoID", "teacher_comments",
                                   "supplementary_material", "question", "order",
                                   "correct", "completed", "normalized_weight",
-                                  "peer_review_assignment");
+                                  "peer_review_assignment", "peer_review_score");
                 data.id = parseInt(data.id, 10);
                 if (data.peer_review_assignment !== null) {
                     hasPeerReviews = true;

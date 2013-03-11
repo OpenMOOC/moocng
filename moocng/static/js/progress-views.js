@@ -109,28 +109,15 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         });
     },
 
-    compute_score: function () {
+    render_badge: function (minimum_reviewers, score) {
         "use strict";
-        var sum = _.reduce(this.reviews, function (memo, review) {
-            return memo + review.get('score');
-        }, 0),
-            n = this.reviews.length;
-        if (n > 0) {
-            return sum / n;
-        } else {
-            return 0;
-        }
-    },
-
-    render_badge: function (minimum_reviewers) {
-        "use strict";
-        var icon = '', score = 0, badge_class = '';
+        var icon = '', badge_class = '';
 
         if (this.reviews.length < minimum_reviewers) {
             icon = '<i class="icon-exclamation-sign icon-white" title="' + MOOC.trans.progress.score_dont_apply + '"></i> ';
         }
 
-        score = this.compute_score();
+        score = this.model.get('peer_review_score')[0];
 
         badge_class = (score >= 2.5) ? 'success' : 'important';
 
@@ -244,6 +231,7 @@ MOOC.views.PeerReviewReview = Backbone.View.extend({
         $("#review-details-modal")
             .find("time").text(this.model.get('created')).end()
             .find("tbody").html(criteria.join("")).end()
+            .find(".final-score").text(this.model.get('score')).end()
             .find("blockquote").text(this.model.get('comment')).end()
             .modal('show');
     }
