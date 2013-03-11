@@ -109,6 +109,19 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         });
     },
 
+    compute_score: function () {
+        "use strict";
+        var sum = _.reduce(this.reviews, function (memo, review) {
+            return memo + review.get('score');
+        }, 0),
+            n = this.reviews.length;
+        if (n > 0) {
+            return sum / n;
+        } else {
+            return 0;
+        }
+    },
+
     render_badge: function (minimum_reviewers) {
         "use strict";
         var icon = '', score = 0, badge_class = '';
@@ -116,6 +129,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         if (this.reviews.length < minimum_reviewers) {
             icon = '<i class="icon-exclamation-sign icon-white" title="' + MOOC.trans.progress.score_dont_apply + '"></i> ';
         }
+
+        score = this.compute_score();
 
         badge_class = (score >= 2.5) ? 'success' : 'important';
 
