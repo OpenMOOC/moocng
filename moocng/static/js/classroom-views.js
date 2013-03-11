@@ -939,12 +939,21 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
 
     uploadFile: function (fileInput, callback) {
         "use strict";
-        var that = this;
-        _.each(fileInput.files, function (file) {
-            that.executeOnSignedUrl(file, function (signedURL) {
-                that.uploadToS3(file, signedURL, callback);
-            });
-        });
+        var that = this,
+            file = null;
+
+        if (fileInput.files.length > 0) {
+            file = fileInput.files[0];
+            if (file.size/(1024*1024) <= MOOC.peerReview.settings.file_max_size) {
+                that.executeOnSignedUrl(file, function (signedURL) {
+                    that.uploadToS3(file, signedURL, callback);
+                });
+            } else {
+                MOOC.alerts.show(MOOC.alerts.ERROR,
+                                 MOOC.trans.peerreview.prFileMaxSize,
+                                 MOOC.trans.peerreview.prFileMaxSizeMsg);
+            }
+        }
     },
 
     uploadToS3: function (file, url, callback) {
