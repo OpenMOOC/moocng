@@ -439,7 +439,7 @@ class PeerReviewSubmissionsResource(MongoResource):
                 bundle.data["course"] = kq.unit.course.id
 
         if "created" not in bundle.data:
-            bundle.data["created"] = datetime.now().isoformat()
+            bundle.data["created"] = datetime.utcnow()
 
         bundle.data["reviews"] = 0
         bundle.data["author_reviews"] = 0
