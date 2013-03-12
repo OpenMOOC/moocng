@@ -212,7 +212,7 @@ MOOC.views.PeerReviewReview = Backbone.View.extend({
         if (_.isUndefined(label)) {
             label = '';
         }
-        return label;
+        return label + ' (' + value + ')';
     },
 
     show_details: function (event) {
