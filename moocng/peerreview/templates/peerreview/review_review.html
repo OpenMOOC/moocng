@@ -14,7 +14,8 @@
                 $(item).parent().find('button[data-value='+$(item).val()+']').addClass('active');
             });
             $('button.criterion_value').click(function (event) {
-                target = $(event.target);
+                var target = $(event.target),
+                    input;
                 if(!target.attr('data-name')) {
                     target = $(target.parent());
                 }
