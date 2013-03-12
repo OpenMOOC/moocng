@@ -944,7 +944,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
 
         if (fileInput.files.length > 0) {
             file = fileInput.files[0];
-            if (file.size/(1024*1024) <= MOOC.peerReview.settings.file_max_size) {
+            if (file.size / (1024 * 1024) <= MOOC.peerReview.settings.file_max_size) {
                 that.executeOnSignedUrl(file, function (signedURL) {
                     that.uploadToS3(file, signedURL, callback);
                 });
