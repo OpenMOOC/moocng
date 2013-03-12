@@ -820,14 +820,14 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
                 html.push("<h4>" + MOOC.trans.classroom.prSent + "</h4>");
                 html.push("<p>" + MOOC.trans.classroom.prJust.replace("#(minimum_reviewers)s", this.model.get("minimum_reviewers")) + "</p>");
                 html.push("</div>");
-                html.push("<p><a href='" + MOOC.peerReview.urls.prReview + "'>" + MOOC.trans.classroom.prReview + "</a></p>");
+                html.push("<p><a href='" + MOOC.peerReview.urls.prReview + "#kq" + this.model.get("_knowledgeQuantumInstance").get("id") + "'>" + MOOC.trans.classroom.prReview + "</a></p>");
             } else {
                 unit = MOOC.models.course.getByKQ(this.model.get("_knowledgeQuantumInstance"));
                 html.push(" alert-info'>");
                 html.push("<h4>" + MOOC.trans.classroom.prSent + "</h4>");
                 html.push("<p>" + MOOC.trans.classroom.prAlready + "</p>");
                 html.push("</div>");
-                html.push("<p><a href='" + MOOC.peerReview.urls.prReview + "'>" + MOOC.trans.classroom.prReview + "</a></p>");
+                html.push("<p><a href='" + MOOC.peerReview.urls.prReview + "#kq" + this.model.get("_knowledgeQuantumInstance").get("id") + "'>" + MOOC.trans.classroom.prReview + "</a></p>");
                 html.push("<p><a href='" + MOOC.peerReview.urls.prProgress + "#unit" + unit.get("id") + "'>" + MOOC.trans.classroom.prProgress + "</a></p>");
             }
 
@@ -889,7 +889,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
     confirmedSubmit: function () {
         "use strict";
         var file = this.$el.find("form input[type=file]")[0],
-            text = this.$el.find("#pr-submission").val(),
+            text = $.trim(this.$el.find("#pr-submission").val()),
             callback;
 
         if (!this.supportFileAPI(file)) {
