@@ -381,24 +381,22 @@ class PeerReviewSubmissionsResource(MongoResource):
         allowed_methods = ['get', 'post']
         filtering = {
             "kq": ('exact'),
+            "unit": ('exact'),
+            "course": ('exact'),
         }
 
     def obj_get_list(self, request=None, **kwargs):
 
-        try:
-            author = int(request.GET.get('author', request.user.id))
-        except ValueError:
-            raise BadRequest("author must be a positive integer")
+        mongo_query = {
+            "author": request.GET.get('author', request.user.id)
+        }
 
-        try:
-            kq = int(request.GET.get('kq', 0))
-        except ValueError:
-            raise BadRequest("kq must be a positive integer")
-
-        mongo_query = dict(author=author)
-
-        if kq:
-            mongo_query["kq"] = kq
+        for key in self._meta.filtering.keys():
+            if key in request.GET:
+                try:
+                    mongo_query[key] = int(request.GET.get(key))
+                except ValueError:
+                    mongo_query[key] = request.GET.get(key)
 
         query_results = self._collection.find(mongo_query)
 
