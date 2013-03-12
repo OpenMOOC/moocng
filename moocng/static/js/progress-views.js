@@ -21,6 +21,8 @@ if (_.isUndefined(window.MOOC)) {
 
 MOOC.views = {};
 
+MOOC.views.PRR_DESCRIPTION_MAX_LENGTH = 140;
+
 MOOC.views.capitalize = function (text) {
     "use strict";
     return text.charAt(0).toUpperCase() + text.slice(1);
@@ -219,10 +221,14 @@ MOOC.views.PeerReviewReview = Backbone.View.extend({
         event.preventDefault();
 
         criteria = _.map(this.model.get('criteria'), function (criterion, index) {
-            var html = ["<tr>"], criterionObj = null;
+            var html = ["<tr>"], criterionObj = null, description;
+
             criterionObj = this.peerReviewAssignment.get('_criterionList').at(index);
+            description = MOOC.models.truncateText(criterionObj.get('description'), MOOC.views.PRR_DESCRIPTION_MAX_LENGTH);
+
             html.push("<td>" + (index + 1) + "</td>");
-            html.push("<td>" + criterionObj.get('description') + "</td>");
+            html.push("<td><p>" + criterionObj.get('title') + "</p>");
+            html.push("<p><small>" + description + "</small></p></td>");
             html.push("<td>" + this.render_evaluation_criterion_value(criterion[1]) + "</td>");
             html.push("</tr>");
             return html.join("");
