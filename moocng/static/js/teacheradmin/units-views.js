@@ -945,6 +945,8 @@ if (_.isUndefined(window.MOOC)) {
                                 data: { 'assignment': assignmentId },
                                 success: function () {
                                     self.render();
+                                    self.$el.find("#nudget").removeClass("active");
+                                    self.$el.find("#peer-review-assignment").addClass("active");
                                     MOOC.ajax.hideLoading();
                                 },
                                 error: function () {
