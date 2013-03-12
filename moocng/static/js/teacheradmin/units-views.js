@@ -976,6 +976,7 @@ if (_.isUndefined(window.MOOC)) {
                 peer_review_assignment.set("kq", this.model.url().replace('/privkq', '/kq'));
                 peer_review_assignment.set("description", "");
                 peer_review_assignment.set("minimum_reviewers", "0");
+                peer_review_assignment.set("_criterionList", new MOOC.models.EvaluationCriterionList());
                 this.model.set("peerReviewAssignmentInstance", peer_review_assignment);
 
                 self = this;
