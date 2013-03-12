@@ -38,10 +38,10 @@ from moocng.courses.models import Course
 from moocng.peerreview.models import PeerReviewAssignment
 from moocng.peerreview.utils import course_get_peer_review_assignments, save_review
 from moocng.peerreview.forms import ReviewSubmissionForm, EvalutionCriteriaResponseForm
+from moocng.peerreview.templatetags.peer_review_tags import criterion_value
 from moocng.teacheradmin.utils import send_mail_wrapper
+import datetime
 
-
-@require_POST
 @login_required
 def course_review_assign(request, course_slug, assignment_id):
     course = get_object_or_404(Course, slug=course_slug)
@@ -182,13 +182,17 @@ def send_mail_to_submission_owner(current_site_name, assignment, review, submitt
 
         """) % {
             'user': submitter,
-            'date': review['created'],
+            'date': review['created'].strftime('%d/%m/%Y'),
             'nugget': assignment.kq.title
         }
 
-    for criterion in assignment.criteria.all():
-        message += _(u"""- %s
-            """) % criterion.description
+
+    for item in review['criteria']:
+        message += _(u"""- %(criterion)s: %(evaluation)s
+            """) % {
+                'criterion': item[0],
+                'evaluation': criterion_value(item[1])
+            }
 
     message += _(u"""
         Your classmate's comment:
