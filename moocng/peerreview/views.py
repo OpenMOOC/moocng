@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from datetime import datetime, timedelta
 import pymongo
 import hmac
 import hashlib
@@ -61,11 +62,25 @@ def course_review_assign(request, course_slug, assignment_id):
         messages.error(request, _('You already have a submission assigned.'))
         return HttpResponseRedirect(reverse('course_reviews', args=[course_slug]))
 
+    max_hours_assigned = timedelta(hours=getattr(settings,
+                                   "PEER_REVIEW_ASSIGNATION_EXPIRE", 24))
+
+    assignation_expire = datetime.now() - max_hours_assigned
+
     submission = collection.find({
         'kq': assignment.kq.id,
-        'assigned_to': {
-            '$exists': False
-        },
+        '$or': [
+            {
+                'assigned_to': {
+                    '$exists': False
+                },
+            },
+            {
+                'assigned_when': {
+                    '$lt': assignation_expire
+                },
+            }
+        ],
         'author': {
             '$ne': user_id
         },
@@ -81,7 +96,14 @@ def course_review_assign(request, course_slug, assignment_id):
         messages.error(request, _('There is no submission avaliable for you at this moment. Please, try again later.'))
         return HttpResponseRedirect(reverse('course_reviews', args=[course_slug]))
     else:
-        collection.update({'_id': submission[0]['_id']}, {'$set': {'assigned_to': user_id}})
+        collection.update({
+            '_id': submission[0]['_id']
+        }, {
+            '$set': {
+                'assigned_to': user_id,
+                'assigned_when': datetime.now()
+            }
+        })
         return HttpResponseRedirect(reverse('course_review_review', args=[course_slug, assignment_id]))
 
 
