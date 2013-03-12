@@ -1,5 +1,5 @@
 /*jslint vars: false, browser: true, nomen: true */
-/*global MOOC: true, Backbone, $, _ */
+/*global MOOC: true, Backbone, $, _, moment */
 
 // Copyright 2012 Rooter Analysis S.L.
 //
@@ -29,6 +29,22 @@ MOOC.models = {
             result += "/" + aux[i];
         }
         return result + "/";
+    },
+    truncateText: function (text, maxLength) {
+        "use strict";
+        var idx;
+
+        if (text.length > maxLength) {
+            text = text.substr(0, maxLength);
+            idx = text.lastIndexOf(' ');
+            if (idx > 0) {
+                text = text.substring(0, idx);
+            } else {
+                text = text.substring(0, maxLength - 3);
+            }
+            text += "...";
+        }
+        return text;
     }
 };
 
@@ -348,6 +364,14 @@ MOOC.models.PeerReviewReview  = Backbone.Model.extend({
         criteria: [],
         comment: null,
         score: 0
+    },
+
+    parse: function (resp, xhr) {
+        "use strict";
+        if (!_.isUndefined(resp.created)) {
+            resp.created = moment(resp.created, "YYYY-MM-DDTHH:mm:ss.SSSZ");
+        }
+        return resp;
     }
 });
 
@@ -414,20 +438,7 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
 
     truncateTitle: function (maxLength) {
         "use strict";
-        var title = this.get("title"),
-            idx;
-
-        if (title.length > maxLength) {
-            title = title.substr(0, maxLength);
-            idx = title.lastIndexOf(' ');
-            if (idx > 0) {
-                title = title.substring(0, idx);
-            } else {
-                title = title.substring(0, maxLength - 3);
-            }
-            title += "...";
-        }
-        return title;
+        return MOOC.models.truncateText(this.get('title'), maxLength);
     }
 });
 
