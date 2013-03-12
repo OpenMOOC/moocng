@@ -240,7 +240,7 @@ MOOC.views.PeerReviewReview = Backbone.View.extend({
             .find("time").text(this.model.get('created').format('LLLL')).end()
             .find("tbody").html(criteria.join("")).end()
             .find(".final-score").text(this.model.get('score')).end()
-            .find("blockquote").text(this.model.get('comment')).end()
+            .find("blockquote pre").text(this.model.get('comment')).end()
             .modal('show');
     }
 });
