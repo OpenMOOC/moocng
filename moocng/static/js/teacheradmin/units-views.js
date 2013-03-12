@@ -403,6 +403,11 @@ if (_.isUndefined(window.MOOC)) {
                         "'><i class='icon-white icon-question-sign'>" +
                         "</i></span>";
                 }
+                if (this.model.has("peer_review_assignment")) {
+                    header += "<span class='badge badge-inverse peerreview " +
+                        "pull-right' title='" + MOOC.trans.kq.prTooltip +
+                        "'>" + MOOC.trans.kq.pr + "</span>";
+                }
 
                 iframe = "<iframe width='110px' height='71px' src='//www.youtube.com/embed/" +
                     this.model.get("videoID") + "?rel=0&controls=0&origin=" +
