@@ -1082,12 +1082,37 @@ if (_.isUndefined(window.MOOC)) {
                 });
             },
 
+            getConfirmPeerReviewRemovalModal: function () {
+                if (_.isUndefined(this.confirmPeerReviewRemoval)) {
+                    this.confirmPeerReviewRemoval = $("#confirm-peer-review-removal");
+                    this.confirmPeerReviewRemoval.modal({
+                        show: false,
+                        backdrop: "static",
+                        keyboard: false
+                    });
+                }
+                return this.confirmPeerReviewRemoval;
+            },
+
             removePeerReviewAssignment: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
+
+                var modal,
+                    view;
+
+                modal = this.getConfirmPeerReviewRemovalModal();
+                view = this;
+                modal.find("#pr-confirm").off("click").on("click", _.bind(function () {
+                    this.confirmRemovePeerReviewAssignment(this);
+                    modal.modal("hide");
+                }, this));
+                modal.modal("show");
+            },
+
+            confirmRemovePeerReviewAssignment: function (view) {
                 MOOC.ajax.showLoading();
-                var view = this;
-                this.model.get("peerReviewAssignmentInstance").destroy({
+                view.model.get("peerReviewAssignmentInstance").destroy({
                     success: function () {
                         view.model.set("peerReviewAssignmentInstance", null);
                         view.model.set("peer_review_assignment", null);

@@ -278,6 +278,19 @@
     <p>{% trans "This item is new and must be saved before going back." %}</p>
 </div>
 
+<div id="confirm-peer-review-removal" class="modal hide fade">
+    <div class="modal-header">
+        <h3>{% trans "Confirm removal" %}</h3>
+    </div>
+    <div class="modal-body">
+        <p>{% trans "Are you completely sure you want to remove this peer review assignment? Submissions received from students will be removed as well." %}</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
+        <button type="button" class="btn btn-danger" id="pr-confirm">{% trans "Confirm" %}</button>
+    </div>
+</div>
+
 <div id="units-container" class="viewport"></div>
 <div id="unit-editor" class="viewport hide"></div>
 <div id="kq-editor" class="viewport hide"></div>
