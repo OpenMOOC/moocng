@@ -49,7 +49,8 @@ from moocng.courses.utils import normalize_kq_weight, calculate_course_mark
 from moocng.mongodb import get_db
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
 from moocng.peerreview.utils import (kq_get_peer_review_score,
-                                     get_peer_review_review_score)
+                                     get_peer_review_review_score,
+                                     is_peer_review_assignments_completed)
 from moocng.videos.utils import extract_YT_video_id
 
 
@@ -92,6 +93,7 @@ class KnowledgeQuantumResource(ModelResource):
     videoID = fields.CharField(readonly=True)
     correct = fields.BooleanField(readonly=True)
     completed = fields.BooleanField(readonly=True)
+    peer_review_completed = fields.BooleanField(readonly=True)
     normalized_weight = fields.IntegerField(readonly=True)
 
     class Meta:
@@ -117,6 +119,7 @@ class KnowledgeQuantumResource(ModelResource):
         self.user_answers = get_user(request, db.get_collection('answers'))
         self.user_activity = get_user(request, db.get_collection('activity'))
         self.peer_review_reviews = db.get_collection('peer_review_reviews')
+        self.peer_review_submissions = db.get_collection('peer_review_submissions')
         return super(KnowledgeQuantumResource, self).dispatch(request_type,
                                                               request,
                                                               **kwargs)
@@ -167,10 +170,20 @@ class KnowledgeQuantumResource(ModelResource):
 
             return question.is_correct(answer)
 
+    def dehydrate_peer_review_completed(self, bundle):
+        try:
+            assignment = bundle.obj.peerreviewassignment_set.get()
+        except PeerReviewAssignment.DoesNotExist:
+            return None
+
+        submission = self.peer_review_submissions.find_one({
+            "kq": bundle.obj.id,
+            "author": bundle.request.user.id
+        })
+
+        return is_peer_review_assignments_completed(assignment, submission)
+
     def dehydrate_completed(self, bundle):
-        # TODO:
-        # Mark as completed when has peer_review, user has sent submission
-        # and user has reviewed at least minimum reviews
         try:
             return self._is_completed(self.user_activity, bundle.obj)
         except AttributeError:
@@ -368,24 +381,22 @@ class PeerReviewSubmissionsResource(MongoResource):
         allowed_methods = ['get', 'post']
         filtering = {
             "kq": ('exact'),
+            "unit": ('exact'),
+            "course": ('exact'),
         }
 
     def obj_get_list(self, request=None, **kwargs):
 
-        try:
-            author = int(request.GET.get('author', request.user.id))
-        except ValueError:
-            raise BadRequest("author must be a positive integer")
+        mongo_query = {
+            "author": request.GET.get('author', request.user.id)
+        }
 
-        try:
-            kq = int(request.GET.get('kq', 0))
-        except ValueError:
-            raise BadRequest("kq must be a positive integer")
-
-        mongo_query = dict(author=author)
-
-        if kq:
-            mongo_query["kq"] = kq
+        for key in self._meta.filtering.keys():
+            if key in request.GET:
+                try:
+                    mongo_query[key] = int(request.GET.get(key))
+                except ValueError:
+                    mongo_query[key] = request.GET.get(key)
 
         query_results = self._collection.find(mongo_query)
 
@@ -428,7 +439,7 @@ class PeerReviewSubmissionsResource(MongoResource):
                 bundle.data["course"] = kq.unit.course.id
 
         if "created" not in bundle.data:
-            bundle.data["created"] = datetime.now().isoformat()
+            bundle.data["created"] = datetime.utcnow()
 
         bundle.data["reviews"] = 0
         bundle.data["author_reviews"] = 0

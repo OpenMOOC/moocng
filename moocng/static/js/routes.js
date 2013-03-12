@@ -53,13 +53,18 @@ MOOC.io = {
 };
 
 MOOC.App = Backbone.Router.extend({
+    lastUnitView: null,
     unitSteps: function (unit, loadFirstKQ) {
         "use strict";
         var unitObj = MOOC.models.course.get(unit),
-            steps = [];
+            steps = [],
+            self = this,
+            shouldDelegateEvents = false;
 
         if (_.isNull(unitObj.get("knowledgeQuantumList"))) {
             steps.push(async.apply(MOOC.router.loadUnitData, unitObj));
+        } else {
+            shouldDelegateEvents = true;
         }
 
         if (loadFirstKQ) {
@@ -74,7 +79,11 @@ MOOC.App = Backbone.Router.extend({
             });
         } else {
             steps.push(function (callback) {
+                self.lastUnitView = MOOC.views.unitViews[unit];
                 MOOC.views.unitViews[unit].render();
+                if (shouldDelegateEvents) {
+                    self.lastUnitView.delegateEventsInSubViews();
+                }
                 $("#unit-selector").find("div.collapse").removeClass("in");
                 $("#unit" + unit + "-container").addClass("in");
 
@@ -154,6 +163,9 @@ MOOC.App = Backbone.Router.extend({
     unit: function (unit) {
         "use strict";
         unit = parseInt(unit, 10);
+        if (!_.isNull(this.lastUnitView)) {
+            this.lastUnitView.undelegateEventsInSubViews();
+        }
         async.series(this.unitSteps(unit, MOOC.router.hasHandler("unit1/kq1")));
     },
 

@@ -59,7 +59,6 @@ def if_has_peer_review_assignments(parser, token):
     else:
         nodelist_false = template.NodeList()
 
-
     return IfHasPeerReviewAssignmentsNode(course, nodelist_true, nodelist_false)
 
 
@@ -68,14 +67,14 @@ def pending_reviews(peer_review_assignment, user, course, user_submissions):
     db = get_db()
     peer_review_reviews = db.get_collection('peer_review_reviews')
     reviewed = peer_review_reviews.find({
-            'reviewer': user.id,
-            'kq': peer_review_assignment.kq.id,
-            })
+        'reviewer': user.id,
+        'kq': peer_review_assignment.kq.id,
+    })
     peer_review_submissions = db.get_collection('peer_review_submissions')
     assigned = peer_review_submissions.find({
-            'assigned_to': user.id,
-            'kq': peer_review_assignment.kq.id,
-            })
+        'assigned_to': user.id,
+        'kq': peer_review_assignment.kq.id,
+    })
     pending = peer_review_assignment.minimum_reviewers - reviewed.count()
     has_sent_submission = peer_review_assignment.id in user_submissions
     return {
@@ -85,7 +84,7 @@ def pending_reviews(peer_review_assignment, user, course, user_submissions):
         'has_sent_submission': has_sent_submission,
         'peer_review_assignment_id': peer_review_assignment.id,
         'course_slug': course.slug
-        }
+    }
 
 
 @register.filter
@@ -105,6 +104,7 @@ def get_criterion_title(criterion_id):
     except EvaluationCriterion.DoesNotExist:
         return ''
 
+
 def get_criterion_value_as_text(criterion_value):
     labels = {
         1: ugettext('Very bad'),
@@ -115,6 +115,7 @@ def get_criterion_value_as_text(criterion_value):
     }
 
     return labels.get(criterion_value, ugettext('Undefined'))
+
 
 @register.filter
 def render_criterion_value(criterion_value):
