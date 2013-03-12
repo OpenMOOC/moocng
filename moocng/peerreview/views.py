@@ -34,10 +34,9 @@ from django.conf import settings
 
 from moocng.api.mongodb import get_db
 from moocng.courses.models import Course
-from moocng.peerreview.models import PeerReviewAssignment
+from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
 from moocng.peerreview.utils import course_get_peer_review_assignments, save_review
 from moocng.peerreview.forms import ReviewSubmissionForm, EvalutionCriteriaResponseForm
-from moocng.peerreview.templatetags.peer_review_tags import get_criterion_value_as_text
 from moocng.teacheradmin.utils import send_mail_wrapper
 
 
@@ -175,34 +174,39 @@ def send_mail_to_submission_owner(current_site_name, assignment, review, submitt
     subject = _(u'Your assignment "%(nugget)s" has been reviewed') % {'nugget': assignment.kq.title}
     message = _(u"""Congratulations %(user)s
 
-        The exercise you sent on %(date)s belonging the nugget "%(nugget)s" has been reviewed by a classmate.
+    The exercise you sent on %(date)s belonging the nugget "%(nugget)s" has been reviewed by a classmate.
 
-        Evaluation criteria:
+    Evaluation criteria:
 
-        """) % {
-            'user': submitter,
-            'date': review['created'].strftime('%d/%m/%Y'),
-            'nugget': assignment.kq.title
-        }
+    """) % {
+        'user': submitter,
+        'date': review['created'].strftime('%d/%m/%Y'),
+        'nugget': assignment.kq.title
+    }
 
 
     for item in review['criteria']:
-        message += _(u"""- %(criterion)s: %(evaluation)s
-            """) % {
-                'criterion': item[0],
-                'evaluation': get_criterion_value_as_text(item[1])
-            }
+        try:
+            criterion = EvaluationCriterion.objects.get(pk=item[0]).title
+        except EvaluationCriterion.DoesNotExist:
+            criterion = _(u'Undefined')
+
+        message += u"""- %(criterion)s: %(evaluation)s
+    """ % {
+                        'criterion': criterion,
+                        'evaluation': item[1]
+                    }
 
     message += _(u"""
-        Your classmate's comment:
+    Your classmate's comment:
 
-        %(comment)s
+    %(comment)s
 
-        Best regards and thank you for learning with %(site)s.
+    Best regards and thank you for learning with %(site)s.
 
-        %(site)s's team""") % {
-            'comment': review['comment'],
-            'site': current_site_name,
+    %(site)s's team""") % {
+        'comment': review['comment'],
+        'site': current_site_name,
     }
     send_mail_wrapper(subject, message, [submitter.email])
 
