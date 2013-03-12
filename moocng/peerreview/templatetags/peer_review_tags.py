@@ -105,7 +105,7 @@ def get_criterion_title(criterion_id):
     except EvaluationCriterion.DoesNotExist:
         return ''
 
-def criterion_value(criterion_value):
+def get_criterion_value_as_text(criterion_value):
     labels = {
         1: ugettext('Very bad'),
         2: ugettext('Bad'),
@@ -118,4 +118,4 @@ def criterion_value(criterion_value):
 
 @register.filter
 def render_criterion_value(criterion_value):
-    return criterion_value(criterion_value)
+    return get_criterion_value_as_text(criterion_value)

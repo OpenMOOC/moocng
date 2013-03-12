@@ -28,7 +28,6 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
-from django.views.decorators.http import require_POST
 from django.forms.formsets import formset_factory
 from django.db import IntegrityError
 from django.conf import settings
@@ -38,9 +37,9 @@ from moocng.courses.models import Course
 from moocng.peerreview.models import PeerReviewAssignment
 from moocng.peerreview.utils import course_get_peer_review_assignments, save_review
 from moocng.peerreview.forms import ReviewSubmissionForm, EvalutionCriteriaResponseForm
-from moocng.peerreview.templatetags.peer_review_tags import criterion_value
+from moocng.peerreview.templatetags.peer_review_tags import get_criterion_value_as_text
 from moocng.teacheradmin.utils import send_mail_wrapper
-import datetime
+
 
 @login_required
 def course_review_assign(request, course_slug, assignment_id):
@@ -191,7 +190,7 @@ def send_mail_to_submission_owner(current_site_name, assignment, review, submitt
         message += _(u"""- %(criterion)s: %(evaluation)s
             """) % {
                 'criterion': item[0],
-                'evaluation': criterion_value(item[1])
+                'evaluation': get_criterion_value_as_text(item[1])
             }
 
     message += _(u"""
