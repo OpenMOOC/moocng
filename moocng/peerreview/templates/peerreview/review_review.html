@@ -4,35 +4,58 @@
 
 {% block nav-course-reviews %}class="active"{% endblock %}
 
-
 {% block extrajs %}
     <script type="text/javascript">
         $(document).ready(function () {
+            "use strict";
+            var confirmModal;
+
             $('a.criterion_tooltip').tooltip();
-            $('input#send_review_confirm').popover();
             $('input.criterion_value').each(function (index, item) {
-                $(item).parent().find('button[data-value='+$(item).val()+']').addClass('active');
+                $(item).parent().find('button[data-value=' + $(item).val() + ']').addClass('active');
             });
             $('button.criterion_value').click(function (event) {
                 var target = $(event.target),
                     input;
-                if(!target.attr('data-name')) {
+                if (!target.attr('data-name')) {
                     target = $(target.parent());
                 }
-                input = $('input[name='+target.attr('data-name')+']');
+                input = $('input[name=' + target.attr('data-name') + ']');
                 input.val(target.attr('data-value'));
             });
-            $('input#send_review').click(function (event) {
-                event.preventDefault();
-                $('input#send_review').hide();
-                $('input#send_review_confirm').show();
-                $('input#send_review_confirm').popover('show');
+            $('input#send_review').click(function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                if (confirmModal === undefined) {
+                    confirmModal = $("#confirm-review").modal({
+                        show: false,
+                        backdrop: "static",
+                        keyboard: false
+                    });
+                }
+                confirmModal.modal("show");
+            });
+            $("button#pr-confirm").click(function (evt) {
+                confirmModal.modal("hide");
+                $('form').trigger("submit");
             });
         });
     </script>
 {% endblock %}
 
 {% block content %}
+<div id="confirm-review" class="modal hide fade">
+    <div class="modal-header">
+        <h3>{% trans "Confirm submission" %}</h3>
+    </div>
+    <div class="modal-body">
+        <p>{% trans "Are you completely sure you want to submit your review? You can't change it later, this will be your final review of this student's assignment." %}</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
+        <button type="button" class="btn btn-danger" id="pr-confirm">{% trans "Send" %}</button>
+    </div>
+</div>
 
 <h2>{% trans "Review" %}</h2>
 
@@ -78,17 +101,6 @@
     </div>
     <div class="form-actions">
         <input type="submit" class="btn btn-primary" id="send_review" value="{% trans "Send review" %}" />
-        <input
-            type="submit"
-            data-toggle="popover"
-            data-placement="right"
-            data-title="{% trans "Warning" %}"
-            data-content="{% trans "You can only send a review one time, are you sure?" %}"
-            class="btn btn-primary pull-left"
-            id="send_review_confirm"
-            value="{% trans "Yes, i'm sure" %}"
-            style="display: none"
-        />
     </div>
 </form>
 
