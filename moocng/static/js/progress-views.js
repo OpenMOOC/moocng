@@ -51,6 +51,22 @@ MOOC.views.Unit = Backbone.View.extend({
         });
     },
 
+    delegateEventsInSubViews: function () {
+        "use strict";
+        _(this._kqViews).each(function (kqView) {
+            kqView.delegateEventsInSubViews();
+        });
+        this.delegateEvents();
+    },
+
+    undelegateEventsInSubViews: function () {
+        "use strict";
+        _(this._kqViews).each(function (kqView) {
+            kqView.undelegateEventsInSubViews();
+        });
+        this.undelegateEvents();
+    },
+
     render: function () {
         "use strict";
         var html,
@@ -111,6 +127,22 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         });
     },
 
+    delegateEventsInSubViews: function () {
+        "use strict";
+        _(this._prrViews).each(function (prrView) {
+            prrView.delegateEvents();
+        });
+        this.delegateEvents();
+    },
+
+    undelegateEventsInSubViews: function () {
+        "use strict";
+        _(this._prrViews).each(function (prrView) {
+            prrView.undelegateEvents();
+        });
+        this.undelegateEvents();
+    },
+
     render_badge: function (minimum_reviewers, score) {
         "use strict";
         var icon = '', badge_class = '', title_attr = '';
@@ -128,7 +160,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
         badge_class = (score >= 2.5) ? 'success' : 'important';
 
-        return '<span class="badge badge-' + badge_class + ' pull-right"'+ title_attr + '>' + icon + score + '</span>';
+        return '<span class="badge badge-' + badge_class + ' pull-right"' + title_attr + '>' + icon + score + '</span>';
     },
 
     render: function () {
