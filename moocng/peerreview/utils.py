@@ -43,6 +43,14 @@ def get_peer_review_review_score(review):
             len(review["criteria"]))
 
 
+def is_peer_review_assignments_completed(assignment, submission):
+    if submission is None:
+        return False
+    if submission["author_reviews"] < assignment.minimum_reviewers:
+        return False
+    return True
+
+
 def kq_get_peer_review_score(kq, author, pra=None):
     """ppr_collection is peer_review_reviews mongo collection
 
