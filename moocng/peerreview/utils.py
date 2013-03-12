@@ -36,6 +36,13 @@ def course_has_peer_review_assignments(course):
     return result
 
 
+def get_peer_review_review_score(review):
+    if len(review["criteria"]) == 0:
+        return 0
+    return (float(sum(c[1] for c in review["criteria"])) /
+            len(review["criteria"]))
+
+
 def kq_get_peer_review_score(kq, author, pra=None):
     """ppr_collection is peer_review_reviews mongo collection
 
@@ -67,8 +74,8 @@ def kq_get_peer_review_score(kq, author, pra=None):
     prs_collection = db.get_collection("peer_review_submissions")
 
     submission = prs_collection.find_one({
-        "kq": unicode(kq.id),
-        "author": unicode(author.id)
+        "kq": kq.id,
+        "author": author.id
     })
 
     if not submission:
@@ -83,16 +90,16 @@ def kq_get_peer_review_score(kq, author, pra=None):
     ppr_collection = db.get_collection("peer_review_reviews")
 
     reviews = ppr_collection.find({
-        "kq": unicode(kq.id),
-        "author": unicode(author.id)
+        "kq": kq.id,
+        "author": author.id
     })
 
     reviews_count = reviews.count()
 
     sum_average = 0
     for review in reviews:
-        sum_average += (float(sum([c[1] for c in review["criteria"]]) /
-                        len(review["criteria"])))
+        sum_average += float(get_peer_review_review_score(review))
+
     average = sum_average / reviews_count
 
     if (submission["reviews"] > 0 and
@@ -120,7 +127,7 @@ def save_review(kq, reviewer, user_reviewed, criteria, comment):
         "submission_id": submission.get("_id"),
         "author": user_reviewed.id,
         "comment": comment,
-        "created": datetime.now().isoformat(),
+        "created": datetime.utcnow(),
         "reviewer": reviewer.id,
         "criteria": parsed_criteria,
         "kq": kq.id,

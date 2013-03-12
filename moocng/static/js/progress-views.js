@@ -21,6 +21,8 @@ if (_.isUndefined(window.MOOC)) {
 
 MOOC.views = {};
 
+MOOC.views.PRR_DESCRIPTION_MAX_LENGTH = 140;
+
 MOOC.views.capitalize = function (text) {
     "use strict";
     return text.charAt(0).toUpperCase() + text.slice(1);
@@ -109,13 +111,15 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         });
     },
 
-    render_badge: function (minimum_reviewers) {
+    render_badge: function (minimum_reviewers, score) {
         "use strict";
-        var icon = '', score = 0, badge_class = '';
+        var icon = '', badge_class = '';
 
         if (this.reviews.length < minimum_reviewers) {
             icon = '<i class="icon-exclamation-sign icon-white" title="' + MOOC.trans.progress.score_dont_apply + '"></i> ';
         }
+
+        score = this.model.get('peer_review_score')[0];
 
         badge_class = (score >= 2.5) ? 'success' : 'important';
 
@@ -195,11 +199,20 @@ MOOC.views.PeerReviewReview = Backbone.View.extend({
         var html = [];
 
         html.push('<td>' + (this.index + 1)  + '</td>');
-        html.push('<td>' + this.model.get('created')  + '</td>');
+        html.push('<td>' + this.model.get('created').format('LLLL')  + '</td>');
         html.push('<td><a class="btn btn-small pull-right" href="#"><i class="icon-eye-open"></i> View details</a>' + this.model.get('score')  + '</td>');
 
         this.$el.html(html.join(""));
         return this;
+    },
+
+    render_evaluation_criterion_value: function (value) {
+        "use strict";
+        var label = MOOC.trans.evaluation_criteria[value];
+        if (_.isUndefined(label)) {
+            label = '';
+        }
+        return label;
     },
 
     show_details: function (event) {
@@ -208,18 +221,23 @@ MOOC.views.PeerReviewReview = Backbone.View.extend({
         event.preventDefault();
 
         criteria = _.map(this.model.get('criteria'), function (criterion, index) {
-            var html = ["<tr>"], criterionObj = null;
+            var html = ["<tr>"], criterionObj = null, description;
+
             criterionObj = this.peerReviewAssignment.get('_criterionList').at(index);
+            description = MOOC.models.truncateText(criterionObj.get('description'), MOOC.views.PRR_DESCRIPTION_MAX_LENGTH);
+
             html.push("<td>" + (index + 1) + "</td>");
-            html.push("<td>" + criterionObj.get('description') + "</td>");
-            html.push("<td>" + criterion[1] + "</td>");
+            html.push("<td><p>" + criterionObj.get('title') + "</p>");
+            html.push("<p><small>" + description + "</small></p></td>");
+            html.push("<td>" + this.render_evaluation_criterion_value(criterion[1]) + "</td>");
             html.push("</tr>");
             return html.join("");
         }, this);
 
         $("#review-details-modal")
-            .find("time").text(this.model.get('created')).end()
+            .find("time").text(this.model.get('created').format('LLLL')).end()
             .find("tbody").html(criteria.join("")).end()
+            .find(".final-score").text(this.model.get('score')).end()
             .find("blockquote").text(this.model.get('comment')).end()
             .modal('show');
     }

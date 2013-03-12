@@ -1,5 +1,5 @@
 /*jslint vars: false, browser: true, nomen: true */
-/*global MOOC: true, Backbone, $, _ */
+/*global MOOC: true, Backbone, $, _, moment */
 
 // Copyright 2012 Rooter Analysis S.L.
 //
@@ -29,6 +29,22 @@ MOOC.models = {
             result += "/" + aux[i];
         }
         return result + "/";
+    },
+    truncateText: function (text, maxLength) {
+        "use strict";
+        var idx;
+
+        if (text.length > maxLength) {
+            text = text.substr(0, maxLength);
+            idx = text.lastIndexOf(' ');
+            if (idx > 0) {
+                text = text.substring(0, idx);
+            } else {
+                text = text.substring(0, maxLength - 3);
+            }
+            text += "...";
+        }
+        return text;
     }
 };
 
@@ -351,12 +367,21 @@ MOOC.models.AttachmentList = MOOC.models.TastyPieCollection.extend({
 });
 
 MOOC.models.PeerReviewReview  = Backbone.Model.extend({
+    idAttribute: '_id',
     defaults: {
         kq: null,
         created: null,
         criteria: [],
         comment: null,
         score: 0
+    },
+
+    parse: function (resp, xhr) {
+        "use strict";
+        if (!_.isUndefined(resp.created)) {
+            resp.created = moment(resp.created, "YYYY-MM-DDTHH:mm:ss.SSSZ");
+        }
+        return resp;
     }
 });
 
@@ -381,7 +406,8 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
         attachmentList: null,
         normalized_weight: 0,
         peer_review_assignment: null, // Optional
-        peerReviewAssignmentInstance: null
+        peerReviewAssignmentInstance: null,
+        peer_review_score: null
     },
 
     url: function () {
@@ -422,20 +448,7 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
 
     truncateTitle: function (maxLength) {
         "use strict";
-        var title = this.get("title"),
-            idx;
-
-        if (title.length > maxLength) {
-            title = title.substr(0, maxLength);
-            idx = title.lastIndexOf(' ');
-            if (idx > 0) {
-                title = title.substring(0, idx);
-            } else {
-                title = title.substring(0, maxLength - 3);
-            }
-            title += "...";
-        }
-        return title;
+        return MOOC.models.truncateText(this.get('title'), maxLength);
     }
 });
 
@@ -502,16 +515,26 @@ MOOC.models.Unit = Backbone.Model.extend({
 
     parse: function (resp, xhr) {
         "use strict";
-        var result = {};
+        var result = {},
+            start = new Date(),
+            deadline = new Date();
+
         if (!_.isNull(resp)) {
+            if (resp.start) {
+                start = new Date(resp.start);
+            }
+            if (resp.deadline) {
+                deadline = new Date(resp.deadline);
+            }
+
             result = {
                 id: parseInt(resp.id, 10),
                 order: resp.order,
                 title: resp.title,
                 type: resp.unittype,
                 weight: parseInt(resp.weight, 10),
-                start: new Date(resp.start),
-                deadline: new Date(resp.deadline)
+                start: start,
+                deadline: deadline
             };
         }
         return result;

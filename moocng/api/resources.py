@@ -48,7 +48,8 @@ from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
 from moocng.courses.utils import normalize_kq_weight, calculate_course_mark
 from moocng.mongodb import get_db
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
-from moocng.peerreview.utils import kq_get_peer_review_score
+from moocng.peerreview.utils import (kq_get_peer_review_score,
+                                     get_peer_review_review_score)
 from moocng.videos.utils import extract_YT_video_id
 
 
@@ -149,6 +150,8 @@ class KnowledgeQuantumResource(ModelResource):
         questions = bundle.obj.question_set.all()
         if questions.count() == 0:
             # no question: a kq is correct if it is completed
+            if bundle.obj.peerreviewassignment_set.exists():
+                return None
             try:
                 return self._is_completed(self.user_activity, bundle.obj)
             except AttributeError:
@@ -165,6 +168,9 @@ class KnowledgeQuantumResource(ModelResource):
             return question.is_correct(answer)
 
     def dehydrate_completed(self, bundle):
+        # TODO:
+        # Mark as completed when has peer_review, user has sent submission
+        # and user has reviewed at least minimum reviews
         try:
             return self._is_completed(self.user_activity, bundle.obj)
         except AttributeError:
@@ -445,6 +451,8 @@ class PeerReviewSubmissionsResource(MongoResource):
 
 
 class PeerReviewReviewsResource(MongoResource):
+    score = fields.IntegerField(readonly=True)
+
     class Meta:
         resource_name = 'peer_review_reviews'
         collection = 'peer_review_reviews'
@@ -463,12 +471,15 @@ class PeerReviewReviewsResource(MongoResource):
 
     def obj_get_list(self, request=None, **kwargs):
         mongo_query = {
-            "author": request.GET.get('author', unicode(request.user.id))
+            "author": request.GET.get('author', request.user.id)
         }
 
         for key in self._meta.filtering.keys():
             if key in request.GET:
-                mongo_query[key] = request.GET.get(key)
+                try:
+                    mongo_query[key] = int(request.GET.get(key))
+                except ValueError:
+                    mongo_query[key] = request.GET.get(key)
 
         query_results = self._collection.find(mongo_query)
 
@@ -496,6 +507,9 @@ class PeerReviewReviewsResource(MongoResource):
         obj = MongoObj(initial=mongo_item)
         obj.uuid = kwargs['pk']
         return obj
+
+    def dehydrate_score(self, bundle):
+        return get_peer_review_review_score(bundle.obj.to_dict())
 
 
 class QuestionResource(ModelResource):

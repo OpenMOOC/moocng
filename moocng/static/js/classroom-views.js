@@ -810,6 +810,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
             unit;
 
         if (this.model.get("_submitted")) {
+            // Message telling the student he has already sent the exercise
             $("#kq-q-buttons").addClass("hide");
             $("#kq-next-container").addClass("offset4");
 
@@ -832,6 +833,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
 
             this.$el.removeClass("question").html(html.join(""));
         } else {
+            // Show the peer review submission form
             kqPath = window.location.hash.substring(1, window.location.hash.length - 2); // Remove trailing /p
 
             this.$el.removeClass("question").html(this.getTemplate());
@@ -866,7 +868,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
         if (criteria.length === 0) { return; }
         $modal = this.getCriteriaModal();
         criteria.each(function (criterion) {
-            body += "<p>" + criterion.get("description") + "</p>";
+            body += "<h4>" + criterion.get("title") + "</h4><p>" + criterion.get("description") + "</p>";
         });
         $modal.find(".modal-body").html(body);
         $modal.modal('show');
@@ -937,11 +939,74 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
 
     uploadFile: function (fileInput, callback) {
         "use strict";
-        var fileUrl = "TODO";
-        // TODO upload file to the cloud, then invoke callback with the file url or id
-        // Max file size in MB is in MOOC.peerReview.settings.file_max_size
-        callback(fileUrl);
-    }
+        var that = this,
+            file = null;
+
+        if (fileInput.files.length > 0) {
+            file = fileInput.files[0];
+            if (file.size / (1024 * 1024) <= MOOC.peerReview.settings.file_max_size) {
+                that.executeOnSignedUrl(file, function (signedURL) {
+                    that.uploadToS3(file, signedURL, callback);
+                });
+            } else {
+                MOOC.alerts.show(MOOC.alerts.ERROR,
+                                 MOOC.trans.peerreview.prFileMaxSize,
+                                 MOOC.trans.peerreview.prFileMaxSizeMsg);
+            }
+        }
+    },
+
+    uploadToS3: function (file, url, callback) {
+        "use strict";
+        var that = this;
+
+        $.ajax({
+            url: url,
+            type: "PUT",
+            data: file,
+            processData: false,
+            xhr: function () {
+                var myXhr = $.ajaxSettings.xhr();
+                if (myXhr.upload) {
+                    myXhr.upload.addEventListener('progress', function (event) {
+                        if (event.lengthComputable) {
+                            var percentLoaded = Math.round((event.loaded / event.total) * 100);
+                            that.setProgress(percentLoaded, percentLoaded === 100 ? 'Finalizing.' : 'Uploading.');
+                        }
+                    }, false);
+                }
+                return myXhr;
+            },
+            headers: { 'Content-Type': file.type, 'x-amz-acl': 'public-read' },
+            success: function (data) {
+                that.setProgress(100, 'Upload completed.');
+                $.ajax({
+                    url: '/s3_download_url/?name=' + file.name + '&type=' + file.type,
+                    success: function (data) {
+                        callback(decodeURIComponent(data));
+                    }
+                });
+            },
+            error: function () {
+                that.setProgress(0, 'Upload error.');
+            }
+        });
+    },
+
+    executeOnSignedUrl: function (file, callback) {
+        "use strict";
+        $.ajax({
+            url: '/s3_upload_url/?name=' + file.name + '&type=' + file.type,
+            success: function (data) {
+                callback(decodeURIComponent(data));
+            }
+        });
+    },
+
+    setProgress: function (percent, statusLabel) {
+        "use strict";
+        console.log(percent, statusLabel);
+    },
 });
 
 MOOC.views.peerReviewAssignmentViews = {};

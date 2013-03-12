@@ -14,6 +14,7 @@
 
 
 from django import template
+from django.utils.translation import ugettext
 
 from moocng.mongodb import get_db
 from moocng.peerreview.utils import course_has_peer_review_assignments
@@ -95,6 +96,7 @@ def get_criterion_description(criterion_id):
     except EvaluationCriterion.DoesNotExist:
         return ''
 
+
 @register.filter
 def get_criterion_title(criterion_id):
     try:
@@ -102,3 +104,16 @@ def get_criterion_title(criterion_id):
         return criterion.title
     except EvaluationCriterion.DoesNotExist:
         return ''
+
+
+@register.filter
+def render_criterion_value(criterion_value):
+    labels = {
+        1: ugettext('Very bad'),
+        2: ugettext('Bad'),
+        3: ugettext('Normal'),
+        4: ugettext('Good'),
+        5: ugettext('Very good')
+        }
+
+    return labels.get(criterion_value, ugettext('Undefined'))
