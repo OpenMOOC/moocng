@@ -143,7 +143,9 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 html.push('<table class="table table-stripped table-bordered">');
                 html.push('<caption>' + MOOC.trans.progress.current_reviews + '</caption>');
                 html.push('<thead><tr>');
-                html.push('<th>#</th><th>' + MOOC.trans.progress.date + '</th><th>Score</th>');
+                html.push('<th>#</th>');
+                html.push('<th>' + MOOC.trans.progress.date + '</th>');
+                html.push('<th>' + MOOC.trans.progress.score + ' </th>');
                 html.push('</tr></thead>');
                 html.push('<tbody></tbody>');
                 html.push('</table>');
@@ -200,7 +202,7 @@ MOOC.views.PeerReviewReview = Backbone.View.extend({
 
         html.push('<td>' + (this.index + 1)  + '</td>');
         html.push('<td>' + this.model.get('created').format('LLLL')  + '</td>');
-        html.push('<td><a class="btn btn-small pull-right" href="#"><i class="icon-eye-open"></i> View details</a>' + this.model.get('score')  + '</td>');
+        html.push('<td><a class="btn btn-small pull-right" href="#"><i class="icon-eye-open"></i> ' + MOOC.trans.progress.view_details + '</a>' + this.model.get('score')  + '</td>');
 
         this.$el.html(html.join(""));
         return this;
