@@ -1,5 +1,5 @@
 /*jslint vars: false, browser: true, nomen: true */
-/*global MOOC: true, Backbone, $, _ */
+/*global MOOC: true, Backbone, $, _, moment */
 
 // Copyright 2012 Rooter Analysis S.L.
 //
@@ -348,6 +348,13 @@ MOOC.models.PeerReviewReview  = Backbone.Model.extend({
         criteria: [],
         comment: null,
         score: 0
+    },
+
+    parse: function (resp, xhr) {
+        if (!_.isUndefined(resp.created)) {
+            resp.created = moment(resp.created, "YYYY-MM-DDTHH:mm:ss.SSSZ");
+        }
+        return resp;
     }
 });
 

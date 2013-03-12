@@ -197,7 +197,7 @@ MOOC.views.PeerReviewReview = Backbone.View.extend({
         var html = [];
 
         html.push('<td>' + (this.index + 1)  + '</td>');
-        html.push('<td>' + this.model.get('created')  + '</td>');
+        html.push('<td>' + this.model.get('created').format('LLLL')  + '</td>');
         html.push('<td><a class="btn btn-small pull-right" href="#"><i class="icon-eye-open"></i> View details</a>' + this.model.get('score')  + '</td>');
 
         this.$el.html(html.join(""));
@@ -229,7 +229,7 @@ MOOC.views.PeerReviewReview = Backbone.View.extend({
         }, this);
 
         $("#review-details-modal")
-            .find("time").text(this.model.get('created')).end()
+            .find("time").text(this.model.get('created').format('LLLL')).end()
             .find("tbody").html(criteria.join("")).end()
             .find(".final-score").text(this.model.get('score')).end()
             .find("blockquote").text(this.model.get('comment')).end()
