@@ -1005,8 +1005,8 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
 
     setProgress: function (percent, statusLabel) {
         "use strict";
-        console.log(percent, statusLabel);
-    },
+        // TODO: Update the progress bar
+    }
 });
 
 MOOC.views.peerReviewAssignmentViews = {};
