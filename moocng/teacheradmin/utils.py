@@ -12,15 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
-
 from django.conf import settings
 from django.contrib.sites.models import get_current_site
-from django.core.mail import send_mail, get_connection, EmailMultiAlternatives, EmailMessage
 from django.utils.translation import ugettext_lazy as _
-from django.template import loader
 
-logger = logging.getLogger(__name__)
+from moocng.courses.utils import send_mail_wrapper
 
 
 def send_invitation(request, invitation):
@@ -46,31 +42,3 @@ def send_removed_notification(request, email, course):
     }
     to =  [email]
     send_mail_wrapper(subject, template, context, to)
-
-def send_mail_wrapper(subject, template, context, to):
-    try:
-        email = EmailMessage(
-            subject = subject,
-            body = loader.render_to_string(template, context),
-            from_email = settings.DEFAULT_FROM_EMAIL,
-            to = to
-        )
-        email.send()
-    except IOError as ex:
-        logger.error('The notification "%s" to %s could not be sent because of %s' % (subject, str(to), str(ex)))
-
-
-def send_mass_mail_wrapper(subject, message, recipients, html_content=False):
-    mails = []
-    content = message
-    if html_content:
-        content = ""
-    for to in recipients:
-        email = EmailMultiAlternatives(subject, content, settings.DEFAULT_FROM_EMAIL, [to])
-        if html_content:
-            email.attach_alternative(message, "text/html")
-        mails.append(email)
-    try:
-        get_connection().send_messages(mails)
-    except IOError as ex:
-        logger.error('The massive email "%s" to %s could not be sent because of %s' % (subject, recipients, str(ex)))

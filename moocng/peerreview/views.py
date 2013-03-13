@@ -37,11 +37,10 @@ from django.utils.translation import ugettext as _
 
 from moocng.api.mongodb import get_db
 from moocng.courses.models import Course, KnowledgeQuantum
+from moocng.courses.utils import send_mail_wrapper
 from moocng.peerreview.forms import ReviewSubmissionForm, EvalutionCriteriaResponseForm
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
 from moocng.peerreview.utils import course_get_peer_review_assignments, save_review
-from moocng.teacheradmin.utils import send_mail_wrapper
-from moocng.courses.models import Course, KnowledgeQuantum
 
 
 @login_required

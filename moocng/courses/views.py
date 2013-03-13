@@ -35,8 +35,8 @@ from moocng.badges.models import Award
 from moocng.courses.models import Course, CourseTeacher, Announcement
 from moocng.courses.utils import (calculate_course_mark, get_unit_badge_class,
                                   is_course_ready,
-                                  is_teacher as is_teacher_test)
-from moocng.teacheradmin.utils import send_mail_wrapper
+                                  is_teacher as is_teacher_test,
+                                  send_mail_wrapper)
 
 
 def home(request):
