@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="utf-8"?>
+<django-objects version="1.0">
+    <object pk="16" model="flatpages.flatpage">
+        <field type="CharField" name="url">/oldscore-en/</field>
+        <field type="CharField" name="title">Help for the score calculation (old method)</field>
+        <field type="TextField" name="content">&lt;h2&gt;Course description&lt;/h2&gt;
+
+&lt;p&gt;A course contains units, and units contains nuggets.&lt;/p&gt;
+
+&lt;p&gt;Units can be of 3 types: Normals, Homework and Exams.&lt;/p&gt;
+
+&lt;p&gt;The Normal units doesn't have dates (nor start or end). Their questions can be
+answered whenever and as many times as the students wants to, and the solutions
+are open so the students can check them up. This doesn't happen with the P2P
+(peer review) activities, they can be sent at anytime but only once.&lt;/p&gt;
+
+&lt;p&gt;On the other hand, the Homework or Exam units have beginning and ending dates.
+Outside of this time range the student can't attempt any activity (not even
+P2P submissions reviews) nor change their previous answers. The solution of the
+questions will only be available after the end date.&lt;/p&gt;
+
+&lt;p&gt;There are 3 possible activities:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Video&lt;/strong&gt;. The student only has to watch a video.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Question&lt;/strong&gt;. After watching a video, the student has to answer a few small
+  questions asked by the teacher.&lt;/li&gt;
+ &lt;li&gt;&lt;strong&gt;P2P&lt;/strong&gt;. It's an activity reviewed by peers. There is a topic, and the student
+  has to prepare a submission, after sending it the student has to review as
+  many partners' submissions as required.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;Student evolution measurement. Progress View&lt;/h2&gt;
+
+&lt;p&gt;A student can check his evolution in the progress view, there his activity is
+displayed per units.&lt;/p&gt;
+
+&lt;p&gt;The completeness percentage of a unit is calculated based on its nuggets and in
+function of the nuggets' associated student activity.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Video&lt;/strong&gt;. Once watched, the activity will be considered complete.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Question&lt;/strong&gt;. If the student has watched the video and have answered to the
+  question, then the activity will be completed.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;P2P&lt;/strong&gt;. Once the video is watched, the submission sent and the required
+  partners' submissions reviewed, the nugget will be completed.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;Score calculation&lt;/h2&gt;
+
+&lt;p&gt;The score of the course is in the 0 to 10 range. The final mark will depend on 
+Normal, Homework and Exam units.&lt;/p&gt;
+
+&lt;p&gt;In a course, the different units may have a different weight (some are more
+important than others, this weights are percentages and their total value sums
+100). Each unit has nuggets, and nuggets also have a weight that represent the
+importance of the nugget in the unit, and they are percentages too.&lt;/p&gt;
+
+&lt;p&gt;In the "evaluation criteria" view the student can see the weights assigned
+to every unit and nugget of the course.&lt;/p&gt;
+
+&lt;p&gt;The score of the course will then be the ponderated sum of the scores of its
+units, and the score of each unit (also in a 0 to 10 range) will be the
+ponderated sum of its nuggets. This final score can be seen at the "my
+transcript" view.&lt;/p&gt;
+
+&lt;p&gt;For each kind of nugget its score (in a 0 to 10 scale) is calculated in a
+different way:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Video&lt;/strong&gt;: If the student has watched the video, then the score is 10, else 0.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Question&lt;/strong&gt;:
+  &lt;ul&gt;
+    &lt;li&gt;If the student answers the questions without any mistake, then its 10.&lt;/li&gt;
+    &lt;li&gt;If he doesn't answer or he makes mistakes, then is 0.&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;P2P&lt;/strong&gt;: There are a few conditions that affect the score of these activities.
+  &lt;ul&gt;
+    &lt;li&gt;If the student doesn't send his submission or he doesn't review the
+    required number of partners' submissions, then the score is 0.&lt;/li&gt;
+   &lt;li&gt;If the student sends his submission, reviews at least the required number
+    of partners' submissions, but his submission is not reviewed by the
+    required number of partners, then the nugget will not be considered in the
+    unit score calculation. (The weight of the nugget will be split a added to
+    every other nugget of the same unit).&lt;/li&gt;
+   &lt;li&gt;If the student sends his submission, reviews at least the required number
+    of partners' submissions, and his submission is reviewed by at least the
+    minimum required number of partners, then the score of the nugget will be
+    the mean of the partners' valorations of the nugget, in a 0 to 10 range.&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Each nugget contributes to the unit score in a proportion defined by its weight
+as follow: 10 x weight / 100.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: The sooner the student send his submission for the P2P activities the
+better, since the probabilty of getting enough reviewers to review his work will be bigger.&lt;/p&gt;</field>
+        <field type="BooleanField" name="enable_comments">False</field>
+        <field type="CharField" name="template_name"></field>
+        <field type="BooleanField" name="registration_required">False</field>
+        <field to="sites.site" name="sites" rel="ManyToManyRel"><object pk="1"></object></field>
+    </object>
+    <object pk="17" model="flatpages.flatpage">
+        <field type="CharField" name="url">/oldscore-es/</field>
+        <field type="CharField" name="title">Ayuda para el cálculo de la nota (método antiguo)</field>
+        <field type="TextField" name="content">&lt;h2&gt;Descripción de un curso&lt;/h2&gt;
+
+
+&lt;p&gt;Un curso está compuesto por unidades y éstas a su vez están constituidas por
+píldoras.&lt;/p&gt;
+
+&lt;p&gt;Las unidades pueden ser de 3 tipos: Normales, Tareas y Exámenes.&lt;/p&gt;
+
+&lt;p&gt;Las unidades Normales no tienen fecha. Sus preguntas se pueden contestar cuando
+y cuantas veces se quiera, y las respuestas se pueden consultar libremente.
+Esto no es así para las actividades P2P (peer to peer) que, aunque se pueden
+entregar cuando se quiera, sólo se pueden entregar una vez.&lt;/p&gt;
+
+&lt;p&gt;Las unidades de tipo Tarea o Examen, por el contrario, tienen una fecha de
+inicio y de finalización. Fuera de dicho rango temporal no podrá realizarse
+ninguna actividad de la unidad (ni siquiera revisiones de actividades P2P). La
+solución de las preguntas se ofrece una vez alcanzada la fecha de finalización.&lt;/p&gt;
+
+&lt;p&gt;Dentro de una unidad existen 3 tipos de actividades:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Vídeo&lt;/strong&gt;. En esta actividad únicamente el alumno tendrá que visualizar un vídeo.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Pregunta&lt;/strong&gt;. En esta actividad el alumno deberá responder a una serie de
+  cuestiones que plantea el profesor (tipo test).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;P2P&lt;/strong&gt;. Se trata de una actividad de revisión por compañeros (peer review). En
+  ella se nos planteará una cuestión sobre la que el alumno deberá elaborar
+  una entrega. Una vez enviada la entrega, el alumno deberá corregir tantos
+  ejercicios de sus compañeros como le sea indicado.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;Métrica de la evolución de un alumno. Vista de progreso&lt;/h2&gt;
+
+
+&lt;p&gt;Un alumno puede ver su evolución en la vista de progreso que mide su actividad
+desglosada por unidades.&lt;/p&gt;
+
+&lt;p&gt;El porcentaje de completitud de la unidad se calcula en base a sus píldoras en
+función de su actividad asociada:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Vídeo&lt;/strong&gt;. Una vez visualizado, la actividad se dará como completada.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Pregunta&lt;/strong&gt;. Si el alumno visualiza el vídeo y responde a la pregunta se le dará
+  la actividad como completada.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;P2P&lt;/strong&gt;. Esta actividad se dará por completada cuando el usuario, tras visualizar
+  el vídeo, envíe el ejercicio y revise el mínimo exigido de ejercicios de sus compañeros.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;Cálculo de notas&lt;/h2&gt;
+
+&lt;p&gt;La nota de un curso se valora en una escala de 0 a 10.  La nota final dependerá de la nota de las unidades de tipo
+Normal, Tareas y Examenes.&lt;/p&gt;
+
+Para el cálculo de la
+nota se tendrán en cuenta únicamente los módulos de tipo Tarea o Examen. Las
+unidades de tipo Normal se consideran unidades de apoyo para el seguimiento del
+curso y no contarán por tanto para la nota final.&lt;/p&gt;
+
+&lt;p&gt;Dentro de un curso, las diferentes unidades pueden tener distinto peso (unas
+pueden valer más que otras, estos pesos serán porcentajes cuyo valor total
+dentro del curso sumará 100). Dentro de una unidad cada píldora también tiene
+un peso asociado que pondera su importancia dentro de la unidad, y también es
+un porcentaje.&lt;/p&gt;
+
+&lt;p&gt;En la vista "criterios de evaluación" podremos ver el peso asignado a las
+diferentes unidades del curso, y también los pesos asociados a las píldoras de
+dichas unidades.&lt;/p&gt;
+
+&lt;p&gt;La nota de un curso será por tanto la suma ponderada de las notas de sus
+unidades, y la nota de cada unidad será la suma ponderada de las notas de sus
+píldoras. Esta nota final se puede consultar en la vista de "mis notas".&lt;/p&gt;
+
+&lt;p&gt;La nota de una píldora (en una escala de 0 a 10) se calcula de manera diferente
+según el tipo de actividad asociada a dicha píldora:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Vídeo&lt;/strong&gt;. Si se ha visualizado el vídeo la nota asociada a la píldora será 10.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Pregunta&lt;/strong&gt;:
+  &lt;ul&gt;
+      &lt;li&gt;Si respondemos a la pregunta sin fallos, la nota asociada a la píldora será
+   10.&lt;/li&gt;
+   &lt;li&gt;Si no respondemos o respondemos con algún fallo, la nota asociada a la
+   píldora será 0.&lt;/li&gt;
+ &lt;/ul&gt;
+&lt;li&gt;&lt;strong&gt;P2P&lt;/strong&gt;. Hay que tener en cuenta los siguientes aspectos para el cálculo de notas
+  de esta actividad:
+ &lt;ul&gt;
+    &lt;li&gt;Si un usuario no envía su trabajo o no corrige el número mínimo de
+    ejercicios que se le exigen en la actividad, la nota será 0.&lt;/li&gt;
+   &lt;li&gt;Si un usuario envía su trabajo, corrige el número mínimo de ejercicios que
+    se le exigen pero no obtiene el mínimo de valoraciones exigidas en la
+    actividad, esta actividad no contará para el cálculo de la nota final.
+    (El peso asociado a la actividad se repartirá entre el resto de píldoras de
+    la unidad).&lt;/li&gt;
+  &lt;li&gt;Si un usuario envía su trabajo, corrige el número mínimo de ejercicios que
+    se le exigen, y obtiene el mínimo de valoraciones requeridas, la nota
+    asociada será la media ponderada de las valoraciones que recibió de sus
+    compañeros.&lt;/li&gt;
+ &lt;/ul&gt;
+&lt;/ul&gt;
+&lt;p&gt;Finalmente, la aportación que cada píldora hace a la nota de la unidad será
+10 x ponderación / 100.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Nota&lt;/strong&gt;: Cuanto antes realice el alumno los ejercicios de tipo P2P más posibilidad
+tendrá de recibir el mínimo de valoraciones necesarias para que puntúe el
+ejercicio.&lt;/p&gt;</field>
+        <field type="BooleanField" name="enable_comments">False</field>
+        <field type="CharField" name="template_name"></field>
+        <field type="BooleanField" name="registration_required">False</field>
+        <field to="sites.site" name="sites" rel="ManyToManyRel"><object pk="1"></object></field>
+    </object>
+    <object pk="18" model="flatpages.flatpage">
+        <field type="CharField" name="url">/score-en/</field>
+        <field type="CharField" name="title">Help for the score calculation</field>
+        <field type="TextField" name="content">&lt;h2&gt;Course description&lt;/h2&gt;
+
+&lt;p&gt;A course contains units, and units contains nuggets.&lt;/p&gt;
+
+&lt;p&gt;Units can be of 3 types: Normals, Homework and Exams.&lt;/p&gt;
+
+&lt;p&gt;The Normal units doesn't have dates (nor start or end). Their questions can be
+answered whenever and as many times as the students wants to, and the solutions
+are open so the students can check them up. This doesn't happen with the P2P
+(peer review) activities, they can be sent at anytime but only once.&lt;/p&gt;
+
+&lt;p&gt;On the other hand, the Homework or Exam units have beginning and ending dates.
+Outside of this time range the student can't attempt any activity (not even
+P2P submissions reviews) nor change their previous answers. The solution of the
+questions will only be available after the end date.&lt;/p&gt;
+
+&lt;p&gt;There are 3 possible activities:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Video&lt;/strong&gt;. The student only has to watch a video.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Question&lt;/strong&gt;. After watching a video, the student has to answer a few small
+  questions asked by the teacher.&lt;/li&gt;
+ &lt;li&gt;&lt;strong&gt;P2P&lt;/strong&gt;. It's an activity reviewed by peers. There is a topic, and the student
+  has to prepare a submission, after sending it the student has to review as
+  many partners' submissions as required.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;Student evolution measurement. Progress View&lt;/h2&gt;
+
+&lt;p&gt;A student can check his evolution in the progress view, there his activity is
+displayed per units.&lt;/p&gt;
+
+&lt;p&gt;The completeness percentage of a unit is calculated based on its nuggets and in
+function of the nuggets' associated student activity.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Video&lt;/strong&gt;. Once watched, the activity will be considered complete.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Question&lt;/strong&gt;. If the student has watched the video and have answered to the
+  question, then the activity will be completed.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;P2P&lt;/strong&gt;. Once the video is watched, the submission sent and the required
+  partners' submissions reviewed, the nugget will be completed.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;Score calculation&lt;/h2&gt;
+
+&lt;p&gt;The score of the course is in the 0 to 10 range. In this calculation &lt;i&gt;only the
+Homework and Exam units are considered&lt;/i&gt;. The Normal units are support content
+for the good development of the course, and because of that they don't
+contribute to the final score.&lt;/p&gt;
+
+&lt;p&gt;In a course, the different units may have a different weight (some are more
+important than others, this weights are percentages and their total value sums
+100). Each unit has nuggets, and nuggets also have a weight that represent the
+importance of the nugget in the unit, and they are percentages too.&lt;/p&gt;
+
+&lt;p&gt;In the "evaluation criteria" view the student can see the weights assigned
+to every unit and nugget of the course.&lt;/p&gt;
+
+&lt;p&gt;The score of the course will then be the ponderated sum of the scores of its
+units, and the score of each unit (also in a 0 to 10 range) will be the
+ponderated sum of its nuggets. This final score can be seen at the "my
+transcript" view.&lt;/p&gt;
+
+&lt;p&gt;For each kind of nugget its score (in a 0 to 10 scale) is calculated in a
+different way:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Video&lt;/strong&gt;: If the student has watched the video, then the score is 10, else 0.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Question&lt;/strong&gt;:
+  &lt;ul&gt;
+    &lt;li&gt;If the student answers the questions without any mistake, then its 10.&lt;/li&gt;
+    &lt;li&gt;If he doesn't answer or he makes mistakes, then is 0.&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;P2P&lt;/strong&gt;: There are a few conditions that affect the score of these activities.
+  &lt;ul&gt;
+    &lt;li&gt;If the student doesn't send his submission or he doesn't review the
+    required number of partners' submissions, then the score is 0.&lt;/li&gt;
+   &lt;li&gt;If the student sends his submission, reviews at least the required number
+    of partners' submissions, but his submission is not reviewed by the
+    required number of partners, then the nugget will not be considered in the
+    unit score calculation. (The weight of the nugget will be split a added to
+    every other nugget of the same unit).&lt;/li&gt;
+   &lt;li&gt;If the student sends his submission, reviews at least the required number
+    of partners' submissions, and his submission is reviewed by at least the
+    minimum required number of partners, then the score of the nugget will be
+    the mean of the partners' valorations of the nugget, in a 0 to 10 range.&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Each nugget contributes to the unit score in a proportion defined by its weight
+as follow: 10 x weight / 100.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: The sooner the student send his submission for the P2P activities the
+better, since the probabilty of getting enough reviewers to review his work will be bigger.&lt;/p&gt;</field>
+        <field type="BooleanField" name="enable_comments">False</field>
+        <field type="CharField" name="template_name"></field>
+        <field type="BooleanField" name="registration_required">False</field>
+        <field to="sites.site" name="sites" rel="ManyToManyRel"><object pk="1"></object></field>
+    </object>
+    <object pk="19" model="flatpages.flatpage">
+        <field type="CharField" name="url">/score-es/</field>
+        <field type="CharField" name="title">Ayuda para el cálculo de la nota</field>
+        <field type="TextField" name="content">&lt;h2&gt;Descripción de un curso&lt;/h2&gt;
+
+
+&lt;p&gt;Un curso está compuesto por unidades y éstas a su vez están constituidas por
+píldoras.&lt;/p&gt;
+
+&lt;p&gt;Las unidades pueden ser de 3 tipos: Normales, Tareas y Exámenes.&lt;/p&gt;
+
+&lt;p&gt;Las unidades Normales no tienen fecha. Sus preguntas se pueden contestar cuando
+y cuantas veces se quiera, y las respuestas se pueden consultar libremente.
+Esto no es así para las actividades P2P (peer to peer) que, aunque se pueden
+entregar cuando se quiera, sólo se pueden entregar una vez.&lt;/p&gt;
+
+&lt;p&gt;Las unidades de tipo Tarea o Examen, por el contrario, tienen una fecha de
+inicio y de finalización. Fuera de dicho rango temporal no podrá realizarse
+ninguna actividad de la unidad (ni siquiera revisiones de actividades P2P). La
+solución de las preguntas se ofrece una vez alcanzada la fecha de finalización.&lt;/p&gt;
+
+&lt;p&gt;Dentro de una unidad existen 3 tipos de actividades:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Vídeo&lt;/strong&gt;. En esta actividad únicamente el alumno tendrá que visualizar un vídeo.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Pregunta&lt;/strong&gt;. En esta actividad el alumno deberá responder a una serie de
+  cuestiones que plantea el profesor (tipo test).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;P2P&lt;/strong&gt;. Se trata de una actividad de revisión por compañeros (peer review). En
+  ella se nos planteará una cuestión sobre la que el alumno deberá elaborar
+  una entrega. Una vez enviada la entrega, el alumno deberá corregir tantos
+  ejercicios de sus compañeros como le sea indicado.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;Métrica de la evolución de un alumno. Vista de progreso&lt;/h2&gt;
+
+
+&lt;p&gt;Un alumno puede ver su evolución en la vista de progreso que mide su actividad
+desglosada por unidades.&lt;/p&gt;
+
+&lt;p&gt;El porcentaje de completitud de la unidad se calcula en base a sus píldoras en
+función de su actividad asociada:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Vídeo&lt;/strong&gt;. Una vez visualizado, la actividad se dará como completada.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Pregunta&lt;/strong&gt;. Si el alumno visualiza el vídeo y responde a la pregunta se le dará
+  la actividad como completada.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;P2P&lt;/strong&gt;. Esta actividad se dará por completada cuando el usuario, tras visualizar
+  el vídeo, envíe el ejercicio y revise el mínimo exigido de ejercicios de sus compañeros.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;Cálculo de notas&lt;/h2&gt;
+
+&lt;p&gt;La nota de un curso se valora en una escala de 0 a 10. Para el cálculo de la
+nota &lt;i&gt;se tendrán en cuenta únicamente los módulos de tipo Tarea o Examen&lt;/i&gt;. Las
+unidades de tipo Normal se consideran unidades de apoyo para el seguimiento del
+curso y no contarán por tanto para la nota final.&lt;/p&gt;
+
+&lt;p&gt;Dentro de un curso, las diferentes unidades pueden tener distinto peso (unas
+pueden valer más que otras, estos pesos serán porcentajes cuyo valor total
+dentro del curso sumará 100). Dentro de una unidad cada píldora también tiene
+un peso asociado que pondera su importancia dentro de la unidad, y también es
+un porcentaje.&lt;/p&gt;
+
+&lt;p&gt;En la vista "criterios de evaluación" podremos ver el peso asignado a las
+diferentes unidades del curso, y también los pesos asociados a las píldoras de
+dichas unidades.&lt;/p&gt;
+
+&lt;p&gt;La nota de un curso será por tanto la suma ponderada de las notas de sus
+unidades, y la nota de cada unidad será la suma ponderada de las notas de sus
+píldoras. Esta nota final se puede consultar en la vista de "mis notas".&lt;/p&gt;
+
+&lt;p&gt;La nota de una píldora (en una escala de 0 a 10) se calcula de manera diferente
+según el tipo de actividad asociada a dicha píldora:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Vídeo&lt;/strong&gt;. Si se ha visualizado el vídeo la nota asociada a la píldora será 10.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Pregunta&lt;/strong&gt;:
+  &lt;ul&gt;
+      &lt;li&gt;Si respondemos a la pregunta sin fallos, la nota asociada a la píldora será
+   10.&lt;/li&gt;
+   &lt;li&gt;Si no respondemos o respondemos con algún fallo, la nota asociada a la
+   píldora será 0.&lt;/li&gt;
+ &lt;/ul&gt;
+&lt;li&gt;&lt;strong&gt;P2P&lt;/strong&gt;. Hay que tener en cuenta los siguientes aspectos para el cálculo de notas
+  de esta actividad:
+ &lt;ul&gt;
+    &lt;li&gt;Si un usuario no envía su trabajo o no corrige el número mínimo de
+    ejercicios que se le exigen en la actividad, la nota será 0.&lt;/li&gt;
+   &lt;li&gt;Si un usuario envía su trabajo, corrige el número mínimo de ejercicios que
+    se le exigen pero no obtiene el mínimo de valoraciones exigidas en la
+    actividad, esta actividad no contará para el cálculo de la nota final.
+    (El peso asociado a la actividad se repartirá entre el resto de píldoras de
+    la unidad).&lt;/li&gt;
+  &lt;li&gt;Si un usuario envía su trabajo, corrige el número mínimo de ejercicios que
+    se le exigen, y obtiene el mínimo de valoraciones requeridas, la nota
+    asociada será la media ponderada de las valoraciones que recibió de sus
+    compañeros.&lt;/li&gt;
+ &lt;/ul&gt;
+&lt;/ul&gt;
+&lt;p&gt;Finalmente, la aportación que cada píldora hace a la nota de la unidad será
+10 x ponderación / 100.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Nota&lt;/strong&gt;: Cuanto antes realice el alumno los ejercicios de tipo P2P más posibilidad
+tendrá de recibir el mínimo de valoraciones necesarias para que puntúe el
+ejercicio.&lt;/p&gt;</field>
+        <field type="BooleanField" name="enable_comments">False</field>
+        <field type="CharField" name="template_name"></field>
+        <field type="BooleanField" name="registration_required">False</field>
+        <field to="sites.site" name="sites" rel="ManyToManyRel"><object pk="1"></object></field>
+    </object>
+</django-objects>
