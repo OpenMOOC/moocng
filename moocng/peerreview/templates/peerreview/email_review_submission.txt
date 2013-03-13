@@ -1,0 +1,15 @@
+Congratulations {{ user }}
+
+The exercise you sent on {{ date }} belonging the nugget "{{ nugget }}" has been reviewed by a classmate.
+
+Evaluation criteria:
+
+{% for criterion, evaluation in review_criteria %}
+- {{ criterion }}: {{ evaluation }}
+{% endfor %}
+
+Your classmate's comment:
+
+{{ comment }}
+
+Best regards and thank you for learning with {{ site }}.

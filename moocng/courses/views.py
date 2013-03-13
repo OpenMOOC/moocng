@@ -106,12 +106,14 @@ def course_add(request):
 
         if not allow_public:
             subject = _('Your course "%s" has been created') % name
-            message = _('Dear %(user)s\n\nYour course "%(course)s" has been created, and you have been assigned as the teacher owner. You can now access to the course administration interface and start adding content.\n\nBest regards,\n%(site)s\'s team') % {
+            template = 'courses/email_not_allow.txt'
+            context = {
                 'user': owner.get_full_name(),
                 'course': name,
-                'site': get_current_site(request).name,
+                'site': get_current_site(request).name
             }
-            send_mail_wrapper(subject, message, [owner.email])
+            to = [owner.email]
+            send_mail_wrapper(subject, template, context, to)
 
         messages.success(request, _('The course was successfully created'))
         return HttpResponseRedirect(reverse('teacheradmin_info', args=[course.slug]))

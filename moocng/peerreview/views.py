@@ -194,43 +194,28 @@ def course_review_review(request, course_slug, assignment_id):
 
 def send_mail_to_submission_owner(current_site_name, assignment, review, submitter):
     subject = _(u'Your assignment "%(nugget)s" has been reviewed') % {'nugget': assignment.kq.title}
-    message = _(u"""Congratulations %(user)s
-
-    The exercise you sent on %(date)s belonging the nugget "%(nugget)s" has been reviewed by a classmate.
-
-    Evaluation criteria:
-
-    """) % {
-        'user': submitter,
-        'date': review['created'].strftime('%d/%m/%Y'),
-        'nugget': assignment.kq.title
-    }
-
-
+    template = 'peerreview/email_review_submission.txt'
+    review_criteria = []
     for item in review['criteria']:
         try:
             criterion = EvaluationCriterion.objects.get(pk=item[0]).title
-        except EvaluationCriterion.DoesNotExist:
+        except:
             criterion = _(u'Undefined')
 
-        message += u"""- %(criterion)s: %(evaluation)s
-    """ % {
-                        'criterion': criterion,
-                        'evaluation': item[1]
-                    }
+        review_criteria.append((criterion, item[1]))
 
-    message += _(u"""
-    Your classmate's comment:
-
-    %(comment)s
-
-    Best regards and thank you for learning with %(site)s.
-
-    %(site)s's team""") % {
+    context = {
+        'user' : submitter,
+        'date': review['created'].strftime('%d/%m/%Y'),
+        'nugget': assignment.kq.title,
+        'review_criteria': review_criteria,
         'comment': review['comment'],
-        'site': current_site_name,
+        'site': current_site_name
     }
-    send_mail_wrapper(subject, message, [submitter.email])
+    to = [submitter.email]
+
+    send_mail_wrapper(subject, template, context, to)
+
 
 @login_required
 def get_s3_upload_url(request):
