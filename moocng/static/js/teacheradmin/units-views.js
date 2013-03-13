@@ -567,7 +567,9 @@ if (_.isUndefined(window.MOOC)) {
             initialize: function () {
                 _.bindAll(this, "render", "save", "remove", "goBack",
                     "checkRequired", "useBlankCanvas", "useLastFrame",
-                    "toggleSolution");
+                    "toggleSolution", "addQuestion", "addPeerReviewAssignment",
+                    "addCriterion", "forceProcess", "removeQuestion",
+                    "removePeerReviewAssignment", "go2options");
             },
 
             render: function () {
@@ -715,6 +717,7 @@ if (_.isUndefined(window.MOOC)) {
                     question,
                     assignment,
                     criterionList,
+                    criterionListSaveTasks,
                     attachCB;
 
                 this.model.unset("new");
@@ -750,6 +753,7 @@ if (_.isUndefined(window.MOOC)) {
                 });
 
                 if (this.model.has("peerReviewAssignmentInstance")) {
+                    criterionListSaveTasks = [];
                     assignment = this.model.get("peerReviewAssignmentInstance");
                     if (assignment.has("id")) {
                         assignment.set("description", tinyMCE.get("reviewdescription").getContent());
@@ -769,14 +773,15 @@ if (_.isUndefined(window.MOOC)) {
 
                     criterionList = assignment.get("_criterionList");
                     criterionList.each(function (criterion) {
-                        var titleInputId;
-                        var descriptionInputId;
+                        var titleInputId,
+                            descriptionInputId;
+
                         titleInputId = "criteriontitle-" + criterion.get("id");
                         descriptionInputId = "criteriondescription-" + criterion.get("id");
                         criterion.set("title", self.$el.find("#" + titleInputId).val());
                         criterion.set("description", self.$el.find("#" + descriptionInputId).val());
 
-                        steps.push(function (asyncCB) {
+                        criterionListSaveTasks.push(function (asyncCB) {
                             criterion.save(null, {
                                 success: function () {
                                     asyncCB();
@@ -786,6 +791,10 @@ if (_.isUndefined(window.MOOC)) {
                                 }
                             });
                         });
+                    });
+
+                    steps.push(function (asyncCB) {
+                        async.parallel(criterionListSaveTasks, asyncCB);
                     });
                 }
 
@@ -824,8 +833,8 @@ if (_.isUndefined(window.MOOC)) {
                                         };
                                     })
                                 );
-                            self.model.set("attachmentList", attachmentList);
-                            asyncCB();
+                                self.model.set("attachmentList", attachmentList);
+                                asyncCB();
                             },
                             error: function () { asyncCB("Error saving attachment"); }
                         });
