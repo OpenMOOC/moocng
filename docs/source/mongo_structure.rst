@@ -7,6 +7,8 @@ MongoDB is used to store all user activity.
 
 * Watches videos (activity collection)
 * Answers (answers collection)
+* Peer Reviews Submissions (peer_review_submissions collection).
+* Peer Review Reviews (peer_review_reviews collection)
 
 
 Activity Collection
@@ -27,7 +29,7 @@ Object Structure
 * **courses**: (String) Object where every property is one *Course id* in
   moocng.
 
-  * **kqs**: (List of Strings) Every item in list is one *KnowledQuantum id*
+  * **kqs**: (List of Strings) Every item in list is one *KnowledgeQuantum id*
     (KQ) in moocng. If a KQ is in this list then this KQ video has been viewed.
 
 
@@ -155,8 +157,8 @@ Peer Review Submissions Collection
 
 The collection name is **peer_review_submissions**.
 
-This collection store peer review user submissions for every *KnowledQuantum*
-with *PeerReviewAssignement*.
+This collection store peer review user submissions for every *KnowledgeQuantum*
+with *PeerReviewAssignment*.
 
 This collection have one object per user submission.
 
@@ -172,7 +174,7 @@ Example
        "author_reviews" : 1,
        "text" : "Text from submission from user 1",
        "file" : "513e0dbfc2fc058ab13fd894",
-       "created" : "2013-03-11T10:19:05.713189",
+       "created" : ISODate("2013-03-11T10:19:05.713Z"),
        "reviewers" : [
            2
        ],
@@ -181,6 +183,7 @@ Example
        "unit" : 1
        "kq" : 1,
        "assigned_to": 3
+       "assigned_when": ISODate("2013-03-11T13:18:02.231Z"),
    }
 
 
@@ -189,7 +192,7 @@ Object Structure
 
 * **_id**: Native mongo ObjectId
 * **author**: (Integer) Submission author *User id* in moocng.
-* **author_reviews**: (Integer) Reviews to this *Asignement* from this user.
+* **author_reviews**: (Integer) Reviews to this *Assignment* from this user.
 * **text**: (String) Text given from student.
 * **file**: (String) link to file uploaded by user, or a ID in s3.
 * **created**: (datetime) String ISO DateTime Format.
@@ -199,7 +202,7 @@ Object Structure
   others.
 * **course**: (Integer): *Course id*
 * **unit**: (Integer): *Unit id*
-* **kq**: (Integer): *KnowledQuantum id* is related to *PeerReviewAssignement*.
+* **kq**: (Integer): *KnowledgeQuantum id* is related to *PeerReviewAssignment*.
 * **assigned_to**: (Integer) One *User id* from user who has been assigned to
   review this assignement. This user can't be present in **reviewers** until he
   finish the review.
@@ -226,18 +229,16 @@ Example
        "reviewer" : 1,
        "comment" : "This is text about submission from user reviewer",
        "submission_id" : ObjectId("513df5e9ac15dd081146d479"),
-       "created" : "2013-03-11T10:51:54.172189",
+       "created" : ISODate("2013-03-11T10:51:54.172Z"),
        "criteria" : [
            [1, 3],
            [2, 2],
            [3, 5]
        ],
-
        "course" : 1,
        "unit" : 1
        "kq" : 1,
    }
-
 
 
 Object Structure
@@ -254,4 +255,4 @@ Object Structure
   * **second item** (Integer) This is the value given by reviewer.
 * **course**: (Integer): *Course id*.
 * **unit**: (Integer): *Unit id*.
-* **kq**: (Integer): *KnowledQuantum id* is related to *PeerReviewAssignement*.
+* **kq**: (Integer): *KnowledgeQuantum id* is related to *PeerReviewAssignment*.
