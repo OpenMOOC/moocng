@@ -987,7 +987,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
             success: function (data) {
                 that.setProgress(100, 'Upload completed.');
                 $.ajax({
-                    url: '/s3_download_url/?name=' + file.name + '&type=' + file.type,
+                    url: '/s3_download_url/?name=' + file.name + '&kq=' + that.model.get("_knowledgeQuantumInstance").get("id"),
                     success: function (data) {
                         callback(decodeURIComponent(data));
                     }
@@ -1001,8 +1001,10 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
 
     executeOnSignedUrl: function (file, callback) {
         "use strict";
+        var that = this;
+
         $.ajax({
-            url: '/s3_upload_url/?name=' + file.name + '&type=' + file.type,
+            url: '/s3_upload_url/?name=' + file.name + '&type=' + file.type + '&kq=' + that.model.get("_knowledgeQuantumInstance").get("id"),
             success: function (data) {
                 callback(decodeURIComponent(data));
             }

@@ -41,6 +41,7 @@ from moocng.peerreview.forms import ReviewSubmissionForm, EvalutionCriteriaRespo
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
 from moocng.peerreview.utils import course_get_peer_review_assignments, save_review
 from moocng.teacheradmin.utils import send_mail_wrapper
+from moocng.courses.models import Course, KnowledgeQuantum
 
 
 @login_required
@@ -207,7 +208,7 @@ def send_mail_to_submission_owner(current_site_name, assignment, review, submitt
         review_criteria.append((criterion, item[1]))
 
     context = {
-        'user' : submitter,
+        'user': submitter,
         'date': review['created'].strftime('%d/%m/%Y'),
         'nugget': assignment.kq.title,
         'review_criteria': review_criteria,
@@ -222,11 +223,15 @@ def send_mail_to_submission_owner(current_site_name, assignment, review, submitt
 @login_required
 def get_s3_upload_url(request):
     user = request.user
-    name = "%d/%s" % (user.id, request.GET['name']);
+
+    filename = request.GET.get('name', 'noname')
+    kq_id = request.GET.get('kq', 'nokq')
+
+    name = "%d/%s/%s" % (user.id, kq_id, filename)
     mime_type = request.GET['type']
 
     expires = time.time() + settings.AWS_S3_UPLOAD_EXPIRE_TIME
-    amz_headers= "x-amz-acl:public-read"
+    amz_headers = "x-amz-acl:public-read"
     string_to_sign = "PUT\n\n%s\n%d\n%s\n/%s/%s" % (mime_type, expires, amz_headers, settings.AWS_STORAGE_BUCKET_NAME, name)
 
     sig = hmac.new(settings.AWS_SECRET_ACCESS_KEY, string_to_sign, hashlib.sha1).digest()
@@ -241,28 +246,30 @@ def get_s3_upload_url(request):
         sig
     )
 
-    return HttpResponse(urllib.quote(url));
+    return HttpResponse(urllib.quote(url))
 
 
 @login_required
 def get_s3_download_url(request):
-    url = s3_url(request.user.id, request.GET['name'])
-    return HttpResponse(urllib.quote(url));
+    name = request.GET.get('name', 'noname')
+    kq_id = request.GET.get('kq', 'nokq')
+    url = s3_url(request.user.id, name, kq_id)
+    return HttpResponse(urllib.quote(url))
 
 
-def s3_url(user_id, filename):
-    name = "%d/%s" % (user_id, filename)
+def s3_url(user_id, filename, kq_id):
+    name = "%d/%s/%s" % (user_id, kq_id, filename)
     url = "%s/%s" % (settings.AWS_S3_URL, name)
     return url
 
 
-def s3_upload(user_id, filename, file_obj):
+def s3_upload(user_id, kq_id, filename, file_obj):
     conn = boto.connect_s3(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY)
 
     bucket = conn.get_bucket(settings.AWS_STORAGE_BUCKET_NAME)
 
     k = boto.s3.key.Key(bucket)
-    name = "%d/%s" % (user_id, filename)
+    name = "%d/%s/%s" % (user_id, kq_id, filename)
     k.key = name
     k.set_contents_from_file(file_obj)
 
@@ -286,20 +293,20 @@ def course_review_upload(request, course_slug):
             messages.error(request, _('Your text is greater than the max allowed size (%d characters).') % settings.PEER_REVIEW_TEXT_MAX_SIZE)
             return HttpResponseRedirect(reverse('course_classroom', args=[course_slug])+"#unit%d/kq%d/p" % (unit.id, kq.id))
 
-        s3_upload(request.user.id, file_to_upload.name, file_to_upload)
-        file_url = s3_url(request.user.id, file_to_upload.name)
+        s3_upload(request.user.id, kq.id, file_to_upload.name, file_to_upload)
+        file_url = s3_url(request.user.id, file_to_upload.name, kq.id)
 
         submission = {
-            "author" : request.user.id,
-            "author_reviews" : 0,
-            "text" : request.POST.get('pr-submission', ''),
-            "file" : file_url,
-            "created" : datetime.now(),
-            "reviewers" : [],
-            "reviews" : 0,
-            "course" : course.id,
-            "unit" : unit.id,
-            "kq" : kq.id,
+            "author": request.user.id,
+            "author_reviews": 0,
+            "text": request.POST.get('pr-submission', ''),
+            "file": file_url,
+            "created": datetime.now(),
+            "reviewers": [],
+            "reviews": 0,
+            "course": course.id,
+            "unit": unit.id,
+            "kq": kq.id,
             "assigned_to": None,
         }
         db = get_db()
