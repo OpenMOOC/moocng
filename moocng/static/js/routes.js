@@ -36,6 +36,7 @@ MOOC.io = {
 
         return dfd.promise();
     },
+
     loadPeerReviewReviewList: function (unitId) {
         "use strict";
         return MOOC.io._loadDataFromUnit(unitId, MOOC.models.PeerReviewReviewList);
@@ -49,6 +50,11 @@ MOOC.io = {
     loadEvaluationCriterionList: function (unitId) {
         "use strict";
         return MOOC.io._loadDataFromUnit(unitId, MOOC.models.EvaluationCriterionList);
+    },
+
+    loadPeerReviewSubmissionList: function (unitId) {
+        "use strict";
+        return MOOC.io._loadDataFromUnit(unitId, MOOC.models.PeerReviewSubmissionList);
     }
 };
 
@@ -288,16 +294,19 @@ MOOC.App = Backbone.Router.extend({
                 // Only in progress view
                 $.when(MOOC.io.loadPeerReviewReviewList(unitID),
                        MOOC.io.loadPeerReviewAssignmentList(unitID),
-                       MOOC.io.loadEvaluationCriterionList(unitID))
+                       MOOC.io.loadEvaluationCriterionList(unitID),
+                       MOOC.io.loadPeerReviewSubmissionList(unitID))
                     .then(function (peerReviewReviewList,
                                     peerReviewAssignmentList,
-                                    evaluationCriterionList) {
+                                    evaluationCriterionList,
+                                    peerReviewSubmissionList) {
 
                         var knowledgeQuantumList = unitObj.get('knowledgeQuantumList');
 
                         unitObj.set('peerReviewReviewList', peerReviewReviewList);
                         knowledgeQuantumList.setPeerReviewAssignmentList(peerReviewAssignmentList);
                         knowledgeQuantumList.setEvaluationCriterionList(evaluationCriterionList);
+                        knowledgeQuantumList.setPeerReviewSubmissionList(peerReviewSubmissionList);
                         createView();
                     });
 
