@@ -44,6 +44,7 @@
 
 {% if pending > 0 %}
 
-<p><i class="icon-warning-sign"></i> {% blocktrans %}You still need to review {{ pending }} more submissions.{% endblocktrans %}</p>
+<p><i class="icon-warning-sign"></i> {% blocktrans count counter=pending %}You still need to review {{ pending }} more submissions.{% plural %}You still need to review {{ pending }} more submission.{% endblocktrans %}
+</p>
 
 {% endif %}
