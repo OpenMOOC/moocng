@@ -13,32 +13,33 @@
 # limitations under the License.
 
 from datetime import datetime, timedelta
-import pymongo
-import hmac
+import base64
 import hashlib
+import hmac
 import urllib
 import time
-import base64
-import boto
 
+import boto
+import pymongo
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.sites.models import get_current_site
 from django.core.urlresolvers import reverse
+from django.db import IntegrityError
+from django.forms.formsets import formset_factory
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
-from django.forms.formsets import formset_factory
-from django.db import IntegrityError
-from django.conf import settings
 
 from moocng.api.mongodb import get_db
 from moocng.courses.models import Course, KnowledgeQuantum
+from moocng.peerreview.forms import ReviewSubmissionForm, EvalutionCriteriaResponseForm
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
 from moocng.peerreview.utils import course_get_peer_review_assignments, save_review
-from moocng.peerreview.forms import ReviewSubmissionForm, EvalutionCriteriaResponseForm
 from moocng.teacheradmin.utils import send_mail_wrapper
 
 
