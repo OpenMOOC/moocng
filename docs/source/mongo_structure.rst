@@ -192,20 +192,23 @@ Object Structure
 
 * **_id**: Native mongo ObjectId
 * **author**: (Integer) Submission author *User id* in moocng.
-* **author_reviews**: (Integer) Reviews to this *Assignment* from this user.
-* **text**: (String) Text given from student.
-* **file**: (String) link to file uploaded by user, or a ID in s3.
-* **created**: (datetime) String ISO DateTime Format.
-* **reviewers**: (List): Every Object is one *User id* who has reviewed this
+* **author_reviews**: (Integer) Number of reviews that the author of this
+  submission has done.
+* **text**: (String) Text entered by the author of this submission.
+* **file**: (String)  Link to file or S3's ID uploaded by the author of this
   submission.
-* **reviews**: (Integer) Count, how many times has been reviewed this review by
-  others.
+* **created**: (ISODate) When this submission was created.
+* **reviewers**: (List): List of users that have reviewed this submission. Each
+  element of the list is an integer (moocng user id)
+* **reviews**: (Integer) Number of times this submission has been reviewed by
+  other users.
 * **course**: (Integer): *Course id*
 * **unit**: (Integer): *Unit id*
 * **kq**: (Integer): *KnowledgeQuantum id* is related to *PeerReviewAssignment*.
-* **assigned_to**: (Integer) One *User id* from user who has been assigned to
-  review this assignement. This user can't be present in **reviewers** until he
-  finish the review.
+* **assigned_to**: (Integer) Number of times this submission has been reviewed
+  by other users. This user will not be added to the reviewers list until he
+  finishes the review.
+* **assigned_when**: (ISODate) When this submission was assigned.
 
 
 Peer Review Reviews Collection
@@ -213,7 +216,7 @@ Peer Review Reviews Collection
 
 The collection name is **peer_review_reviews**.
 
-This collection store user reviews for assignement submissions.
+This collection store user reviews for assignment submissions.
 
 This collection have one object per user review.
 
@@ -245,14 +248,15 @@ Object Structure
 ----------------
 
 * **_id**: Native mongo ObjectId
-* **author**: (Integer) Submission author *User id* in moocng.
-* **reviewer**: (Integer) *User id* from reviewer user.
-* **comment**: (String) Text given from reviewer.
-* **submission_id**: Native mongo ObjectId from relate Submission.
-* **created**: (datetime) String ISO DateTime Format, user .
+* **author**: (Integer)  User that created the submission.
+* **reviewer**: (Integer) User that reviewed the submission.
+* **comment**: (String) Comment by the reviewer.
+* **submission_id**: Native mongo ObjectId that links to the submission object
+  in the Submissions collection.
+* **created**: (ISODate) When this review has been created.
 * **criteria**: (List): List of List, every child has the value per criteria.
   * **first item**: (Integer) This is *criteria_id*.
-  * **second item** (Integer) This is the value given by reviewer.
+  * **second item** (Integer) This is the value given by the reviewer.
 * **course**: (Integer): *Course id*.
 * **unit**: (Integer): *Unit id*.
 * **kq**: (Integer): *KnowledgeQuantum id* is related to *PeerReviewAssignment*.
