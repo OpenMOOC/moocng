@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-13 06:19-0500\n"
+"POT-Creation-Date: 2013-03-13 06:22-0500\n"
 "PO-Revision-Date: 2013-03-12 14:13+0100\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -1497,8 +1497,8 @@ msgstr "Entrega revisada el %(created)s."
 
 #: peerreview/templates/peerreview/pending_reviews.html:47
 #, python-format
-msgid "You still need to review %(pending)s more submissions."
-msgid_plural "You still need to review %(pending)s more submission."
+msgid "You still need to review %(pending)s more submission."
+msgid_plural "You still need to review %(pending)s more submissions."
 msgstr[0] "Aún tienes que revisar %(pending)s entrega más."
 msgstr[1] "Aún tienes que revisar %(pending)s entregas más."
 
