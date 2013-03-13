@@ -1,5 +1,5 @@
 /*jslint vars: false, browser: true, nomen: true */
-/*global MOOC: true, Backbone, $, _ */
+/*global MOOC: true, Backbone, $, _, interpolate, gettext */
 
 // Copyright 2012 Rooter Analysis S.L.
 //
@@ -170,6 +170,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         var html = [
                 "<b>" + this.model.truncateTitle(40) + "</b>"
             ],
+            authorReviews = 0,
             peer_review,
             minimum_reviewers;
 
@@ -192,7 +193,14 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 html.push('<p>' + MOOC.trans.progress.no_reviews_yet + '</p>');
             }
 
-            html.push('<p>' + MOOC.trans.progress.minimum_reviews + ': <strong>' +  minimum_reviewers + '</strong></p>');
+            if (this.model.has("_peerReviewSubmissionInstance")) {
+                authorReviews = this.model.get("_peerReviewSubmissionInstance").get("author_reviews");
+            }
+
+            html.push("<p>" + interpolate(gettext("You have sent %(sent_reviews)s reviews of the %(mandatory_reviews)s mandatory reviews."), {
+                sent_reviews: authorReviews,
+                mandatory_reviews: minimum_reviewers
+            }, true));
         } else {
 
             if (this.model.get('completed')) {

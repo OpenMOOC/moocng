@@ -55,6 +55,34 @@ MOOC.models.TastyPieCollection = Backbone.Collection.extend({
     }
 });
 
+MOOC.models.PeerReviewSubmission = Backbone.Model.extend({
+    defaults: {
+        author: null,
+        author_reviews: 0,
+        created: null,
+        kq: null,
+        reviews: 0,
+        text: null, // optional
+        file: null // optional
+    },
+
+    parse: function (resp, xhr) {
+        "use strict";
+        return _.pick(resp, "_id", "author", "author_reviews", "created", "kq",
+            "reviews", "text", "file");
+    },
+
+    url: function () {
+        "use strict";
+        return MOOC.ajax.getAbsoluteUrl("peer_review_submissions/") + this.get("_id") + "/";
+    }
+});
+
+MOOC.models.PeerReviewSubmissionList = MOOC.models.TastyPieCollection.extend({
+    model: MOOC.models.PeerReviewSubmission,
+    url: MOOC.ajax.getAbsoluteUrl("peer_review_submissions/")
+});
+
 MOOC.models.EvaluationCriterion = Backbone.Model.extend({
     defaults: {
         id: -1,
@@ -397,7 +425,9 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
         normalized_weight: 0,
         peer_review_assignment: null, // Optional
         peerReviewAssignmentInstance: null,
-        peer_review_score: null
+        peer_review_score: null,
+
+        _peerReviewSubmissionInstance: null
     },
 
     url: function () {
@@ -482,8 +512,18 @@ MOOC.models.KnowledgeQuantumList  = MOOC.models.TastyPieCollection.extend({
                 }
             });
         }, this);
-    }
+    },
 
+    setPeerReviewSubmissionList: function (peerReviewSubmissionList) {
+        "use strict";
+        peerReviewSubmissionList.each(function (prs) {
+            this.each(function (kq) {
+                if (prs.get('kq') === kq.get("id")) {
+                    kq.set("_peerReviewSubmissionInstance", prs);
+                }
+            });
+        }, this);
+    }
 });
 
 MOOC.models.Unit = Backbone.Model.extend({

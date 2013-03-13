@@ -19,6 +19,7 @@ import hashlib
 import urllib
 import time
 import base64
+import boto
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -34,8 +35,8 @@ from django.db import IntegrityError
 from django.conf import settings
 
 from moocng.api.mongodb import get_db
-from moocng.courses.models import Course
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
+from moocng.peerreview.models import PeerReviewAssignment
 from moocng.peerreview.utils import course_get_peer_review_assignments, save_review
 from moocng.peerreview.forms import ReviewSubmissionForm, EvalutionCriteriaResponseForm
 from moocng.teacheradmin.utils import send_mail_wrapper
@@ -241,12 +242,67 @@ def get_s3_upload_url(request):
 
     return HttpResponse(urllib.quote(url));
 
+
 @login_required
 def get_s3_download_url(request):
-    user = request.user
-    name = "%d/%s" % (user.id, request.GET['name']);
-    mime_type = request.GET['type']
-
-    url = "%s/%s" % (settings.AWS_S3_URL, name)
-
+    url = s3_url(request.user.id, request.GET['name'])
     return HttpResponse(urllib.quote(url));
+
+
+def s3_url(user_id, filename):
+    name = "%d/%s" % (user_id, filename)
+    url = "%s/%s" % (settings.AWS_S3_URL, name)
+    return url
+
+
+def s3_upload(user_id, filename, file_obj):
+    conn = boto.connect_s3(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY)
+
+    bucket = conn.get_bucket(settings.AWS_STORAGE_BUCKET_NAME)
+
+    k = boto.s3.key.Key(bucket)
+    name = "%d/%s" % (user_id, filename)
+    k.key = name
+    k.set_contents_from_file(file_obj)
+
+
+@login_required
+def course_review_upload(request, course_slug):
+    if request.method == "POST":
+        course = get_object_or_404(Course, slug=course_slug)
+
+        file_to_upload = request.FILES.get('pr_file', None)
+        submission_text = request.POST.get('pr-submission', '')
+
+        kq = get_object_or_404(KnowledgeQuantum, id=request.POST.get('kq_id', 0))
+        unit = kq.unit
+
+        if (file_to_upload.size / (1024 * 1024) >= settings.PEER_REVIEW_FILE_MAX_SIZE):
+            messages.error(request, _('Your file is greater than the max allowed size (%d MB).') % settings.PEER_REVIEW_FILE_MAX_SIZE)
+            return HttpResponseRedirect(reverse('course_classroom', args=[course_slug])+"#unit%d/kq%d/p" % (unit.id, kq.id))
+
+        if (len(submission_text) >= settings.PEER_REVIEW_TEXT_MAX_SIZE):
+            messages.error(request, _('Your text is greater than the max allowed size (%d characters).') % settings.PEER_REVIEW_TEXT_MAX_SIZE)
+            return HttpResponseRedirect(reverse('course_classroom', args=[course_slug])+"#unit%d/kq%d/p" % (unit.id, kq.id))
+
+        s3_upload(request.user.id, file_to_upload.name, file_to_upload)
+        file_url = s3_url(request.user.id, file_to_upload.name)
+
+        submission = {
+            "author" : request.user.id,
+            "author_reviews" : 0,
+            "text" : request.POST.get('pr-submission', ''),
+            "file" : file_url,
+            "created" : datetime.now(),
+            "reviewers" : [],
+            "reviews" : 0,
+            "course" : course.id,
+            "unit" : unit.id,
+            "kq" : kq.id,
+            "assigned_to": None,
+        }
+        db = get_db()
+        submissions = db.get_collection("peer_review_submissions")
+        submissions.insert(submission)
+
+        return HttpResponseRedirect(reverse('course_classroom', args=[course_slug])+"#unit%d/kq%d" % (unit.id, kq.id))

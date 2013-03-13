@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-12 11:09-0500\n"
+"POT-Creation-Date: 2013-03-13 06:22-0500\n"
 "PO-Revision-Date: 2013-03-12 14:13+0100\n"
 "Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -448,8 +448,7 @@ msgstr "comunicado"
 msgid "announcements"
 msgstr "comunicados"
 
-#: courses/models.py:170 peerreview/templatetags/peer_review_tags.py:112
-#: teacheradmin/templates/teacheradmin/units.html:60
+#: courses/models.py:170 teacheradmin/templates/teacheradmin/units.html:60
 msgid "Normal"
 msgstr "Normal"
 
@@ -954,7 +953,7 @@ msgid "Instructor's comments"
 msgstr "Comentarios del profesor"
 
 #: courses/templates/courses/classroom.html:163
-#: courses/templates/courses/progress.html:95
+#: courses/templates/courses/progress.html:94
 #: teacheradmin/templates/teacheradmin/stats.html:156
 #: teacheradmin/templates/teacheradmin/teachers.html:41
 #: teacheradmin/templates/teacheradmin/teachers.html:45
@@ -966,7 +965,7 @@ msgid "Error"
 msgstr "Error"
 
 #: courses/templates/courses/classroom.html:164
-#: courses/templates/courses/progress.html:96
+#: courses/templates/courses/progress.html:95
 msgid "Unknown error with ajax petition"
 msgstr "Error desconocido al hacer la petición ajax"
 
@@ -1072,12 +1071,12 @@ msgid "Your file must be smaller than %(file_max_size)sMB."
 msgstr "Tu fichero debe ocupar menos de %(file_max_size)sMB."
 
 #: courses/templates/courses/classroom.html:192
-#: courses/templates/courses/progress.html:119
+#: courses/templates/courses/progress.html:110
 msgid "The module is not ready"
 msgstr "El módulo no está listo"
 
 #: courses/templates/courses/classroom.html:193
-#: courses/templates/courses/progress.html:120
+#: courses/templates/courses/progress.html:111
 msgid ""
 "This module has no nuggets. Probably the start date hasn't been reached yet."
 msgstr ""
@@ -1227,7 +1226,7 @@ msgid "Review date"
 msgstr "Fecha de la revisión"
 
 #: courses/templates/courses/progress.html:58
-#: courses/templates/courses/progress.html:106
+#: courses/templates/courses/progress.html:105
 msgid "Score"
 msgstr "Nota"
 
@@ -1239,24 +1238,24 @@ msgstr "Nota final"
 msgid "Comment"
 msgstr "Comentario"
 
-#: courses/templates/courses/progress.html:99
+#: courses/templates/courses/progress.html:98
 msgid "completed"
 msgstr "completado"
 
-#: courses/templates/courses/progress.html:100
+#: courses/templates/courses/progress.html:99
 msgid "correct"
 msgstr "correcto"
 
-#: courses/templates/courses/progress.html:101
+#: courses/templates/courses/progress.html:100
 msgid "Incorrect"
 msgstr "Incorrecto"
 
-#: courses/templates/courses/progress.html:102
+#: courses/templates/courses/progress.html:101
 #: teacheradmin/templates/teacheradmin/teachers.html:18
 msgid "Pending"
 msgstr "Pendiente"
 
-#: courses/templates/courses/progress.html:103
+#: courses/templates/courses/progress.html:102
 msgid ""
 "This score will not be applied to your final score until you get the minimum "
 "number of reviews"
@@ -1264,26 +1263,22 @@ msgstr ""
 "Esta nota no se aplicará a tu nota final hasta que obtengas el número mínimo "
 "de revisiones"
 
-#: courses/templates/courses/progress.html:104
-msgid "Current reviews"
-msgstr "Revisiones actuales"
+#: courses/templates/courses/progress.html:103
+msgid "Reviews of your submission"
+msgstr "Revisiones de tu entrega"
 
-#: courses/templates/courses/progress.html:105
+#: courses/templates/courses/progress.html:104
 #: teacheradmin/templates/teacheradmin/announcement_view.html:12
 msgid "Date"
 msgstr "Fecha"
 
-#: courses/templates/courses/progress.html:107
+#: courses/templates/courses/progress.html:106
 msgid "View details"
 msgstr "Ver detalles"
 
-#: courses/templates/courses/progress.html:108
+#: courses/templates/courses/progress.html:107
 msgid "You have not received any review yet"
 msgstr "Aún no has recibido ninguna revisión"
-
-#: courses/templates/courses/progress.html:109
-msgid "Minimum number of reviews"
-msgstr "Número mínimo de revisiones"
 
 #: courses/templates/courses/transcript.html:16
 msgid "Mark"
@@ -1372,7 +1367,7 @@ msgstr "Criterios de evaluación"
 msgid "{0} - EvaluationCriterion {1}"
 msgstr "{0} - Criterio de evaluación {1}"
 
-#: peerreview/views.py:51 peerreview/views.py:117
+#: peerreview/views.py:51 peerreview/views.py:138
 msgid "The selected peer review assignment is not part of this course."
 msgstr ""
 "La actividad revisada por compañeros seleccionada no es parte de este curso"
@@ -1381,7 +1376,7 @@ msgstr ""
 msgid "You already have a submission assigned."
 msgstr "Ya has enviado esta actividad"
 
-#: peerreview/views.py:81
+#: peerreview/views.py:95
 msgid ""
 "There is no submission avaliable for you at this moment. Please, try again "
 "later."
@@ -1389,15 +1384,15 @@ msgstr ""
 "No hay ninguna actividad que necesite revisión en este momento. Por favor, "
 "pruebe más tarde."
 
-#: peerreview/views.py:128
+#: peerreview/views.py:149
 msgid "You don't have this submission assigned."
 msgstr "No tienes asignado para revisión este ejercicio"
 
-#: peerreview/views.py:148
+#: peerreview/views.py:169
 msgid "Your can't submit two times the same review."
 msgstr "No puedes enviar 2 veces la misma revisión"
 
-#: peerreview/views.py:158
+#: peerreview/views.py:179
 #, python-format
 msgid ""
 "Your review has been submitted. You have to review at least %d exercises "
@@ -1405,26 +1400,26 @@ msgid ""
 msgstr ""
 "Tu revisión ha sido enviada. Tienes que revisar al menos %d ejercicios más."
 
-#: peerreview/views.py:160
+#: peerreview/views.py:181
 msgid "Your review has been submitted."
 msgstr "Su revisión ha sido enviada."
 
-#: peerreview/views.py:175
+#: peerreview/views.py:196
 #, python-format
 msgid "Your assignment \"%(nugget)s\" has been reviewed"
 msgstr "Su trabajo \"%(nugget)s\" ha sido revisado"
 
-#: peerreview/views.py:176
+#: peerreview/views.py:197
 #, python-format
 msgid ""
 "Congratulations %(user)s\n"
 "\n"
-"        The exercise you sent on %(date)s belonging the nugget \"%(nugget)s"
-"\" has been reviewed by a classmate.\n"
+"    The exercise you sent on %(date)s belonging the nugget \"%(nugget)s\" "
+"has been reviewed by a classmate.\n"
 "\n"
-"        Evaluation criteria:\n"
+"    Evaluation criteria:\n"
 "\n"
-"        "
+"    "
 msgstr ""
 "Felicidades %(user)s\n"
 "\n"
@@ -1435,24 +1430,21 @@ msgstr ""
 "\n"
 "        "
 
-#: peerreview/views.py:190
-#, python-format
-msgid ""
-"- %(criterion)s: %(evaluation)s\n"
-"            "
-msgstr ""
+#: peerreview/views.py:214
+msgid "Undefined"
+msgstr "Indefinido"
 
-#: peerreview/views.py:196
+#: peerreview/views.py:222
 #, python-format
 msgid ""
 "\n"
-"        Your classmate's comment:\n"
+"    Your classmate's comment:\n"
 "\n"
-"        %(comment)s\n"
+"    %(comment)s\n"
 "\n"
-"        Best regards and thank you for learning with %(site)s.\n"
+"    Best regards and thank you for learning with %(site)s.\n"
 "\n"
-"        %(site)s's team"
+"    %(site)s's team"
 msgstr ""
 "\n"
 "        Comentario de tu compañero:\n"
@@ -1505,8 +1497,10 @@ msgstr "Entrega revisada el %(created)s."
 
 #: peerreview/templates/peerreview/pending_reviews.html:47
 #, python-format
-msgid "You still need to review %(pending)s more submissions."
-msgstr "Aún tienes que revisar %(pending)s entregas más."
+msgid "You still need to review %(pending)s more submission."
+msgid_plural "You still need to review %(pending)s more submissions."
+msgstr[0] "Aún tienes que revisar %(pending)s entrega más."
+msgstr[1] "Aún tienes que revisar %(pending)s entregas más."
 
 #: peerreview/templates/peerreview/review_review.html:52
 msgid ""
@@ -1544,26 +1538,6 @@ msgstr "Este curso no tiene ningúna actividad a revisar por compañeros"
 #: peerreview/templates/peerreview/reviews.html:26
 msgid "You can try enrolling in another course"
 msgstr "Puedes probar matriculándote en otro curso"
-
-#: peerreview/templatetags/peer_review_tags.py:110
-msgid "Very bad"
-msgstr "Muy mal"
-
-#: peerreview/templatetags/peer_review_tags.py:111
-msgid "Bad"
-msgstr "Mal"
-
-#: peerreview/templatetags/peer_review_tags.py:113
-msgid "Good"
-msgstr "Bien"
-
-#: peerreview/templatetags/peer_review_tags.py:114
-msgid "Very good"
-msgstr "Muy bien"
-
-#: peerreview/templatetags/peer_review_tags.py:117
-msgid "Undefined"
-msgstr "Indefinido"
 
 #: teacheradmin/forms.py:53
 msgid "Send the announcement via email to all the students in this course"
@@ -2106,3 +2080,15 @@ msgstr "Sitio de administración de moocng"
 #: templates/admin/base_site.html:7
 msgid "moocng administration"
 msgstr "Administración de moocng"
+
+#~ msgid "Very bad"
+#~ msgstr "Muy mal"
+
+#~ msgid "Bad"
+#~ msgstr "Mal"
+
+#~ msgid "Good"
+#~ msgstr "Bien"
+
+#~ msgid "Very good"
+#~ msgstr "Muy bien"

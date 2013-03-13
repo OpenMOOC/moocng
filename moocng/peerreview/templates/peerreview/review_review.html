@@ -57,54 +57,57 @@
     </div>
 </div>
 
-<h2>{% trans "Review" %}</h2>
+<h2>{% trans "Review for" %} {{ assignment.kq.title }}</h2>
 
-<div class="span12">
-    <div class="span5">
-        <h3>{% trans "Activity description" %}</h3>
-        {{ assignment.description|safe }}
-    </div>
+<h3>{% trans "Activity description" %}</h3>
+{{ assignment.description|safe }}
 
-    <div class="span5">
-        <h3>{% trans "Student response" %}</h3>
-        {{ submission.text }}
-        {% if submission.file %}
-            <p><a href="{{ submission.file }}">{% trans "Attachment" %}</a></p>
-        {% endif %}
-    </div>
-</div>
+<h3>{% trans "Student response" %}</h3>
+{{ submission.text }}
+{% if submission.file %}
+  <p>
+    <a href="{{ submission.file }}">{% trans "Download student's submission" %}</a>
+  </p>
+  <div class="alert">
+    <strong>Warning!</strong> You should scan this file with your antivirus software. {{ site }} is not responsible for any harm this may cause to your computer.
+  </div>
+{% endif %}
 
 <h3>{% trans "Your review" %}</h3>
 
 <form method="post">
-    <div class="clearfix">
-       {% csrf_token %}
-       {{ criteria_formset.management_form }}
-       <div class="span6">
-           {% for criterion in criteria_formset %}
-               {{ criterion.evaluation_criterion_id }}
-               <div class="clearfix well well-small">
-                   <p><strong>{{ criterion.evaluation_criterion_id.value|get_criterion_title }}</strong></p>
-                      <pre><small>{{ criterion.evaluation_criterion_id.value|get_criterion_description|escape }}</small></pre>
-                   <div class="btn-group pull-right" data-toggle="buttons-radio">
-                       <button type="button" data-name="{{ criterion.value.html_name }}" data-value="" class="btn btn-warning criterion_value disabled"><i class="icon-minus"></i></button>
-                       {% for choice in criterion.value %}
-                           <button type="button" data-name="{{ criterion.value.html_name }}" data-value="{{ choice.choice_value }}" class="btn criterion_value">{{ choice.choice_label }}</button>
-                       {% endfor %}
-                       <input type="hidden" class="criterion_value" name="{{ criterion.value.html_name }}" value="{% if criterion.value.value %}{{ criterion.value.value }}{% endif %}">
-                       <button type="button" data-name="{{ criterion.value.html_name }}" data-value="" class="btn btn-success criterion_value disabled"><i class="icon-plus"></i></button>
-                   </div>
-                   {{ criterion.value.errors }}
-               </div>
-           {% endfor %}
-       </div>
-       <div class="span5 well well-small">
-           {{ submission_form }}
-       </div>
+  {% csrf_token %}
+  {{ criteria_formset.management_form }}
+
+  {% for criterion in criteria_formset %}
+    {% if forloop.counter0|divisibleby:"2" %}
+    <div class="row">
+    {% endif %}
+    <div class="span6">
+      {{ criterion.evaluation_criterion_id }}
+      <p><strong>{{ criterion.evaluation_criterion_id.value|get_criterion_title }}</strong></p>
+      <pre style="height: 100px; overflow: auto;"><small>{{ criterion.evaluation_criterion_id.value|get_criterion_description|escape }}</small></pre>
+      <div class="btn-group pull-right" data-toggle="buttons-radio">
+        <button type="button" data-name="{{ criterion.value.html_name }}" data-value="" class="btn btn-warning criterion_value disabled"><i class="icon-minus"></i></button>
+        {% for choice in criterion.value %}
+          <button type="button" data-name="{{ criterion.value.html_name }}" data-value="{{ choice.choice_value }}" class="btn criterion_value">{{ choice.choice_label }}</button>
+        {% endfor %}
+        <input type="hidden" class="criterion_value" name="{{ criterion.value.html_name }}" value="{% if criterion.value.value %}{{ criterion.value.value }}{% endif %}">
+        <button type="button" data-name="{{ criterion.value.html_name }}" data-value="" class="btn btn-success criterion_value disabled"><i class="icon-plus"></i></button>
+      </div>
+      {{ criterion.value.errors }}
     </div>
-    <div class="form-actions">
-        <input type="submit" class="btn btn-primary" id="send_review" value="{% trans "Send review" %}" />
+    {% if forloop.counter|divisibleby:"2" %}
     </div>
+    {% endif %}
+  {% endfor %}
+  </div>
+
+  {{ submission_form }}
+
+  <div class="form-actions">
+    <input type="submit" class="btn btn-primary" id="send_review" value="{% trans "Send review" %}" />
+  </div>
 </form>
 
 {% endblock %}
