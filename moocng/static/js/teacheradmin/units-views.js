@@ -561,6 +561,7 @@ if (_.isUndefined(window.MOOC)) {
                 "click button#go2options": "go2options",
                 "click button#save-kq": "save",
                 "click button#delete-kq": "remove",
+                "click button.removecriterion": "removePeerReviewCriterion",
                 "click button.back": "goBack"
             },
 
@@ -647,7 +648,7 @@ if (_.isUndefined(window.MOOC)) {
                         titleLabel = "<label for=\"" + titleInputId + "\" class=\"required\">" + MOOC.trans.evaluationCriterion.title + "</label>";
                         descriptionInput = "<input type=\"text\" name=\"" + descriptionInputId + "\" id=\"" + descriptionInputId + "\" maxlength=\"200\" class=\"input-xlarge\" required=\"required\" />";
                         descriptionLabel = "<label for=\"" + descriptionInputId + "\" class=\"required\">" + MOOC.trans.evaluationCriterion.description + "</label>";
-                        removeBtn = "<button id=\"" + removeBtnId + "\" class=\"btn btn-danger\">" + MOOC.trans.evaluationCriterion.remove + "</button>";
+                        removeBtn = "<button id=\"" + removeBtnId + "\" class=\"removecriterion btn btn-danger\">" + MOOC.trans.evaluationCriterion.remove + "</button>";
                         criterionDiv = "<div id=\"" + criterionDivId + "\">"
                                        + "<div class=\"row mb10\"> <div class=\"span3\">" + titleLabel + titleInput + "</div>"
                                        + "<div class=\"span4\">" + descriptionLabel + descriptionInput + "</div></div>"
@@ -656,11 +657,6 @@ if (_.isUndefined(window.MOOC)) {
                         criterionListDiv.append(criterionDiv);
                         criterionListDiv.find("#" + titleInputId).val(criterion.get("title"));
                         criterionListDiv.find("#" + descriptionInputId).val(criterion.get("description"));
-                        criterionListDiv.find("#" + removeBtnId).click(function (evt) {
-                            evt.stopPropagation();
-                            evt.preventDefault();
-                            self.removePeerReviewCriterion(criterion);
-                        });
                     });
                 }
 
@@ -1089,7 +1085,6 @@ if (_.isUndefined(window.MOOC)) {
             removePeerReviewAssignment: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
-
                 var modal,
                     view;
 
@@ -1126,7 +1121,18 @@ if (_.isUndefined(window.MOOC)) {
                 });
             },
 
-            removePeerReviewCriterion: function (criterion) {
+            removePeerReviewCriterion: function (evt) {
+                evt.stopPropagation();
+                evt.preventDefault();
+
+                var criterionId,
+                    criterion,
+                    criterionList;
+
+                criterionId = parseInt(evt.target.getAttribute('id').split('-')[1], 10);
+                criterionList = this.model.get("peerReviewAssignmentInstance").get("_criterionList");
+                criterion = criterionList.find(function(candidate) { return (candidate.get("id") == criterionId); });
+
                 MOOC.ajax.showLoading();
                 var self = this;
                 criterion.destroy({
