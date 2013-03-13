@@ -35,8 +35,8 @@ from django.db import IntegrityError
 from django.conf import settings
 
 from moocng.api.mongodb import get_db
+from moocng.courses.models import Course
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
-from moocng.peerreview.models import PeerReviewAssignment
 from moocng.peerreview.utils import course_get_peer_review_assignments, save_review
 from moocng.peerreview.forms import ReviewSubmissionForm, EvalutionCriteriaResponseForm
 from moocng.teacheradmin.utils import send_mail_wrapper
