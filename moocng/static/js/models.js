@@ -57,8 +57,6 @@ MOOC.models.TastyPieCollection = Backbone.Collection.extend({
 
 MOOC.models.EvaluationCriterion = Backbone.Model.extend({
     defaults: {
-        id: -1,
-        order: -1,
         title: "",
         description: "",
         assignment: null
@@ -66,7 +64,9 @@ MOOC.models.EvaluationCriterion = Backbone.Model.extend({
 
     parse: function (resp, xhr) {
         "use strict";
-        return _.pick(resp, "id", "order", "title", "description", "assignment");
+        if (resp != null)
+            return _.pick(resp, "id", "order", "description", "assignment", "title");
+        return resp;
     },
 
     url: function () {
@@ -78,17 +78,18 @@ MOOC.models.EvaluationCriterion = Backbone.Model.extend({
 MOOC.models.EvaluationCriterionList = MOOC.models.TastyPieCollection.extend({
     model: MOOC.models.EvaluationCriterion,
 
-    url: MOOC.ajax.getAbsoluteUrl("evaluation_criterion/"),
-
     comparator: function (criterion) {
         "use strict";
         return criterion.get("order");
+    },
+
+    url: function() {
+        return MOOC.ajax.getAbsoluteUrl("evaluation_criterion/");
     }
 });
 
 MOOC.models.PeerReviewAssignment = Backbone.Model.extend({
     defaults: {
-        id: -1,
         description: "",
         minimum_reviewers: null,
         kq: null,
@@ -100,7 +101,16 @@ MOOC.models.PeerReviewAssignment = Backbone.Model.extend({
 
     url: function () {
         "use strict";
-        return MOOC.ajax.getAbsoluteUrl("peer_review_assignment/") + this.get("id") + "/";
+        if (this.has("id"))
+            return MOOC.ajax.getAbsoluteUrl("peer_review_assignment/") + this.get("id") + "/";
+        else
+            return MOOC.ajax.getAbsoluteUrl("peer_review_assignment/");
+    },
+
+    isActive: function () {
+        "use strict";
+        // TODO
+        return true;
     }
 });
 

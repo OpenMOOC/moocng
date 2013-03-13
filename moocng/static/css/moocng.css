@@ -453,6 +453,10 @@ code {
     margin-right: 10px;
 }
 
+.teacheradmin-units .badge.peerreview {
+    margin-right: 10px;
+}
+
 .teacheradmin-units label.required:before {
     content: "* ";
     color: red;
