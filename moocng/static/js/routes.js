@@ -81,7 +81,7 @@ MOOC.App = Backbone.Router.extend({
             steps.push(function (callback) {
                 self.lastUnitView = MOOC.views.unitViews[unit];
                 MOOC.views.unitViews[unit].render();
-                if (shouldDelegateEvents) {
+                if (shouldDelegateEvents && _.has(self.lastUnitView, 'undelegateEventsInSubViews')) {
                     self.lastUnitView.delegateEventsInSubViews();
                 }
                 $("#unit-selector").find("div.collapse").removeClass("in");
@@ -164,7 +164,9 @@ MOOC.App = Backbone.Router.extend({
         "use strict";
         unit = parseInt(unit, 10);
         if (!_.isNull(this.lastUnitView)) {
-            this.lastUnitView.undelegateEventsInSubViews();
+            if (_.has(this.lastUnitView, 'undelegateEventsInSubViews')) {
+                this.lastUnitView.undelegateEventsInSubViews();
+            }
         }
         async.series(this.unitSteps(unit, MOOC.router.hasHandler("unit1/kq1")));
     },
