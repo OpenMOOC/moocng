@@ -933,8 +933,13 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
 
     supportFileAPI: function (fileInput) {
         "use strict";
-        // TODO check browser support of file related features needed to upload the file to S3
-        return true;
+        var support = true;
+
+        if (fileInput.files === undefined) {
+            support = false;
+        }
+
+        return support;
     },
 
     uploadFile: function (fileInput, callback) {
