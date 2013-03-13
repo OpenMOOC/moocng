@@ -893,8 +893,9 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
             callback;
 
         if (!this.supportFileAPI(file)) {
-            MOOC.alerts.show(MOOC.alerts.ERROR, MOOC.trans.classroom.prBrowser, MOOC.trans.classroom.prBrowserMsg);
-            return;
+            var form = $(this.$el.find("form")[0]);
+            form.append($('<input type="hidden" name="kq_id" value="'+this.model.get("_knowledgeQuantumInstance").get("id")+'" />'));
+            form.submit();
         }
 
         if (text === "" && file.files.length === 0) {

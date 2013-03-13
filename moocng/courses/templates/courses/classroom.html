@@ -12,7 +12,8 @@
 
 {% block content %}
 <script id="peer-review-tpl" type="text/template">
-    <div class='solution-wrapper white'><form>
+    <div class='solution-wrapper white'><form method='post' action='{% url course_review_upload course_slug=course.slug %}' enctype='multipart/form-data'>
+        {% csrf_token %}
         <h4>{% trans "Peer review assignment" %}</h4>
         <div id='pr-description'></div>
 
