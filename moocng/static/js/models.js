@@ -64,8 +64,9 @@ MOOC.models.EvaluationCriterion = Backbone.Model.extend({
 
     parse: function (resp, xhr) {
         "use strict";
-        if (resp != null)
+        if (resp !== null) {
             return _.pick(resp, "id", "order", "description", "assignment", "title");
+        }
         return resp;
     },
 
@@ -83,7 +84,8 @@ MOOC.models.EvaluationCriterionList = MOOC.models.TastyPieCollection.extend({
         return criterion.get("order");
     },
 
-    url: function() {
+    url: function () {
+        "use strict";
         return MOOC.ajax.getAbsoluteUrl("evaluation_criterion/");
     }
 });
@@ -101,16 +103,11 @@ MOOC.models.PeerReviewAssignment = Backbone.Model.extend({
 
     url: function () {
         "use strict";
-        if (this.has("id"))
+        if (this.has("id")) {
             return MOOC.ajax.getAbsoluteUrl("peer_review_assignment/") + this.get("id") + "/";
-        else
-            return MOOC.ajax.getAbsoluteUrl("peer_review_assignment/");
-    },
+        }
 
-    isActive: function () {
-        "use strict";
-        // TODO
-        return true;
+        return MOOC.ajax.getAbsoluteUrl("peer_review_assignment/");
     }
 });
 
