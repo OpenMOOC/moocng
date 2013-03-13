@@ -25,5 +25,6 @@ urlpatterns = patterns(
     url(r'^course/(?P<course_slug>[-\w]+)/reviews/(?P<assignment_id>\d+)/review/', 'course_review_review',
         name='course_review_review'),
     url(r'^s3_upload_url/', 'get_s3_upload_url', name='get_s3_upload_url'),
+    url(r'^s3_download_url/', 'get_s3_download_url', name='get_s3_download_url'),
     url(r'^course/(?P<course_slug>[-\w]+)/reviews/upload/', 'course_review_upload', name='course_review_upload'),
 )
