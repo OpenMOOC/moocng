@@ -76,7 +76,7 @@ if (_.isUndefined(window.MOOC)) {
                 assignmentUrl = kq.get("peer_review_assignment").split("/");
 
                 assignmentId = parseInt(assignmentUrl.pop(), 10);
-                while (isNaN(assignmentId)) {
+                while (_.isNaN(assignmentId)) {
                     assignmentId = parseInt(assignmentUrl.pop(), 10);
                 }
 

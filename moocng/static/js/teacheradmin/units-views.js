@@ -918,7 +918,7 @@ if (_.isUndefined(window.MOOC)) {
                             assignmentUrl = assignmentUrl.split('/');
 
                             assignmentId = parseInt(assignmentUrl.pop(), 10);
-                            while (isNaN(assignmentId)) {
+                            while (_.isNaN(assignmentId)) {
                                 assignmentId = parseInt(assignmentUrl.pop(), 10);
                             }
 
@@ -973,7 +973,7 @@ if (_.isUndefined(window.MOOC)) {
                             reviewUrl = self.model.get("peer_review_assignment").split("/");
                             createdId = reviewUrl.pop();
 
-                            while (isNaN(parseInt(createdId, 10))) {
+                            while (_.isNaN(parseInt(createdId, 10))) {
                                 createdId = reviewUrl.pop();
                             }
 
