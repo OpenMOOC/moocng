@@ -7,7 +7,7 @@ MongoDB is used to store all user activity.
 
 * Watches videos (activity collection)
 * Answers (answers collection)
-* Peer Reviews Submissions (peer_review_submissions collection).
+* Peer Review Submissions (peer_review_submissions collection).
 * Peer Review Reviews (peer_review_reviews collection)
 
 
@@ -212,7 +212,7 @@ Object Structure
 
 
 Peer Review Reviews Collection
-**********************************
+******************************
 
 The collection name is **peer_review_reviews**.
 
