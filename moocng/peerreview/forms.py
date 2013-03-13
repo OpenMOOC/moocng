@@ -10,7 +10,7 @@ EVALUTION_CRITERIA_CHOICES = [
 
 
 class ReviewSubmissionForm(forms.Form):
-    comments = forms.CharField(widget=forms.widgets.Textarea, required=False)
+    comments = forms.CharField(widget=forms.widgets.Textarea(attrs={'class': 'input-block-level'}), required=False)
 
 
 class EvalutionCriteriaResponseForm(forms.Form):
