@@ -106,7 +106,7 @@ def course_add(request):
 
         if not allow_public:
             subject = _('Your course "%s" has been created') % name
-            template = 'courses/email_not_allow.txt'
+            template = 'courses/email_new_course.txt'
             context = {
                 'user': owner.get_full_name(),
                 'course': name,
