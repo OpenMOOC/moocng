@@ -170,23 +170,40 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         return '<span class="badge pull-right">' + MOOC.trans.progress.pending + '</span>';
     },
 
-    render: function () {
+    render_normal_kq: function () {
         "use strict";
-        var html = [
-                "<b>" + this.model.truncateTitle(40) + "</b>"
-            ],
-            authorReviews = 0,
-            peer_review,
-            minimum_reviewers;
-
-        if (this.reviews !== null) {
-            minimum_reviewers = this.model.get('peerReviewAssignmentInstance').get('minimum_reviewers');
-
-            if (this.model.get('completed')) {
-                html.push(this.render_badge(minimum_reviewers));
+        var html = [];
+        if (this.model.get('completed')) {
+            if (this.model.get("correct")) {
+                html.push('<span class="badge badge-success pull-right"><i class="icon-ok icon-white"></i> ' + MOOC.views.capitalize(MOOC.trans.progress.correct) + '</span>');
             } else {
-                html.push(this.render_pending_badge());
+                html.push('<span class="badge badge-important pull-right"><i class="icon-remove icon-white"></i> ' + MOOC.trans.progress.incorrect + '</span>');
             }
+        } else {
+            html.push(this.render_pending_badge());
+        }
+        return html.join('');
+    },
+
+    render_peer_review_kq: function () {
+        "use strict";
+        var html = [], pra = null, submission = null, author_reviews = 0, minimum_reviewers = 0;
+        pra = this.model.get('peerReviewAssignmentInstance');
+
+        minimum_reviewers = pra.get('minimum_reviewers');
+
+        if (this.model.get('completed')) {
+            html.push(this.render_badge(minimum_reviewers));
+        } else {
+            html.push(this.render_pending_badge());
+        }
+
+        if (this.model.has("_peerReviewSubmissionInstance")) {
+            submission = this.model.get("_peerReviewSubmissionInstance");
+        }
+
+        if (submission !== null) {
+            author_reviews = submission.get('author_reviews');
 
             if (this.reviews.length > 0) {
                 html.push('<table class="table table-stripped table-bordered">');
@@ -202,28 +219,26 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 html.push('<p>' + MOOC.trans.progress.no_reviews_yet + '</p>');
             }
 
-            if (this.model.has("_peerReviewSubmissionInstance")) {
-                authorReviews = this.model.get("_peerReviewSubmissionInstance").get("author_reviews");
-            }
-
             html.push("<p>" + interpolate(gettext("You have sent %(sent_reviews)s reviews of the %(mandatory_reviews)s mandatory reviews."), {
-                sent_reviews: authorReviews,
+                sent_reviews: author_reviews,
                 mandatory_reviews: minimum_reviewers
             }, true));
-        } else {
-
-            if (this.model.get('completed')) {
-                if (this.model.get("correct")) {
-                    html.push('<span class="badge badge-success pull-right"><i class="icon-ok icon-white"></i> ' + MOOC.views.capitalize(MOOC.trans.progress.correct) + '</span>');
-                } else {
-                    html.push('<span class="badge badge-important pull-right"><i class="icon-remove icon-white"></i> ' + MOOC.trans.progress.incorrect + '</span>');
-                }
-            } else {
-                html.push(this.render_pending_badge());
-            }
         }
+        return html.join("");
+    },
+
+    render: function () {
+        "use strict";
+        var html = ["<b>" + this.model.truncateTitle(40) + "</b>"];
 
         this.$el.attr("title", this.model.get('title'));
+
+        if (this.reviews !== null) {
+            html.push(this.render_peer_review_kq());
+        } else {
+            html.push(this.render_normal_kq());
+        }
+
         this.$el.html(html.join(""));
 
         if (this.reviews !== null) {
