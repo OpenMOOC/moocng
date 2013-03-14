@@ -208,19 +208,21 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
     player: null,
 
-    repeatedlyCheckIfPlayer: function (callback) {
+    repeatedlyCheckIfPlayer: function () {
         "use strict";
         if (MOOC.YTready) {
+            this.player = YT.get("ytplayer");
+            // A new player instance for a new video
+            if (!_.isUndefined(this.player) && !_.isNull(this.player)) {
+                this.player.destroy();
+            }
             this.player = new YT.Player("ytplayer", {
                 events: {
                     onStateChange: _.bind(this.loadExercise, this)
                 }
             });
-            if (!_.isUndefined(callback)) {
-                callback();
-            }
         } else {
-            _.delay(_.bind(this.repeatedlyCheckIfPlayer, this), 200, callback);
+            _.delay(_.bind(this.repeatedlyCheckIfPlayer, this), 200);
         }
     },
 
@@ -376,6 +378,12 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     this.setEventForNavigation("#kq-previous", unit, this.model, false);
                     this.setEventForNavigation("#kq-next", unit, this.model, true);
 
+                    if (!_.isUndefined(this.player) && !_.isNull(this.player)) {
+                        this.player.destroy();
+                    }
+                    $("#kq-video").empty();
+                    this.player = null;
+
                     if (_.isUndefined(view)) {
                         view = new MOOC.views.Question({
                             model: question,
@@ -383,8 +391,6 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                         });
                         MOOC.views.questionViews[question.get("id")] = view;
                     }
-
-                    this.destroyVideo();
                     view.render();
 
                     callback();
@@ -411,6 +417,12 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     this.setEventForNavigation("#kq-previous", unit, this.model, false);
                     this.setEventForNavigation("#kq-next", unit, this.model, true);
 
+                    if (!_.isUndefined(this.player) && !_.isNull(this.player)) {
+                        this.player.destroy();
+                    }
+                    $("#kq-video").empty();
+                    this.player = null;
+
                     if (_.isUndefined(view)) {
                         view = new MOOC.views.PeerReviewAssignment({
                             model: peerReviewObj,
@@ -418,8 +430,6 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                         });
                         MOOC.views.peerReviewAssignmentViews[peerReviewObj.get("id")] = view;
                     }
-
-                    this.destroyVideo();
                     view.render();
 
                     callback();
@@ -436,12 +446,6 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
     loadSolution: function () {
         "use strict";
         var toExecute = [];
-
-        toExecute.push(_.bind(this.repeatedlyCheckIfPlayer, this));
-        toExecute.push(_.bind(function (callback) {
-            _.bind(this.destroyVideo, this)();
-            callback();
-        }, this));
 
         if (!this.model.has("questionInstance")) {
             toExecute.push(async.apply(this.setupListernerFor, this.model, "questionInstance"));
@@ -476,12 +480,6 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         async.series(toExecute);
 
         return this;
-    },
-
-    destroyVideo: function () {
-        "use strict";
-        $("#kq-video").empty();
-        this.player = null;
     }
 });
 
