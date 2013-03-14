@@ -23,7 +23,7 @@ def send_invitation(request, invitation):
     subject = _(u'You have been invited to be a teacher in "%s"') % invitation.course.name
     template = 'teacheradmin/email_invitation_teacher.txt'
     context = {
-        'host': invitation.host.get_full_name or invitation.host.username,
+        'host': invitation.host.get_full_name() or invitation.host.username,
         'course': invitation.course.name,
         'register': settings.REGISTRY_URL,
         'site': get_current_site(request).name
