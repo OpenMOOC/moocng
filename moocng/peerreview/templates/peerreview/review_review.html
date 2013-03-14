@@ -86,7 +86,6 @@
     expired on {{ assignation_expire }}, but you still can send your review.
     Hurry up!
   {% endblocktrans %}
-</div>
 {% else %}
   <strong>{% trans "Remember:" %}</strong>
   {% blocktrans with assignation_expire=assignation_expire %}
@@ -94,6 +93,7 @@
     date, the review can be reassigned to another student.
   {% endblocktrans %}
 {% endif %}
+</div>
 
 <form method="post">
   {% csrf_token %}
