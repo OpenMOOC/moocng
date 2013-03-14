@@ -270,6 +270,15 @@ class PrivatePeerReviewAssignmentResource(ModelResource):
             "kq": ('exact'),
         }
 
+    def obj_delete(self, request, **kwargs):
+        obj = self.obj_get(request, **kwargs)
+        #submissions and reviews must be deleted too
+        submissions = get_db().get_collection('peer_review_submissions')
+        submissions.remove({'kq': obj.kq_id})
+        reviews = get_db().get_collection('peer_review_reviews')
+        reviews.remove({'kq': obj.kq_id})
+        super(PrivatePeerReviewAssignmentResource, self).obj_delete(request, **kwargs)
+
 
 class EvaluationCriterionResource(ModelResource):
     assignment = fields.ToOneField(PeerReviewAssignmentResource, 'assignment')

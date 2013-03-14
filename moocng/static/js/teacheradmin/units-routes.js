@@ -2,6 +2,7 @@
 /*global MOOC:true, _, jQuery, Backbone */
 
 // Copyright 2012 Rooter Analysis S.L.
+// Copyright (c) 2013 Grupo Opentia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +37,7 @@ if (_.isUndefined(window.MOOC)) {
                             var data = _.pick(kq, "id", "title", "videoID",
                                 "teacher_comments", "supplementary_material",
                                 "question", "order", "correct", "completed",
-                                "normalized_weight");
+                                "normalized_weight", "peer_review_assignment");
                             data.id = parseInt(data.id, 10);
                             return data;
                         }));
@@ -47,7 +48,11 @@ if (_.isUndefined(window.MOOC)) {
         },
         loadKQDetails = function (kq, callback) {
             var promises = [],
-                questionUrl;
+                questionUrl,
+                peer_review_assignment,
+                criterionList,
+                assignmentUrl,
+                assignmentId;
 
             if (kq.has("question") && !kq.has("questionInstance")) {
                 questionUrl = kq.get("question").replace("question", "privquestion");
@@ -63,6 +68,33 @@ if (_.isUndefined(window.MOOC)) {
                         kq.set("questionInstance", question);
                     }
                 }));
+            }
+
+            if (kq.has("peer_review_assignment") && !kq.has("peerReviewAssignmentInstance")) {
+                peer_review_assignment = new MOOC.models.PeerReviewAssignment();
+                criterionList = peer_review_assignment.get("_criterionList");
+                assignmentUrl = kq.get("peer_review_assignment").split("/");
+
+                assignmentId = parseInt(assignmentUrl.pop(), 10);
+                while (_.isNaN(assignmentId)) {
+                    assignmentId = parseInt(assignmentUrl.pop(), 10);
+                }
+
+                promises.push($.ajax(kq.get("peer_review_assignment").replace("peer_review_assignment", "privpeer_review_assignment"), {
+                    success: function (data, textStatus, jqXHR) {
+                        peer_review_assignment.set("id", parseInt(data.id, 10));
+                        peer_review_assignment.set("description", data.description);
+                        peer_review_assignment.set("minimum_reviewers", data.minimum_reviewers);
+                        peer_review_assignment.set("knowledgeQuantum", data.kq);
+                        kq.set("peerReviewAssignmentInstance", peer_review_assignment);
+                    }
+                }));
+
+                promises.push(
+                    peer_review_assignment.get("_criterionList").fetch({
+                        data: { 'assignment': assignmentId }
+                    })
+                );
             }
 
             if (!kq.has("attachmentList")) {
@@ -236,6 +268,20 @@ if (_.isUndefined(window.MOOC)) {
         };
         MOOC.models.KnowledgeQuantum.prototype.url = function () {
             return MOOC.ajax.getAbsoluteUrl("privkq/") + this.get("id") + "/";
+        };
+        MOOC.models.PeerReviewAssignment.prototype.url = function () {
+            if (this.has("id")) {
+                return MOOC.ajax.getAbsoluteUrl("privpeer_review_assignment/") + this.get("id") + "/";
+            }
+
+            return MOOC.ajax.getAbsoluteUrl("privpeer_review_assignment/");
+        };
+        MOOC.models.EvaluationCriterion.prototype.url = function () {
+            if (this.has("id")) {
+                return MOOC.ajax.getAbsoluteUrl("privevaluation_criterion/") + this.get("id") + "/";
+            }
+
+            return MOOC.ajax.getAbsoluteUrl("privevaluation_criterion/");
         };
 
         MOOC.router = new MOOC.App();
