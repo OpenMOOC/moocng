@@ -311,4 +311,4 @@ def course_review_upload(request, course_slug):
         submissions = db.get_collection("peer_review_submissions")
         submissions.insert(submission)
 
-        return HttpResponseRedirect(reverse('course_classroom', args=[course_slug])+"#unit%d/kq%d" % (unit.id, kq.id))
+        return HttpResponseRedirect(reverse('course_classroom', args=[course_slug])+"#unit%d/kq%d/p" % (unit.id, kq.id))

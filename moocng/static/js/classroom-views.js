@@ -777,6 +777,10 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
         "use strict";
         if (_.isUndefined(this.template)) {
             this.template = $("#peer-review-tpl").text();
+            if (this.template === "") {
+                // HACK for IE8
+                this.template = $("#peer-review-tpl").html();
+            }
         }
         return this.template;
     },
@@ -925,7 +929,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
             }, this));
         }, this);
 
-        if (file.files.length > 0) {
+        if ($(file).val().length > 0) {
             this.uploadFile(file, callback);
         } else {
             callback();
