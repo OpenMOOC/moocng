@@ -109,6 +109,12 @@
                 {% if course.estimated_effort %}
                     <dt>{% trans "Estimated Effort" %}</dt><dd>{{ course.estimated_effort|safe }}</dd>
                 {% endif %}
+                {% if use_old_calculus %}
+                    <dt><a target="_new" href="{% url oldscore %}" ><small>{% trans "Evaluation criteria" %}</small></a></dt>
+                {% else %}
+                    <dt><a target="_new" href="{% url score %}" ><small>{% trans "Evaluation criteria" %}</small></a></dt>
+                {% endif %}
+
             </dl>
         </div>
 

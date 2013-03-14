@@ -26,8 +26,13 @@
         {% endif%}
         <hr>
         {% if course_info.units_info %}
-            <h4>{% trans "Final mark" %}: {{ course_info.mark|floatformat:"-2" }} / 10 </h4>
-        
+            <h4>{% trans "Final mark" %}: {{ course_info.mark|floatformat:"-2" }} / 10
+            {% if course_info.use_old_calculus %}
+                <a target="_new" href="{% url oldscore %}" ><small>({% trans "Evaluation criteria" %})</small></a>
+            {% else %}
+                <a target="_new" href="{% url score %}" ><small>({% trans "Evaluation criteria" %})</small></a>
+            {% endif %}
+        </h4>
             {% if course_info.course.threshold %}
                 <p>{% blocktrans with threshold=course_info.course.threshold %}You need at least a <strong>{{ threshold }} to pass</strong> this course.{% endblocktrans %}</p>
             {% endif %}

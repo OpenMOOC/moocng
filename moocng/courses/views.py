@@ -135,6 +135,8 @@ def course_overview(request, course_slug):
     course_teachers = CourseTeacher.objects.filter(course=course)
     announcements = Announcement.objects.filter(course=course).order_by('datetime').reverse()[:5]
 
+    use_old_calculus = course.slug in settings.COURSES_USING_OLD_TRANSCRIPT
+
     return render_to_response('courses/overview.html', {
         'course': course,
         'is_enrolled': is_enrolled,
@@ -142,6 +144,7 @@ def course_overview(request, course_slug):
         'request': request,
         'course_teachers': course_teachers,
         'announcements': announcements,
+        'use_old_calculus': use_old_calculus,
     }, context_instance=RequestContext(request))
 
 
@@ -270,6 +273,7 @@ def transcript(request):
             'award': award,
             'passed': passed,
             'cert_url': cert_url,
+            'use_old_calculus': use_old_calculus,
         })
     return render_to_response('courses/transcript.html', {
         'courses_info': courses_info,
