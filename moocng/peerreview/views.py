@@ -270,6 +270,7 @@ def s3_upload(user_id, kq_id, filename, file_obj):
     name = "%d/%s/%s" % (user_id, kq_id, filename)
     k.key = name
     k.set_contents_from_file(file_obj)
+    k.make_public();
 
 
 @login_required
