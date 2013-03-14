@@ -257,16 +257,17 @@ def get_s3_download_url(request):
 
 
 def s3_url(user_id, filename, kq_id):
+    conn = boto.connect_s3(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY)
+    bucket = conn.get_bucket(settings.AWS_STORAGE_BUCKET_NAME)
+    k = boto.s3.key.Key(bucket)
     name = "%d/%s/%s" % (user_id, kq_id, filename)
-    url = "%s/%s" % (settings.AWS_S3_URL, name)
-    return url
+    k.key = name
+    return k.generate_url(expires_in=60*60*24*365*10) # 10 years
 
 
 def s3_upload(user_id, kq_id, filename, file_obj):
     conn = boto.connect_s3(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY)
-
     bucket = conn.get_bucket(settings.AWS_STORAGE_BUCKET_NAME)
-
     k = boto.s3.key.Key(bucket)
     name = "%d/%s/%s" % (user_id, kq_id, filename)
     k.key = name
