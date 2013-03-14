@@ -31,7 +31,7 @@ class PeerReviewAssignment(models.Model):
     description = HTMLField(verbose_name=_(u'Description'),
                             blank=True, null=False)
     minimum_reviewers = models.PositiveSmallIntegerField(verbose_name=_(u'Minimum reviewers'))
-    kq = models.ForeignKey(KnowledgeQuantum,
+    kq = models.OneToOneField(KnowledgeQuantum,
                            verbose_name=_(u'Nugget'),
                            blank=False, null=False)
     objects = PeerReviewAssignmentManager()
