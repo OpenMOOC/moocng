@@ -223,6 +223,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 sent_reviews: author_reviews,
                 mandatory_reviews: minimum_reviewers
             }, true));
+
+            html.push(" <a href='" + MOOC.peerReview.urls.prReview + "#kq" + this.model.get("id") + "'>" + MOOC.trans.progress.prReview + "</a>.</p>");
         }
         return html.join("");
     },
