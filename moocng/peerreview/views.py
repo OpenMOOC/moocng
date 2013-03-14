@@ -66,7 +66,7 @@ def course_review_assign(request, course_slug, assignment_id):
     max_hours_assigned = timedelta(hours=getattr(settings,
                                    "PEER_REVIEW_ASSIGNATION_EXPIRE", 24))
 
-    assignation_expire = datetime.now() - max_hours_assigned
+    assignation_expire = datetime.utcnow() - max_hours_assigned
 
     submission = collection.find({
         'kq': assignment.kq.id,
@@ -102,7 +102,7 @@ def course_review_assign(request, course_slug, assignment_id):
         }, {
             '$set': {
                 'assigned_to': user_id,
-                'assigned_when': datetime.now()
+                'assigned_when': datetime.utcnow()
             }
         })
         return HttpResponseRedirect(reverse('course_review_review', args=[course_slug, assignment_id]))
