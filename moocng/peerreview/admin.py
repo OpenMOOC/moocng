@@ -30,8 +30,8 @@ class PeerReviewAssignmentAdmin(admin.ModelAdmin):
 
 class EvaluationCriterionAdmin(SortableAdmin):
 
-    list_display = ('title',)
-
+    list_display = ('title', 'assignment')
+    list_filter =  ('assignment', 'assignment__kq__unit__course',)
 
 admin.site.register(PeerReviewAssignment, PeerReviewAssignmentAdmin)
 admin.site.register(EvaluationCriterion, EvaluationCriterionAdmin)
