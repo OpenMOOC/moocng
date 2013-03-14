@@ -208,7 +208,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
     player: null,
 
-    repeatedlyCheckIfPlayer: function () {
+    // The callback is only used in the router, not in the views
+    repeatedlyCheckIfPlayer: function (callback) {
         "use strict";
         if (MOOC.YTready) {
             this.player = YT.get("ytplayer");
@@ -221,8 +222,9 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     onStateChange: _.bind(this.loadExercise, this)
                 }
             });
+            if (!_.isUndefined(callback)) { callback(); }
         } else {
-            _.delay(_.bind(this.repeatedlyCheckIfPlayer, this), 200);
+            _.delay(_.bind(this.repeatedlyCheckIfPlayer, this), 200, callback);
         }
     },
 
@@ -378,7 +380,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     this.setEventForNavigation("#kq-previous", unit, this.model, false);
                     this.setEventForNavigation("#kq-next", unit, this.model, true);
 
-                    if (!_.isUndefined(this.player) && !_.isNull(this.player)) {
+                    if (this.player && !_.isNull(this.player.getIframe())) {
                         this.player.destroy();
                     }
                     $("#kq-video").empty();
@@ -417,7 +419,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     this.setEventForNavigation("#kq-previous", unit, this.model, false);
                     this.setEventForNavigation("#kq-next", unit, this.model, true);
 
-                    if (!_.isUndefined(this.player) && !_.isNull(this.player)) {
+                    if (this.player && !_.isNull(this.player.getIframe())) {
                         this.player.destroy();
                     }
                     $("#kq-video").empty();
