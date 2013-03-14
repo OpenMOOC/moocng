@@ -1,5 +1,9 @@
+{% load i18n %}
+
+{% blocktrans %}
 Dear {{ user }}
 
 Your course "{{ course }}" has been created, and you have been assigned as the teacher owner. You can now access to the course administration interface and start adding content.
 
 Best regards, {{ site }}'s team
+{% endblocktrans %}
