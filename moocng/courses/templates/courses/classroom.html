@@ -158,10 +158,6 @@
     <script src="{{ STATIC_URL }}js/classroom-views.js"> type="text/javascript"</script>
     <script type="text/javascript">
         MOOC.trans = {
-            ajax: {
-                error: "{% trans "Error" %}",
-                unknownError: "{% trans "Unknown error with ajax petition" %}"
-            },
             classroom: {
                 q: "{% trans "Q" %}",
                 qTooltip: "{% trans "Question" %}",
@@ -188,8 +184,6 @@
                 prFileMaxSizeMsg: "{% blocktrans with file_max_size=peer_review.file_max_size %}Your file must be smaller than {{ file_max_size }}MB.{% endblocktrans %}"
             },
             api: {
-                unitNotReadyTitle: "{% trans "The module is not ready" %}",
-                unitNotReady: "{% trans "This module has no nuggets. Probably the start date hasn't been reached yet." %}",
                 solutionNotReadyTitle: "{% trans "The solution is not available" %}",
                 solutionNotReady: "{% trans "Please wait until the deadline of the module." %}"
             }

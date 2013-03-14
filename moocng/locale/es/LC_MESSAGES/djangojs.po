@@ -15,14 +15,26 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-14 06:17-0500\n"
-"PO-Revision-Date: 2013-03-14 12:18+0100\n"
+"POT-Creation-Date: 2013-03-14 11:11-0500\n"
+"PO-Revision-Date: 2013-03-14 17:13+0100\n"
 "Last-Translator: Alejandro Blanco <ablanco@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: static/js/ajax.js:35
+msgid "Error"
+msgstr "Error"
+
+#: static/js/ajax.js:37
+msgid "Unknown error with ajax petition"
+msgstr "Error desconocido al hacer la petición ajax"
+
+#: static/js/ajax.js:42
+msgid "error"
+msgstr "error"
 
 #: static/js/progress-views.js:81 static/js/progress-views.js.c:86
 msgid "completed"
@@ -73,10 +85,19 @@ msgstr ""
 "Has enviado %(sent_reviews)s revisiones de las %(mandatory_reviews)s "
 "obligatorias."
 
-#: static/js/progress-views.js:229
+#: static/js/progress-views.js:230
 msgid "Do more reviews"
 msgstr "Hacer más revisiones"
 
 #: static/js/progress-views.js:283
 msgid "View details"
 msgstr "Ver detalles"
+
+#: static/js/routes.js:81
+msgid "The module is not ready"
+msgstr "El módulo no está listo"
+
+#: static/js/routes.js:82
+msgid ""
+"This module has no nuggets. Probably the start date hasn't been reached yet."
+msgstr "Este módulo no tiene píldoras. Probablemente aún no se ha alcanzado la fecha de inicio."
