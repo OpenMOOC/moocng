@@ -211,8 +211,8 @@ The bucket must be configured with the next CORS configuration:
       </CORSRule>
   </CORSConfiguration>
 
-And your settings must define your account data, your bucket, the expire
-time of upload permissions and the bucket base url.
+And your settings must define your account data, your bucket and the expire
+time of upload permissions.
 
 .. code-block:: python
 
@@ -220,7 +220,6 @@ time of upload permissions and the bucket base url.
   AWS_SECRET_ACCESS_KEY = "your-secret-key-id"
   AWS_STORAGE_BUCKET_NAME = "your-bucket-name"
   AWS_S3_UPLOAD_EXPIRE_TIME = (60 * 5) # 5 minutes
-  AWS_S3_URL = "https://your-bucket-name.s3.amazonaws.com"
 
 
 Web server configuration

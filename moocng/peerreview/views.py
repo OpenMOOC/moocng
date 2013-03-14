@@ -228,21 +228,19 @@ def get_s3_upload_url(request):
 
     name = "%d/%s/%s" % (user.id, kq_id, filename)
     mime_type = request.GET['type']
-
     expires = time.time() + settings.AWS_S3_UPLOAD_EXPIRE_TIME
-    amz_headers = "x-amz-acl:public-read"
-    string_to_sign = "PUT\n\n%s\n%d\n%s\n/%s/%s" % (mime_type, expires, amz_headers, settings.AWS_STORAGE_BUCKET_NAME, name)
+    headers = {
+            'x-amz-acl': "public-read",
+            'Content-Type': mime_type,
+    }
 
-    sig = hmac.new(settings.AWS_SECRET_ACCESS_KEY, string_to_sign, hashlib.sha1).digest()
-    sig = base64.encodestring(sig).strip()
-    sig = urllib.quote(sig, safe='')
-
-    url = "%s/%s?AWSAccessKeyId=%s&Expires=%d&Signature=%s" % (
-        settings.AWS_S3_URL,
-        name,
-        settings.AWS_ACCESS_KEY_ID,
-        expires,
-        sig
+    conn = boto.connect_s3(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY)
+    url = conn.generate_url(
+            settings.AWS_S3_UPLOAD_EXPIRE_TIME,
+            "PUT",
+            settings.AWS_STORAGE_BUCKET_NAME,
+            name,
+            headers
     )
 
     return HttpResponse(urllib.quote(url))
@@ -262,7 +260,7 @@ def s3_url(user_id, filename, kq_id):
     k = boto.s3.key.Key(bucket)
     name = "%d/%s/%s" % (user_id, kq_id, filename)
     k.key = name
-    return k.generate_url(expires_in=60*60*24*365*10) # 10 years
+    return k.generate_url(expires_in=0, query_auth=False)
 
 
 def s3_upload(user_id, kq_id, filename, file_obj):
