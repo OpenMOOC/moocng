@@ -15,20 +15,20 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-14 06:01-0500\n"
-"PO-Revision-Date: 2013-03-14 12:02+0100\n"
-"Last-Translator: Lorenzo Gil <lgs@yaco.es>\n"
+"POT-Creation-Date: 2013-03-14 07:34-0500\n"
+"PO-Revision-Date: 2013-03-14 13:36+0100\n"
+"Last-Translator: Antonio Perez-Aranda <aperezaranda@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
-"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: es_ES\n"
 
-#: settings.py:82
+#: settings.py:81
 msgid "English"
 msgstr "Inglés"
 
-#: settings.py:83
+#: settings.py:82
 msgid "Spanish"
 msgstr "Español"
 
@@ -311,11 +311,11 @@ msgstr "Comunicados del %(course_title)s"
 #: courses/feeds.py:35
 #, python-format
 msgid ""
-"Announcements of the online course \"%(course_title)s\" on the platform "
-"\"%(site_name)s\"."
+"Announcements of the online course \"%(course_title)s\" on the platform \"%"
+"(site_name)s\"."
 msgstr ""
-"Comunicados del curso online \"%(course_title)s\" en la plataforma "
-"\"%(site_name)s\"."
+"Comunicados del curso online \"%(course_title)s\" en la plataforma \"%"
+"(site_name)s\"."
 
 #: courses/forms.py:36
 msgid "The deadline date is mandatory for homework and exams."
@@ -1218,16 +1218,15 @@ msgstr "Comentario"
 
 #: courses/templates/courses/transcript.html:20
 msgid "of the final mark"
-msgstr ""
+msgstr "de la nota final"
 
 #: courses/templates/courses/transcript.html:25
 msgid "No scoring units"
-msgstr ""
+msgstr "No hay unidades puntuables"
 
 #: courses/templates/courses/transcript.html:29
-#, fuzzy
 msgid "Final mark"
-msgstr "Nota final"
+msgstr "Calificación final"
 
 #: courses/templates/courses/transcript.html:32
 #, python-format
@@ -1312,16 +1311,16 @@ msgstr "Criterios de evaluación"
 msgid "{0} - EvaluationCriterion {1}"
 msgstr "{0} - Criterio de evaluación {1}"
 
-#: peerreview/views.py:53 peerreview/views.py:140
+#: peerreview/views.py:54 peerreview/views.py:141
 msgid "The selected peer review assignment is not part of this course."
 msgstr ""
 "La actividad revisada por compañeros seleccionada no es parte de este curso"
 
-#: peerreview/views.py:63
+#: peerreview/views.py:64
 msgid "You already have a submission assigned."
 msgstr "Ya has enviado esta actividad"
 
-#: peerreview/views.py:97
+#: peerreview/views.py:98
 msgid ""
 "There is no submission avaliable for you at this moment. Please, try again "
 "later."
@@ -1329,15 +1328,15 @@ msgstr ""
 "No hay ninguna actividad que necesite revisión en este momento. Por favor, "
 "pruebe más tarde."
 
-#: peerreview/views.py:151
+#: peerreview/views.py:152
 msgid "You don't have this submission assigned."
 msgstr "No tienes asignado para revisión este ejercicio"
 
-#: peerreview/views.py:171
+#: peerreview/views.py:172
 msgid "Your can't submit two times the same review."
 msgstr "No puedes enviar 2 veces la misma revisión"
 
-#: peerreview/views.py:181
+#: peerreview/views.py:182
 #, python-format
 msgid ""
 "Your review has been submitted. You have to review at least %d exercises "
@@ -1345,25 +1344,25 @@ msgid ""
 msgstr ""
 "Tu revisión ha sido enviada. Tienes que revisar al menos %d ejercicios más."
 
-#: peerreview/views.py:183
+#: peerreview/views.py:184
 msgid "Your review has been submitted."
 msgstr "Su revisión ha sido enviada."
 
-#: peerreview/views.py:198
+#: peerreview/views.py:211
 #, python-format
 msgid "Your assignment \"%(nugget)s\" has been reviewed"
 msgstr "Su trabajo \"%(nugget)s\" ha sido revisado"
 
-#: peerreview/views.py:205
+#: peerreview/views.py:218
 msgid "Undefined"
 msgstr "Indefinido"
 
-#: peerreview/views.py:288
+#: peerreview/views.py:300
 #, fuzzy, python-format
 msgid "Your file is greater than the max allowed size (%d MB)."
 msgstr "Tu fichero debe ocupar menos de %(file_max_size)sMB."
 
-#: peerreview/views.py:292
+#: peerreview/views.py:304
 #, python-format
 msgid "Your text is greater than the max allowed size (%d characters)."
 msgstr ""
@@ -1441,11 +1440,63 @@ msgstr "Respuesta del alumno"
 msgid "Download student's submission"
 msgstr "Descargar la entrega del estudiante"
 
-#: peerreview/templates/peerreview/review_review.html:76
+#: peerreview/templates/peerreview/review_review.html:72
+#: peerreview/templates/peerreview/review_review.html:83
+msgid "Warning!"
+msgstr "¡Atención!"
+
+#: peerreview/templates/peerreview/review_review.html:73
+#, python-format
+msgid ""
+"\n"
+"        You should scan this file with your antivirus software. %(site)s\n"
+"        is not responsible for any harm this may cause to your computer.\n"
+"    "
+msgstr ""
+"\n"
+"        Debes revisar este fichero con tu antivitus. %(site)s no es\n"
+"        responsable de ningún daño que este pueda causar a tu ordenador.\n"
+"    "
+
+#: peerreview/templates/peerreview/review_review.html:80
 msgid "Your review"
 msgstr "Tu revisión"
 
-#: peerreview/templates/peerreview/review_review.html:109
+#: peerreview/templates/peerreview/review_review.html:84
+#, python-format
+msgid ""
+"\n"
+"    This submission can be now claimed by other student. Your claim\n"
+"    expired on %(assignation_expire)s, but you still can send your review.\n"
+"    Hurry up!\n"
+"  "
+msgstr ""
+"\n"
+"    Este ejercicio puede ahora ser asignado a otro alumno. Su consesión\n"
+"    cacuducó el %(assignation_expire)s, pero aún puedes enviar su revisión.\n"
+"    Dese prisa!\n"
+"  "
+
+#: peerreview/templates/peerreview/review_review.html:91
+#, fuzzy
+msgid "Remember:"
+msgstr "¡Recuerda!"
+
+#: peerreview/templates/peerreview/review_review.html:92
+#, python-format
+msgid ""
+"\n"
+"    You must review this exercise before %(assignation_expire)s. After "
+"this,\n"
+"    date, the review can be reassigned to another student.\n"
+"  "
+msgstr ""
+"\n"
+"    Debes revisar este ejericio antes del %(assignation_expire)s. Después "
+"    de esta fecha, la reivisión puede ser reasignada a otro estudiante.\n"
+"  "
+
+#: peerreview/templates/peerreview/review_review.html:129
 msgid "Send review"
 msgstr "Enviar revisión"
 
