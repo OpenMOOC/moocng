@@ -1041,7 +1041,6 @@ msgid "Please wait until the deadline of the module."
 msgstr "Por favor, espere hasta alcanzar la fecha límite del módulo."
 
 #: courses/templates/courses/email_not_allow.txt:3
-#, fuzzy, python-format
 msgid ""
 "\n"
 "Dear %(user)s\n"
@@ -1052,14 +1051,14 @@ msgid ""
 "\n"
 "Best regards, %(site)s's team\n"
 msgstr ""
+"\n"
 "Estimado %(user)s\n"
 "\n"
-"Su curso \"%(course)s\" ha sido creado, y usted ha sido asignado como el "
-"profesor propietario. Ahora puede acceder a la interfaz de administración "
+"El curso \"%(course)s\" ha sido creado, y has sido asignado como el "
+"profesor propietario. Ahora puedes acceder a la interfaz de administración "
 "del curso y comenzar a añadir contenido.\n"
 "\n"
-"Un afectuoso saludo,\n"
-"el equipo de %(site)s"
+"Un afectuoso saludo, el equipo de %(site)s\n"
 
 #: courses/templates/courses/home.html:25
 msgid "More information about this course"
