@@ -49,8 +49,7 @@ from moocng.courses.utils import normalize_kq_weight, calculate_course_mark
 from moocng.mongodb import get_db
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
 from moocng.peerreview.utils import (kq_get_peer_review_score,
-                                     get_peer_review_review_score,
-                                     is_peer_review_assignments_completed)
+                                     get_peer_review_review_score)
 from moocng.videos.utils import extract_YT_video_id
 
 
@@ -93,7 +92,6 @@ class KnowledgeQuantumResource(ModelResource):
     videoID = fields.CharField(readonly=True)
     correct = fields.BooleanField(readonly=True)
     completed = fields.BooleanField(readonly=True)
-    peer_review_completed = fields.BooleanField(readonly=True)
     normalized_weight = fields.IntegerField(readonly=True)
 
     class Meta:
@@ -118,8 +116,6 @@ class KnowledgeQuantumResource(ModelResource):
         db = get_db()
         self.user_answers = get_user(request, db.get_collection('answers'))
         self.user_activity = get_user(request, db.get_collection('activity'))
-        self.peer_review_reviews = db.get_collection('peer_review_reviews')
-        self.peer_review_submissions = db.get_collection('peer_review_submissions')
         return super(KnowledgeQuantumResource, self).dispatch(request_type,
                                                               request,
                                                               **kwargs)
@@ -170,43 +166,8 @@ class KnowledgeQuantumResource(ModelResource):
 
             return question.is_correct(answer)
 
-    def dehydrate_peer_review_completed(self, bundle):
-        try:
-            assignment = bundle.obj.peerreviewassignment_set.get()
-        except PeerReviewAssignment.DoesNotExist:
-            return None
-
-        submission = self.peer_review_submissions.find_one({
-            "kq": bundle.obj.id,
-            "author": bundle.request.user.id
-        })
-
-        return is_peer_review_assignments_completed(assignment, submission)
-
     def dehydrate_completed(self, bundle):
-        try:
-            return self._is_completed(self.user_activity, bundle.obj)
-        except AttributeError:
-            return False
-
-    def _is_completed(self, activity, kq):
-        course_id = kq.unit.course.id
-        if activity is None:
-            return False
-
-        courses = activity.get('courses', None)
-        if courses is None:
-            return False
-
-        visited = courses.get(unicode(course_id), None)
-        if visited is None:
-            return False
-
-        kqs = visited.get('kqs', None)
-        if kqs is None:
-            return False
-
-        return unicode(kq.id) in kqs
+        return bundle.obj.is_completed(bundle.request.user)
 
 
 class PrivateKnowledgeQuantumResource(ModelResource):

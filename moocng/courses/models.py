@@ -29,6 +29,7 @@ from tinymce.models import HTMLField
 from moocng.badges.models import Badge
 from moocng.courses.cache import invalidate_template_fragment
 from moocng.enrollment import enrollment_methods
+from moocng.mongodb import get_db
 from moocng.videos.tasks import process_video_task
 from moocng.videos.utils import extract_YT_video_id
 
@@ -225,6 +226,32 @@ class KnowledgeQuantum(Sortable):
         verbose_name=_(u'Supplementary material'),
         blank=True, null=False)
 
+    def is_completed(self, user):
+        if not self.kq_visited_by(user):
+            return False
+
+        questions = self.question_set.filter()
+        if len(questions):
+            return questions[0].is_completed(user, visited=True)
+
+        assignments = self.peerreviewassignment_set.filter()
+        if assignments:
+            return assignments[0].is_completed(user, visited=True)
+
+        return True
+
+    def kq_visited_by(self, user):
+        db = get_db()
+
+        activity = db.get_collection("activity")
+        # Verify if user has watch the video from kq
+        user_activity_exists = activity.find({
+            "user": user.id,
+            "courses.%s.kqs" % (self.unit.course.id): unicode(self.id)
+        })
+
+        return user_activity_exists.count() > 0
+
     class Meta(Sortable.Meta):
         verbose_name = _(u'nugget')
         verbose_name_plural = _(u'nuggets')
@@ -296,6 +323,28 @@ class Question(models.Model):
             correct = correct and option.is_correct(reply)
 
         return correct
+
+    def is_completed(self, user, visited=None):
+        db = get_db()
+
+        if visited is None:
+            visited = self.kq.kq_visited_by(user)
+            if not visited:
+                return False
+
+        # Verify if user has answered the question
+        answers = db.get_collection("answers")
+        answers_exists = answers.find_one({
+            "user": user.id,
+            "questions.%s" % (self.id): {
+                "$exists": True
+            }
+        })
+
+        if not answers_exists:
+            return False
+
+        return True
 
 
 def handle_question_post_save(sender, instance, created, **kwargs):

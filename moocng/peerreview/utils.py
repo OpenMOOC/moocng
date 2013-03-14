@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+from datetime import datetime
+
 from django.db import IntegrityError
 
 from moocng.mongodb import get_db
-
 from moocng.peerreview import cache
 from moocng.peerreview.models import PeerReviewAssignment
-
-from datetime import datetime
 
 
 def course_get_peer_review_assignments(course):
@@ -41,14 +41,6 @@ def get_peer_review_review_score(review):
         return 0
     return (float(sum(c[1] for c in review["criteria"])) /
             len(review["criteria"]))
-
-
-def is_peer_review_assignments_completed(assignment, submission):
-    if submission is None:
-        return False
-    if submission["author_reviews"] < assignment.minimum_reviewers:
-        return False
-    return True
 
 
 def kq_get_peer_review_score(kq, author, pra=None):

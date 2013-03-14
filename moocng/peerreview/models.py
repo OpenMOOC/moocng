@@ -22,6 +22,7 @@ from adminsortable.models import Sortable
 from tinymce.models import HTMLField
 
 from moocng.courses.models import KnowledgeQuantum
+from moocng.mongodb import get_db
 from moocng.peerreview import cache
 from moocng.peerreview.managers import PeerReviewAssignmentManager
 
@@ -35,12 +36,37 @@ class PeerReviewAssignment(models.Model):
                            blank=False, null=False)
     objects = PeerReviewAssignmentManager()
 
+    def is_completed(self, user, visited=None):
+
+        db = get_db()
+
+        if visited is None:
+            visited = self.kq.kq_visited_by(user)
+            if not visited:
+                return False
+
+        # Verify if user has sent a submission
+        submissions = db.get_collection("peer_review_submissions")
+        user_submission = submissions.find_one({
+            "kq": self.kq.id,
+            "author": user.id
+        })
+
+        if not user_submission:
+            return False
+
+        if user_submission.get("author_reviews", 0) < self.minimum_reviewers:
+            return False
+
+        return True
+
     class Meta:
         verbose_name = _(u'peer review assignment')
         verbose_name_plural = _(u'peer review assignments')
 
     def __unicode__(self):
         return self.kq.__unicode__()
+
 
 def invalidate_cache(sender, instance, **kwargs):
     course = instance.kq.unit.course
