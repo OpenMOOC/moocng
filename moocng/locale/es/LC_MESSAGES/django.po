@@ -1398,7 +1398,7 @@ msgstr ""
 "\n"
 "%(comment)s\n"
 "\n"
-"Saludos cordiales y agradecerle que aprenda con  %(site)s. El equipo de "
+"Saludos cordiales y agradecerte que aprendas con  %(site)s. El equipo de "
 "%(site)s.\n"
 
 #: peerreview/templates/peerreview/pending_reviews.html:5
