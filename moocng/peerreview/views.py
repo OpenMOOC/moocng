@@ -33,6 +33,7 @@ from django.forms.formsets import formset_factory
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
+from django.utils import timezone
 from django.utils.translation import ugettext as _
 
 from moocng.api.mongodb import get_db
@@ -173,9 +174,9 @@ def course_review_review(request, course_slug, assignment_id):
 
             reviews = get_db().get_collection('peer_review_reviews')
             reviewed = reviews.find({
-                    'reviewer': user_id,
-                    'kq': assignment.kq.id,
-                    })
+                'reviewer': user_id,
+                'kq': assignment.kq.id,
+            })
             pending = assignment.minimum_reviewers - reviewed.count()
             if pending > 0:
                 messages.success(request, _('Your review has been submitted. You have to review at least %d exercises more.') % pending)
@@ -186,13 +187,25 @@ def course_review_review(request, course_slug, assignment_id):
         submission_form = ReviewSubmissionForm()
         criteria_formset = EvalutionCriteriaResponseFormSet(initial=criteria_initial)
 
+    max_hours_assigned = timedelta(hours=getattr(settings,
+                                   "PEER_REVIEW_ASSIGNATION_EXPIRE", 24))
+
+    assigned_when = timezone.make_aware(submission[0]["assigned_when"], None)
+
+    assignation_expire = assigned_when + max_hours_assigned
+
+    is_assignation_expired = timezone.datetime.utcnow() > assignation_expire
+
     return render_to_response('peerreview/review_review.html', {
-            'submission': submission[0],
-            'submission_form': submission_form,
-            'criteria_formset': criteria_formset,
-            'course': course,
-            'assignment': assignment,
-            }, context_instance=RequestContext(request))
+        'submission': submission[0],
+        'is_assignation_expired': is_assignation_expired,
+        'assignation_expire': assignation_expire,
+        'submission_form': submission_form,
+        'criteria_formset': criteria_formset,
+        'course': course,
+        'assignment': assignment,
+    }, context_instance=RequestContext(request))
+
 
 def send_mail_to_submission_owner(current_site_name, assignment, review, submitter):
     subject = _(u'Your assignment "%(nugget)s" has been reviewed') % {'nugget': assignment.kq.title}
@@ -270,6 +283,7 @@ def s3_upload(user_id, kq_id, filename, file_obj):
     name = "%d/%s/%s" % (user_id, kq_id, filename)
     k.key = name
     k.set_contents_from_file(file_obj)
+    k.make_public();
 
 
 @login_required
@@ -311,4 +325,4 @@ def course_review_upload(request, course_slug):
         submissions = db.get_collection("peer_review_submissions")
         submissions.insert(submission)
 
-        return HttpResponseRedirect(reverse('course_classroom', args=[course_slug])+"#unit%d/kq%d" % (unit.id, kq.id))
+        return HttpResponseRedirect(reverse('course_classroom', args=[course_slug])+"#unit%d/kq%d/p" % (unit.id, kq.id))

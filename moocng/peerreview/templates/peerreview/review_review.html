@@ -69,11 +69,31 @@
     <a href="{{ submission.file }}">{% trans "Download student's submission" %}</a>
   </p>
   <div class="alert">
-    <strong>Warning!</strong> You should scan this file with your antivirus software. {{ site }} is not responsible for any harm this may cause to your computer.
+    <strong>{% trans "Warning!" %}</strong>
+    {% blocktrans with site=site %}
+        You should scan this file with your antivirus software. {{ site }}
+        is not responsible for any harm this may cause to your computer.
+    {% endblocktrans %}
   </div>
 {% endif %}
 
 <h3>{% trans "Your review" %}</h3>
+<div class="alert">
+{% if is_assignation_expired %}
+  <strong>{% trans "Warning!" %}</strong>
+  {% blocktrans with assignation_expire=assignation_expire %}
+    This submission can be now claimed by other student. Your claim
+    expired on {{ assignation_expire }}, but you still can send your review.
+    Hurry up!
+  {% endblocktrans %}
+</div>
+{% else %}
+  <strong>{% trans "Remember:" %}</strong>
+  {% blocktrans with assignation_expire=assignation_expire %}
+    You must review this exercise before {{ assignation_expire }}. After this,
+    date, the review can be reassigned to another student.
+  {% endblocktrans %}
+{% endif %}
 
 <form method="post">
   {% csrf_token %}
