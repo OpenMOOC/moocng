@@ -1,5 +1,5 @@
 /*jslint vars: false, browser: true, nomen: true */
-/*global MOOC: true, Backbone, $, _ */
+/*global MOOC: true, Backbone, $, _, gettext */
 
 // Copyright 2012 Rooter Analysis S.L.
 //
@@ -32,14 +32,14 @@ MOOC.ajax.genericError = function (jqXHR, textStatus, errorThrown) {
     "use strict";
     var message;
     if (!_.isNull(textStatus)) {
-        message = MOOC.trans.ajax.error + ": " + textStatus;
+        message = gettext("Error") + ": " + textStatus;
     } else {
-        message = MOOC.trans.ajax.unknownError;
+        message = gettext("Unknown error with ajax petition");
     }
     if (!_.isNull(errorThrown)) {
         message += " - " + errorThrown;
     }
-    MOOC.alerts.show(MOOC.alerts.ERROR, "AJAX " + MOOC.trans.ajax.error, message);
+    MOOC.alerts.show(MOOC.alerts.ERROR, "AJAX " + gettext("error"), message);
 };
 
 MOOC.ajax.getResource = function (uri, callback) {

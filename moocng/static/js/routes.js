@@ -1,5 +1,5 @@
 /*jslint vars: false, browser: true, nomen: true */
-/*global MOOC: true, Backbone, $, _, async */
+/*global MOOC: true, Backbone, $, _, async, gettext */
 
 // Copyright 2012 Rooter Analysis S.L.
 //
@@ -77,7 +77,9 @@ MOOC.App = Backbone.Router.extend({
             steps.push(function (callback) {
                 var kqObj = unitObj.get("knowledgeQuantumList").first();
                 if (_.isUndefined(kqObj)) {
-                    MOOC.alerts.show(MOOC.alerts.INFO, MOOC.trans.api.unitNotReadyTitle, MOOC.trans.api.unitNotReady);
+                    MOOC.alerts.show(MOOC.alerts.INFO,
+                                     gettext("The module is not ready"),
+                                     gettext("This module has no nuggets. Probably the start date hasn't been reached yet."));
                 } else {
                     MOOC.router.navigate("unit" + unitObj.get("id") + "/kq" + kqObj.get("id"), { trigger: true });
                     callback();

@@ -89,16 +89,6 @@
     <script src="{{ STATIC_URL }}js/routes.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/progress-views.js" type="text/javascript"></script>
     <script type="text/javascript">
-        MOOC.trans = {
-            ajax: {
-                error: "{% trans "Error" %}",
-                unknownError: "{% trans "Unknown error with ajax petition" %}"
-            },
-            api: {
-                unitNotReadyTitle: "{% trans "The module is not ready" %}",
-                unitNotReady: "{% trans "This module has no nuggets. Probably the start date hasn't been reached yet." %}"
-            }
-        };
         $("#unit-list li").each(function (idx, node) {
             var id = node.id.split("unit")[1];
             MOOC.models.course.add(new MOOC.models.Unit({
