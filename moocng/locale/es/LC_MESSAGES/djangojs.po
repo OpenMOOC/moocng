@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-13 05:45-0500\n"
-"PO-Revision-Date: 2013-03-12 14:13+0100\n"
+"POT-Creation-Date: 2013-03-14 05:58-0500\n"
+"PO-Revision-Date: 2013-03-14 12:00+0100\n"
 "Last-Translator: Alejandro Blanco <ablanco@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
 "Language: es_ES\n"
@@ -24,10 +24,53 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: static/js/progress-views.js:198
+#: static/js/progress-views.js:81 static/js/progress-views.js.c:86
+msgid "completed"
+msgstr "completado"
+
+#: static/js/progress-views.js:82 static/js/progress-views.js.c:90
+#: static/js/progress-views.js:178
+msgid "correct"
+msgstr "correcto"
+
+#: static/js/progress-views.js:152
+msgid ""
+"This score will not be applied to your final score until you get the minimum "
+"number of reviews"
+msgstr "Esta nota no se aplicará a tu nota final hasta que obtengas el número mínimo de revisiones"
+
+#: static/js/progress-views.js:170
+msgid "pending"
+msgstr "pendiente"
+
+#: static/js/progress-views.js:180
+msgid "incorrect"
+msgstr "incorrecto"
+
+#: static/js/progress-views.js:210
+msgid "Reviews of your submission"
+msgstr "Revisiones de tu entrega"
+
+#: static/js/progress-views.js:213
+msgid "Date"
+msgstr "Fecha"
+
+#: static/js/progress-views.js:214
+msgid "Score"
+msgstr "Nota"
+
+#: static/js/progress-views.js:219
+msgid "You have not received any review yet"
+msgstr "Aún no has recibido ninguna revisión"
+
+#: static/js/progress-views.js:222
 msgid ""
 "You have sent %(sent_reviews)s reviews of the %(mandatory_reviews)s "
 "mandatory reviews."
 msgstr ""
 "Has enviado %(sent_reviews)s revisiones de las %(mandatory_reviews)s "
 "obligatorias."
+
+#: static/js/progress-views.js:276
+msgid "View details"
+msgstr "Ver detalles"

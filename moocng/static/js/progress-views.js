@@ -78,16 +78,16 @@ MOOC.views.Unit = Backbone.View.extend({
 
         $("#unit-title").html(this.model.get("title"));
 
-        html = '<div class="progress progress-info" title="' + MOOC.trans.progress.completed + '"><div class="bar completed" style="width: 0%;"></div></div>';
-        html += '<div class="progress progress-success" title="' + MOOC.trans.progress.correct + '"><div class="bar correct" style="width: 0%;"></div></div>';
+        html = '<div class="progress progress-info" title="' + gettext('completed') + '"><div class="bar completed" style="width: 0%;"></div></div>';
+        html += '<div class="progress progress-success" title="' + gettext('correct') + '"><div class="bar correct" style="width: 0%;"></div></div>';
         $("#unit-progress-bar").html(html);
 
         progress = this.model.calculateProgress({ completed: true });
-        helpText = "<div><span>" + Math.round(progress) + "% " + MOOC.trans.progress.completed + "</span></div>";
+        helpText = "<div><span>" + Math.round(progress) + "% " + gettext('completed') + "</span></div>";
         $("#unit-progress-bar").find("div.bar.completed").css("width", progress + "%");
 
         progress = this.model.calculateProgress({ completed: true, correct: true });
-        helpText += "<div><span>" + Math.round(progress) + "% " + MOOC.trans.progress.correct + "</span></div>";
+        helpText += "<div><span>" + Math.round(progress) + "% " + gettext('correct') + "</span></div>";
         $("#unit-progress-bar").find("div.bar.correct").css("width", progress + "%");
 
         $("#unit-progress-text").html(helpText);
@@ -149,7 +149,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
         if (this.reviews.length < minimum_reviewers) {
             icon = '<i class="icon-exclamation-sign icon-white"></i> ';
-            title_attr = ' title="' + MOOC.trans.progress.score_dont_apply + '"';
+            title_attr = ' title="' + gettext('This score will not be applied to your final score until you get the minimum number of reviews') + '"';
         }
 
         score_obj = this.model.get('peer_review_score');
@@ -167,7 +167,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
     render_pending_badge: function () {
         "use strict";
-        return '<span class="badge pull-right">' + MOOC.trans.progress.pending + '</span>';
+        return '<span class="badge pull-right">' + MOOC.views.capitalize(gettext('pending')) + '</span>';
     },
 
     render_normal_kq: function () {
@@ -175,9 +175,9 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         var html = [];
         if (this.model.get('completed')) {
             if (this.model.get("correct")) {
-                html.push('<span class="badge badge-success pull-right"><i class="icon-ok icon-white"></i> ' + MOOC.views.capitalize(MOOC.trans.progress.correct) + '</span>');
+                html.push('<span class="badge badge-success pull-right"><i class="icon-ok icon-white"></i> ' + MOOC.views.capitalize(gettext('correct')) + '</span>');
             } else {
-                html.push('<span class="badge badge-important pull-right"><i class="icon-remove icon-white"></i> ' + MOOC.trans.progress.incorrect + '</span>');
+                html.push('<span class="badge badge-important pull-right"><i class="icon-remove icon-white"></i> ' + MOOC.views.capitalize(gettext('incorrect')) + '</span>');
             }
         } else {
             html.push(this.render_pending_badge());
@@ -207,16 +207,16 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
             if (this.reviews.length > 0) {
                 html.push('<table class="table table-stripped table-bordered">');
-                html.push('<caption>' + MOOC.trans.progress.current_reviews + '</caption>');
+                html.push('<caption>' + gettext('Reviews of your submission') + '</caption>');
                 html.push('<thead><tr>');
                 html.push('<th>#</th>');
-                html.push('<th>' + MOOC.trans.progress.date + '</th>');
-                html.push('<th>' + MOOC.trans.progress.score + ' </th>');
+                html.push('<th>' + gettext('Date') + '</th>');
+                html.push('<th>' + gettext('Score') + ' </th>');
                 html.push('</tr></thead>');
                 html.push('<tbody></tbody>');
                 html.push('</table>');
             } else {
-                html.push('<p>' + MOOC.trans.progress.no_reviews_yet + '</p>');
+                html.push('<p>' + gettext('You have not received any review yet') + '</p>');
             }
 
             html.push("<p>" + interpolate(gettext("You have sent %(sent_reviews)s reviews of the %(mandatory_reviews)s mandatory reviews."), {
@@ -275,7 +275,7 @@ MOOC.views.PeerReviewReview = Backbone.View.extend({
 
         html.push('<td>' + (this.index + 1)  + '</td>');
         html.push('<td>' + this.model.get('created').format('LLLL')  + '</td>');
-        html.push('<td><a class="btn btn-small pull-right" href="#"><i class="icon-eye-open"></i> ' + MOOC.trans.progress.view_details + '</a>' + this.model.get('score')  + '</td>');
+        html.push('<td><a class="btn btn-small pull-right" href="#"><i class="icon-eye-open"></i> ' + gettext('View details') + '</a>' + this.model.get('score')  + '</td>');
 
         this.$el.html(html.join(""));
         return this;
