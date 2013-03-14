@@ -41,23 +41,28 @@ def calculate_course_mark(course, user):
         course_unit_list = Unit.objects.filter(course=course).exclude(unittype='n')
 
     total_weight_unnormalized = 0
+    unit_course_counter = 0
     for course_unit in course_unit_list:
-        total_weight_unnormalized += course_unit.weight
-
+        if not(course_unit.unittype == 'n' and not use_old_calculus):
+            total_weight_unnormalized += course_unit.weight
+            unit_course_counter += 1
     units_info = []
     for unit in course_unit_list:
         unit_info = {}
+        use_unit_in_total = False
         if unit.unittype == 'n' and not use_old_calculus:
             normalized_unit_weight = 0
             mark, relative_mark = (0, 0)
         else:
-            normalized_unit_weight = normalize_unit_weight(unit, len(course_unit_list), total_weight_unnormalized)
-            mark, relative_mark = calculate_unit_mark(unit, user, normalized_unit_weight)
-        total_mark += relative_mark
+            normalized_unit_weight = normalize_unit_weight(unit, unit_course_counter, total_weight_unnormalized)
+            mark, relative_mark, use_unit_in_total = calculate_unit_mark(unit, user, normalized_unit_weight)
+        if use_unit_in_total:
+            total_mark += relative_mark
         unit_info = {
             'unit': unit,
             'mark': mark,
             'normalized_weight': normalized_unit_weight,
+            'use_unit_in_total': use_unit_in_total
         }
         units_info.append(unit_info)
     return total_mark, units_info
@@ -70,20 +75,22 @@ def calculate_unit_mark(unit, user, normalized_unit_weight):
     kqs_total_weight_unnormalized = 0
     unit_mark = 0
     entries = []
+    use_unit_in_total = False
     for unit_kq in unit_kqs:
         mark, use_in_total = calculate_kq_mark(unit_kq, user)
         if use_in_total and mark is not None:
+            use_unit_in_total = True
             entries.append((unit_kq, mark))
             kqs_total_weight_unnormalized += unit_kq.weight
-    course_unit_counter = len(entries)
+    kq_unit_counter = len(entries)
     for entry in entries:
-        normalized_kq_weight = normalize_kq_weight(entry[0], course_unit_counter, kqs_total_weight_unnormalized)
+        normalized_kq_weight = normalize_kq_weight(entry[0], kq_unit_counter, kqs_total_weight_unnormalized)
         unit_mark += (normalized_kq_weight * entry[1]) / 100.0
     if unit_mark == 0:
-        return [0, 0]
+        return (0, 0, use_unit_in_total)
     else:
         # returns the absolute mark and the mark in relation with the course
-        return [unit_mark, (normalized_unit_weight * unit_mark) / 100.0]
+        return (unit_mark, (normalized_unit_weight * unit_mark) / 100.0, use_unit_in_total)
 
 
 def calculate_kq_mark(kq, user):
@@ -108,7 +115,10 @@ def calculate_kq_mark(kq, user):
             peer_review_assignment = PeerReviewAssignment.objects.filter(kq=kq)
             if peer_review_assignment:
                 mark, use_in_total = kq_get_peer_review_score(kq, user, peer_review_assignment[0])
-                return (mark * 2.0, use_in_total)  # * 2 due peer_review range is 1-5
+                if mark is not None:
+                    return (mark * 2.0, use_in_total)  # * 2 due peer_review range is 1-5
+                else:
+                    return (None, False)
             else:
                 activity = db.get_collection('activity')
                 user_activity_list = activity.find_one({'user': user.id}, safe=True)
