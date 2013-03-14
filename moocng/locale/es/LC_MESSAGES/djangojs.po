@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-14 05:58-0500\n"
-"PO-Revision-Date: 2013-03-14 12:00+0100\n"
+"POT-Creation-Date: 2013-03-14 06:17-0500\n"
+"PO-Revision-Date: 2013-03-14 12:18+0100\n"
 "Last-Translator: Alejandro Blanco <ablanco@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
 "Language: es_ES\n"
@@ -37,7 +37,9 @@ msgstr "correcto"
 msgid ""
 "This score will not be applied to your final score until you get the minimum "
 "number of reviews"
-msgstr "Esta nota no se aplicará a tu nota final hasta que obtengas el número mínimo de revisiones"
+msgstr ""
+"Esta nota no se aplicará a tu nota final hasta que obtengas el número mínimo "
+"de revisiones"
 
 #: static/js/progress-views.js:170
 msgid "pending"
@@ -63,7 +65,7 @@ msgstr "Nota"
 msgid "You have not received any review yet"
 msgstr "Aún no has recibido ninguna revisión"
 
-#: static/js/progress-views.js:222
+#: static/js/progress-views.js:223
 msgid ""
 "You have sent %(sent_reviews)s reviews of the %(mandatory_reviews)s "
 "mandatory reviews."
@@ -71,6 +73,10 @@ msgstr ""
 "Has enviado %(sent_reviews)s revisiones de las %(mandatory_reviews)s "
 "obligatorias."
 
-#: static/js/progress-views.js:276
+#: static/js/progress-views.js:229
+msgid "Do more reviews"
+msgstr "Hacer más revisiones"
+
+#: static/js/progress-views.js:283
 msgid "View details"
 msgstr "Ver detalles"

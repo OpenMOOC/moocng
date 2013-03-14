@@ -219,12 +219,17 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 html.push('<p>' + gettext('You have not received any review yet') + '</p>');
             }
 
-            html.push("<p>" + interpolate(gettext("You have sent %(sent_reviews)s reviews of the %(mandatory_reviews)s mandatory reviews."), {
+            html.push("<p>");
+            html.push(interpolate(gettext("You have sent %(sent_reviews)s reviews of the %(mandatory_reviews)s mandatory reviews."), {
                 sent_reviews: author_reviews,
                 mandatory_reviews: minimum_reviewers
             }, true));
+            html.push("</p>");
 
-            html.push(" <a href='" + MOOC.peerReview.urls.prReview + "#kq" + this.model.get("id") + "'>" + MOOC.trans.progress.prReview + "</a>.</p>");
+            if (author_reviews < minimum_reviewers) {
+                html.push("<p><a href='" + MOOC.peerReview.urls.prReview + "#kq" + this.model.get("id") + "'>" + gettext('Do more reviews') + "</a>.</p>");
+            }
+
         }
         return html.join("");
     },
