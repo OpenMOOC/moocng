@@ -260,7 +260,8 @@ def transcript(request):
         for idx, uinfo in enumerate(units_info):
             unit_class = get_unit_badge_class(uinfo['unit'])
             units_info[idx]['badge_class'] = unit_class
-            if not use_old_calculus and uinfo['unit'].unittype == 'n':
+            if (not use_old_calculus and uinfo['unit'].unittype == 'n') or \
+              not units_info[idx]['use_unit_in_total']:
                 units_info[idx]['hide'] = True
         courses_info.append({
             'course': course,
