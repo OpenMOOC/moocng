@@ -583,6 +583,9 @@ if (_.isUndefined(window.MOOC)) {
                     self;
 
                 $(".viewport").addClass("hide");
+                while (tinyMCE.editors.length > 0) {
+                    tinyMCE.editors[0].remove();
+                }
                 this.$el.html($("#edit-kq-tpl").text());
 
                 this.$el.find("input#kqtitle").val(this.model.get("title"));
@@ -674,9 +677,6 @@ if (_.isUndefined(window.MOOC)) {
                     this.$el.find("#attachment-empty").removeClass("hide");
                 }
 
-                while (tinyMCE.editors.length > 0) {
-                    tinyMCE.editors[0].remove();
-                }
                 this.$el.find("textarea#kqsupplementary").val(this.model.get("supplementary_material"));
                 this.$el.find("textarea#kqcomments").val(this.model.get("teacher_comments"));
                 options = _.extend(_.clone(tinyMCEOptions), {
@@ -1127,14 +1127,16 @@ if (_.isUndefined(window.MOOC)) {
 
                 var criterionId,
                     criterion,
-                    criterionList;
+                    criterionList,
+                    self = this;
 
                 criterionId = parseInt(evt.target.getAttribute('id').split('-')[1], 10);
                 criterionList = this.model.get("peerReviewAssignmentInstance").get("_criterionList");
-                criterion = criterionList.find(function(candidate) { return (candidate.get("id") == criterionId); });
+                criterion = criterionList.find(function (candidate) {
+                    return (candidate.get("id") === criterionId);
+                });
 
                 MOOC.ajax.showLoading();
-                var self = this;
                 criterion.destroy({
                     success: function () {
                         var assignment,
