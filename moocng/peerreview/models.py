@@ -31,9 +31,8 @@ class PeerReviewAssignment(models.Model):
     description = HTMLField(verbose_name=_(u'Description'),
                             blank=True, null=False)
     minimum_reviewers = models.PositiveSmallIntegerField(verbose_name=_(u'Minimum reviewers'))
-    kq = models.OneToOneField(KnowledgeQuantum,
-                           verbose_name=_(u'Nugget'),
-                           blank=False, null=False)
+    kq = models.OneToOneField(KnowledgeQuantum, verbose_name=_(u'Nugget'),
+                              blank=False, null=False)
     objects = PeerReviewAssignmentManager()
 
     def is_completed(self, user, visited=None):
@@ -82,7 +81,7 @@ class EvaluationCriterion(Sortable):
                                    verbose_name=_(u'Peer review assignment'),
                                    related_name='criteria')
     title = models.CharField(verbose_name=_(u'Title'), max_length=100,
-                            blank=False, null=False)
+                             blank=False, null=False)
     description = models.TextField(verbose_name=_(u'Description'),
                                    blank=True, null=False)
 
