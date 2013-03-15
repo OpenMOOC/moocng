@@ -13,9 +13,6 @@
 # limitations under the License.
 
 from datetime import datetime, timedelta
-import base64
-import hashlib
-import hmac
 import urllib
 import time
 
