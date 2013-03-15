@@ -29,6 +29,7 @@ from tastypie.resources import ModelResource
 from django.conf import settings
 from django.conf.urls import url
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.db.models.fields.files import ImageFieldFile
 from django.http import HttpResponse
@@ -83,9 +84,9 @@ class KnowledgeQuantumResource(ModelResource):
     question = fields.ToManyField('moocng.api.resources.QuestionResource',
                                   'question_set', related_name='kq',
                                   readonly=True, null=True)
-    peer_review_assignment = fields.ToManyField(
+    peer_review_assignment = fields.ToOneField(
         'moocng.api.resources.PeerReviewAssignmentResource',
-        'peerreviewassignment_set',
+        'peerreviewassignment',
         related_name='peer_review_assignment',
         readonly=True, null=True)
     peer_review_score = fields.IntegerField(readonly=True)
@@ -130,17 +131,11 @@ class KnowledgeQuantumResource(ModelResource):
         else:
             return question[0]
 
-    def dehydrate_peer_review_assignment(self, bundle):
-        peer_review_assignment = bundle.data['peer_review_assignment']
-        if len(peer_review_assignment) == 0:
-            return None
-        else:
-            return peer_review_assignment[0]
-
     def dehydrate_peer_review_score(self, bundle):
-        if bundle.obj.peerreviewassignment_set.exists():
+        try:
             return kq_get_peer_review_score(bundle.obj, bundle.request.user)
-        return None
+        except ObjectDoesNotExist:
+            return None
 
     def dehydrate_videoID(self, bundle):
         return extract_YT_video_id(bundle.obj.video)
@@ -149,10 +144,8 @@ class KnowledgeQuantumResource(ModelResource):
         questions = bundle.obj.question_set.all()
         if questions.count() == 0:
             # no question: a kq is correct if it is completed
-            if bundle.obj.peerreviewassignment_set.exists():
-                return None
             try:
-                return self._is_completed(self.user_activity, bundle.obj)
+                return bundle.obj.is_completed(self.user_activity)
             except AttributeError:
                 return False
         else:
@@ -175,9 +168,9 @@ class PrivateKnowledgeQuantumResource(ModelResource):
     question = fields.ToManyField('moocng.api.resources.QuestionResource',
                                   'question_set', related_name='kq',
                                   readonly=True, null=True)
-    peer_review_assignment = fields.ToManyField(
+    peer_review_assignment = fields.ToOneField(
         'moocng.api.resources.PeerReviewAssignmentResource',
-        'peerreviewassignment_set',
+        'peerreviewassignment',
         related_name='peer_review_assignment',
         readonly=True, null=True)
     videoID = fields.CharField()
@@ -202,13 +195,6 @@ class PrivateKnowledgeQuantumResource(ModelResource):
             return None
         else:
             return question[0]
-
-    def dehydrate_peer_review_assignment(self, bundle):
-        peer_review_assignment = bundle.data['peer_review_assignment']
-        if len(peer_review_assignment) == 0:
-            return None
-        else:
-            return peer_review_assignment[0]
 
     def dehydrate_videoID(self, bundle):
         return extract_YT_video_id(bundle.obj.video)

@@ -15,6 +15,7 @@
 import logging
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import MaxValueValidator
 from django.db import models
 from django.db import transaction
@@ -234,9 +235,10 @@ class KnowledgeQuantum(Sortable):
         if len(questions):
             return questions[0].is_completed(user, visited=True)
 
-        assignments = self.peerreviewassignment_set.filter()
-        if assignments:
-            return assignments[0].is_completed(user, visited=True)
+        try:
+            return self.peerreviewassignment.is_completed(user, visited=True)
+        except ObjectDoesNotExist:
+            pass
 
         return True
 

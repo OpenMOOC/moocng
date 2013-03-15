@@ -65,7 +65,7 @@ def kq_get_peer_review_score(kq, author, pra=None):
 
     if not pra:
         try:
-            pra = kq.peerreviewassignment_set.get()
+            pra = kq.peerreviewassignment
         except PeerReviewAssignment.DoesNotExist:
             return (None, False)
 
