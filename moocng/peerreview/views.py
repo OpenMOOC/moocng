@@ -14,7 +14,6 @@
 
 from datetime import datetime, timedelta
 import urllib
-import time
 
 import boto
 import pymongo
@@ -244,7 +243,6 @@ def get_s3_upload_url(request):
 
     name = "%d/%s/%s" % (user.id, kq_id, filename)
     mime_type = request.GET['type']
-    expires = time.time() + settings.AWS_S3_UPLOAD_EXPIRE_TIME
     headers = {
             'x-amz-acl': "public-read",
             'Content-Type': mime_type,
