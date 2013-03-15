@@ -112,9 +112,9 @@ def course_reviews(request, course_slug):
 
     collection = get_db().get_collection('peer_review_submissions')
     submissions = collection.find({
-            'author': request.user.id,
-            'course': course.id,
-            }, {'kq': True, '_id': False})
+        'author': request.user.id,
+        'course': course.id,
+    }, {'kq': True, '_id': False})
     submissions = [s['kq'] for s in submissions]
 
     user_submissions = [a.id for a in assignments if a.kq.id in submissions]
@@ -122,11 +122,11 @@ def course_reviews(request, course_slug):
     is_enrolled = course.students.filter(id=request.user.id).exists()
 
     return render_to_response('peerreview/reviews.html', {
-            'course': course,
-            'assignments': assignments,
-            'user_submissions': user_submissions,
-            'is_enrolled': is_enrolled,
-            }, context_instance=RequestContext(request))
+        'course': course,
+        'assignments': assignments,
+        'user_submissions': user_submissions,
+        'is_enrolled': is_enrolled,
+    }, context_instance=RequestContext(request))
 
 
 @login_required
@@ -243,17 +243,17 @@ def get_s3_upload_url(request):
     name = "%d/%s/%s" % (user.id, kq_id, filename)
     mime_type = request.GET['type']
     headers = {
-            'x-amz-acl': "public-read",
-            'Content-Type': mime_type,
+        'x-amz-acl': "public-read",
+        'Content-Type': mime_type,
     }
 
     conn = boto.connect_s3(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY)
     url = conn.generate_url(
-            settings.AWS_S3_UPLOAD_EXPIRE_TIME,
-            "PUT",
-            settings.AWS_STORAGE_BUCKET_NAME,
-            name,
-            headers
+        settings.AWS_S3_UPLOAD_EXPIRE_TIME,
+        "PUT",
+        settings.AWS_STORAGE_BUCKET_NAME,
+        name,
+        headers
     )
 
     return HttpResponse(urllib.quote(url))
@@ -283,7 +283,7 @@ def s3_upload(user_id, kq_id, filename, file_obj):
     name = "%d/%s/%s" % (user_id, kq_id, filename)
     k.key = name
     k.set_contents_from_file(file_obj)
-    k.make_public();
+    k.make_public()
 
 
 @login_required
