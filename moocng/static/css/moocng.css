@@ -472,6 +472,7 @@ code {
     text-align: center;
 }
 
+.classroom div.loading.backdrop,
 .teacheradmin-units div.loading.backdrop,
 .teacheradmin-stats div.loading.backdrop {
     z-index: 99999999;
@@ -484,6 +485,7 @@ code {
     background: black;
 }
 
+.classroom div.loading.indicator,
 .teacheradmin-units div.loading.indicator,
 .teacheradmin-stats div.loading.indicator {
     z-index: 100000000;

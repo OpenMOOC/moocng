@@ -21,6 +21,16 @@ if (_.isUndefined(window.MOOC)) {
 
 MOOC.ajax = {};
 
+MOOC.ajax.showLoading = function () {
+    "use strict";
+    $(".loading").removeClass("hide");
+};
+
+MOOC.ajax.hideLoading = function () {
+    "use strict";
+    $(".loading").addClass("hide");
+};
+
 MOOC.ajax.host = "/api/v1/";
 
 MOOC.ajax.getAbsoluteUrl = function (path) {

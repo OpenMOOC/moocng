@@ -892,6 +892,8 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
 
     confirmedSubmit: function () {
         "use strict";
+        MOOC.ajax.showLoading();
+
         var file = this.$el.find("form input[type=file]")[0],
             text = $.trim(this.$el.find("#pr-submission").val()),
             form = $(this.$el.find("form")[0]),
@@ -904,6 +906,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
 
         if (text === "" && file.files.length === 0) {
             MOOC.alerts.show(MOOC.alerts.ERROR, MOOC.trans.classroom.prRequired, MOOC.trans.classroom.prRequiredMsg);
+            MOOC.ajax.hideLoading();
             return;
         }
 
@@ -923,6 +926,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
                 submission.file = file;
             }
 
+            MOOC.ajax.hideLoading();
             MOOC.ajax.sendPRSubmission(submission, _.bind(function () {
                 this.model.set("_submitted", true);
                 this.render(true);
@@ -959,6 +963,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
                     that.uploadToS3(file, signedURL, callback);
                 });
             } else {
+                MOOC.ajax.hideLoading();
                 MOOC.alerts.show(MOOC.alerts.ERROR,
                                  MOOC.trans.peerreview.prFileMaxSize,
                                  MOOC.trans.peerreview.prFileMaxSizeMsg);
@@ -998,6 +1003,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
                 });
             },
             error: function () {
+                MOOC.ajax.hideLoading();
                 that.setProgress(0, 'Upload error.');
             }
         });
