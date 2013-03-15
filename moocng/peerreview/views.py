@@ -29,7 +29,6 @@ from django.forms.formsets import formset_factory
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
-from django.utils import timezone
 from django.utils.translation import ugettext as _
 
 from moocng.api.mongodb import get_db
@@ -189,11 +188,11 @@ def course_review_review(request, course_slug, assignment_id):
     max_hours_assigned = timedelta(hours=getattr(settings,
                                    "PEER_REVIEW_ASSIGNATION_EXPIRE", 24))
 
-    assigned_when = timezone.make_aware(submission[0]["assigned_when"], None)
-
+    assigned_when = submission[0]["assigned_when"]
     assignation_expire = assigned_when + max_hours_assigned
 
-    is_assignation_expired = timezone.datetime.utcnow() > assignation_expire
+    now = datetime.now(assigned_when.tzinfo)
+    is_assignation_expired = now > assignation_expire
 
     is_enrolled = course.students.filter(id=request.user.id).exists()
 
