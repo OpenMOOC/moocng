@@ -19,4 +19,5 @@ class PeerReviewAssignmentManager(models.Manager):
 
     def from_course(self, course):
         return self.get_query_set().filter(
-            kq__unit__course=course).order_by('kq__unit__order')
+            kq__unit__course=course).order_by(
+            'kq__unit__order', 'kq__order')
