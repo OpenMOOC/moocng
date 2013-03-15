@@ -14,7 +14,6 @@
 
 
 from django import template
-from django.utils.translation import ugettext
 
 from moocng.mongodb import get_db
 from moocng.peerreview.utils import course_has_peer_review_assignments
