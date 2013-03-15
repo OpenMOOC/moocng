@@ -145,7 +145,7 @@ class KnowledgeQuantumResource(ModelResource):
         if questions.count() == 0:
             # no question: a kq is correct if it is completed
             try:
-                return bundle.obj.is_completed(self.user_activity)
+                return bundle.obj.is_completed(bundle.request.user)
             except AttributeError:
                 return False
         else:
