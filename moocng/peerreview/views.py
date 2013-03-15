@@ -121,10 +121,13 @@ def course_reviews(request, course_slug):
 
     user_submissions = [a.id for a in assignments if a.kq.id in submissions]
 
+    is_enrolled = course.students.filter(id=request.user.id).exists()
+
     return render_to_response('peerreview/reviews.html', {
             'course': course,
             'assignments': assignments,
             'user_submissions': user_submissions,
+            'is_enrolled': is_enrolled,
             }, context_instance=RequestContext(request))
 
 
@@ -193,6 +196,8 @@ def course_review_review(request, course_slug, assignment_id):
 
     is_assignation_expired = timezone.datetime.utcnow() > assignation_expire
 
+    is_enrolled = course.students.filter(id=request.user.id).exists()
+
     return render_to_response('peerreview/review_review.html', {
         'submission': submission[0],
         'is_assignation_expired': is_assignation_expired,
@@ -201,6 +206,7 @@ def course_review_review(request, course_slug, assignment_id):
         'criteria_formset': criteria_formset,
         'course': course,
         'assignment': assignment,
+        'is_enrolled': is_enrolled,
     }, context_instance=RequestContext(request))
 
 
