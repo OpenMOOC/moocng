@@ -79,19 +79,12 @@ MOOC.views.Unit = Backbone.View.extend({
         $("#unit-title").html(this.model.get("title"));
 
         html = '<div class="progress progress-info" title="' + gettext('completed') + '"><div class="bar completed" style="width: 0%;"></div></div>';
-        html += '<div class="progress progress-success" title="' + gettext('correct') + '"><div class="bar correct" style="width: 0%;"></div></div>';
         $("#unit-progress-bar").html(html);
-
         progress = this.model.calculateProgress({ completed: true });
         helpText = "<div><span>" + Math.round(progress) + "% " + gettext('completed') + "</span></div>";
         $("#unit-progress-bar").find("div.bar.completed").css("width", progress + "%");
 
-        progress = this.model.calculateProgress({ completed: true, correct: true });
-        helpText += "<div><span>" + Math.round(progress) + "% " + gettext('correct') + "</span></div>";
-        $("#unit-progress-bar").find("div.bar.correct").css("width", progress + "%");
-
         $("#unit-progress-text").html(helpText);
-
 
         $("#unit-kqs").empty();
         _(this._kqViews).each(function (kqView) {
