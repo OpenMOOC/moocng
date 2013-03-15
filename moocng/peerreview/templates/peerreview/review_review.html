@@ -57,6 +57,13 @@
     </div>
 </div>
 
+{% if criteria_formset.errors %}
+<div class="alert alert-block alert-error">
+  <h4>{% trans "Error" %}</h4>
+  {% trans "There were errors when submitting this form. Please check the specific errors below." %}
+</div>
+{% endif %}
+
 <h2>{% trans "Review for" %} {{ assignment.kq.title }}</h2>
 
 <h3>{% trans "Activity description" %}</h3>
