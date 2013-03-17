@@ -175,7 +175,7 @@ TEMPLATE_DIRS = (
     os.path.join(BASEDIR, 'templates'),
 )
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -199,14 +199,13 @@ INSTALLED_APPS = (
     'moocng.enrollment',
     'moocng.api',
     'moocng.categories',
-    'moocng.dbauth',
+    'moocng.auth_handlers',
     'moocng.peerreview',
-    'djangosaml2',
     'south',
     'registration',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-)
+]
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -277,7 +276,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'moocng.context_processors.site',
     'moocng.context_processors.theme',
     'moocng.context_processors.extra_settings',
-    'moocng.context_processors.idp_urls',
     'moocng.context_processors.google_analytics',
     'moocng.context_processors.certificate_url',
 )
@@ -367,20 +365,23 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
-AUTH_TYPE = "dbauth"
-if AUTH_TYPE == "dbauth":
+
+AUTH_HANDLER = "moocng.auth_handlers.handlers.DBAuth"
+if AUTH_HANDLER == "moocng.auth_handlers.handlers.DBAuth":
+    INSTALLED_APPS.append('moocng.auth_handlers.dbauth')
     ACCOUNT_ACTIVATION_DAYS = 15
-    REGISTRY_URL = '/dbauth/register/'
-    PROFILE_URL = '/dbauth/profile/'
-    CHANGEPW_URL = '/dbauth/changepwd/'
-    LOGIN_URL = '/dbauth/login/'
-    LOGOUT_URL = '/dbauth/logout/'
-elif AUTH_TYPE == "saml2":
+    #REGISTRY_URL = '/dbauth/register/'
+    #PROFILE_URL = '/dbauth/profile/'
+    #CHANGEPW_URL = '/dbauth/changepwd/'
+    #LOGIN_URL = '/dbauth/login/'
+    #LOGOUT_URL = '/dbauth/logout/'
+elif AUTH_HANDLER == "auth_handlers.handlers.SAML2":
+    INSTALLED_APPS.append('djangosaml2')
     REGISTRY_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/newUser.php'
     PROFILE_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/reviewUser.php'
     CHANGEPW_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/changePassword.php'
-    LOGIN_URL = '/saml2/login/'
-    LOGOUT_URL = '/saml2/logout/'
+    #LOGIN_URL = '/saml2/login/'
+    #LOGOUT_URL = '/saml2/logout/'
 
     SAML_CREATE_UNKNOWN_USER = True
     SAML_ATTRIBUTE_MAPPING = {

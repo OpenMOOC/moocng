@@ -80,42 +80,6 @@ def certificate_url(request):
     return context
 
 
-def idp_urls(request):
-    try:
-        registry_url = settings.REGISTRY_URL
-    except AttributeError:
-        registry_url = '#'
-
-    try:
-        profile_url = settings.PROFILE_URL
-    except AttributeError:
-        profile_url = '#'
-
-    try:
-        changepw_url = settings.CHANGEPW_URL
-    except AttributeError:
-        changepw_url = '#'
-
-    try:
-        login_url = settings.LOGIN_URL
-    except AttributeError:
-        login_url = '#'
-
-    try:
-        logout_url = settings.LOGOUT_URL
-    except AttributeError:
-        logout_url = '#'
-
-    context = {
-        'registry_url': registry_url,
-        'profile_url': profile_url,
-        'changepw_url': changepw_url,
-        'login_url': login_url,
-        'logout_url': logout_url,
-    }
-    return context
-
-
 def extra_settings(request):
 
     try:
