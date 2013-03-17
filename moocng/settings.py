@@ -175,7 +175,7 @@ TEMPLATE_DIRS = (
     os.path.join(BASEDIR, 'templates'),
 )
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -199,12 +199,13 @@ INSTALLED_APPS = (
     'moocng.enrollment',
     'moocng.api',
     'moocng.categories',
+    'moocng.auth_handlers',
     'moocng.peerreview',
-    'djangosaml2',
     'south',
+    'registration',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-)
+]
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -275,7 +276,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'moocng.context_processors.site',
     'moocng.context_processors.theme',
     'moocng.context_processors.extra_settings',
-    'moocng.context_processors.idp_urls',
     'moocng.context_processors.google_analytics',
     'moocng.context_processors.certificate_url',
 )
@@ -351,9 +351,6 @@ djcelery.setup_loader()
 
 BROKER_URL = 'amqp://moocng:moocngpassword@localhost:5672/moocng'
 
-REGISTRY_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/newUser.php'
-PROFILE_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/reviewUser.php'
-CHANGEPW_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/changePassword.php'
 ASKBOT_URL_TEMPLATE = 'https://questions.example.com/%s/'
 
 CERTIFICATE_URL = 'http://example.com/idcourse/%(courseid)s/email/%(email)s'  # Example, to be overwritten in local settings
@@ -365,100 +362,116 @@ PEER_REVIEW_FILE_MAX_SIZE = 5  # in MB
 PEER_REVIEW_ASSIGNATION_EXPIRE = 24  # in hours
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-LOGIN_URL = '/saml2/login/'
+
 LOGIN_REDIRECT_URL = '/'
-LOGOUT_URL = '/saml2/logout/'
 LOGOUT_REDIRECT_URL = '/'
 
-SAML_CREATE_UNKNOWN_USER = True
-SAML_ATTRIBUTE_MAPPING = {
-    'mail': ('username', 'email', ),
-    'cn': ('first_name', ),
-    'sn': ('last_name', ),
-    'eduPersonAffiliation': ('groups', ),
-    }
+AUTH_HANDLER = "moocng.auth_handlers.handlers.DBAuth"
+if AUTH_HANDLER == "moocng.auth_handlers.handlers.DBAuth":
+    INSTALLED_APPS.append('moocng.auth_handlers.dbauth')
+    ACCOUNT_ACTIVATION_DAYS = 15
+    #REGISTRY_URL = '/dbauth/register/'
+    #PROFILE_URL = '/dbauth/profile/'
+    #CHANGEPW_URL = '/dbauth/changepwd/'
+    #LOGIN_URL = '/dbauth/login/'
+    #LOGOUT_URL = '/dbauth/logout/'
+elif AUTH_HANDLER == "auth_handlers.handlers.SAML2":
+    INSTALLED_APPS.append('djangosaml2')
+    REGISTRY_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/newUser.php'
+    PROFILE_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/reviewUser.php'
+    CHANGEPW_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/changePassword.php'
+    #LOGIN_URL = '/saml2/login/'
+    #LOGOUT_URL = '/saml2/logout/'
 
-import saml2
+    SAML_CREATE_UNKNOWN_USER = True
+    SAML_ATTRIBUTE_MAPPING = {
+        'mail': ('username', 'email', ),
+        'cn': ('first_name', ),
+        'sn': ('last_name', ),
+        'eduPersonAffiliation': ('groups', ),
+        }
 
-SAML_CONFIG = {
-    # full path to the xmlsec1 binary programm
-    'xmlsec_binary': '/usr/bin/xmlsec1',
+    import saml2
 
-    # your entity id, usually your subdomain plus the url to the metadata view
-    'entityid': 'https://moocng.example.com/saml2/metadata/',
+    SAML_CONFIG = {
+        # full path to the xmlsec1 binary programm
+        'xmlsec_binary': '/usr/bin/xmlsec1',
 
-    # directory with attribute mapping
-    'attribute_map_dir': os.path.join(BASEDIR, 'attributemaps'),
+        # your entity id, usually your subdomain plus the url to the metadata view
+        'entityid': 'https://moocng.example.com/saml2/metadata/',
 
-    # this block states what services we provide
-    'service': {
-        # we are just a lonely SP
-        'sp' : {
-            'name': 'Moocng SP',
-            'endpoints': {
-                # url and binding to the assetion consumer service view
-                # do not change the binding or service name
-                'assertion_consumer_service': [
-                    ('https://moocng.example.com/saml2/acs/', saml2.BINDING_HTTP_POST),
-                    ],
-                # url and binding to the single logout service view
-                # do not change the binding or service name
-                'single_logout_service': [
-                    ('https://moocng.example.com/saml2/ls/', saml2.BINDING_HTTP_REDIRECT),
-                    ],
-                },
+        # directory with attribute mapping
+        'attribute_map_dir': os.path.join(BASEDIR, 'attributemaps'),
 
-            # in this section the list of IdPs we talk to are defined
-            'idp': {
-                # we do not need a WAYF service since there is
-                # only an IdP defined here. This IdP should be
-                # present in our metadata
+        # this block states what services we provide
+        'service': {
+            # we are just a lonely SP
+            'sp' : {
+                'name': 'Moocng SP',
+                'endpoints': {
+                    # url and binding to the assetion consumer service view
+                    # do not change the binding or service name
+                    'assertion_consumer_service': [
+                        ('https://moocng.example.com/saml2/acs/', saml2.BINDING_HTTP_POST),
+                        ],
+                    # url and binding to the single logout service view
+                    # do not change the binding or service name
+                    'single_logout_service': [
+                        ('https://moocng.example.com/saml2/ls/', saml2.BINDING_HTTP_REDIRECT),
+                        ],
+                    },
 
-                # the keys of this dictionary are entity ids
-                'https://idp.example.com/simplesaml/saml2/idp/metadata.php': {
-                    'single_sign_on_service': {
-                        saml2.BINDING_HTTP_REDIRECT: 'https://idp.example.com/simplesaml/saml2/idp/SSOService.php',
-                        },
-                    'single_logout_service': {
-                        saml2.BINDING_HTTP_REDIRECT: 'https://idp.example.com/simplesaml/saml2/idp/SingleLogoutService.php',
+                # in this section the list of IdPs we talk to are defined
+                'idp': {
+                    # we do not need a WAYF service since there is
+                    # only an IdP defined here. This IdP should be
+                    # present in our metadata
+
+                    # the keys of this dictionary are entity ids
+                    'https://idp.example.com/simplesaml/saml2/idp/metadata.php': {
+                        'single_sign_on_service': {
+                            saml2.BINDING_HTTP_REDIRECT: 'https://idp.example.com/simplesaml/saml2/idp/SSOService.php',
+                            },
+                        'single_logout_service': {
+                            saml2.BINDING_HTTP_REDIRECT: 'https://idp.example.com/simplesaml/saml2/idp/SingleLogoutService.php',
+                            },
                         },
                     },
                 },
             },
-        },
 
-    # where the remote metadata is stored
-    'metadata': {
-        'local': [os.path.join(BASEDIR, 'remote_metadata.xml')],
-        },
+        # where the remote metadata is stored
+        'metadata': {
+            'local': [os.path.join(BASEDIR, 'remote_metadata.xml')],
+            },
 
-    # set to 1 to output debugging information
-    'debug': 1,
+        # set to 1 to output debugging information
+        'debug': 1,
 
-    # certificate
-    'key_file': os.path.join(BASEDIR, 'mycert.key'),  # private part
-    'cert_file': os.path.join(BASEDIR, 'mycert.pem'),  # public part
+        # certificate
+        'key_file': os.path.join(BASEDIR, 'mycert.key'),  # private part
+        'cert_file': os.path.join(BASEDIR, 'mycert.pem'),  # public part
 
-    # own metadata settings
-    'contact_person': [
-        {'given_name': 'Sysadmin',
-         'sur_name': '',
-         'company': 'Example CO',
-         'email_address': 'sysadmin@example.com',
-         'contact_type': 'technical'},
-        {'given_name': 'Boss',
-         'sur_name': '',
-         'company': 'Example CO',
-         'email_address': 'admin@example.com',
-         'contact_type': 'administrative'},
-        ],
-    # you can set multilanguage information here
-    'organization': {
-        'name': [('Example CO', 'es'), ('Example CO', 'en')],
-        'display_name': [('Example', 'es'), ('Example', 'en')],
-        'url': [('http://www.example.com', 'es'), ('http://www.example.com', 'en')],
-        },
-    }
+        # own metadata settings
+        'contact_person': [
+            {'given_name': 'Sysadmin',
+             'sur_name': '',
+             'company': 'Example CO',
+             'email_address': 'sysadmin@example.com',
+             'contact_type': 'technical'},
+            {'given_name': 'Boss',
+             'sur_name': '',
+             'company': 'Example CO',
+             'email_address': 'admin@example.com',
+             'contact_type': 'administrative'},
+            ],
+        # you can set multilanguage information here
+        'organization': {
+            'name': [('Example CO', 'es'), ('Example CO', 'en')],
+            'display_name': [('Example', 'es'), ('Example', 'en')],
+            'url': [('http://www.example.com', 'es'), ('http://www.example.com', 'en')],
+            },
+        }
 
 try:
     from local_settings import *
