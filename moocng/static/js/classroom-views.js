@@ -980,6 +980,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
             type: "PUT",
             data: file,
             processData: false,
+            crossDomain: true,
             xhr: function () {
                 var myXhr = $.ajaxSettings.xhr();
                 if (myXhr.upload) {
@@ -1015,6 +1016,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
 
         $.ajax({
             url: '/s3_upload_url/?name=' + file.name + '&type=' + file.type + '&kq=' + that.model.get("_knowledgeQuantumInstance").get("id"),
+            crossDomain: true,
             success: function (data) {
                 callback(decodeURIComponent(data));
             }
