@@ -35,8 +35,8 @@ from moocng.badges.models import Award
 from moocng.courses.models import Course, CourseTeacher, Announcement
 from moocng.courses.utils import (calculate_course_mark, get_unit_badge_class,
                                   is_course_ready,
-                                  is_teacher as is_teacher_test)
-from moocng.teacheradmin.utils import send_mail_wrapper
+                                  is_teacher as is_teacher_test,
+                                  send_mail_wrapper)
 
 
 def home(request):
@@ -106,12 +106,14 @@ def course_add(request):
 
         if not allow_public:
             subject = _('Your course "%s" has been created') % name
-            message = _('Dear %(user)s\n\nYour course "%(course)s" has been created, and you have been assigned as the teacher owner. You can now access to the course administration interface and start adding content.\n\nBest regards,\n%(site)s\'s team') % {
+            template = 'courses/email_new_course.txt'
+            context = {
                 'user': owner.get_full_name(),
                 'course': name,
-                'site': get_current_site(request).name,
+                'site': get_current_site(request).name
             }
-            send_mail_wrapper(subject, message, [owner.email])
+            to = [owner.email]
+            send_mail_wrapper(subject, template, context, to)
 
         messages.success(request, _('The course was successfully created'))
         return HttpResponseRedirect(reverse('teacheradmin_info', args=[course.slug]))
@@ -133,6 +135,8 @@ def course_overview(request, course_slug):
     course_teachers = CourseTeacher.objects.filter(course=course)
     announcements = Announcement.objects.filter(course=course).order_by('datetime').reverse()[:5]
 
+    use_old_calculus = course.slug in settings.COURSES_USING_OLD_TRANSCRIPT
+
     return render_to_response('courses/overview.html', {
         'course': course,
         'is_enrolled': is_enrolled,
@@ -140,6 +144,7 @@ def course_overview(request, course_slug):
         'request': request,
         'course_teachers': course_teachers,
         'announcements': announcements,
+        'use_old_calculus': use_old_calculus,
     }, context_instance=RequestContext(request))
 
 
@@ -167,14 +172,21 @@ def course_classroom(request, course_slug):
             'title': u.title,
             'unittype': u.unittype,
             'badge_class': get_unit_badge_class(u),
+            'badge_tooltip': u.get_unit_type_name(),
         }
         units.append(unit)
+
+    peer_review = {
+        'text_max_size': settings.PEER_REVIEW_TEXT_MAX_SIZE,
+        'file_max_size': settings.PEER_REVIEW_FILE_MAX_SIZE,
+    }
 
     return render_to_response('courses/classroom.html', {
         'course': course,
         'unit_list': units,
         'is_enrolled': is_enrolled,
         'is_teacher': is_teacher_test(request.user, course),
+        'peer_review': peer_review
     }, context_instance=RequestContext(request))
 
 
@@ -251,7 +263,8 @@ def transcript(request):
         for idx, uinfo in enumerate(units_info):
             unit_class = get_unit_badge_class(uinfo['unit'])
             units_info[idx]['badge_class'] = unit_class
-            if not use_old_calculus and uinfo['unit'].unittype == 'n':
+            if (not use_old_calculus and uinfo['unit'].unittype == 'n') or \
+              not units_info[idx]['use_unit_in_total']:
                 units_info[idx]['hide'] = True
         courses_info.append({
             'course': course,
@@ -260,6 +273,7 @@ def transcript(request):
             'award': award,
             'passed': passed,
             'cert_url': cert_url,
+            'use_old_calculus': use_old_calculus,
         })
     return render_to_response('courses/transcript.html', {
         'courses_info': courses_info,

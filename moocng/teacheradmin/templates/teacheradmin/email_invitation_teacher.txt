@@ -1,0 +1,11 @@
+{% load i18n %}
+
+{% blocktrans %}
+Hello,
+
+you have been invited to be a teacher in the course "{{ course }}" by {{ host }}. After your registration in the platform is complete, you will be automatically assigned as a teacher to the course.
+
+You can register here: {{ register }}
+
+Best regards, {{ site }}'s team
+{% endblocktrans %}

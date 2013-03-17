@@ -12,60 +12,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
-
 from django.conf import settings
 from django.contrib.sites.models import get_current_site
-from django.core.mail import send_mail, get_connection, EmailMultiAlternatives
 from django.utils.translation import ugettext_lazy as _
 
-
-logger = logging.getLogger(__name__)
+from moocng.courses.utils import send_mail_wrapper
 
 
 def send_invitation(request, invitation):
-    name = invitation.host.get_full_name() or invitation.host.username
-    msg = _(u'Hello, you have been invited to be a teacher in the course "%(course)s" by %(host)s. After your registration in the platform is complete, you will be automatically assigned as a teacher to the course.\n\nYou can register here: %(register)s\n\nBest regards,\n%(site)s\'s team') % {
+    subject = _(u'You have been invited to be a teacher in "%s"') % invitation.course.name
+    template = 'teacheradmin/email_invitation_teacher.txt'
+    context = {
+        'host': invitation.host.get_full_name() or invitation.host.username,
         'course': invitation.course.name,
-        'host': name,
         'register': settings.REGISTRY_URL,
         'site': get_current_site(request).name
     }
-    send_mail_wrapper(_(u'You have been invited to be a teacher in "%s"') % invitation.course.name,
-                      msg,
-                      [invitation.email])
+    to = [invitation.email]
+    send_mail_wrapper(subject, template, context, to)
 
 
 def send_removed_notification(request, email, course):
-    name = request.user.get_full_name() or request.user.username
-    msg = _(u'Hello, you have been removed as teacher from the course "%(course)s" by %(host)s.\n\nBest regards,\n%(site)s\'s team') % {
+    subject = _(u'You have been removed as teacher from "%s"') % course.name
+    template = 'teacheradmin/email_remove_teacher.txt'
+    context = {
         'course': course.name,
-        'host': name,
+        'host': request.user.get_full_name() or request.user.username,
         'site': get_current_site(request).name
     }
-    send_mail_wrapper(_(u'You have been removed as teacher from "%s"') % course.name,
-                      msg,
-                      [email])
-
-
-def send_mail_wrapper(subject, message, to):
-    try:
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, to)
-    except IOError as ex:
-        logger.error('The notification "%s" to %s could not be sent because of %s' % (subject, str(to), str(ex)))
-
-
-def send_mass_mail_wrapper(subject, message, recipients, html_content=False):
-    mails = []
-    content = message
-    if html_content:
-        content = ""
-    for to in recipients:
-        email = EmailMultiAlternatives(subject, content, settings.DEFAULT_FROM_EMAIL, [to])
-        if html_content:
-            email.attach_alternative(message, "text/html")
-        mails.append(email)
-    try:
-        get_connection().send_messages(mails)
-    except IOError as ex:
-        logger.error('The massive email "%s" to %s could not be sent because of %s' % (subject, recipients, str(ex)))
+    to =  [email]
+    send_mail_wrapper(subject, template, context, to)

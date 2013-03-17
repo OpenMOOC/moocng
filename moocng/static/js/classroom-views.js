@@ -27,7 +27,8 @@ MOOC.views.Unit = Backbone.View.extend({
     events: {
         "click li span.kq": "showKQ",
         "click li span.q": "showQ",
-        "click li span.a": "showA"
+        "click li span.a": "showA",
+        "click li span.pr": "showPR"
     },
 
     render: function () {
@@ -37,8 +38,10 @@ MOOC.views.Unit = Backbone.View.extend({
             css_class = MOOC.models.activity.hasKQ(kq.get('id')) ? ' label-info' : '';
             html += '<li id="kq' + kq.get("id") + '"><span class="kq label' + css_class + '" title="' + kq.get("title") + '">' + kq.truncateTitle(25) + '</span>';
             if (kq.has("question")) {
-                html += ' <span class="q label">' + MOOC.trans.classroom.q + '</span> ';
-                html += '/ <span class="a label">' + MOOC.trans.classroom.a + '</span>';
+                html += ' <span class="q label" title="' + MOOC.trans.classroom.qTooltip + '">' + MOOC.trans.classroom.q + '</span> ';
+                html += '/ <span class="a label" title="' + MOOC.trans.classroom.aTooltip + '">' + MOOC.trans.classroom.a + '</span>';
+            } else if (kq.has("peer_review_assignment")) {
+                html += ' <span class="pr label" title="' + MOOC.trans.classroom.prTooltip + '">' + MOOC.trans.classroom.pr + '</span>';
             }
             html += '</li>';
         });
@@ -63,6 +66,12 @@ MOOC.views.Unit = Backbone.View.extend({
         "use strict";
         var kq = $(evt.target).parent().attr("id").split("kq")[1];
         MOOC.router.navigate(this.id + "/kq" + kq + "/a", { trigger: true });
+    },
+
+    showPR: function (evt) {
+        "use strict";
+        var kq = $(evt.target).parent().attr("id").split("kq")[1];
+        MOOC.router.navigate(this.id + "/kq" + kq + "/p", { trigger: true });
     }
 });
 
@@ -71,8 +80,7 @@ MOOC.views.unitViews = {};
 MOOC.views.KnowledgeQuantum = Backbone.View.extend({
     render: function () {
         "use strict";
-        var height = this.getVideoHeight(),
-            player,
+        var player,
             html,
             unit,
             order,
@@ -81,17 +89,19 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             comments,
             supplementary;
 
-        html = '<iframe id="ytplayer" width="100%" height="' + height + 'px" ';
+        html = '<iframe id="ytplayer" width="620px" height="372px" ';
         html += 'src="//www.youtube.com/embed/' + this.model.get("videoID");
         html += '?rel=0&origin=' + MOOC.host;
         html += '" frameborder="0" allowfullscreen></iframe>';
-        $("#kq-video").html(html);
+        $("#kq-video").removeClass("question").html(html);
 
         $("#kq-q-buttons").addClass("hide");
         $("#kq-next-container").addClass("offset4");
 
         if (this.model.has("question")) {
             this.loadQuestionData();
+        } else if (this.model.has("peer_review_assignment")) {
+            this.loadPeerReviewData();
         }
         this.repeatedlyCheckIfPlayer();
 
@@ -124,24 +134,6 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         return this;
     },
 
-    getVideoHeight: function () {
-        "use strict";
-        var width = $("#kq-video").css("width"),
-            height;
-
-        if (width.indexOf('p') > 0) {
-            width = parseInt(width.split('p')[0], 10);
-        } else {
-            width = parseInt(width, 10);
-        }
-        height = Math.round((width * 6) / 10);
-        if (height < 200) {
-            height = 200;
-        }
-
-        return height;
-    },
-
     setEventForNavigation: function (selector, unit, kq, next) {
         "use strict";
         var path = window.location.hash,
@@ -159,6 +151,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 url = "unit" + unit.get("id") + "/kq" + aux.get("id");
                 if (answer && aux.has("question")) {
                     url += "/a";
+                } else if (answer && aux.has("peer_review_assignment")) {
+                    url += "/p";
                 }
                 return url;
             }
@@ -169,17 +163,24 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         if (/#[\w\/]+\/q/.test(path)) { // Viewing question
             target = next ? "answer" : "same";
         } else if (/#[\w\/]+\/a/.test(path)) { // Viewing answer
-            target = next ? "next" : "question";
+            target = next ? "next" : "exercise";
+        } else if (/#[\w\/]+\/p/.test(path)) { // Viewing peer review
+            target = next ? "next" : "same";
         } else { // Viewing kq
-            target = next ? "question" : "prev";
+            target = next ? "exercise" : "prev";
         }
-        if (target === "question" && !kq.has("question")) {
+        if (target === "exercise" && !kq.has("question") && !kq.has("peer_review_assignment")) {
             target = "next";
         }
 
         switch (target) {
-        case "question":
-            url = "unit" + unit.get("id") + "/kq" + kq.get("id") + "/q";
+        case "exercise":
+            url = "unit" + unit.get("id") + "/kq" + kq.get("id");
+            if (kq.has("question")) {
+                url += "/q";
+            } else { // peer review
+                url += "/p";
+            }
             break;
         case "answer":
             url = "unit" + unit.get("id") + "/kq" + kq.get("id") + "/a";
@@ -207,17 +208,21 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
     player: null,
 
+    // The callback is only used in the router, not in the views
     repeatedlyCheckIfPlayer: function (callback) {
         "use strict";
         if (MOOC.YTready) {
+            this.player = YT.get("ytplayer");
+            // A new player instance for a new video
+            if (!_.isUndefined(this.player) && !_.isNull(this.player)) {
+                this.player.destroy();
+            }
             this.player = new YT.Player("ytplayer", {
                 events: {
-                    onStateChange: _.bind(this.loadQuestion, this)
+                    onStateChange: _.bind(this.loadExercise, this)
                 }
             });
-            if (!_.isUndefined(callback)) {
-                callback();
-            }
+            if (!_.isUndefined(callback)) { callback(); }
         } else {
             _.delay(_.bind(this.repeatedlyCheckIfPlayer, this), 200, callback);
         }
@@ -285,11 +290,54 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         }
     },
 
-    loadQuestion: function (evt) {
+    loadPeerReviewData: function () {
+        "use strict";
+        var kqObj = this.model;
+        if (!kqObj.has("peerReviewAssignmentInstance")) {
+            // Load Peer Review Data
+            MOOC.ajax.getResource(kqObj.get("peer_review_assignment"), function (data, textStatus, jqXHR) {
+                var ajaxCounter = 0,
+                    peerReviewObj = new MOOC.models.PeerReviewAssignment({
+                        id: data.id,
+                        description: data.description,
+                        minimum_reviewers: data.minimum_reviewers
+                    }),
+                    callback;
+
+                callback = function () {
+                    if (ajaxCounter === 2) {
+                        // Don't set the peerReviewAssignmentInstance until the
+                        // evaluation criteria is loaded and the submitted flag
+                        // set
+                        kqObj.set("peerReviewAssignmentInstance", peerReviewObj);
+                    }
+                };
+
+                peerReviewObj.set("_knowledgeQuantumInstance", kqObj);
+                MOOC.ajax.getPRSubmission(kqObj.get("id"), function (data, textStatus, jqXHR) {
+                    if (data.objects.length > 0) {
+                        peerReviewObj.set("_submitted", true);
+                    }
+                    ajaxCounter += 1;
+                    callback();
+                });
+                // Load Evalutation Criteria
+                peerReviewObj.get("_criterionList").fetch({
+                    data: { 'assignment': peerReviewObj.get("id") },
+                    success: function (collection, resp, options) {
+                        ajaxCounter += 1;
+                        callback();
+                    }
+                });
+            });
+        }
+    },
+
+    loadExercise: function (evt) {
         "use strict";
         if (evt.data === YT.PlayerState.ENDED) {
             var model = this.model,
-                toExecute;
+                toExecute = [];
 
             // Mark kq as "viewed"
             MOOC.models.activity.addKQ(String(model.get("id")), function () {
@@ -301,8 +349,6 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
             // We can't assume the question exists
             if (model.has("question")) {
-                toExecute = [];
-
                 if (!this.model.has("questionInstance")) {
                     toExecute.push(async.apply(this.setupListernerFor, this.model, "questionInstance"));
                 }
@@ -334,6 +380,12 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     this.setEventForNavigation("#kq-previous", unit, this.model, false);
                     this.setEventForNavigation("#kq-next", unit, this.model, true);
 
+                    if (this.player && !_.isNull(this.player.getIframe())) {
+                        this.player.destroy();
+                    }
+                    $("#kq-video").empty();
+                    this.player = null;
+
                     if (_.isUndefined(view)) {
                         view = new MOOC.views.Question({
                             model: question,
@@ -341,13 +393,53 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                         });
                         MOOC.views.questionViews[question.get("id")] = view;
                     }
-                    // We need to destroy the iframe with a callback because the
-                    // question view needs to read the width/height of the video
-                    view.render(_.bind(this.destroyVideo, this));
+                    view.render();
+
+                    callback();
+                }, this));
+            } else if (model.has("peer_review_assignment")) {
+                toExecute = [];
+
+                if (!this.model.has("peerReviewAssignmentInstance")) {
+                    toExecute.push(async.apply(this.setupListernerFor, this.model, "peerReviewAssignmentInstance"));
+                }
+
+                toExecute.push(_.bind(function (callback) {
+                    var peerReviewObj = this.model.get("peerReviewAssignmentInstance"),
+                        view = MOOC.views.peerReviewAssignmentViews[peerReviewObj.get("id")],
+                        path = window.location.hash.substring(1),
+                        unit = MOOC.models.course.getByKQ(this.model);
+
+                    $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
+                    if (!(/[\w\/]+\/p/.test(path))) {
+                        path = path + "/p";
+                        MOOC.router.navigate(path, { trigger: false });
+                    }
+
+                    this.setEventForNavigation("#kq-previous", unit, this.model, false);
+                    this.setEventForNavigation("#kq-next", unit, this.model, true);
+
+                    if (this.player && !_.isNull(this.player.getIframe())) {
+                        this.player.destroy();
+                    }
+                    $("#kq-video").empty();
+                    this.player = null;
+
+                    if (_.isUndefined(view)) {
+                        view = new MOOC.views.PeerReviewAssignment({
+                            model: peerReviewObj,
+                            el: $("#kq-video")[0]
+                        });
+                        MOOC.views.peerReviewAssignmentViews[peerReviewObj.get("id")] = view;
+                    }
+                    view.render();
+
+                    callback();
                 }, this));
 
-                async.series(toExecute);
             }
+
+            async.series(toExecute);
         }
 
         return this;
@@ -357,34 +449,26 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         "use strict";
         var toExecute = [];
 
-        toExecute.push(_.bind(this.repeatedlyCheckIfPlayer, this));
-        toExecute.push(_.bind(function (callback) {
-            _.bind(this.destroyVideo, this)();
-            callback();
-        }, this));
-
         if (!this.model.has("questionInstance")) {
             toExecute.push(async.apply(this.setupListernerFor, this.model, "questionInstance"));
         }
 
         toExecute.push(_.bind(function (callback) {
-            var height = this.getVideoHeight(),
-                unit = MOOC.models.course.getByKQ(this.model),
+            var unit = MOOC.models.course.getByKQ(this.model),
                 questionInstance = this.model.get("questionInstance"),
                 html = "";
 
             if (questionInstance.has("solutionText")) {
                 html = "<div class='solution-wrapper white'>" + questionInstance.get("solutionText") + "</div>";
             } else if (questionInstance.has("solutionVideo")) {
-                html = '<iframe id="ytplayer" width="100%" height="' + height + 'px" ';
+                html = '<iframe id="ytplayer" width="620px" height="372px" ';
                 html += 'src="//www.youtube.com/embed/' + this.model.get("questionInstance").get("solutionVideo");
                 html += '?rel=0&origin=' + MOOC.host + '" frameborder="0" allowfullscreen></iframe>';
             } else {
                 MOOC.alerts.show(MOOC.alerts.INFO, MOOC.trans.api.solutionNotReadyTitle, MOOC.trans.api.solutionNotReady);
             }
 
-            $("#kq-video").html(html);
-            $("#kq-video").css("height", "auto");
+            $("#kq-video").removeClass("question").html(html);
             $("#kq-q-buttons").addClass("hide");
             $("#kq-next-container").addClass("offset4");
             $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
@@ -398,25 +482,13 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         async.series(toExecute);
 
         return this;
-    },
-
-    destroyVideo: function () {
-        "use strict";
-        var node = $("#kq-video"),
-            height = node.css("height");
-
-        if (!_.isUndefined(height)) {
-            node.css("height", height);
-        }
-        node.empty();
-        this.player = null;
     }
 });
 
 MOOC.views.kqViews = {};
 
 MOOC.views.Question = Backbone.View.extend({
-    render: function (destroyPlayer) {
+    render: function () {
         "use strict";
         var kqPath = window.location.hash.substring(1, window.location.hash.length - 2), // Remove trailing /q
             answer = this.model.get('answer'),
@@ -429,28 +501,21 @@ MOOC.views.Question = Backbone.View.extend({
         } else {
             html = "<div class='white' style='width: 620px; height: 372px;'></div>";
         }
-        destroyPlayer();
         this.$el.html(html);
-        this.$el.css("height", "auto");
+        this.$el.addClass("question");
 
         $("#kq-q-buttons").removeClass("hide");
-
         if (this.model.isActive()) {
             $("#kq-q-submit").attr("disabled", false);
         } else {
             $("#kq-q-submit").attr("disabled", "disabled");
         }
-
-        $("#kq-q-showkq")
-            .unbind('click.QuestionView')
-            .bind('click.QuestionView', function () {
-                MOOC.router.navigate(kqPath, { trigger: true });
-            });
-        $("#kq-q-submit")
-            .unbind('click.QuestionView')
-            .bind('click.QuestionView', _.bind(function () {
-                this.submitAnswer();
-            }, this));
+        $("#kq-q-showkq").off('click').on('click', function () {
+            MOOC.router.navigate(kqPath, { trigger: true });
+        });
+        $("#kq-q-submit").off('click').on('click', _.bind(function () {
+            this.submitAnswer();
+        }, this));
         $("#kq-next-container").removeClass("offset4");
 
         this.model.get("optionList").each(function (opt) {
@@ -691,3 +756,277 @@ MOOC.views.Attachment = Backbone.View.extend({
         return this;
     }
 });
+
+MOOC.views.PeerReviewAssignment = Backbone.View.extend({
+    events: {
+        "click button#pr-view-criteria": "viewCriteria"
+    },
+
+    initialize: function () {
+        "use strict";
+        _.bindAll(this, "render", "getTemplate", "getCriteriaModal",
+            "viewCriteria", "submit", "confirmedSubmit", "supportFileAPI",
+            "uploadFile");
+    },
+
+    template: undefined,
+    modal: undefined,
+    confirmModal: undefined,
+
+    getTemplate: function () {
+        "use strict";
+        if (_.isUndefined(this.template)) {
+            this.template = $("#peer-review-tpl").text();
+            if (this.template === "") {
+                // HACK for IE8
+                this.template = $("#peer-review-tpl").html();
+            }
+        }
+        return this.template;
+    },
+
+    getCriteriaModal: function () {
+        "use strict";
+        if (_.isUndefined(this.modal)) {
+            this.modal = $("#evaluation-criteria");
+            this.modal.modal({ show: false });
+        }
+        return this.modal;
+    },
+
+    getConfirmModal: function () {
+        "use strict";
+        if (_.isUndefined(this.confirmModal)) {
+            this.confirmModal = $("#confirm-peer-review");
+            this.confirmModal.modal({
+                show: false,
+                backdrop: "static",
+                keyboard: false
+            });
+        }
+        return this.confirmModal;
+    },
+
+    render: function (justSent) {
+        "use strict";
+        var kqPath,
+            html,
+            unit;
+
+        if (this.model.get("_submitted")) {
+            // Message telling the student he has already sent the exercise
+            $("#kq-q-buttons").addClass("hide");
+            $("#kq-next-container").addClass("offset4");
+
+            html = ["<div class='alert alert-block"];
+            if (justSent) {
+                html.push(" alert-success'>");
+                html.push("<h4>" + MOOC.trans.classroom.prSent + "</h4>");
+                html.push("<p>" + MOOC.trans.classroom.prJust.replace("#(minimum_reviewers)s", this.model.get("minimum_reviewers")) + "</p>");
+                html.push("</div>");
+                html.push("<p><strong><a href='" + MOOC.peerReview.urls.prReview + "#kq" + this.model.get("_knowledgeQuantumInstance").get("id") + "'>" + MOOC.trans.classroom.prReview + "</a></strong></p>");
+            } else {
+                unit = MOOC.models.course.getByKQ(this.model.get("_knowledgeQuantumInstance"));
+                html.push(" alert-info'>");
+                html.push("<h4>" + MOOC.trans.classroom.prSent + "</h4>");
+                html.push("<p>" + MOOC.trans.classroom.prAlready + "</p>");
+                html.push("</div>");
+                html.push("<p><strong><a href='" + MOOC.peerReview.urls.prReview + "#kq" + this.model.get("_knowledgeQuantumInstance").get("id") + "'>" + MOOC.trans.classroom.prReview + "</a></strong></p>");
+                html.push("<p><a href='" + MOOC.peerReview.urls.prProgress + "#unit" + unit.get("id") + "'>" + MOOC.trans.classroom.prProgress + "</a></p>");
+            }
+
+            this.$el.removeClass("question").html(html.join(""));
+        } else {
+            // Show the peer review submission form
+            kqPath = window.location.hash.substring(1, window.location.hash.length - 2); // Remove trailing /p
+
+            this.$el.removeClass("question").html(this.getTemplate());
+            this.$el.find("#pr-description").html(this.model.get("description"));
+            this.$el.find("#pr-submission").off("input propertychange").on("input propertychange", function () {
+                var $input = $(this),
+                    maxLength = $input.attr('maxlength');
+                if ($input.val().length > maxLength) {
+                    $input.val($input.val().substring(0, maxLength));
+                }
+            });
+
+            $("#kq-q-buttons").removeClass("hide");
+            $("#kq-q-submit").attr("disabled", false);
+            $("#kq-q-showkq").off('click').on('click', function () {
+                MOOC.router.navigate(kqPath, { trigger: true });
+            });
+            $("#kq-q-submit").off('click').on('click', this.submit);
+            $("#kq-next-container").removeClass("offset4");
+        }
+
+        return this;
+    },
+
+    viewCriteria: function (evt) {
+        "use strict";
+        evt.preventDefault();
+        evt.stopPropagation();
+        var criteria = this.model.get("_criterionList"),
+            body = "",
+            $modal;
+        if (criteria.length === 0) { return; }
+        $modal = this.getCriteriaModal();
+        criteria.each(function (criterion) {
+            body += "<h4>" + criterion.get("title") + "</h4><p>" + criterion.get("description") + "</p>";
+        });
+        $modal.find(".modal-body").html(body);
+        $modal.modal('show');
+    },
+
+    submit: function (evt) {
+        "use strict";
+        evt.preventDefault();
+        evt.stopPropagation();
+        var modal = this.getConfirmModal();
+        modal.find("#pr-confirm").off("click").on("click", _.bind(function () {
+            this.confirmedSubmit();
+            modal.modal("hide");
+        }, this));
+        modal.modal("show");
+    },
+
+    confirmedSubmit: function () {
+        "use strict";
+        MOOC.ajax.showLoading();
+
+        var file = this.$el.find("form input[type=file]")[0],
+            text = $.trim(this.$el.find("#pr-submission").val()),
+            form = $(this.$el.find("form")[0]),
+            callback;
+
+        if (!this.supportFileAPI(file)) {
+            form.append($('<input type="hidden" name="kq_id" value="' + this.model.get("_knowledgeQuantumInstance").get("id") + '" />'));
+            form.submit();
+        }
+
+        if (text === "" && file.files.length === 0) {
+            MOOC.alerts.show(MOOC.alerts.ERROR, MOOC.trans.classroom.prRequired, MOOC.trans.classroom.prRequiredMsg);
+            MOOC.ajax.hideLoading();
+            return;
+        }
+
+        callback = _.bind(function (file) {
+            var kq = this.model.get("_knowledgeQuantumInstance").get("id"),
+                unitObj = MOOC.models.course.getByKQ(kq),
+                submission = {
+                    kq: kq,
+                    unit: unitObj.get("id"),
+                    course: unitObj.courseId
+                };
+
+            if (text !== "") {
+                submission.text = text;
+            }
+            if (!_.isUndefined(file)) {
+                submission.file = file;
+            }
+
+            MOOC.ajax.hideLoading();
+            MOOC.ajax.sendPRSubmission(submission, _.bind(function () {
+                this.model.set("_submitted", true);
+                this.render(true);
+            }, this));
+        }, this);
+
+        if ($(file).val().length > 0) {
+            this.uploadFile(file, callback);
+        } else {
+            callback();
+        }
+    },
+
+    supportFileAPI: function (fileInput) {
+        "use strict";
+        var support = true;
+
+        if (fileInput.files === undefined) {
+            support = false;
+        }
+
+        return support;
+    },
+
+    uploadFile: function (fileInput, callback) {
+        "use strict";
+        var that = this,
+            file = null;
+
+        if (fileInput.files.length > 0) {
+            file = fileInput.files[0];
+            if (file.size / (1024 * 1024) <= MOOC.peerReview.settings.file_max_size) {
+                that.executeOnSignedUrl(file, function (signedURL) {
+                    that.uploadToS3(file, signedURL, callback);
+                });
+            } else {
+                MOOC.ajax.hideLoading();
+                MOOC.alerts.show(MOOC.alerts.ERROR,
+                                 MOOC.trans.peerreview.prFileMaxSize,
+                                 MOOC.trans.peerreview.prFileMaxSizeMsg);
+            }
+        }
+    },
+
+    uploadToS3: function (file, url, callback) {
+        "use strict";
+        var that = this;
+
+        $.ajax({
+            url: url,
+            type: "PUT",
+            data: file,
+            processData: false,
+            crossDomain: true,
+            xhr: function () {
+                var myXhr = $.ajaxSettings.xhr();
+                if (myXhr.upload) {
+                    myXhr.upload.addEventListener('progress', function (event) {
+                        if (event.lengthComputable) {
+                            var percentLoaded = Math.round((event.loaded / event.total) * 100);
+                            that.setProgress(percentLoaded, percentLoaded === 100 ? 'Finalizing.' : 'Uploading.');
+                        }
+                    }, false);
+                }
+                return myXhr;
+            },
+            headers: { 'Content-Type': file.type, 'x-amz-acl': 'public-read' },
+            success: function (data) {
+                that.setProgress(100, 'Upload completed.');
+                $.ajax({
+                    url: '/s3_download_url/?name=' + file.name + '&kq=' + that.model.get("_knowledgeQuantumInstance").get("id"),
+                    success: function (data) {
+                        callback(decodeURIComponent(data));
+                    }
+                });
+            },
+            error: function () {
+                MOOC.ajax.hideLoading();
+                that.setProgress(0, 'Upload error.');
+            }
+        });
+    },
+
+    executeOnSignedUrl: function (file, callback) {
+        "use strict";
+        var that = this;
+
+        $.ajax({
+            url: '/s3_upload_url/?name=' + file.name + '&type=' + file.type + '&kq=' + that.model.get("_knowledgeQuantumInstance").get("id"),
+            crossDomain: true,
+            success: function (data) {
+                callback(decodeURIComponent(data));
+            }
+        });
+    },
+
+    setProgress: function (percent, statusLabel) {
+        "use strict";
+        // TODO: Update the progress bar
+    }
+});
+
+MOOC.views.peerReviewAssignmentViews = {};

@@ -23,11 +23,16 @@ handler403 = 'django.views.defaults.permission_denied'
 handler404 = 'django.views.defaults.page_not_found'
 handler500 = 'django.views.defaults.server_error'
 
+js_info_dict = {
+    'packages': ('moocng',),
+}
+
 urlpatterns = patterns(
     '',
     # Examples:
     # url(r'^$', 'moocng.views.home', name='home'),
     url(r'^', include('moocng.courses.urls')),
+    url(r'^', include('moocng.peerreview.urls')),
 
     url(r'^enrollment/', include('moocng.enrollment.urls')),
 
@@ -45,6 +50,9 @@ urlpatterns = patterns(
     url(r'^contact/', include('moocng.contact.urls')),
 
     url(r'^category/', include('moocng.categories.urls')),
+
+    # JavaScript translations
+    (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict),
 )
 
 if settings.AUTH_TYPE == 'saml2':

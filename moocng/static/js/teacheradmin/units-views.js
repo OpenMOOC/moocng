@@ -1,7 +1,8 @@
 /*jslint vars: false, browser: true, nomen: true, regexp: true */
-/*global MOOC:true, _, jQuery, Backbone, tinyMCE */
+/*global MOOC:true, _, jQuery, Backbone, tinyMCE, async */
 
 // Copyright 2012 Rooter Analysis S.L.
+// Copyright (c) 2013 Grupo Opentia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -402,6 +403,11 @@ if (_.isUndefined(window.MOOC)) {
                         "'><i class='icon-white icon-question-sign'>" +
                         "</i></span>";
                 }
+                if (this.model.has("peer_review_assignment")) {
+                    header += "<span class='badge badge-inverse peerreview " +
+                        "pull-right' title='" + MOOC.trans.kq.prTooltip +
+                        "'>" + MOOC.trans.kq.pr + "</span>";
+                }
 
                 iframe = "<iframe width='110px' height='71px' src='//www.youtube.com/embed/" +
                     this.model.get("videoID") + "?rel=0&controls=0&origin=" +
@@ -543,29 +549,43 @@ if (_.isUndefined(window.MOOC)) {
         KQEditor: Backbone.View.extend({
             events: {
                 "click button#addquestion": "addQuestion",
+                "click button#addpeerreviewassignment": "addPeerReviewAssignment",
+                "click button#addcriterion": "addCriterion",
                 "click button#force-process": "forceProcess",
                 "click button#dont-use-last-frame": "useBlankCanvas",
                 "click button#use-last-frame": "useLastFrame",
                 "click button#delete-question": "removeQuestion",
+                "click button#delete-peer-review-assignment": "removePeerReviewAssignment",
                 "click button#use-solution-video-btn": "toggleSolution",
                 "click button#use-solution-text-btn": "toggleSolution",
                 "click button#go2options": "go2options",
                 "click button#save-kq": "save",
                 "click button#delete-kq": "remove",
+                "click button.removecriterion": "removePeerReviewCriterion",
                 "click button.back": "goBack"
             },
 
             initialize: function () {
                 _.bindAll(this, "render", "save", "remove", "goBack",
                     "checkRequired", "useBlankCanvas", "useLastFrame",
-                    "toggleSolution");
+                    "toggleSolution", "addQuestion", "addPeerReviewAssignment",
+                    "addCriterion", "forceProcess", "removeQuestion",
+                    "removePeerReviewAssignment", "go2options");
             },
 
             render: function () {
                 var $attachments,
                     question,
-                    options;
+                    options,
+                    assignment,
+                    criterionList,
+                    criterionListDiv,
+                    self;
+
                 $(".viewport").addClass("hide");
+                while (tinyMCE.editors.length > 0) {
+                    tinyMCE.editors[0].remove();
+                }
                 this.$el.html($("#edit-kq-tpl").text());
 
                 this.$el.find("input#kqtitle").val(this.model.get("title"));
@@ -600,6 +620,49 @@ if (_.isUndefined(window.MOOC)) {
                     }
                 }
 
+                if (this.model.has("peer_review_assignment") && this.model.has("peerReviewAssignmentInstance")) {
+                    assignment = this.model.get("peerReviewAssignmentInstance");
+                    this.$el.find("#peer-review-assignment-tab").removeClass("hide");
+                    this.$el.find("#nopeerreviewassignment").addClass("hide");
+                    this.$el.find("#reviewdescription").val(assignment.get("description"));
+                    this.$el.find("#reviewminreviews").val(assignment.get("minimum_reviewers"));
+                    criterionList = assignment.get("_criterionList");
+                    criterionListDiv = this.$el.find("#reviewcriterions");
+                    self = this;
+                    criterionListDiv.empty();
+                    criterionList.each(function (criterion) {
+                        var criterionDivId,
+                            titleInputId,
+                            descriptionInputId,
+                            removeBtnId,
+                            titleInput,
+                            titleLabel,
+                            descriptionInput,
+                            descriptionLabel,
+                            removeBtn,
+                            criterionDiv;
+
+                        criterionDivId = "criterion-" + criterion.get("id");
+                        titleInputId = "criteriontitle-" + criterion.get("id");
+                        descriptionInputId = "criteriondescription-" + criterion.get("id");
+                        removeBtnId = "criterionremove-" + criterion.get("id");
+
+                        titleInput = "<input type=\"text\" name=\"" + titleInputId + "\" id=\"" + titleInputId + "\" maxlength=\"100\" class=\"input-large\" required=\"required\" />";
+                        titleLabel = "<label for=\"" + titleInputId + "\" class=\"required\">" + MOOC.trans.evaluationCriterion.title + "</label>";
+                        descriptionInput = "<input type=\"text\" name=\"" + descriptionInputId + "\" id=\"" + descriptionInputId + "\" maxlength=\"200\" class=\"input-xlarge\" required=\"required\" />";
+                        descriptionLabel = "<label for=\"" + descriptionInputId + "\" class=\"required\">" + MOOC.trans.evaluationCriterion.description + "</label>";
+                        removeBtn = "<button id=\"" + removeBtnId + "\" class=\"removecriterion btn btn-danger\">" + MOOC.trans.evaluationCriterion.remove + "</button>";
+                        criterionDiv = "<div id=\"" + criterionDivId + "\">"
+                                       + "<div class=\"row mb10\"> <div class=\"span3\">" + titleLabel + titleInput + "</div>"
+                                       + "<div class=\"span4\">" + descriptionLabel + descriptionInput + "</div></div>"
+                                       + "<div class=\"row mb20\"><div class=\"align-right span10\">" + removeBtn + "</div></div></divZ";
+
+                        criterionListDiv.append(criterionDiv);
+                        criterionListDiv.find("#" + titleInputId).val(criterion.get("title"));
+                        criterionListDiv.find("#" + descriptionInputId).val(criterion.get("description"));
+                    });
+                }
+
                 $attachments = this.$el.find("#attachment-list");
                 if (this.model.get("attachmentList").length > 0) {
                     this.model.get("attachmentList").each(function (attachment) {
@@ -614,14 +677,11 @@ if (_.isUndefined(window.MOOC)) {
                     this.$el.find("#attachment-empty").removeClass("hide");
                 }
 
-                while (tinyMCE.editors.length > 0) {
-                    tinyMCE.editors[0].remove();
-                }
                 this.$el.find("textarea#kqsupplementary").val(this.model.get("supplementary_material"));
                 this.$el.find("textarea#kqcomments").val(this.model.get("teacher_comments"));
                 options = _.extend(_.clone(tinyMCEOptions), {
                     width: "380", // bootstrap span5
-                    elements: "kqsupplementary, kqcomments"
+                    elements: "kqsupplementary, kqcomments, reviewdescription"
                 });
                 tinyMCE.init(options);
                 options = _.extend(_.clone(tinyMCEOptions), {
@@ -648,90 +708,13 @@ if (_.isUndefined(window.MOOC)) {
                 }
                 MOOC.ajax.showLoading();
 
-                var question,
-                    saveKQAjax,
-                    saveAttachmentsAjax;
-
-                saveAttachmentsAjax = _.bind(function (input) {
-                    var self = this,
-                        fakeForm,
-                        cb;
-
-                    cb = function () {
-                        if (!_.isUndefined(callback)) {
-                            callback();
-                        } else {
-                            self.render();
-                            self.$el.find("#attachments-tab a").trigger("click");
-                            MOOC.ajax.hideLoading();
-                        }
-                    };
-
-                    if (input.files) {
-                        fakeForm = new FormData();
-                        fakeForm.append("attachment", input.files[0]);
-                        $.ajax(window.location.pathname + "attachment/?kq=" + this.model.get("id"), {
-                            type: "POST",
-                            headers: {
-                                "X-CSRFToken": csrftoken
-                            },
-                            data: fakeForm,
-                            processData: false,
-                            contentType: false,
-                            success: function () {
-                                MOOC.ajax.showAlert("saved");
-                                $.ajax(MOOC.ajax.host + "attachment/?format=json&kq=" + self.model.get("id"), {
-                                    success: function (data, textStatus, jqXHR) {
-                                        var attachmentList = new MOOC.models.AttachmentList(
-                                            _.map(data.objects, function (attachment) {
-                                                return {
-                                                    id: parseInt(attachment.id, 10),
-                                                    url: attachment.attachment
-                                                };
-                                            })
-                                        );
-                                        self.model.set("attachmentList", attachmentList);
-                                        cb();
-                                    },
-                                    error: function () {
-                                        MOOC.ajax.hideLoading();
-                                        MOOC.ajax.showAlert("generic");
-                                    }
-                                });
-                            },
-                            error: function () {
-                                MOOC.ajax.hideLoading();
-                                MOOC.ajax.showAlert("generic");
-                            }
-                        });
-                    } else {
-                        MOOC.ajax.showAlert("generic");
-                        cb();
-                    }
-                }, this);
-
-                saveKQAjax = _.bind(function () {
-                    var self = this;
-                    this.model.save(null, {
-                        success: function () {
-                            var $input = self.$el.find("div.fileupload input[type='file']");
-                            if ($input.val() !== "") {
-                                saveAttachmentsAjax($input[0]);
-                            } else {
-                                MOOC.ajax.showAlert("saved");
-                                if (!_.isUndefined(callback)) {
-                                    callback();
-                                } else {
-                                    MOOC.ajax.hideLoading();
-                                }
-                            }
-                        },
-                        error: function () {
-                            MOOC.ajax.hideLoading();
-                            MOOC.ajax.showAlert("generic");
-                        }
-                    });
-                }, this);
+                var steps = [],
+                    self = this,
+                    question,
+                    assignment,
+                    criterionList,
+                    criterionListSaveTasks,
+                    attachCB;
 
                 this.model.unset("new");
                 this.model.set("title", $.trim(this.$el.find("input#kqtitle").val()));
@@ -739,6 +722,7 @@ if (_.isUndefined(window.MOOC)) {
                 this.model.set("normalized_weight", parseInt(this.$el.find("input#kqweight").val(), 10));
                 this.model.set("supplementary_material", tinyMCE.get("kqsupplementary").getContent());
                 this.model.set("teacher_comments", tinyMCE.get("kqcomments").getContent());
+
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
                     if (this.$el.find("#use-solution-video-btn").is(".active")) {
@@ -748,18 +732,131 @@ if (_.isUndefined(window.MOOC)) {
                         question.set("solutionVideo", null);
                         question.set("solutionText", tinyMCE.get("solution-text").getContent());
                     }
-                    question.save(null, {
-                        success: function () {
-                            saveKQAjax();
-                        },
-                        error: function () {
-                            MOOC.ajax.hideLoading();
-                            MOOC.ajax.showAlert("generic");
+
+                    steps.push(function (asyncCB) {
+                        question.save(null, {
+                            success: function () { asyncCB(); },
+                            error: function () { asyncCB("Error saving question"); }
+                        });
+                    });
+                }
+
+                steps.push(function (asyncCB) {
+                    self.model.save(null, {
+                        success: function () { asyncCB(); },
+                        error: function () { asyncCB("Error saving KQ"); }
+                    });
+                });
+
+                if (this.model.has("peerReviewAssignmentInstance")) {
+                    criterionListSaveTasks = [];
+                    assignment = this.model.get("peerReviewAssignmentInstance");
+                    if (assignment.has("id")) {
+                        assignment.set("description", tinyMCE.get("reviewdescription").getContent());
+                        assignment.set("minimum_reviewers", parseInt(this.$el.find("input#reviewminreviews").val(), 10));
+                    }
+
+                    steps.push(function (asyncCB) {
+                        assignment.save(null, {
+                            success: function () {
+                                asyncCB();
+                            },
+                            error: function () {
+                                asyncCB("Error saving peer review assignment");
+                            }
+                        });
+                    });
+
+                    criterionList = assignment.get("_criterionList");
+                    criterionList.each(function (criterion) {
+                        var titleInputId,
+                            descriptionInputId;
+
+                        titleInputId = "criteriontitle-" + criterion.get("id");
+                        descriptionInputId = "criteriondescription-" + criterion.get("id");
+                        criterion.set("title", self.$el.find("#" + titleInputId).val());
+                        criterion.set("description", self.$el.find("#" + descriptionInputId).val());
+
+                        criterionListSaveTasks.push(function (asyncCB) {
+                            criterion.save(null, {
+                                success: function () {
+                                    asyncCB();
+                                },
+                                error: function () {
+                                    asyncCB("Error saving peer review assignment evaluation criterion");
+                                }
+                            });
+                        });
+                    });
+
+                    steps.push(function (asyncCB) {
+                        async.parallel(criterionListSaveTasks, asyncCB);
+                    });
+                }
+
+                // Look for attachments
+                if (this.$el.find("div.fileupload input[type='file']").val() !== "") {
+                    steps.push(function (asyncCB) {
+                        var input = self.$el.find("div.fileupload input[type='file']")[0],
+                            fakeForm;
+                        if (input.files) {
+                            fakeForm = new FormData();
+                            fakeForm.append("attachment", input.files[0]);
+                            $.ajax(window.location.pathname + "attachment/?kq=" + self.model.get("id"), {
+                                type: "POST",
+                                headers: {
+                                    "X-CSRFToken": csrftoken
+                                },
+                                data: fakeForm,
+                                processData: false,
+                                contentType: false,
+                                success: function () { asyncCB(); },
+                                error: function () { asyncCB("Error saving attachment"); }
+                            });
+                        } else {
+                            asyncCB("Error with attachment, FileAPI not supported");
                         }
                     });
-                } else {
-                    saveKQAjax();
+
+                    steps.push(function (asyncCB) {
+                        $.ajax(MOOC.ajax.host + "attachment/?format=json&kq=" + self.model.get("id"), {
+                            success: function (data, textStatus, jqXHR) {
+                                var attachmentList = new MOOC.models.AttachmentList(
+                                    _.map(data.objects, function (attachment) {
+                                        return {
+                                            id: parseInt(attachment.id, 10),
+                                            url: attachment.attachment
+                                        };
+                                    })
+                                );
+                                self.model.set("attachmentList", attachmentList);
+                                asyncCB();
+                            },
+                            error: function () { asyncCB("Error saving attachment"); }
+                        });
+                    });
+
+                    attachCB = function () {
+                        self.render();
+                        self.$el.find("#attachments-tab a").trigger("click");
+                    };
                 }
+
+                async.series(steps, function (err, results) {
+                    if (!_.isUndefined(callback)) {
+                        callback();
+                    } else {
+                        if (err) {
+                            MOOC.ajax.showAlert("generic");
+                        } else {
+                            MOOC.ajax.showAlert("saved");
+                        }
+                        if (!_.isUndefined(attachCB)) {
+                            attachCB();
+                        }
+                        MOOC.ajax.hideLoading();
+                    }
+                });
             },
 
             remove: function (evt) {
@@ -793,7 +890,107 @@ if (_.isUndefined(window.MOOC)) {
                 this.model.set("questionInstance", question);
                 this.save(evt, _.bind(function () {
                     this.render();
+                    this.$el.find("#question-tab a").trigger("click");
                     MOOC.ajax.hideLoading();
+                }, this));
+            },
+
+            addCriterion: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                if (!this.checkRequired()) {
+                    MOOC.ajax.showAlert("required");
+                    return;
+                }
+
+                var self,
+                    assignment,
+                    assignmentUrl,
+                    assignmentId,
+                    criterionList,
+                    newCriterion;
+
+                self = this;
+                assignment = this.model.get("peerReviewAssignmentInstance");
+                assignmentUrl = assignment.url();
+                newCriterion = new MOOC.models.EvaluationCriterion();
+
+                this.save(evt, function () {
+                    newCriterion.set("assignment", assignmentUrl);
+                    newCriterion.save(null, {
+                        success: function () {
+                            criterionList = new MOOC.models.EvaluationCriterionList();
+                            assignmentUrl = assignmentUrl.split('/');
+
+                            assignmentId = parseInt(assignmentUrl.pop(), 10);
+                            while (_.isNaN(assignmentId)) {
+                                assignmentId = parseInt(assignmentUrl.pop(), 10);
+                            }
+
+                            assignment.get("_criterionList").fetch({
+                                data: { 'assignment': assignmentId },
+                                success: function () {
+                                    self.render();
+                                    self.$el.find("form li.active").removeClass("active");
+                                    self.$el.find("form fieldset.active").removeClass("active");
+                                    self.$el.find("#peer-review-assignment-tab").addClass("active");
+                                    self.$el.find("#peer-review-assignment").addClass("active");
+                                    MOOC.ajax.hideLoading();
+                                },
+                                error: function () {
+                                    MOOC.ajax.hideLoading();
+                                    MOOC.ajax.showAlert("generic");
+                                }
+                            });
+                        },
+                        error: function () {
+                            MOOC.ajax.hideLoading();
+                            MOOC.ajax.showAlert("generic");
+                        }
+                    });
+
+                });
+            },
+
+            addPeerReviewAssignment: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                if (!this.checkRequired()) {
+                    MOOC.ajax.showAlert("required");
+                    return;
+                }
+                var peer_review_assignment,
+                    self;
+
+                peer_review_assignment = new MOOC.models.PeerReviewAssignment();
+                peer_review_assignment.set("kq", this.model.url().replace('/privkq', '/kq'));
+                peer_review_assignment.set("description", "");
+                peer_review_assignment.set("minimum_reviewers", "0");
+                peer_review_assignment.set("_criterionList", new MOOC.models.EvaluationCriterionList());
+                this.model.set("peerReviewAssignmentInstance", peer_review_assignment);
+
+                self = this;
+                this.save(evt, _.bind(function () {
+                    self.model.fetch({
+                        success: function () {
+                            var reviewUrl,
+                                createdId;
+                            reviewUrl = self.model.get("peer_review_assignment").split("/");
+                            createdId = reviewUrl.pop();
+
+                            while (_.isNaN(parseInt(createdId, 10))) {
+                                createdId = reviewUrl.pop();
+                            }
+
+                            self.model.get("peerReviewAssignmentInstance").set("id", parseInt(createdId, 10));
+                            self.render();
+                            MOOC.ajax.hideLoading();
+                        },
+                        error: function () {
+                            MOOC.ajax.hideLoading();
+                            MOOC.ajax.showAlert("generic");
+                        }
+                    });
                 }, this));
             },
 
@@ -865,6 +1062,93 @@ if (_.isUndefined(window.MOOC)) {
                                 MOOC.ajax.showAlert("generic");
                             }
                         });
+                    },
+                    error: function () {
+                        MOOC.ajax.hideLoading();
+                        MOOC.ajax.showAlert("generic");
+                    }
+                });
+            },
+
+            getConfirmPeerReviewRemovalModal: function () {
+                if (_.isUndefined(this.confirmPeerReviewRemoval)) {
+                    this.confirmPeerReviewRemoval = $("#confirm-peer-review-removal");
+                    this.confirmPeerReviewRemoval.modal({
+                        show: false,
+                        backdrop: "static",
+                        keyboard: false
+                    });
+                }
+                return this.confirmPeerReviewRemoval;
+            },
+
+            removePeerReviewAssignment: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                var modal,
+                    view;
+
+                modal = this.getConfirmPeerReviewRemovalModal();
+                view = this;
+                modal.find("#pr-confirm").off("click").on("click", _.bind(function () {
+                    this.confirmRemovePeerReviewAssignment(this);
+                    modal.modal("hide");
+                }, this));
+                modal.modal("show");
+            },
+
+            confirmRemovePeerReviewAssignment: function (view) {
+                MOOC.ajax.showLoading();
+                view.model.get("peerReviewAssignmentInstance").destroy({
+                    success: function () {
+                        view.model.set("peerReviewAssignmentInstance", null);
+                        view.model.set("peer_review_assignment", null);
+                        view.model.save(null, {
+                            success: function () {
+                                MOOC.ajax.hideLoading();
+                                view.render();
+                            },
+                            error: function () {
+                                MOOC.ajax.hideLoading();
+                                MOOC.ajax.showAlert("generic");
+                            }
+                        });
+                    },
+                    error: function () {
+                        MOOC.ajax.hideLoading();
+                        MOOC.ajax.showAlert("generic");
+                    }
+                });
+            },
+
+            removePeerReviewCriterion: function (evt) {
+                evt.stopPropagation();
+                evt.preventDefault();
+
+                var criterionId,
+                    criterion,
+                    criterionList,
+                    self = this;
+
+                criterionId = parseInt(evt.target.getAttribute('id').split('-')[1], 10);
+                criterionList = this.model.get("peerReviewAssignmentInstance").get("_criterionList");
+                criterion = criterionList.find(function (candidate) {
+                    return (candidate.get("id") === criterionId);
+                });
+
+                MOOC.ajax.showLoading();
+                criterion.destroy({
+                    success: function () {
+                        var assignment,
+                            criterionList,
+                            criterionDivId;
+
+                        assignment = self.model.get("peerReviewAssignmentInstance");
+                        criterionList = assignment.get("_criterionList");
+                        criterionDivId = "criterion-" + criterion.get("id");
+                        criterionList.remove(criterion);
+                        self.$el.find("#" + criterionDivId).remove();
+                        MOOC.ajax.hideLoading();
                     },
                     error: function () {
                         MOOC.ajax.hideLoading();

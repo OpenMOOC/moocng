@@ -178,6 +178,52 @@ display a link in the UI. The relevant setting is `ASKBOT_URL_TEMPLATE`:
 
 Where the fragment `%s` will be replaced by the name of the course.
 
+Amazon S3 configuration
+-----------------------
+
+moocng use S3 to storage users uploaded files. You need an Amazon AWS account
+and create a bucket to store the files.
+
+The bucket must be configured with the next CORS configuration:
+
+.. code-block:: xml
+
+  <?xml version="1.0" encoding="UTF-8"?>
+  <CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+      <CORSRule>
+          <AllowedOrigin>*</AllowedOrigin>
+          <AllowedMethod>PUT</AllowedMethod>
+          <MaxAgeSeconds>3000</MaxAgeSeconds>
+          <AllowedHeader>Content-Type</AllowedHeader>
+          <AllowedHeader>x-amz-acl</AllowedHeader>
+          <AllowedHeader>origin</AllowedHeader>
+          <AllowedHeader>Accept</AllowedHeader>
+          <AllowedHeader>Accept-Charset</AllowedHeader>
+          <AllowedHeader>Accept-Encoding</AllowedHeader>
+          <AllowedHeader>Accept-Language</AllowedHeader>
+          <AllowedHeader>Access-Control-Request-Headers</AllowedHeader>
+          <AllowedHeader>Access-Control-Request-Method</AllowedHeader>
+          <AllowedHeader>Connection</AllowedHeader>
+          <AllowedHeader>Host</AllowedHeader>
+          <AllowedHeader>Origin</AllowedHeader>
+          <AllowedHeader>Referer</AllowedHeader>
+          <AllowedHeader>User-Agent</AllowedHeader>
+      </CORSRule>
+  </CORSConfiguration>
+
+To improve the security in production environments you can define a more strict
+AllowedOrigin setting in your CORS configuration.
+
+And your settings must define your account data, your bucket and the expire
+time of upload permissions.
+
+.. code-block:: python
+
+  AWS_ACCESS_KEY_ID = "your-access-key-id"
+  AWS_SECRET_ACCESS_KEY = "your-secret-key-id"
+  AWS_STORAGE_BUCKET_NAME = "your-bucket-name"
+  AWS_S3_UPLOAD_EXPIRE_TIME = (60 * 5) # 5 minutes
+
 
 Web server configuration
 ------------------------

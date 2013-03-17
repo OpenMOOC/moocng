@@ -56,6 +56,12 @@ EMAIL_HOST_PASSWORD = ''
 
 EMAIL_SUBJECT_PREFIX = '[OpenMOOC] | '
 
+# Amazon credentials
+AWS_ACCESS_KEY_ID = ""
+AWS_SECRET_ACCESS_KEY = ""
+AWS_STORAGE_BUCKET_NAME = ""
+AWS_S3_UPLOAD_EXPIRE_TIME = (60 * 5) # 5 minutes
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -63,7 +69,7 @@ EMAIL_SUBJECT_PREFIX = '[OpenMOOC] | '
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'Europe/Madrid'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -194,6 +200,7 @@ INSTALLED_APPS = (
     'moocng.api',
     'moocng.categories',
     'moocng.dbauth',
+    'moocng.peerreview',
     'djangosaml2',
     'south',
     'registration',
@@ -351,6 +358,10 @@ ASKBOT_URL_TEMPLATE = 'https://questions.example.com/%s/'
 CERTIFICATE_URL = 'http://example.com/idcourse/%(courseid)s/email/%(email)s'  # Example, to be overwritten in local settings
 
 MASSIVE_EMAIL_BATCH_SIZE = 30
+
+PEER_REVIEW_TEXT_MAX_SIZE = 5000  # in chars
+PEER_REVIEW_FILE_MAX_SIZE = 5  # in MB
+PEER_REVIEW_ASSIGNATION_EXPIRE = 24  # in hours
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
