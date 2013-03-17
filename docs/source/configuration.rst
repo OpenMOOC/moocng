@@ -211,6 +211,9 @@ The bucket must be configured with the next CORS configuration:
       </CORSRule>
   </CORSConfiguration>
 
+To improve the security in production environments you can define a more strict
+AllowedOrigin setting in your CORS configuration.
+
 And your settings must define your account data, your bucket and the expire
 time of upload permissions.
 
