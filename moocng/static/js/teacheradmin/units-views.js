@@ -76,7 +76,7 @@ if (_.isUndefined(window.MOOC)) {
             var result = true;
             $el.find("[required=required]").each(function (idx, elem) {
                 elem = $(elem);
-                if (elem.is(":visible") && elem.val() === "") {
+                if (elem.is(":visible") && $.trim(elem.val()) === "") {
                     result = false;
                 }
             });
@@ -774,8 +774,8 @@ if (_.isUndefined(window.MOOC)) {
 
                         titleInputId = "criteriontitle-" + criterion.get("id");
                         descriptionInputId = "criteriondescription-" + criterion.get("id");
-                        criterion.set("title", self.$el.find("#" + titleInputId).val());
-                        criterion.set("description", self.$el.find("#" + descriptionInputId).val());
+                        criterion.set("title", $.trim(self.$el.find("#" + titleInputId).val()));
+                        criterion.set("description", $.trim(self.$el.find("#" + descriptionInputId).val()));
 
                         criterionListSaveTasks.push(function (asyncCB) {
                             criterion.save(null, {
