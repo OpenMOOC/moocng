@@ -78,6 +78,10 @@ class UnitResource(ModelResource):
             "course": ('exact'),
         }
 
+    def alter_deserialized_detail_data(self, request, data):
+        data[u'title'] = data[u'title'].strip()
+        return data
+
 
 class KnowledgeQuantumResource(ModelResource):
     unit = fields.ToOneField(UnitResource, 'unit')
@@ -186,6 +190,10 @@ class PrivateKnowledgeQuantumResource(ModelResource):
             "unit": ('exact'),
         }
 
+    def alter_deserialized_detail_data(self, request, data):
+        data[u'title'] = data[u'title'].strip()
+        return data
+
     def dehydrate_normalized_weight(self, bundle):
         return normalize_kq_weight(bundle.obj)
 
@@ -277,7 +285,7 @@ class EvaluationCriterionResource(ModelResource):
         authorization = DjangoAuthorization()
         filtering = {
             "assignment": ('exact'),
-            "unit":  ('exact'),
+            "unit": ('exact'),
         }
 
     def obj_get_list(self, request=None, **kwargs):
@@ -308,8 +316,13 @@ class PrivateEvaluationCriterionResource(ModelResource):
         authorization = TeacherAuthorization()
         filtering = {
             "assignment": ('exact'),
-            "unit":  ('exact'),
+            "unit": ('exact'),
         }
+
+    def alter_deserialized_detail_data(self, request, data):
+        data[u'title'] = data[u'title'].strip()
+        data[u'description'] = data[u'description'].strip()
+        return data
 
     def obj_get_list(self, request=None, **kwargs):
 
