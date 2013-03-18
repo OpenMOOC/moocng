@@ -79,7 +79,8 @@ class UnitResource(ModelResource):
         }
 
     def alter_deserialized_detail_data(self, request, data):
-        data[u'title'] = data[u'title'].strip()
+        if u'title' in data:
+            data[u'title'] = data[u'title'].strip()
         return data
 
 
@@ -191,7 +192,8 @@ class PrivateKnowledgeQuantumResource(ModelResource):
         }
 
     def alter_deserialized_detail_data(self, request, data):
-        data[u'title'] = data[u'title'].strip()
+        if u'title' in data:
+            data[u'title'] = data[u'title'].strip()
         return data
 
     def dehydrate_normalized_weight(self, bundle):
@@ -320,8 +322,10 @@ class PrivateEvaluationCriterionResource(ModelResource):
         }
 
     def alter_deserialized_detail_data(self, request, data):
-        data[u'title'] = data[u'title'].strip()
-        data[u'description'] = data[u'description'].strip()
+        if u'title' in data:
+            data[u'title'] = data[u'title'].strip()
+        if u'description' in data:
+            data[u'description'] = data[u'description'].strip()
         return data
 
     def obj_get_list(self, request=None, **kwargs):
