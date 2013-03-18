@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from datetime import datetime
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -22,6 +23,19 @@ class Command(BaseCommand):
     """send mail test
     """
 
+   
+    def message(self, message):
+        self.stdout.write("%s\n" % message.encode("ascii", "replace"))
+
     def handle(self, *args, **options):
-        send_mail('Testing mail', 'Here is the message.',
+        now = datetime.now()
+        body="""
+Hi, this is the testing message
+
+send on %s
+""" % str(now)
+
+        self.message(body)
+
+        send_mail('Testing mail - %s' % str(now), body,
                   settings.DEFAULT_FROM_EMAIL, args)
