@@ -451,7 +451,9 @@ if (_.isUndefined(window.MOOC)) {
 
                 $("#media-player").html(this.player_template(context));
                 $("#media-player").modal("show");
-
+                $("#media-player").on('hidden', function (evt) {
+                    $(evt.target).html("");
+                });
             }
         }),
 
