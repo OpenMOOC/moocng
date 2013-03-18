@@ -1133,7 +1133,7 @@ if (_.isUndefined(window.MOOC)) {
                 criterionId = parseInt(evt.target.getAttribute('id').split('-')[1], 10);
                 criterionList = this.model.get("peerReviewAssignmentInstance").get("_criterionList");
                 criterion = criterionList.find(function (candidate) {
-                    return (candidate.get("id") === criterionId);
+                    return (parseInt(candidate.get("id"), 10) === criterionId);
                 });
 
                 MOOC.ajax.showLoading();
