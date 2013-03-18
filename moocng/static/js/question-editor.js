@@ -36,11 +36,27 @@
                 text: "",
                 feedback: ""
             };
+        },
+
+        url: function () {
+            var url = MOOC.models.Option.__super__.url.call(this);
+            if (url.charAt(url.length - 1) !== '/') {
+                url += '/';
+            }
+            return url;
         }
     });
 
     MOOC.models.OptionList  = Backbone.Collection.extend({
-        model: MOOC.models.Option
+        model: MOOC.models.Option,
+
+        url: function () {
+            var url = MOOC.models.OptionList.__super__.url.call(this);
+            if (url.charAt(url.length - 1) !== '/') {
+                url += '/';
+            }
+            return url;
+        }
     });
 
     MOOC.views = {};
