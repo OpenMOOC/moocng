@@ -79,7 +79,7 @@ class UnitResource(ModelResource):
         }
 
     def alter_deserialized_detail_data(self, request, data):
-        if u'title' in data:
+        if u'title' in data and data[u'title'] is not None:
             data[u'title'] = data[u'title'].strip()
         return data
 
@@ -192,7 +192,7 @@ class PrivateKnowledgeQuantumResource(ModelResource):
         }
 
     def alter_deserialized_detail_data(self, request, data):
-        if u'title' in data:
+        if u'title' in data and data[u'title'] is not None:
             data[u'title'] = data[u'title'].strip()
         return data
 
@@ -322,9 +322,9 @@ class PrivateEvaluationCriterionResource(ModelResource):
         }
 
     def alter_deserialized_detail_data(self, request, data):
-        if u'title' in data:
+        if u'title' in data and data[u'title'] is not None:
             data[u'title'] = data[u'title'].strip()
-        if u'description' in data:
+        if u'description' in data and data[u'description'] is not None:
             data[u'description'] = data[u'description'].strip()
         return data
 
