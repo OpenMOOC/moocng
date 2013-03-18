@@ -86,6 +86,18 @@ class Course(Sortable):
         max_length=200,
         default='free')
 
+    COURSE_STATUSES = (
+        ('d', _(u'Draft')),
+        ('p', _(u'Published')),
+    )
+
+    status = models.CharField(
+        verbose_name=_(u'Status'),
+        choices=COURSE_STATUSES,
+        max_length=10,
+        default=COURSE_STATUSES[0][0],
+    )
+
     class Meta(Sortable.Meta):
         verbose_name = _(u'course')
         verbose_name_plural = _(u'courses')
@@ -190,6 +202,19 @@ class Unit(Sortable):
                                       default=0,
                                       help_text='0-100%',
                                       validators=[MaxValueValidator(100)])
+
+    UNIT_STATUSES = (
+        ('d', _(u'Draft')),
+        ('l', _(u'Listable')),
+        ('p', _(u'Published')),
+    )
+
+    status = models.CharField(
+        verbose_name=_(u'Status'),
+        choices=UNIT_STATUSES,
+        max_length=10,
+        default=UNIT_STATUSES[0][0],
+    )
 
     class Meta(Sortable.Meta):
         verbose_name = _(u'unit')
