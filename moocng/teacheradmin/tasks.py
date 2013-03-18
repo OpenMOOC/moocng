@@ -18,8 +18,8 @@ from django.contrib.auth.models import User
 
 from celery import task
 
+from moocng.courses.utils import send_mass_mail_wrapper
 from moocng.teacheradmin.models import MassiveEmail
-from moocng.teacheradmin.utils import send_mass_mail_wrapper
 
 logger = logging.getLogger(__name__)
 

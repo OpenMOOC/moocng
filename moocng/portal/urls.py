@@ -14,9 +14,14 @@
 
 from django.conf.urls import patterns, url
 
+js_info_dict = {
+    'packages': ('moocng',),
+}
 
 urlpatterns = patterns(
-    '',
-    url(r'^setlang/$', 'moocng.portal.views.set_language',
-        name='set_language'),
+    'moocng.portal.views',
+    url(r'^setlang/$', 'set_language', name='set_language'),
+
+    # JavaScript translations
+    url(r'^js/$', 'cached_javascript_catalog', js_info_dict, name='jsi18n'),
 )

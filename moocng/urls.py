@@ -23,11 +23,13 @@ handler403 = 'django.views.defaults.permission_denied'
 handler404 = 'django.views.defaults.page_not_found'
 handler500 = 'django.views.defaults.server_error'
 
+
 urlpatterns = patterns(
     '',
     # Examples:
     # url(r'^$', 'moocng.views.home', name='home'),
     url(r'^', include('moocng.courses.urls')),
+    url(r'^', include('moocng.peerreview.urls')),
 
     url(r'^enrollment/', include('moocng.enrollment.urls')),
 

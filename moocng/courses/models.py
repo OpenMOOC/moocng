@@ -15,11 +15,13 @@
 import logging
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import MaxValueValidator
 from django.db import models
 from django.db import transaction
 from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 
 from adminsortable.models import Sortable
 from adminsortable.fields import SortableForeignKey
@@ -28,6 +30,7 @@ from tinymce.models import HTMLField
 from moocng.badges.models import Badge
 from moocng.courses.cache import invalidate_template_fragment
 from moocng.enrollment import enrollment_methods
+from moocng.mongodb import get_db
 from moocng.videos.tasks import process_video_task
 from moocng.videos.utils import extract_YT_video_id
 
@@ -123,6 +126,15 @@ class CourseTeacher(Sortable):
         verbose_name_plural = _(u'course teachers')
 
 
+def courseteacher_invalidate_cache(sender, instance, **kwargs):
+    invalidate_template_fragment('course_overview_secondary_info',
+                                 instance.course.id)
+
+signals.post_save.connect(courseteacher_invalidate_cache, sender=CourseTeacher)
+signals.post_delete.connect(courseteacher_invalidate_cache,
+                            sender=CourseTeacher)
+
+
 class Announcement(models.Model):
 
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
@@ -157,9 +169,9 @@ class Unit(Sortable):
     course = SortableForeignKey(Course, verbose_name=_(u'Course'))
 
     UNIT_TYPES = (
-        ('n', u'Normal'),
-        ('h', u'Homeworks'),
-        ('e', u'Exam'),
+        ('n', _(u'Normal')),
+        ('h', _(u'Homework')),
+        ('e', _(u'Exam')),
     )
     unittype = models.CharField(verbose_name=_(u'Type'), choices=UNIT_TYPES,
                                 max_length=1, default=UNIT_TYPES[0][0])
@@ -186,6 +198,11 @@ class Unit(Sortable):
     def __unicode__(self):
         return u'%s - %s (%s)' % (self.course, self.title, self.unittype)
 
+    def get_unit_type_name(self):
+        for t in self.UNIT_TYPES:
+            if t[0] == self.unittype:
+                return t[1]
+
 
 def unit_invalidate_cache(sender, instance, **kwargs):
     invalidate_template_fragment('course_overview_secondary_info', instance.course.id)
@@ -209,6 +226,33 @@ class KnowledgeQuantum(Sortable):
     supplementary_material = HTMLField(
         verbose_name=_(u'Supplementary material'),
         blank=True, null=False)
+
+    def is_completed(self, user):
+        if not self.kq_visited_by(user):
+            return False
+
+        questions = self.question_set.filter()
+        if len(questions):
+            return questions[0].is_completed(user, visited=True)
+
+        try:
+            return self.peerreviewassignment.is_completed(user, visited=True)
+        except ObjectDoesNotExist:
+            pass
+
+        return True
+
+    def kq_visited_by(self, user):
+        db = get_db()
+
+        activity = db.get_collection("activity")
+        # Verify if user has watch the video from kq
+        user_activity_exists = activity.find({
+            "user": user.id,
+            "courses.%s.kqs" % (self.unit.course.id): unicode(self.id)
+        })
+
+        return user_activity_exists.count() > 0
 
     class Meta(Sortable.Meta):
         verbose_name = _(u'nugget')
@@ -266,7 +310,7 @@ class Question(models.Model):
         verbose_name_plural = _(u'questions')
 
     def __unicode__(self):
-        return u'%s - Question %d' % (self.kq, self.id)
+        return ugettext(u'{0} - Question {1}').format(self.kq, self.id)
 
     def is_correct(self, answer):
         correct = True
@@ -281,6 +325,28 @@ class Question(models.Model):
             correct = correct and option.is_correct(reply)
 
         return correct
+
+    def is_completed(self, user, visited=None):
+        db = get_db()
+
+        if visited is None:
+            visited = self.kq.kq_visited_by(user)
+            if not visited:
+                return False
+
+        # Verify if user has answered the question
+        answers = db.get_collection("answers")
+        answers_exists = answers.find_one({
+            "user": user.id,
+            "questions.%s" % (self.id): {
+                "$exists": True
+            }
+        })
+
+        if not answers_exists:
+            return False
+
+        return True
 
 
 def handle_question_post_save(sender, instance, created, **kwargs):
@@ -320,7 +386,7 @@ class Option(models.Model):
         verbose_name_plural = _(u'options')
 
     def __unicode__(self):
-        return u'%s at %s x %s' % (self.optiontype, self.x, self.y)
+        return ugettext(u'{0} at {1} x {2}').format(self.optiontype, self.x, self.y)
 
     def is_correct(self, reply):
         if self.optiontype == 'l':

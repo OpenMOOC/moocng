@@ -159,7 +159,8 @@ if (_.isUndefined(window.MOOC)) {
                         .tickSubdivide(false)
                         .tickFormat(function (t) {
                             return aux[t];
-                        });
+                        })
+                        .rotateLabels(-30);
                     return chart;
                 }
             );
@@ -293,7 +294,8 @@ if (_.isUndefined(window.MOOC)) {
                         .tickSubdivide(false)
                         .tickFormat(function (t) {
                             return aux[t];
-                        });
+                        })
+                        .rotateLabels(-30);
                     return chart;
                 }
             );
@@ -434,7 +436,8 @@ if (_.isUndefined(window.MOOC)) {
                         .tickSubdivide(false)
                         .tickFormat(function (t) {
                             return aux[t];
-                        });
+                        })
+                        .rotateLabels(-30);
                     return chart;
                 }
             );

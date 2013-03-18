@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load i18n askboturl %}
+{% load i18n askboturl peer_review_tags %}
 
 {% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
 
@@ -20,13 +20,19 @@
     <a href="{% askboturl course.slug %}">{% trans "Discussion" %}</a>
   </li>
 
+  {% if_has_peer_review_assignments course %}
+  <li {% block nav-course-reviews %}{% endblock %}>
+    <a href="{% url course_reviews course.slug %}">{% trans "Reviews" %}</a>
+  </li>
+  {% endif_has_peer_review_assignments %}
+
   <li {% block nav-course-progress %}{% endblock %}>
     <a href="{% url course_progress course.slug %}">{% trans "Progress" %}</a>
   </li>
 
   {% if is_teacher or user.is_staff %}
-  <li class="pull-right">
-    <a href="{% url teacheradmin_stats course.slug %}">{% trans "Course administration" %}</a>
+  <li class="pull-right{% block nav-course-admin %}{% endblock %}">
+    <a href="{% url teacheradmin_index course.slug %}">{% trans "Course administration" %}</a>
   </li>
   {% endif %}
 

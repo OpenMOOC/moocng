@@ -29,12 +29,12 @@ from django.utils.translation import ugettext as _
 
 from gravatar.templatetags.gravatar import gravatar_img_for_email
 
-from moocng.api.mongodb import get_db
 from moocng.courses.models import (Course, CourseTeacher, KnowledgeQuantum,
                                    Option, Announcement, Unit, Attachment)
 from moocng.courses.utils import (UNIT_BADGE_CLASSES, calculate_course_mark,
                                   calculate_unit_mark, calculate_kq_mark)
 from moocng.categories.models import Category
+from moocng.mongodb import get_db
 from moocng.teacheradmin.decorators import is_teacher_or_staff
 from moocng.teacheradmin.forms import (CourseForm, AnnouncementForm,
                                        MassiveEmailForm)
@@ -501,12 +501,15 @@ def teacheradmin_categories(request, course_slug):
             if key.startswith('cat-'):
                 slug = key[4:]
                 try:
-                    category = Category.objects.get(slug=slug)
+                    category = Category.objects.get(slug=slug,
+                                                    only_admins=False)
                     category_list.append(category)
                 except Category.DoesNotExist:
                     messages.error(request, _(u'There were problems with some data you introduced, please fix them and try again.'))
                     return HttpResponseRedirect(
                         reverse('teacheradmin_categories', args=[course_slug]))
+        admin_cats = course.categories.filter(only_admins=True)
+        category_list.extend(admin_cats)
         course.categories.clear()
         course.categories.add(*category_list)
         course.save()
@@ -517,7 +520,7 @@ def teacheradmin_categories(request, course_slug):
     counter = 0
     categories = []
     aux = []
-    for cat in Category.objects.all():
+    for cat in Category.objects.filter(only_admins=False):
         counter += 1
         aux.append({
             'cat': cat,

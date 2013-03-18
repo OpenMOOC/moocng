@@ -1,6 +1,6 @@
 {% extends "courses/base_course.html" %}
 
-{% load i18n compress %}
+{% load i18n compress peer_review_tags %}
 
 {% block nav-course-progress %}class="active"{% endblock %}
 
@@ -14,7 +14,7 @@
     <section class="span9">
         <div class="row">
             <div class="span6" id="unit-progress-bar"></div>
-            <div class="span3"><div class="well" id="unit-progress-text"></div></div>
+            <div class="span3"><div id="unit-progress-text"></div></div>
         </div>
         <div class="row"><div class="span6">
             <ol id="unit-kqs"></ol>
@@ -42,36 +42,53 @@
         </ul>
     </div>
 </div>
+<div id="review-details-modal" class="modal hide fade">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>{% trans "Review details" %}</h3>
+  </div>
+  <div class="modal-body">
+    <p>{% trans "Review date" %}: <time datetime=""></time></p>
+    <table class="table table-stripped table-bordered">
+      <caption style="text-align: left">{% trans "Evaluation criteria" %}:</caption>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>{% trans "Description" %}</th>
+          <th>{% trans "Score" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2">{% trans "Final score" %}</td>
+          <td class="final-score"></td>
+        </tr>
+      </tfoot>
+    </table>
+    <p>{% trans "Comment" %}:</p>
+    <blockquote><pre></pre></blockquote>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">{% trans "Close" %}</button>
+  </div>
+</div>
 {% endblock %}
 
 {% block extrajs %}
-    {% compress js %}
     <script src="{{ STATIC_URL }}js/libs/underscore-1.3.3.min.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/libs/backbone-0.9.2.min.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/libs/async.min.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/libs/moment.min.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/libs/langs.min.js" type="text/javascript"></script>
+    <script src="{% url jsi18n %}" type="text/javascript"></script>
+    {% compress js %}
     <script src="{{ STATIC_URL }}js/ajax.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/models.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/routes.js" type="text/javascript"></script>
-    {% endcompress %}
-    {% compress js %}
     <script src="{{ STATIC_URL }}js/progress-views.js" type="text/javascript"></script>
     <script type="text/javascript">
-        MOOC.trans = {
-            ajax: {
-                error: "{% trans "Error" %}",
-                unknownError: "{% trans "Unknown error with ajax petition" %}"
-            },
-            progress: {
-                completed: "{% trans "completed" %}",
-                correct: "{% trans "correct" %}",
-                incorrect: "{% trans "Incorrect" %}",
-                pending: "{% trans "Pending" %}"
-            },
-            api: {
-                unitNotReadyTitle: "{% trans "The module is not ready" %}",
-                unitNotReady: "{% trans "This module has no nuggets. Probably the start date hasn't been reached yet." %}"
-            }
-        };
         $("#unit-list li").each(function (idx, node) {
             var id = node.id.split("unit")[1];
             MOOC.models.course.add(new MOOC.models.Unit({
@@ -81,7 +98,14 @@
                 type: node.className.split('-')[1]
             }));
         });
+        MOOC.peerReview = {
+            urls: {
+                prReview: "{% url course_reviews course_slug=course.slug %}"
+            }
+        };
         MOOC.init({{ course.id }});
+        $("#review-details-modal").modal({show: false});
+        moment.lang('{{ LANGUAGE_CODE }}');
     </script>
     {% endcompress %}
 {% endblock %}

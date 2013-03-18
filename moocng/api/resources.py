@@ -14,16 +14,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 from datetime import datetime
 import re
 
+from bson import ObjectId
+from bson.errors import InvalidId
+
 from tastypie import fields
-from tastypie.resources import ModelResource
 from tastypie.authorization import DjangoAuthorization
+from tastypie.exceptions import NotFound, BadRequest
+from tastypie.resources import ModelResource
 
 from django.conf import settings
 from django.conf.urls import url
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.db.models.fields.files import ImageFieldFile
 from django.http import HttpResponse
@@ -35,11 +41,16 @@ from moocng.api.authentication import (DjangoAuthentication,
 from moocng.api.authorization import (PublicReadTeachersModifyAuthorization,
                                       TeacherAuthorization,
                                       UserResourceAuthorization)
-from moocng.api.mongodb import get_db, get_user, MongoObj, MongoResource
-from moocng.api.validation import AnswerValidation
+from moocng.api.mongodb import get_user, MongoObj, MongoResource
+from moocng.api.validation import (AnswerValidation,
+                                   PeerReviewSubmissionsResourceValidation)
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment, Course)
 from moocng.courses.utils import normalize_kq_weight, calculate_course_mark
+from moocng.mongodb import get_db
+from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
+from moocng.peerreview.utils import (kq_get_peer_review_score,
+                                     get_peer_review_review_score)
 from moocng.videos.utils import extract_YT_video_id
 
 
@@ -67,12 +78,23 @@ class UnitResource(ModelResource):
             "course": ('exact'),
         }
 
+    def alter_deserialized_detail_data(self, request, data):
+        if u'title' in data and data[u'title'] is not None:
+            data[u'title'] = data[u'title'].strip()
+        return data
+
 
 class KnowledgeQuantumResource(ModelResource):
     unit = fields.ToOneField(UnitResource, 'unit')
     question = fields.ToManyField('moocng.api.resources.QuestionResource',
                                   'question_set', related_name='kq',
                                   readonly=True, null=True)
+    peer_review_assignment = fields.ToOneField(
+        'moocng.api.resources.PeerReviewAssignmentResource',
+        'peerreviewassignment',
+        related_name='peer_review_assignment',
+        readonly=True, null=True)
+    peer_review_score = fields.IntegerField(readonly=True)
     videoID = fields.CharField(readonly=True)
     correct = fields.BooleanField(readonly=True)
     completed = fields.BooleanField(readonly=True)
@@ -114,6 +136,12 @@ class KnowledgeQuantumResource(ModelResource):
         else:
             return question[0]
 
+    def dehydrate_peer_review_score(self, bundle):
+        try:
+            return kq_get_peer_review_score(bundle.obj, bundle.request.user)
+        except ObjectDoesNotExist:
+            return None
+
     def dehydrate_videoID(self, bundle):
         return extract_YT_video_id(bundle.obj.video)
 
@@ -122,7 +150,7 @@ class KnowledgeQuantumResource(ModelResource):
         if questions.count() == 0:
             # no question: a kq is correct if it is completed
             try:
-                return self._is_completed(self.user_activity, bundle.obj)
+                return bundle.obj.is_completed(bundle.request.user)
             except AttributeError:
                 return False
         else:
@@ -137,29 +165,7 @@ class KnowledgeQuantumResource(ModelResource):
             return question.is_correct(answer)
 
     def dehydrate_completed(self, bundle):
-        try:
-            return self._is_completed(self.user_activity, bundle.obj)
-        except AttributeError:
-            return False
-
-    def _is_completed(self, activity, kq):
-        course_id = kq.unit.course.id
-        if activity is None:
-            return False
-
-        courses = activity.get('courses', None)
-        if courses is None:
-            return False
-
-        visited = courses.get(unicode(course_id), None)
-        if visited is None:
-            return False
-
-        kqs = visited.get('kqs', None)
-        if kqs is None:
-            return False
-
-        return unicode(kq.id) in kqs
+        return bundle.obj.is_completed(bundle.request.user)
 
 
 class PrivateKnowledgeQuantumResource(ModelResource):
@@ -167,6 +173,11 @@ class PrivateKnowledgeQuantumResource(ModelResource):
     question = fields.ToManyField('moocng.api.resources.QuestionResource',
                                   'question_set', related_name='kq',
                                   readonly=True, null=True)
+    peer_review_assignment = fields.ToOneField(
+        'moocng.api.resources.PeerReviewAssignmentResource',
+        'peerreviewassignment',
+        related_name='peer_review_assignment',
+        readonly=True, null=True)
     videoID = fields.CharField()
     normalized_weight = fields.IntegerField()
 
@@ -179,6 +190,11 @@ class PrivateKnowledgeQuantumResource(ModelResource):
         filtering = {
             "unit": ('exact'),
         }
+
+    def alter_deserialized_detail_data(self, request, data):
+        if u'title' in data and data[u'title'] is not None:
+            data[u'title'] = data[u'title'].strip()
+        return data
 
     def dehydrate_normalized_weight(self, bundle):
         return normalize_kq_weight(bundle.obj)
@@ -214,6 +230,261 @@ class AttachmentResource(ModelResource):
 
     def dehydrate_attachment(self, bundle):
         return bundle.obj.attachment.url
+
+
+class PeerReviewAssignmentResource(ModelResource):
+    kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
+
+    class Meta:
+        queryset = PeerReviewAssignment.objects.all()
+        resource_name = 'peer_review_assignment'
+        allowed_methods = ['get']
+        authentication = DjangoAuthentication()
+        authorization = DjangoAuthorization()
+        filtering = {
+            "kq": ('exact'),
+        }
+
+    def get_object_list(self, request):
+        objects = super(PeerReviewAssignmentResource, self).get_object_list(request)
+        return objects.filter(
+            Q(kq__unit__unittype='n') |
+            Q(kq__unit__start__isnull=True) |
+            Q(kq__unit__start__isnull=False, kq__unit__start__lte=datetime.now)
+        )
+
+
+class PrivatePeerReviewAssignmentResource(ModelResource):
+    kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
+
+    class Meta:
+        queryset = PeerReviewAssignment.objects.all()
+        resource_name = 'privpeer_review_assignment'
+        authentication = TeacherAuthentication()
+        authorization = TeacherAuthorization()
+        filtering = {
+            "kq": ('exact'),
+        }
+
+    def obj_delete(self, request, **kwargs):
+        obj = self.obj_get(request, **kwargs)
+        #submissions and reviews must be deleted too
+        submissions = get_db().get_collection('peer_review_submissions')
+        submissions.remove({'kq': obj.kq_id})
+        reviews = get_db().get_collection('peer_review_reviews')
+        reviews.remove({'kq': obj.kq_id})
+        super(PrivatePeerReviewAssignmentResource, self).obj_delete(request, **kwargs)
+
+
+class EvaluationCriterionResource(ModelResource):
+    assignment = fields.ToOneField(PeerReviewAssignmentResource, 'assignment')
+
+    class Meta:
+        queryset = EvaluationCriterion.objects.all()
+        resource_name = 'evaluation_criterion'
+        allowed_methods = ['get']
+        authentication = DjangoAuthentication()
+        authorization = DjangoAuthorization()
+        filtering = {
+            "assignment": ('exact'),
+            "unit": ('exact'),
+        }
+
+    def obj_get_list(self, request=None, **kwargs):
+
+        assignment = request.GET.get('assignment', None)
+        unit = request.GET.get('unit', None)
+
+        if assignment is not None:
+            results = EvaluationCriterion.objects.filter(assignment_id=assignment)
+        elif unit is not None:
+            results = EvaluationCriterion.objects.filter(assignment__kq__unit_id=unit)
+        else:
+            results = EvaluationCriterion.objects.all()
+        return results.filter(
+            Q(assignment__kq__unit__unittype='n') |
+            Q(assignment__kq__unit__start__isnull=True) |
+            Q(assignment__kq__unit__start__isnull=False, assignment__kq__unit__start__lte=datetime.now)
+        )
+
+
+class PrivateEvaluationCriterionResource(ModelResource):
+    assignment = fields.ToOneField(PeerReviewAssignmentResource, 'assignment')
+
+    class Meta:
+        queryset = EvaluationCriterion.objects.all()
+        resource_name = 'privevaluation_criterion'
+        authentication = TeacherAuthentication()
+        authorization = TeacherAuthorization()
+        filtering = {
+            "assignment": ('exact'),
+            "unit": ('exact'),
+        }
+
+    def alter_deserialized_detail_data(self, request, data):
+        if u'title' in data and data[u'title'] is not None:
+            data[u'title'] = data[u'title'].strip()
+        if u'description' in data and data[u'description'] is not None:
+            data[u'description'] = data[u'description'].strip()
+        return data
+
+    def obj_get_list(self, request=None, **kwargs):
+
+        assignment = request.GET.get('assignment', None)
+        unit = request.GET.get('unit', None)
+
+        if assignment is not None:
+            results = EvaluationCriterion.objects.filter(assignment_id=assignment)
+        elif unit is not None:
+            results = EvaluationCriterion.objects.filter(assignment__kq__unit_id=unit)
+        else:
+            results = EvaluationCriterion.objects.all()
+        return results
+
+
+class PeerReviewSubmissionsResource(MongoResource):
+    class Meta:
+        resource_name = 'peer_review_submissions'
+        collection = 'peer_review_submissions'
+        datakey = 'peer_review_submissions'
+        object_class = MongoObj
+        authentication = DjangoAuthentication()
+        authorization = DjangoAuthorization()
+        validation = PeerReviewSubmissionsResourceValidation()
+        allowed_methods = ['get', 'post']
+        filtering = {
+            "kq": ('exact'),
+            "unit": ('exact'),
+            "course": ('exact'),
+        }
+
+    def obj_get_list(self, request=None, **kwargs):
+
+        mongo_query = {
+            "author": request.GET.get('author', request.user.id)
+        }
+
+        for key in self._meta.filtering.keys():
+            if key in request.GET:
+                try:
+                    mongo_query[key] = int(request.GET.get(key))
+                except ValueError:
+                    mongo_query[key] = request.GET.get(key)
+
+        query_results = self._collection.find(mongo_query)
+
+        results = []
+
+        for query_item in query_results:
+            obj = MongoObj(initial=query_item)
+            obj.uuid = query_item["_id"]
+            results.append(obj)
+
+        return results
+
+    def obj_get(self, request=None, **kwargs):
+
+        try:
+            query = dict(_id=ObjectId(kwargs['pk']))
+        except InvalidId:
+            raise BadRequest('Invalid ObjectId provided')
+
+        mongo_item = self._collection.find_one(query)
+
+        if mongo_item is None:
+            raise NotFound('Invalid resource lookup data provided')
+
+        obj = MongoObj(initial=mongo_item)
+        obj.uuid = kwargs['pk']
+        return obj
+
+    def obj_create(self, bundle, request=None, **kwargs):
+
+        bundle = self.full_hydrate(bundle)
+
+        if "bundle" not in bundle.data and "reviews" not in bundle.data:
+            kq = KnowledgeQuantum.objects.get(id=int(bundle.data["kq"]))
+
+            if "unit" not in bundle.data:
+                bundle.data["unit"] = kq.unit.id
+
+            if "course" not in bundle.data:
+                bundle.data["course"] = kq.unit.course.id
+
+        if "created" not in bundle.data:
+            bundle.data["created"] = datetime.utcnow()
+
+        bundle.data["reviews"] = 0
+        bundle.data["author_reviews"] = 0
+        bundle.data["author"] = request.user.id
+
+        self._collection.insert(bundle.data, safe=True)
+
+        bundle.uuid = bundle.obj.uuid
+
+        return bundle
+
+
+class PeerReviewReviewsResource(MongoResource):
+    score = fields.IntegerField(readonly=True)
+
+    class Meta:
+        resource_name = 'peer_review_reviews'
+        collection = 'peer_review_reviews'
+        datakey = 'peer_review_reviews'
+        object_class = MongoObj
+        authentication = DjangoAuthentication()
+        authorization = DjangoAuthorization()
+        allowed_methods = ['get']
+        filtering = {
+            "reviewer": ('exact'),
+            "kq": ('exact'),
+            "unit": ('exact'),
+            "course": ('exact'),
+            "submission_id": ('exact'),
+        }
+
+    def obj_get_list(self, request=None, **kwargs):
+        mongo_query = {
+            "author": request.GET.get('author', request.user.id)
+        }
+
+        for key in self._meta.filtering.keys():
+            if key in request.GET:
+                try:
+                    mongo_query[key] = int(request.GET.get(key))
+                except ValueError:
+                    mongo_query[key] = request.GET.get(key)
+
+        query_results = self._collection.find(mongo_query)
+
+        results = []
+
+        for query_item in query_results:
+            obj = MongoObj(initial=query_item)
+            obj.uuid = query_item["_id"]
+            results.append(obj)
+
+        return results
+
+    def obj_get(self, request=None, **kwargs):
+
+        try:
+            query = dict(_id=ObjectId(kwargs['pk']))
+        except InvalidId:
+            raise BadRequest('Invalid ObjectId provided')
+
+        mongo_item = self._collection.find_one(query)
+
+        if mongo_item is None:
+            raise NotFound('Invalid resource lookup data provided')
+
+        obj = MongoObj(initial=mongo_item)
+        obj.uuid = kwargs['pk']
+        return obj
+
+    def dehydrate_score(self, bundle):
+        return get_peer_review_review_score(bundle.obj.to_dict())
 
 
 class QuestionResource(ModelResource):

@@ -1,5 +1,5 @@
 /*jslint vars: false, browser: true, nomen: true */
-/*global MOOC: true, Backbone, $, _, async */
+/*global MOOC: true, Backbone, $, _, async, gettext */
 
 // Copyright 2012 Rooter Analysis S.L.
 //
@@ -19,21 +19,67 @@ if (_.isUndefined(window.MOOC)) {
     window.MOOC = {};
 }
 
+MOOC.io = {
+    _loadDataFromUnit: function (unitId, Model) {
+        "use strict";
+        var dfd = $.Deferred(), list = new Model();
+
+        list.fetch({
+            data: { 'unit': unitId },
+            success: function () {
+                dfd.resolve(list);
+            },
+            error: function () {
+                dfd.reject();
+            }
+        });
+
+        return dfd.promise();
+    },
+
+    loadPeerReviewReviewList: function (unitId) {
+        "use strict";
+        return MOOC.io._loadDataFromUnit(unitId, MOOC.models.PeerReviewReviewList);
+    },
+
+    loadPeerReviewAssignmentList: function (unitId) {
+        "use strict";
+        return MOOC.io._loadDataFromUnit(unitId, MOOC.models.PeerReviewAssignmentList);
+    },
+
+    loadEvaluationCriterionList: function (unitId) {
+        "use strict";
+        return MOOC.io._loadDataFromUnit(unitId, MOOC.models.EvaluationCriterionList);
+    },
+
+    loadPeerReviewSubmissionList: function (unitId) {
+        "use strict";
+        return MOOC.io._loadDataFromUnit(unitId, MOOC.models.PeerReviewSubmissionList);
+    }
+};
+
 MOOC.App = Backbone.Router.extend({
-    unitSteps: function (unit, loadKQ) {
+    lastUnitView: null,
+    unitSteps: function (unit, loadFirstKQ) {
         "use strict";
         var unitObj = MOOC.models.course.get(unit),
-            steps = [];
+            steps = [],
+            self = this,
+            shouldDelegateEvents = false;
 
         if (_.isNull(unitObj.get("knowledgeQuantumList"))) {
             steps.push(async.apply(MOOC.router.loadUnitData, unitObj));
+        } else {
+            shouldDelegateEvents = true;
         }
 
-        if (loadKQ) {
+        if (loadFirstKQ) {
             steps.push(function (callback) {
                 var kqObj = unitObj.get("knowledgeQuantumList").first();
                 if (_.isUndefined(kqObj)) {
-                    MOOC.alerts.show(MOOC.alerts.INFO, MOOC.trans.api.unitNotReadyTitle, MOOC.trans.api.unitNotReady);
+                    MOOC.alerts.show(MOOC.alerts.INFO,
+                                     gettext("The module is not ready"),
+                                     gettext("This module has no nuggets. Probably the start date hasn't been reached yet."));
                 } else {
                     MOOC.router.navigate("unit" + unitObj.get("id") + "/kq" + kqObj.get("id"), { trigger: true });
                     callback();
@@ -41,7 +87,11 @@ MOOC.App = Backbone.Router.extend({
             });
         } else {
             steps.push(function (callback) {
+                self.lastUnitView = MOOC.views.unitViews[unit];
                 MOOC.views.unitViews[unit].render();
+                if (shouldDelegateEvents && _.has(self.lastUnitView, 'undelegateEventsInSubViews')) {
+                    self.lastUnitView.delegateEventsInSubViews();
+                }
                 $("#unit-selector").find("div.collapse").removeClass("in");
                 $("#unit" + unit + "-container").addClass("in");
 
@@ -121,6 +171,11 @@ MOOC.App = Backbone.Router.extend({
     unit: function (unit) {
         "use strict";
         unit = parseInt(unit, 10);
+        if (!_.isNull(this.lastUnitView)) {
+            if (_.has(this.lastUnitView, 'undelegateEventsInSubViews')) {
+                this.lastUnitView.undelegateEventsInSubViews();
+            }
+        }
         async.series(this.unitSteps(unit, MOOC.router.hasHandler("unit1/kq1")));
     },
 
@@ -144,12 +199,13 @@ MOOC.App = Backbone.Router.extend({
 
         toExecute.push(function (callback) {
             var view = MOOC.views.kqViews[kq],
-                cb = _.bind(view.loadQuestion, view);
+                cb = _.bind(view.loadExercise, view);
             cb = async.apply(cb, { data: 0 });
             // data: 0 because YT.PlayerState.ENDED = 0s
             _.bind(view.repeatedlyCheckIfPlayer, view)(cb);
             callback();
         });
+
         async.series(toExecute);
     },
 
@@ -168,36 +224,98 @@ MOOC.App = Backbone.Router.extend({
             MOOC.views.kqViews[kq].loadSolution();
             callback();
         });
+
+        async.series(toExecute);
+    },
+
+    kqP: function (unit, kq) {
+        "use strict";
+        unit = parseInt(unit, 10);
+        kq = parseInt(kq, 10);
+        var toExecute = this.kqSteps(unit, kq, false);
+
+        toExecute.push(function (callback) {
+            MOOC.views.kqViews[kq].loadPeerReviewData();
+            callback();
+        });
+
+        toExecute.push(function (callback) {
+            var view = MOOC.views.kqViews[kq],
+                cb = _.bind(view.loadExercise, view);
+            cb = async.apply(cb, { data: 0 });
+            // data: 0 because YT.PlayerState.ENDED = 0s
+            _.bind(view.repeatedlyCheckIfPlayer, view)(cb);
+            callback();
+        });
+
         async.series(toExecute);
     },
 
     loadUnitData: function (unitObj, callback) {
         "use strict";
         unitObj.set("knowledgeQuantumList", new MOOC.models.KnowledgeQuantumList());
-        var unitID = unitObj.get("id");
+        var unitID = unitObj.get("id"),
+            inClassroomView = MOOC.router.hasHandler("unit1/kq1");
 
         MOOC.ajax.getKQsByUnit(unitID, function (data, textStatus, jqXHR) {
-            var unitView;
+            var unitView,
+                hasPeerReviews,
+                peerReviewReviewList,
+                createView;
+
+            hasPeerReviews = false;
 
             unitObj.get("knowledgeQuantumList").reset(_.map(data.objects, function (kq) {
                 var data = _.pick(kq, "id", "title", "videoID", "teacher_comments",
                                   "supplementary_material", "question", "order",
-                                  "correct", "completed", "normalized_weight");
+                                  "correct", "completed", "normalized_weight",
+                                  "peer_review_assignment", "peer_review_score");
                 data.id = parseInt(data.id, 10);
+                if (data.peer_review_assignment !== null) {
+                    hasPeerReviews = true;
+                }
                 return data;
             }));
 
-            unitView = MOOC.views.unitViews[unitID];
-            if (_.isUndefined(unitView)) {
-                unitView = new MOOC.views.Unit({
-                    model: unitObj,
-                    id: "unit" + unitID,
-                    el: $("#unit" + unitID + "-container")[0]
-                });
-                MOOC.views.unitViews[unitID] = unitView;
+            createView = function () {
+                unitView = MOOC.views.unitViews[unitID];
+                if (_.isUndefined(unitView)) {
+                    unitView = new MOOC.views.Unit({
+                        model: unitObj,
+                        id: "unit" + unitID,
+                        el: $("#unit" + unitID + "-container")[0]
+                    });
+                    MOOC.views.unitViews[unitID] = unitView;
+                }
+
+                callback();
+            };
+
+            if (!inClassroomView && hasPeerReviews) {
+
+                // Only in progress view
+                $.when(MOOC.io.loadPeerReviewReviewList(unitID),
+                       MOOC.io.loadPeerReviewAssignmentList(unitID),
+                       MOOC.io.loadEvaluationCriterionList(unitID),
+                       MOOC.io.loadPeerReviewSubmissionList(unitID))
+                    .then(function (peerReviewReviewList,
+                                    peerReviewAssignmentList,
+                                    evaluationCriterionList,
+                                    peerReviewSubmissionList) {
+
+                        var knowledgeQuantumList = unitObj.get('knowledgeQuantumList');
+
+                        unitObj.set('peerReviewReviewList', peerReviewReviewList);
+                        knowledgeQuantumList.setPeerReviewAssignmentList(peerReviewAssignmentList);
+                        knowledgeQuantumList.setEvaluationCriterionList(evaluationCriterionList);
+                        knowledgeQuantumList.setPeerReviewSubmissionList(peerReviewSubmissionList);
+                        createView();
+                    });
+
+            } else {
+                createView();
             }
 
-            callback();
         });
     },
 
@@ -222,6 +340,7 @@ MOOC.init = function (course_id, KQRoute) {
         MOOC.router.route("unit:unit/kq:kq", "kq");
         MOOC.router.route("unit:unit/kq:kq/q", "kqQ");
         MOOC.router.route("unit:unit/kq:kq/a", "kqA");
+        MOOC.router.route("unit:unit/kq:kq/p", "kqP");
 
         MOOC.models.activity = new MOOC.models.Activity({id: course_id});
         MOOC.models.activity.fetch();

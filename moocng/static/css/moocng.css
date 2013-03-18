@@ -227,7 +227,7 @@ img.award {
 
 .courseprogress #unit-progress-bar .progress,
 .courseprogress #unit-progress-bar .progress .bar {
-    height: 30px;
+    height: 18px;
 }
 
 .courseprogress #unit-kqs li {
@@ -248,22 +248,22 @@ img.award {
     margin-bottom: 10px;
 }
 
-.classroom #kq-video img {
+.classroom #kq-video.question img {
     display: block;
     margin: 0 auto;
 }
 
-.classroom #kq-video input,
-.classroom #kq-video textarea,
-.classroom #kq-video .btn {
+.classroom #kq-video.question input,
+.classroom #kq-video.question textarea,
+.classroom #kq-video.question .btn {
     position: absolute;
 }
 
-.classroom #kq-video .btn {
+.classroom #kq-video.question .btn {
     padding: 3px;
 }
 
-.classroom #kq-video textarea.text {
+.classroom #kq-video.question textarea.text {
     border: 0;
     background: transparent;
     box-shadow: none;
@@ -272,24 +272,24 @@ img.award {
     height: auto;
 }
 
-.classroom #kq-video input.correct {
+.classroom #kq-video.question input.correct {
     background-color: #DFF0D8;
     border: 4px solid #468847;
 }
 
-.classroom #kq-video input.incorrect {
+.classroom #kq-video.question input.incorrect {
     background-color: #F2DEDE;
     border: 4px solid #B94A48;
 }
 
-.classroom #kq-video input.correct[type=checkbox],
-.classroom #kq-video input.correct[type=radio]
+.classroom #kq-video.question input.correct[type=checkbox],
+.classroom #kq-video.question input.correct[type=radio]
 {
     outline: 2px solid #468847;
 }
 
-.classroom #kq-video input.incorrect[type=checkbox],
-.classroom #kq-video input.incorrect[type=radio]
+.classroom #kq-video.question input.incorrect[type=checkbox],
+.classroom #kq-video.question input.incorrect[type=radio]
 {
     outline: 2px solid #B94A48;
 }
@@ -310,8 +310,13 @@ img.award {
 .classroom .solution-wrapper {
     padding: 10px;
     border: 1px solid #e5e5e5;
-    height: 350px;  /* it's 372 counting the padding and border*/
+/*     height: 350px;  /* it's 372 counting the padding and border */
     overflow: auto;
+}
+
+.classroom #pr-submission {
+    width: 570px;
+    height: 220px;
 }
 
 .announcement div.content {
@@ -325,14 +330,66 @@ code {
     border: 1px solid #E1E1E8;
 }
 
-.category-box,
-.category-box-liquid {
+.category-box {
     text-align: center;
+    position: relative;
 }
 
-.category-box-liquid img {
-    max-width: 140px;
-    margin: 0 5px;
+.category-box .banner {
+    position:relative;
+    -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+    -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+    box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+}
+
+.category-box .banner:before,
+.category-box .banner:after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    -webkit-box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    -moz-box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    top: 0;
+    bottom: 0;
+    left: 10px;
+    right: 10px;
+    -moz-border-radius: 100px / 10px;
+    border-radius: 100px / 10px;
+}
+
+.category-box .banner:after {
+    right: 10px;
+    left: auto;
+    -webkit-transform:skew(8deg) rotate(3deg);
+    -moz-transform:skew(8deg) rotate(3deg);
+    -ms-transform:skew(8deg) rotate(3deg);
+    -o-transform:skew(8deg) rotate(3deg);
+    transform:skew(8deg) rotate(3deg);
+}
+
+.category-box .banner img {
+    width: 940px; /* bootstrap span12 */
+    height: 240px;
+}
+
+.category-box img.icon {
+    width: 140px; /* bootstrap span2 */
+    height: 140px;
+    border: 1px solid black;
+    -webkit-box-shadow: 0 10px 6px -6px #777;
+    -moz-box-shadow: 0 10px 6px -6px #777;
+    box-shadow: 0 10px 6px -6px #777;
+}
+
+.category-box img.icon.center {
+    position: absolute;
+    top: 50px;
+    left: 400px;
+}
+
+.category-box.liquid {
+    margin: 0 10px;
 }
 
 .errorlist {
@@ -396,6 +453,10 @@ code {
     margin-right: 10px;
 }
 
+.teacheradmin-units .badge.peerreview {
+    margin-right: 10px;
+}
+
 .teacheradmin-units label.required:before {
     content: "* ";
     color: red;
@@ -424,6 +485,7 @@ code {
     width: 660px;
 }
 
+.classroom div.loading.backdrop,
 .teacheradmin-units div.loading.backdrop,
 .teacheradmin-stats div.loading.backdrop {
     z-index: 99999999;
@@ -436,6 +498,7 @@ code {
     background: black;
 }
 
+.classroom div.loading.indicator,
 .teacheradmin-units div.loading.indicator,
 .teacheradmin-stats div.loading.indicator {
     z-index: 100000000;

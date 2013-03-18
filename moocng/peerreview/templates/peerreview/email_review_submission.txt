@@ -1,0 +1,21 @@
+{% load i18n %}
+
+{% blocktrans %}
+Congratulations {{ user }}
+
+The exercise you sent on {{ date }} belonging the nugget "{{ nugget }}" has been reviewed by a classmate.
+
+Evaluation criteria:
+{% endblocktrans %}
+
+{% for criterion, evaluation in review_criteria %}
+- {{ criterion }}: {{ evaluation }}
+{% endfor %}
+
+{% blocktrans %}
+Your classmate's comment:
+
+{{ comment }}
+
+Best regards and thank you for learning with {{ site }}.
+{% endblocktrans %}

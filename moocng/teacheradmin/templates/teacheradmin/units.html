@@ -15,9 +15,11 @@
     <script src="{{ STATIC_URL }}js/libs/jquery-ui-1.9.2.custom.min.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/libs/underscore-1.3.3.min.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/libs/backbone-0.9.2.min.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/libs/async.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}tiny_mce/tiny_mce.js"></script>
+    <script src="{{ STATIC_URL }}js/libs/bootstrap-fileupload.min.js" type="text/javascript"></script>
 {% compress js %}
-    <script src="{{ STATIC_URL }}js/libs/bootstrap-fileupload.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/ajax.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/models.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/teacheradmin/units-views.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/teacheradmin/units-routes.js" type="text/javascript"></script>
@@ -35,6 +37,13 @@
                 supplementary_material: "{% trans "Supplementary material" %}",
                 kq: "{% trans "nugget" %}",
                 question: "{% trans "It has a question" %}",
+                pr: "{% trans "PR" %}",
+                prTooltip: "{% trans "Peer review" %}",
+            },
+            evaluationCriterion: {
+                description: "{% trans "Description:" %}",
+                remove: "{%trans "Remove criterion" %}",
+                title: "{% trans "Title:" %}",
             }
         };
         MOOC.init({{ course.id }}, {{ unit_badge_classes|safe }});
@@ -92,6 +101,7 @@
         <li class="active"><a href="#nugget" data-toggle="tab">{% trans "Nugget" %}</a></li>
         <li id="attachments-tab"><a href="#attachments" data-toggle="tab">{% trans "Attachments" %}</a></li>
         <li id="question-tab" class="hide"><a href="#question" data-toggle="tab">{% trans "Question" %}</a></li>
+        <li id="peer-review-assignment-tab" class="hide"><a href="#peer-review-assignment" data-toggle="tab">{% trans "Peer review" %}</a></li>
     </ul>
     <div class="tab-content"><fieldset class="tab-pane active" id="nugget">
     <div class="row">
@@ -124,6 +134,11 @@
     <div id="noquestion" class="row mb20">
         <div class="span10 align-right">
             <button id="addquestion" class="btn btn-primary">{% trans "Save changes and add a question to this nugget" %}</button>
+        </div>
+    </div>
+    <div id="nopeerreviewassignment" class="row mb20">
+        <div class="span10 align-right">
+            <button id="addpeerreviewassignment" class="btn btn-primary">{% trans "Save changes and add a peer review assignment to this nugget" %}</button>
         </div>
     </div>
     </fieldset>
@@ -199,6 +214,38 @@
             <button id="delete-question" class="btn btn-danger">{% trans "Remove the question from this nugget" %}</button>
         </div>
     </div>
+    </fieldset>
+    <fieldset class="tab-pane" id="peer-review-assignment">
+    <div class="row">
+        <div class="span5">
+            <label for="reviewdescription" class="required">{% trans "Assignment description" %}</label>
+            <textarea id="reviewdescription" name="reviewdescription" class="span5" rows="5"></textarea>
+        </div>
+        <div class="span5">
+            <label for="reviewminreviews" class="required">{% trans "Minimun reviewers" %}</label>
+            <div class="input-append">
+                <input type="number" min="0" max="100" step="1" name="reviewminreviews" id="reviewminreviews" class="input-mini" required="required" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+      <div class="span10">
+        <legend>{% trans "Evaluation criterions" %}</legend>
+        <div id="reviewcriterions">
+        </div>
+        <div class="row">
+            <div class="align-right">
+                <button id="addcriterion" class="btn btn-primary">{% trans "Save changes and an evaluation criterion" %}</button>
+            </div>
+        </div>
+      </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="mb10 align-right span10">
+            <button id="delete-peer-review-assignment" class="btn btn-danger">{% trans "Remove the peer review assignment" %}</button>
+        </div>
+    </div>
     </fieldset></div>
     <fieldset>
     <div class="row"><div class="span10 align-right"><div class="form-actions">
@@ -245,6 +292,19 @@
 <div class="alert alert-error hide" id="unsaved">
     <h4>{% trans "Error" %}</h4>
     <p>{% trans "This item is new and must be saved before going back." %}</p>
+</div>
+
+<div id="confirm-peer-review-removal" class="modal hide fade">
+    <div class="modal-header">
+        <h3>{% trans "Confirm removal" %}</h3>
+    </div>
+    <div class="modal-body">
+        <p>{% trans "Are you completely sure you want to remove this peer review assignment? Submissions received from students will be removed as well." %}</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
+        <button type="button" class="btn btn-danger" id="pr-confirm">{% trans "Confirm" %}</button>
+    </div>
 </div>
 
 <div id="units-container" class="viewport"></div>

@@ -12,9 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import time
+
 from django.conf import settings
 from django.contrib.sites.models import get_current_site
 from django.views import i18n
+from django.views.decorators.cache import cache_page
 
 
 def set_language(request):
@@ -27,3 +30,9 @@ def set_language(request):
                             domain=site.domain,
                             httponly=False)
     return response
+
+# every time the server is restarted key_prefix will be different
+# effectively invalidating this cache
+@cache_page(3600, key_prefix='jsi18n-%s' % time.time())
+def cached_javascript_catalog(request, domain='djangojs', packages=None):
+    return i18n.javascript_catalog(request, domain, packages)

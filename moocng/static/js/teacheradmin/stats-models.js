@@ -57,7 +57,7 @@ if (_.isUndefined(window.MOOC)) {
 
         url: function () {
             if (!_.isNull(this.unit)) {
-                return MOOC.ajax.getAbsoluteUrl("kqs") + "?unit=" + this.unit.get("id");
+                return MOOC.ajax.getAbsoluteUrl("kqs/") + "?unit=" + this.unit.get("id");
             }
             return ""; // ERROR
         }
@@ -104,7 +104,7 @@ if (_.isUndefined(window.MOOC)) {
     MOOC.models.UnitList = Backbone.Collection.extend({
         model: MOOC.models.Unit,
         url: function () {
-            return MOOC.ajax.getAbsoluteUrl("units");
+            return MOOC.ajax.getAbsoluteUrl("units/");
         }
     });
 

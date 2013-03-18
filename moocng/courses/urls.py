@@ -29,6 +29,8 @@ urlpatterns = patterns(
     url(r'^tos/$', 'flatpage', {'page': 'tos'}, name='tos'),
     url(r'^copyright/$', 'flatpage', {'page': 'copyright'}, name='copyright'),
     url(r'^cert/$', 'flatpage', {'page': 'cert'}, name='cert'),
+    url(r'^oldscore-help/$', 'flatpage', {'page': 'oldscore'}, name='oldscore'),
+    url(r'^score-help/$', 'flatpage', {'page': 'score'}, name='score'),
 
     url(r'^transcript/$', 'transcript', name='transcript'),
 

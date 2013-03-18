@@ -2,35 +2,43 @@
 
 {% load i18n %}
 
+{% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
+
 {% block content %}
-{% if one_category %}
-    <div class="row">
-        <div class="span6 offset3 category-box">
-            {% if categories.0.icon %}
-            <div class="row"><div class="span2 offset2">
-                <img src="{{categories.0.icon.url}}" alt="{% trans "Category's icon" %}" />
-            </div></div>
-            {% endif %}
-            <h1>{{ categories.0.name }}</h1>
-        </div>
-    </div>
-{% else %}
-    <div class="row"><div class="span12">
-        {% for cat in categories %}
-            <div class="inlineb category-box-liquid">
-                {% if cat.icon %}
-                    <img src="{{cat.icon.url}}" alt="{% trans "Category's icon" %}" />
-                {% endif %}
-                <p><h1>{{ cat.name }}</h1></p>
-            </div>
-        {% endfor %}
-    </div></div>
-{% endif %}
+<div class="row">
+  <div class="span12 category-box">
+    {% if first_category.banner %}
+    <div class="banner"><img src="{{ first_category.banner.url }}" alt="{% trans "Category's background banner" %}" /></div>
+    {% endif %}
+    {% if first_category.icon %}
+    <img class="icon {% if first_category.banner %}center{% endif %}" src="{{first_category.icon.url}}" alt="{% trans "Category's icon" %}" />
+    {% endif %}
+    <h1>{{ first_category.name }}{% if other_categories %}, {% for cat in other_categories %}{{ cat.name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% endif %}</h1>
+  </div>
+</div>
 
 <div class="row"><div class="span8 offset2">
     {% if courses %}
         <ul class="unstyled">{% for course in courses %}
-            <li class="box"><h3><a href="{% url course_overview course_slug=course.slug %}">{{ course.name }}</a></h3></li>
+            <li class="box {{ course.enrollment_method|slugify }}">
+                <div class="row">
+                    <div class="{% if course.start_date or course.end_date %}span5{% else %}span8{% endif %}">
+                        <h3><a href="{% url course_overview course_slug=course.slug %}">{{ course.name }}</a></h3>
+                    </div>
+                    {% if course.start_date or course.end_date %}
+                    <div class="span2">
+                        <dl>
+                            {% if course.start_date %}
+                                <dt>{% trans "Classes Start" %}</dt><dd>{{ course.start_date|date:"d / M / Y" }}</dd>
+                            {% endif %}
+                            {% if course.end_date %}
+                                <dt>{% trans "Classes End" %}</dt><dd>{{ course.end_date|date:"d / M / Y" }}</dd>
+                            {% endif %}
+                        </dl>
+                    </div>
+                    {% endif %}
+                </div>
+            </li>
         {% endfor %}</ul>
     {% else %}
         <div class="alert alert-info">

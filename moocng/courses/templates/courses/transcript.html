@@ -12,20 +12,32 @@
 
     {% for course_info in courses_info %}
     <div class="box" id="{{ course_info.course.slug }}" name="{{ course_info.course.slug }}">
-      <h2><a href="{{ course_info.course.get_absolute_url }}">{{ course_info.course.name }}</a></h2>
-      <p>{% trans "Mark" %}: <b>{{ course_info.mark|floatformat:"-2" }}</b>/10 </p>
-        {% if course_info.course.threshold %}
-            <p>{% blocktrans with threshold=course_info.course.threshold %}You need at least a <strong>{{ threshold }} to pass</strong> this course.{% endblocktrans %}</p>
-        {% endif %}
+      <h2><a href="{{ course_info.course.get_absolute_url }}">{{ course_info.course.name }}</a></h2>      
         {% if course_info.units_info %}
             <ul>
             {% for unit_info in course_info.units_info %}
                 {% if not unit_info.hide %}
-                    <li><span class="badge {{ unit_info.badge_class }}">{{ unit_info.unit.unittype|capfirst }}</span> <a href="{% url course_overview   course_info.course.slug %}classroom/#unit{{ unit_info.unit.id }}">{{ unit_info.unit.title }}</a> <b> {{ unit_info.mark|floatformat:"-2" }}</b>/10   ({{ unit_info.normalized_weight|floatformat:"-2" }}%)</li>
+                    <li><span class="badge {{ unit_info.badge_class }}">{{ unit_info.unit.unittype|capfirst }}</span> <a href="{% url course_progress course_info.course.slug %}#unit{{ unit_info.unit.id }}">{{ unit_info.unit.title }}</a> <b> {{ unit_info.mark|floatformat:"-2" }}</b>/10   ({{ unit_info.normalized_weight|floatformat:"-2" }}% {% trans "of the final mark" %})</li>
                 {% endif %}
             {% endfor %}
             </ul>
+        {% else %}
+            <p>{% trans "No scoring units" %}</p>
         {% endif%}
+        <hr>
+        {% if course_info.units_info %}
+            <h4>{% trans "Final mark" %}: {{ course_info.mark|floatformat:"-2" }} / 10
+            {% if course_info.use_old_calculus %}
+                <a target="_new" href="{% url oldscore %}" ><small>({% trans "Evaluation criteria" %})</small></a>
+            {% else %}
+                <a target="_new" href="{% url score %}" ><small>({% trans "Evaluation criteria" %})</small></a>
+            {% endif %}
+        </h4>
+            {% if course_info.course.threshold %}
+                <p>{% blocktrans with threshold=course_info.course.threshold %}You need at least a <strong>{{ threshold }} to pass</strong> this course.{% endblocktrans %}</p>
+            {% endif %}
+        {% endif %}
+
         {% if course_info.award %}
             <p>{% trans "Congratulations, you have completed" %} "{{ course_info.course.name }}". {% trans "Here is a badge!" %}</p>
             <p>
@@ -33,6 +45,7 @@
                 <code>{{ course_info.award.get_image_public_url }}</code>
             </p>
         {% endif %}
+
         {% if course_info.course.certification_available %}
             {% if course_info.passed %}
                 <p><a target="_new" href="{{ course_info.cert_url }}" class="btn btn-success">{% trans "I want a certificate of completion for this course" %}</a>

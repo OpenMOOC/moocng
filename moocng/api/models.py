@@ -18,6 +18,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import pre_save
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 
 from adminsortable.models import Sortable
 
@@ -34,7 +35,7 @@ class UserApi(Sortable):
         verbose_name_plural = _(u'User Apis')
 
     def __unicode__(self):
-        return "Apikey of %s  :::  %s" % (self.user.username, str(self.key))
+        return ugettext(u'Apikey of {0}  :::  {1}').format(self.user.username, str(self.key))
 
 
 def pre_save_userapi(sender, **kwargs):
