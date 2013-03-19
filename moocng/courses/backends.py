@@ -17,6 +17,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.models import SiteProfileNotAvailable
 from django.core.exceptions import ObjectDoesNotExist
 from djangosaml2.backends import Saml2Backend
+from moocng.courses.models import CourseTeacher
 from moocng.teacheradmin.models import Invitation
 
 
@@ -35,7 +36,7 @@ class Saml2BackendExtension(Saml2Backend):
                                 force_save=True)
         user_pendings = Invitation.objects.filter(email=user.email)
         for user_pending in user_pendings:
-            user_pending.course.teachers.add(user)
+            CourseTeacher.objects.get_or_create(course=user_pending.course, teacher=user)
             user_pending.delete()
         return user
 
