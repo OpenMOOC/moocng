@@ -72,8 +72,8 @@ def invalidate_cache(sender, instance, **kwargs):
     try:
         course = instance.kq.unit.course
         cache.invalidate_course_has_peer_review_assignment_in_cache(course)
-    except ObjectDoesNotExist, exception:  # The knoledge quantum
-        pass                               # is being deleted
+    except ObjectDoesNotExist:  # The knowledge quantum is being deleted
+        pass
 
 
 signals.post_save.connect(invalidate_cache, sender=PeerReviewAssignment)
