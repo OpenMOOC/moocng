@@ -7,7 +7,9 @@
 {% block mainclass %}classroom{% endblock %}
 
 {% block extraheader %}
+    {% compress css %}
     <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-fileupload.min.css">
+    {% endcompress %}
 {% endblock %}
 
 {% block content %}

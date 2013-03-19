@@ -175,6 +175,11 @@ TEMPLATE_DIRS = (
     os.path.join(BASEDIR, 'templates'),
 )
 
+COMPRESS_CSS_FILTERS = [
+    'compressor.filters.css_default.CssAbsoluteFilter',
+    'compressor.filters.cssmin.CSSMinFilter',
+]
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',

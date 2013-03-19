@@ -7,7 +7,9 @@
 {% block mainclass %}teacheradmin-stats{% endblock %}
 
 {% block extraheader %}
+    {% compress css %}
     <link rel="stylesheet" href="{{ STATIC_URL }}css/nv.d3.css">
+    {% endcompress %}
 {% endblock %}
 
 {% block extrajs %}

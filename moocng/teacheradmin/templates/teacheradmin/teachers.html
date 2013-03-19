@@ -5,7 +5,9 @@
 {% block nav-teacheradmin-teachers %}active{% endblock %}
 
 {% block extraheader %}
+    {% compress css %}
     <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui-1.9.2.custom.min.css">
+    {% endcompress %}
 {% endblock %}
 
 {% block extrajs %}
