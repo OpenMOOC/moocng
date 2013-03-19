@@ -192,6 +192,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         }
 
         if (this.model.has("_peerReviewSubmissionInstance")) {
+            console.log("jarl jurl jorl");
             submission = this.model.get("_peerReviewSubmissionInstance");
         }
 

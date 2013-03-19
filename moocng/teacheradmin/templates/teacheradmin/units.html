@@ -7,10 +7,8 @@
 {% block mainclass %}teacheradmin-units{% endblock %}
 
 {% block extraheader %}
-    {% compress css %}
     <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui-1.9.2.custom.min.css">
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-fileupload.min.css">
-    {% endcompress %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-fileupload.2.3.1-j6.min.css">
 {% endblock %}
 
 {% block extrajs %}
@@ -19,12 +17,13 @@
     <script src="{{ STATIC_URL }}js/libs/backbone-0.9.2.min.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/libs/async.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}tiny_mce/tiny_mce.js"></script>
-    <script src="{{ STATIC_URL }}js/libs/bootstrap-fileupload.min.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/libs/bootstrap-fileupload.2.3.1-j6.min.js" type="text/javascript"></script>
 {% compress js %}
     <script src="{{ STATIC_URL }}js/ajax.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/models.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/teacheradmin/units-views.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/teacheradmin/units-routes.js" type="text/javascript"></script>
+{% endcompress %}
     <script type="text/javascript">
         MOOC.trans = {
             nothing: "{% trans "Nothing" %}",
@@ -50,7 +49,6 @@
         };
         MOOC.init({{ course.id }}, {{ unit_badge_classes|safe }});
     </script>
-{% endcompress %}
 {% endblock %}
 
 {% block section %}
