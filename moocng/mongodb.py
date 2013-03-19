@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import urlparse
-from threading import local
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -59,16 +58,20 @@ class MongoDB(object):
         return self.database[collection]
 
 
-connections = local()
+
+# this is not a thread local because we want
+# the server workers to reuse as many connections as possible
+_mongodb_connection = None
 
 
 def get_db():
+    global _mongodb_connection
     try:
         db_uri = settings.MONGODB_URI
     except AttributeError:
         raise ImproperlyConfigured('Missing required MONGODB_URI setting')
 
-    if not hasattr(connections, 'default'):
-        connections.default = MongoDB(db_uri)
+    if _mongodb_connection is None:
+        _mongodb_connection = MongoDB(db_uri)
 
-    return connections.default
+    return _mongodb_connection
