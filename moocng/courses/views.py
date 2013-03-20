@@ -28,7 +28,6 @@ from django.core.validators import validate_email
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
-from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
 
 from moocng.badges.models import Award
@@ -37,6 +36,7 @@ from moocng.courses.utils import (calculate_course_mark, get_unit_badge_class,
                                   is_course_ready,
                                   is_teacher as is_teacher_test,
                                   send_mail_wrapper)
+from moocng.slug import unique_slugify
 
 
 def home(request):
@@ -99,9 +99,10 @@ def course_add(request):
             messages.error(request, _('The name can\'t be an empty string'))
             return HttpResponseRedirect(reverse('course_add'))
 
-        course = Course.objects.create(name=name, owner=owner,
-                                       slug=slugify(name),
-                                       description=_('To fill'))
+        course = Course(name=name, owner=owner, description=_('To fill'))
+        unique_slugify(course, name)
+        course.save()
+
         CourseTeacher.objects.create(course=course, teacher=owner)
 
         if not allow_public:
@@ -264,7 +265,7 @@ def transcript(request):
             unit_class = get_unit_badge_class(uinfo['unit'])
             units_info[idx]['badge_class'] = unit_class
             if (not use_old_calculus and uinfo['unit'].unittype == 'n') or \
-              not units_info[idx]['use_unit_in_total']:
+                    not units_info[idx]['use_unit_in_total']:
                 units_info[idx]['hide'] = True
         courses_info.append({
             'course': course,
