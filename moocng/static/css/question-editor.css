@@ -48,6 +48,10 @@ fieldset .option {
     cursor: pointer;
 }
 
+fieldset .option input {
+    margin: 0;
+}
+
 fieldset .selected {
     background-color: #8888ff;
 }

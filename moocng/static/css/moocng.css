@@ -257,6 +257,7 @@ img.award {
 .classroom #kq-video.question textarea,
 .classroom #kq-video.question .btn {
     position: absolute;
+    margin: 0;
 }
 
 .classroom #kq-video.question .btn {
