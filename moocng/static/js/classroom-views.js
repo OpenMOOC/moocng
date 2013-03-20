@@ -142,16 +142,16 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             target,
             url;
 
-        getUrlForOtherKQ = function (position, answer) {
-            var aux = unit.get("knowledgeQuantumList").getByPosition(position),
+        getUrlForOtherKQ = function (position, next) {
+            var aux = unit.get("knowledgeQuantumList").getAdjacent(position, next),
                 url;
             if (_.isUndefined(aux)) {
                 $(selector).addClass("disabled");
             } else {
                 url = "unit" + unit.get("id") + "/kq" + aux.get("id");
-                if (answer && aux.has("question")) {
+                if (!next && aux.has("question")) {
                     url += "/a";
-                } else if (answer && aux.has("peer_review_assignment")) {
+                } else if (!next && aux.has("peer_review_assignment")) {
                     url += "/p";
                 }
                 return url;
@@ -186,10 +186,10 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             url = "unit" + unit.get("id") + "/kq" + kq.get("id") + "/a";
             break;
         case "next":
-            url = getUrlForOtherKQ(order + 1, false);
+            url = getUrlForOtherKQ(order, true);
             break;
         case "prev":
-            url = getUrlForOtherKQ(order - 1, true);
+            url = getUrlForOtherKQ(order, false);
             break;
         case "same":
             url = "unit" + unit.get("id") + "/kq" + kq.get("id");
