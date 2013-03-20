@@ -27,14 +27,13 @@ from django.template.defaultfilters import slugify
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
-from gravatar.templatetags.gravatar import gravatar_img_for_email
-
 from moocng.courses.models import (Course, CourseTeacher, KnowledgeQuantum,
                                    Option, Announcement, Unit, Attachment)
 from moocng.courses.utils import (UNIT_BADGE_CLASSES, calculate_course_mark,
                                   calculate_unit_mark, calculate_kq_mark)
 from moocng.categories.models import Category
 from moocng.mongodb import get_db
+from moocng.portal.templatetags.gravatar import gravatar_img_for_email
 from moocng.teacheradmin.decorators import is_teacher_or_staff
 from moocng.teacheradmin.forms import (CourseForm, AnnouncementForm,
                                        MassiveEmailForm)

@@ -56,7 +56,7 @@
         <tr>
             <td class="hide">{{ course_teacher.id }}</td>
             <td class="cell-drag-handle"><i class="icon-th"></i></td>
-            <td>{% gravatar_img_for_user course_teacher.teacher 20 %}</td>
+            <td><img src="{% gravatar_for_email course_teacher.teacher.email 20 %}" width="20" height="20" /></td>
             <td>{% firstof course_teacher.teacher.get_full_name course_teacher.teacher.username %}</td>
             <td class="ownership">
             {% if course_teacher.teacher.id == course.owner.id %}

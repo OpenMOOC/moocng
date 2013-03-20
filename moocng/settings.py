@@ -193,7 +193,6 @@ INSTALLED_APPS = (
     'django.contrib.flatpages',
     'adminsortable',
     'djcelery',
-    'gravatar',
     'tinymce',
     'tastypie',
     'compressor',
