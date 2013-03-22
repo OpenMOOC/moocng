@@ -12,6 +12,16 @@
 <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
     {{ form.non_field_errors }}
     <div class="row">
+        <div class="span10">
+            <p>
+                {{ form.status.errors }}
+                {{ form.status.label_tag }}
+                {{ form.status }}
+                {% if form.status.help_text %}<span class="help-inline">{{ form.status.help_text }}</span>{% endif %}
+            </p>
+        </div>
+    </div>
+    <div class="row">
         <div class="span5">
             <p>
                 {{ form.name.errors }}

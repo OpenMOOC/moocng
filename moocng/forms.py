@@ -134,3 +134,37 @@ class HTML5DateInput(forms.widgets.DateInput):
 class HTML5DateTimeInput(forms.widgets.DateTimeInput):
 
     input_type = 'datetime'
+
+
+class BootstrapRadioInput(forms.widgets.RadioInput):
+
+    def render(self, name=None, value=None, attrs=None, choices=()):
+        name = name or self.name
+        value = value or self.value
+        attrs = attrs or self.attrs
+        label_for = ''
+        if 'id' in self.attrs:
+            label_for = '%s for="%s_%s"' % (label_for, self.attrs['id'], self.index)
+        label_for = '%s class="radio inline"' % label_for
+        choice_label = conditional_escape(force_unicode(self.choice_label))
+        return mark_safe(u'<label%s>%s %s</label>' % (label_for, self.tag(), choice_label))
+
+
+class BootstrapInlineRadioFieldRenderer(forms.widgets.RadioFieldRenderer):
+
+    def __iter__(self):
+        for i, choice in enumerate(self.choices):
+            yield BootstrapRadioInput(self.name, self.value, self.attrs.copy(), choice, i)
+
+    def __getitem__(self, idx):
+        choice = self.choices[idx]  # Let the IndexError propogate
+        return BootstrapRadioInput(self.name, self.value, self.attrs.copy(), choice, idx)
+
+    def render(self):
+        # We don't want the standard render becouse we don't use <ul><li>
+        return mark_safe(''.join([u'%s' % force_unicode(w) for w in self]))
+
+
+class BootstrapInlineRadioSelect(forms.widgets.RadioSelect):
+
+    renderer = BootstrapInlineRadioFieldRenderer

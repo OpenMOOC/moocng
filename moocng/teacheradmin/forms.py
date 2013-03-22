@@ -19,7 +19,8 @@ from tinymce.widgets import TinyMCE
 
 from moocng.courses.forms import AnnouncementForm as CoursesAnnouncementForm
 from moocng.courses.models import Course
-from moocng.forms import BootstrapMixin, BootstrapClearableFileInput, HTML5DateInput
+from moocng.forms import (BootstrapMixin, BootstrapClearableFileInput,
+                          HTML5DateInput, BootstrapInlineRadioSelect)
 from moocng.teacheradmin.models import MassiveEmail
 
 
@@ -32,6 +33,7 @@ class CourseForm(forms.ModelForm):
             'start_date': HTML5DateInput(),
             'end_date': HTML5DateInput(),
             'certification_banner': BootstrapClearableFileInput(),
+            'status': BootstrapInlineRadioSelect(),
         }
 
     def __init__(self, *args, **kwargs):
