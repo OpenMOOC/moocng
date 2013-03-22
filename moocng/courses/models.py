@@ -238,7 +238,12 @@ class Unit(Sortable):
 
 
 def unit_invalidate_cache(sender, instance, **kwargs):
-    invalidate_template_fragment('course_overview_secondary_info', instance.course.id)
+    try:
+        invalidate_template_fragment('course_overview_secondary_info',
+                                     instance.course.id)
+    except Course.DoesNotExist:
+        # The course is being deleted, nothing to invalidate
+        pass
 
 
 signals.post_save.connect(unit_invalidate_cache, sender=Unit)

@@ -37,7 +37,8 @@ from moocng.courses.utils import (calculate_course_mark, get_unit_badge_class,
                                   send_mail_wrapper)
 from moocng.courses.security import (check_user_can_view_course,
                                      get_courses_available_for_user,
-                                     can_user_view_unit)
+                                     can_user_view_unit,
+                                     get_units_available_for_user)
 from moocng.slug import unique_slugify
 
 
@@ -142,8 +143,11 @@ def course_overview(request, course_slug):
 
     use_old_calculus = course.slug in settings.COURSES_USING_OLD_TRANSCRIPT
 
+    units = get_units_available_for_user(course, request.user)
+
     return render_to_response('courses/overview.html', {
         'course': course,
+        'units': units,
         'is_enrolled': is_enrolled,
         'is_teacher': is_teacher,
         'request': request,

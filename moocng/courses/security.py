@@ -22,7 +22,7 @@ from django.http import Http404
 from django.utils.translation import ugettext as _
 
 
-from moocng.courses.models import Course, CourseTeacher
+from moocng.courses.models import Course, Unit, CourseTeacher
 
 
 def can_user_view_course(course, user):
@@ -67,8 +67,7 @@ def check_user_can_view_course(course, request):
 
 
 def get_courses_available_for_user(user):
-    """Filter in a list of courses, what courses are availabled
-       for the user"""
+    """Filter in a list of courses what courses are availabled for the user"""
     if user.is_superuser or user.is_staff:
         # Publish all the courses that are on time.
         return Course.objects.exclude(end_date__lt=date.today())
@@ -105,3 +104,15 @@ def can_user_view_unit(unit, user):
         return False, 'listable'
 
     return False, 'draft'
+
+
+def get_units_available_for_user(course, user):
+    """Filter units of a course what courses are availabled for the user"""
+    if user.is_superuser or user.is_staff:
+        return course.unit_set.all
+    elif user.is_anonymous():
+        return course.unit_set.filter(Q(status='p') | Q(status='l'))
+    else:
+        return Unit.objects.filter(Q(status='p', course=course) |
+                           Q(status='l', course=course) | 
+                           Q(status='d', course=course, course__courseteacher__teacher=user, course__courseteacher__course=course)).distinct()
