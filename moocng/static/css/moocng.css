@@ -426,9 +426,16 @@ code {
     vertical-align: top;
 }
 
-.teacheradmin-units .unit h3 {
+.teacheradmin-units .unit .header span.badge,
+.teacheradmin-units .unit .header span.label {
+    position: relative;
+    top: -5px;
+}
+
+.teacheradmin-units .unit .header h3 {
     display: inline-block;
     margin-top: 0;
+    padding-left: 15px;
 }
 
 .teacheradmin-units .kq h4 {
@@ -449,11 +456,9 @@ code {
     cursor: move;
 }
 
-.teacheradmin-units .badge.question {
-    margin-right: 10px;
-}
-
-.teacheradmin-units .badge.peerreview {
+.teacheradmin-units .kq .badge {
+    position: relative;
+    top: 8px;
     margin-right: 10px;
 }
 

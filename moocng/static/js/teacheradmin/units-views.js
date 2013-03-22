@@ -177,7 +177,7 @@ if (_.isUndefined(window.MOOC)) {
                 listNode = node.find('#unit-list-container');
                 this.model.each(function (unit) {
                     var view = MOOC.views.unitViews[unit.get("id")],
-                        el = $("<div id='unit" + unit.get("id") + "' class='unit ui-widget ui-widget-content ui-helper-clearfix ui-corner-all'></div>")[0];
+                        el = $("<div id='unit" + unit.get("id") + "' class='unit ui-widget ui-widget-content ui-helper-clearfix ui-corner-all status-" + unit.get("status") + "'></div>")[0];
                     listNode.append(el);
                     if (_.isUndefined(view)) {
                         view = new MOOC.views.Unit({
@@ -256,7 +256,15 @@ if (_.isUndefined(window.MOOC)) {
 
             initialize: function () {
                 _.bindAll(this, "render", "sortingHandler", "toUnitEditor",
-                    "addKQ");
+                    "addKQ", "getStatusLabel");
+            },
+
+            getStatusLabel: function () {
+                return {
+                    p: "label-success",
+                    l: "label-info",
+                    d: ""
+                }[this.model.get("status")];
             },
 
             render: function () {
@@ -268,7 +276,10 @@ if (_.isUndefined(window.MOOC)) {
                     html;
 
                 header = "<span class='badge " + MOOC.unitBadgeClasses[this.model.get("type")] +
-                    "'>" + this.model.get("type").toUpperCase() + "</span> " +
+                    "' title='" + MOOC.trans.unit[this.model.get("type")] + "'>" +
+                    this.model.get("type").toUpperCase() + "</span> " +
+                    "<span class='label " + this.getStatusLabel() + "'>" +
+                    MOOC.trans.unit[this.model.get("status")] + "</span> " +
                     "<h3>" + this.model.get("title") + "</h3>" +
                     "<button class='btn pull-right edit' title='" + MOOC.trans.edit +
                     " " + MOOC.trans.unit.unit + "'><i class='icon-edit'></i> " +
@@ -276,7 +287,7 @@ if (_.isUndefined(window.MOOC)) {
                 add = "<button class='btn pull-right add'><i class='icon-plus'></i> " +
                     MOOC.trans.add + " " + MOOC.trans.kq.kq + "</button>";
                 html = inlineb({ classes: "drag-handle" });
-                html += inlineb(block(header),
+                html += inlineb(block(header, { classes: "header" }),
                                 block("", { classes: "kq-container" }),
                                 block(add),
                                 { classes: "unit-right" });
