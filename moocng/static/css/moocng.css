@@ -481,6 +481,10 @@ code {
     width: 106px;
 }
 
+.teacheradmin-units #unit-status {
+    padding-left: 0px;
+}
+
 #media-player {
     width: 660px;
 }

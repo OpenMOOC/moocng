@@ -550,13 +550,21 @@ MOOC.models.KnowledgeQuantumList  = MOOC.models.TastyPieCollection.extend({
 MOOC.models.Unit = Backbone.Model.extend({
     defaults: {
         order: -1,
-        knowledgeQuantumList: null,
         title: "",
         type: 'n',
+        status: 'd',
         weight: 0,
         start: null,
         deadline: null,
+
+        knowledgeQuantumList: null,
         peerReviewReviewList: null
+    },
+
+    statuses: {
+        p: "published",
+        l: "listable",
+        d: "draft"
     },
 
     url: function () {
@@ -583,6 +591,7 @@ MOOC.models.Unit = Backbone.Model.extend({
                 order: resp.order,
                 title: resp.title,
                 type: resp.unittype,
+                status: resp.status,
                 weight: parseInt(resp.weight, 10),
                 start: start,
                 deadline: deadline

@@ -144,6 +144,19 @@ if (_.isUndefined(window.MOOC)) {
             theme_advanced_buttons1: "bold,italic,underline,strikethrough,separator,link,unlink,separator,undo,redo,copy,paste,separator,cleanup,separator,bullist,numlist",
             theme_advanced_buttons2: "",
             theme_advanced_buttons3: ""
+        },
+
+        invert = function (obj) {
+            var result = {},
+                key;
+            for (key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    if (_.has(obj, key)) {
+                        result[obj[key]] = key;
+                    }
+                }
+            }
+            return result;
         };
 
     MOOC.views = {
@@ -488,10 +501,22 @@ if (_.isUndefined(window.MOOC)) {
             render: function () {
                 $(".viewport").addClass("hide");
                 this.$el.html($("#edit-unit-tpl").text());
-                this.$el.find("input#title").val(this.model.get("title"));
-                this.$el.find("select#type").val(this.model.get("type"));
-                this.$el.find("select#type").trigger("change");
-                this.$el.find("input#weight").val(this.model.get("weight"));
+                this.$el
+                    .find("input#title").val(this.model.get("title")).end()
+                    .find("select#type").val(this.model.get("type")).end()
+                    .find("select#type").trigger("change").end()
+                    .find("input#weight").val(this.model.get("weight"));
+                this.$el.find("input[type=radio][name=status]").each(_.bind(function (idx, elem) {
+                    elem = $(elem);
+                    var id = elem.attr("id").split('-')[1],
+                        active = this.model.statuses[this.model.get("status")];
+                    if (id === active) {
+                        elem.attr("checked", "checked");
+                    } else {
+                        elem.attr("checked", false);
+                    }
+                }, this));
+
                 if (!_.isNull(this.model.get("start"))) {
                     this.$el.find("input#start_date").val(this.formatDate(this.model.get("start")));
                 }
@@ -523,9 +548,13 @@ if (_.isUndefined(window.MOOC)) {
                     return;
                 }
                 MOOC.ajax.showLoading();
+
+                var status;
                 this.model.unset("new");
                 this.model.set("title", $.trim(this.$el.find("input#title").val()));
                 this.model.set("type", this.$el.find("select#type").val());
+                status = this.$el.find("input[type=radio][name=status]:checked").attr("id").split('-')[1];
+                this.model.set("status", invert(this.model.statuses)[status]);
                 this.model.set("weight", parseInt(this.$el.find("input#weight").val(), 10));
                 this.model.set("start", this.$el.find("input#start_date").val());
                 this.model.set("deadline", this.$el.find("input#end_date").val());
