@@ -117,6 +117,10 @@ class Course(Sortable):
         if self.promotion_video:
             return extract_YT_video_id(self.promotion_video)
 
+    @property
+    def is_public(self):
+        return self.status == 'p'
+
 
 def course_invalidate_cache(sender, instance, **kwargs):
     invalidate_template_fragment('course_list')

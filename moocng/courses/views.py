@@ -36,6 +36,7 @@ from moocng.courses.utils import (calculate_course_mark, get_unit_badge_class,
                                   is_course_ready,
                                   is_teacher as is_teacher_test,
                                   send_mail_wrapper)
+from moocng.courses.security import check_user_can_view_course
 from moocng.slug import unique_slugify
 
 
@@ -125,6 +126,8 @@ def course_add(request):
 
 def course_overview(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
+
+    check_user_can_view_course(course, request)
 
     if request.user.is_authenticated():
         is_enrolled = course.students.filter(id=request.user.id).exists()
