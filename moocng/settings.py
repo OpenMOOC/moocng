@@ -175,6 +175,13 @@ TEMPLATE_DIRS = (
     os.path.join(BASEDIR, 'templates'),
 )
 
+COMPRESS_CSS_FILTERS = [
+    'compressor.filters.css_default.CssAbsoluteFilter',
+    'compressor.filters.cssmin.CSSMinFilter',
+]
+
+COMPRESS_OFFLINE = False
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -186,7 +193,6 @@ INSTALLED_APPS = (
     'django.contrib.flatpages',
     'adminsortable',
     'djcelery',
-    'gravatar',
     'tinymce',
     'tastypie',
     'compressor',

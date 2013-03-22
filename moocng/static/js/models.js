@@ -487,11 +487,25 @@ MOOC.models.KnowledgeQuantumList  = MOOC.models.TastyPieCollection.extend({
         return kq.get("order");
     },
 
-    getByPosition: function (position) {
+    getAdjacent: function (position, next) {
         "use strict";
-        return this.find(function (kq) {
-            return position === kq.get("order");
-        });
+        var kqs = this.toArray(),
+            aux,
+            result,
+            i;
+
+        for (i = 0; i < kqs.length && _.isUndefined(result); i += 1) {
+            aux = kqs[i];
+            if (aux.get("order") === position) {
+                if (next && i < kqs.length - 1) {
+                    result = kqs[i + 1];
+                } else if (!next && i > 0) {
+                    result = kqs[i - 1];
+                }
+            }
+        }
+
+        return result;
     },
 
     setPeerReviewAssignmentList: function (peerReviewAssignmentList) {

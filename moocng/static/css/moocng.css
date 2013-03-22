@@ -472,6 +472,19 @@ code {
     text-align: center;
 }
 
+.teacheradmin-units a.thumbnail {
+    display: inline-block;
+    padding: 1px;
+}
+
+.teacheradmin-units a.thumbnail img {
+    width: 106px;
+}
+
+#media-player {
+    width: 660px;
+}
+
 .classroom div.loading.backdrop,
 .teacheradmin-units div.loading.backdrop,
 .teacheradmin-stats div.loading.backdrop {

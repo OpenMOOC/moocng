@@ -380,7 +380,8 @@ if (_.isUndefined(window.MOOC)) {
 
         KQ: Backbone.View.extend({
             events: {
-                "click button.kqedit": "toKQEditor"
+                "click button.kqedit": "toKQEditor",
+                "click a.thumbnail": "openVideoPlayer"
             },
 
             initialize: function () {
@@ -391,6 +392,7 @@ if (_.isUndefined(window.MOOC)) {
                 var html,
                     header,
                     iframe,
+                    video_thumbnail,
                     data;
 
                 header = "<h4>" + this.model.get("title") + "</h4><button " +
@@ -413,13 +415,20 @@ if (_.isUndefined(window.MOOC)) {
                     this.model.get("videoID") + "?rel=0&controls=0&origin=" +
                     MOOC.host + "' frameborder='0'></iframe>";
 
+                video_thumbnail = "<a class='thumbnail' data-toggle='modal' href='#player-" + this.model.id + "'>" +
+                                  "<img class='youtube-thumbnail' src='//img.youtube.com/vi/" +
+                                    this.model.get("videoID") + "/1.jpg'/></a>";
+
                 data = "<p>" + MOOC.trans.kq.teacher_comments + ": " +
                     truncate(_.escape(stripTags(this.model.get("teacher_comments")))) + "</p>" +
                     "<p>" + MOOC.trans.kq.supplementary_material + ": " +
                     truncate(_.escape(stripTags(this.model.get("supplementary_material")))) + "<p/>";
 
+
+                // inlineb(iframe, { style: "margin-left: 30px;" }) +
+
                 html = inlineb({ classes: "drag-handle" }) +
-                    inlineb(iframe, { style: "margin-left: 30px;" }) +
+                    inlineb(video_thumbnail, { style: "margin-left: 30px;" }) +
                     inlineb(block(header), block(data), { classes: "kq-right" });
 
                 this.$el.html(html);
@@ -428,6 +437,22 @@ if (_.isUndefined(window.MOOC)) {
             toKQEditor: function (evt) {
                 MOOC.router.navigate("kq" + this.model.get("id"), {
                     trigger: true
+                });
+            },
+
+            player_template: _.template($("#modal-video-player-tpl").html()),
+
+            openVideoPlayer: function (evt) {
+                var context = {
+                    videoID: this.model.get("videoID"),
+                    title: this.model.get("title"),
+                    host: MOOC.host
+                };
+
+                $("#media-player").html(this.player_template(context));
+                $("#media-player").modal("show");
+                $("#media-player").on('hidden', function (evt) {
+                    $(evt.target).html("");
                 });
             }
         }),
@@ -1133,7 +1158,7 @@ if (_.isUndefined(window.MOOC)) {
                 criterionId = parseInt(evt.target.getAttribute('id').split('-')[1], 10);
                 criterionList = this.model.get("peerReviewAssignmentInstance").get("_criterionList");
                 criterion = criterionList.find(function (candidate) {
-                    return (candidate.get("id") === criterionId);
+                    return (parseInt(candidate.get("id"), 10) === criterionId);
                 });
 
                 MOOC.ajax.showLoading();

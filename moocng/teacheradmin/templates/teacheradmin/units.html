@@ -8,7 +8,7 @@
 
 {% block extraheader %}
     <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui-1.9.2.custom.min.css">
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-fileupload.min.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-fileupload.2.3.1-j6.min.css">
 {% endblock %}
 
 {% block extrajs %}
@@ -17,12 +17,13 @@
     <script src="{{ STATIC_URL }}js/libs/backbone-0.9.2.min.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/libs/async.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}tiny_mce/tiny_mce.js"></script>
-    <script src="{{ STATIC_URL }}js/libs/bootstrap-fileupload.min.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/libs/bootstrap-fileupload.2.3.1-j6.min.js" type="text/javascript"></script>
 {% compress js %}
     <script src="{{ STATIC_URL }}js/ajax.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/models.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/teacheradmin/units-views.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/teacheradmin/units-routes.js" type="text/javascript"></script>
+{% endcompress %}
     <script type="text/javascript">
         MOOC.trans = {
             nothing: "{% trans "Nothing" %}",
@@ -48,7 +49,6 @@
         };
         MOOC.init({{ course.id }}, {{ unit_badge_classes|safe }});
     </script>
-{% endcompress %}
 {% endblock %}
 
 {% block section %}
@@ -257,6 +257,19 @@
 </form>
 </script>
 
+
+<script id="modal-video-player-tpl" type="text/template">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="media-player-label"><%= title %></h3>
+  </div>
+  <div class="modal-body">
+    <iframe width="620px" height="372" src="//www.youtube.com/embed/<%= videoID %>?rel=0&controls=0&origin="<%= host %>" frameborder='0'></iframe>
+  </div>
+</script>
+
+
+
 <div class="loading backdrop hide"></div>
 <div class="loading indicator hide"></div>
 
@@ -297,4 +310,8 @@
 <div id="units-container" class="viewport"></div>
 <div id="unit-editor" class="viewport hide"></div>
 <div id="kq-editor" class="viewport hide"></div>
+
+<div id="media-player" class="modal hide fade" tabindex="-1" role="dialog"
+     aria-labelledby="media-player-label" aria-hidden="true">
+</div>
 {% endblock %}

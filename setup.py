@@ -64,7 +64,6 @@ setup(
         'Django>=1.4.1',
         'django-admin-sortable==1.3.8',
         'django-celery==3.0.11',
-        'django-gravatar==0.1.0',
         'django-tinymce==1.5.1b2',
         'django-tastypie==0.9.11-openmooc',
         'South==0.7.6',

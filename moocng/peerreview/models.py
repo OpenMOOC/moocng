@@ -13,6 +13,7 @@
 # limitations under the License.
 
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
@@ -68,8 +69,11 @@ class PeerReviewAssignment(models.Model):
 
 
 def invalidate_cache(sender, instance, **kwargs):
-    course = instance.kq.unit.course
-    cache.invalidate_course_has_peer_review_assignment_in_cache(course)
+    try:
+        course = instance.kq.unit.course
+        cache.invalidate_course_has_peer_review_assignment_in_cache(course)
+    except ObjectDoesNotExist:  # The knowledge quantum is being deleted
+        pass
 
 
 signals.post_save.connect(invalidate_cache, sender=PeerReviewAssignment)
