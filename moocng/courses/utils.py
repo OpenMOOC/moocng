@@ -35,7 +35,7 @@ def calculate_course_mark(course, user):
     if course.slug in settings.COURSES_USING_OLD_TRANSCRIPT:
         use_old_calculus = True
     total_mark = 0
-    course_unit_list = Unit.objects.filter(course=course, status='p')
+    course_unit_list = Unit.objects.filter(course=course)
     if not use_old_calculus:
         course_unit_list = course_unit_list.exclude(unittype='n')
 
