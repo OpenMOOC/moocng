@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from datetime import date
 import re
 
 from django.conf import settings
@@ -37,7 +36,8 @@ from moocng.courses.utils import (calculate_course_mark, get_unit_badge_class,
                                   is_teacher as is_teacher_test,
                                   send_mail_wrapper)
 from moocng.courses.security import (check_user_can_view_course,
-                                     get_courses_available_for_user)
+                                     get_courses_available_for_user,
+                                     can_user_view_unit)
 from moocng.slug import unique_slugify
 
 
@@ -172,14 +172,15 @@ def course_classroom(request, course_slug):
 
     units = []
     for u in course.unit_set.all():
-        unit = {
-            'id': u.id,
-            'title': u.title,
-            'unittype': u.unittype,
-            'badge_class': get_unit_badge_class(u),
-            'badge_tooltip': u.get_unit_type_name(),
-        }
-        units.append(unit)
+        if can_user_view_unit(u, request.user)[0]:
+            unit = {
+                'id': u.id,
+                'title': u.title,
+                'unittype': u.unittype,
+                'badge_class': get_unit_badge_class(u),
+                'badge_tooltip': u.get_unit_type_name(),
+            }
+            units.append(unit)
 
     peer_review = {
         'text_max_size': settings.PEER_REVIEW_TEXT_MAX_SIZE,
@@ -214,13 +215,14 @@ def course_progress(request, course_slug):
 
     units = []
     for u in course.unit_set.all():
-        unit = {
-            'id': u.id,
-            'title': u.title,
-            'unittype': u.unittype,
-            'badge_class': get_unit_badge_class(u),
-        }
-        units.append(unit)
+        if can_user_view_unit(u, request.user)[0]:
+            unit = {
+                'id': u.id,
+                'title': u.title,
+                'unittype': u.unittype,
+                'badge_class': get_unit_badge_class(u),
+            }
+            units.append(unit)
 
     return render_to_response('courses/progress.html', {
         'course': course,

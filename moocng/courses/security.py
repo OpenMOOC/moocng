@@ -60,7 +60,7 @@ def check_user_can_view_course(course, request):
                 'is_staff': _(u'This course is not public yet. Your have access to it because you are staff member'),
                 'is_superuser': _(u'This course is not public yet. Your have access to it because you are a super user'),
                 'is_teacher': _(u'This course is not public yet. Your have access to it because you are a teacher of the course'),
-                }
+            }
             messages.warning(request, msg_table[reason])
     else:
         raise Http404()
@@ -77,3 +77,31 @@ def get_courses_available_for_user(user):
         return Course.objects.exclude(end_date__lt=date.today()).filter(status='p')
     else:
         return Course.objects.exclude(end_date__lt=date.today()).filter(Q(status='p') | Q(status='d', courseteacher__teacher=user))
+
+
+def can_user_view_unit(unit, user):
+    """Returns a pair where the first element is a bool indicating if the user
+    can view the unit, and the second one is a string code explaining the
+    reason."""
+
+    if unit.status == 'p':
+        return True, 'published'
+
+    if user.is_superuser:
+        return True, 'is_superuser'
+
+    if user.is_staff:
+        return True, 'is_staff'
+
+    # check if the user is a teacher of the course
+    if not user.is_anonymous():
+        try:
+            CourseTeacher.objects.get(teacher=user, course=unit.course)
+            return True, 'is_teacher'
+        except CourseTeacher.DoesNotExist:
+            pass
+
+    if unit.status == 'l':
+        return False, 'listable'
+
+    return False, 'draft'
