@@ -19,11 +19,17 @@
 
     {% cache 3600 course_list %}
     {% for course in courses %}
-    <div class="box">
-      <h2><a href="{{ course.get_absolute_url }}">{{ course.name }}</a></h2>
-      {{ course.description|safe|truncatewords_html:60 }}
-      <p class="box-footer"><a href="{{ course.get_absolute_url }}">{% trans "More information about this course" %}</a></p>
-    </div>
+
+    {% if course.is_public %}
+        <div class="box published">
+    {% else %}
+        <div class="box draft">
+        <span class="label pull-right">{% trans "Draft" %}</span>
+    {% endif %}
+          <h2><a href="{{ course.get_absolute_url }}">{{ course.name }}</a></h2>
+          {{ course.description|safe|truncatewords_html:60 }}
+          <p class="box-footer"><a href="{{ course.get_absolute_url }}">{% trans "More information about this course" %}</a></p>
+        </div>
     {% endfor %}
     {% endcache %}
 

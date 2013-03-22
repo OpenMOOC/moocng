@@ -103,6 +103,10 @@ footer ul li {
     margin-bottom: 20px;
 }
 
+.draft {
+    background-color: #F5F2D1;
+}
+
 .action-box {
     background-color: transparent;
     box-shadow: none;

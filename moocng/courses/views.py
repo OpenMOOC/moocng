@@ -36,12 +36,13 @@ from moocng.courses.utils import (calculate_course_mark, get_unit_badge_class,
                                   is_course_ready,
                                   is_teacher as is_teacher_test,
                                   send_mail_wrapper)
-from moocng.courses.security import check_user_can_view_course
+from moocng.courses.security import (check_user_can_view_course,
+                                     get_courses_available_for_user)
 from moocng.slug import unique_slugify
 
 
 def home(request):
-    courses = Course.objects.exclude(end_date__lt=date.today())
+    courses = get_courses_available_for_user(request.user)
     return render_to_response('courses/home.html', {
         'courses': courses,
     }, context_instance=RequestContext(request))

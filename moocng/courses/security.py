@@ -14,11 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from datetime import date
+
 from django.contrib import messages
+from django.db.models import Q
 from django.http import Http404
 from django.utils.translation import ugettext as _
 
-from moocng.courses.models import CourseTeacher
+
+from moocng.courses.models import Course, CourseTeacher
 
 
 def can_user_view_course(course, user):
@@ -50,13 +54,26 @@ def check_user_can_view_course(course, request):
     """Raises a 404 error if the user can't see the course"""
     yes_he_can, reason = can_user_view_course(course, request.user)
 
-    if yes_he_can and reason != 'public':
-        msg_table = {
-            'is_staff': _(u'This course is not public yet. Your have access to it because you are staff member'),
-            'is_superuser': _(u'This course is not public yet. Your have access to it because you are a super user'),
-            'is_teacher': _(u'This course is not public yet. Your have access to it because you are a teacher of the course'),
-            }
-        messages.warning(request, msg_table[reason])
-
+    if yes_he_can:
+        if reason != 'public':
+            msg_table = {
+                'is_staff': _(u'This course is not public yet. Your have access to it because you are staff member'),
+                'is_superuser': _(u'This course is not public yet. Your have access to it because you are a super user'),
+                'is_teacher': _(u'This course is not public yet. Your have access to it because you are a teacher of the course'),
+                }
+            messages.warning(request, msg_table[reason])
     else:
         raise Http404()
+
+
+def get_courses_available_for_user(user):
+    """Filter in a list of courses, what courses are availabled
+       for the user"""
+    if user.is_superuser or user.is_staff:
+        # Publish all the courses that are on time.
+        return Course.objects.exclude(end_date__lt=date.today())
+    elif user.is_anonymous():
+        # Only return the published courses
+        return Course.objects.exclude(end_date__lt=date.today()).filter(status='p')
+    else:
+        return Course.objects.exclude(end_date__lt=date.today()).filter(Q(status='p') | Q(status='d', courseteacher__teacher=user))
