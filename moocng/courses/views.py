@@ -172,7 +172,7 @@ def course_classroom(request, course_slug):
         }, context_instance=RequestContext(request))
 
     units = []
-    for u in get_units_available_for_user(course, request.user)():
+    for u in get_units_available_for_user(course, request.user):
         unit = {
             'id': u.id,
             'title': u.title,
@@ -214,7 +214,7 @@ def course_progress(request, course_slug):
         }, context_instance=RequestContext(request))
 
     units = []
-    for u in get_units_available_for_user(course, request.user)():
+    for u in get_units_available_for_user(course, request.user):
         unit = {
             'id': u.id,
             'title': u.title,
