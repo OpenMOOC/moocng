@@ -139,10 +139,9 @@ def course_overview(request, course_slug):
 
     course_teachers = CourseTeacher.objects.filter(course=course)
     announcements = Announcement.objects.filter(course=course).order_by('datetime').reverse()[:5]
-
+    units = get_units_available_for_user(course, request.user, True)
     use_old_calculus = course.slug in settings.COURSES_USING_OLD_TRANSCRIPT
 
-    units = get_units_available_for_user(course, request.user, True)
     return render_to_response('courses/overview.html', {
         'course': course,
         'units': units,
@@ -172,7 +171,17 @@ def course_classroom(request, course_slug):
             'ask_admin': ask_admin,
         }, context_instance=RequestContext(request))
 
-    units = get_units_available_for_user(course, request.user)
+    units = []
+    for u in get_units_available_for_user(course, request.user)():
+        unit = {
+            'id': u.id,
+            'title': u.title,
+            'unittype': u.unittype,
+            'badge_class': get_unit_badge_class(u),
+            'badge_tooltip': u.get_unit_type_name(),
+        }
+        units.append(unit)
+
     peer_review = {
         'text_max_size': settings.PEER_REVIEW_TEXT_MAX_SIZE,
         'file_max_size': settings.PEER_REVIEW_FILE_MAX_SIZE,
@@ -204,7 +213,17 @@ def course_progress(request, course_slug):
             'ask_admin': ask_admin,
         }, context_instance=RequestContext(request))
 
-    units = get_units_available_for_user(course, request.user)
+    units = []
+    for u in get_units_available_for_user(course, request.user)():
+        unit = {
+            'id': u.id,
+            'title': u.title,
+            'unittype': u.unittype,
+            'badge_class': get_unit_badge_class(u),
+            'badge_tooltip': u.get_unit_type_name(),
+        }
+        units.append(unit)
+
     return render_to_response('courses/progress.html', {
         'course': course,
         'unit_list': units,
