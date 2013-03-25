@@ -142,7 +142,7 @@ def course_overview(request, course_slug):
 
     use_old_calculus = course.slug in settings.COURSES_USING_OLD_TRANSCRIPT
 
-    units = get_units_available_for_user(course, request.user)
+    units = get_units_available_for_user(course, request.user, True)
     return render_to_response('courses/overview.html', {
         'course': course,
         'units': units,

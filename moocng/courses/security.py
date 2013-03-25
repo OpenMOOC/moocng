@@ -78,13 +78,20 @@ def get_courses_available_for_user(user):
         return Course.objects.exclude(end_date__lt=date.today()).filter(Q(status='p') | Q(status='d', courseteacher__teacher=user))
 
 
-def get_units_available_for_user(course, user):
+def get_units_available_for_user(course, user, show_listable=False):
     """Filter units of a course what courses are availabled for the user"""
     if user.is_superuser or user.is_staff:
         return course.unit_set.all
     elif user.is_anonymous():
-        return course.unit_set.filter(Q(status='p') | Q(status='l'))
+        if show_listable:
+            return course.unit_set.filter(Q(status='p') | Q(status='l'))
+        else:
+            return course.unit_set.filter(Q(status='p'))
     else:
-        return Unit.objects.filter(Q(status='p', course=course) |
-                           Q(status='l', course=course) | 
-                           Q(status='d', course=course, course__courseteacher__teacher=user, course__courseteacher__course=course)).distinct()
+        if show_listable:
+            return Unit.objects.filter(Q(status='p', course=course) |
+                               Q(status='l', course=course) |
+                               Q(status='d', course=course, course__courseteacher__teacher=user, course__courseteacher__course=course)).distinct()
+        else:
+            return Unit.objects.filter(Q(status='p', course=course) |
+                   Q(status='d', course=course, course__courseteacher__teacher=user, course__courseteacher__course=course)).distinct()
