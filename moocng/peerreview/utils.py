@@ -26,6 +26,10 @@ def course_get_peer_review_assignments(course):
     return PeerReviewAssignment.objects.from_course(course)
 
 
+def course_get_published_peer_review_assignments(course):
+    return PeerReviewAssignment.objects.published_from_course(course)
+
+
 def course_has_peer_review_assignments(course):
     result = cache.get_course_has_peer_review_assignments_from_cache(course)
     if result is None:

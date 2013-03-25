@@ -36,7 +36,7 @@ from moocng.courses.models import Course, KnowledgeQuantum
 from moocng.courses.utils import send_mail_wrapper
 from moocng.peerreview.forms import ReviewSubmissionForm, EvalutionCriteriaResponseForm
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
-from moocng.peerreview.utils import course_get_peer_review_assignments, save_review
+from moocng.peerreview.utils import course_get_published_peer_review_assignments, save_review
 
 
 @login_required
@@ -108,7 +108,7 @@ def course_review_assign(request, course_slug, assignment_id):
 def course_reviews(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
 
-    assignments = course_get_peer_review_assignments(course)
+    assignments = course_get_published_peer_review_assignments(course)
 
     collection = get_db().get_collection('peer_review_submissions')
     submissions = collection.find({
@@ -299,11 +299,11 @@ def course_review_upload(request, course_slug):
 
         if (file_to_upload.size / (1024 * 1024) >= settings.PEER_REVIEW_FILE_MAX_SIZE):
             messages.error(request, _('Your file is greater than the max allowed size (%d MB).') % settings.PEER_REVIEW_FILE_MAX_SIZE)
-            return HttpResponseRedirect(reverse('course_classroom', args=[course_slug])+"#unit%d/kq%d/p" % (unit.id, kq.id))
+            return HttpResponseRedirect(reverse('course_classroom', args=[course_slug]) + "#unit%d/kq%d/p" % (unit.id, kq.id))
 
         if (len(submission_text) >= settings.PEER_REVIEW_TEXT_MAX_SIZE):
             messages.error(request, _('Your text is greater than the max allowed size (%d characters).') % settings.PEER_REVIEW_TEXT_MAX_SIZE)
-            return HttpResponseRedirect(reverse('course_classroom', args=[course_slug])+"#unit%d/kq%d/p" % (unit.id, kq.id))
+            return HttpResponseRedirect(reverse('course_classroom', args=[course_slug]) + "#unit%d/kq%d/p" % (unit.id, kq.id))
 
         s3_upload(request.user.id, kq.id, file_to_upload.name, file_to_upload)
         file_url = s3_url(request.user.id, file_to_upload.name, kq.id)
@@ -325,4 +325,4 @@ def course_review_upload(request, course_slug):
         submissions = db.get_collection("peer_review_submissions")
         submissions.insert(submission)
 
-        return HttpResponseRedirect(reverse('course_classroom', args=[course_slug])+"#unit%d/kq%d/p" % (unit.id, kq.id))
+        return HttpResponseRedirect(reverse('course_classroom', args=[course_slug]) + "#unit%d/kq%d/p" % (unit.id, kq.id))
