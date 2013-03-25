@@ -63,13 +63,27 @@
     <fieldset>
     <legend>{% trans "Unit" %}</legend>
     <div class="row">
+        <div class="span10 mb10">
+            <label class="required">{% trans "Status" %}</label>
+            <label for="status-published" class="radio inline pointer">
+                <input type="radio" name="status" id="status-published" /> {% trans "Published" %}
+            </label>
+            <label for="status-listable" class="radio inline pointer">
+                <input type="radio" name="status" id="status-listable" /> {% trans "Listable" %}
+            </label>
+            <label for="status-draft" class="radio inline pointer">
+                <input type="radio" name="status" id="status-draft" /> {% trans "Draft" %}
+            </label>
+        </div>
+    </div>
+    <div class="row">
         <div class="span4">
             <label for="title" class="required">{% trans "Title" %}</label>
             <input id="title" type="text" name="title" maxlength="200" class="input-xlarge" required="required" />
         </div>
         <div class="span4">
             <label for="type" class="required">{% trans "Type" %}</label>
-            <select name="type" id="type" class="input-xlarge">
+            <select name="type" id="type">
                 <option value="n" selected="selected">{% trans "Normal" %}</option>
                 <option value="h">{% trans "Homework" %}</option>
                 <option value="e">{% trans "Exam" %}</option>
@@ -83,29 +97,15 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    <div id="dates" class="row hide">
         <div class="span4">
-            <label id="unit-status" class="required radio inline">{% trans "Status" %}: </label>
-            <label for="status-published" class="radio inline pointer">
-                <input type="radio" name="status" id="status-published" /> {% trans "Published" %}
-            </label>
-            <label for="status-listable" class="radio inline pointer">
-                <input type="radio" name="status" id="status-listable" /> {% trans "Listable" %}
-            </label>
-            <label for="status-draft" class="radio inline pointer">
-                <input type="radio" name="status" id="status-draft" /> {% trans "Draft" %}
-            </label>
+            <label for="start_date">{% trans "Start date" %}</label>
+            <input type="date" name="start_date" id="start_date" placeholder="YYYY-MM-DD" class="input-xlarge" />
         </div>
-        <div class="span6"><div id="dates" class="row hide">
-            <div class="span3">
-                <label for="start_date">{% trans "Start date" %}</label>
-                <input type="date" name="start_date" id="start_date" placeholder="YYYY-MM-DD" class="span3" />
-            </div>
-            <div class="span3">
-                <label for="end_date">{% trans "End date" %}</label>
-                <input type="date" name="end_date" id="end_date" placeholder="YYYY-MM-DD" class="span3" />
-            </div>
-        </div></div>
+        <div class="span4">
+            <label for="end_date">{% trans "End date" %}</label>
+            <input type="date" name="end_date" id="end_date" placeholder="YYYY-MM-DD" class="input-xlarge" />
+        </div>
     </div>
     </fieldset>
     <div class="row"><div class="span10 align-right">

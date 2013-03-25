@@ -490,8 +490,8 @@ code {
     width: 106px;
 }
 
-.teacheradmin-units #unit-status {
-    padding-left: 0px;
+.teacheradmin-units select#type {
+    width: 284px;
 }
 
 #media-player {
