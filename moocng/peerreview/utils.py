@@ -26,8 +26,8 @@ def course_get_peer_review_assignments(course):
     return PeerReviewAssignment.objects.from_course(course)
 
 
-def course_get_published_peer_review_assignments(course):
-    return PeerReviewAssignment.objects.published_from_course(course)
+def course_get_visible_peer_review_assignments(user, course):
+    return PeerReviewAssignment.objects.visible_from_course(user, course)
 
 
 def course_has_peer_review_assignments(course):

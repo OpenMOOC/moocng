@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from django.db import models
+from django.db.models import Q
 
 
 class PeerReviewAssignmentManager(models.Manager):
@@ -22,5 +23,14 @@ class PeerReviewAssignmentManager(models.Manager):
             kq__unit__course=course).order_by(
                 'kq__unit__order', 'kq__order')
 
-    def published_from_course(self, course):
-        return self.from_course(course).filter(kq__unit__status='p')
+    def visible_from_course(self, user, course):
+        if user.is_superuser or user.is_staff:
+            return self.from_course(course)
+        elif user.is_anonymous():
+            return []
+        else:
+            return self.from_course(course).filter(
+                Q(kq__unit__status='p') |
+                Q(kq__unit__status='l',  kq__unit__course__courseteacher__teacher=user, kq__unit__course__courseteacher__course=course) |
+                Q(kq__unit__status='d',  kq__unit__course__courseteacher__teacher=user, kq__unit__course__courseteacher__course=course)).distinct()
+
