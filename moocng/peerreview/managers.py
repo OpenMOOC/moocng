@@ -31,6 +31,5 @@ class PeerReviewAssignmentManager(models.Manager):
         else:
             return self.from_course(course).filter(
                 Q(kq__unit__status='p') |
-                Q(kq__unit__status='l',  kq__unit__course__courseteacher__teacher=user, kq__unit__course__courseteacher__course=course) |
-                Q(kq__unit__status='d',  kq__unit__course__courseteacher__teacher=user, kq__unit__course__courseteacher__course=course)).distinct()
-
+                Q(kq__unit__status='l', kq__unit__course__courseteacher__teacher=user, kq__unit__course__courseteacher__course=course) |
+                Q(kq__unit__status='d', kq__unit__course__courseteacher__teacher=user, kq__unit__course__courseteacher__course=course)).distinct()
