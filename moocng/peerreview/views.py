@@ -36,7 +36,7 @@ from moocng.courses.models import Course, KnowledgeQuantum
 from moocng.courses.utils import send_mail_wrapper
 from moocng.peerreview.forms import ReviewSubmissionForm, EvalutionCriteriaResponseForm
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
-from moocng.peerreview.utils import course_get_published_peer_review_assignments, save_review
+from moocng.peerreview.utils import course_get_visible_peer_review_assignments, save_review
 
 
 @login_required
@@ -108,7 +108,8 @@ def course_review_assign(request, course_slug, assignment_id):
 def course_reviews(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
 
-    assignments = course_get_published_peer_review_assignments(course)
+    assignments = course_get_visible_peer_review_assignments(request.user, 
+                                                               course)
 
     collection = get_db().get_collection('peer_review_submissions')
     submissions = collection.find({
