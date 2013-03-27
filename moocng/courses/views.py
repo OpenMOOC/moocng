@@ -42,9 +42,15 @@ from moocng.slug import unique_slugify
 
 
 def home(request):
+    use_cache = True
+    if (request.user.is_superuser or request.user.is_staff or
+            CourseTeacher.objects.filter(teacher=request.user.id).exists()):
+        use_cache = False
     courses = get_courses_available_for_user(request.user)
+
     return render_to_response('courses/home.html', {
         'courses': courses,
+        'use_cache': use_cache,
     }, context_instance=RequestContext(request))
 
 

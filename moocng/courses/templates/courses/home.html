@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load cache i18n %}
+{% load conditionalcache i18n %}
 
 {% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
 
@@ -17,21 +17,20 @@
   <section class="span8">
     <h1 class="content-title">{% trans "Courses" %}</h1>
 
-    {% cache 3600 course_list %}
-    {% for course in courses %}
-
-    {% if course.is_public %}
-        <div class="box published">
-    {% else %}
-        <div class="box draft">
-        <span class="label pull-right">{% trans "Draft" %}</span>
-    {% endif %}
-          <h2><a href="{{ course.get_absolute_url }}">{{ course.name }}</a></h2>
-          {{ course.description|safe|truncatewords_html:60 }}
-          <p class="box-footer"><a href="{{ course.get_absolute_url }}">{% trans "More information about this course" %}</a></p>
-        </div>
-    {% endfor %}
-    {% endcache %}
+    {% conditionalcache use_cache 3600 course_list %}
+        {% for course in courses %}
+            {% if course.is_public %}
+                <div class="box published">
+            {% else %}
+                <div class="box draft">
+                    <span class="label pull-right">{% trans "Draft" %}</span>
+            {% endif %}
+                    <h2><a href="{{ course.get_absolute_url }}">{{ course.name }}</a></h2>
+                    {{ course.description|safe|truncatewords_html:60 }}
+                    <p class="box-footer"><a href="{{ course.get_absolute_url }}">{% trans "More information about this course" %}</a></p>
+                </div>
+        {% endfor %}
+    {% endconditionalcache %}
 
   </section>
   <div class="span4">

@@ -17,6 +17,7 @@
 from datetime import date
 
 from django.contrib import messages
+from django.core.cache import cache
 from django.db.models import Q
 from django.http import Http404
 from django.utils.translation import ugettext as _
@@ -69,12 +70,13 @@ def check_user_can_view_course(course, request):
 def get_courses_available_for_user(user):
     """Filter in a list of courses what courses are availabled for the user"""
     if user.is_superuser or user.is_staff:
-        # Publish all the courses that are on time.
+        # Return every course that hasn't finished
         return Course.objects.exclude(end_date__lt=date.today())
-    elif user.is_anonymous():
-        # Only return the published courses
+    elif user.is_anonymous() or not CourseTeacher.objects.filter(teacher=user).exists():
+        # Regular user, return only the published courses
         return Course.objects.exclude(end_date__lt=date.today()).filter(status='p')
     else:
+        # Is a teacher, return draft courses if he is one of its teachers
         return Course.objects.exclude(end_date__lt=date.today()).filter(Q(status='p') | Q(status='d', courseteacher__teacher=user)).distinct()
 
 
