@@ -34,7 +34,7 @@ from django.utils.translation import ugettext as _
 
 from moocng.api.mongodb import get_db
 from moocng.courses.models import Course, KnowledgeQuantum
-from moocng.courses.utils import send_mail_wrapper
+from moocng.courses.utils import send_mail_wrapper, is_course_ready
 from moocng.peerreview.forms import ReviewSubmissionForm, EvalutionCriteriaResponseForm
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
 from moocng.peerreview.utils import course_get_visible_peer_review_assignments, save_review
@@ -116,6 +116,15 @@ def course_reviews(request, course_slug):
     is_enrolled = course.students.filter(id=request.user.id).exists()
     if not is_enrolled:
         return HttpResponseForbidden(_('You are not enrolled in this course'))
+
+    is_ready, ask_admin = is_course_ready(course)
+
+    if not is_ready:
+        return render_to_response('courses/no_content.html', {
+            'course': course,
+            'is_enrolled': is_enrolled,
+            'ask_admin': ask_admin,
+        }, context_instance=RequestContext(request))
 
     assignments = course_get_visible_peer_review_assignments(request.user,
                                                              course)
