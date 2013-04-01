@@ -26,8 +26,7 @@ from django.contrib.sites.models import get_current_site
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.forms.formsets import formset_factory
-from django.http import (HttpResponseRedirect, HttpResponse,
-                         HttpResponseForbidden)
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
@@ -48,7 +47,8 @@ def course_review_assign(request, course_slug, assignment_id):
 
     is_enrolled = course.students.filter(id=user_id).exists()
     if not is_enrolled:
-        return HttpResponseForbidden(_('You are not enrolled in this course'))
+        messages.error(request, _('You are not enrolled in this course'))
+        return HttpResponseRedirect(reverse('course_overview', args=[course_slug]))
 
     if assignment.kq.unit.course != course:
         messages.error(request, _('The selected peer review assignment is not part of this course.'))
@@ -115,7 +115,8 @@ def course_reviews(request, course_slug):
 
     is_enrolled = course.students.filter(id=request.user.id).exists()
     if not is_enrolled:
-        return HttpResponseForbidden(_('You are not enrolled in this course'))
+        messages.error(request, _('You are not enrolled in this course'))
+        return HttpResponseRedirect(reverse('course_overview', args=[course_slug]))
 
     is_ready, ask_admin = is_course_ready(course)
 
@@ -154,7 +155,8 @@ def course_review_review(request, course_slug, assignment_id):
 
     is_enrolled = course.students.filter(id=user_id).exists()
     if not is_enrolled:
-        return HttpResponseForbidden(_('You are not enrolled in this course'))
+        messages.error(request, _('You are not enrolled in this course'))
+        return HttpResponseRedirect(reverse('course_overview', args=[course_slug]))
 
     if assignment.kq.unit.course != course:
         messages.error(request, _('The selected peer review assignment is not part of this course.'))

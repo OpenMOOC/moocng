@@ -166,7 +166,8 @@ def course_classroom(request, course_slug):
 
     is_enrolled = course.students.filter(id=request.user.id).exists()
     if not is_enrolled:
-        return HttpResponseForbidden(_('You are not enrolled in this course'))
+        messages.error(request, _('You are not enrolled in this course'))
+        return HttpResponseRedirect(reverse('course_overview', args=[course_slug]))
 
     is_ready, ask_admin = is_course_ready(course)
 
@@ -208,7 +209,8 @@ def course_progress(request, course_slug):
 
     is_enrolled = course.students.filter(id=request.user.id).exists()
     if not is_enrolled:
-        return HttpResponseForbidden(_('You are not enrolled in this course'))
+        messages.error(request, _('You are not enrolled in this course'))
+        return HttpResponseRedirect(reverse('course_overview', args=[course_slug]))
 
     is_ready, ask_admin = is_course_ready(course)
 
