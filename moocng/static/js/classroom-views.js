@@ -661,14 +661,17 @@ MOOC.views.Option = Backbone.View.extend({
                 type: this.types[optiontype],
                 id: 'option' + this.model.get('id')
             },
-            left = this.model.get('x'),
-            top = this.model.get('y'),
+            // The scale is required because the question editor is smaller
+            // than the classroom question
+            scale = 1.1481481, // 620/540 or 372/324
+            left = Math.floor(this.model.get('x') * scale),
+            top = Math.floor(this.model.get('y') * scale),
             feedbackBtn,
             correct;
 
         if (optiontype === 't') {
-            width = this.model.get('width') + 'px;';
-            height = this.model.get('height');
+            width = Math.floor(this.model.get('width') * scale) + 'px;';
+            height = Math.floor(this.model.get('height') * scale);
             if (height < this.MIN_TEXT_HEIGHT) {
                 height = this.MIN_TEXT_HEIGHT;
             }
