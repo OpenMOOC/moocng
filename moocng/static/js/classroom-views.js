@@ -661,24 +661,20 @@ MOOC.views.Option = Backbone.View.extend({
                 type: this.types[optiontype],
                 id: 'option' + this.model.get('id')
             },
-            widthScale = 540 / 620,
-            heightScale = 324 / 372,
-            top,
-            left,
+            left = this.model.get('x'),
+            top = this.model.get('y'),
             feedbackBtn,
             correct;
 
         if (optiontype === 't') {
-            width = Math.floor(this.model.get('width') / widthScale) + 'px;';
-            height = Math.floor(this.model.get('height') / heightScale);
+            width = this.model.get('width') + 'px;';
+            height = this.model.get('height');
             if (height < this.MIN_TEXT_HEIGHT) {
                 height = this.MIN_TEXT_HEIGHT;
             }
             height = height + 'px;';
         }
 
-        top = Math.floor(this.model.get('y') / heightScale);
-        left = Math.floor(this.model.get('x') / widthScale);
         attributes.style = [
             'top: ' + top + 'px;',
             'left: ' + left + 'px;'
