@@ -27,6 +27,7 @@ from adminsortable.models import Sortable
 from adminsortable.fields import SortableForeignKey
 from tinymce.models import HTMLField
 
+from moocng.assets.models import Asset
 from moocng.badges.models import Badge
 from moocng.courses.cache import invalidate_template_fragment
 from moocng.enrollment import enrollment_methods
@@ -264,6 +265,9 @@ class KnowledgeQuantum(Sortable):
     supplementary_material = HTMLField(
         verbose_name=_(u'Supplementary material'),
         blank=True, null=False)
+
+    asset = models.ManyToManyField(Asset, verbose_name=_(u'Assets'),
+                                   related_name='knowledgequantum_as_asset')
 
     def is_completed(self, user):
         if not self.kq_visited_by(user):
