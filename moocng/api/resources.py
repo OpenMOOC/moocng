@@ -842,13 +842,15 @@ class UserResource(ModelResource):
         obj = self.get_object(request, kwargs)
         if isinstance(obj, HttpResponse):
             return obj
-        courses = obj.courses_as_student.all()
         passed_courses = []
-
+        if 'courseid' in request.GET:
+            courseid = int(request.GET.get('courseid'))
+            courses = obj.courses_as_student.filter(id=courseid)
+        else:
+            courses = obj.courses_as_student.all()
         for course in courses:
             if course.threshold is not None:
                 total_mark, units_info = calculate_course_mark(course, obj)
                 if float(course.threshold) <= total_mark:
                     passed_courses.append(course)
-
         return self.alt_get_list(request, passed_courses)
