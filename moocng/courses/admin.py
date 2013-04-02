@@ -33,7 +33,7 @@ from celery.task.control import inspect
 
 from adminsortable.admin import SortableAdmin
 
-from moocng.courses.forms import UnitForm, AttachmentForm, CourseForm
+from moocng.courses.forms import UnitForm, AttachmentForm
 from moocng.courses.models import Course, Announcement, Unit, KnowledgeQuantum
 from moocng.courses.models import Question, Option, Attachment
 from moocng.courses.models import CourseTeacher
@@ -46,12 +46,16 @@ logger = logging.getLogger(__name__)
 
 class CourseAdmin(SortableAdmin):
 
-    form = CourseForm
     prepopulated_fields = {'slug': ('name', )}
-    filter_horizontal = ('teachers', 'students')
+    exclude = ('students', 'teachers')
+    raw_id_fields = ('owner',)
+    autocomplete_lookup_fields = {'fk': ['owner'], }
 
 
 class CourseTeacherAdmin(SortableAdmin):
+
+    raw_id_fields = ('teacher',)
+    autocomplete_lookup_fields = {'fk': ['teacher'], }
 
     list_display = ('course', 'teacher')
 
@@ -85,7 +89,7 @@ class KnowledgeQuantumAdmin(SortableAdmin):
         AttachmentInline,
     ]
 
-    list_display = ('__unicode__', 'title', 'video', 'weight')
+    list_display = ('__unicode__', 'title', 'media_content_type', 'media_content_id', 'weight')
     list_filter = ('unit', )
 
 
@@ -95,7 +99,7 @@ ensure_csrf_cookie_m = method_decorator(ensure_csrf_cookie)
 
 class QuestionAdmin(admin.ModelAdmin):
 
-    list_display = ('kq', 'solution_video')
+    list_display = ('kq', 'solution_media_content_type', 'solution_media_content_id')
     list_filter = ('kq', )
     formfield_overrides = {
         models.ImageField: {'widget': ImageReadOnlyWidget},

@@ -38,6 +38,8 @@ class BadgeAdmin(admin.ModelAdmin):
 
 class AwardAdmin(admin.ModelAdmin):
     model = Award
+    raw_id_fields = ('user',)
+    autocomplete_lookup_fields = { 'fk': ['user'], }
     list_display = ('user', 'badge', show_image, 'awarded',)
 
 

@@ -1,6 +1,6 @@
 {% extends "courses/base_course.html" %}
 
-{% load cache gravatar i18n enrollment_tags %}
+{% load cache gravatar i18n enrollment_tags media_contents %}
 
 {% block nav-course-overview %}class="active"{% endblock %}
 
@@ -12,12 +12,11 @@
 <h1>{{ course.name }}</h1>
 
 <div class="row">
-
     {% cache 3600 course_overview_main_info course.id %}
     <div class="span8">
-        {% if course.promotion_video %}
+        {% if course.promotion_media_content_type and course.promotion_media_content_id %}
             <div class="media-box">
-                <iframe width="620" height="349" src="//www.youtube.com/embed/{{ course.get_embeded_code_for_promotion_video }}" frameborder="0" allowfullscreen></iframe>
+                {% media_content_iframe_code course.promotion_media_content_type course.promotion_media_content_id height="349px" width="620px" allowfullscreen="1" controls="1" %}
             </div>
         {% endif %}
 
@@ -89,7 +88,7 @@
             <ul class="unstyled clearfix">
             {% for course_teacher in course_teachers %}
                 <li class="teacher">
-                  <img src="{% gravatar_for_email course_teacher.teacher.email 50 %}" width="50" height="50" />
+                  <img src="{% gravatar_for_email course_teacher.teacher.email %}" width="50" height="50" />
                   <strong>{% firstof course_teacher.teacher.get_full_name course_teacher.teacher.username %}</strong>
                 </li>
             {% endfor %}

@@ -31,7 +31,7 @@ class UnitsTestCase(ApiTestCase):
 
         # Test public course
         course = self.create_test_basic_course(owner)
-        self.check_test_get_units(course, is_possible=True)
+        self.check_test_get_units(course, is_possible=False)
 
     def test_get_units_user(self):
         owner = self.create_test_user_owner()
@@ -90,7 +90,7 @@ class UnitsTestCase(ApiTestCase):
 
         # Test public course
         course = self.create_test_basic_course(owner)
-        self.check_test_get_units(course, is_possible=True, key=key)
+        self.check_test_get_units(course, is_possible=False, key=key)
 
     # Auxiliary function
     def check_test_get_units(self, course, is_possible=False, key=None):
@@ -212,7 +212,7 @@ class UnitTestCase(ApiTestCase):
 
         # Test public course
         course = self.create_test_basic_course(owner)
-        self.check_test_get_unit(course, is_possible=True)
+        self.check_test_get_unit(course, is_possible=False)
 
     def test_get_unit_user(self):
         owner = self.create_test_user_owner()
@@ -271,7 +271,7 @@ class UnitTestCase(ApiTestCase):
 
         # Test public course
         course = self.create_test_basic_course(owner)
-        self.check_test_get_unit(course, is_possible=True, key=key)
+        self.check_test_get_unit(course, is_possible=False, key=key)
 
     # Auxiliary function
     def check_test_get_unit(self, course, is_possible=False, key=None):

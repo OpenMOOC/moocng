@@ -28,14 +28,14 @@ register = template.Library()
 
 
 @register.simple_tag
-def gravatar_for_email(email, size=80):
+def gravatar_for_email(email):
     url = "%savatar/%s/?" % (GRAVATAR_URL_PREFIX, md5_constructor(email).hexdigest())
-    url += urllib.urlencode({"s": str(size), "default": GRAVATAR_DEFAULT_IMAGE})
+    url += urllib.urlencode({"default": GRAVATAR_DEFAULT_IMAGE})
     return mark_safe(url)
 
 
 @register.simple_tag
 def gravatar_img_for_email(email, size=80):
-    url = gravatar_for_email(email, size)
+    url = gravatar_for_email(email)
     img = '<img src="%s" height="%s" width="%s"/>' % (url, size, size)
     return mark_safe(img)

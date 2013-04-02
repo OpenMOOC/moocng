@@ -39,10 +39,18 @@ def send_contact_message(communication_type, sender_username, sender_email,
     else:
         to = [destination]
 
+    try:
+        if settings.SEND_CONTACT_EMAIL_FROM_SENDER:
+            from_ = sender_email
+        else:
+            from_ = settings.DEFAULT_FROM_EMAIL
+    except AttributeError:
+        from_ = settings.DEFAULT_FROM_EMAIL
+
     mail = EmailMultiAlternatives(
         u'%s%s' % (settings.EMAIL_SUBJECT_PREFIX, subject),
         message,
-        settings.SERVER_EMAIL,
+        from_,
         to,
         connection=connection,
         headers=headers,

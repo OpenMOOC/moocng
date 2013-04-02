@@ -18,7 +18,7 @@ from django.test import TestCase
 from django.core.exceptions import ImproperlyConfigured
 
 from moocng.api.models import UserApi
-from moocng.api.mongodb import MongoDB
+from moocng.mongodb import MongoDB
 from moocng.courses.models import Course, Unit, CourseTeacher
 
 

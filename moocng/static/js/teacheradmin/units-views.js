@@ -87,32 +87,6 @@ if (_.isUndefined(window.MOOC)) {
             return str.replace(/<\/?[^>]+>/ig, '');
         },
 
-        extractVideoID = function (video_url) {
-            video_url = $.trim(video_url);
-            if (video_url[video_url.length - 1] === '/') {
-                // Remove trailing '/'
-                video_url = video_url.substring(0, video_url.length - 1);
-            }
-            video_url = video_url.split('/');
-            video_url = video_url[video_url.length - 1];
-            if (video_url.indexOf('=') > 0) {
-                if (video_url.indexOf("watch") === 0) {
-                    // Long url, remove "watch?"
-                    video_url = video_url.substring(video_url.indexOf('?') + 1);
-                    // Look for 'v' parameter
-                    video_url = _.find(video_url.split('&'), function (parameter) {
-                        return parameter.indexOf("v=") === 0;
-                    });
-                    // Remove "v="
-                    video_url = video_url.substring(2);
-                } else {
-                    // Short url, remove all parameters
-                    video_url = video_url.substring(0, video_url.indexOf('?'));
-                }
-            }
-            return video_url;
-        },
-
         getCookie = function (name) {
             var cookieValue = null,
                 cookies,
@@ -417,6 +391,7 @@ if (_.isUndefined(window.MOOC)) {
                     header,
                     iframe,
                     video_thumbnail,
+                    thumbnail_url,
                     data;
 
                 header = "<h4>" + this.model.get("title") + "</h4><button " +
@@ -435,21 +410,19 @@ if (_.isUndefined(window.MOOC)) {
                         "'>" + MOOC.trans.kq.pr + "</span>";
                 }
 
-                iframe = "<iframe width='110px' height='71px' src='//www.youtube.com/embed/" +
-                    this.model.get("videoID") + "?rel=0&controls=0&origin=" +
-                    MOOC.host + "' frameborder='0'></iframe>";
+                thumbnail_url = this.model.get("thumbnail_url");
 
-                video_thumbnail = "<a class='thumbnail' data-toggle='modal' href='#player-" + this.model.id + "'>" +
-                                  "<img class='youtube-thumbnail' src='//img.youtube.com/vi/" +
-                                    this.model.get("videoID") + "/1.jpg'/></a>";
+                video_thumbnail = "";
+                if (thumbnail_url) {
+                    video_thumbnail = "<a class='thumbnail' data-toggle='modal' href='#player-" + this.model.id + "'>" +
+                                  "<img src='" + this.model.get("thumbnail_url") + "'/></a>";
+                }
 
                 data = "<p>" + MOOC.trans.kq.teacher_comments + ": " +
                     truncate(_.escape(stripTags(this.model.get("teacher_comments")))) + "</p>" +
                     "<p>" + MOOC.trans.kq.supplementary_material + ": " +
                     truncate(_.escape(stripTags(this.model.get("supplementary_material")))) + "<p/>";
 
-
-                // inlineb(iframe, { style: "margin-left: 30px;" }) +
 
                 html = inlineb({ classes: "drag-handle" }) +
                     inlineb(video_thumbnail, { style: "margin-left: 30px;" }) +
@@ -464,16 +437,22 @@ if (_.isUndefined(window.MOOC)) {
                 });
             },
 
-            player_template: _.template($("#modal-video-player-tpl").html()),
-
             openVideoPlayer: function (evt) {
-                var context = {
-                    videoID: this.model.get("videoID"),
-                    title: this.model.get("title"),
-                    host: MOOC.host
-                };
+                var iframe_template,
+                    iframe,
+                    context,
+                    modal_template;
 
-                $("#media-player").html(this.player_template(context));
+                modal_template = _.template($("#modal-video-player-tpl").html());
+                iframe_template = _.template(this.model.get("iframe_code"));
+                iframe = iframe_template({ width: '620px', height: '372px', allowfullscreen: false, controls: false, origin: MOOC.host });
+
+                context = {
+                    title: this.model.get("title"),
+                    iframe_code: iframe
+                }
+
+                $("#media-player").html(modal_template(context));
                 $("#media-player").modal("show");
                 $("#media-player").on('hidden', function (evt) {
                     $(evt.target).html("");
@@ -654,16 +633,15 @@ if (_.isUndefined(window.MOOC)) {
                 this.$el.html($("#edit-kq-tpl").text());
 
                 this.$el.find("input#kqtitle").val(this.model.get("title"));
-                if (this.model.has("videoID") && this.model.get("videoID") !== "") {
-                    this.$el.find("input#kqvideo").val("http://youtu.be/" + this.model.get("videoID"));
-                }
+                this.$el.find("select#kqmedia_content_type").val(this.model.get("media_content_type"));
+                this.$el.find("input#kqmedia_content_id").val(this.model.get("media_content_id"));
                 this.$el.find("input#kqweight").val(this.model.get("normalized_weight"));
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
                     this.$el.find("#noquestion").addClass("hide");
                     this.$el.find("#question-tab").removeClass("hide");
                     this.$el.find("#question img").attr("src", question.get("lastFrame"));
-                    if (question.has("solutionVideo") && question.get("solutionVideo") !== "") {
+                    if (question.has("solutionMediaContentId") && question.get("solutionMediaContentId") !== "") {
                         this.$el.find("button#use-solution-video-btn").trigger("click");
                     } else if (question.has("solutionText") && question.get("solutionText") !== "") {
                         this.$el.find("button#use-solution-text-btn").trigger("click");
@@ -671,8 +649,11 @@ if (_.isUndefined(window.MOOC)) {
                         // Default
                         this.$el.find("button#use-solution-video-btn").trigger("click");
                     }
-                    if (question.has("solutionVideo") && question.get("solutionVideo") !== "") {
-                        this.$el.find("#questionvideo").val("http://youtu.be/" + question.get("solutionVideo"));
+                    if (question.has("solutionMediaContentType") && question.get("solutionMediaContentType") !== "") {
+                        this.$el.find("#questionmedia_content_type").val(question.get("solutionMediaContentType"));
+                    }
+                    if (question.has("solutionMediaContentId") && question.get("solutionMediaContentId") !== "") {
+                        this.$el.find("#questionmedia_content_id").val(question.get("solutionMediaContentId"));
                     }
                     this.$el.find("textarea#solution-text").val(question.get("solutionText"));
                     if (!question.get("use_last_frame")) {
@@ -783,7 +764,8 @@ if (_.isUndefined(window.MOOC)) {
 
                 this.model.unset("new");
                 this.model.set("title", $.trim(this.$el.find("input#kqtitle").val()));
-                this.model.set("videoID", extractVideoID(this.$el.find("input#kqvideo").val()));
+                this.model.set("media_content_id", $.trim(this.$el.find("input#kqmedia_content_id").val()));
+                this.model.set("media_content_type", this.$el.find("select#kqmedia_content_type").val());
                 this.model.set("normalized_weight", parseInt(this.$el.find("input#kqweight").val(), 10));
                 this.model.set("supplementary_material", tinyMCE.get("kqsupplementary").getContent());
                 this.model.set("teacher_comments", tinyMCE.get("kqcomments").getContent());
@@ -791,10 +773,12 @@ if (_.isUndefined(window.MOOC)) {
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
                     if (this.$el.find("#use-solution-video-btn").is(".active")) {
-                        question.set("solutionVideo", extractVideoID(this.$el.find("#questionvideo").val()));
+                        question.set("solutionMediaContentType", this.$el.find("#questionmedia_content_type").val());
+                        question.set("solutionMediaContentId", this.$el.find("#questionmedia_content_id").val());
                         question.set("solutionText", null);
                     } else {
-                        question.set("solutionVideo", null);
+                        question.set("solutionMediaContentType", null);
+                        question.set("solutionMediaContentId", null);
                         question.set("solutionText", tinyMCE.get("solution-text").getContent());
                     }
 

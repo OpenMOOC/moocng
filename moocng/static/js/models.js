@@ -229,7 +229,8 @@ MOOC.models.OptionList  = MOOC.models.TastyPieCollection.extend({
 MOOC.models.Question = Backbone.Model.extend({
     defaults: {
         lastFrame: null, // of the KnowledgeQuantum's video
-        solutionVideo: null,
+        solutionMediaContentType: null,
+        solutionMediaContentId: null,
         solutionText: null,
         optionList: null,
         answer: null,
@@ -246,7 +247,8 @@ MOOC.models.Question = Backbone.Model.extend({
         return {
             id: parseInt(resp.id, 10),
             lastFrame: resp.last_frame,
-            solutionVideo: resp.solutionID,
+            solutionMediaContentType: resp.solution_media_content_type,
+            solutionMediaContentId: resp.solution_media_content_id,
             use_last_frame: resp.use_last_frame
         };
     },
@@ -281,12 +283,16 @@ MOOC.models.Question = Backbone.Model.extend({
             model2send.url = MOOC.models.detailUrlToCollection(model.url());
         }
         model2send.unset("lastFrame");
-        if (model.has("solutionVideo") && model.get("solutionVideo") !== "") {
-            model2send.set("solutionID", model.get("solutionVideo"));
+        if (model.has("solutionMediaContentType") && model.get("solutionMediaContentType") !== "") {
+            model2send.set("solution_media_content_type", model.get("solutionMediaContentType"));
         } else {
-            model2send.set("solutionID", "");
+            model2send.set("solution_media_content_type", "");
         }
-        model2send.unset("solutionVideo");
+        if (model.has("solutionMediaContentId") && model.get("solutionMediaContentId") !== "") {
+            model2send.set("solution_media_content_id", model.get("solutionMediaContentId"));
+        } else {
+            model2send.set("solution_media_content_id", "");
+        }
         if (model.has("solutionText") && model.get("solutionText") !== "") {
             model2send.set("solution_text", model.get("solutionText"));
         } else {
@@ -421,7 +427,8 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
     defaults: {
         order: -1,
         title: null,
-        videoID: null,
+        media_content_type: null,
+        media_content_id: null,
         teacher_comments: null,
         supplementary_material: null,
         question: null, // Optional

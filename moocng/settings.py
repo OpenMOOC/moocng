@@ -189,6 +189,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'grappelli',
     'django.contrib.admin',
     'django.contrib.flatpages',
     'adminsortable',
@@ -210,6 +211,7 @@ INSTALLED_APPS = (
     'south',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'moocng.media_contents',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -466,14 +468,33 @@ SAML_CONFIG = {
         },
     }
 
+MEDIA_CONTENT_TYPES = {
+    'youtube': {
+        'name': 'YouTube',
+        'handler': 'moocng.media_contents.handlers.youtube.YoutubeMediaContentHandler',
+    },
+    'vimeo': {
+        'name': 'Vimeo',
+        'handler': 'moocng.media_contents.handlers.vimeo.VimeoMediaContentHandler',
+    },
+    'scribd': {
+        'name': 'Scribd',
+        'handler': 'moocng.media_contents.handlers.scribd.ScribdMediaContentHandler',
+    },
+    'prezi': {
+        'name': 'Prezi',
+        'handler': 'moocng.media_contents.handlers.prezi.PreziMediaContentHandler',
+    },
+}
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     },
 }
 
-
 try:
     from local_settings import *
 except ImportError:
     pass
+
