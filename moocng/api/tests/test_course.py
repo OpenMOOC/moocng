@@ -27,14 +27,9 @@ class CoursesTestCase(ApiTestCase):
 
         owner = self.create_test_user_owner()
 
-        response = self.client.get('/api/%s/course/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, NO_OBJECTS)
-
         self.create_test_basic_course(owner)
         response = self.client.get('/api/%s/course/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, BASIC_COURSES)
+        self.assertEqual(response.status_code, 401)
 
     def test_get_courses_user(self):
         owner = self.create_test_user_owner()
@@ -138,13 +133,9 @@ class CourseTestCase(ApiTestCase):
     def test_get_course_annonymous(self):
         owner = self.create_test_user_owner()
 
-        response = self.client.get('/api/%s/course/1/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 404)
-
         self.create_test_basic_course(owner)
         response = self.client.get('/api/%s/course/1/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, BASIC_COURSE)
+        self.assertEqual(response.status_code, 401)
 
     def test_get_course_user(self):
         owner = self.create_test_user_owner()
@@ -309,9 +300,6 @@ class CourseTestCase(ApiTestCase):
     def test_put_course_annonymous(self):
         owner = self.create_test_user_owner()
 
-        response = self.client.get('/api/%s/course/1/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 404)
-
         self.create_test_basic_course(owner)
 
         response = self.client.put('/api/%s/course/1/%s' % (self.api_name, self.format_append), simplejson.loads(BASIC_COURSE))
@@ -385,9 +373,6 @@ class CourseTestCase(ApiTestCase):
     # Delete course
     def test_delete_course_annonymous(self):
         owner = self.create_test_user_owner()
-
-        response = self.client.get('/api/%s/course/1/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 404)
 
         self.create_test_basic_course(owner)
 

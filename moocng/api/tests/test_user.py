@@ -59,25 +59,17 @@ class UserTestCase(ApiTestCase):
         teacher1 = self.create_test_user_teacher1()
         self.client = self.django_login_user(self.client, teacher1)
 
-        response = self.client.get('/api/%s/user/2/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 404)
-
         self.create_test_user_test()
         response = self.client.get('/api/%s/user/2/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, NORMAL_USER)
+        self.assertEqual(response.status_code, 401)
 
     def test_get_user_owner(self):
         owner = self.create_test_user_owner()
         self.client = self.django_login_user(self.client, owner)
 
-        response = self.client.get('/api/%s/user/2/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 404)
-
         self.create_test_user_test()
         response = self.client.get('/api/%s/user/2/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, NORMAL_USER)
+        self.assertEqual(response.status_code, 401)
 
     def test_get_user_admin(self):
         admin = self.create_test_user_admin()
@@ -102,7 +94,8 @@ class UserTestCase(ApiTestCase):
 
         self.create_test_user_test()
         response = self.client.get('/api/%s/user/2/%s&key=%s' % (self.api_name, self.format_append, key))
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, NORMAL_USER)
 
     def test_get_user_certificator(self):
         certuser = self.create_test_user_user()
@@ -155,8 +148,7 @@ class UserTestCase(ApiTestCase):
         self.assertEqual(response.status_code, 401)
 
         response = self.client.get('/api/%s/user/2/allcourses/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, NO_OBJECTS)
+        self.assertEqual(response.status_code, 401)
 
     def test_get_allcourses_alum(self):
         owner = self.create_test_user_owner()
@@ -177,8 +169,7 @@ class UserTestCase(ApiTestCase):
         self.assertEqual(response.status_code, 401)
 
         response = self.client.get('/api/%s/user/2/allcourses/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, NO_OBJECTS)
+        self.assertEqual(response.status_code, 401)
 
         course1.students.add(alum1)
         course1.save()
@@ -186,8 +177,7 @@ class UserTestCase(ApiTestCase):
         course2.save()
 
         response = self.client.get('/api/%s/user/2/allcourses/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, BASIC_ALLCOURSES)
+        self.assertEqual(response.status_code, 401)
 
     def test_get_allcourses_teacher(self):
         owner = self.create_test_user_owner()
@@ -210,8 +200,7 @@ class UserTestCase(ApiTestCase):
         self.assertEqual(response.status_code, 401)
 
         response = self.client.get('/api/%s/user/2/allcourses/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, NO_OBJECTS)
+        self.assertEqual(response.status_code, 401)
 
     def test_get_allcourses_owner(self):
         teacher1 = self.create_test_user_teacher1()
@@ -234,8 +223,7 @@ class UserTestCase(ApiTestCase):
         self.assertEqual(response.status_code, 401)
 
         response = self.client.get('/api/%s/user/2/allcourses/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, NO_OBJECTS)
+        self.assertEqual(response.status_code, 401)
 
     def test_get_allcourses_admin(self):
         owner = self.create_test_user_owner()
@@ -253,7 +241,8 @@ class UserTestCase(ApiTestCase):
                                       name='course2')
 
         response = self.client.get('/api/%s/user/3/allcourses/%s' % (self.api_name, self.format_append))
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, BASIC_ALLCOURSES)
 
         response = self.client.get('/api/%s/user/2/allcourses/%s' % (self.api_name, self.format_append))
         self.assertEqual(response.status_code, 200)
