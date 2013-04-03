@@ -1,6 +1,6 @@
 {% extends "courses/base_course.html" %}
 
-{% load i18n compress %}
+{% load i18n compress mathjax %}
 
 {% block nav-course-classroom %}class="active"{% endblock %}
 
@@ -8,6 +8,9 @@
 
 {% block extraheader %}
     <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-fileupload.2.3.1-j6.min.css">
+    {% if mathjax_enabled %}
+      {% mathjax_scripts %}
+    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -15,7 +18,7 @@
     <div class='solution-wrapper white'><form method='post' action='{% url course_review_upload course_slug=course.slug %}' enctype='multipart/form-data'>
         {% csrf_token %}
         <h4>{% trans "Peer review assignment" %}</h4>
-        <div id='pr-description'></div>
+        <div id='pr-description' class="mathjax"></div>
 
         <p class="align-right">
             <button class='btn' id='pr-view-criteria'><i class="icon-info-sign"></i> {% trans "View the evaluation criteria" %}</button>
@@ -54,7 +57,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h3>{% trans "Evaluation criteria" %}</h3>
     </div>
-    <div class="modal-body"></div>
+    <div class="modal-body mathjax"></div>
     <div class="modal-footer">
         <button type="button" class="btn" data-dismiss="modal">{% trans "Close" %}</button>
     </div>
@@ -132,8 +135,8 @@
         </ul>
 
         <div class="tab-content">
-            <div class="tab-pane active" id="comments"></div>
-            <div class="tab-pane" id="supplementary"></div>
+            <div class="tab-pane active mathjax" id="comments"></div>
+            <div class="tab-pane mathjax" id="supplementary"></div>
         </div>
     </section>
 </div>

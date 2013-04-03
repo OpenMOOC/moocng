@@ -110,7 +110,13 @@ def extra_settings(request):
     except AttributeError:
         sandbox = ''
 
+    try:
+        mathjax_enabled = settings.MATHJAX_ENABLED
+    except AttributeError:
+        mathjax_enabled = False
+
     context = {
         'sandbox': sandbox,
+        'mathjax_enabled': mathjax_enabled,
     }
     return context
