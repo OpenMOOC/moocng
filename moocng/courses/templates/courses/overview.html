@@ -89,7 +89,7 @@
             <ul class="unstyled clearfix">
             {% for course_teacher in course_teachers %}
                 <li class="teacher">
-                  <img src="{% gravatar_for_email course_teacher.teacher.email 50 %}" width="50" height="50" />
+                  <img src="{% gravatar_for_email course_teacher.teacher.email %}" width="50" height="50" />
                   <strong>{% firstof course_teacher.teacher.get_full_name course_teacher.teacher.username %}</strong>
                 </li>
             {% endfor %}
