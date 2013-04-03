@@ -53,6 +53,8 @@ from moocng.peerreview.utils import (kq_get_peer_review_score,
                                      get_peer_review_review_score)
 from moocng.videos.utils import extract_YT_video_id
 
+from moocng.assets.models import Asset
+
 
 class CourseResource(ModelResource):
 
@@ -854,3 +856,13 @@ class UserResource(ModelResource):
                 if float(course.threshold) <= total_mark:
                     passed_courses.append(course)
         return self.alt_get_list(request, passed_courses)
+    
+
+class AssetResource(ModelResource):
+
+    class Meta:
+        queryset = Asset.objects.all()
+        resource_name = 'asset'
+        allowed_methods = ['get']
+        authentication = DjangoAuthentication()
+        authorization = DjangoAuthorization()
