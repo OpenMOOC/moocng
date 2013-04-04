@@ -27,6 +27,8 @@ logger = logging.getLogger(__name__)
 
 
 class UserApiAdmin(SortableAdmin):
+    raw_id_fields = ('user',)
+    autocomplete_lookup_fields = { 'fk': ['user'], }
 
     readonly_fields = ('key',)
     actions = ['change_key']
