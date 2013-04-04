@@ -183,7 +183,14 @@ MOOC.App = Backbone.Router.extend({
         "use strict";
         unit = parseInt(unit, 10);
         kq = parseInt(kq, 10);
-        async.series(this.kqSteps(unit, kq, true));
+        var toExecute = this.kqSteps(unit, kq, true);
+        toExecute.push(function (callback) {
+            _.each(MOOC.views.players, function (PlayerView) {
+                new PlayerView(MOOC.views.kqViews[kq]);
+            });
+            callback();
+        });
+        async.series(toExecute);
     },
 
     kqQ: function (unit, kq) {
@@ -202,7 +209,7 @@ MOOC.App = Backbone.Router.extend({
                 cb = _.bind(view.loadExercise, view);
             cb = async.apply(cb, { data: 0 });
             // data: 0 because YT.PlayerState.ENDED = 0s
-            _.bind(view.repeatedlyCheckIfPlayer, view)(cb);
+            //_.bind(view.repeatedlyCheckIfPlayer, view)(cb);
             callback();
         });
 
@@ -266,10 +273,12 @@ MOOC.App = Backbone.Router.extend({
             hasPeerReviews = false;
 
             unitObj.get("knowledgeQuantumList").reset(_.map(data.objects, function (kq) {
-                var data = _.pick(kq, "id", "title", "videoID", "teacher_comments",
+                var data = _.pick(kq, "id", "title", "teacher_comments",
                                   "supplementary_material", "question", "order",
+                                  "iframe_code", "media_content_type", "media_content_id",
                                   "correct", "completed", "normalized_weight",
-                                  "peer_review_assignment", "peer_review_score");
+                                  "peer_review_assignment", "peer_review_score",
+                                  "thumbnail_url");
                 data.id = parseInt(data.id, 10);
                 if (data.peer_review_assignment !== null) {
                     hasPeerReviews = true;
@@ -336,6 +345,14 @@ MOOC.init = function (course_id, KQRoute) {
     MOOC.router = new MOOC.App();
     MOOC.router.route("unit:unit", "unit");
     MOOC.host = window.location.protocol + '//' + window.location.host;
+    MOOC.players_listener = _.extend({}, Backbone.Events);
+    MOOC.players_listener.on('mediaContentPlayerReady', function(player) {
+        player.init();
+    });
+    MOOC.players_listener.on('mediaContentFinished', function (view) {
+        _.bind(view.loadExercise, view)();
+    });
+
     if (KQRoute) {
         MOOC.router.route("unit:unit/kq:kq", "kq");
         MOOC.router.route("unit:unit/kq:kq/q", "kqQ");

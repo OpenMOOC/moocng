@@ -130,8 +130,16 @@
             <input id="kqtitle" type="text" name="kqtitle" maxlength="200" class="input-xlarge" required="required" />
         </div>
         <div class="span4">
-            <label for="kqvideo" class="required">{% trans "Video url" %}</label>
-            <input id="kqvideo" type="text" name="kqvideo" maxlength="200" class="input-xlarge" required="required" />
+            <label for="kqmedia_content_type" class="required">{% trans "Content type" %}</label>
+            <select id="kqmedia_content_type" name="kqmedia_content_type" class="input-xlarge" required="required">
+                {% for media_content_type in media_content_type_choices %}
+                    <option value='{{ media_content_type.0}}'>{{ media_content_type.1}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="span4">
+            <label for="kqmedia_content_id" class="required">{% trans "Content id" %}</label>
+            <input id="kqmedia_content_id" type="text" name="kqmedia_content_id" maxlength="200" class="input-xlarge" required="required" />
         </div>
         <div class="span2">
             <label for="kqweight" class="required">{% trans "Weight" %}</label>
@@ -216,8 +224,16 @@
             </div>
             <div class="row mb20" id="use-solution-video">
                 <div class="span10">
-                    <label for="questionvideo" class="required">{% trans "Solution video url" %}</label>
-                    <input id="questionvideo" type="text" name="questionvideo" maxlength="200" class="span5" required="required" />
+                    <label for="questionmedia_content_type" class="required">{% trans "Content type" %}</label>
+                    <select id="questionmedia_content_type" name="questionmedia_content_type" class="input-xlarge" required="required">
+                        {% for media_content_type in media_content_type_choices %}
+                            <option value='{{ media_content_type.0}}'>{{ media_content_type.1}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="span10">
+                    <label for="questionmedia_content_id" class="required">{% trans "Content id" %}</label>
+                    <input id="questionmedia_content_id" type="text" name="questionmedia_content_id" maxlength="200" class="input-xlarge" required="required" />
                 </div>
             </div>
             <div class="row mb20 hide" id="use-solution-text">
@@ -284,7 +300,7 @@
     <h3 id="media-player-label"><%= title %></h3>
   </div>
   <div class="modal-body">
-    <iframe width="620px" height="372" src="//www.youtube.com/embed/<%= videoID %>?rel=0&controls=0&origin="<%= host %>" frameborder='0'></iframe>
+    <%= iframe_code %>
   </div>
 </script>
 
