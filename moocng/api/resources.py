@@ -215,6 +215,20 @@ class PrivateKnowledgeQuantumResource(ModelResource):
             bundle.data['video'] = video
         return bundle
 
+    def obj_delete(self, request, **kwargs):
+        try:
+            # if the knoledge quantum has a peer review,
+            # submissions and reviews must be deleted too
+            obj = self.obj_get(request, **kwargs)
+            obj.peerreviewassignment
+            submissions = get_db().get_collection('peer_review_submissions')
+            submissions.remove({'kq': obj.id})
+            reviews = get_db().get_collection('peer_review_reviews')
+            reviews.remove({'kq': obj.id})
+        except ObjectDoesNotExist:
+            pass
+        super(PrivateKnowledgeQuantumResource, self).obj_delete(request, **kwargs)
+
 
 class AttachmentResource(ModelResource):
     kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
