@@ -29,3 +29,17 @@ class Asset(models.Model):
     class Meta:
         verbose_name = _(u'asset')
         verbose_name_plural = _(u'assets')
+
+
+class Reservation(models.Model):
+
+    user = models.ForeignKey(User, verbose_name=_(u'User'), null = True, blank = True)
+    kq = models.ForeignKey('courses.KnowledgeQuantum', verbose_name=_(u'Nugget'), null = True, blank = True)
+    asset = models.ForeignKey(Asset, verbose_name=_(u'Asset'), null = False)
+    slot_id = models.PositiveSmallIntegerField(null = True)
+    reservation_begins = models.DateTimeField(verbose_name=_(u'Datetime'), null = False, blank = False)
+    reservation_ends = models.DateTimeField(verbose_name=_(u'Datetime'), null = False, blank = False)
+
+    class Meta:
+        verbose_name = _(u'reservation')
+        verbose_name_plural = _(u'reservations')
