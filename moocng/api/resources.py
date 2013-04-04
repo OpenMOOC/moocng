@@ -859,6 +859,7 @@ class UserResource(ModelResource):
 
 
 class AssetResource(ModelResource):
+    kq = fields.ToManyField(KnowledgeQuantumResource, 'kq')
 
     class Meta:
         queryset = Asset.objects.all()
