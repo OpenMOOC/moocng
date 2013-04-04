@@ -53,8 +53,9 @@ class CourseAdmin(SortableAdmin):
 
 
 class CourseTeacherAdmin(SortableAdmin):
+
     raw_id_fields = ('teacher',)
-    autocomplete_lookup_fields = { 'fk': ['teacher'], }
+    autocomplete_lookup_fields = {'fk': ['teacher'], }
 
     raw_id_fields = ('teacher',)
     autocomplete_lookup_fields = {'fk': ['teacher'], }
