@@ -867,6 +867,18 @@ class AssetResource(ModelResource):
         allowed_methods = ['get']
         authentication = DjangoAuthentication()
         authorization = DjangoAuthorization()
+        
+        
+    def obj_get_list(self, request=None, **kwargs):
+
+        kq = request.GET.get('kq', None)
+
+        if kq is not None:
+            results = Asset.objects.filter(kq__id=kq)
+        else:
+            results = Asset.objects.all()
+        return results
+        
 
 
 class ReservationResource(ModelResource):
@@ -882,4 +894,21 @@ class ReservationResource(ModelResource):
         authorization = DjangoAuthorization()
         filtering = {
             "kq": ('exact'),
+            "user": ('exact'),
         }
+        
+        
+    def obj_get_list(self, request=None, **kwargs):
+
+        kq = request.GET.get('kq', None)
+        user = request.GET.get('user', None)
+
+        if kq is not None and user is not None:           
+            results = Reservation.objects.filter(Q(kq__id=kq) & Q(user__id=user))
+        elif kq is not None:
+            results = Reservation.objects.filter(kq__id=kq)     
+        elif user is not None:
+            results = Reservation.objects.filter(user__id=user)    
+        else:
+            results = Reservation.objects.all()
+        return results
