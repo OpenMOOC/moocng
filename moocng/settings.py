@@ -197,9 +197,9 @@ INSTALLED_APPS = (
     'tastypie',
     'compressor',
     'moocng.contact',
-    'moocng.assets',
     'moocng.badges',  # this must be defined before moocng.courses
     'moocng.courses',
+    'moocng.assets',
     'moocng.portal',
     'moocng.videos',
     'moocng.teacheradmin',

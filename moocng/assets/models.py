@@ -16,6 +16,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from moocng.courses.models import KnowledgeQuantum
+
 from tinymce.models import HTMLField
 
 class Asset(models.Model):
@@ -27,6 +29,8 @@ class Asset(models.Model):
                             blank=True, null=False)
     capacity = models.PositiveIntegerField(verbose_name=_(u'Student capacity'))
     max_bookable_slots = models.PositiveSmallIntegerField(verbose_name=_(u'Maximun bookable slots'))
+    kq = models.ManyToManyField(KnowledgeQuantum, verbose_name=_(u'Assets'),
+                                   related_name='knowledgequantum_as_asset')
 
     class Meta:
         verbose_name = _(u'asset')
@@ -37,7 +41,7 @@ class Reservation(models.Model):
 
     user = models.ForeignKey(User, verbose_name=_(u'User'),
                              null=True, blank=True)
-    kq = models.ForeignKey('courses.KnowledgeQuantum',
+    kq = models.ForeignKey(KnowledgeQuantum,
                            verbose_name=_(u'Nugget'), null=True, blank=True)
     asset = models.ForeignKey(Asset, verbose_name=_(u'Asset'),
                               null=False)

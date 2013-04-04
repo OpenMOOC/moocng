@@ -20,10 +20,21 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('assets', ['Reservation'])
 
+        # Adding M2M table for field kq on 'Asset'
+        db.create_table('assets_asset_kq', (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('asset', models.ForeignKey(orm['assets.asset'], null=False)),
+            ('knowledgequantum', models.ForeignKey(orm['courses.knowledgequantum'], null=False))
+        ))
+        db.create_unique('assets_asset_kq', ['asset_id', 'knowledgequantum_id'])
+
 
     def backwards(self, orm):
         # Deleting model 'Reservation'
         db.delete_table('assets_reservation')
+
+        # Removing M2M table for field kq on 'Asset'
+        db.delete_table('assets_asset_kq')
 
 
     models = {
@@ -32,6 +43,7 @@ class Migration(SchemaMigration):
             'capacity': ('django.db.models.fields.PositiveIntegerField', [], {}),
             'description': ('tinymce.models.HTMLField', [], {'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'kq': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'knowledgequantum_as_asset'", 'symmetrical': 'False', 'to': "orm['courses.KnowledgeQuantum']"}),
             'max_bookable_slots': ('django.db.models.fields.PositiveSmallIntegerField', [], {}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'slot_duration': ('django.db.models.fields.PositiveSmallIntegerField', [], {})
@@ -125,7 +137,6 @@ class Migration(SchemaMigration):
         },
         'courses.knowledgequantum': {
             'Meta': {'ordering': "['order']", 'object_name': 'KnowledgeQuantum'},
-            'asset': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'knowledgequantum_as_asset'", 'symmetrical': 'False', 'to': "orm['assets.Asset']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'order': ('django.db.models.fields.PositiveIntegerField', [], {'default': '1', 'db_index': 'True'}),
             'supplementary_material': ('tinymce.models.HTMLField', [], {'blank': 'True'}),
