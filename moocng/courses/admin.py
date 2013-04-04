@@ -33,7 +33,7 @@ from celery.task.control import inspect
 
 from adminsortable.admin import SortableAdmin
 
-from moocng.courses.forms import UnitForm, AttachmentForm, CourseForm
+from moocng.courses.forms import UnitForm, AttachmentForm
 from moocng.courses.models import Course, Announcement, Unit, KnowledgeQuantum
 from moocng.courses.models import Question, Option, Attachment
 from moocng.courses.models import CourseTeacher
@@ -46,14 +46,16 @@ logger = logging.getLogger(__name__)
 
 class CourseAdmin(SortableAdmin):
 
-    form = CourseForm
     prepopulated_fields = {'slug': ('name', )}
-    filter_horizontal = ('teachers', 'students')
+    exclude = ('students', 'teachers')
+    raw_id_fields = ('owner',)
+    autocomplete_lookup_fields = {'fk': ['owner'], }
 
 
 class CourseTeacherAdmin(SortableAdmin):
+
     raw_id_fields = ('teacher',)
-    autocomplete_lookup_fields = { 'fk': ['teacher'], }
+    autocomplete_lookup_fields = {'fk': ['teacher'], }
 
     list_display = ('course', 'teacher')
 
