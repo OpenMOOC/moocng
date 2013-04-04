@@ -20,6 +20,7 @@ from moocng.courses.models import KnowledgeQuantum
 
 from tinymce.models import HTMLField
 
+
 class Asset(models.Model):
 
     slot_duration = models.PositiveSmallIntegerField(verbose_name=_(u'Slot duration'))
@@ -30,7 +31,7 @@ class Asset(models.Model):
     capacity = models.PositiveIntegerField(verbose_name=_(u'Student capacity'))
     max_bookable_slots = models.PositiveSmallIntegerField(verbose_name=_(u'Maximun bookable slots'))
     kq = models.ManyToManyField(KnowledgeQuantum, verbose_name=_(u'Assets'),
-                                   related_name='knowledgequantum_as_asset')
+                                related_name='knowledgequantum_as_asset')
 
     class Meta:
         verbose_name = _(u'asset')
