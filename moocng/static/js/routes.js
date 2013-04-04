@@ -1,5 +1,5 @@
 /*jslint vars: false, browser: true, nomen: true */
-/*global MOOC: true, Backbone, $, _, async, gettext */
+/*global MOOC: true, Backbone, $, _, async, gettext, MathJax */
 
 // Copyright 2012 Rooter Analysis S.L.
 //
@@ -176,14 +176,32 @@ MOOC.App = Backbone.Router.extend({
                 this.lastUnitView.undelegateEventsInSubViews();
             }
         }
-        async.series(this.unitSteps(unit, MOOC.router.hasHandler("unit1/kq1")));
+
+        var toExecute = this.unitSteps(unit, MOOC.router.hasHandler("unit1/kq1"));
+
+        if (_.isObject(window.MathJax)) {
+            toExecute.push(function (callback) {
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, $('.classes')[0]]);
+            });
+        }
+
+        async.series(toExecute);
     },
 
     kq: function (unit, kq) {
         "use strict";
         unit = parseInt(unit, 10);
         kq = parseInt(kq, 10);
-        async.series(this.kqSteps(unit, kq, true));
+
+        var toExecute = this.kqSteps(unit, kq, true);
+
+        if (_.isObject(window.MathJax)) {
+            toExecute.push(function (callback) {
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, $('.classes')[0]]);
+            });
+        }
+
+        async.series(toExecute);
     },
 
     kqQ: function (unit, kq) {
@@ -206,6 +224,12 @@ MOOC.App = Backbone.Router.extend({
             callback();
         });
 
+        if (_.isObject(window.MathJax)) {
+            toExecute.push(function (callback) {
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, $('.classes')[0]]);
+            });
+        }
+
         async.series(toExecute);
     },
 
@@ -224,6 +248,12 @@ MOOC.App = Backbone.Router.extend({
             MOOC.views.kqViews[kq].loadSolution();
             callback();
         });
+
+        if (_.isObject(window.MathJax)) {
+            toExecute.push(function (callback) {
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, $('.classes')[0]]);
+            });
+        }
 
         async.series(toExecute);
     },
@@ -247,6 +277,12 @@ MOOC.App = Backbone.Router.extend({
             _.bind(view.repeatedlyCheckIfPlayer, view)(cb);
             callback();
         });
+
+        if (_.isObject(window.MathJax)) {
+            toExecute.push(function (callback) {
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, $('.classes')[0]]);
+            });
+        }
 
         async.series(toExecute);
     },

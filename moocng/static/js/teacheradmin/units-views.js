@@ -1,5 +1,5 @@
 /*jslint vars: false, browser: true, nomen: true, regexp: true */
-/*global MOOC:true, _, jQuery, Backbone, tinyMCE, async */
+/*global MOOC:true, _, jQuery, Backbone, tinyMCE, async, MathJax */
 
 // Copyright 2012 Rooter Analysis S.L.
 // Copyright (c) 2013 Grupo Opentia
@@ -190,6 +190,9 @@ if (_.isUndefined(window.MOOC)) {
                         view.setElement(el);
                     }
                     view.render();
+                    if (_.isObject(window.MathJax)) {
+                        MathJax.Hub.Queue(["Typeset", MathJax.Hub, $('.classes')[0]]);
+                    }
                 });
                 node.append(block("<button id='addUnit' class='btn'>" +
                     "<i class='icon-plus'></i> " + MOOC.trans.add + " " +

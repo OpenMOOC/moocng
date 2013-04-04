@@ -208,6 +208,7 @@ INSTALLED_APPS = (
     'moocng.peerreview',
     'djangosaml2',
     'south',
+    'django_mathjax',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -472,6 +473,17 @@ CACHES = {
     },
 }
 
+MATHJAX_ENABLED = False
+MATHJAX_CONFIG_FILE = "TeX-AMS-MML_HTMLorMML"
+MATHJAX_CONFIG_DATA = {
+  "tex2jax": {
+    "inlineMath":
+      [
+          ['$','$'],
+          ['\\(','\\)']
+      ]
+  }
+}
 
 try:
     from local_settings import *

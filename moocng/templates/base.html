@@ -22,6 +22,10 @@
   <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-1.7.2.min.js"><\/script>')</script>
   <script src="{{ STATIC_URL }}js/libs/modernizr-2.5.3.min.js"></script>
   <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
+  {% if mathjax_enabled %}
+    {% load mathjax %}
+    {% mathjax_scripts %}
+  {% endif %}
   {% block extraheader %}{% endblock %}
 </head>
 <body>
