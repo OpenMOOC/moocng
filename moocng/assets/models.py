@@ -21,8 +21,10 @@ from tinymce.models import HTMLField
 class Asset(models.Model):
 
     slot_duration = models.PositiveSmallIntegerField(verbose_name=_(u'Slot duration'))
-    name = models.CharField(verbose_name=_(u'Name'), max_length = 200)
-    description = HTMLField(verbose_name=_(u'Description'), blank = True, null = False)
+    name = models.CharField(verbose_name=_(u'Name'),
+                            max_length=200)
+    description = HTMLField(verbose_name=_(u'Description'),
+                            blank=True, null=False)
     capacity = models.PositiveIntegerField(verbose_name=_(u'Student capacity'))
     max_bookable_slots = models.PositiveSmallIntegerField(verbose_name=_(u'Maximun bookable slots'))
 
@@ -33,12 +35,17 @@ class Asset(models.Model):
 
 class Reservation(models.Model):
 
-    user = models.ForeignKey(User, verbose_name=_(u'User'), null = True, blank = True)
-    kq = models.ForeignKey('courses.KnowledgeQuantum', verbose_name=_(u'Nugget'), null = True, blank = True)
-    asset = models.ForeignKey(Asset, verbose_name=_(u'Asset'), null = False)
-    slot_id = models.PositiveSmallIntegerField(null = True)
-    reservation_begins = models.DateTimeField(verbose_name=_(u'Datetime'), null = False, blank = False)
-    reservation_ends = models.DateTimeField(verbose_name=_(u'Datetime'), null = False, blank = False)
+    user = models.ForeignKey(User, verbose_name=_(u'User'),
+                             null=True, blank=True)
+    kq = models.ForeignKey('courses.KnowledgeQuantum',
+                           verbose_name=_(u'Nugget'), null=True, blank=True)
+    asset = models.ForeignKey(Asset, verbose_name=_(u'Asset'),
+                              null=False)
+    slot_id = models.PositiveSmallIntegerField(null=True)
+    reservation_begins = models.DateTimeField(verbose_name=_(u'Datetime'),
+                                              null=False, blank=False)
+    reservation_ends = models.DateTimeField(verbose_name=_(u'Datetime'),
+                                            null=False, blank=False)
 
     class Meta:
         verbose_name = _(u'reservation')
