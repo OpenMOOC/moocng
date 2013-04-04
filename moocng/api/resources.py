@@ -53,7 +53,7 @@ from moocng.peerreview.utils import (kq_get_peer_review_score,
                                      get_peer_review_review_score)
 from moocng.videos.utils import extract_YT_video_id
 
-from moocng.assets.models import Asset
+from moocng.assets.models import Asset,Reservation
 
 
 class CourseResource(ModelResource):
@@ -866,3 +866,19 @@ class AssetResource(ModelResource):
         allowed_methods = ['get']
         authentication = DjangoAuthentication()
         authorization = DjangoAuthorization()
+        
+class ReservationResource(ModelResource):
+    user = fields.ToOneField(UserResource, 'user')
+    kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
+    asset = fields.ToOneField(AssetResource, 'asset');
+
+
+    class Meta:
+        queryset = Reservation.objects.all()
+        resource_name = 'reservation'
+        allowed_methods = ['get']
+        authentication = DjangoAuthentication()
+        authorization = DjangoAuthorization()
+        filtering = {
+            "kq": ('exact'),
+        }

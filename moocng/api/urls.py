@@ -37,6 +37,7 @@ v1_api.register(resources.PrivateEvaluationCriterionResource())
 v1_api.register(resources.PeerReviewSubmissionsResource())
 v1_api.register(resources.PeerReviewReviewsResource())
 v1_api.register(resources.AssetResource())
+v1_api.register(resources.ReservationResource())
 
 urlpatterns = patterns(
     '',
