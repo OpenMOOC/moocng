@@ -2,6 +2,7 @@
 /*global MOOC: true, Backbone, $, _, moment */
 
 // Copyright 2012 Rooter Analysis S.L.
+// Copyright (c) 2013 Grupo Opentia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -142,6 +143,51 @@ MOOC.models.PeerReviewAssignment = Backbone.Model.extend({
 MOOC.models.PeerReviewAssignmentList = MOOC.models.TastyPieCollection.extend({
     model: MOOC.models.PeerReviewAssignment,
     url: MOOC.ajax.getAbsoluteUrl('peer_review_assignment/')
+});
+
+MOOC.models.Asset = Backbone.Model.extend({
+    defaults: {
+        description: "",
+        name: "",
+        slot_duration: 0,
+        max_bookable_slots: 0,
+        capacity: 0,
+
+        _kqList: new MOOC.models.KnowledgeQuantumList()
+    },
+
+    url: function () {
+        "use strict";
+        if (this.has("id")) {
+            return MOOC.ajax.getAbsoluteUrl("asset/") + this.get("id") + "/";
+        }
+
+        return MOOC.ajax.getAbsoluteUrl("asset/");
+    }
+});
+
+MOOC.models.Reservation = Backbone.Model.extend({
+    defaults: {
+        asset: null,
+        user: null,
+        kq: null,
+        slot_id: 0,
+        reservation_begins: null,
+        reservation_ends: null,
+
+        _knowledgeQuantumInstance: null,
+        _assetInstance: null,
+        _userInstance: null
+    },
+
+    url: function () {
+        "use strict";
+        if (this.has("id")) {
+            return MOOC.ajax.getAbsoluteUrl("reservation/") + this.get("id") + "/";
+        }
+
+        return MOOC.ajax.getAbsoluteUrl("reservation/");
+    }
 });
 
 MOOC.models.Activity = Backbone.Model.extend({
