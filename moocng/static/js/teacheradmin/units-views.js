@@ -1,5 +1,5 @@
 /*jslint vars: false, browser: true, nomen: true, regexp: true */
-/*global MOOC:true, _, jQuery, Backbone, tinyMCE, async */
+/*global MOOC:true, _, jQuery, Backbone, tinyMCE, async, MEDIA_CONTENT_TYPES */
 
 // Copyright 2012 Rooter Analysis S.L.
 // Copyright (c) 2013 Grupo Opentia
@@ -83,34 +83,77 @@ if (_.isUndefined(window.MOOC)) {
             return result;
         },
 
-        stripTags = function (str) {
-            return str.replace(/<\/?[^>]+>/ig, '');
+        checkMediaContentId = function ($el) {
+            var content_id,
+                content_type,
+                patterns,
+                result_kqmedia,
+                result_question;
+
+            patterns = {
+                'youtube': [
+                    /youtube\.com\/watch[#\?].*\?v=([^"\& ]+)/,
+                    /youtube\.com\/embed\/([^"\&\? ]+)/,
+                    /youtube\.com\/v\/([^"\&\? ]+)/,
+                    /youtube\.com\/\?v=([^"\& ]+)/,
+                    /youtu\.be\/([^"\&\? ]+)/,
+                    /gdata\.youtube\.com\/feeds\/api\/videos\/([^"\&\? ]+)/,
+                    /^([^"\&\? ]+)$/
+                ],
+                'vimeo': [
+                    /vimeo\.com\/(\d+)/,
+                    /vimeo\.com\/video\/(\d+)/,
+                    /vimeo\.com\/groups\/.+\/videos\/(\d+)/,
+                    /vimeo\.com\/channels\/.+#(\d+)/,
+                    /^(\d+)$/
+                ],
+                'scribd': [
+                    /scribd\.com\/doc\/(\d+)\/.*/,
+                    /^(\d+)$/
+                ],
+                'prezi': [
+                    /prezi\.com\/([a-zA-Z0-9\-]+)\/.*/,
+                    /^([a-zA-Z0-9\-]+)$/
+                ]
+            };
+
+            result_kqmedia = false;
+            $("#kqmedia_content_id").each(function (idx, elem) {
+                content_id = $(elem).val();
+                content_type = $("#kqmedia_content_type").val();
+
+                if (!$(elem).is(':visible')) {
+                    result_kqmedia = true;
+                }
+
+                _.each(patterns[content_type], function (pattern) {
+                    if (content_id.match(pattern) !== null) {
+                        result_kqmedia = true;
+                    }
+                });
+            });
+
+            result_question = false;
+            $("#questionmedia_content_id").each(function (idx, elem) {
+                content_id = $(elem).val();
+                content_type = $("#questionmedia_content_type").val();
+
+                if (!$(elem).is(':visible')) {
+                    result_question = true;
+                }
+
+                _.each(patterns[content_type], function (pattern) {
+                    if (content_id.match(pattern) !== null) {
+                        result_question = true;
+                    }
+                });
+            });
+
+            return result_kqmedia && result_question;
         },
 
-        extractVideoID = function (video_url) {
-            video_url = $.trim(video_url);
-            if (video_url[video_url.length - 1] === '/') {
-                // Remove trailing '/'
-                video_url = video_url.substring(0, video_url.length - 1);
-            }
-            video_url = video_url.split('/');
-            video_url = video_url[video_url.length - 1];
-            if (video_url.indexOf('=') > 0) {
-                if (video_url.indexOf("watch") === 0) {
-                    // Long url, remove "watch?"
-                    video_url = video_url.substring(video_url.indexOf('?') + 1);
-                    // Look for 'v' parameter
-                    video_url = _.find(video_url.split('&'), function (parameter) {
-                        return parameter.indexOf("v=") === 0;
-                    });
-                    // Remove "v="
-                    video_url = video_url.substring(2);
-                } else {
-                    // Short url, remove all parameters
-                    video_url = video_url.substring(0, video_url.indexOf('?'));
-                }
-            }
-            return video_url;
+        stripTags = function (str) {
+            return str.replace(/<\/?[^>]+>/ig, '');
         },
 
         getCookie = function (name) {
@@ -429,6 +472,7 @@ if (_.isUndefined(window.MOOC)) {
                     header,
                     iframe,
                     video_thumbnail,
+                    thumbnail_url,
                     data;
 
                 header = "<h4>" + this.model.get("title") + "</h4><button " +
@@ -447,21 +491,19 @@ if (_.isUndefined(window.MOOC)) {
                         "'>" + MOOC.trans.kq.pr + "</span>";
                 }
 
-                iframe = "<iframe width='110px' height='71px' src='//www.youtube.com/embed/" +
-                    this.model.get("videoID") + "?rel=0&controls=0&origin=" +
-                    MOOC.host + "' frameborder='0'></iframe>";
+                thumbnail_url = this.model.get("thumbnail_url");
 
-                video_thumbnail = "<a class='thumbnail' data-toggle='modal' href='#player-" + this.model.id + "'>" +
-                                  "<img class='youtube-thumbnail' src='//img.youtube.com/vi/" +
-                                    this.model.get("videoID") + "/1.jpg'/></a>";
+                video_thumbnail = "";
+                if (thumbnail_url) {
+                    video_thumbnail = "<a class='thumbnail' data-toggle='modal' href='#player-" + this.model.id + "'>" +
+                                  "<img src='" + this.model.get("thumbnail_url") + "'/></a>";
+                }
 
                 data = "<p>" + MOOC.trans.kq.teacher_comments + ": " +
                     truncate(_.escape(stripTags(this.model.get("teacher_comments")))) + "</p>" +
                     "<p>" + MOOC.trans.kq.supplementary_material + ": " +
                     truncate(_.escape(stripTags(this.model.get("supplementary_material")))) + "<p/>";
 
-
-                // inlineb(iframe, { style: "margin-left: 30px;" }) +
 
                 html = inlineb({ classes: "drag-handle" }) +
                     inlineb(video_thumbnail, { style: "margin-left: 30px;" }) +
@@ -476,16 +518,22 @@ if (_.isUndefined(window.MOOC)) {
                 });
             },
 
-            player_template: _.template($("#modal-video-player-tpl").html()),
-
             openVideoPlayer: function (evt) {
-                var context = {
-                    videoID: this.model.get("videoID"),
+                var iframe_template,
+                    iframe,
+                    context,
+                    modal_template;
+
+                modal_template = _.template($("#modal-video-player-tpl").html());
+                iframe_template = _.template(this.model.get("iframe_code"));
+                iframe = iframe_template({ width: '620px', height: '372px', allowfullscreen: false, controls: false, origin: MOOC.host });
+
+                context = {
                     title: this.model.get("title"),
-                    host: MOOC.host
+                    iframe_code: iframe
                 };
 
-                $("#media-player").html(this.player_template(context));
+                $("#media-player").html(modal_template(context));
                 $("#media-player").modal("show");
                 $("#media-player").on('hidden', function (evt) {
                     $(evt.target).html("");
@@ -505,7 +553,7 @@ if (_.isUndefined(window.MOOC)) {
 
             initialize: function () {
                 _.bindAll(this, "render", "changeType", "save", "remove",
-                    "goBack", "checkRequired");
+                    "goBack", "checkRequired", "checkMediaContentId");
             },
 
             formatDate: function (date) {
@@ -568,6 +616,10 @@ if (_.isUndefined(window.MOOC)) {
                 evt.stopPropagation();
                 if (!this.checkRequired()) {
                     MOOC.ajax.showAlert("required");
+                    return;
+                }
+                if (!checkMediaContentId()) {
+                    MOOC.ajax.showAlert("media_content_id");
                     return;
                 }
                 MOOC.ajax.showLoading();
@@ -642,7 +694,8 @@ if (_.isUndefined(window.MOOC)) {
                 "click button#save-kq": "save",
                 "click button#delete-kq": "remove",
                 "click button.removecriterion": "removePeerReviewCriterion",
-                "click button.back": "goBack"
+                "click button.back": "goBack",
+                "change select#kqmedia_content_type": "redrawCanGetLastFrame"
             },
 
             initialize: function () {
@@ -660,6 +713,8 @@ if (_.isUndefined(window.MOOC)) {
                     assignment,
                     criterionList,
                     criterionListDiv,
+                    content_type,
+                    can_get_last_frame,
                     self;
 
                 $(".viewport").addClass("hide");
@@ -669,10 +724,10 @@ if (_.isUndefined(window.MOOC)) {
                 this.$el.html($("#edit-kq-tpl").text());
 
                 this.$el.find("input#kqtitle").val(this.model.get("title"));
-                if (this.model.has("videoID") && this.model.get("videoID") !== "") {
-                    this.$el.find("input#kqvideo").val("http://youtu.be/" + this.model.get("videoID"));
-                }
+                this.$el.find("select#kqmedia_content_type").val(this.model.get("media_content_type"));
+                this.$el.find("input#kqmedia_content_id").val(this.model.get("media_content_id"));
                 this.$el.find("input#kqweight").val(this.model.get("weight"));
+
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
                     this.$el.find("#noquestion").addClass("hide");
@@ -682,7 +737,7 @@ if (_.isUndefined(window.MOOC)) {
                     this.$el.find("#nopeerreviewassignment").addClass("hide");
                     this.$el.find("#question-tab").removeClass("hide");
                     this.$el.find("#question img").attr("src", question.get("lastFrame"));
-                    if (question.has("solutionVideo") && question.get("solutionVideo") !== "") {
+                    if (question.has("solution_media_content_id") && question.get("solution_media_content_id") !== "") {
                         this.$el.find("button#use-solution-video-btn").trigger("click");
                     } else if (question.has("solutionText") && question.get("solutionText") !== "") {
                         this.$el.find("button#use-solution-text-btn").trigger("click");
@@ -690,13 +745,23 @@ if (_.isUndefined(window.MOOC)) {
                         // Default
                         this.$el.find("button#use-solution-video-btn").trigger("click");
                     }
-                    if (question.has("solutionVideo") && question.get("solutionVideo") !== "") {
-                        this.$el.find("#questionvideo").val("http://youtu.be/" + question.get("solutionVideo"));
+                    if (question.has("solution_media_content_type") && question.get("solution_media_content_type") !== "") {
+                        this.$el.find("#questionmedia_content_type").val(question.get("solution_media_content_type"));
+                    }
+                    if (question.has("solution_media_content_id") && question.get("solution_media_content_id") !== "") {
+                        this.$el.find("#questionmedia_content_id").val(question.get("solution_media_content_id"));
                     }
                     this.$el.find("textarea#solution-text").val(question.get("solutionText"));
                     if (!question.get("use_last_frame")) {
                         this.$el.find("#last-frame").addClass("hide");
                         this.$el.find("#no-last-frame").removeClass("hide");
+                    }
+                    content_type = this.model.get('media_content_type');
+                    can_get_last_frame = MEDIA_CONTENT_TYPES[content_type].can_get_last_frame;
+                    if (!can_get_last_frame) {
+                        this.$el.find("#last-frame").addClass("hide");
+                        this.$el.find("#no-last-frame").addClass("hide");
+                        this.$el.find("#cant-last-frame").removeClass("hide");
                     }
                     if (question.get("lastFrame").indexOf("no-image.png") >= 0) {
                         this.$el.find("#question img").css("margin-bottom", "10px");
@@ -782,6 +847,30 @@ if (_.isUndefined(window.MOOC)) {
                 return this;
             },
 
+            redrawCanGetLastFrame: function (event) {
+                var target,
+                    content_type,
+                    can_get_last_frame,
+                    question;
+
+                target = $(event.currentTarget);
+                content_type = target.val();
+                can_get_last_frame = MEDIA_CONTENT_TYPES[content_type].can_get_last_frame;
+                question = this.model.get('questionInstance');
+                if (!can_get_last_frame) {
+                    this.$el.find("#last-frame").addClass("hide");
+                    this.$el.find("#no-last-frame").addClass("hide");
+                    this.$el.find("#cant-last-frame").removeClass("hide");
+                } else {
+                    if (question.get("use_last_frame")) {
+                        this.$el.find("#last-frame").removeClass("hide");
+                    } else {
+                        this.$el.find("#no-last-frame").removeClass("hide");
+                    }
+                    this.$el.find("#cant-last-frame").addClass("hide");
+                }
+            },
+
             // Returns true if all required fields are filled, false otherwise
             checkRequired: function () {
                 return checkRequiredAux(this.$el);
@@ -794,6 +883,10 @@ if (_.isUndefined(window.MOOC)) {
                     MOOC.ajax.showAlert("required");
                     return;
                 }
+                if (!checkMediaContentId()) {
+                    MOOC.ajax.showAlert("media_content_id");
+                    return;
+                }
                 MOOC.ajax.showLoading();
 
                 var steps = [],
@@ -802,22 +895,33 @@ if (_.isUndefined(window.MOOC)) {
                     assignment,
                     criterionList,
                     criterionListSaveTasks,
+                    content_type,
+                    can_get_last_frame,
                     attachCB;
 
                 this.model.unset("new");
                 this.model.set("title", $.trim(this.$el.find("input#kqtitle").val()));
-                this.model.set("videoID", extractVideoID(this.$el.find("input#kqvideo").val()));
+                this.model.set("media_content_id", $.trim(this.$el.find("input#kqmedia_content_id").val()));
+                this.model.set("media_content_type", this.$el.find("select#kqmedia_content_type").val());
                 this.model.set("weight", parseInt(this.$el.find("input#kqweight").val(), 10));
                 this.model.set("supplementary_material", tinyMCE.get("kqsupplementary").getContent());
                 this.model.set("teacher_comments", tinyMCE.get("kqcomments").getContent());
 
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
+                    content_type = this.$el.find("select#kqmedia_content_type").val();
+                    can_get_last_frame = MEDIA_CONTENT_TYPES[content_type].can_get_last_frame;
+                    if (!can_get_last_frame) {
+                        question.set("use_last_frame", false);
+                    }
+
                     if (this.$el.find("#use-solution-video-btn").is(".active")) {
-                        question.set("solutionVideo", extractVideoID(this.$el.find("#questionvideo").val()));
+                        question.set("solution_media_content_type", this.$el.find("#questionmedia_content_type").val());
+                        question.set("solution_media_content_id", this.$el.find("#questionmedia_content_id").val());
                         question.set("solutionText", null);
                     } else {
-                        question.set("solutionVideo", null);
+                        question.set("solution_media_content_type", null);
+                        question.set("solution_media_content_id", null);
                         question.set("solutionText", tinyMCE.get("solution-text").getContent());
                     }
 
@@ -976,6 +1080,10 @@ if (_.isUndefined(window.MOOC)) {
                     MOOC.ajax.showAlert("required");
                     return;
                 }
+                if (!checkMediaContentId()) {
+                    MOOC.ajax.showAlert("media_content_id");
+                    return;
+                }
                 var question = new MOOC.models.Question(),
                     view = this;
                 this.model.set("questionInstance", question);
@@ -991,6 +1099,11 @@ if (_.isUndefined(window.MOOC)) {
                 evt.stopPropagation();
                 if (!this.checkRequired()) {
                     MOOC.ajax.showAlert("required");
+                    return;
+                }
+
+                if (!checkMediaContentId()) {
+                    MOOC.ajax.showAlert("media_content_id");
                     return;
                 }
 
@@ -1048,6 +1161,10 @@ if (_.isUndefined(window.MOOC)) {
                 evt.stopPropagation();
                 if (!this.checkRequired()) {
                     MOOC.ajax.showAlert("required");
+                    return;
+                }
+                if (!checkMediaContentId()) {
+                    MOOC.ajax.showAlert("media_content_id");
                     return;
                 }
                 var peer_review_assignment,

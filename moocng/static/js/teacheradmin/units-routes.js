@@ -34,10 +34,12 @@ if (_.isUndefined(window.MOOC)) {
                 promises.push($.ajax(MOOC.ajax.host + "privkq/?format=json&unit=" + unit.get("id"), {
                     success: function (data, textStatus, jqXHR) {
                         unit.get("knowledgeQuantumList").reset(_.map(data.objects, function (kq) {
-                            var data = _.pick(kq, "id", "title", "videoID",
+                            var data = _.pick(kq, "id", "title",
                                 "teacher_comments", "supplementary_material",
                                 "question", "order", "correct", "completed",
-                                "weight", "peer_review_assignment");
+                                "iframe_code", "media_content_type", "media_content_id",
+                                "normalized_weight", "peer_review_assignment",
+                                "thumbnail_url", "weight");
                             data.id = parseInt(data.id, 10);
                             return data;
                         }));
@@ -61,7 +63,9 @@ if (_.isUndefined(window.MOOC)) {
                         var question = new MOOC.models.Question({
                             id: parseInt(data.id, 10),
                             lastFrame: data.last_frame,
-                            solutionVideo: data.solutionID,
+                            solution_media_content_type: data.solution_media_content_type,
+                            solution_media_content_id: data.solution_media_content_id,
+                            iframe_code: data.iframe_code,
                             solutionText: data.solution_text,
                             use_last_frame: data.use_last_frame
                         });
