@@ -33,7 +33,8 @@ class Asset(models.Model):
     capacity = models.PositiveIntegerField(verbose_name=_(u'Student capacity'))
     max_bookable_slots = models.PositiveSmallIntegerField(verbose_name=_(u'Maximun bookable slots'))
     kq = models.ManyToManyField(KnowledgeQuantum, verbose_name=_(u'Assets'),
-                                related_name='knowledgequantum_as_asset')
+                                related_name='knowledgequantum_as_asset',
+                                blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'asset')
