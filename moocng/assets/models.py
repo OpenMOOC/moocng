@@ -14,8 +14,10 @@
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
 
+from moocng.assets import cache
 from moocng.courses.models import KnowledgeQuantum
 
 from tinymce.models import HTMLField
@@ -39,6 +41,24 @@ class Asset(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+def invalidate_cache(sender, **kwargs):
+    if kwargs['action'] not in ('post_add', 'post_remove', 'post_clear'):
+        return
+
+    kqs = []
+    if kwargs['reverse']:
+        kqs.append(instance)
+    elif kwargs['pk_set'] is not None:
+        kqs = KnowledgeQuantum.objects.filter(id__in=kwargs['pk_set'])
+
+    for i in kqs:
+        course = i.unit.course
+        cache.invalidate_course_has_assets_in_cache(course)
+
+
+signals.m2m_changed.connect(invalidate_cache, sender=Asset.kq.through)
 
 
 class Reservation(models.Model):
