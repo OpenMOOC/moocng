@@ -153,7 +153,7 @@ MOOC.models.Asset = Backbone.Model.extend({
         max_bookable_slots: 0,
         capacity: 0,
 
-        _kqList: new MOOC.models.KnowledgeQuantumList()
+        _kqList: null
     },
 
     url: function () {
