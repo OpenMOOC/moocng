@@ -18,7 +18,7 @@ from django.forms import ModelForm, ValidationError, TextInput
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 
-from moocng.assets.models import Asset
+from moocng.assets.models import Asset, Reservation
 
 
 class AssetForm(ModelForm):
@@ -26,3 +26,9 @@ class AssetForm(ModelForm):
     class Meta:
         model = Asset
         exclude = ('kq')
+
+
+class ReservationForm(ModelForm):
+
+    class Meta:
+        model = Reservation
