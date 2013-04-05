@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load i18n askboturl peer_review_tags %}
+{% load i18n askboturl peer_review_tags asset_tags %}
 
 {% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
 
@@ -25,6 +25,12 @@
     <a href="{% url course_reviews course.slug %}">{% trans "Reviews" %}</a>
   </li>
   {% endif_has_peer_review_assignments %}
+
+  {% if_has_assets course %}
+  <li {% block nav-course-assets %}{% endblock %}>
+    <a href="{% url course_overview course.slug %}">{% trans "Assets" %}</a> <!-- TODO: CHANGE -->
+  </li>
+  {% endif_has_assets %}
 
   <li {% block nav-course-progress %}{% endblock %}>
     <a href="{% url course_progress course.slug %}">{% trans "Progress" %}</a>
