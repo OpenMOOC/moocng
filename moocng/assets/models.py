@@ -37,6 +37,9 @@ class Asset(models.Model):
         verbose_name = _(u'asset')
         verbose_name_plural = _(u'assets')
 
+    def __unicode__(self):
+        return self.name
+
 
 class Reservation(models.Model):
 
