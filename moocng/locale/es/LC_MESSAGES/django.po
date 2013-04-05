@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-26 09:53+0100\n"
+"POT-Creation-Date: 2013-04-05 11:28+0200\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Antonio Perez-Aranda <aperezaranda@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -32,7 +32,7 @@ msgstr "Inglés"
 msgid "Spanish"
 msgstr "Español"
 
-#: api/admin.py:39
+#: api/admin.py:41
 #, python-format
 msgid "Change key of selected %(verbose_name_plural)s"
 msgstr "Cambiar la key de las %(verbose_name_plural)s seleccionada(s)"
@@ -289,16 +289,16 @@ msgstr "Contacto"
 msgid "Submit"
 msgstr "Enviar"
 
-#: courses/admin.py:179 courses/admin.py:227 courses/admin.py:275
+#: courses/admin.py:183 courses/admin.py:231 courses/admin.py:279
 #, python-format
 msgid "%(name)s object with primary key %(key)r does not exist."
 msgstr "El objeto %(name)s con clave primaria %(key)r no existe."
 
-#: courses/admin.py:198
+#: courses/admin.py:202
 msgid "Edit options for question"
 msgstr "Editar las opciones de la pregunta"
 
-#: courses/admin.py:234
+#: courses/admin.py:238
 #, python-format
 msgid "Option %(option)d for question %(question)s does not exist."
 msgstr "La opción %(option)d de la pregunta %(question)s no existe."
@@ -393,7 +393,7 @@ msgid "Enrollment method"
 msgstr "Método de matriculación"
 
 #: courses/models.py:90 courses/models.py:215
-#: courses/templates/courses/home.html:27
+#: courses/templates/courses/home.html:26
 #: teacheradmin/templates/teacheradmin/units.html:35
 #: teacheradmin/templates/teacheradmin/units.html:75
 msgid "Draft"
@@ -652,7 +652,7 @@ msgstr "opciones"
 msgid "{0} at {1} x {2}"
 msgstr "{0} en {1} x {2}"
 
-#: courses/security.py:60
+#: courses/security.py:61
 msgid ""
 "This course is not public yet. Your have access to it because you are staff "
 "member"
@@ -660,14 +660,14 @@ msgstr ""
 "Este curso no es público aún. Tienes acceso a él porque eres miembro del "
 "equipo de administradores"
 
-#: courses/security.py:61
+#: courses/security.py:62
 msgid ""
 "This course is not public yet. Your have access to it because you are a "
 "super user"
 msgstr ""
 "Esto curso no es público aún. Tienes acceso a él porque eres un super usuario"
 
-#: courses/security.py:62
+#: courses/security.py:63
 msgid ""
 "This course is not public yet. Your have access to it because you are a "
 "teacher of the course"
@@ -675,41 +675,41 @@ msgstr ""
 "Este curso no es público aún. Tienes acceso a él porque eres profesor del "
 "curso"
 
-#: courses/views.py:71
+#: courses/views.py:77
 msgid "Only administrators can create courses"
 msgstr "Sólo los administradores pueden crear cursos"
 
-#: courses/views.py:82 courses/views.py:94
+#: courses/views.py:88 courses/views.py:100
 msgid "That user doesn't exists, the owner must be an user of the platform"
 msgstr ""
 "El usuario no existe, el propietario de un curso ha de ser un usuario de la "
 "plataforma"
 
-#: courses/views.py:88
+#: courses/views.py:94
 msgid "The owner must be a name plus ID or an email"
 msgstr ""
 "El propietario debe definirse mediante un nombre más ID, o un correo "
 "electrónico"
 
-#: courses/views.py:101
+#: courses/views.py:107
 msgid "The name can't be an empty string"
 msgstr "El nombre del curso no puede ser una cadena vacía"
 
-#: courses/views.py:104
+#: courses/views.py:110
 msgid "To fill"
 msgstr "A rellenar"
 
-#: courses/views.py:111
+#: courses/views.py:117
 #, python-format
 msgid "Your course \"%s\" has been created"
 msgstr "Su curso \"%s\" ha sido creado"
 
-#: courses/views.py:121
+#: courses/views.py:127
 msgid "The course was successfully created"
 msgstr "El curso se ha creado con éxito"
 
-#: courses/views.py:163 courses/views.py:205 peerreview/views.py:51
-#: peerreview/views.py:118 peerreview/views.py:148
+#: courses/views.py:169 courses/views.py:212 peerreview/views.py:50
+#: peerreview/views.py:118 peerreview/views.py:158
 msgid "You are not enrolled in this course"
 msgstr "No estás matriculado en este curso"
 
@@ -1117,7 +1117,7 @@ msgstr ""
 "\n"
 "Un afectuoso saludo, el equipo de %(site)s\n"
 
-#: courses/templates/courses/home.html:31
+#: courses/templates/courses/home.html:30
 msgid "More information about this course"
 msgstr "Más información sobre este curso"
 
@@ -1358,7 +1358,7 @@ msgstr "Criterios de evaluación"
 msgid "{0} - EvaluationCriterion {1}"
 msgstr "{0} - Criterio de evaluación {1}"
 
-#: peerreview/views.py:54 peerreview/views.py:151
+#: peerreview/views.py:54 peerreview/views.py:162
 msgid "The selected peer review assignment is not part of this course."
 msgstr ""
 "La actividad revisada por compañeros seleccionada no es parte de este curso"
@@ -1375,15 +1375,15 @@ msgstr ""
 "No hay ninguna entrega que necesite revisión en este momento. Por favor, "
 "pruebe más tarde."
 
-#: peerreview/views.py:162
+#: peerreview/views.py:173
 msgid "You don't have this submission assigned."
 msgstr "No tienes asignado para revisión este ejercicio"
 
-#: peerreview/views.py:182
+#: peerreview/views.py:193
 msgid "Your can't submit two times the same review."
 msgstr "No puedes enviar 2 veces la misma revisión"
 
-#: peerreview/views.py:192
+#: peerreview/views.py:203
 #, python-format
 msgid ""
 "Your review has been submitted. You have to review at least %d exercises "
@@ -1391,25 +1391,25 @@ msgid ""
 msgstr ""
 "Tu revisión ha sido enviada. Tienes que revisar al menos %d ejercicios más."
 
-#: peerreview/views.py:194
+#: peerreview/views.py:205
 msgid "Your review has been submitted."
 msgstr "Su revisión ha sido enviada."
 
-#: peerreview/views.py:222
+#: peerreview/views.py:233
 #, python-format
 msgid "Your assignment \"%(nugget)s\" has been reviewed"
 msgstr "Su trabajo \"%(nugget)s\" ha sido revisado"
 
-#: peerreview/views.py:229
+#: peerreview/views.py:240
 msgid "Undefined"
 msgstr "Indefinido"
 
-#: peerreview/views.py:311
+#: peerreview/views.py:322
 #, python-format
 msgid "Your file is greater than the max allowed size (%d MB)."
 msgstr "Tu fichero es mayor del tamaño máximo permitido (%d MB)."
 
-#: peerreview/views.py:315
+#: peerreview/views.py:326
 #, python-format
 msgid "Your text is greater than the max allowed size (%d characters)."
 msgstr "Tu texto es mayor del tamaño máximo permitod (%d caracteres)."
@@ -2166,12 +2166,10 @@ msgid "Confirm removal"
 msgstr "Confirmar borrado"
 
 #: teacheradmin/templates/teacheradmin/units.html:322
-msgid ""
-"Are you completely sure you want to remove this peer review assignment? "
-"Submissions received from students will be removed as well."
+msgid "Are you completely sure you want to remove this peer review assignment?"
 msgstr ""
 "¿Está completamente seguro de que quiere eliminar esta tarea revisada por "
-"compañeros? Las entregas realizadas por los alumnos también serán borradas."
+"compañeros?"
 
 #: teacheradmin/templates/teacheradmin/units.html:326
 msgid "Confirm"
