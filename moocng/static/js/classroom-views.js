@@ -1,5 +1,5 @@
 /*jslint vars: false, browser: true, nomen: true */
-/*global MOOC: true, Backbone, $, _, YT, async */
+/*global MOOC: true, Backbone, $, _, YT, async, MathJax */
 
 // Copyright 2012 Rooter Analysis S.L.
 //
@@ -130,6 +130,12 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 view.render();
             });
         }, this));
+
+        if (_.isObject(window.MathJax)) {
+            _.each($('.mathjax'), function (item) {
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, item]);
+            });
+        }
 
         return this;
     },
@@ -459,7 +465,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 html = "";
 
             if (questionInstance.has("solutionText")) {
-                html = "<div class='solution-wrapper white'>" + questionInstance.get("solutionText") + "</div>";
+                html = "<div class='solution-wrapper white mathjax'>" + questionInstance.get("solutionText") + "</div>";
             } else if (questionInstance.has("solutionVideo")) {
                 html = '<iframe id="ytplayer" width="620px" height="372px" ';
                 html += 'src="//www.youtube.com/embed/' + this.model.get("questionInstance").get("solutionVideo");
@@ -478,6 +484,14 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
             callback();
         }, this));
+
+        if (_.isObject(window.MathJax)) {
+            toExecute.push(function (callback) {
+                _.each($('.mathjax'), function (item) {
+                    MathJax.Hub.Queue(["Typeset", MathJax.Hub, item]);
+                });
+            });
+        }
 
         async.series(toExecute);
 
@@ -737,7 +751,6 @@ MOOC.views.Option = Backbone.View.extend({
 
         this.$el.append(this.make(tag, attributes, content));
 
-
         return this;
     }
 });
@@ -858,6 +871,12 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
             $("#kq-next-container").removeClass("offset4");
         }
 
+        if (_.isObject(window.MathJax)) {
+            _.each($('.mathjax'), function (item) {
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, item]);
+            });
+        }
+
         return this;
     },
 
@@ -874,6 +893,11 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
             body += "<h4>" + criterion.get("title") + "</h4><p>" + criterion.get("description") + "</p>";
         });
         $modal.find(".modal-body").html(body);
+        if (_.isObject(window.MathJax)) {
+            _.each($('.mathjax'), function (item) {
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, item]);
+            });
+        }
         $modal.modal('show');
     },
 
