@@ -872,7 +872,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
         }
 
         if (_.isObject(window.MathJax)) {
-            _.each($('.mathjax'), function (item) {
+            _.each(this.$el.find('.mathjax'), function (item) {
                 MathJax.Hub.Queue(["Typeset", MathJax.Hub, item]);
             });
         }
@@ -894,7 +894,7 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
         });
         $modal.find(".modal-body").html(body);
         if (_.isObject(window.MathJax)) {
-            _.each($('.mathjax'), function (item) {
+            _.each($modal.find('.mathjax'), function (item) {
                 MathJax.Hub.Queue(["Typeset", MathJax.Hub, item]);
             });
         }
