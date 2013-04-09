@@ -16,6 +16,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 
 from moocng.assets import cache
 from moocng.courses.models import KnowledgeQuantum
@@ -56,6 +57,9 @@ class AssetAvailability(models.Model):
     class Meta:
         verbose_name = _(u'asset availability')
         verbose_name_plural = _(u'asset availabilities')
+
+    def __unicode__(self):
+        return ugettext(u'Assets availables for {0}').format(self.kq)
 
 
 def invalidate_cache(sender, **kwargs):
