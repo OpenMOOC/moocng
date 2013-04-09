@@ -157,6 +157,18 @@ if (_.isUndefined(window.MOOC)) {
                 }
             }
             return result;
+        },
+
+        confirmationModal,
+        showConfirmationModal = function (callback) {
+            if (_.isUndefined(confirmationModal)) {
+                confirmationModal = $("#confirm-delete-action").modal({ show: false });
+            }
+            confirmationModal.find(".btn-danger").off("click").on("click", function (evt) {
+                confirmationModal.modal("hide");
+                callback();
+            });
+            confirmationModal.modal("show");
         };
 
     MOOC.views = {
@@ -584,18 +596,21 @@ if (_.isUndefined(window.MOOC)) {
             remove: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
-                MOOC.ajax.showLoading();
-                MOOC.models.course.remove(this.model);
-                this.model.destroy({
-                    success: function () {
-                        MOOC.ajax.hideLoading();
-                        MOOC.router.navigate("", { trigger: true });
-                    },
-                    error: function () {
-                        MOOC.ajax.hideLoading();
-                        MOOC.ajax.showAlert("generic");
-                    }
-                });
+                var cb = _.bind(function () {
+                    MOOC.ajax.showLoading();
+                    MOOC.models.course.remove(this.model);
+                    this.model.destroy({
+                        success: function () {
+                            MOOC.ajax.hideLoading();
+                            MOOC.router.navigate("", { trigger: true });
+                        },
+                        error: function () {
+                            MOOC.ajax.hideLoading();
+                            MOOC.ajax.showAlert("generic");
+                        }
+                    });
+                }, this);
+                showConfirmationModal(cb);
             },
 
             goBack: function (evt) {
@@ -927,20 +942,23 @@ if (_.isUndefined(window.MOOC)) {
             remove: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
-                MOOC.ajax.showLoading();
-                var unit = MOOC.models.course.getByKQ(this.model.get("id")),
-                    model = this.model;
-                model.destroy({
-                    success: function () {
-                        unit.get("knowledgeQuantumList").remove(model);
-                        MOOC.ajax.hideLoading();
-                        MOOC.router.navigate("", { trigger: true });
-                    },
-                    error: function () {
-                        MOOC.ajax.hideLoading();
-                        MOOC.ajax.showAlert("generic");
-                    }
-                });
+                var cb = _.bind(function () {
+                    MOOC.ajax.showLoading();
+                    var unit = MOOC.models.course.getByKQ(this.model.get("id")),
+                        model = this.model;
+                    model.destroy({
+                        success: function () {
+                            unit.get("knowledgeQuantumList").remove(model);
+                            MOOC.ajax.hideLoading();
+                            MOOC.router.navigate("", { trigger: true });
+                        },
+                        error: function () {
+                            MOOC.ajax.hideLoading();
+                            MOOC.ajax.showAlert("generic");
+                        }
+                    });
+                }, this);
+                showConfirmationModal(cb);
             },
 
             addQuestion: function (evt) {
@@ -1111,115 +1129,99 @@ if (_.isUndefined(window.MOOC)) {
             removeQuestion: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
-                MOOC.ajax.showLoading();
-                var view = this;
-                this.model.get("questionInstance").destroy({
-                    success: function () {
-                        view.model.set("questionInstance", null);
-                        view.model.set("question", null);
-                        view.model.save(null, {
+
+                var view = this,
+                    cb = function () {
+                        MOOC.ajax.showLoading();
+                        view.model.get("questionInstance").destroy({
                             success: function () {
-                                MOOC.ajax.hideLoading();
-                                view.render();
+                                view.model.set("questionInstance", null);
+                                view.model.set("question", null);
+                                view.model.save(null, {
+                                    success: function () {
+                                        MOOC.ajax.hideLoading();
+                                        view.render();
+                                    },
+                                    error: function () {
+                                        MOOC.ajax.hideLoading();
+                                        MOOC.ajax.showAlert("generic");
+                                    }
+                                });
                             },
                             error: function () {
                                 MOOC.ajax.hideLoading();
                                 MOOC.ajax.showAlert("generic");
                             }
                         });
-                    },
-                    error: function () {
-                        MOOC.ajax.hideLoading();
-                        MOOC.ajax.showAlert("generic");
-                    }
-                });
-            },
+                    };
 
-            getConfirmPeerReviewRemovalModal: function () {
-                if (_.isUndefined(this.confirmPeerReviewRemoval)) {
-                    this.confirmPeerReviewRemoval = $("#confirm-peer-review-removal");
-                    this.confirmPeerReviewRemoval.modal({
-                        show: false,
-                        backdrop: "static",
-                        keyboard: false
-                    });
-                }
-                return this.confirmPeerReviewRemoval;
+                showConfirmationModal(cb);
             },
 
             removePeerReviewAssignment: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
-                var modal,
-                    view;
 
-                modal = this.getConfirmPeerReviewRemovalModal();
-                view = this;
-                modal.find("#pr-confirm").off("click").on("click", _.bind(function () {
-                    this.confirmRemovePeerReviewAssignment(this);
-                    modal.modal("hide");
-                }, this));
-                modal.modal("show");
-            },
-
-            confirmRemovePeerReviewAssignment: function (view) {
-                MOOC.ajax.showLoading();
-                view.model.get("peerReviewAssignmentInstance").destroy({
-                    success: function () {
-                        view.model.set("peerReviewAssignmentInstance", null);
-                        view.model.set("peer_review_assignment", null);
-                        view.model.save(null, {
+                var view = this,
+                    cb = function () {
+                        MOOC.ajax.showLoading();
+                        view.model.get("peerReviewAssignmentInstance").destroy({
                             success: function () {
-                                MOOC.ajax.hideLoading();
-                                view.render();
+                                view.model.set("peerReviewAssignmentInstance", null);
+                                view.model.set("peer_review_assignment", null);
+                                view.model.save(null, {
+                                    success: function () {
+                                        MOOC.ajax.hideLoading();
+                                        view.render();
+                                    },
+                                    error: function () {
+                                        MOOC.ajax.hideLoading();
+                                        MOOC.ajax.showAlert("generic");
+                                    }
+                                });
                             },
                             error: function () {
                                 MOOC.ajax.hideLoading();
                                 MOOC.ajax.showAlert("generic");
                             }
                         });
-                    },
-                    error: function () {
-                        MOOC.ajax.hideLoading();
-                        MOOC.ajax.showAlert("generic");
-                    }
-                });
+                    };
+
+                showConfirmationModal(cb);
             },
 
             removePeerReviewCriterion: function (evt) {
                 evt.stopPropagation();
                 evt.preventDefault();
 
-                var criterionId,
-                    criterion,
-                    criterionList,
-                    self = this;
+                var self = this,
+                    cb;
 
-                criterionId = parseInt(evt.target.getAttribute('id').split('-')[1], 10);
-                criterionList = this.model.get("peerReviewAssignmentInstance").get("_criterionList");
-                criterion = criterionList.find(function (candidate) {
-                    return (parseInt(candidate.get("id"), 10) === criterionId);
-                });
+                cb = function () {
+                    var criterionId = parseInt(evt.target.getAttribute('id').split('-')[1], 10),
+                        criterionList = self.model.get("peerReviewAssignmentInstance").get("_criterionList"),
+                        criterion = criterionList.find(function (candidate) {
+                            return (parseInt(candidate.get("id"), 10) === criterionId);
+                        });
 
-                MOOC.ajax.showLoading();
-                criterion.destroy({
-                    success: function () {
-                        var assignment,
-                            criterionList,
-                            criterionDivId;
+                    MOOC.ajax.showLoading();
+                    criterion.destroy({
+                        success: function () {
+                            var assignment = self.model.get("peerReviewAssignmentInstance"),
+                                criterionList = assignment.get("_criterionList"),
+                                criterionDivId = "criterion-" + criterion.get("id");
+                            criterionList.remove(criterion);
+                            self.$el.find("#" + criterionDivId).remove();
+                            MOOC.ajax.hideLoading();
+                        },
+                        error: function () {
+                            MOOC.ajax.hideLoading();
+                            MOOC.ajax.showAlert("generic");
+                        }
+                    });
+                };
 
-                        assignment = self.model.get("peerReviewAssignmentInstance");
-                        criterionList = assignment.get("_criterionList");
-                        criterionDivId = "criterion-" + criterion.get("id");
-                        criterionList.remove(criterion);
-                        self.$el.find("#" + criterionDivId).remove();
-                        MOOC.ajax.hideLoading();
-                    },
-                    error: function () {
-                        MOOC.ajax.hideLoading();
-                        MOOC.ajax.showAlert("generic");
-                    }
-                });
+                showConfirmationModal(cb);
             },
 
             go2options: function (evt) {
@@ -1265,28 +1267,31 @@ if (_.isUndefined(window.MOOC)) {
 
             remove: function (evt) {
                 var $el = $(evt.target).parent().parent(),
-                    id = $el.attr("id").split('-')[1],
-                    rows = $el.parent().find("tr").length;
-                MOOC.ajax.showLoading();
-                $.ajax(window.location.pathname + "attachment/?attachment=" + id, {
-                    type: "DELETE",
-                    headers: {
-                        "X-CSRFToken": csrftoken
-                    },
-                    success: function () {
-                        var $table = $el.parent().parent();
-                        $el.fadeOut().remove();
-                        MOOC.ajax.hideLoading();
-                        MOOC.ajax.showAlert("saved");
-                        if (rows === 1) {
-                            $table.hide().parent().find("#attachment-empty").show();
-                        }
-                    },
-                    error: function () {
-                        MOOC.ajax.hideLoading();
-                        MOOC.ajax.showAlert("generic");
-                    }
-                });
+                    cb = function () {
+                        var id = $el.attr("id").split('-')[1],
+                            rows = $el.parent().find("tr").length;
+                        MOOC.ajax.showLoading();
+                        $.ajax(window.location.pathname + "attachment/?attachment=" + id, {
+                            type: "DELETE",
+                            headers: {
+                                "X-CSRFToken": csrftoken
+                            },
+                            success: function () {
+                                var $table = $el.parent().parent();
+                                $el.fadeOut().remove();
+                                MOOC.ajax.hideLoading();
+                                MOOC.ajax.showAlert("saved");
+                                if (rows === 1) {
+                                    $table.hide().parent().find("#attachment-empty").show();
+                                }
+                            },
+                            error: function () {
+                                MOOC.ajax.hideLoading();
+                                MOOC.ajax.showAlert("generic");
+                            }
+                        });
+                    };
+                showConfirmationModal(cb);
             }
         })
     };
