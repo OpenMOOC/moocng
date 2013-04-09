@@ -53,7 +53,7 @@ from moocng.peerreview.utils import (kq_get_peer_review_score,
                                      get_peer_review_review_score)
 from moocng.videos.utils import extract_YT_video_id
 
-from moocng.assets.models import Asset, Reservation
+from moocng.assets.models import Asset, Reservation, AssetAvailability
 
 
 class CourseResource(ModelResource):
@@ -859,7 +859,7 @@ class UserResource(ModelResource):
 
 
 class AssetResource(ModelResource):
-    kq = fields.ToManyField(KnowledgeQuantumResource, 'kq')
+    available_in = fields.ToManyField('moocng.api.resources.AssetAvailabilityResource', 'available_in')
 
     class Meta:
         queryset = Asset.objects.all()
@@ -867,24 +867,57 @@ class AssetResource(ModelResource):
         allowed_methods = ['get']
         authentication = DjangoAuthentication()
         authorization = DjangoAuthorization()
-        
-        
+        filtering = {
+            "available_in": ('exact'),
+        }
+
     def obj_get_list(self, request=None, **kwargs):
 
-        kq = request.GET.get('kq', None)
+        availability = request.GET.get('availability', None)
 
-        if kq is not None:
-            results = Asset.objects.filter(kq__id=kq)
+        if availability is not None:
+            results = Asset.objects.filter(available_in__id=availability)
         else:
             results = Asset.objects.all()
         return results
-        
+
+
+class AssetAvailabilityResource(ModelResource):
+
+    kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
+    assets = fields.ToManyField(AssetResource, 'assets')
+
+    class Meta:
+        queryset = AssetAvailability.objects.all()
+        resource_name = 'asset_availability'
+        allowed_methods = ['get']
+        authentication = DjangoAuthentication()
+        authorization = DjangoAuthorization()
+        filtering = {
+            "kq": ('exact'),
+            "assets": ('exact'),
+        }
+
+    def obj_get_list(self, request=None, **kwargs):
+
+        kq = request.GET.get('kq', None)
+        asset = request.GET.get('asset', None)
+
+        if kq is not None and assets is not None:
+            results = AssetAvailability.objects.filter(Q(kq__id=kq) & Q(assets__available_in__id=asset))
+        elif kq is not None:
+            results = AssetAvailability.objects.filter(kq__id=kq)
+        elif asset is not None:
+            results = AssetAvailability.objects.filter(assets__available_in__id=asset)
+        else:
+            results = AssetAvailability.objects.all()
+        return results
 
 
 class ReservationResource(ModelResource):
     user = fields.ToOneField(UserResource, 'user')
-    kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
     asset = fields.ToOneField(AssetResource, 'asset')
+    reserved_from = fields.ToOneField(AssetAvailabilityResource, 'reserved_from')
 
     class Meta:
         queryset = Reservation.objects.all()
@@ -893,22 +926,26 @@ class ReservationResource(ModelResource):
         authentication = DjangoAuthentication()
         authorization = DjangoAuthorization()
         filtering = {
-            "kq": ('exact'),
+            "asset": ('exact'),
             "user": ('exact'),
+            "reserved_from": ('exact'),
         }
-        
-        
+
     def obj_get_list(self, request=None, **kwargs):
 
-        kq = request.GET.get('kq', None)
+        asset = request.GET.get('asset', None)
         user = request.GET.get('user', None)
+        kq = request.GET.get('kq', None)
 
-        if kq is not None and user is not None:           
-            results = Reservation.objects.filter(Q(kq__id=kq) & Q(user__id=user))
-        elif kq is not None:
-            results = Reservation.objects.filter(kq__id=kq)     
-        elif user is not None:
-            results = Reservation.objects.filter(user__id=user)    
-        else:
-            results = Reservation.objects.all()
+        results = Reservation.objects.all()
+
+        if asset is not None:
+            results = results.filter(asset__id=asset)
+
+        if user is not None:
+            results = results.filter(user__id=user)
+
+        if kq is not None:
+            results = results.filter(reserved_from__kq=kq)
+
         return results
