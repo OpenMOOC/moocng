@@ -14,16 +14,21 @@
 
 from django.contrib import admin
 
-from moocng.assets.models import Reservation, Asset
+from moocng.assets.models import Reservation, Asset, AssetAvailability
 
-from moocng.assets.forms import AssetForm, ReservationForm
+from moocng.assets.forms import AssetForm, ReservationForm, AssetAvailabilityForm
 
 
 class AssetAdmin(admin.ModelAdmin):
 
     form = AssetForm
-    prepopulated_fields = {'name': ('name', )}
     #filter_horizontal = ('kq',)
+
+
+class AssetAvailabilityAdmin(admin.ModelAdmin):
+
+    form = AssetAvailabilityForm
+    filter_horizontal = ('assets',)
 
 
 class ReservationAdmin(admin.ModelAdmin):
@@ -33,4 +38,5 @@ class ReservationAdmin(admin.ModelAdmin):
     list_filter = ('reserved_from', 'asset', 'user')
 
 admin.site.register(Asset, AssetAdmin)
+admin.site.register(AssetAvailability, AssetAvailabilityAdmin)
 admin.site.register(Reservation, ReservationAdmin)
