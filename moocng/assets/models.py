@@ -62,25 +62,15 @@ class AssetAvailability(models.Model):
         return ugettext(u'Assets availables for {0}').format(self.kq)
 
 
-def invalidate_cache(sender, **kwargs):
-    #TODO
-    return None
-    #if kwargs['action'] not in ('post_add', 'post_remove', 'post_clear'):
-        #return
-
-    #kqs = []
-    #if kwargs['reverse']:
-        #kqs.append(instance)
-    #elif kwargs['pk_set'] is not None:
-        #kqs = KnowledgeQuantum.objects.filter(id__in=kwargs['pk_set'])
-
-    #for i in kqs:
-        #course = i.unit.course
-        #cache.invalidate_course_has_assets_in_cache(course)
+def invalidate_cache(sender, instance, **kwargs):
+    try:
+        cache.invalidate_course_has_assets_in_cache(instance.kq.unit.course)
+    except ObjectDoesNotExist:
+        pass
 
 
-signals.m2m_changed.connect(invalidate_cache, sender=Asset.available_in)
-signals.m2m_changed.connect(invalidate_cache, sender=AssetAvailability.assets)
+signals.post_save.connect(invalidate_cache, sender=AssetAvailability)
+signals.post_delete.connect(invalidate_cache, sender=AssetAvailability)
 
 
 class Reservation(models.Model):
