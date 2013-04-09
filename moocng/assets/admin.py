@@ -23,14 +23,14 @@ class AssetAdmin(admin.ModelAdmin):
 
     form = AssetForm
     prepopulated_fields = {'name': ('name', )}
-    filter_horizontal = ('kq',)
+    #filter_horizontal = ('kq',)
 
 
 class ReservationAdmin(admin.ModelAdmin):
 
     form = ReservationForm
-    list_display = ('kq', 'asset', 'user')
-    list_filter = ('kq', 'asset', 'user')
+    list_display = ('reserved_from', 'asset', 'user')
+    list_filter = ('reserved_from', 'asset', 'user')
 
 admin.site.register(Asset, AssetAdmin)
 admin.site.register(Reservation, ReservationAdmin)

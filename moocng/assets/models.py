@@ -32,9 +32,6 @@ class Asset(models.Model):
                             blank=True, null=False)
     capacity = models.PositiveIntegerField(verbose_name=_(u'Student capacity'))
     max_bookable_slots = models.PositiveSmallIntegerField(verbose_name=_(u'Maximun bookable slots'))
-    kq = models.ManyToManyField(KnowledgeQuantum, verbose_name=_(u'Assets'),
-                                related_name='knowledgequantum_as_asset',
-                                blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'asset')
@@ -44,30 +41,51 @@ class Asset(models.Model):
         return self.name
 
 
+class AssetAvailability(models.Model):
+
+    kq = models.ForeignKey(KnowledgeQuantum,
+                           verbose_name=_(u'KnowledgeQuantum'),
+                           related_name='asset_availability')
+    assets = models.ManyToManyField(Asset, verbose_name=_(u'Assets'),
+                                    related_name='available_in')
+    available_from = models.DateField(verbose_name=_(u'Available from'),
+                                      blank=True, null=True)
+    available_to = models.DateField(verbose_name=_(u'Available to'),
+                                    blank=True, null=True)
+
+    class Meta:
+        verbose_name = _(u'asset availability')
+        verbose_name_plural = _(u'asset availabilities')
+
+
 def invalidate_cache(sender, **kwargs):
-    if kwargs['action'] not in ('post_add', 'post_remove', 'post_clear'):
-        return
+    #TODO
+    return None
+    #if kwargs['action'] not in ('post_add', 'post_remove', 'post_clear'):
+        #return
 
-    kqs = []
-    if kwargs['reverse']:
-        kqs.append(instance)
-    elif kwargs['pk_set'] is not None:
-        kqs = KnowledgeQuantum.objects.filter(id__in=kwargs['pk_set'])
+    #kqs = []
+    #if kwargs['reverse']:
+        #kqs.append(instance)
+    #elif kwargs['pk_set'] is not None:
+        #kqs = KnowledgeQuantum.objects.filter(id__in=kwargs['pk_set'])
 
-    for i in kqs:
-        course = i.unit.course
-        cache.invalidate_course_has_assets_in_cache(course)
+    #for i in kqs:
+        #course = i.unit.course
+        #cache.invalidate_course_has_assets_in_cache(course)
 
 
-signals.m2m_changed.connect(invalidate_cache, sender=Asset.kq.through)
+signals.m2m_changed.connect(invalidate_cache, sender=Asset.available_in)
+signals.m2m_changed.connect(invalidate_cache, sender=AssetAvailability.assets)
 
 
 class Reservation(models.Model):
 
     user = models.ForeignKey(User, verbose_name=_(u'User'),
                              null=True, blank=True)
-    kq = models.ForeignKey(KnowledgeQuantum,
-                           verbose_name=_(u'Nugget'), null=True, blank=True)
+    reserved_from = models.ForeignKey(AssetAvailability,
+                                      verbose_name=_(u'Reserved from'),
+                                      null=True, blank=True)
     asset = models.ForeignKey(Asset, verbose_name=_(u'Asset'),
                               null=False)
     slot_id = models.PositiveSmallIntegerField(null=True)

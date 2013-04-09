@@ -24,7 +24,7 @@ from moocng.assets.models import Asset
 
 
 def course_get_assets(course):
-    return Asset.objects.filter(kq__unit__course__id=course.id)
+    return Asset.objects.filter(available_in__kq__unit__course__id=course.id)
 
 
 def course_has_assets(course):
