@@ -13,9 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.template import RequestContext
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render_to_response
+from django.template import RequestContext
+from django.utils.translation import ugettext as _
 
 
 from moocng.assets.models import Asset
