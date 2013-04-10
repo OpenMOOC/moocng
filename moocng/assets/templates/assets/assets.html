@@ -1,0 +1,24 @@
+{% extends "courses/base_course.html" %}
+
+{% load i18n asset_tags %}
+
+{% block nav-course-assets %}class="active"{% endblock %}
+
+{% block content %}
+
+<h2>{% trans "Assets" %}</h2>
+
+{% if assets %}
+
+  {% for asset in assets %}
+    <h3 id="asset{{ asset.id }}">{{ asset.name }}</h3>
+  {% endfor %}
+
+{% else %}
+
+<p>{% trans "This course does not have any bookable assets" %}.<p>
+
+<p><a href="{% url home %}">{% trans "You can try enrolling in another course" %}.</a></p>
+{% endif %}
+
+{% endblock %}

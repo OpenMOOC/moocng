@@ -28,7 +28,7 @@
 
   {% if_has_assets course %}
   <li {% block nav-course-assets %}{% endblock %}>
-    <a href="{% url course_overview course.slug %}">{% trans "Assets" %}</a> <!-- TODO: CHANGE -->
+    <a href="{% url course_assets course.slug %}">{% trans "Assets" %}</a>
   </li>
   {% endif_has_assets %}
 
