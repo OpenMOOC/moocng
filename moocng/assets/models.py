@@ -91,3 +91,7 @@ class Reservation(models.Model):
     class Meta:
         verbose_name = _(u'reservation')
         verbose_name_plural = _(u'reservations')
+
+    def __unicode__(self):
+        return ugettext(u'Reservation of {0}, made by {1}').format(self.asset, self.user)
+
