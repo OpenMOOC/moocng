@@ -19,21 +19,6 @@ from tastypie.resources import Resource
 from moocng.mongodb import get_db
 
 
-def get_user(request, collection):
-    return collection.find_one({'user': request.user.id}, safe=True)
-
-
-def get_or_create_user(request, collection, key, initial):
-    user_id = request.user.id
-
-    user = collection.find_one({'user': user_id}, safe=True)
-    if user is None:
-        user = {'user': user_id, key: initial}
-        user['_id'] = collection.insert(user)
-
-    return user
-
-
 class MongoObj(object):
     """This class is required for Tastypie"""
 
@@ -88,15 +73,15 @@ class MongoResource(Resource):
         return self.get_object_list(request)
 
     def obj_get(self, request=None, **kwargs):
-        user = self._get_or_create_user(request, **kwargs)
-        oid = kwargs['pk']
 
-        result = user[self._meta.datakey].get(oid, None)
-        if result is None:
+        result = self._collection.find(kwargs)
+        if len(result) == 0:
             raise NotFound('Invalid resource lookup data provided')
+        elif len(result) > 1:
+            raise NotFound('Dulicate resource')
 
-        obj = MongoObj(initial=result)
-        obj.uuid = oid
+        obj = MongoObj(initial=result[0])
+        obj.uuid = str(result[0]['_id'])
         return obj
 
     def obj_create(self, bundle, request=None, **kwargs):
@@ -105,11 +90,6 @@ class MongoResource(Resource):
         _id = self._collection.insert(bundle.data, safe=True)
         bundle.obj.uuid = str(_id)
         return bundle
-
-    def _get_or_create_user(self, request, **kwargs):
-        return get_or_create_user(request, self._collection,
-                                  self._meta.datakey,
-                                  self._initial(request, **kwargs))
 
     def dehydrate(self, bundle):
         bundle.data.update(bundle.obj.to_dict())
