@@ -23,7 +23,7 @@ from django.utils.translation import ugettext as _
 
 
 from moocng.assets.models import Asset
-from moocng.assets.utils import course_get_assets
+from moocng.assets.utils import course_get_assets, user_course_get_reservations
 from moocng.courses.models import Course
 from moocng.courses.utils import is_course_ready
 
@@ -49,8 +49,12 @@ def course_assets(request, course_slug):
 
     assets = course_get_assets(course)
 
+    reservations = user_course_get_reservations(request.user, course)
+
     return render_to_response('assets/assets.html', {
         'course': course,
         'assets': assets,
         'is_enrolled': is_enrolled,
+        'reservations': reservations,
+
     }, context_instance=RequestContext(request))

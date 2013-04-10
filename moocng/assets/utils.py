@@ -17,10 +17,11 @@
 from datetime import datetime
 
 from django.db import IntegrityError
+from django.db.models import Q
 
 from moocng.mongodb import get_db
 from moocng.assets import cache
-from moocng.assets.models import Asset
+from moocng.assets.models import Asset, Reservation
 
 
 def course_get_assets(course):
@@ -34,3 +35,8 @@ def course_has_assets(course):
         result = assets.count() > 0
         cache.set_course_has_assets_in_cache(course, result)
     return result
+
+
+def user_course_get_reservations(user, course):
+    return Reservation.objects.filter(Q(reserved_from__kq__unit__course__id=course.id)
+                                      & Q(user__id=user.id))

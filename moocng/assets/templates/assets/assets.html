@@ -21,4 +21,20 @@
 <p><a href="{% url home %}">{% trans "You can try enrolling in another course" %}.</a></p>
 {% endif %}
 
+
+<h2>{% trans "Reservations" %}</h2>
+
+{% if reservations %}
+
+  {% for reservation in reservations %}
+    <h3 id="reservation{{ reservation.id }}"> {{ reservation.asset }}</h3>
+  {% endfor %}
+
+{% else %}
+
+<p>{% trans "You do not have any asset reservation for this course yet " %}.<p>
+
+{% endif %}
+
+
 {% endblock %}
