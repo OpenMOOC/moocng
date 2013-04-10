@@ -276,8 +276,6 @@
     </fieldset>
 </form>
 </script>
-
-
 <script id="modal-video-player-tpl" type="text/template">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -287,8 +285,6 @@
     <iframe width="620px" height="372" src="//www.youtube.com/embed/<%= videoID %>?rel=0&controls=0&origin="<%= host %>" frameborder='0'></iframe>
   </div>
 </script>
-
-
 
 <div class="loading backdrop hide"></div>
 <div class="loading indicator hide"></div>
@@ -314,16 +310,17 @@
     <p>{% trans "This item is new and must be saved before going back." %}</p>
 </div>
 
-<div id="confirm-peer-review-removal" class="modal hide fade">
+<div id="confirm-delete-action" class="modal hide fade">
     <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h3>{% trans "Confirm removal" %}</h3>
     </div>
     <div class="modal-body">
-        <p>{% trans "Are you completely sure you want to remove this peer review assignment? Submissions received from students will be removed as well." %}</p>
+        <p>{% trans "Are you completely sure you want to remove this? You cannot undo this action." %}</p>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
-        <button type="button" class="btn btn-danger" id="pr-confirm">{% trans "Confirm" %}</button>
+        <button type="button" class="btn btn-danger">{% trans "Confirm" %}</button>
     </div>
 </div>
 

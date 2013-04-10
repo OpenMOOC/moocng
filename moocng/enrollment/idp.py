@@ -80,6 +80,7 @@ def enroll_course_at_idp(student, course):
         course_id = unicode(course.id)
         if course_id not in existing_courses:
             existing_courses.append(course_id)
+            payload[enrollment_attribute] = existing_courses
             logger.debug('Enrolling the student %s in the course %s' %
                          (student.email, course_id))
 

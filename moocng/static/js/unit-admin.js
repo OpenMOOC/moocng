@@ -17,17 +17,17 @@
 
 django.jQuery(document).ready(function () {
     "use strict";
-    django.jQuery(".field-unittype").change(function (evt) {
+    django.jQuery("#id_unittype").change(function (evt) {
         var select = django.jQuery(evt.target),
             option = select.find("option:selected").val();
 
         if (option === 'n') {
-            django.jQuery(".field-start").hide();
-            django.jQuery(".field-deadline").hide();
+            django.jQuery(".grp-row.start").hide();
+            django.jQuery(".grp-row.deadline").hide();
         } else {
-            django.jQuery(".field-start").show();
-            django.jQuery(".field-deadline").show();
+            django.jQuery(".grp-row.start").show();
+            django.jQuery(".grp-row.deadline").show();
         }
     });
-    django.jQuery(".field-unittype").trigger("change");
+    django.jQuery("#id_unittype").trigger("change");
 });

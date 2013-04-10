@@ -18,6 +18,8 @@ from moocng.teacheradmin.models import Invitation, MassiveEmail
 
 
 class InvitationAdmin(admin.ModelAdmin):
+    raw_id_fields = ('host',)
+    autocomplete_lookup_fields = { 'fk': ['host'], }
 
     list_display = ('course', 'email', 'datetime')
     list_filter = ('course', )

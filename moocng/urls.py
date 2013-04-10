@@ -64,3 +64,14 @@ if settings.DEBUG:
                                 serve,
                                 {'document_root': settings.MEDIA_ROOT}))
     del(_media_url, serve)
+
+
+# Grapelli support, in django 1.5 this monkey patching won't be necessary
+# because it supports custom user models.
+# This monkey patching adds support to the user model of autocompletion.
+
+from django.contrib.auth.models import User
+
+User.autocomplete_search_fields = staticmethod(lambda: ("id__iexact", "username__icontains",))
+
+urlpatterns += patterns('', url(r'^grappelli/', include('grappelli.urls')))
