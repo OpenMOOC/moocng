@@ -25,7 +25,11 @@
               <ul>
               {% if reservations %}
                 {% for reservation in reservations %}
-                  <li class="accordion-toggle" id="reservation{{ reservation.id }}"> {{ reservation.asset }}</li>
+                  <li class="accordion-toggle" id="reservation{{ reservation.id }}"> {{ reservation.asset }}
+                   {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends %}
+                  </br> From: {{ from }} 
+                  </br> To:  {{ to }} {% endblocktrans %}
+                  </li>
                 {% endfor %}
                 {% else %}
                   {% trans "You do not have any asset reservation for this course yet " %}.
