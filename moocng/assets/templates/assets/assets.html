@@ -6,22 +6,6 @@
 
 {% block content %}
 
-<h2>{% trans "Assets" %}</h2>
-
-{% if assets %}
-
-  {% for asset in assets %}
-    <h3 id="asset{{ asset.id }}">{{ asset.name }}</h3>
-  {% endfor %}
-
-{% else %}
-
-<p>{% trans "This course does not have any bookable assets" %}.<p>
-
-<p><a href="{% url home %}">{% trans "You can try enrolling in another course" %}.</a></p>
-{% endif %}
-
-
 <h2>{% trans "Reservations" %}</h2>
 
 {% if reservations %}
@@ -36,5 +20,20 @@
 
 {% endif %}
 
+<h2>{% trans "Assets" %}</h2>
+
+{% if assets %}
+
+  {% for asset in assets %}
+    <h3 id="asset{{ asset.id }}">{{ asset.name }}</h3>
+  {% endfor %}
+
+{% else %}
+
+<p>{% trans "This course does not have any bookable assets" %}.<p>
+
+<p><a href="{% url home %}">{% trans "You can try enrolling in another course" %}.</a></p>
+
+{% endif %}
 
 {% endblock %}
