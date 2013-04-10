@@ -5,28 +5,49 @@
 {% block nav-course-assets %}class="active"{% endblock %}
 
 {% block content %}
-
-<h2>{% trans "Reservations" %}</h2>
-
-{% if reservations %}
-
-  {% for reservation in reservations %}
-    <h3 id="reservation{{ reservation.id }}"> {{ reservation.asset }}</h3>
-  {% endfor %}
-
-{% else %}
-
-<p>{% trans "You do not have any asset reservation for this course yet " %}.<p>
-
-{% endif %}
-
 <h2>{% trans "Assets" %}</h2>
 
 {% if assets %}
 
-  {% for asset in assets %}
-    <h3 id="asset{{ asset.id }}">{{ asset.name }}</h3>
-  {% endfor %}
+  <div class="row mb20">
+    <section class="span8" id="content">
+    </section>
+
+    {% regroup kqs by unit as unit_list %}
+    <div class="span4" id="unit-selector">
+
+      <div class="accordion-group">
+          <div class="accordion-heading">
+            <span class="accordion-toggle">{% trans "Current reservations" %}</span>
+          </div>
+          <div id="reservations-container" class="accordion-body">
+            <div class="accordion-inner">
+              <ul>
+              {% if reservations %}
+                {% for reservation in reservations %}
+                  <li class="accordion-toggle" id="reservation{{ reservation.id }}"> {{ reservation.asset }}</li>
+                {% endfor %}
+                {% else %}
+                  {% trans "You do not have any asset reservation for this course yet " %}.
+                {% endif %}
+              </ul>
+            </div>
+          </div>
+      </div>
+
+      {% for unit in unit_list %}
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a class="accordion-toggle" href="#unit{{ unit.grouper.id }}" data-target="#unit{{ unit.grouper.id }}-container" data-parent="#unit-selector"><span class="badge {{ unit.grouper.badge_class }}" title="{{ unit.grouper.badge_tooltip }}">{{ unit.grouper.unittype|capfirst }}</span> - {{ unit.grouper.title }}</a>
+          </div>
+          <div id="unit{{ unit.grouper.id }}-container" class="collapse accordion-body" unit-type="{{ unit.grouper.unittype }}">
+            <div class="accordion-inner"></div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
 
 {% else %}
 

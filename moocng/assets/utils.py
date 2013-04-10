@@ -21,12 +21,17 @@ from django.db.models import Q
 
 from moocng.mongodb import get_db
 from moocng.assets import cache
-from moocng.assets.models import Asset, Reservation
+from moocng.assets.models import Asset, AssetAvailability, Reservation
+from moocng.courses.models import KnowledgeQuantum
 
 
 def course_get_assets(course):
     return Asset.objects.filter(available_in__kq__unit__course__id=course.id)
 
+
+def course_get_kq_with_bookable_assets(course):
+    kq_ids = AssetAvailability.objects.filter(kq__unit__course__id = course.id).values_list('kq', flat=True)
+    return KnowledgeQuantum.objects.filter(id__in=kq_ids)
 
 def course_has_assets(course):
     result = cache.get_course_has_assets_from_cache(course)
