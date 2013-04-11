@@ -16,7 +16,12 @@ from tastypie.bundle import Bundle
 from tastypie.exceptions import NotFound, BadRequest
 from tastypie.resources import Resource
 
+from django.dispatch import Signal
+
 from moocng.mongodb import get_db
+
+
+mongo_object_created = Signal(providing_args=["user_id", "obj"])
 
 
 def validate_dict_schema(obj, schema):
@@ -105,6 +110,7 @@ class MongoResource(Resource):
         self.validate_schema(bundle)
         bundle.obj = MongoObj(bundle.data)
         _id = self._collection.insert(bundle.data, safe=True)
+        mongo_object_created.send_robust(sender=self, mongo_object=bundle.data)
         bundle.obj.uuid = str(_id)
         return bundle
 
