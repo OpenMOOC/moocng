@@ -23,9 +23,13 @@ from django.utils.translation import ugettext as _
 
 
 from moocng.assets.models import Asset
-from moocng.assets.utils import course_get_assets, user_course_get_reservations, course_get_kq_with_bookable_assets
+from moocng.assets.utils import course_get_assets, user_course_get_reservations
+from moocng.assets.utils import course_get_kq_with_bookable_assets, user_course_get_past_reservations
+from moocng.assets.utils import user_course_get_pending_reservations, user_course_get_active_reservations
 from moocng.courses.models import Course
 from moocng.courses.utils import is_course_ready
+
+import datetime
 
 
 @login_required
@@ -47,10 +51,17 @@ def course_reservations(request, course_slug):
             'ask_admin': ask_admin,
         }, context_instance=RequestContext(request))
 
-    reservations = user_course_get_reservations(request.user, course)
+    active_reservations = user_course_get_active_reservations(request.user, course)
+
+    past_reservations = user_course_get_past_reservations(request.user, course)
+
+    pending_reservations = user_course_get_pending_reservations(request.user, course)
 
     return render_to_response('assets/reservations.html', {
         'course': course,
         'is_enrolled': is_enrolled,
-        'reservations': reservations,
+        'active_reservations': active_reservations,
+        'past_reservations': past_reservations,
+        'pending_reservations': pending_reservations,
+        #'date_time': datetime.datetime.now(),
     }, context_instance=RequestContext(request))

@@ -6,15 +6,17 @@
 
 {% block content %}
 
-  <h2>{% trans "Current reservations" %}</h2>
 
-{% if reservations %}
+<h2>{% trans "Active Reservations" %}</h2>
 
-      <div id="course-reservations" class="well">
+{% if active_reservations %}
+
+      <div id="course-active-reservations" class="well">
           	
-          {% for reservation in reservations %}
-              <h3>{{ reservation.asset }}</h3>
-              <ul id="reservation{{ reservation.id }}" >
+          {% for reservation in active_reservations %}
+              <h3>{% blocktrans with asset_name=reservation.asset kq_title=reservation.reserved_from.kq.title%}
+              {{ asset_name}} of {{kq_title }}   {% endblocktrans %} </h3>
+              <ul id="active-reservation{{ reservation.id }}" >
 
                    {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends %}
               
@@ -29,9 +31,59 @@
       </div>
 
  {% else %}
-   {% trans "You do not have any asset reservation for this course yet." %}
+   {% trans "You do not have any active asset reservation for this course yet." %}
 
  {% endif %}
+ 
+  
+<h2>{% trans "Pending Reservations" %}</h2>
 
+{% if pending_reservations %}
+
+      <div id="course-pending-reservations" class="well">
+          	
+          {% for reservation in pending_reservations %}
+              <h3>{% blocktrans with asset_name=reservation.asset kq_title=reservation.reserved_from.kq.title%}
+              	{{ asset_name}} of {{kq_title }}   {% endblocktrans %} </h3>
+              <ul id="pending-reservation{{ reservation.id }}" >
+
+                   {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends %}
+              
+                  <li> From: {{ from }} </li>
+                  <li> To:  {{ to }} </li> 
+                  
+                  {% endblocktrans %} 
+
+              </ul>
+           {% endfor %}
+        
+      </div>
+  {% endif %}
+ 
+
+<h2>{% trans "Past Reservations" %}</h2>
+
+{% if past_reservations %}
+
+      <div id="course-past-reservations" class="well">
+          	
+          {% for reservation in past_reservations %}
+              <h3>{% blocktrans with asset_name=reservation.asset kq_title=reservation.reserved_from.kq.title%}
+              {{ asset_name}} of {{kq_title }}   {% endblocktrans %} </h3>
+              <ul id="past-reservation{{ reservation.id }}" >
+
+                   {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends %}
+              
+                  <li> From: {{ from }} </li>
+                  <li> To:  {{ to }} </li> 
+                  
+                  {% endblocktrans %} 
+
+              </ul>
+           {% endfor %}
+        
+      </div>
+  {% endif %}
+ 
 
 {% endblock %}

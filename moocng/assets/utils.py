@@ -14,7 +14,7 @@
 # limitations under the License.
 
 
-from datetime import datetime
+import datetime
 
 from django.db import IntegrityError
 from django.db.models import Q
@@ -30,8 +30,9 @@ def course_get_assets(course):
 
 
 def course_get_kq_with_bookable_assets(course):
-    kq_ids = AssetAvailability.objects.filter(kq__unit__course__id = course.id).values_list('kq', flat=True)
+    kq_ids = AssetAvailability.objects.filter(kq__unit__course__id=course.id).values_list('kq', flat=True)
     return KnowledgeQuantum.objects.filter(id__in=kq_ids)
+
 
 def course_has_assets(course):
     result = cache.get_course_has_assets_from_cache(course)
@@ -45,3 +46,26 @@ def course_has_assets(course):
 def user_course_get_reservations(user, course):
     return Reservation.objects.filter(Q(reserved_from__kq__unit__course__id=course.id)
                                       & Q(user__id=user.id))
+
+
+def user_course_get_active_reservations(user, course, time=None):
+    if time is None:
+        time = datetime.datetime.now()
+    result = user_course_get_reservations(user, course).filter(Q(reservation_begins__lte=time)
+                                                               & Q(reservation_ends__gte=time))
+    return result
+
+
+def user_course_get_past_reservations(user, course, time=None):
+    if time is None:
+        time = datetime.datetime.now()
+    result = user_course_get_reservations(user, course).filter(reservation_ends__lt=time).order_by('-reservation_begins')
+    return result
+
+
+def user_course_get_pending_reservations(user, course, time=None):
+    if time is None:
+        time = datetime.datetime.now()
+    result = user_course_get_reservations(user, course).filter(Q(reservation_begins__gt=time)
+                                                               & Q(reservation_ends__gt=time)).order_by('reservation_begins')
+    return result
