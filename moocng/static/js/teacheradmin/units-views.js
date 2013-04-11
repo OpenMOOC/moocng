@@ -672,7 +672,7 @@ if (_.isUndefined(window.MOOC)) {
                 if (this.model.has("videoID") && this.model.get("videoID") !== "") {
                     this.$el.find("input#kqvideo").val("http://youtu.be/" + this.model.get("videoID"));
                 }
-                this.$el.find("input#kqweight").val(this.model.get("normalized_weight"));
+                this.$el.find("input#kqweight").val(this.model.get("weight"));
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
                     this.$el.find("#noquestion").addClass("hide");
@@ -799,7 +799,7 @@ if (_.isUndefined(window.MOOC)) {
                 this.model.unset("new");
                 this.model.set("title", $.trim(this.$el.find("input#kqtitle").val()));
                 this.model.set("videoID", extractVideoID(this.$el.find("input#kqvideo").val()));
-                this.model.set("normalized_weight", parseInt(this.$el.find("input#kqweight").val(), 10));
+                this.model.set("weight", parseInt(this.$el.find("input#kqweight").val(), 10));
                 this.model.set("supplementary_material", tinyMCE.get("kqsupplementary").getContent());
                 this.model.set("teacher_comments", tinyMCE.get("kqcomments").getContent());
 

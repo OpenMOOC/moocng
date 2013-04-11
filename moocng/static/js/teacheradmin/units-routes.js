@@ -37,7 +37,7 @@ if (_.isUndefined(window.MOOC)) {
                             var data = _.pick(kq, "id", "title", "videoID",
                                 "teacher_comments", "supplementary_material",
                                 "question", "order", "correct", "completed",
-                                "normalized_weight", "peer_review_assignment");
+                                "weight", "peer_review_assignment");
                             data.id = parseInt(data.id, 10);
                             return data;
                         }));

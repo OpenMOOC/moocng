@@ -425,15 +425,16 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
         teacher_comments: null,
         supplementary_material: null,
         question: null, // Optional
-        questionInstance: null,
         completed: false,
         correct: null,
-        attachmentList: null,
+        weight: 0,
         normalized_weight: 0,
         peer_review_assignment: null, // Optional
-        peerReviewAssignmentInstance: null,
         peer_review_score: null,
 
+        attachmentList: null,
+        questionInstance: null,
+        peerReviewAssignmentInstance: null,
         _peerReviewSubmissionInstance: null
     },
 
@@ -448,7 +449,6 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
         delete resp.resource_uri;
         delete resp.unit;
         delete resp.video;
-        delete resp.weight;
         return resp;
     },
 
@@ -457,7 +457,6 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
         var model2send = model.clone(),
             unit = MOOC.models.course.getByKQcid(model.cid);
         model2send.set("unit", MOOC.ajax.host + "unit/" + unit.get("id") + "/");
-        model2send.set("weight", model.get("normalized_weight"));
         model2send.unset("normalized_weight");
         model2send.unset("completed");
         model2send.unset("correct");
