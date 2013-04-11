@@ -80,7 +80,8 @@ MOOC.views.Unit = Backbone.View.extend({
 
         html = '<div class="progress progress-info" title="' + gettext('completed') + '"><div class="bar completed" style="width: 0%;"></div></div>';
         $("#unit-progress-bar").html(html);
-        progress = this.model.calculateProgress({ completed: true });
+        progress = this.model.get("knowledgeQuantumList").where({ completed: true }).length;
+        progress = (progress / this.model.get("knowledgeQuantumList").length) * 100;
         helpText = "<div><span>" + Math.round(progress) + "% " + gettext('completed') + "</span></div>";
         $("#unit-progress-bar").find("div.bar.completed").css("width", progress + "%");
 
