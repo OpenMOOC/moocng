@@ -44,9 +44,9 @@ class Asset(models.Model):
 
 class AssetAvailability(models.Model):
 
-    kq = models.ForeignKey(KnowledgeQuantum,
-                           verbose_name=_(u'KnowledgeQuantum'),
-                           related_name='asset_availability')
+    kq = models.OneToOneField(KnowledgeQuantum,
+                              verbose_name=_(u'KnowledgeQuantum'),
+                              related_name='asset_availability')
     assets = models.ManyToManyField(Asset, verbose_name=_(u'Assets'),
                                     related_name='available_in')
     available_from = models.DateField(verbose_name=_(u'Available from'),

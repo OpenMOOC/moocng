@@ -96,6 +96,11 @@ class KnowledgeQuantumResource(ModelResource):
         'peerreviewassignment',
         related_name='peer_review_assignment',
         readonly=True, null=True)
+    asset_availability = fields.ToOneField(
+        'moocng.api.resources.AssetAvailabilityResource',
+        'asset_availability',
+        related_name='asset_availability',
+        readonly=True, null=True)
     peer_review_score = fields.IntegerField(readonly=True)
     videoID = fields.CharField(readonly=True)
     correct = fields.BooleanField(readonly=True)
@@ -179,6 +184,11 @@ class PrivateKnowledgeQuantumResource(ModelResource):
         'moocng.api.resources.PeerReviewAssignmentResource',
         'peerreviewassignment',
         related_name='peer_review_assignment',
+        readonly=True, null=True)
+    asset_availability = fields.ToOneField(
+        'moocng.api.resources.AssetAvailabilityResource',
+        'asset_availability',
+        related_name='asset_availability',
         readonly=True, null=True)
     videoID = fields.CharField()
     normalized_weight = fields.IntegerField()
