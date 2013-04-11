@@ -2,6 +2,7 @@
 /*global MOOC: true, Backbone, $, _, async, gettext */
 
 // Copyright 2012 Rooter Analysis S.L.
+// Copyright (c) 2013 Grupo Opentia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -251,6 +252,25 @@ MOOC.App = Backbone.Router.extend({
         async.series(toExecute);
     },
 
+    kqAS: function(unit, kq) {
+        "use strict";
+        unit = parseInt(unit, 10);
+        kq = parseInt(kq, 10);
+        var toExecute = this.kqSteps(unit, kq, false);
+
+        toExecute.push(function (callback) {
+            MOOC.views.kqViews[kq].loadAssetAvailabilityData();
+            callback();
+        });
+
+        toExecute.push(function (callback) {
+            MOOC.views.kqViews[kq].loadAssetAvailability();
+            callback();
+        });
+
+        async.series(toExecute);
+    },
+
     loadUnitData: function (unitObj, callback) {
         "use strict";
         unitObj.set("knowledgeQuantumList", new MOOC.models.KnowledgeQuantumList());
@@ -342,6 +362,7 @@ MOOC.init = function (course_id, KQRoute) {
         MOOC.router.route("unit:unit/kq:kq/q", "kqQ");
         MOOC.router.route("unit:unit/kq:kq/a", "kqA");
         MOOC.router.route("unit:unit/kq:kq/p", "kqP");
+        MOOC.router.route("unit:unit/kq:kq/as", "kqAS");
 
         MOOC.models.activity = new MOOC.models.Activity({id: course_id});
         MOOC.models.activity.fetch();
@@ -358,6 +379,11 @@ MOOC.init = function (course_id, KQRoute) {
             }
         });
         MOOC.router.on('route:kqA', function (u, kq) {
+            if (last_kq !== null) {
+                MOOC.models.activity.addKQ(last_kq);
+            }
+        });
+        MOOC.router.on('route:kqAS', function (u, kq) {
             if (last_kq !== null) {
                 MOOC.models.activity.addKQ(last_kq);
             }

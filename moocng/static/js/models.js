@@ -166,6 +166,23 @@ MOOC.models.Asset = Backbone.Model.extend({
     }
 });
 
+MOOC.models.AssetAvailability = Backbone.Model.extend({
+    defaults: {
+        kq: null,
+        available_from: null,
+        available_to: null
+    },
+
+    url: function () {
+        "use strict";
+        if (this.has("id")) {
+            return MOOC.ajax.getAbsoluteUrl("asset_availability/") + this.get("id") + "/";
+        }
+
+        return MOOC.ajax.getAbsoluteUrl("asset_availability/");
+    }
+});
+
 MOOC.models.Reservation = Backbone.Model.extend({
     defaults: {
         asset: null,

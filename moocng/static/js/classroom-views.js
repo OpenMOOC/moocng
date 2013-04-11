@@ -2,6 +2,7 @@
 /*global MOOC: true, Backbone, $, _, YT, async, MathJax */
 
 // Copyright 2012 Rooter Analysis S.L.
+// Copyright (c) 2013 Grupo Opentia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,7 +29,8 @@ MOOC.views.Unit = Backbone.View.extend({
         "click li span.kq": "showKQ",
         "click li span.q": "showQ",
         "click li span.a": "showA",
-        "click li span.pr": "showPR"
+        "click li span.pr": "showPR",
+        "click li span.as": "showAS"
     },
 
     render: function () {
@@ -43,7 +45,7 @@ MOOC.views.Unit = Backbone.View.extend({
             } else if (kq.has("peer_review_assignment")) {
                 html += ' <span class="pr label" title="' + MOOC.trans.classroom.prTooltip + '">' + MOOC.trans.classroom.pr + '</span>';
             } else if (kq.has("asset_availability")) {
-                html += ' <span class="av label" title="' + MOOC.trans.classroom.asTooltip + '">' + MOOC.trans.classroom.as + '</span>';
+                html += ' <span class="as label" title="' + MOOC.trans.classroom.asTooltip + '">' + MOOC.trans.classroom.as + '</span>';
             }
             html += '</li>';
         });
@@ -74,6 +76,12 @@ MOOC.views.Unit = Backbone.View.extend({
         "use strict";
         var kq = $(evt.target).parent().attr("id").split("kq")[1];
         MOOC.router.navigate(this.id + "/kq" + kq + "/p", { trigger: true });
+    },
+
+    showAS: function (evt) {
+        "use strict";
+        var kq = $(evt.target).parent().attr("id").split("kq")[1];
+        MOOC.router.navigate(this.id + "/kq" + kq + "/as", { trigger: true });
     }
 });
 
@@ -302,7 +310,6 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         "use strict";
         var kqObj = this.model;
         if (!kqObj.has("peerReviewAssignmentInstance")) {
-            // Load Peer Review Data
             MOOC.ajax.getResource(kqObj.get("peer_review_assignment"), function (data, textStatus, jqXHR) {
                 var ajaxCounter = 0,
                     peerReviewObj = new MOOC.models.PeerReviewAssignment({
@@ -337,6 +344,24 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                         callback();
                     }
                 });
+            });
+        }
+    },
+
+    loadAssetAvailabilityData: function () {
+        "use strict";
+        var kqObj = this.model;
+        if (!kqObj.has("assetAvailabilityInstance")) {
+            MOOC.ajax.getResource(kqObj.get("asset_availability"), function (data, textStatus, jqXHR) {
+                var assetAvailabilityObj;
+                assetAvailabilityObj = new MOOC.models.PeerReviewAssignment({
+                        id: data.id,
+                        kq: data.kq,
+                        available_from: data.available_from,
+                        available_to: data.available_to
+                });
+
+                kqObj.set("assetAvailabilityInstance", assetAvailabilityObj);
             });
         }
     },
@@ -453,6 +478,40 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         return this;
     },
 
+    loadAssetAvailability: function () {
+        "use strict";
+        var toExecute = [];
+
+        if (!this.model.has("assetAvailabilityInstance")) {
+            toExecute.push(async.apply(this.setupListernerFor, this.model, "assetAvailabilityInstance"));
+        }
+
+        toExecute.push(_.bind(function (callback) {
+            var unit = MOOC.models.course.getByKQ(this.model),
+                assetAvailability = this.model.get("assetAvailabilityInstance"),
+                html = "";
+
+            html = "<div class='solution-wrapper white'>"
+            html += "<h2>" + MOOC.trans.classroom.asDates + "</h2><ul>"
+            html += "<li>" + MOOC.trans.classroom.asDatesFrom + assetAvailability.get("available_from")+"</li>";
+            html += "<li>" + MOOC.trans.classroom.asDatesTo + assetAvailability.get("available_to")+"</li></ul>";
+
+            $("#kq-video").html(html);
+            $("#kq-q-showkq").addClass("hide");
+            $("#kq-q-submit").addClass("hide");
+            $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
+
+            this.setEventForNavigation("#kq-previous", unit, this.model, false);
+            this.setEventForNavigation("#kq-next", unit, this.model, true);
+
+            callback();
+        }, this));
+
+        async.series(toExecute);
+
+        return this;
+    },
+
     loadSolution: function () {
         "use strict";
         var toExecute = [];
@@ -502,6 +561,55 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 });
 
 MOOC.views.kqViews = {};
+
+MOOC.views.AssetAvailability = Backbone.View.extend({
+    render: function () {
+        "use strict";
+        var kqPath = window.location.hash.substring(1, window.location.hash.length - 2), // Remove trailing /q
+            answer = this.model.get('answer'),
+            html;
+
+        if (this.model.get("use_last_frame")) {
+            html = '<img src="' + this.model.get("lastFrame") + '" ' +
+                'alt="' + this.model.get("title") +
+                '" style="width: 620px; height: 372px;" />';
+        } else {
+            html = "<div class='white' style='width: 620px; height: 372px;'></div>";
+        }
+        this.$el.html(html);
+        this.$el.addClass("question");
+
+        $("#kq-q-buttons").removeClass("hide");
+        if (this.model.isActive()) {
+            $("#kq-q-submit").attr("disabled", false);
+        } else {
+            $("#kq-q-submit").attr("disabled", "disabled");
+        }
+        $("#kq-q-showkq").off('click').on('click', function () {
+            MOOC.router.navigate(kqPath, { trigger: true });
+        });
+        $("#kq-q-submit").off('click').on('click', _.bind(function () {
+            this.submitAnswer();
+        }, this));
+        $("#kq-next-container").removeClass("offset4");
+
+        this.model.get("optionList").each(function (opt) {
+            var view = MOOC.views.optionViews[opt.get("id")], reply = null;
+            if (_.isUndefined(view)) {
+                reply = answer.getReply(opt.get('id'));
+                view = new MOOC.views.Option({
+                    model: opt,
+                    reply: reply,
+                    el: $("#kq-video")[0]
+                });
+                MOOC.views.optionViews[opt.get("id")] = view;
+            }
+            view.render();
+        });
+
+        return this;
+    }
+});
 
 MOOC.views.Question = Backbone.View.extend({
     render: function () {
