@@ -25,6 +25,7 @@ from tastypie import fields
 from tastypie.authorization import DjangoAuthorization
 from tastypie.exceptions import NotFound, BadRequest
 from tastypie.resources import ModelResource
+from tastypie.validation import FormValidation
 
 from django.conf import settings
 from django.conf.urls import url
@@ -41,9 +42,10 @@ from moocng.api.authentication import (DjangoAuthentication,
 from moocng.api.authorization import (PublicReadTeachersModifyAuthorization,
                                       TeacherAuthorization,
                                       UserResourceAuthorization)
-from moocng.api.mongodb import get_user, MongoObj, MongoResource
+from moocng.api.mongodb import MongoObj, MongoResource, MongoUserResource
 from moocng.api.validation import (AnswerValidation,
                                    PeerReviewSubmissionsResourceValidation)
+from moocng.courses.forms import ActivityForm
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment, Course)
 from moocng.courses.utils import normalize_kq_weight, calculate_course_mark
@@ -53,6 +55,11 @@ from moocng.peerreview.utils import (kq_get_peer_review_score,
                                      get_peer_review_review_score)
 from moocng.videos.utils import extract_YT_video_id
 
+
+## TODO delete this
+
+def get_user(uno, dos):
+    return {}
 
 class CourseResource(ModelResource):
 
@@ -706,49 +713,47 @@ class AnswerResource(MongoResource):
         return bundle
 
 
-class ActivityResource(MongoResource):
+class ActivityResource(MongoUserResource):
+
+    course_id = fields.IntegerField(null=False, blank=False)
+    unit_id = fields.IntegerField(null=False, blank=False)
+    kq_id = fields.IntegerField(null=False, blank=False)
+    # user_id = fields.IntegerField(null=False)
+    # date = fields.DateTimeField(default=datetime.utcnow)
+
+    mongo_schema = {
+        "user_id": 1,
+        "course_id": 1,
+        "unit_id": 1,
+        "kq_id": 1,
+        "date": 1,
+    }
 
     class Meta:
         resource_name = 'activity'
         collection = 'activity'
-        datakey = 'courses'
+        datakey = 'activity'
         object_class = MongoObj
         authentication = DjangoAuthentication()
         authorization = DjangoAuthorization()
-        allowed_methods = ['get', 'put']
+        allowed_methods = ['get', 'post']
         filtering = {
-            "unit": ('exact'),
+            "unit_id": ('exact'),
+            "kq_id": ('exact'),
+            "course_id": ('exact'),
         }
-        validation = AnswerValidation()
+        validation = FormValidation(form_class=ActivityForm)
 
-    def obj_update(self, bundle, request=None, **kwargs):
-        user = self._get_or_create_user(request, **kwargs)
-        course_id = kwargs['pk']
+    def obj_create(self, bundle, request, **kwargs):
+        exists = not (self._collection.find_one({
+            "user_id": request.user.id,
+            "kq_id": bundle.data["kq_id"],
+        }) is None)
+        if exists:
+            raise BadRequest("The activity already exists")
 
-        bundle = self.full_hydrate(bundle)
-
-        user[self._meta.datakey][course_id] = bundle.obj.kqs
-
-        self._collection.update({'_id': user['_id']}, user, safe=True)
-
-        bundle.uuid = bundle.obj.uuid
-
-        return bundle
-
-    def hydrate(self, bundle):
-        bundle.obj.kqs = {}
-        if 'kqs' in bundle.data:
-            bundle.obj.kqs['kqs'] = bundle.data['kqs']
-
-        return bundle
-
-    def dehydrate(self, bundle):
-        bundle.data['kqs'] = bundle.obj.kqs
-        return bundle
-
-    def _initial(self, request, **kwargs):
-        course_id = kwargs['pk']
-        return {course_id: {'kqs': []}}
+        bundle.data["date"] = datetime.utcnow()
+        return super(ActivityResource, self).obj_create(bundle, request, **kwargs)
 
 
 class UserResource(ModelResource):
