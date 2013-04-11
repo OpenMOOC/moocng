@@ -150,9 +150,7 @@ MOOC.models.Asset = Backbone.Model.extend({
         name: "",
         slot_duration: 0,
         max_bookable_slots: 0,
-        capacity: 0,
-
-        _kqList: null
+        capacity: 0
     },
 
     url: function () {
@@ -163,6 +161,11 @@ MOOC.models.Asset = Backbone.Model.extend({
 
         return MOOC.ajax.getAbsoluteUrl("asset/");
     }
+});
+
+MOOC.models.AssetList = MOOC.models.TastyPieCollection.extend({
+    model: MOOC.models.Asset,
+    url: MOOC.ajax.getAbsoluteUrl('asset/')
 });
 
 MOOC.models.AssetAvailability = Backbone.Model.extend({
@@ -499,7 +502,8 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
         questionInstance: null,
         assetAvailabilityInstance: null,
         peerReviewAssignmentInstance: null,
-        _peerReviewSubmissionInstance: null
+        _peerReviewSubmissionInstance: null,
+        _assetList: null
     },
 
     url: function () {

@@ -347,20 +347,34 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         }
     },
 
-    loadAssetAvailabilityData: function () {
+    loadAssetsData: function () {
         "use strict";
-        var kqObj = this.model;
+        var kqObj,
+            assetList;
+
+        kqObj = this.model;
+
         if (!kqObj.has("assetAvailabilityInstance")) {
+            if (!kqObj.has("_assetList")) {
+                assetList = new MOOC.models.AssetList();
+                assetList.fetch({
+                    data: { 'kq': kqObj.get("id") },
+                    success: function (collection, resp, options) {
+                        kqObj.set("_assetList", assetList);
+                    }
+                });
+            }
             MOOC.ajax.getResource(kqObj.get("asset_availability"), function (data, textStatus, jqXHR) {
                 var assetAvailabilityObj;
-                assetAvailabilityObj = new MOOC.models.PeerReviewAssignment({
-                        id: data.id,
-                        kq: data.kq,
-                        available_from: data.available_from,
-                        available_to: data.available_to
+
+                assetAvailabilityObj = new MOOC.models.AssetAvailability({
+                    id: data.id,
+                    kq: data.kq,
+                    available_from: data.available_from,
+                    available_to: data.available_to
                 });
 
-                kqObj.set("assetAvailabilityInstance", assetAvailabilityObj);
+                kqObj.set('assetAvailabilityInstance', assetAvailabilityObj);
             });
         }
     },
@@ -477,7 +491,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         return this;
     },
 
-    loadAssetAvailability: function () {
+    loadAssets: function () {
         "use strict";
         var toExecute = [];
 
@@ -485,15 +499,19 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             toExecute.push(async.apply(this.setupListernerFor, this.model, "assetAvailabilityInstance"));
         }
 
+        if (!this.model.has("_assetList")) {
+            toExecute.push(async.apply(this.setupListernerFor, this.model, "_assetList"));
+        }
+
         toExecute.push(_.bind(function (callback) {
             var unit = MOOC.models.course.getByKQ(this.model),
                 assetAvailability = this.model.get("assetAvailabilityInstance"),
-                html = "";
+                html;
 
-            html = "<div class='solution-wrapper white'>"
-            html += "<h2>" + MOOC.trans.classroom.asDates + "</h2><ul>"
-            html += "<li>" + MOOC.trans.classroom.asDatesFrom + assetAvailability.get("available_from")+"</li>";
-            html += "<li>" + MOOC.trans.classroom.asDatesTo + assetAvailability.get("available_to")+"</li></ul>";
+            html = "<div class='solution-wrapper white'>";
+            html += "<h2>" + MOOC.trans.classroom.asDates + "</h2><ul>";
+            html += "<li>" + MOOC.trans.classroom.asDatesFrom + assetAvailability.get("available_from") + "</li>";
+            html += "<li>" + MOOC.trans.classroom.asDatesTo + assetAvailability.get("available_to") + "</li></ul>";
 
             $("#kq-video").html(html);
             $("#kq-q-showkq").addClass("hide");

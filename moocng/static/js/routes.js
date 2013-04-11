@@ -251,19 +251,19 @@ MOOC.App = Backbone.Router.extend({
         async.series(toExecute);
     },
 
-    kqAS: function(unit, kq) {
+    kqAS: function (unit, kq) {
         "use strict";
         unit = parseInt(unit, 10);
         kq = parseInt(kq, 10);
         var toExecute = this.kqSteps(unit, kq, false);
 
         toExecute.push(function (callback) {
-            MOOC.views.kqViews[kq].loadAssetAvailabilityData();
+            MOOC.views.kqViews[kq].loadAssetsData();
             callback();
         });
 
         toExecute.push(function (callback) {
-            MOOC.views.kqViews[kq].loadAssetAvailability();
+            MOOC.views.kqViews[kq].loadAssets();
             callback();
         });
 
