@@ -718,8 +718,6 @@ class ActivityResource(MongoUserResource):
     course_id = fields.IntegerField(null=False, blank=False)
     unit_id = fields.IntegerField(null=False, blank=False)
     kq_id = fields.IntegerField(null=False, blank=False)
-    # user_id = fields.IntegerField(null=False)
-    # date = fields.DateTimeField(default=datetime.utcnow)
 
     mongo_schema = {
         "user_id": 1,
