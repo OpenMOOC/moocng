@@ -478,6 +478,8 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
         normalized_weight: 0,
         peer_review_assignment: null, // Optional
         peerReviewAssignmentInstance: null,
+        asset_availability: null,
+        assetAvailabilityInstance: null,
         peer_review_score: null,
 
         _peerReviewSubmissionInstance: null

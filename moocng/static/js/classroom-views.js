@@ -42,6 +42,8 @@ MOOC.views.Unit = Backbone.View.extend({
                 html += '/ <span class="a label" title="' + MOOC.trans.classroom.aTooltip + '">' + MOOC.trans.classroom.a + '</span>';
             } else if (kq.has("peer_review_assignment")) {
                 html += ' <span class="pr label" title="' + MOOC.trans.classroom.prTooltip + '">' + MOOC.trans.classroom.pr + '</span>';
+            } else if (kq.has("asset_availability")) {
+                html += ' <span class="av label" title="' + MOOC.trans.classroom.asTooltip + '">' + MOOC.trans.classroom.as + '</span>';
             }
             html += '</li>';
         });
