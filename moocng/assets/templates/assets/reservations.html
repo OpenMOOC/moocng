@@ -1,0 +1,37 @@
+{% extends "courses/base_course.html" %}
+
+{% load i18n asset_tags %}
+
+{% block nav-course-reservations %}class="active"{% endblock %}
+
+{% block content %}
+
+  <h2>{% trans "Current reservations" %}</h2>
+
+{% if reservations %}
+
+      <div id="course-reservations" class="well">
+          	
+          {% for reservation in reservations %}
+              <h3>{{ reservation.asset }}</h3>
+              <ul id="reservation{{ reservation.id }}" >
+
+                   {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends %}
+              
+                  <li> From: {{ from }} </li>
+                  <li> To:  {{ to }} </li> 
+                  
+                  {% endblocktrans %} 
+
+              </ul>
+           {% endfor %}
+        
+      </div>
+
+ {% else %}
+   {% trans "You do not have any asset reservation for this course yet " %}.
+
+ {% endif %}
+
+
+{% endblock %}

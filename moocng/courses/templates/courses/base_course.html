@@ -27,8 +27,8 @@
   {% endif_has_peer_review_assignments %}
 
   {% if_has_assets course %}
-  <li {% block nav-course-assets %}{% endblock %}>
-    <a href="{% url course_assets course.slug %}">{% trans "Assets" %}</a>
+  <li {% block nav-course-reservations %}{% endblock %}>
+    <a href="{% url course_reservations course.slug %}">{% trans "Reservations" %}</a>
   </li>
   {% endif_has_assets %}
 

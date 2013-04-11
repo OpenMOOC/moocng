@@ -29,7 +29,7 @@ from moocng.courses.utils import is_course_ready
 
 
 @login_required
-def course_assets(request, course_slug):
+def course_reservations(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
 
     is_enrolled = course.students.filter(id=request.user.id).exists()
@@ -47,16 +47,10 @@ def course_assets(request, course_slug):
             'ask_admin': ask_admin,
         }, context_instance=RequestContext(request))
 
-    assets = course_get_assets(course)
-
     reservations = user_course_get_reservations(request.user, course)
 
-    kqs = course_get_kq_with_bookable_assets(course)
-
-    return render_to_response('assets/assets.html', {
+    return render_to_response('assets/reservations.html', {
         'course': course,
-        'assets': assets,
         'is_enrolled': is_enrolled,
         'reservations': reservations,
-        'kqs': kqs
     }, context_instance=RequestContext(request))

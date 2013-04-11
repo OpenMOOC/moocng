@@ -17,6 +17,6 @@ from django.conf.urls import patterns, url
 urlpatterns = patterns(
     'moocng.assets.views',
 
-    url(r'^course/(?P<course_slug>[-\w]+)/assets/$', 'course_assets',
-        name='course_assets')
+    url(r'^course/(?P<course_slug>[-\w]+)/reservations/$', 'course_reservations',
+        name='course_reservations')
 )
