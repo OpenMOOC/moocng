@@ -2,7 +2,6 @@
 /*global MOOC: true, Backbone, $, _, moment */
 
 // Copyright 2012 Rooter Analysis S.L.
-// Copyright (c) 2013 Grupo Opentia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.

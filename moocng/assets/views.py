@@ -1,4 +1,3 @@
-# Copyright (c) 2013 Grupo Opentia
 # Copyright 2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
