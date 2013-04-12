@@ -46,7 +46,8 @@ from moocng.api.validation import (AnswerValidation,
                                    PeerReviewSubmissionsResourceValidation)
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment, Course)
-from moocng.courses.utils import normalize_kq_weight, calculate_course_mark
+from moocng.courses.utils import (normalize_kq_weight, calculate_course_mark,
+                                  normalize_unit_weight, calculate_unit_mark)
 from moocng.mongodb import get_db
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
 from moocng.peerreview.utils import (kq_get_peer_review_score,
@@ -82,6 +83,42 @@ class UnitResource(ModelResource):
         if u'title' in data and data[u'title'] is not None:
             data[u'title'] = data[u'title'].strip()
         return data
+
+
+class UnitScoreResource(ModelResource):
+    score = fields.FloatField(readonly=True)
+
+    class Meta:
+        queryset = Unit.objects.all()
+        resource_name = 'unitscore'
+        object_class = MongoObj
+        authentication = DjangoAuthentication()
+        authorization = DjangoAuthorization()
+        allowed_methods = ['get']
+        fields = ['id']
+
+    # TODO this method needs to be optimized and will be when the scores
+    # get refactored
+    def dehydrate_score(self, bundle):
+        use_old_calculus = False
+        if bundle.obj.course.slug in settings.COURSES_USING_OLD_TRANSCRIPT:
+            use_old_calculus = True
+
+        if bundle.obj.unittype == 'n' and not use_old_calculus:
+            normalized_unit_weight = 0
+        else:
+            course_unit_list = Unit.objects.filter(course=bundle.obj.course)
+            if not use_old_calculus:
+                course_unit_list = course_unit_list.exclude(unittype='n')
+            total_weight_unnormalized = 0
+            unit_course_counter = 0
+            for course_unit in course_unit_list:
+                if not(course_unit.unittype == 'n' and not use_old_calculus):
+                    total_weight_unnormalized += course_unit.weight
+                    unit_course_counter += 1
+            normalized_unit_weight = normalize_unit_weight(bundle.obj, unit_course_counter, total_weight_unnormalized)
+
+        return calculate_unit_mark(bundle.obj, bundle.request.user, normalized_unit_weight)
 
 
 class KnowledgeQuantumResource(ModelResource):

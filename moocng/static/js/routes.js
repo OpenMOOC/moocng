@@ -261,7 +261,9 @@ MOOC.App = Backbone.Router.extend({
             var unitView,
                 hasPeerReviews,
                 peerReviewReviewList,
-                createView;
+                createView,
+                toExecute,
+                score;
 
             hasPeerReviews = false;
 
@@ -291,27 +293,50 @@ MOOC.App = Backbone.Router.extend({
                 callback();
             };
 
-            if (!inClassroomView && hasPeerReviews) {
-
+            if (!inClassroomView) {
                 // Only in progress view
-                $.when(MOOC.io.loadPeerReviewReviewList(unitID),
-                       MOOC.io.loadPeerReviewAssignmentList(unitID),
-                       MOOC.io.loadEvaluationCriterionList(unitID),
-                       MOOC.io.loadPeerReviewSubmissionList(unitID))
-                    .then(function (peerReviewReviewList,
-                                    peerReviewAssignmentList,
-                                    evaluationCriterionList,
-                                    peerReviewSubmissionList) {
+                toExecute = [];
 
-                        var knowledgeQuantumList = unitObj.get('knowledgeQuantumList');
-
-                        unitObj.set('peerReviewReviewList', peerReviewReviewList);
-                        knowledgeQuantumList.setPeerReviewAssignmentList(peerReviewAssignmentList);
-                        knowledgeQuantumList.setEvaluationCriterionList(evaluationCriterionList);
-                        knowledgeQuantumList.setPeerReviewSubmissionList(peerReviewSubmissionList);
-                        createView();
+                score = new MOOC.models.UnitScore({
+                    id: unitObj.get("id")
+                });
+                unitObj.set("_scoreInstance", score);
+                toExecute.push(function (callback) {
+                    score.fetch({
+                        success: function () {
+                            callback();
+                        },
+                        error: function () {
+                            callback("Couldn't get the unit's score");
+                        }
                     });
+                });
 
+                if (hasPeerReviews) {
+                    toExecute.push(function (callback) {
+                        $.when(MOOC.io.loadPeerReviewReviewList(unitID),
+                               MOOC.io.loadPeerReviewAssignmentList(unitID),
+                               MOOC.io.loadEvaluationCriterionList(unitID),
+                               MOOC.io.loadPeerReviewSubmissionList(unitID))
+                            .then(function (peerReviewReviewList,
+                                            peerReviewAssignmentList,
+                                            evaluationCriterionList,
+                                            peerReviewSubmissionList) {
+
+                                var knowledgeQuantumList = unitObj.get('knowledgeQuantumList');
+
+                                unitObj.set('peerReviewReviewList', peerReviewReviewList);
+                                knowledgeQuantumList.setPeerReviewAssignmentList(peerReviewAssignmentList);
+                                knowledgeQuantumList.setEvaluationCriterionList(evaluationCriterionList);
+                                knowledgeQuantumList.setPeerReviewSubmissionList(peerReviewSubmissionList);
+                                callback();
+                            });
+                    });
+                }
+
+                async.parallel(toExecute, function (err, results) {
+                    createView();
+                });
             } else {
                 createView();
             }

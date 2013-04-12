@@ -95,7 +95,8 @@ MOOC.views.Unit = Backbone.View.extend({
             $("#unit-kqs").append(kqView.render().el);
         });
 
-        score = Math.round(this.model.calculateProgress({ completed: true, correct: true })) / 10;
+        score = this.model.get("_scoreInstance").get("score")[0];
+        score = Math.round(score * 100) / 100;
         $("#final-score span").text(score + " / 10").attr("title", gettext("The nugget's weight have been considered to calculate this score."));
 
         return this;

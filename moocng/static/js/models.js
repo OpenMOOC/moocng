@@ -546,6 +546,23 @@ MOOC.models.KnowledgeQuantumList  = MOOC.models.TastyPieCollection.extend({
     }
 });
 
+MOOC.models.UnitScore = Backbone.Model.extend({
+    defaults: {
+        score: [0, 0, false]
+    },
+
+    url: function () {
+        "use strict";
+        return MOOC.ajax.getAbsoluteUrl("unitscore/") + this.get("id") + "/";
+    },
+
+    parse: function (resp, xhr) {
+        "use strict";
+        delete resp.resource_uri;
+        return resp;
+    }
+});
+
 MOOC.models.Unit = Backbone.Model.extend({
     defaults: {
         order: -1,
@@ -557,7 +574,8 @@ MOOC.models.Unit = Backbone.Model.extend({
         deadline: null,
 
         knowledgeQuantumList: null,
-        peerReviewReviewList: null
+        peerReviewReviewList: null,
+        _scoreInstance: null
     },
 
     statuses: {
@@ -618,22 +636,6 @@ MOOC.models.Unit = Backbone.Model.extend({
                 MOOC.models.course.courseId + "/");
         }
         Backbone.sync(method, model2send, options);
-    },
-
-    calculateProgress: function (conditions) {
-        "use strict";
-        var kqs = this.get("knowledgeQuantumList").length,
-            progress = this.get("knowledgeQuantumList").where(conditions),
-            result = 0;
-
-        _.each(progress, function (kq) {
-            result += kq.get("normalized_weight");
-        });
-
-        if (!_.isNumber(result) || _.isNaN(result)) {
-            result = 0;
-        }
-        return result;
     },
 
     getPeerReviewReviewsForKq: function (kq) {
