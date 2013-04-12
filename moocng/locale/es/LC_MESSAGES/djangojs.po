@@ -1,4 +1,4 @@
-# Copyright 2012 Rooter Analysis S.L.
+# Copyright 2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-14 11:11-0500\n"
+"POT-Creation-Date: 2013-04-12 10:55+0200\n"
 "PO-Revision-Date: 2013-03-14 17:13+0100\n"
 "Last-Translator: Alejandro Blanco <ablanco@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -24,28 +24,35 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: static/js/ajax.js:35
+#: static/js/ajax.js:45
 msgid "Error"
 msgstr "Error"
 
-#: static/js/ajax.js:37
+#: static/js/ajax.js:47
 msgid "Unknown error with ajax petition"
 msgstr "Error desconocido al hacer la petición ajax"
 
-#: static/js/ajax.js:42
+#: static/js/ajax.js:52
 msgid "error"
 msgstr "error"
 
-#: static/js/progress-views.js:81 static/js/progress-views.js.c:86
+#: static/js/progress-views.js:80 static/js/progress-views.js.c:86
 msgid "completed"
 msgstr "completado"
 
-#: static/js/progress-views.js:82 static/js/progress-views.js.c:90
-#: static/js/progress-views.js:178
-msgid "correct"
-msgstr "correcto"
+#: static/js/progress-views.js:88
+msgid "New progress calculation"
+msgstr "Nuevo cálculo para el progreso"
 
-#: static/js/progress-views.js:152
+#: static/js/progress-views.js:89
+msgid ""
+"Now the weights of the unit's nuggets are not considered in progress "
+"calculation."
+msgstr ""
+"Ahora el peso de las píldoras de la unidad no es tenido en cuenta a la hora "
+"de calcular el progreso."
+
+#: static/js/progress-views.js:148
 msgid ""
 "This score will not be applied to your final score until you get the minimum "
 "number of reviews"
@@ -53,31 +60,35 @@ msgstr ""
 "Esta nota no se aplicará a tu nota final hasta que obtengas el número mínimo "
 "de revisiones"
 
-#: static/js/progress-views.js:170
+#: static/js/progress-views.js:166
 msgid "pending"
 msgstr "pendiente"
 
-#: static/js/progress-views.js:180
+#: static/js/progress-views.js:174
+msgid "correct"
+msgstr "correcto"
+
+#: static/js/progress-views.js:176
 msgid "incorrect"
 msgstr "incorrecto"
 
-#: static/js/progress-views.js:210
+#: static/js/progress-views.js:206
 msgid "Reviews of your submission"
 msgstr "Revisiones de tu entrega"
 
-#: static/js/progress-views.js:213
+#: static/js/progress-views.js:209
 msgid "Date"
 msgstr "Fecha"
 
-#: static/js/progress-views.js:214
+#: static/js/progress-views.js:210
 msgid "Score"
 msgstr "Nota"
 
-#: static/js/progress-views.js:219
+#: static/js/progress-views.js:215
 msgid "You have not received any review yet"
 msgstr "Aún no has recibido ninguna revisión"
 
-#: static/js/progress-views.js:223
+#: static/js/progress-views.js:219
 msgid ""
 "You have sent %(sent_reviews)s reviews of the %(mandatory_reviews)s "
 "mandatory reviews."
@@ -85,11 +96,11 @@ msgstr ""
 "Has enviado %(sent_reviews)s revisiones de las %(mandatory_reviews)s "
 "obligatorias."
 
-#: static/js/progress-views.js:230
+#: static/js/progress-views.js:226
 msgid "Do more reviews"
 msgstr "Hacer más revisiones"
 
-#: static/js/progress-views.js:283
+#: static/js/progress-views.js:279
 msgid "View details"
 msgstr "Ver detalles"
 
@@ -100,4 +111,6 @@ msgstr "El módulo no está listo"
 #: static/js/routes.js:82
 msgid ""
 "This module has no nuggets. Probably the start date hasn't been reached yet."
-msgstr "Este módulo no tiene píldoras. Probablemente aún no se ha alcanzado la fecha de inicio."
+msgstr ""
+"Este módulo no tiene píldoras. Probablemente aún no se ha alcanzado la fecha "
+"de inicio."

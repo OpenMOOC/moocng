@@ -29,7 +29,6 @@ MOOC.views.capitalize = function (text) {
 };
 
 MOOC.views.Unit = Backbone.View.extend({
-
     initialize: function () {
         "use strict";
         var unit = this.model, collection = unit.get('knowledgeQuantumList');
@@ -82,10 +81,13 @@ MOOC.views.Unit = Backbone.View.extend({
         $("#unit-progress-bar").html(html);
         progress = this.model.get("knowledgeQuantumList").where({ completed: true }).length;
         progress = (progress / this.model.get("knowledgeQuantumList").length) * 100;
-        helpText = "<div><span>" + Math.round(progress) + "% " + gettext('completed') + "</span></div>";
         $("#unit-progress-bar").find("div.bar.completed").css("width", progress + "%");
 
-        $("#unit-progress-text").html(helpText);
+        helpText = "<div><span>" + Math.round(progress) + "% " + gettext('completed') + "</span> <button id='new-progress-info' class='btn btn-warning btn-small'><i class='icon-exclamation-sign'></i></button></div>";
+        $("#unit-progress-text").html(helpText).find("#new-progress-info").popover({
+            title: gettext("New progress calculation"),
+            content: gettext("Now the weights of the unit's nuggets are not considered in progress calculation.")
+        });
 
         $("#unit-kqs").empty();
         _(this._kqViews).each(function (kqView) {
