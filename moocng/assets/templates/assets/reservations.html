@@ -31,9 +31,11 @@ $(document).ready(function () {
 
 {% block content %}
 
+
  {% if active_reservations %}
 
  <h2>{% trans "Active Reservations" %}</h2>
+
 
       <div id="course-active-reservations" class="well">
           	
@@ -66,13 +68,14 @@ $(document).ready(function () {
           {% for reservation in pending_reservations %}
               <h3>{% blocktrans with asset_name=reservation.asset kq_title=reservation.reserved_from.kq.title%}
               	{{ asset_name}} of {{kq_title }}   {% endblocktrans %} </h3>
+              	 
               <ul id="pending-reservation{{ reservation.id }}" >
 
                   {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends %}
               
                   <li> From: {{ from }} </li>
                   <li> To:  {{ to }} </li> 
-                  
+                  </br>
                   {% endblocktrans %} 
 
                	 <form action="{% url cancel_reservation course.slug reservation.id %}"  method="post">{% csrf_token %}
@@ -83,6 +86,7 @@ $(document).ready(function () {
            {% endfor %}
         
       </div>
+
 
  {% else %}
    {% trans "You do not have any pending asset reservation for this course." %}

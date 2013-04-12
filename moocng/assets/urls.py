@@ -18,5 +18,7 @@ urlpatterns = patterns(
     'moocng.assets.views',
 
     url(r'^course/(?P<course_slug>[-\w]+)/reservations/$', 'course_reservations',
-        name='course_reservations')
+        name='course_reservations'),
+    url(r'^course/(?P<course_slug>[-\w]+)/reservations/(?P<reservation_id>[-\w]+)/cancel$', 'cancel_reservation',
+        name='cancel_reservation'),
 )

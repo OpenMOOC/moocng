@@ -22,12 +22,14 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
 
-from moocng.assets.models import Asset
+from moocng.assets.models import Asset, Reservation
 from moocng.assets.utils import course_get_assets, user_course_get_reservations
 from moocng.assets.utils import course_get_kq_with_bookable_assets, user_course_get_past_reservations
 from moocng.assets.utils import user_course_get_pending_reservations, user_course_get_active_reservations
 from moocng.courses.models import Course
 from moocng.courses.utils import is_course_ready
+
+from django.db.models import Q
 
 import datetime
 
@@ -63,5 +65,27 @@ def course_reservations(request, course_slug):
         'active_reservations': active_reservations,
         'past_reservations': past_reservations,
         'pending_reservations': pending_reservations,
-        #'date_time': datetime.datetime.now(),
     }, context_instance=RequestContext(request))
+
+
+@login_required
+def cancel_reservation(request, course_slug, reservation_id):
+
+    if request.method == 'POST':
+
+        course = get_object_or_404(Course, slug=course_slug)
+
+        is_enrolled = course.students.filter(id=request.user.id).exists()
+
+        if not is_enrolled:
+            messages.error(request, _('You are not enrolled in this course'))
+            return HttpResponseRedirect(reverse('course_overview',
+                                        args=[course_slug]))
+
+        reserv_remove = Reservation.objects.filter(Q(id=reservation_id) & Q(user__id=request.user.id))
+        if reserv_remove is None:
+            messages.error(request, _('You are not the owner of this reservation'))
+            return HttpResponseRedirect(reverse('course_reservations', args=[course.slug]))
+        reserv_remove.delete()
+
+    return HttpResponseRedirect(reverse('course_reservations', args=[course.slug]))
