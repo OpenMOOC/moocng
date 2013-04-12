@@ -2,7 +2,6 @@
 /*global MOOC:true, _, jQuery, Backbone, tinyMCE, async */
 
 // Copyright 2012 Rooter Analysis S.L.
-// Copyright (c) 2013 Grupo Opentia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -672,10 +671,14 @@ if (_.isUndefined(window.MOOC)) {
                 if (this.model.has("videoID") && this.model.get("videoID") !== "") {
                     this.$el.find("input#kqvideo").val("http://youtu.be/" + this.model.get("videoID"));
                 }
-                this.$el.find("input#kqweight").val(this.model.get("normalized_weight"));
+                this.$el.find("input#kqweight").val(this.model.get("weight"));
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
                     this.$el.find("#noquestion").addClass("hide");
+                    /* A KQ can only have a question OR a peer review, so if it has
+                       a question, the peer review assignment creation button should
+                       be hidden as well */
+                    this.$el.find("#nopeerreviewassignment").addClass("hide");
                     this.$el.find("#question-tab").removeClass("hide");
                     this.$el.find("#question img").attr("src", question.get("lastFrame"));
                     if (question.has("solutionVideo") && question.get("solutionVideo") !== "") {
@@ -704,6 +707,10 @@ if (_.isUndefined(window.MOOC)) {
                     assignment = this.model.get("peerReviewAssignmentInstance");
                     this.$el.find("#peer-review-assignment-tab").removeClass("hide");
                     this.$el.find("#nopeerreviewassignment").addClass("hide");
+                    /* A KQ can only have a question OR a peer review, so if it has
+                       a peer review assignment, the question creation button should
+                       be hidden as well */
+                    this.$el.find("#noquestion").addClass("hide");
                     this.$el.find("#reviewdescription").val(assignment.get("description"));
                     this.$el.find("#reviewminreviews").val(assignment.get("minimum_reviewers"));
                     criterionList = assignment.get("_criterionList");
@@ -799,7 +806,7 @@ if (_.isUndefined(window.MOOC)) {
                 this.model.unset("new");
                 this.model.set("title", $.trim(this.$el.find("input#kqtitle").val()));
                 this.model.set("videoID", extractVideoID(this.$el.find("input#kqvideo").val()));
-                this.model.set("normalized_weight", parseInt(this.$el.find("input#kqweight").val(), 10));
+                this.model.set("weight", parseInt(this.$el.find("input#kqweight").val(), 10));
                 this.model.set("supplementary_material", tinyMCE.get("kqsupplementary").getContent());
                 this.model.set("teacher_comments", tinyMCE.get("kqcomments").getContent());
 

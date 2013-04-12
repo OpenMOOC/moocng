@@ -2,7 +2,6 @@
 /*global MOOC:true, _, jQuery, Backbone */
 
 // Copyright 2012 Rooter Analysis S.L.
-// Copyright (c) 2013 Grupo Opentia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,7 +36,7 @@ if (_.isUndefined(window.MOOC)) {
                             var data = _.pick(kq, "id", "title", "videoID",
                                 "teacher_comments", "supplementary_material",
                                 "question", "order", "correct", "completed",
-                                "normalized_weight", "peer_review_assignment");
+                                "weight", "peer_review_assignment");
                             data.id = parseInt(data.id, 10);
                             return data;
                         }));
