@@ -11,17 +11,13 @@ $(document).ready(function () {
 
     $('#past-reservations-message').css('cursor', 'pointer');
     $("#course-past-reservations").hide();
-    $("#past-reservations-message").click(function(){
+    $("#past-message-btn").click(function(){
     $("#course-past-reservations").toggle();
-    
-    if ($('#course-past-reservations').is(':visible')){
-    	$("#past_message").text("{% trans "hide past reservations.." %}");
-
-    }else {
-    	$("#past_message").text("{% trans "display past reservations.." %}");
-
-    }
-    
+        if ($('#course-past-reservations').is(':visible')){
+            $("#past-message").text("{% trans "Hide past reservations" %}");
+        }else {
+            $("#past-message").text("{% trans "Display past reservations" %}");
+        }
     });
 
 });
@@ -98,10 +94,14 @@ $(document).ready(function () {
 	
  <h2>{% trans "Past Reservations" %}</h2>
 
-   <div id="past-reservations-message">
-   <p id="past_message">  {% trans "display past reservations.." %} </p>
-   </div>	
-	
+    <div id="past-reservations-message">
+        <button class="btn" id="past-message-btn">
+            <i class="icon-info-sign"></i>
+            <span id="past-message">{% trans "Display past reservations" %}</span>
+        </button>
+    </div>
+    <br />
+
       <div id="course-past-reservations" class="well">
           	
           {% for reservation in past_reservations %}
