@@ -513,6 +513,13 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             html += "<li>" + MOOC.trans.classroom.asDatesFrom + assetAvailability.get("available_from") + "</li>";
             html += "<li>" + MOOC.trans.classroom.asDatesTo + assetAvailability.get("available_to") + "</li></ul>";
 
+            html += "<h2>" + MOOC.trans.classroom.asAssetList + "</h2><ul>";
+            this.model.get("_assetList").each(function (asset) {
+                html += "<li>" + asset.get('name') + "</li>";
+            });
+            html += "</ul>";
+
+
             $("#kq-video").html(html);
             $("#kq-q-showkq").addClass("hide");
             $("#kq-q-submit").addClass("hide");
