@@ -70,7 +70,8 @@ MOOC.views.Unit = Backbone.View.extend({
         "use strict";
         var html,
             progress,
-            helpText;
+            helpText,
+            score;
 
         this.$el.parent().children().removeClass("active");
         this.$el.addClass("active");
@@ -93,6 +94,9 @@ MOOC.views.Unit = Backbone.View.extend({
         _(this._kqViews).each(function (kqView) {
             $("#unit-kqs").append(kqView.render().el);
         });
+
+        score = Math.round(this.model.calculateProgress({ completed: true, correct: true })) / 10;
+        $("#final-score span").text(score + " / 10").attr("title", gettext("The nugget's weight have been considered to calculate this score."));
 
         return this;
     }
@@ -166,9 +170,16 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         return '<span class="badge pull-right">' + MOOC.views.capitalize(gettext('pending')) + '</span>';
     },
 
+    render_normalized_weight: function () {
+        "use strict";
+        var normWeight = Math.round(this.model.get("normalized_weight"));
+        return "<span class='muted pull-right weight' title='" + this.model.get("normalized_weight") + "%'>" + normWeight + "%</span>";
+    },
+
     render_normal_kq: function () {
         "use strict";
         var html = [];
+        html.push(this.render_normalized_weight());
         if (this.model.get('completed')) {
             if (this.model.get("correct")) {
                 html.push('<span class="badge badge-success pull-right"><i class="icon-ok icon-white"></i> ' + MOOC.views.capitalize(gettext('correct')) + '</span>');
@@ -188,6 +199,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
         minimum_reviewers = pra.get('minimum_reviewers');
 
+        html.push(this.render_normalized_weight());
         if (this.model.get('completed')) {
             html.push(this.render_badge(minimum_reviewers));
         } else {
