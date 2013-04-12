@@ -4,12 +4,36 @@
 
 {% block nav-course-reservations %}class="active"{% endblock %}
 
+
+{% block extrajs %}
+<script type="text/javascript">
+$(document).ready(function () {
+
+    $('#past-reservations-message').css('cursor', 'pointer');
+    $("#course-past-reservations").hide();
+    $("#past-reservations-message").click(function(){
+    $("#course-past-reservations").toggle();
+    
+    if ($('#course-past-reservations').is(':visible')){
+    	$("#past_message").text("{% trans "hide past reservations.." %}");
+
+    }else {
+    	$("#past_message").text("{% trans "display past reservations.." %}");
+
+    }
+    
+    });
+
+});
+</script>
+{% endblock %}
+
+
 {% block content %}
 
+ {% if active_reservations %}
 
-<h2>{% trans "Active Reservations" %}</h2>
-
-{% if active_reservations %}
+ <h2>{% trans "Active Reservations" %}</h2>
 
       <div id="course-active-reservations" class="well">
           	
@@ -30,15 +54,12 @@
         
       </div>
 
- {% else %}
-   {% trans "You do not have any active asset reservation for this course yet." %}
-
  {% endif %}
  
-  
-<h2>{% trans "Pending Reservations" %}</h2>
 
-{% if pending_reservations %}
+ <h2>{% trans "Pending Reservations" %}</h2> 
+
+ {% if pending_reservations %}
 
       <div id="course-pending-reservations" class="well">
           	
@@ -47,29 +68,43 @@
               	{{ asset_name}} of {{kq_title }}   {% endblocktrans %} </h3>
               <ul id="pending-reservation{{ reservation.id }}" >
 
-                   {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends %}
+                  {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends %}
               
                   <li> From: {{ from }} </li>
                   <li> To:  {{ to }} </li> 
                   
                   {% endblocktrans %} 
 
+               	 <form action="{% url cancel_reservation course.slug reservation.id %}"  method="post">{% csrf_token %}
+				 <input type="submit" value="{% trans "Remove" %}" class="btn btn-primary" />
+				 </form> 
+
               </ul>
            {% endfor %}
         
       </div>
-  {% endif %}
- 
 
-<h2>{% trans "Past Reservations" %}</h2>
+ {% else %}
+   {% trans "You do not have any pending asset reservation for this course." %}
 
-{% if past_reservations %}
+ {% endif %}
 
+
+ {% if past_reservations %}
+	
+ <h2>{% trans "Past Reservations" %}</h2>
+
+   <div id="past-reservations-message">
+   <p id="past_message">  {% trans "display past reservations.." %} </p>
+   </div>	
+	
       <div id="course-past-reservations" class="well">
           	
           {% for reservation in past_reservations %}
+          
               <h3>{% blocktrans with asset_name=reservation.asset kq_title=reservation.reserved_from.kq.title%}
               {{ asset_name}} of {{kq_title }}   {% endblocktrans %} </h3>
+              
               <ul id="past-reservation{{ reservation.id }}" >
 
                    {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends %}
@@ -83,7 +118,7 @@
            {% endfor %}
         
       </div>
-  {% endif %}
- 
+ {% endif %}
+
 
 {% endblock %}
