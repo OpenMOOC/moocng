@@ -17,6 +17,7 @@ import datetime
 
 from django.db import IntegrityError
 from django.db.models import Q
+from django.utils.translation import ugettext as _
 
 from moocng.mongodb import get_db
 from moocng.assets import cache
@@ -68,3 +69,65 @@ def user_course_get_pending_reservations(user, course, time=None):
     result = user_course_get_reservations(user, course).filter(Q(reservation_begins__gt=time)
                                                                & Q(reservation_ends__gt=time)).order_by('reservation_begins')
     return result
+
+
+def is_asset_bookable(user, asset, availability, reservation_begins, reservation_ends):
+    """This method checks if there is possible to create a new reservation
+    with the given parameters.
+    It returns a tuple whose first parameter is a boolean which specifies if
+    it's possible to create the reservation, and if it's not possible the
+    second parameter would be a string which specifies why it's not possible
+    to create the reservation"""
+
+    if not availability.assets.filter(id=asset.id).exists():
+        return(False, _('This asset is not available from this nugget.'))
+
+    if reservation_ends < datetime.datetime.today():
+        return (False, _('The specified time is in the past.'))
+    if reservation_begins.date() < availability.available_from or reservation_ends.date() > availability.available_to:
+        return (False, _('The specified time is not in the bookable period.'))
+
+    collisions = Reservation.objects.filter(asset__id=asset.id)
+    collisions = collisions.exclude(Q(reservation_begins__gt=reservation_begins)
+                                    | Q(reservation_ends__lt=reservation_ends))
+    if (collisions.count() >= asset.max_bookable_slots):
+        return (False, _("There's not a free slot available."))
+
+    return (True, None)
+
+def book_asset(user, asset, availability, reservation_begins, reservation_ends):
+    """This method checks if there is possible to create a new reservation
+    with the given parameters, and if it's possible it creates the reservation.
+    It returns a tuple whose first parameter is a boolean which specifies if
+    the reservation was created, and the second element is a message specifying
+    that the reservation was created or the reason why it couldn't be created.
+    """
+    can_create = is_asset_bookable(user, asset, availability, reservation_begins, reservation_ends)
+    if not can_create[0]:
+        return can_create
+
+    collisions = Reservation.objects.filter(asset__id=asset.id)
+    collisions = collisions.exclude(Q(reservation_begins__gt=reservation_ends)
+                                    | Q(reservation_ends__lt=reservation_begins))
+    used_slots = collisions.values_list('slot_id', flat=True)
+
+    free_slots = range(asset.max_bookable_slots)
+
+    for i in used_slots:
+        try:
+            free_slots.remove(i)
+        except ValueError:
+            pass
+    if len(free_slots) == 0:
+        return (False, _("There's not a free slot available."))
+
+    slot = free_slots[0]
+
+    new_reservation = Reservation(user=user, asset=asset, slot_id = slot,
+                                  reserved_from=availability,
+                                  reservation_begins=reservation_begins,
+                                  reservation_ends=reservation_ends)
+
+    new_reservation.save();
+
+    return (True, _("Reservation created successfully."));

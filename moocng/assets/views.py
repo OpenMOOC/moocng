@@ -15,22 +15,20 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
 
-from moocng.assets.models import Asset, Reservation
-from moocng.assets.utils import course_get_assets, user_course_get_reservations
-from moocng.assets.utils import course_get_kq_with_bookable_assets, user_course_get_past_reservations
-from moocng.assets.utils import user_course_get_pending_reservations, user_course_get_active_reservations
-from moocng.courses.models import Course
+from moocng.assets.models import Asset, AssetAvailability, Reservation
+from moocng.assets.utils import *
+from moocng.courses.models import Course, KnowledgeQuantum
 from moocng.courses.utils import is_course_ready
 
 from django.db.models import Q
 
-import datetime
+from datetime import datetime, timedelta
 
 
 @login_required
@@ -88,3 +86,50 @@ def cancel_reservation(request, course_slug, reservation_id):
         reserv_remove.delete()
 
     return HttpResponseRedirect(reverse('course_reservations', args=[course.slug]))
+
+@login_required
+def reservation_create(request, course_slug, kq_id, asset_id):
+
+    if request.method in ['POST', 'PUT']:
+        course = get_object_or_404(Course, slug=course_slug)
+        is_enrolled = course.students.filter(id=request.user.id).exists()
+
+        if not is_enrolled:
+            messages.error(request, _('You are not enrolled in this course'))
+            return HttpResponseRedirect(reverse('course_overview',
+                                                args=[course_slug]))
+
+        kq = get_object_or_404(KnowledgeQuantum, id=kq_id)
+        asset = get_object_or_404(Asset, id=asset_id)
+
+        try:
+            availability = kq.asset_availability
+        except AssetAvailability.DoesNotExist:
+            messages.error(request, _('This nugget has no available asset'))
+            return HttpResponseRedirect(reverse('course_reservations',
+                                        args=[course_slug]))
+
+        if not ('reservation_date' in request.POST and 'reservation_time' in request.POST):
+            messages.error(request, _('No initial time specified'))
+            return HttpResponseRedirect(reverse('course_reservations',
+                                        args=[course_slug]))
+
+        try:
+            reservation_starts = datetime.strptime(request.POST['reservation_date'] + ' ' + request.POST['reservation_time'],
+                                 '%Y-%m-%d %H:%M')
+        except ValueError:
+            messages.error(request, _('Incorrect booking time specified'))
+            return HttpResponseRedirect(reverse('course_overview',
+                                        args=[course_slug]))
+
+        did_book = book_asset(request.user, asset, availability, reservation_starts,
+                              reservation_starts + timedelta(0, asset.slot_duration * 60))
+        if did_book[0]:
+            messages.success(request, did_book[1])
+        else:
+            messages.error(request, did_book[1])
+
+        return HttpResponseRedirect(reverse('course_reservations',
+                                    args=[course_slug]))
+    else:
+        return HttpResponseNotAllowed(['POST', 'PUT'])

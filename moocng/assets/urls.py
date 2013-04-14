@@ -21,4 +21,6 @@ urlpatterns = patterns(
         name='course_reservations'),
     url(r'^course/(?P<course_slug>[-\w]+)/reservations/(?P<reservation_id>[-\w]+)/cancel$', 'cancel_reservation',
         name='cancel_reservation'),
+    url(r'^course/(?P<course_slug>[-\w]+)/reservations/(?P<kq_id>[-\w]+)/(?P<asset_id>[-\w]+)/new$', 'reservation_create',
+        name='reservation_create'),
 )
