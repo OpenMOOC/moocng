@@ -76,6 +76,25 @@
     </div>
 </div>
 
+<div id="new-reservation-form" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>{% trans "New reservation" %}</h3>
+    </div>
+    <div class="modal-body">
+        <div id="new-asset-reservation-asset-information"></div>
+        <div id="new-asset-reservation-availability-information"></div>
+        <form action="" method="post" id="new-asset-reservation-form">
+            {% csrf_token %}
+            <div id="new-asset-reservation-form-content"></div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
+        <button type="button" class="btn btn-danger" id="as-confirm">{% trans "Confirm" %}</button>
+    </div>
+</div>
+
 <div class="row"><div class="span8">
     <h2 id="kq-title"></h2>
 </div></div>
@@ -188,10 +207,17 @@
                 prAlready: "{% trans "You have already sent a submission for this peer review assignment. You can now review submissions from other students or check your score." %}",
                 prReview: "{% trans "Review other students submissions" %}",
                 prProgress: "{% trans "Check my progress" %}",
+                asAssetList: "{% trans "Available Assets: " %}",
+                asBook: "{% trans "Book" %}",
+                asBookDate: "{% trans "Date: " %}",
+                asBookTime: "{% trans "Time: " %}",
+                asCannotBook: "{% trans "You are not in the booking period for this nugget." %}",
+                asCapacity: "{% trans "Capacity: " %}",
                 asDates: "{% trans "Dates on which assets can be booked" %}",
                 asDatesFrom: "{% trans "From: " %}",
                 asDatesTo: "{% trans "To: " %}",
-                asAssetList: "{% trans "Available Assets: " %}"
+                asNumberOfSlots: "{% trans "Number of slots: " %}",
+                asSlotLength:  "{% trans "Slot length: " %}"
             },
             peerreview: {
                 prFileMaxSize: "{% trans "Your file is too big" %}",

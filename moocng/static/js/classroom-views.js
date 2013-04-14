@@ -1146,31 +1146,73 @@ MOOC.views.peerReviewAssignmentViews = {};
 
 MOOC.views.Asset = Backbone.View.extend({
     events: {
+        "click button.as-new-reservation": "newReservation"
     },
 
     initialize: function () {
         "use strict";
-        _.bindAll(this, "render");
+        _.bindAll(this, "render", "getFormModal", "submit",
+                  "confirmedSubmit");
+    },
+
+    modal: undefined,
+    formModal: undefined,
+
+    getFormModal: function () {
+        "use strict";
+        if (_.isUndefined(this.formModal)) {
+            this.formModal = $("#new-reservation-form");
+            this.formModal.modal({
+                show: false,
+                backdrop: "static",
+                keyboard: false
+            });
+        }
+        return this.formModal;
     },
 
     render: function () {
         "use strict";
-        var kqPath,
-            html,
-            unit;
+        var html,
+            buttonId,
+            divId,
+            canBeBooked;
 
         html = [];
 
         html.push("<div id=\"availability-information\" class='solution-wrapper white'>");
-        html.push("<h2>" + MOOC.trans.classroom.asDates + "</h2><ul>");
+        html.push("<h3>" + MOOC.trans.classroom.asDates + "</h3><ul>");
         html.push("<li>" + MOOC.trans.classroom.asDatesFrom + this.model.get("available_from") + "</li>");
-        html.push("<li>" + MOOC.trans.classroom.asDatesTo + this.model.get("available_to") + "</li></ul>");
+        html.push("<li>" + MOOC.trans.classroom.asDatesTo + this.model.get("available_to") + "</li>");
+        html.push("</ul></div>");
 
-        html.push("<h2>" + MOOC.trans.classroom.asAssetList + "</h2><ul>");
+        canBeBooked = this.model.get("can_be_booked");
+
+        if (!canBeBooked) {
+            html.push("<br /><div class=\"alert\">");
+            html.push(MOOC.trans.classroom.asCannotBook);
+            html.push("</div>");
+        }
+
+        html.push("<h2>" + MOOC.trans.classroom.asAssetList + "</h2>");
         this.model.get("_assetList").each(function (asset) {
-            html.push("<li>" + asset.get('name') + "</li>");
+            buttonId = "reservationnew-" + asset.get("id");
+            divId = "asset-information-" + asset.get("id");
+            html.push("<div class='solution-wrapper white'>");
+            html.push("<div id='" + divId + "'>");
+            html.push("<h3>" + asset.get("name") + "</h3>");
+            html.push(asset.get("description"));
+            html.push("<ul><li>" + MOOC.trans.classroom.asSlotLength + asset.get("slot_duration") + "</li>");
+            html.push("<li>" + MOOC.trans.classroom.asNumberOfSlots + asset.get("max_bookable_slots") + "</li>");
+            html.push("<li>" + MOOC.trans.classroom.asCapacity + asset.get("capacity") + "</li>");
+            html.push("</ul></div><p class=\"align-right\">");
+            if (canBeBooked) {
+                html.push("<button type=\"button\" class=\"btn btn-primary as-new-reservation\" id=\"" + buttonId + "\">");
+                html.push(MOOC.trans.classroom.asBook);
+                html.push("</button>");
+            }
+            html.push("</p></div><br />");
         });
-        html.push("</ul>");
 
         this.$el.html(html.join(""));
 
@@ -1178,6 +1220,89 @@ MOOC.views.Asset = Backbone.View.extend({
         $("#kq-q-submit").addClass("hide");
 
         return this;
+    },
+
+    newReservation: function (evt) {
+        "use strict";
+        var assetId = parseInt(evt.target.getAttribute('id').split('-')[1], 10),
+            assetList = this.model.get("_assetList"),
+            formModal = this.getFormModal(),
+            assetDivId = "#asset-information-" + assetId,
+            actionURL,
+            baseURL = document.URL,
+            formContent,
+            asset,
+            firstDate,
+            lastDate,
+            defaultDate,
+            currentTime;
+
+        asset = assetList.find(function (candidate) {
+            return (parseInt(candidate.get("id"), 10) === assetId);
+        });
+
+        evt.preventDefault();
+        evt.stopPropagation();
+
+        formModal.find("#new-asset-reservation-availability-information").html(this.$el.find("#availability-information").html());
+        formModal.find("#new-asset-reservation-asset-information").html(this.$el.find(assetDivId).html());
+
+        firstDate = this.model.get("available_from");
+
+        lastDate = this.model.get("available_to");
+
+        if (new Date(firstDate) < (new Date())) {
+            defaultDate = (new Date()).toISOString().split('T')[0];
+        } else {
+            defaultDate = firstDate;
+        }
+
+        formContent = [];
+        formContent.push("<div class=\"row\">");
+        formContent.push("<div class=\"span3\"><p><label for=\"as-date\">" + MOOC.trans.classroom.asBookDate + "</label>");
+        formContent.push("<input type=\"date\" class=\"input-medium\" name=\"reservation_date\" id=\"as-date\"");
+        formContent.push("min=\"" + firstDate + "\" max=\"" + lastDate + "\" value=\"" + defaultDate + "\"/></p>");
+        formContent.push("</div><div class=\"span3\"><p><label for=\"as-fromtime\">");
+        formContent.push(MOOC.trans.classroom.asBookTime + "</label>");
+        formContent.push("<select class=\"input-small\" name=\"reservation_time\" id=\"as-fromtime\">");
+
+        currentTime = new Date('2000-01-01T00:00:00.000Z'); //The day itself is irrelevant
+        while (currentTime.getUTCDate() === 1) {
+            formContent.push("<option>");
+            formContent.push(currentTime.toISOString().split('T')[1].slice(0, 5));
+            formContent.push("</option>");
+            currentTime = new Date(currentTime.getTime() + asset.get("slot_duration") * 60000);
+        }
+        formContent.push("</select></p></div></div>");
+
+        baseURL = document.URL.split('#')[0];
+        if (baseURL.slice(-1) === "/") {
+            baseURL = baseURL.slice(0, baseURL.length - 1);
+        }
+        baseURL = baseURL.split('/').slice(0, -1).join('/');
+
+        actionURL = baseURL + "/reservations/" + this.model.get("knowledgeQuantumInstance").get("id");
+        actionURL += "/" + assetId + "/new";
+
+        formModal.find("#new-asset-reservation-form-content").html(formContent.join(""));
+        formModal.find("#new-asset-reservation-form").attr("action", actionURL);
+
+        this.submit();
+    },
+
+    submit: function () {
+        "use strict";
+        var modal = this.getFormModal();
+        modal.find("#as-confirm").off("click").on("click", _.bind(function () {
+            this.confirmedSubmit();
+            modal.modal("hide");
+        }, this));
+        modal.modal("show");
+    },
+
+    confirmedSubmit: function () {
+        "use strict";
+        this.getFormModal().find("#new-asset-reservation-form")[0].submit();
     }
 });
 
