@@ -172,7 +172,9 @@ MOOC.models.AssetAvailability = Backbone.Model.extend({
     defaults: {
         kq: null,
         available_from: null,
-        available_to: null
+        available_to: null,
+
+        _assetList: new MOOC.models.AssetList()
     },
 
     url: function () {

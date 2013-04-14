@@ -506,27 +506,30 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         toExecute.push(_.bind(function (callback) {
             var unit = MOOC.models.course.getByKQ(this.model),
                 assetAvailability = this.model.get("assetAvailabilityInstance"),
-                html;
+                view = MOOC.views.assetViews[assetAvailability.get("id")];
 
-            html = "<div class='solution-wrapper white'>";
-            html += "<h2>" + MOOC.trans.classroom.asDates + "</h2><ul>";
-            html += "<li>" + MOOC.trans.classroom.asDatesFrom + assetAvailability.get("available_from") + "</li>";
-            html += "<li>" + MOOC.trans.classroom.asDatesTo + assetAvailability.get("available_to") + "</li></ul>";
+            assetAvailability.set("_assetList", this.model.get("_assetList"));
 
-            html += "<h2>" + MOOC.trans.classroom.asAssetList + "</h2><ul>";
-            this.model.get("_assetList").each(function (asset) {
-                html += "<li>" + asset.get('name') + "</li>";
-            });
-            html += "</ul>";
-
-
-            $("#kq-video").html(html);
-            $("#kq-q-showkq").addClass("hide");
-            $("#kq-q-submit").addClass("hide");
             $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
+
+            if (this.player && !_.isNull(this.player.getIframe())) {
+                this.player.destroy();
+            }
+            $("#kq-video").empty();
+            this.player = null;
+
+            if (_.isUndefined(view)) {
+                view = new MOOC.views.Asset({
+                    model: assetAvailability,
+                    el: $("#kq-video")[0]
+                });
+                MOOC.views.assetViews[assetAvailability.get("id")] = view;
+            }
 
             this.setEventForNavigation("#kq-previous", unit, this.model, false);
             this.setEventForNavigation("#kq-next", unit, this.model, true);
+
+            view.render();
 
             callback();
         }, this));
@@ -1138,3 +1141,42 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
 });
 
 MOOC.views.peerReviewAssignmentViews = {};
+
+MOOC.views.Asset = Backbone.View.extend({
+    events: {
+    },
+
+    initialize: function () {
+        "use strict";
+        _.bindAll(this, "render");
+    },
+
+    render: function () {
+        "use strict";
+        var kqPath,
+            html,
+            unit;
+
+        html = [];
+
+        html.push("<div id=\"availability-information\" class='solution-wrapper white'>");
+        html.push("<h2>" + MOOC.trans.classroom.asDates + "</h2><ul>");
+        html.push("<li>" + MOOC.trans.classroom.asDatesFrom + this.model.get("available_from") + "</li>");
+        html.push("<li>" + MOOC.trans.classroom.asDatesTo + this.model.get("available_to") + "</li></ul>");
+
+        html.push("<h2>" + MOOC.trans.classroom.asAssetList + "</h2><ul>");
+        this.model.get("_assetList").each(function (asset) {
+            html.push("<li>" + asset.get('name') + "</li>");
+        });
+        html.push("</ul>");
+
+        this.$el.html(html.join(""));
+
+        $("#kq-q-showkq").addClass("hide");
+        $("#kq-q-submit").addClass("hide");
+
+        return this;
+    }
+});
+
+MOOC.views.assetViews = {};
