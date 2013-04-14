@@ -586,55 +586,6 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
 MOOC.views.kqViews = {};
 
-MOOC.views.AssetAvailability = Backbone.View.extend({
-    render: function () {
-        "use strict";
-        var kqPath = window.location.hash.substring(1, window.location.hash.length - 2), // Remove trailing /q
-            answer = this.model.get('answer'),
-            html;
-
-        if (this.model.get("use_last_frame")) {
-            html = '<img src="' + this.model.get("lastFrame") + '" ' +
-                'alt="' + this.model.get("title") +
-                '" style="width: 620px; height: 372px;" />';
-        } else {
-            html = "<div class='white' style='width: 620px; height: 372px;'></div>";
-        }
-        this.$el.html(html);
-        this.$el.addClass("question");
-
-        $("#kq-q-buttons").removeClass("hide");
-        if (this.model.isActive()) {
-            $("#kq-q-submit").attr("disabled", false);
-        } else {
-            $("#kq-q-submit").attr("disabled", "disabled");
-        }
-        $("#kq-q-showkq").off('click').on('click', function () {
-            MOOC.router.navigate(kqPath, { trigger: true });
-        });
-        $("#kq-q-submit").off('click').on('click', _.bind(function () {
-            this.submitAnswer();
-        }, this));
-        $("#kq-next-container").removeClass("offset4");
-
-        this.model.get("optionList").each(function (opt) {
-            var view = MOOC.views.optionViews[opt.get("id")], reply = null;
-            if (_.isUndefined(view)) {
-                reply = answer.getReply(opt.get('id'));
-                view = new MOOC.views.Option({
-                    model: opt,
-                    reply: reply,
-                    el: $("#kq-video")[0]
-                });
-                MOOC.views.optionViews[opt.get("id")] = view;
-            }
-            view.render();
-        });
-
-        return this;
-    }
-});
-
 MOOC.views.Question = Backbone.View.extend({
     render: function () {
         "use strict";
