@@ -883,6 +883,29 @@ class AssetResource(ModelResource):
         return results
 
 
+class PrivateAssetResource(ModelResource):
+    available_in = fields.ToManyField('moocng.api.resources.AssetAvailabilityResource', 'available_in')
+
+    class Meta:
+        queryset = Asset.objects.all()
+        resource_name = 'privasset'
+        authentication = TeacherAuthentication()
+        authorization = TeacherAuthorization()
+        filtering = {
+            "available_in": ('exact'),
+        }
+
+    def obj_get_list(self, request=None, **kwargs):
+
+        availability = request.GET.get('availability', None)
+
+        if availability is not None:
+            results = Asset.objects.filter(available_in__id=availability)
+        else:
+            results = Asset.objects.all()
+        return results
+
+
 class AssetAvailabilityResource(ModelResource):
 
     kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
@@ -907,6 +930,37 @@ class AssetAvailabilityResource(ModelResource):
             return False
         else:
             return True
+
+    def obj_get_list(self, request=None, **kwargs):
+
+        kq = request.GET.get('kq', None)
+        asset = request.GET.get('asset', None)
+
+        if kq is not None and assets is not None:
+            results = AssetAvailability.objects.filter(Q(kq__id=kq) & Q(assets__available_in__id=asset))
+        elif kq is not None:
+            results = AssetAvailability.objects.filter(kq__id=kq)
+        elif asset is not None:
+            results = AssetAvailability.objects.filter(assets__available_in__id=asset)
+        else:
+            results = AssetAvailability.objects.all()
+        return results
+
+
+class PrivateAssetAvailabilityResource(ModelResource):
+
+    kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
+    assets = fields.ToManyField(AssetResource, 'assets')
+
+    class Meta:
+        queryset = AssetAvailability.objects.all()
+        resource_name = 'privasset_availability'
+        authentication = TeacherAuthentication()
+        authorization = TeacherAuthorization()
+        filtering = {
+            "kq": ('exact'),
+            "assets": ('exact'),
+        }
 
     def obj_get_list(self, request=None, **kwargs):
 
