@@ -108,6 +108,7 @@ if (_.isUndefined(window.MOOC)) {
                         asset_availability.set("available_from", data.available_from);
                         asset_availability.set("available_to", data.available_to);
                         asset_availability.set("kq", data.kq);
+                        asset_availability.set("assets", data.assets);
                         kq.set("assetAvailabilityInstance", asset_availability);
                     }
                 }));
@@ -291,6 +292,12 @@ if (_.isUndefined(window.MOOC)) {
         };
         MOOC.models.KnowledgeQuantum.prototype.url = function () {
             return MOOC.ajax.getAbsoluteUrl("privkq/") + this.get("id") + "/";
+        };
+        MOOC.models.AssetAvailability.prototype.url = function () {
+            if (this.has("id")) {
+                return MOOC.ajax.getAbsoluteUrl("privasset_availability/") + this.get("id") + "/";
+            }
+            return MOOC.ajax.getAbsoluteUrl("privasset_availability/");
         };
         MOOC.models.PeerReviewAssignment.prototype.url = function () {
             if (this.has("id")) {

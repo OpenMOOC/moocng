@@ -818,7 +818,8 @@ if (_.isUndefined(window.MOOC)) {
                     assignment,
                     criterionList,
                     criterionListSaveTasks,
-                    attachCB;
+                    attachCB,
+                    assetAvail;
 
                 this.model.unset("new");
                 this.model.set("title", $.trim(this.$el.find("input#kqtitle").val()));
@@ -895,6 +896,22 @@ if (_.isUndefined(window.MOOC)) {
 
                     steps.push(function (asyncCB) {
                         async.parallel(criterionListSaveTasks, asyncCB);
+                    });
+                }
+
+                if (this.model.has("assetAvailabilityInstance")) {
+                    assetAvail = this.model.get("assetAvailabilityInstance");
+                    assetAvail.set("available_from", this.$el.find("#availablefrom").val());
+                    assetAvail.set("available_to", this.$el.find("#availableto").val());
+                    steps.push(function (asyncCB) {
+                        assetAvail.save(null, {
+                            success: function () {
+                                asyncCB();
+                            },
+                            error: function () {
+                                asyncCB("Error saving Asset Availability");
+                            }
+                        });
                     });
                 }
 
