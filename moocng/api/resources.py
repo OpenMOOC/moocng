@@ -15,7 +15,7 @@
 # limitations under the License.
 
 
-from datetime import datetime
+from datetime import datetime, date
 import re
 
 from bson import ObjectId
@@ -887,6 +887,7 @@ class AssetAvailabilityResource(ModelResource):
 
     kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
     assets = fields.ToManyField(AssetResource, 'assets')
+    can_be_booked = fields.BooleanField(readonly=True)
 
     class Meta:
         queryset = AssetAvailability.objects.all()
@@ -898,6 +899,14 @@ class AssetAvailabilityResource(ModelResource):
             "kq": ('exact'),
             "assets": ('exact'),
         }
+
+    def dehydrate_can_be_booked(self, bundle):
+        if bundle.obj.available_from > date.today():
+            return False
+        elif bundle.obj.available_to < date.today():
+            return False
+        else:
+            return True
 
     def obj_get_list(self, request=None, **kwargs):
 

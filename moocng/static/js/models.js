@@ -173,6 +173,7 @@ MOOC.models.AssetAvailability = Backbone.Model.extend({
         kq: null,
         available_from: null,
         available_to: null,
+        can_be_booked: null,
 
         knowledgeQuantumInstance: null,
         _assetList: new MOOC.models.AssetList()
