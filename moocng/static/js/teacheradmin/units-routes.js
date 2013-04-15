@@ -36,7 +36,7 @@ if (_.isUndefined(window.MOOC)) {
                             var data = _.pick(kq, "id", "title", "videoID",
                                 "teacher_comments", "supplementary_material",
                                 "question", "order", "correct", "completed",
-                                "weight", "peer_review_assignment");
+                                "weight", "peer_review_assignment", "asset_availability");
                             data.id = parseInt(data.id, 10);
                             return data;
                         }));
@@ -49,6 +49,8 @@ if (_.isUndefined(window.MOOC)) {
             var promises = [],
                 questionUrl,
                 peer_review_assignment,
+                asset_availability,
+                assetList,
                 criterionList,
                 assignmentUrl,
                 assignmentId;
@@ -95,6 +97,28 @@ if (_.isUndefined(window.MOOC)) {
                     })
                 );
             }
+
+            if (kq.has("asset_availability") && !kq.has("assetAvailabilityInstance")) {
+                asset_availability = new MOOC.models.AssetAvailability();
+                assetList = asset_availability.get("_assetList");
+
+                promises.push($.ajax(kq.get("asset_availability").replace("asset_availability", "privasset_availability"), {
+                    success: function (data, textStatus, jqXHR) {
+                        asset_availability.set("id", parseInt(data.id, 10));
+                        asset_availability.set("available_from", data.available_from);
+                        asset_availability.set("available_to", data.available_to);
+                        asset_availability.set("kq", data.kq);
+                        kq.set("assetAvailabilityInstance", asset_availability);
+                    }
+                }));
+
+               /* promises.push(
+                    asset_availability.get("_criterionList").fetch({
+                        data: { 'name': assetId }
+                    })
+                );*/
+            }
+
 
             if (!kq.has("attachmentList")) {
                 promises.push($.ajax(MOOC.ajax.host + "attachment/?format=json&kq=" + kq.get("id"), {

@@ -445,6 +445,11 @@ if (_.isUndefined(window.MOOC)) {
                         "pull-right' title='" + MOOC.trans.kq.prTooltip +
                         "'>" + MOOC.trans.kq.pr + "</span>";
                 }
+                if (this.model.has("asset_availability")) {
+                    header += "<span class='badge badge-inverse peerreview " +
+                        "pull-right' title='" + MOOC.trans.kq.assetTip +
+                        "'>" + MOOC.trans.kq.asset + "</span>";
+                }
 
                 iframe = "<iframe width='110px' height='71px' src='//www.youtube.com/embed/" +
                     this.model.get("videoID") + "?rel=0&controls=0&origin=" +
@@ -659,6 +664,7 @@ if (_.isUndefined(window.MOOC)) {
                     assignment,
                     criterionList,
                     criterionListDiv,
+                    assetAvail,
                     self;
 
                 $(".viewport").addClass("hide");
@@ -749,6 +755,17 @@ if (_.isUndefined(window.MOOC)) {
                         criterionListDiv.find("#" + descriptionInputId).val(criterion.get("description"));
                     });
                 }
+
+                if (this.model.has("asset_availability") && this.model.has("assetAvailabilityInstance")) {
+                    assetAvail = this.model.get("assetAvailabilityInstance");
+                    this.$el.find("#asset-availability-tab").removeClass("hide");
+                    //this.$el.find("#noassetavailability").addClass("hide");
+
+                    this.$el.find("#availablefrom").val(assetAvail.get("available_from"));
+                    this.$el.find("#availableto").val(assetAvail.get("available_to"));
+
+                }
+
 
                 $attachments = this.$el.find("#attachment-list");
                 if (this.model.get("attachmentList").length > 0) {
