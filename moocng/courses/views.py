@@ -251,8 +251,12 @@ def announcement_detail(request, course_slug, announcement_id, announcement_slug
 
 
 @login_required
-def transcript(request):
-    course_list = request.user.courses_as_student.all()
+def transcript(request, course_slug=None):
+    if not course_slug is None:
+        course_list = request.user.courses_as_student.filter(slug=course_slug)
+    else:
+        course_list = request.user.courses_as_student.all()
+
     courses_info = []
     cert_url = ''
     for course in course_list:
