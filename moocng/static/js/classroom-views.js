@@ -371,7 +371,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     id: data.id,
                     kq: data.kq,
                     available_from: data.available_from,
-                    available_to: data.available_to
+                    available_to: data.available_to,
+                    knowledgeQuantumInstance: kqObj
                 });
 
                 kqObj.set('assetAvailabilityInstance', assetAvailabilityObj);
