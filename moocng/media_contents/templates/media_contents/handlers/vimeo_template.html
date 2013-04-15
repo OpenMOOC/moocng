@@ -1,0 +1,13 @@
+<iframe
+    id="vimeoplayer"
+    src="//player.vimeo.com/video/{{ content_id }}?api=1&player_id=vimeoplayer"
+    width="<%= width %>"
+    height="<%= height %>"
+    frameborder="0"
+    <%
+    if (allowfullscreen) {
+        print("webkitAllowFullScreen mozallowfullscreen allowfullscreen");
+    }
+    %>
+    >
+</iframe>

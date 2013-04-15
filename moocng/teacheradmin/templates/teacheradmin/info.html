@@ -29,10 +29,16 @@
                 {{ form.name }}
                 {% if form.name.help_text %}<span class="help-inline">{{ form.name.help_text }}</span>{% endif %}
             <p>
-                {{ form.promotion_video.errors }}
-                {{ form.promotion_video.label_tag }}
-                {{ form.promotion_video }}
-                {% if form.promotion_video.help_text %}<span class="help-inline">{{ form.promotion_video.help_text }}</span>{% endif %}
+                {{ form.promotion_media_content_type.errors }}
+                {{ form.promotion_media_content_type.label_tag }}
+                {{ form.promotion_media_content_type }}
+                {% if form.promotion_media_content_type.help_text %}<span class="help-inline">{{ form.promotion_media_content_type.help_text }}</span>{% endif %}
+            </p>
+            <p>
+                {{ form.promotion_media_content_id.errors }}
+                <label for="id_promotion_media_content_id">{% trans "Content id or url" %}</label>
+                {{ form.promotion_media_content_id }}
+                {% if form.promotion_media_content_id.help_text %}<span class="help-inline">{{ form.promotion_media_content_id.help_text }}</span>{% endif %}
             </p>
             <p>
                 {{ form.enrollment_method.errors }}

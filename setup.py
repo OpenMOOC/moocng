@@ -75,5 +75,6 @@ setup(
         'python-memcached==1.48',
         'django-grappelli==2.4.4',
         'django-mathjax==0.0.1',
+        'requests==1.2.0',
         ],
 )
