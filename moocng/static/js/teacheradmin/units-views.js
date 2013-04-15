@@ -552,7 +552,7 @@ if (_.isUndefined(window.MOOC)) {
 
             initialize: function () {
                 _.bindAll(this, "render", "changeType", "save", "remove",
-                    "goBack", "checkRequired", "checkMediaContentId");
+                    "goBack", "checkRequired");
             },
 
             formatDate: function (date) {
@@ -615,10 +615,6 @@ if (_.isUndefined(window.MOOC)) {
                 evt.stopPropagation();
                 if (!this.checkRequired()) {
                     MOOC.ajax.showAlert("required");
-                    return;
-                }
-                if (!checkMediaContentId()) {
-                    MOOC.ajax.showAlert("media_content_id");
                     return;
                 }
                 MOOC.ajax.showLoading();
