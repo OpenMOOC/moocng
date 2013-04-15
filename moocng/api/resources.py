@@ -25,7 +25,6 @@ from tastypie import fields
 from tastypie.authorization import DjangoAuthorization
 from tastypie.exceptions import NotFound, BadRequest
 from tastypie.resources import ModelResource
-from tastypie.validation import FormValidation
 
 from django.conf import settings
 from django.conf.urls import url
@@ -45,7 +44,6 @@ from moocng.api.authorization import (PublicReadTeachersModifyAuthorization,
 from moocng.api.mongodb import MongoObj, MongoResource, MongoUserResource
 from moocng.api.validation import (AnswerValidation,
                                    PeerReviewSubmissionsResourceValidation)
-from moocng.courses.forms import ActivityForm
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment, Course)
 from moocng.courses.utils import normalize_kq_weight, calculate_course_mark
@@ -55,11 +53,6 @@ from moocng.peerreview.utils import (kq_get_peer_review_score,
                                      get_peer_review_review_score)
 from moocng.videos.utils import extract_YT_video_id
 
-
-## TODO delete this
-
-def get_user(uno, dos):
-    return {}
 
 class CourseResource(ModelResource):
 
@@ -715,18 +708,6 @@ class AnswerResource(MongoResource):
 
 class ActivityResource(MongoUserResource):
 
-    course_id = fields.IntegerField(null=False, blank=False)
-    unit_id = fields.IntegerField(null=False, blank=False)
-    kq_id = fields.IntegerField(null=False, blank=False)
-
-    mongo_schema = {
-        "user_id": 1,
-        "course_id": 1,
-        "unit_id": 1,
-        "kq_id": 1,
-        "date": 1,
-    }
-
     class Meta:
         resource_name = 'activity'
         collection = 'activity'
@@ -734,24 +715,26 @@ class ActivityResource(MongoUserResource):
         object_class = MongoObj
         authentication = DjangoAuthentication()
         authorization = DjangoAuthorization()
-        allowed_methods = ['get', 'post']
+        allowed_methods = ['get', 'push']
         filtering = {
+            "course_id": ('exact'),
             "unit_id": ('exact'),
             "kq_id": ('exact'),
-            "course_id": ('exact'),
         }
-        validation = FormValidation(form_class=ActivityForm)
+        # validation = AnswerValidation()
+        course_id = fields.IntegerField(null=False)
+        unit_id = fields.IntegerField(null=False)
+        kq_id = fields.IntegerField(null=False)
+        user_id = fields.IntegerField(null=False)
 
-    def obj_create(self, bundle, request, **kwargs):
-        exists = not (self._collection.find_one({
-            "user_id": request.user.id,
-            "kq_id": bundle.data["kq_id"],
-        }) is None)
-        if exists:
-            raise BadRequest("The activity already exists")
 
-        bundle.data["date"] = datetime.utcnow()
-        return super(ActivityResource, self).obj_create(bundle, request, **kwargs)
+    def _initial(self, request, **kwargs):
+        course_id = kwargs['pk']
+        return {"course_id": course_id,
+                "unit_id": -1,
+                "kq_id": -1,
+                "user_id": -1
+                }
 
 
 class UserResource(ModelResource):

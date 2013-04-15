@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from bson import ObjectId
+
 from tastypie.bundle import Bundle
 from tastypie.exceptions import NotFound, BadRequest
 from tastypie.resources import Resource
@@ -31,7 +33,7 @@ def validate_dict_schema(obj, schema):
 
     for (key, value) in schema.items():
         if value == 1 and key not in obj:
-            return BadRequest("%s required field %s is not in data provide" % key)
+            return BadRequest("required field %s is not in data provide" % key)
 
     return True
 
@@ -77,12 +79,19 @@ class MongoResource(Resource):
 
         return self._build_reverse_url('api_dispatch_detail', kwargs=kwargs)
 
-    def get_object_list(self, request, filter=None):
+    def get_object_list(self, request, **kwargs):
         results = []
-        if filter is None:
-            filter = {}
+        filters = kwargs.get("filters", {})
+        if self._meta.filtering:
+            for filter in self._meta.filtering.keys():
+                filter_value = request.GET.get(filter, None)
+                if not filter_value is None:
+                    try:
+                        filters[filter] = int(filter_value)
+                    except ValueError:
+                        filters[filter] = filter_value
 
-        for result in self._collection.find(filter):
+        for result in self._collection.find(filters):
             obj = MongoObj(initial=result)
             obj.uuid = str(result['_id'])
             results.append(obj)
@@ -90,12 +99,18 @@ class MongoResource(Resource):
         return results
 
     def obj_get_list(self, request=None, **kwargs):
-        # no filtering by now
-        return self.get_object_list(request, kwargs)
+        return self.get_object_list(request, **kwargs)
 
     def obj_get(self, request=None, **kwargs):
+        filter = kwargs.copy()
+        if 'pk' in kwargs:
+            if self._meta.datakey == '_id':
+                filter["_id"] = ObjectId(kwargs["pk"])
+            else:
+                filter[self._meta.datakey] = kwargs["pk"]
+            filter.pop("pk")
 
-        result = self._collection.find(kwargs)
+        result = self._collection.find(filter)
         if result.count() == 0:
             raise NotFound('Invalid resource lookup data provided')
         elif result.count() > 1:
@@ -131,15 +146,14 @@ class MongoUserResource(MongoResource):
 
     user_id_field = "user_id"
 
-    def get_object_list(self, request, filter=None):
-        if not isinstance(filter, dict):
-            filter = {}
-        filter[self.user_id_field] = request.user.id
+    def get_object_list(self, request, **kwargs):
+        filters = kwargs.get("filters", {})
+        filters[self.user_id_field] = request.user.id
 
-        return super(MongoUserResource, self).get_object_list(request, filter)
+        return super(MongoUserResource, self).get_object_list(request,
+                                                              filters=filters)
 
     def obj_get(self, request=None, **kwargs):
-
         if not isinstance(kwargs, dict):
             kwargs = {}
         kwargs[self.user_id_field] = request.user.id
