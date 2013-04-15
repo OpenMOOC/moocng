@@ -613,7 +613,7 @@ class OptionResource(ModelResource):
                 unicode(bundle.obj.question.id), None)
             if answer is not None:
                 unit = bundle.obj.question.kq.unit
-                if unit.unittype == 'n' or not(unit.deadline and datetime.now(unit.deadline.tzinfo) < unit.deadline):
+                if unit.unittype == 'n' or not(unit.deadline and datetime.now(unit.deadline.tzinfo) > unit.deadline):
                     solution = bundle.obj.solution
         return solution
 
