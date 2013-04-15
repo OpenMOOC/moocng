@@ -22,6 +22,7 @@ from moocng.courses.models import Course
 from moocng.forms import (BootstrapMixin, BootstrapClearableFileInput,
                           HTML5DateInput, BootstrapInlineRadioSelect)
 from moocng.teacheradmin.models import MassiveEmail
+from moocng.media_contents import media_content_extract_id
 
 
 class CourseForm(forms.ModelForm):
@@ -46,6 +47,14 @@ class CourseForm(forms.ModelForm):
 
             elif isinstance(widget, forms.widgets.Textarea):
                 widget.mce_attrs['width'] = '780'  # bootstrap span10
+
+    def clean_promotion_media_content_id(self):
+        content_type = self.cleaned_data.get('promotion_media_content_type')
+        content_id = self.cleaned_data.get('promotion_media_content_id')
+        if content_type and content_id:
+            if not media_content_extract_id(content_type, content_id):
+                raise forms.ValidationError(_('Invalid content id or url'))
+        return content_id
 
 
 class AnnouncementForm(CoursesAnnouncementForm, BootstrapMixin):

@@ -229,7 +229,9 @@ MOOC.models.OptionList  = MOOC.models.TastyPieCollection.extend({
 MOOC.models.Question = Backbone.Model.extend({
     defaults: {
         lastFrame: null, // of the KnowledgeQuantum's video
-        solutionVideo: null,
+        solution_media_content_type: null,
+        solution_media_content_id: null,
+        iframe_code: null,
         solutionText: null,
         optionList: null,
         answer: null,
@@ -246,7 +248,9 @@ MOOC.models.Question = Backbone.Model.extend({
         return {
             id: parseInt(resp.id, 10),
             lastFrame: resp.last_frame,
-            solutionVideo: resp.solutionID,
+            solution_media_content_type: resp.solution_media_content_type,
+            solution_media_content_id: resp.solution_media_content_id,
+            iframe_code: resp.iframe_code,
             use_last_frame: resp.use_last_frame
         };
     },
@@ -281,12 +285,16 @@ MOOC.models.Question = Backbone.Model.extend({
             model2send.url = MOOC.models.detailUrlToCollection(model.url());
         }
         model2send.unset("lastFrame");
-        if (model.has("solutionVideo") && model.get("solutionVideo") !== "") {
-            model2send.set("solutionID", model.get("solutionVideo"));
+        if (model.has("solution_media_content_type") && model.get("solution_media_content_type") !== "") {
+            model2send.set("solution_media_content_type", model.get("solution_media_content_type"));
         } else {
-            model2send.set("solutionID", "");
+            model2send.set("solution_media_content_type", "");
         }
-        model2send.unset("solutionVideo");
+        if (model.has("solution_media_content_id") && model.get("solution_media_content_id") !== "") {
+            model2send.set("solution_media_content_id", model.get("solution_media_content_id"));
+        } else {
+            model2send.set("solution_media_content_id", "");
+        }
         if (model.has("solutionText") && model.get("solutionText") !== "") {
             model2send.set("solution_text", model.get("solutionText"));
         } else {
@@ -421,7 +429,8 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
     defaults: {
         order: -1,
         title: null,
-        videoID: null,
+        media_content_type: null,
+        media_content_id: null,
         teacher_comments: null,
         supplementary_material: null,
         question: null, // Optional

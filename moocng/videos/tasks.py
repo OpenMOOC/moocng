@@ -18,8 +18,8 @@ import shutil
 
 from celery import task
 
-from moocng.videos.download import process_video, NotFound
-from moocng.videos.utils import extract_YT_video_id
+from moocng.videos.download import NotFound
+from moocng.media_contents import media_content_get_last_frame
 
 from django.core.files import File
 
@@ -29,23 +29,23 @@ logger = logging.getLogger(__name__)
 def do_process_video_task(question_id):
     from moocng.courses.models import Question
     question = Question.objects.get(id=question_id)
-    url = question.kq.video
+    content_type = question.kq.media_content_type
+    content_id = question.kq.media_content_id
 
     try:
-        tempdir = tempfile.mkdtemp()
-        frame = process_video(tempdir, url)
+        tmpdir = tempfile.mkdtemp()
+        frame = media_content_get_last_frame(content_type, content_id, tmpdir)
 
         if frame is not None:
-            video_id = extract_YT_video_id(url)
-            if video_id == u'':
-                raise NotFound(url)
-            question.last_frame.save("%s.png" % video_id, File(open(frame)))
+            if not content_id:
+                raise NotFound(content_id)
+            question.last_frame.save("%s.png" % content_id, File(open(frame)))
     except IOError:
-        logger.error('Video %s could not be downloaded or processed. Probably the codec is not supported, please try again with a newer YouTube video.' % url)
+        logger.error('Video %s could not be downloaded or processed. Probably the codec is not supported, please try again with a newer YouTube video.' % content_id)
     except NotFound:
-        logger.error('Video %s not found' % url)
+        logger.error('Video %s not found' % content_id)
     finally:
-        shutil.rmtree(tempdir)
+        shutil.rmtree(tmpdir)
 
 
 @task

@@ -89,7 +89,7 @@ class KnowledgeQuantumAdmin(SortableAdmin):
         AttachmentInline,
     ]
 
-    list_display = ('__unicode__', 'title', 'video', 'weight')
+    list_display = ('__unicode__', 'title', 'media_content_type', 'media_content_id', 'weight')
     list_filter = ('unit', )
 
 
@@ -99,7 +99,7 @@ ensure_csrf_cookie_m = method_decorator(ensure_csrf_cookie)
 
 class QuestionAdmin(admin.ModelAdmin):
 
-    list_display = ('kq', 'solution_video')
+    list_display = ('kq', 'solution_media_content_type', 'solution_media_content_id')
     list_filter = ('kq', )
     formfield_overrides = {
         models.ImageField: {'widget': ImageReadOnlyWidget},

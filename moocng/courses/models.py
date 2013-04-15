@@ -32,7 +32,7 @@ from moocng.courses.cache import invalidate_template_fragment
 from moocng.enrollment import enrollment_methods
 from moocng.mongodb import get_db
 from moocng.videos.tasks import process_video_task
-from moocng.videos.utils import extract_YT_video_id
+from moocng.media_contents import get_media_content_types_choices, media_content_extract_id
 
 logger = logging.getLogger(__name__)
 
@@ -65,8 +65,15 @@ class Course(Sortable):
     students = models.ManyToManyField(User, verbose_name=_(u'Students'),
                                       related_name='courses_as_student',
                                       blank=True)
-    promotion_video = models.URLField(verbose_name=_(u'Promotion video'),
-                                      blank=True)
+    promotion_media_content_type = models.CharField(verbose_name=_(u'Content type'),
+                                                    max_length=20,
+                                                    null=True,
+                                                    blank=False,
+                                                    choices=get_media_content_types_choices())
+    promotion_media_content_id = models.CharField(verbose_name=_(u'Content id'),
+                                                  null=True,
+                                                  blank=False,
+                                                  max_length=200)
     threshold = models.DecimalField(
         verbose_name=_(u'Pass threshold'),
         max_digits=4, decimal_places=2,
@@ -106,16 +113,17 @@ class Course(Sortable):
             ("can_list_passedcourses", _("Can list passed courses of an user")),
         )
 
+    def save(self, *args, **kwargs):
+        if self.promotion_media_content_type and self.promotion_media_content_id:
+            self.promotion_media_content_id = media_content_extract_id(self.promotion_media_content_type, self.promotion_media_content_id)
+        return super(Course, self).save(*args, **kwargs)
+
     def __unicode__(self):
         return self.name
 
     @models.permalink
     def get_absolute_url(self):
         return ('course_overview', [self.slug])
-
-    def get_embeded_code_for_promotion_video(self):
-        if self.promotion_video:
-            return extract_YT_video_id(self.promotion_video)
 
     @property
     def is_public(self):
@@ -258,7 +266,15 @@ class KnowledgeQuantum(Sortable):
                                       default=0,
                                       help_text='0-100%',
                                       validators=[MaxValueValidator(100)])
-    video = models.URLField(verbose_name=_(u'Video'))
+    media_content_type = models.CharField(verbose_name=_(u'Content type'),
+                                          max_length=20,
+                                          null=True,
+                                          blank=False,
+                                          choices=get_media_content_types_choices())
+    media_content_id = models.CharField(verbose_name=_(u'Content id'),
+                                        null=True,
+                                        blank=False,
+                                        max_length=200)
     teacher_comments = HTMLField(verbose_name=_(u'Teacher comments'),
                                  blank=True, null=False)
     supplementary_material = HTMLField(
@@ -296,6 +312,11 @@ class KnowledgeQuantum(Sortable):
         verbose_name = _(u'nugget')
         verbose_name_plural = _(u'nuggets')
 
+    def save(self, *args, **kwargs):
+        if self.media_content_type and self.media_content_id:
+            self.media_content_id = media_content_extract_id(self.media_content_type, self.media_content_id)
+        return super(KnowledgeQuantum, self).save(*args, **kwargs)
+
     def __unicode__(self):
         return u'%s - %s' % (self.unit, self.title)
 
@@ -323,12 +344,15 @@ class Question(models.Model):
 
     kq = models.ForeignKey(KnowledgeQuantum, unique=True,
                            verbose_name=_(u'Nugget'))
-    solution_video = models.URLField(
-        verbose_name=_(u'Solution video'),
-        help_text=_(u'If this belongs to a homework or an exam, then the '
-                    u'stundents won\'t see this video until the deadline is '
-                    u'reached.'),
-        blank=True, null=False)
+    solution_media_content_type = models.CharField(verbose_name=_(u'Content type'),
+                                                   max_length=20,
+                                                   null=True,
+                                                   blank=False,
+                                                   choices=get_media_content_types_choices())
+    solution_media_content_id = models.CharField(verbose_name=_(u'Content id'),
+                                                 null=True,
+                                                 blank=False,
+                                                 max_length=200)
     solution_text = HTMLField(
         verbose_name=_(u'Solution text'),
         help_text=_(u'If the solution video is specified then this text will '
@@ -346,6 +370,11 @@ class Question(models.Model):
     class Meta:
         verbose_name = _(u'question')
         verbose_name_plural = _(u'questions')
+
+    def save(self, *args, **kwargs):
+        if self.solution_media_content_type and self.solution_media_content_id:
+            self.solution_media_content_id = media_content_extract_id(self.solution_media_content_type, self.solution_media_content_id)
+        return super(Question, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return ugettext(u'{0} - Question {1}').format(self.kq, self.id)
