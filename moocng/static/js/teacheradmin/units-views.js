@@ -646,7 +646,8 @@ if (_.isUndefined(window.MOOC)) {
                 "click button#save-kq": "save",
                 "click button#delete-kq": "remove",
                 "click button.removecriterion": "removePeerReviewCriterion",
-                "click button.back": "goBack"
+                "click button.back": "goBack",
+                "click button#addassetavailability": "addAssetAvailability"
             },
 
             initialize: function () {
@@ -654,7 +655,7 @@ if (_.isUndefined(window.MOOC)) {
                     "checkRequired", "useBlankCanvas", "useLastFrame",
                     "toggleSolution", "addQuestion", "addPeerReviewAssignment",
                     "addCriterion", "forceProcess", "removeQuestion",
-                    "removePeerReviewAssignment", "go2options");
+                    "removePeerReviewAssignment", "go2options", "addAssetAvailability");
             },
 
             render: function () {
@@ -665,6 +666,7 @@ if (_.isUndefined(window.MOOC)) {
                     criterionList,
                     criterionListDiv,
                     assetAvail,
+                    assetList,
                     self;
 
                 $(".viewport").addClass("hide");
@@ -759,11 +761,10 @@ if (_.isUndefined(window.MOOC)) {
                 if (this.model.has("asset_availability") && this.model.has("assetAvailabilityInstance")) {
                     assetAvail = this.model.get("assetAvailabilityInstance");
                     this.$el.find("#asset-availability-tab").removeClass("hide");
-                    //this.$el.find("#noassetavailability").addClass("hide");
-
+                    this.$el.find("#noassetavailability").addClass("hide");
                     this.$el.find("#availablefrom").val(assetAvail.get("available_from"));
                     this.$el.find("#availableto").val(assetAvail.get("available_to"));
-
+                    assetList = assetAvail.get("_assetList");
                 }
 
 
@@ -901,8 +902,10 @@ if (_.isUndefined(window.MOOC)) {
 
                 if (this.model.has("assetAvailabilityInstance")) {
                     assetAvail = this.model.get("assetAvailabilityInstance");
-                    assetAvail.set("available_from", this.$el.find("#availablefrom").val());
-                    assetAvail.set("available_to", this.$el.find("#availableto").val());
+                    if (this.$el.find("#asset-availability").is(".active")) {
+                        assetAvail.set("available_from", this.$el.find("#availablefrom").val());
+                        assetAvail.set("available_to", this.$el.find("#availableto").val());
+                    }
                     steps.push(function (asyncCB) {
                         assetAvail.save(null, {
                             success: function () {
@@ -1107,6 +1110,50 @@ if (_.isUndefined(window.MOOC)) {
                             }
 
                             self.model.get("peerReviewAssignmentInstance").set("id", parseInt(createdId, 10));
+                            self.render();
+                            MOOC.ajax.hideLoading();
+                        },
+                        error: function () {
+                            MOOC.ajax.hideLoading();
+                            MOOC.ajax.showAlert("generic");
+                        }
+                    });
+                }, this));
+            },
+
+            addAssetAvailability: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                if (!this.checkRequired()) {
+                    MOOC.ajax.showAlert("required");
+                    return;
+                }
+                var asset_availability,
+                    self,
+                    date;
+
+                asset_availability = new MOOC.models.AssetAvailability();
+                asset_availability.set("kq", this.model.url().replace('/privkq', '/kq'));
+                date = new Date();
+                asset_availability.set("available_from", date.toISOString().split('T')[0]);
+                date.setMonth(date.getMonth() + 1);
+                asset_availability.set("available_to", date.toISOString().split('T')[0]);
+                asset_availability.set("assets", []);
+                asset_availability.set("_assetList", new MOOC.models.AssetList());
+                this.model.set("assetAvailabilityInstance", asset_availability);
+
+                self = this;
+                this.save(evt, _.bind(function () {
+                    self.model.fetch({
+                        success: function () {
+                            var assetAvailUrl,
+                                createdId;
+                            assetAvailUrl = self.model.get("asset_availability").split("/");
+                            createdId = assetAvailUrl.pop();
+                            while (_.isNaN(parseInt(createdId, 10))) {
+                                createdId = assetAvailUrl.pop();
+                            }
+                            self.model.get("assetAvailabilityInstance").set("id", parseInt(createdId, 10));
                             self.render();
                             MOOC.ajax.hideLoading();
                         },

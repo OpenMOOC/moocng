@@ -535,6 +535,7 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
         model2send.unset("questionInstance");
         model2send.unset("attachmentList");
         model2send.unset("peerReviewAssignmentInstance");
+        model2send.unset("assetAvailabilityInstance");
         if (model.get("order") < 0) {
             model2send.unset("order");
         }
