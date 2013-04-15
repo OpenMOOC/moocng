@@ -271,6 +271,31 @@ moocng site.
   $ chown www-data:www-data /var/www/moocng/static
 
 
+SAML configuration
+------------------
+
+SAML require a cert. You can create your own self-signed certificates. For other purposes buy them:
+
+ * Follow the first five steps of this guide: http://www.akadia.com/services/ssh_test_certificate.html
+ * Create a directory called "saml2" at you moong folder
+ * Create inside it a certs directory
+ * Copy the 'attributemaps' of moocng inside the saml2
+ * Copy server.key and server.crt to saml2/certs 
+
+.. code-block:: bash
+
+  openssl genrsa -des3 -out server.key 2048
+  openssl req -new -key server.key -out server.csr
+  cp server.key server.key.org
+  openssl rsa -in server.key.org -out server.key
+  openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+
+In moocng, in the settings.py there is a SAML_CONFIG var. You must copy this var in your local_settings and configure
+the params based in your environment.
+
+moocng uses djangosaml2, to config it check the doc at `http://pypi.python.org/pypi/djangosaml2 <http://pypi.python.org/pypi/djangosaml2>`_
+
+
 Default site
 ------------
 
