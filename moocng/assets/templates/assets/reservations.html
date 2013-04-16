@@ -31,10 +31,11 @@
     <h3>{% blocktrans with asset_name=reservation.asset kq_title=reservation.reserved_from.kq.title%}
     {{ asset_name}} of {{kq_title }}   {% endblocktrans %} </h3>
     <ul id="active-reservation{{ reservation.id }}" >
-        {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends %}
+        {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends slot_id=reservation.slot_id %}
         <li> From: {{ from }} </li>
         <li> To:  {{ to }} </li> 
-        {% endblocktrans %} 
+        <li> Slot: {{slot_id}} </li>
+        {% endblocktrans %}
     </ul>
     {% endfor %}
 </div>
@@ -47,14 +48,18 @@
     <h3>{% blocktrans with asset_name=reservation.asset kq_title=reservation.reserved_from.kq.title%}
     {{ asset_name}} of {{kq_title }}   {% endblocktrans %} </h3>
     <ul id="pending-reservation{{ reservation.id }}" >
-        {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends %}
+        {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends slot_id=reservation.slot_id %}
         <li> From: {{ from }} </li>
         <li> To:  {{ to }} </li> 
-        </br>
-        {% endblocktrans %} 
-        <form action="{% url cancel_reservation course.slug reservation.id %}"  method="post">{% csrf_token %}
-        <input type="submit" value="{% trans "Remove" %}" class="btn btn-primary" />
-        </form> 
+        <li> Slot: {{slot_id}} </li>
+        {% endblocktrans %}
+        <div class="row">
+            <div class="align-right span4">
+                <form action="{% url cancel_reservation course.slug reservation.id %}"  method="post">{% csrf_token %}
+                    <input type="submit" value="{% trans "Remove" %}" class="btn btn-danger" />
+                </form>
+            </div>
+        </div>
     </ul>
     {% endfor %}
 </div>
@@ -77,10 +82,11 @@
     <h3>{% blocktrans with asset_name=reservation.asset kq_title=reservation.reserved_from.kq.title%}
     {{ asset_name}} of {{kq_title }}   {% endblocktrans %} </h3>
     <ul id="past-reservation{{ reservation.id }}" >
-        {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends %}
+        {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends slot_id=reservation.slot_id %}
         <li> From: {{ from }} </li>
         <li> To:  {{ to }} </li> 
-        {% endblocktrans %} 
+        <li> Slot: {{slot_id}} </li>
+        {% endblocktrans %}
     </ul>
     {% endfor %}
 </div>
