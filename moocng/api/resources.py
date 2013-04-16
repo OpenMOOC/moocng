@@ -875,9 +875,12 @@ class AssetResource(ModelResource):
     def obj_get_list(self, request=None, **kwargs):
 
         availability = request.GET.get('availability', None)
+        kq = request.GET.get('kq', None)
 
         if availability is not None:
             results = Asset.objects.filter(available_in__id=availability)
+        elif kq is not None:
+            results = Asset.objects.filter(available_in__kq__id=kq)
         else:
             results = Asset.objects.all()
         return results
@@ -898,9 +901,12 @@ class PrivateAssetResource(ModelResource):
     def obj_get_list(self, request=None, **kwargs):
 
         availability = request.GET.get('availability', None)
+        kq = request.GET.get('kq', None)
 
         if availability is not None:
             results = Asset.objects.filter(available_in__id=availability)
+        elif kq is not None:
+            results = Asset.objects.filter(available_in__kq__id=kq)
         else:
             results = Asset.objects.all()
         return results
