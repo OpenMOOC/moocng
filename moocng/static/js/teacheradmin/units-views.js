@@ -698,7 +698,8 @@ if (_.isUndefined(window.MOOC)) {
                 "click button#addassetavailability": "addAssetAvailability",
                 "click button#delete-asset-availability": "removeAssetAvailability",
                 "change select#kqmedia_content_type": "redrawCanGetLastFrame",
-                "click button.removeasset": "removeAssetOfAvailability"
+                "click button.removeasset": "removeAssetOfAvailability",
+                "click button#addasset": "addAssetToAvailability"
             },
 
             initialize: function () {
@@ -719,6 +720,9 @@ if (_.isUndefined(window.MOOC)) {
                     criterionListDiv,
                     assetAvail,
                     assetList,
+                    otherAssets,
+                    assetSelect,
+                    totalOtherAssets,
                     content_type,
                     can_get_last_frame,
                     assetListDiv,
@@ -856,6 +860,27 @@ if (_.isUndefined(window.MOOC)) {
                         assetListDiv.append(assetDiv);
                         assetListDiv.find("#" + nameInputId).text(asset.get("name"));
                     });
+
+                    //get the list of the assets which are not available for this kq             
+                    otherAssets = assetAvail.get("_otherAssets");
+
+                    this.$el.find("#addasset").hide();
+                    totalOtherAssets = otherAssets.length;
+                    if (totalOtherAssets !== 0) {
+                        assetSelect = "<select id=\"assetsForSelect\" >";
+                        otherAssets.each(function (asset) {
+
+                            var assetName,
+                                assetId;
+                            assetId = asset.get("id");
+                            assetName = asset.get("name");
+                            assetSelect += "<option value=\"" + assetId + "\">" + assetName + "</option>";
+
+                        });
+                        assetSelect += "</select>";
+                        this.$el.find("#assetsforadd").html(assetSelect);
+                        this.$el.find("#addasset").show();
+                    }
 
                 }
 
@@ -1111,6 +1136,7 @@ if (_.isUndefined(window.MOOC)) {
                         MOOC.ajax.hideLoading();
                     }
                 });
+
             },
 
             remove: function (evt) {
@@ -1491,17 +1517,17 @@ if (_.isUndefined(window.MOOC)) {
                 evt.stopPropagation();
                 evt.preventDefault();
 
-                var self = this,
-                    cb;
+                var self = this;
 
-                cb = function () {
+                this.save(evt, _.bind(function () {
+
                     var assetId = parseInt(evt.target.getAttribute('id').split('-')[1], 10),
-                        assetInstance,
                         assets,
                         assetToRemove,
                         assetUrl,
                         asset_availability = self.model.get("assetAvailabilityInstance"),
                         assetList = asset_availability.get("_assetList"),
+                        otherAssets = asset_availability.get("_otherAssets"),
                         asset = assetList.find(function (candidate) {
                             return (parseInt(candidate.get("id"), 10) === assetId);
                         }),
@@ -1510,19 +1536,60 @@ if (_.isUndefined(window.MOOC)) {
                     MOOC.ajax.showLoading();
 
                     assetList.remove(asset);
-                    assetInstance = self.model.get("assetAvailabilityInstance");
-                    assets = assetInstance.get("assets");
+                    otherAssets.add(asset);
+                    assets = asset_availability.get("assets");
                     assetUrl = asset.url().replace('/privasset', '/asset');
                     assets.splice(assets.indexOf(assetUrl), 1);
-                    assetInstance.set("assets", assets);
-                    assetInstance.save();
+                    asset_availability.set("assets", assets);
+                    asset_availability.save();
 
-                    self.$el.find("#" + assetDivId).remove();
+                    self.render();
+                    self.$el.find("form li.active").removeClass("active");
+                    self.$el.find("form fieldset.active").removeClass("active");
+                    self.$el.find("#asset-availability-tab").addClass("active");
+                    self.$el.find("#asset-availability").addClass("active");
                     MOOC.ajax.hideLoading();
 
-                };
+                }, this));
 
-                showConfirmationModal(cb);
+            },
+
+            addAssetToAvailability: function (evt) {
+                evt.stopPropagation();
+                evt.preventDefault();
+
+                var self = this;
+
+                this.save(evt, _.bind(function () {
+                    var idAssetToAdd = parseInt($("#assetsForSelect").val(), 10),
+                        asset_availability = self.model.get("assetAvailabilityInstance"),
+                        otherAssets = asset_availability.get("_otherAssets"),
+                        assetList = asset_availability.get("_assetList"),
+                        assets,
+                        assetUrl,
+                        assetToAdd = otherAssets.find(function (candidate) {
+                            return (parseInt(candidate.get("id"), 10) === idAssetToAdd);
+                        });
+
+                    MOOC.ajax.showLoading();
+
+                    otherAssets.remove(assetToAdd);
+                    assetList.add(assetToAdd);
+                    assets = asset_availability.get("assets");
+                    assetUrl = assetToAdd.url().replace('/privasset', '/asset');
+                    assets.push(assetUrl);
+                    asset_availability.set("assets", assets);
+                    asset_availability.save();
+
+                    self.render();
+                    self.$el.find("form li.active").removeClass("active");
+                    self.$el.find("form fieldset.active").removeClass("active");
+                    self.$el.find("#asset-availability-tab").addClass("active");
+                    self.$el.find("#asset-availability").addClass("active");
+                    MOOC.ajax.hideLoading();
+
+                }, this));
+
             },
 
             go2options: function (evt) {

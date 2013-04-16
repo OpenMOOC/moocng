@@ -108,6 +108,7 @@ if (_.isUndefined(window.MOOC)) {
             if (kq.has("asset_availability") && !kq.has("assetAvailabilityInstance")) {
                 asset_availability = new MOOC.models.AssetAvailability();
                 assetList = asset_availability.get("_assetList");
+                assetList = asset_availability.get("_otherAssets");
 
                 promises.push($.ajax(kq.get("asset_availability").replace("asset_availability", "privasset_availability"), {
                     success: function (data, textStatus, jqXHR) {
@@ -117,12 +118,16 @@ if (_.isUndefined(window.MOOC)) {
                         asset_availability.set("kq", data.kq);
                         asset_availability.set("assets", data.assets);
                         kq.set("assetAvailabilityInstance", asset_availability);
+                        asset_availability.set("knowledgeQuantumInstance", kq);
                     }
                 }));
 
                 promises.push(
                     asset_availability.get("_assetList").fetch({
                         data: { 'kq': kq.id }
+                    }),
+                    asset_availability.get("_otherAssets").fetch({
+                        data: { 'exclude_kq': kq.id }
                     })
                 );
             }

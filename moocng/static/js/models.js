@@ -178,7 +178,8 @@ MOOC.models.AssetAvailability = Backbone.Model.extend({
         max_reservations_total: null,
 
         knowledgeQuantumInstance: null,
-        _assetList: new MOOC.models.AssetList()
+        _assetList: new MOOC.models.AssetList(),
+        _otherAssets: new MOOC.models.AssetList(),
     },
 
     url: function () {
