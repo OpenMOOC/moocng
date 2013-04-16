@@ -68,7 +68,7 @@ def course_reservations(request, course_slug):
 @login_required
 def cancel_reservation(request, course_slug, reservation_id):
 
-    if request.method == 'POST':
+    if request.method in ['POST', 'DELETE']:
 
         course = get_object_or_404(Course, slug=course_slug)
 
@@ -85,7 +85,11 @@ def cancel_reservation(request, course_slug, reservation_id):
             return HttpResponseRedirect(reverse('course_reservations', args=[course.slug]))
         reserv_remove.delete()
 
-    return HttpResponseRedirect(reverse('course_reservations', args=[course.slug]))
+        return HttpResponseRedirect(reverse('course_reservations', args=[course.slug]))
+
+    else:
+        return HttpResponseNotAllowed(['POST', 'DELETE'])
+
 
 @login_required
 def reservation_create(request, course_slug, kq_id, asset_id):
