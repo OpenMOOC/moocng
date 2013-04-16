@@ -18,8 +18,9 @@
 if (_.isUndefined(window.MOOC)) {
     window.MOOC = {};
 }
-
-MOOC.views = {};
+if (_.isUndefined(MOOC.views)) {
+    MOOC.views = {};
+}
 
 MOOC.views.KQ_TITLE_MAX_LENGTH = 60;
 
@@ -96,13 +97,16 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             kq,
             kqObj,
             comments,
-            supplementary;
+            supplementary,
+            iframe_template;
 
-        html = '<iframe id="ytplayer" width="620px" height="372px" ';
-        html += 'src="//www.youtube.com/embed/' + this.model.get("videoID");
-        html += '?rel=0&origin=' + MOOC.host;
-        html += '" frameborder="0" allowfullscreen></iframe>';
-        $("#kq-video").removeClass("question").html(html);
+        iframe_template = _.template(this.model.get('iframe_code'));
+        html = iframe_template({ height: '372px', width: '620px', allowfullscreen: true, controls: true, origin: MOOC.host });
+        $("#kq-video").removeClass('question').html(html);
+
+        _.each(MOOC.views.players, function (Player) {
+            var player = new Player();
+        });
 
         $("#kq-q-buttons").addClass("hide");
         $("#kq-next-container").addClass("offset4");
@@ -112,7 +116,6 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         } else if (this.model.has("peer_review_assignment")) {
             this.loadPeerReviewData();
         }
-        this.repeatedlyCheckIfPlayer();
 
         $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
 
@@ -223,26 +226,6 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
     player: null,
 
-    // The callback is only used in the router, not in the views
-    repeatedlyCheckIfPlayer: function (callback) {
-        "use strict";
-        if (MOOC.YTready) {
-            this.player = YT.get("ytplayer");
-            // A new player instance for a new video
-            if (!_.isUndefined(this.player) && !_.isNull(this.player)) {
-                this.player.destroy();
-            }
-            this.player = new YT.Player("ytplayer", {
-                events: {
-                    onStateChange: _.bind(this.loadExercise, this)
-                }
-            });
-            if (!_.isUndefined(callback)) { callback(); }
-        } else {
-            _.delay(_.bind(this.repeatedlyCheckIfPlayer, this), 200, callback);
-        }
-    },
-
     setupListernerFor: function (model, property, callback) {
         "use strict";
         if (model.has(property)) {
@@ -266,7 +249,9 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 var question = new MOOC.models.Question({
                         id: data.id,
                         lastFrame: data.last_frame,
-                        solutionVideo: data.solutionID,
+                        solution_media_content_type: data.solution_media_content_type,
+                        solution_media_content_id: data.solution_media_content_id,
+                        iframe_code: data.iframe_code,
                         use_last_frame: data.use_last_frame
                     });
                 if (data.solution_text !== "") {
@@ -383,112 +368,110 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
     loadExercise: function (evt) {
         "use strict";
-        if (evt.data === YT.PlayerState.ENDED) {
-            var model = this.model,
-                toExecute = [];
+        var model = this.model,
+            toExecute = [];
 
-            // Mark kq as "viewed"
-            MOOC.models.activity.addKQ(String(model.get("id")), function () {
-                var unit = MOOC.models.course.getByKQ(model),
-                    view = MOOC.views.unitViews[unit.get("id")];
+        // Mark kq as "viewed"
+        MOOC.models.activity.addKQ(String(model.get("id")), function () {
+            var unit = MOOC.models.course.getByKQ(model),
+                view = MOOC.views.unitViews[unit.get("id")];
 
-                view.render();
-            });
+            view.render();
+        });
 
-            // We can't assume the question exists
-            if (model.has("question")) {
-                if (!this.model.has("questionInstance")) {
-                    toExecute.push(async.apply(this.setupListernerFor, this.model, "questionInstance"));
-                }
-
-                toExecute.push(_.bind(function (callback) {
-                    var question = this.model.get("questionInstance");
-                    this.setupListernerFor(question, "optionList", callback);
-                }, this));
-
-                toExecute.push(_.bind(function (callback) {
-                    var question = this.model.get("questionInstance");
-                    this.setupListernerFor(question, "answer", callback);
-                }, this));
-
-                toExecute.push(_.bind(function (callback) {
-                    var question = this.model.get("questionInstance"),
-                        view = MOOC.views.questionViews[question.get("id")],
-                        data = {
-                            kq: this.model.get("id")
-                        },
-                        path = window.location.hash.substring(1),
-                        unit = MOOC.models.course.getByKQ(this.model);
-
-                    $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
-                    if (!(/[\w\/]+\/q/.test(path))) {
-                        path = path + "/q";
-                        MOOC.router.navigate(path, { trigger: false });
-                    }
-                    this.setEventForNavigation("#kq-previous", unit, this.model, false);
-                    this.setEventForNavigation("#kq-next", unit, this.model, true);
-
-                    if (this.player && !_.isNull(this.player.getIframe())) {
-                        this.player.destroy();
-                    }
-                    $("#kq-video").empty();
-                    this.player = null;
-
-                    if (_.isUndefined(view)) {
-                        view = new MOOC.views.Question({
-                            model: question,
-                            el: $("#kq-video")[0]
-                        });
-                        MOOC.views.questionViews[question.get("id")] = view;
-                    }
-                    view.render();
-
-                    callback();
-                }, this));
-            } else if (model.has("peer_review_assignment")) {
-                toExecute = [];
-
-                if (!this.model.has("peerReviewAssignmentInstance")) {
-                    toExecute.push(async.apply(this.setupListernerFor, this.model, "peerReviewAssignmentInstance"));
-                }
-
-                toExecute.push(_.bind(function (callback) {
-                    var peerReviewObj = this.model.get("peerReviewAssignmentInstance"),
-                        view = MOOC.views.peerReviewAssignmentViews[peerReviewObj.get("id")],
-                        path = window.location.hash.substring(1),
-                        unit = MOOC.models.course.getByKQ(this.model);
-
-                    $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
-                    if (!(/[\w\/]+\/p/.test(path))) {
-                        path = path + "/p";
-                        MOOC.router.navigate(path, { trigger: false });
-                    }
-
-                    this.setEventForNavigation("#kq-previous", unit, this.model, false);
-                    this.setEventForNavigation("#kq-next", unit, this.model, true);
-
-                    if (this.player && !_.isNull(this.player.getIframe())) {
-                        this.player.destroy();
-                    }
-                    $("#kq-video").empty();
-                    this.player = null;
-
-                    if (_.isUndefined(view)) {
-                        view = new MOOC.views.PeerReviewAssignment({
-                            model: peerReviewObj,
-                            el: $("#kq-video")[0]
-                        });
-                        MOOC.views.peerReviewAssignmentViews[peerReviewObj.get("id")] = view;
-                    }
-                    view.render();
-
-                    callback();
-                }, this));
-
+        // We can't assume the question exists
+        if (model.has("question")) {
+            if (!this.model.has("questionInstance")) {
+                toExecute.push(async.apply(this.setupListernerFor, this.model, "questionInstance"));
             }
 
-            async.series(toExecute);
+            toExecute.push(_.bind(function (callback) {
+                var question = this.model.get("questionInstance");
+                this.setupListernerFor(question, "optionList", callback);
+            }, this));
+
+            toExecute.push(_.bind(function (callback) {
+                var question = this.model.get("questionInstance");
+                this.setupListernerFor(question, "answer", callback);
+            }, this));
+
+            toExecute.push(_.bind(function (callback) {
+                var question = this.model.get("questionInstance"),
+                    view = MOOC.views.questionViews[question.get("id")],
+                    data = {
+                        kq: this.model.get("id")
+                    },
+                    path = window.location.hash.substring(1),
+                    unit = MOOC.models.course.getByKQ(this.model);
+
+                $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
+                if (!(/[\w\/]+\/q/.test(path))) {
+                    path = path + "/q";
+                    MOOC.router.navigate(path, { trigger: false });
+                }
+                this.setEventForNavigation("#kq-previous", unit, this.model, false);
+                this.setEventForNavigation("#kq-next", unit, this.model, true);
+
+                if (this.player && !_.isNull(this.player.getIframe())) {
+                    this.player.destroy();
+                }
+                $("#kq-video").empty();
+                this.player = null;
+
+                if (_.isUndefined(view)) {
+                    view = new MOOC.views.Question({
+                        model: question,
+                        el: $("#kq-video")[0]
+                    });
+                    MOOC.views.questionViews[question.get("id")] = view;
+                }
+                view.render();
+
+                callback();
+            }, this));
+        } else if (model.has("peer_review_assignment")) {
+            toExecute = [];
+
+            if (!this.model.has("peerReviewAssignmentInstance")) {
+                toExecute.push(async.apply(this.setupListernerFor, this.model, "peerReviewAssignmentInstance"));
+            }
+
+            toExecute.push(_.bind(function (callback) {
+                var peerReviewObj = this.model.get("peerReviewAssignmentInstance"),
+                    view = MOOC.views.peerReviewAssignmentViews[peerReviewObj.get("id")],
+                    path = window.location.hash.substring(1),
+                    unit = MOOC.models.course.getByKQ(this.model);
+
+                $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
+                if (!(/[\w\/]+\/p/.test(path))) {
+                    path = path + "/p";
+                    MOOC.router.navigate(path, { trigger: false });
+                }
+
+                this.setEventForNavigation("#kq-previous", unit, this.model, false);
+                this.setEventForNavigation("#kq-next", unit, this.model, true);
+
+                if (this.player && !_.isNull(this.player.getIframe())) {
+                    this.player.destroy();
+                }
+                $("#kq-video").empty();
+                this.player = null;
+
+                if (_.isUndefined(view)) {
+                    view = new MOOC.views.PeerReviewAssignment({
+                        model: peerReviewObj,
+                        el: $("#kq-video")[0]
+                    });
+                    MOOC.views.peerReviewAssignmentViews[peerReviewObj.get("id")] = view;
+                }
+                view.render();
+
+                callback();
+            }, this));
+
         }
+
+        async.series(toExecute);
 
         return this;
     },
@@ -545,6 +528,11 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         "use strict";
         var toExecute = [];
 
+        toExecute.push(_.bind(function (callback) {
+            _.bind(this.destroyVideo, this)();
+            callback();
+        }, this));
+
         if (!this.model.has("questionInstance")) {
             toExecute.push(async.apply(this.setupListernerFor, this.model, "questionInstance"));
         }
@@ -552,19 +540,20 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         toExecute.push(_.bind(function (callback) {
             var unit = MOOC.models.course.getByKQ(this.model),
                 questionInstance = this.model.get("questionInstance"),
-                html = "";
+                html = "",
+                iframe_template;
 
             if (questionInstance.has("solutionText")) {
                 html = "<div class='solution-wrapper white mathjax'>" + questionInstance.get("solutionText") + "</div>";
-            } else if (questionInstance.has("solutionVideo")) {
-                html = '<iframe id="ytplayer" width="620px" height="372px" ';
-                html += 'src="//www.youtube.com/embed/' + this.model.get("questionInstance").get("solutionVideo");
-                html += '?rel=0&origin=' + MOOC.host + '" frameborder="0" allowfullscreen></iframe>';
+            } else if (questionInstance.has("solution_media_content_type")) {
+                iframe_template = _.template(questionInstance.get('iframe_code'));
+                html = iframe_template({ height: '372px', width: '620px', allowfullscreen: true, controls: true, origin: MOOC.host });
             } else {
                 MOOC.alerts.show(MOOC.alerts.INFO, MOOC.trans.api.solutionNotReadyTitle, MOOC.trans.api.solutionNotReady);
             }
 
             $("#kq-video").removeClass("question").html(html);
+            $("#kq-video").css("height", "auto");
             $("#kq-q-buttons").addClass("hide");
             $("#kq-next-container").addClass("offset4");
             $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
@@ -586,6 +575,17 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         async.series(toExecute);
 
         return this;
+    },
+
+    destroyVideo: function () {
+        "use strict";
+        var node = $("#kq-video"),
+            height = node.css("height");
+
+        if (!_.isUndefined(height)) {
+            node.css("height", height);
+        }
+        node.empty();
     }
 });
 

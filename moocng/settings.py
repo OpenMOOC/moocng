@@ -213,6 +213,7 @@ INSTALLED_APPS = (
     'django_mathjax',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'moocng.media_contents',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -469,6 +470,33 @@ SAML_CONFIG = {
         },
     }
 
+MEDIA_CONTENT_TYPES = [
+    {
+        'id': 'youtube',
+        'name': 'YouTube',
+        'handler': 'moocng.media_contents.handlers.youtube.YoutubeMediaContentHandler',
+        'can_get_last_frame': True,
+    },
+    {
+        'id': 'vimeo',
+        'name': 'Vimeo',
+        'handler': 'moocng.media_contents.handlers.vimeo.VimeoMediaContentHandler',
+        'can_get_last_frame': False,
+    },
+    {
+        'id': 'scribd',
+        'name': 'Scribd',
+        'handler': 'moocng.media_contents.handlers.scribd.ScribdMediaContentHandler',
+        'can_get_last_frame': False,
+    },
+    {
+        'id': 'prezi',
+        'name': 'Prezi',
+        'handler': 'moocng.media_contents.handlers.prezi.PreziMediaContentHandler',
+        'can_get_last_frame': False,
+    },
+]
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
@@ -492,3 +520,4 @@ try:
     from local_settings import *
 except ImportError:
     pass
+

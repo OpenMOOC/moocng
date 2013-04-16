@@ -42,6 +42,7 @@ from moocng.teacheradmin.tasks import send_massive_email_task
 from moocng.teacheradmin.utils import (send_invitation,
                                        send_removed_notification)
 from moocng.videos.tasks import process_video_task
+from moocng.media_contents import get_media_content_types_choices
 
 
 @is_teacher_or_staff
@@ -193,6 +194,7 @@ def teacheradmin_units(request, course_slug):
         'course': course,
         'is_enrolled': is_enrolled,
         'unit_badge_classes': simplejson.dumps(UNIT_BADGE_CLASSES),
+        'media_content_type_choices': get_media_content_types_choices(),
     }, context_instance=RequestContext(request))
 
 

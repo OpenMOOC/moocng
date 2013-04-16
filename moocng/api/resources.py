@@ -47,11 +47,11 @@ from moocng.api.validation import (AnswerValidation,
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment, Course)
 from moocng.courses.utils import normalize_kq_weight, calculate_course_mark
+from moocng.media_contents import media_content_get_iframe_template, media_content_get_thumbnail_url
 from moocng.mongodb import get_db
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
 from moocng.peerreview.utils import (kq_get_peer_review_score,
                                      get_peer_review_review_score)
-from moocng.videos.utils import extract_YT_video_id
 
 from moocng.assets.models import Asset, Reservation, AssetAvailability
 
@@ -91,6 +91,8 @@ class KnowledgeQuantumResource(ModelResource):
     question = fields.ToManyField('moocng.api.resources.QuestionResource',
                                   'question_set', related_name='kq',
                                   readonly=True, null=True)
+    iframe_code = fields.CharField(readonly=True)
+    thumbnail_url = fields.CharField(readonly=True)
     peer_review_assignment = fields.ToOneField(
         'moocng.api.resources.PeerReviewAssignmentResource',
         'peerreviewassignment',
@@ -102,7 +104,6 @@ class KnowledgeQuantumResource(ModelResource):
         related_name='asset_availability',
         readonly=True, null=True)
     peer_review_score = fields.IntegerField(readonly=True)
-    videoID = fields.CharField(readonly=True)
     correct = fields.BooleanField(readonly=True)
     completed = fields.BooleanField(readonly=True)
     normalized_weight = fields.IntegerField(readonly=True)
@@ -143,14 +144,17 @@ class KnowledgeQuantumResource(ModelResource):
         else:
             return question[0]
 
+    def dehydrate_iframe_code(self, bundle):
+        return media_content_get_iframe_template(bundle.obj.media_content_type, bundle.obj.media_content_id)
+
+    def dehydrate_thumbnail_url(self, bundle):
+        return media_content_get_thumbnail_url(bundle.obj.media_content_type, bundle.obj.media_content_id)
+
     def dehydrate_peer_review_score(self, bundle):
         try:
             return kq_get_peer_review_score(bundle.obj, bundle.request.user)
         except ObjectDoesNotExist:
             return None
-
-    def dehydrate_videoID(self, bundle):
-        return extract_YT_video_id(bundle.obj.video)
 
     def dehydrate_correct(self, bundle):
         questions = bundle.obj.question_set.all()
@@ -180,6 +184,8 @@ class PrivateKnowledgeQuantumResource(ModelResource):
     question = fields.ToManyField('moocng.api.resources.QuestionResource',
                                   'question_set', related_name='kq',
                                   readonly=True, null=True)
+    iframe_code = fields.CharField(readonly=True)
+    thumbnail_url = fields.CharField(readonly=True)
     peer_review_assignment = fields.ToOneField(
         'moocng.api.resources.PeerReviewAssignmentResource',
         'peerreviewassignment',
@@ -190,7 +196,6 @@ class PrivateKnowledgeQuantumResource(ModelResource):
         'asset_availability',
         related_name='asset_availability',
         readonly=True, null=True)
-    videoID = fields.CharField()
     normalized_weight = fields.IntegerField()
 
     class Meta:
@@ -218,14 +223,11 @@ class PrivateKnowledgeQuantumResource(ModelResource):
         else:
             return question[0]
 
-    def dehydrate_videoID(self, bundle):
-        return extract_YT_video_id(bundle.obj.video)
+    def dehydrate_iframe_code(self, bundle):
+        return media_content_get_iframe_template(bundle.obj.media_content_type, bundle.obj.media_content_id)
 
-    def hydrate_videoID(self, bundle):
-        if 'videoID' in bundle.data and bundle.data['videoID'] is not None:
-            video = 'http://youtu.be/' + bundle.data['videoID']
-            bundle.data['video'] = video
-        return bundle
+    def dehydrate_thumbnail_url(self, bundle):
+        return media_content_get_thumbnail_url(bundle.obj.media_content_type, bundle.obj.media_content_id)
 
 
 class AttachmentResource(ModelResource):
@@ -492,7 +494,8 @@ class PeerReviewReviewsResource(MongoResource):
 
 class QuestionResource(ModelResource):
     kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
-    solutionID = fields.CharField(readonly=True)
+    iframe_code = fields.CharField(readonly=True)
+    thumbnail_url = fields.CharField(readonly=True)
 
     class Meta:
         queryset = Question.objects.all()
@@ -512,21 +515,21 @@ class QuestionResource(ModelResource):
             Q(kq__unit__start__isnull=False, kq__unit__start__lte=datetime.now)
         )
 
-    def dehydrate_solution_video(self, bundle):
+    def dehydrate_solution_media_content_type(self, bundle):
         # Only return solution if the deadline has been reached, or there is
         # no deadline
         unit = bundle.obj.kq.unit
         if unit.unittype != 'n' and unit.deadline > datetime.now(unit.deadline.tzinfo):
             return None
-        return bundle.obj.solution_video
+        return bundle.obj.solution_media_content_type
 
-    def dehydrate_solutionID(self, bundle):
+    def dehydrate_solution_media_content_id(self, bundle):
         # Only return solution if the deadline has been reached, or there is
         # no deadline
         unit = bundle.obj.kq.unit
         if unit.unittype != 'n' and unit.deadline > datetime.now(unit.deadline.tzinfo):
             return None
-        return extract_YT_video_id(bundle.obj.solution_video)
+        return bundle.obj.solution_media_content_id
 
     def dehydrate_solution_text(self, bundle):
         # Only return solution if the deadline has been reached, or there is
@@ -542,10 +545,21 @@ class QuestionResource(ModelResource):
         except ValueError:
             return "%simg/no-image.png" % settings.STATIC_URL
 
+    def dehydrate_iframe_code(self, bundle):
+        return media_content_get_iframe_template(
+            bundle.obj.solution_media_content_type,
+            bundle.obj.solution_media_content_id
+        )
+
+    def dehydrate_thumbnail_url(self, bundle):
+        return media_content_get_thumbnail_url(
+            bundle.obj.solution_media_content_type,
+            bundle.obj.solution_media_content_id
+        )
+
 
 class PrivateQuestionResource(ModelResource):
     kq = fields.ToOneField(PrivateKnowledgeQuantumResource, 'kq')
-    solutionID = fields.CharField()
 
     class Meta:
         queryset = Question.objects.all()
@@ -556,9 +570,6 @@ class PrivateQuestionResource(ModelResource):
         filtering = {
             "kq": ('exact'),
         }
-
-    def dehydrate_solutionID(self, bundle):
-        return extract_YT_video_id(bundle.obj.solution_video)
 
     def dehydrate_last_frame(self, bundle):
         try:
@@ -573,14 +584,6 @@ class PrivateQuestionResource(ModelResource):
             bundle.obj.last_frame = ImageFieldFile(
                 bundle.obj, Question._meta.get_field_by_name('last_frame')[0],
                 "")
-        return bundle
-
-    def hydrate_solutionID(self, bundle):
-        if 'solutionID' in bundle.data and bundle.data['solutionID'] is not None:
-            if bundle.data['solutionID'] != '':
-                bundle.data['solution_video'] = 'http://youtu.be/' + bundle.data['solutionID']
-            else:
-                bundle.data['solution_video'] = ''
         return bundle
 
 
@@ -622,7 +625,7 @@ class OptionResource(ModelResource):
                 unicode(bundle.obj.question.id), None)
             if answer is not None:
                 unit = bundle.obj.question.kq.unit
-                if unit.unittype == 'n' or not(unit.deadline and datetime.now(unit.deadline.tzinfo) < unit.deadline):
+                if unit.unittype == 'n' or not(unit.deadline and datetime.now(unit.deadline.tzinfo) > unit.deadline):
                     solution = bundle.obj.solution
         return solution
 
