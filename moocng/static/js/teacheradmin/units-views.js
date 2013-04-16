@@ -647,7 +647,8 @@ if (_.isUndefined(window.MOOC)) {
                 "click button#delete-kq": "remove",
                 "click button.removecriterion": "removePeerReviewCriterion",
                 "click button.back": "goBack",
-                "click button#addassetavailability": "addAssetAvailability"
+                "click button#addassetavailability": "addAssetAvailability",
+                "click button#delete-asset-availability": "removeAssetAvailability"
             },
 
             initialize: function () {
@@ -655,7 +656,8 @@ if (_.isUndefined(window.MOOC)) {
                     "checkRequired", "useBlankCanvas", "useLastFrame",
                     "toggleSolution", "addQuestion", "addPeerReviewAssignment",
                     "addCriterion", "forceProcess", "removeQuestion",
-                    "removePeerReviewAssignment", "go2options", "addAssetAvailability");
+                    "removePeerReviewAssignment", "go2options", "addAssetAvailability",
+                    "removeAssetAvailability");
             },
 
             render: function () {
@@ -1308,6 +1310,38 @@ if (_.isUndefined(window.MOOC)) {
                         }
                     });
                 };
+
+                showConfirmationModal(cb);
+            },
+
+            removeAssetAvailability: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+
+                var view = this,
+                    cb = function () {
+                        MOOC.ajax.showLoading();
+                        view.model.get("assetAvailabilityInstance").destroy({
+                            success: function () {
+                                view.model.set("assetAvailabilityInstance", null);
+                                view.model.set("asset_availability", null);
+                                view.model.save(null, {
+                                    success: function () {
+                                        MOOC.ajax.hideLoading();
+                                        view.render();
+                                    },
+                                    error: function () {
+                                        MOOC.ajax.hideLoading();
+                                        MOOC.ajax.showAlert("generic");
+                                    }
+                                });
+                            },
+                            error: function () {
+                                MOOC.ajax.hideLoading();
+                                MOOC.ajax.showAlert("generic");
+                            }
+                        });
+                    };
 
                 showConfirmationModal(cb);
             },
