@@ -82,8 +82,8 @@
         <h3>{% trans "New reservation" %}</h3>
     </div>
     <div class="modal-body">
-        <div id="new-asset-reservation-asset-information"></div>
         <div id="new-asset-reservation-availability-information"></div>
+        <div id="new-asset-reservation-asset-information"></div>
         <form action="" method="post" id="new-asset-reservation-form">
             {% csrf_token %}
             <div id="new-asset-reservation-form-content"></div>
@@ -202,12 +202,20 @@
                 asBook: "{% trans "Book" %}",
                 asBookDate: "{% trans "Date: " %}",
                 asBookTime: "{% trans "Time: " %}",
+                asCancelations: "{% trans "Cancelations: " %}",
                 asCannotBook: "{% trans "You are not in the booking period for this nugget." %}",
                 asCapacity: "{% trans "Capacity: " %}",
-                asDates: "{% trans "Dates on which assets can be booked" %}",
+                asDates: "{% trans "Assets can be booked:" %}",
                 asDatesFrom: "{% trans "From: " %}",
                 asDatesTo: "{% trans "To: " %}",
+                asInAdvance: "{% trans "Time in advance required for: " %}",
+                asLimits: "{% trans "Limits for this course: " %}",
                 asNumberOfSlots: "{% trans "Number of slots: " %}",
+                asMaxPending: "{% trans "Pending reservations: " %}",
+                asMaxTotal: "{% trans "Total reservations: " %}",
+                asMinutes: "{% trans "minutes" %}",
+                asRequisites: "{% trans "Requisites for making a reservation:" %}",
+                asReservations: "{% trans "Reservations: " %}",
                 asSlotLength:  "{% trans "Slot length: " %}"
             },
             peerreview: {

@@ -1182,11 +1182,17 @@ MOOC.views.Asset = Backbone.View.extend({
 
         html = [];
 
-        html.push("<div id=\"availability-information\" class='solution-wrapper white'>");
-        html.push("<h3>" + MOOC.trans.classroom.asDates + "</h3><ul>");
+        html.push("<h2>" + MOOC.trans.classroom.asRequisites + "</h2>");
+        html.push("<div id='availability-information' class='solution-wrapper white'>");
+        html.push("<div class='row'>");
+        html.push("<div class='span3'><ul><li>" + MOOC.trans.classroom.asDates + "<ul>");
         html.push("<li>" + MOOC.trans.classroom.asDatesFrom + this.model.get("available_from") + "</li>");
         html.push("<li>" + MOOC.trans.classroom.asDatesTo + this.model.get("available_to") + "</li>");
-        html.push("</ul></div>");
+        html.push("</ul></li></ul></div><div class='span3'><ul><li>");
+        html.push(MOOC.trans.classroom.asLimits + "<ul>");
+        html.push("<li>" + MOOC.trans.classroom.asMaxPending + this.model.get("max_reservations_pending") + "</li>");
+        html.push("<li>" + MOOC.trans.classroom.asMaxTotal + this.model.get("max_reservations_total") + "</li>");
+        html.push("</ul></li></ul></div></div></div>");
 
         canBeBooked = this.model.get("can_be_booked");
 
@@ -1204,10 +1210,17 @@ MOOC.views.Asset = Backbone.View.extend({
             html.push("<div id='" + divId + "'>");
             html.push("<h3>" + asset.get("name") + "</h3>");
             html.push(asset.get("description"));
+            html.push("<div class=\"row\"><div class=\"span3\">");
             html.push("<ul><li>" + MOOC.trans.classroom.asSlotLength + asset.get("slot_duration") + "</li>");
             html.push("<li>" + MOOC.trans.classroom.asNumberOfSlots + asset.get("max_bookable_slots") + "</li>");
             html.push("<li>" + MOOC.trans.classroom.asCapacity + asset.get("capacity") + "</li>");
-            html.push("</ul></div><p class=\"align-right\">");
+            html.push("</ul></div><div class=\"span3\">");
+            html.push("<ul><li>" + MOOC.trans.classroom.asInAdvance + "<ul>");
+            html.push("<li>" + MOOC.trans.classroom.asReservations + " ");
+            html.push(asset.get("reservation_in_advance") + " " + MOOC.trans.classroom.asMinutes + "</li>");
+            html.push("<li>" + MOOC.trans.classroom.asCancelations + " ");
+            html.push(asset.get("cancelation_in_advance") + " " + MOOC.trans.classroom.asMinutes + "</li>");
+            html.push("</ul></li></ul></div></div></div><p class=\"align-right\">");
             if (canBeBooked) {
                 html.push("<button type=\"button\" class=\"btn btn-primary as-new-reservation\" id=\"" + buttonId + "\">");
                 html.push(MOOC.trans.classroom.asBook);
