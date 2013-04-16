@@ -921,6 +921,9 @@ class AssetAvailabilityResource(ModelResource):
     assets = fields.ToManyField(AssetResource, 'assets')
     can_be_booked = fields.BooleanField(readonly=True)
 
+    max_reservations_pending = fields.IntegerField(readonly=True)
+    max_reservations_total = fields.IntegerField(readonly=True)
+
     class Meta:
         queryset = AssetAvailability.objects.all()
         resource_name = 'asset_availability'
@@ -931,6 +934,12 @@ class AssetAvailabilityResource(ModelResource):
             "kq": ('exact'),
             "assets": ('exact'),
         }
+
+    def dehydrate_max_reservations_pending(self, bundle):
+        return bundle.obj.kq.unit.course.max_reservations_pending
+
+    def dehydrate_max_reservations_total(self, bundle):
+        return bundle.obj.kq.unit.course.max_reservations_total
 
     def dehydrate_can_be_booked(self, bundle):
         if bundle.obj.available_from > date.today():
@@ -960,6 +969,10 @@ class PrivateAssetAvailabilityResource(ModelResource):
 
     kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
     assets = fields.ToManyField(AssetResource, 'assets')
+    can_be_booked = fields.BooleanField(readonly=True)
+
+    max_reservations_pending = fields.IntegerField(readonly=True)
+    max_reservations_total = fields.IntegerField(readonly=True)
 
     class Meta:
         queryset = AssetAvailability.objects.all()
@@ -970,6 +983,20 @@ class PrivateAssetAvailabilityResource(ModelResource):
             "kq": ('exact'),
             "assets": ('exact'),
         }
+
+    def dehydrate_max_reservations_pending(self, bundle):
+        return bundle.obj.kq.unit.course.max_reservations_pending
+
+    def dehydrate_max_reservations_total(self, bundle):
+        return bundle.obj.kq.unit.course.max_reservations_total
+
+    def dehydrate_can_be_booked(self, bundle):
+        if bundle.obj.available_from > date.today():
+            return False
+        elif bundle.obj.available_to < date.today():
+            return False
+        else:
+            return True
 
     def obj_get_list(self, request=None, **kwargs):
 

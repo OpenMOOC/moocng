@@ -358,6 +358,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     available_from: data.available_from,
                     available_to: data.available_to,
                     can_be_booked: data.can_be_booked,
+                    max_reservations_pending: data.max_reservations_pending,
+                    max_reservations_total: data.max_reservations_total,
                     knowledgeQuantumInstance: kqObj
                 });
 
