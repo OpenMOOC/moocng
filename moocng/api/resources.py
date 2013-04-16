@@ -942,7 +942,7 @@ class AssetAvailabilityResource(ModelResource):
         kq = request.GET.get('kq', None)
         asset = request.GET.get('asset', None)
 
-        if kq is not None and assets is not None:
+        if kq is not None and asset is not None:
             results = AssetAvailability.objects.filter(Q(kq__id=kq) & Q(assets__available_in__id=asset))
         elif kq is not None:
             results = AssetAvailability.objects.filter(kq__id=kq)
@@ -973,7 +973,7 @@ class PrivateAssetAvailabilityResource(ModelResource):
         kq = request.GET.get('kq', None)
         asset = request.GET.get('asset', None)
 
-        if kq is not None and assets is not None:
+        if kq is not None and asset is not None:
             results = AssetAvailability.objects.filter(Q(kq__id=kq) & Q(assets__available_in__id=asset))
         elif kq is not None:
             results = AssetAvailability.objects.filter(kq__id=kq)
