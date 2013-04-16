@@ -29,6 +29,7 @@ from moocng.courses.utils import is_course_ready
 from django.db.models import Q
 
 from datetime import datetime, timedelta
+import pytz
 
 
 @login_required
@@ -79,10 +80,18 @@ def cancel_reservation(request, course_slug, reservation_id):
             return HttpResponseRedirect(reverse('course_overview',
                                         args=[course_slug]))
 
-        reserv_remove = Reservation.objects.filter(Q(id=reservation_id) & Q(user__id=request.user.id))
+        reserv_remove = Reservation.objects.get(Q(id=reservation_id) & Q(user__id=request.user.id))
         if reserv_remove is None:
             messages.error(request, _('You are not the owner of this reservation'))
             return HttpResponseRedirect(reverse('course_reservations', args=[course.slug]))
+
+        cancel_limit = datetime.utcnow().replace(tzinfo = pytz.utc)
+        cancel_limit += timedelta(0, reserv_remove.asset.cancelation_in_advance * 60)
+
+        if reserv_remove.reservation_begins < cancel_limit:
+            messages.error(request, _('Not enought advance time to cancel this reservation.'))
+            return HttpResponseRedirect(reverse('course_reservations', args=[course.slug]))
+
         reserv_remove.delete()
 
         return HttpResponseRedirect(reverse('course_reservations', args=[course.slug]))

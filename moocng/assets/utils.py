@@ -22,7 +22,7 @@ from django.utils.translation import ugettext as _
 from moocng.mongodb import get_db
 from moocng.assets import cache
 from moocng.assets.models import Asset, AssetAvailability, Reservation
-from moocng.courses.models import KnowledgeQuantum
+from moocng.courses.models import KnowledgeQuantum, Course
 
 
 def course_get_assets(course):
@@ -82,10 +82,24 @@ def is_asset_bookable(user, asset, availability, reservation_begins, reservation
     if not availability.assets.filter(id=asset.id).exists():
         return(False, _('This asset is not available from this nugget.'))
 
-    if reservation_ends < datetime.datetime.today():
+    if reservation_begins > reservation_ends:
+        return(False, _('A reservation should not finish before it starts.'))
+
+    reservation_limit = datetime.datetime.today()
+    reservation_limit += datetime.timedelta(0, asset.reservation_in_advance * 60)
+
+    if reservation_begins < datetime.datetime.today():
         return (False, _('The specified time is in the past.'))
+    if reservation_begins < reservation_limit:
+        return (False, _('Not enought time in advance for this reservation'))
     if reservation_begins.date() < availability.available_from or reservation_ends.date() > availability.available_to:
         return (False, _('The specified time is not in the bookable period.'))
+
+    course = availability.kq.unit.course
+    if user_course_get_pending_reservations(user, course).count() >= course.max_reservations_pending:
+        return (False, _('You have reached the pending reservations limit for this course.'))
+    elif user_course_get_reservations(user, course).count() >= course.max_reservations_total:
+        return (False, _('You have reached the reservations limit for this course.'))
 
     collisions = Reservation.objects.filter(asset__id=asset.id)
     collisions = collisions.exclude(Q(reservation_begins__gt=reservation_begins)

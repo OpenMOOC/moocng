@@ -33,6 +33,10 @@ class Asset(models.Model):
                             blank=True, null=False)
     capacity = models.PositiveIntegerField(verbose_name=_(u'Student capacity'))
     max_bookable_slots = models.PositiveSmallIntegerField(verbose_name=_(u'Maximun bookable slots'))
+    reservation_in_advance = models.PositiveIntegerField(verbose_name=_(u'Time required in advance for reservation'),
+                                                         default=120)
+    cancelation_in_advance = models.PositiveIntegerField(verbose_name=_(u'Time required in advance to cancel a reservation'),
+                                                         default=120)
 
     class Meta:
         verbose_name = _(u'asset')
