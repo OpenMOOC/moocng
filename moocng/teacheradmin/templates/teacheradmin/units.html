@@ -55,6 +55,11 @@
                 description: "{% trans "Description:" %}",
                 remove: "{%trans "Remove criterion" %}",
                 title: "{% trans "Title:" %}",
+            },
+            asset: {
+                description: "{% trans "Description:" %}",
+                remove: "{%trans "Remove Asset" %}",
+                name: "{% trans "Name:" %}",
             }
         };
         MOOC.init({{ course.id }}, {{ unit_badge_classes|safe }});
@@ -311,6 +316,13 @@
             <label for="availabletolabel" class="required"> {% trans "Available to:" %}</label>
             <input type="date" id="availableto" name="availableto" placeholder="YYYY-MM-DD" class="span5" ></input>
         </div>
+    </div>
+    <div class="row">
+      <div class="span10">
+        <legend>{% trans "Assets" %}</legend>
+        <div id="assets">
+        </div>
+      </div>
     </div>
     </br>
     <div class="row">

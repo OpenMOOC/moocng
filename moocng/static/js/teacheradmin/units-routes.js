@@ -54,6 +54,8 @@ if (_.isUndefined(window.MOOC)) {
                 peer_review_assignment,
                 asset_availability,
                 assetList,
+                assetUrl,
+                assetId,
                 criterionList,
                 assignmentUrl,
                 assignmentId;
@@ -118,11 +120,11 @@ if (_.isUndefined(window.MOOC)) {
                     }
                 }));
 
-               /* promises.push(
-                    asset_availability.get("_criterionList").fetch({
-                        data: { 'name': assetId }
+                promises.push(
+                    asset_availability.get("_assetList").fetch({
+                        data: { 'kq': kq.id }
                     })
-                );*/
+                );
             }
 
 

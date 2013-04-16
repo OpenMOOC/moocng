@@ -697,7 +697,8 @@ if (_.isUndefined(window.MOOC)) {
                 "click button.back": "goBack",
                 "click button#addassetavailability": "addAssetAvailability",
                 "click button#delete-asset-availability": "removeAssetAvailability",
-                "change select#kqmedia_content_type": "redrawCanGetLastFrame"
+                "change select#kqmedia_content_type": "redrawCanGetLastFrame",
+                "click button.removeasset": "removeAssetOfAvailability"
             },
 
             initialize: function () {
@@ -720,6 +721,7 @@ if (_.isUndefined(window.MOOC)) {
                     assetList,
                     content_type,
                     can_get_last_frame,
+                    assetListDiv,
                     self;
 
                 $(".viewport").addClass("hide");
@@ -828,8 +830,34 @@ if (_.isUndefined(window.MOOC)) {
                     this.$el.find("#availablefrom").val(assetAvail.get("available_from"));
                     this.$el.find("#availableto").val(assetAvail.get("available_to"));
                     assetList = assetAvail.get("_assetList");
-                }
 
+                    assetListDiv = this.$el.find("#assets");
+                    self = this;
+                    assetListDiv.empty();
+                    assetList.each(function (asset) {
+                        var assetDivId,
+                            nameInputId,
+                            removeBtnId,
+                            nameInput,
+                            nameLabel,
+                            removeBtn,
+                            assetDiv;
+
+                        assetDivId = "asset-" + asset.get("id");
+                        nameInputId = "assetname-" + asset.get("id");
+                        removeBtnId = "assetremove-" + asset.get("id");
+
+                        nameInput = "<h3 class=\"input-large\" id=\"" + nameInputId + "\" ></h3>";
+                        removeBtn = "<button id=\"" + removeBtnId + "\" class=\"removeasset btn btn-danger\">" + MOOC.trans.asset.remove + "</button>";
+                        assetDiv = "<div id=\"" + assetDivId + "\">"
+                                       + "<div> <div class=\"span4\">" + nameInput + "</div>"
+                                       + "<div class=\"row mb20\"><div class=\"align-right span10\">" + removeBtn + "</div></div></divZ";
+
+                        assetListDiv.append(assetDiv);
+                        assetListDiv.find("#" + nameInputId).text(asset.get("name"));
+                    });
+
+                }
 
                 $attachments = this.$el.find("#attachment-list");
                 if (this.model.get("attachmentList").length > 0) {
@@ -1455,6 +1483,44 @@ if (_.isUndefined(window.MOOC)) {
                             }
                         });
                     };
+
+                showConfirmationModal(cb);
+            },
+
+            removeAssetOfAvailability: function (evt) {
+                evt.stopPropagation();
+                evt.preventDefault();
+
+                var self = this,
+                    cb;
+
+                cb = function () {
+                    var assetId = parseInt(evt.target.getAttribute('id').split('-')[1], 10),
+                        assetInstance,
+                        assets,
+                        assetToRemove,
+                        assetUrl,
+                        asset_availability = self.model.get("assetAvailabilityInstance"),
+                        assetList = asset_availability.get("_assetList"),
+                        asset = assetList.find(function (candidate) {
+                            return (parseInt(candidate.get("id"), 10) === assetId);
+                        }),
+                        assetDivId = "asset-" + asset.get("id");
+
+                    MOOC.ajax.showLoading();
+
+                    assetList.remove(asset);
+                    assetInstance = self.model.get("assetAvailabilityInstance");
+                    assets = assetInstance.get("assets");
+                    assetUrl = asset.url().replace('/privasset', '/asset');
+                    assets.splice(assets.indexOf(assetUrl), 1);
+                    assetInstance.set("assets", assets);
+                    assetInstance.save();
+
+                    self.$el.find("#" + assetDivId).remove();
+                    MOOC.ajax.hideLoading();
+
+                };
 
                 showConfirmationModal(cb);
             },
