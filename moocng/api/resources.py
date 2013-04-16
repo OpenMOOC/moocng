@@ -54,6 +54,11 @@ from moocng.peerreview.utils import (kq_get_peer_review_score,
 from moocng.videos.utils import extract_YT_video_id
 
 
+def get_user(request, collection):
+    # TODO remove this!!
+    return {}
+
+
 class CourseResource(ModelResource):
 
     class Meta:
@@ -295,7 +300,8 @@ class EvaluationCriterionResource(ModelResource):
         return results.filter(
             Q(assignment__kq__unit__unittype='n') |
             Q(assignment__kq__unit__start__isnull=True) |
-            Q(assignment__kq__unit__start__isnull=False, assignment__kq__unit__start__lte=datetime.now)
+            Q(assignment__kq__unit__start__isnull=False,
+              assignment__kq__unit__start__lte=datetime.now)
         )
 
 
@@ -504,7 +510,8 @@ class QuestionResource(ModelResource):
         # Only return solution if the deadline has been reached, or there is
         # no deadline
         unit = bundle.obj.kq.unit
-        if unit.unittype != 'n' and unit.deadline > datetime.now(unit.deadline.tzinfo):
+        if (unit.unittype != 'n' and
+                unit.deadline > datetime.now(unit.deadline.tzinfo)):
             return None
         return bundle.obj.solution_video
 
@@ -512,7 +519,8 @@ class QuestionResource(ModelResource):
         # Only return solution if the deadline has been reached, or there is
         # no deadline
         unit = bundle.obj.kq.unit
-        if unit.unittype != 'n' and unit.deadline > datetime.now(unit.deadline.tzinfo):
+        if (unit.unittype != 'n' and
+                unit.deadline > datetime.now(unit.deadline.tzinfo)):
             return None
         return extract_YT_video_id(bundle.obj.solution_video)
 
@@ -520,7 +528,8 @@ class QuestionResource(ModelResource):
         # Only return solution if the deadline has been reached, or there is
         # no deadline
         unit = bundle.obj.kq.unit
-        if unit.unittype != 'n' and unit.deadline > datetime.now(unit.deadline.tzinfo):
+        if (unit.unittype != 'n' and
+                unit.deadline > datetime.now(unit.deadline.tzinfo)):
             return None
         return bundle.obj.solution_text
 
@@ -590,7 +599,8 @@ class OptionResource(ModelResource):
         return objects.filter(
             Q(question__kq__unit__unittype='n') |
             Q(question__kq__unit__start__isnull=True) |
-            Q(question__kq__unit__start__isnull=False, question__kq__unit__start__lte=datetime.now)
+            Q(question__kq__unit__start__isnull=False,
+              question__kq__unit__start__lte=datetime.now)
         )
 
     def dispatch(self, request_type, request, **kwargs):
@@ -610,7 +620,8 @@ class OptionResource(ModelResource):
                 unicode(bundle.obj.question.id), None)
             if answer is not None:
                 unit = bundle.obj.question.kq.unit
-                if unit.unittype == 'n' or not(unit.deadline and datetime.now(unit.deadline.tzinfo) < unit.deadline):
+                if (unit.unittype == 'n' or not(unit.deadline and
+                        datetime.now(unit.deadline.tzinfo) < unit.deadline)):
                     solution = bundle.obj.solution
         return solution
 
@@ -625,54 +636,42 @@ class OptionResource(ModelResource):
         return feedback
 
 
-class AnswerResource(MongoResource):
+class AnswerResource(MongoUserResource):
 
     class Meta:
         resource_name = 'answer'
         collection = 'answers'
-        datakey = 'questions'
+        datakey = 'answer'
         object_class = MongoObj
         authentication = DjangoAuthentication()
         authorization = DjangoAuthorization()
         allowed_methods = ['get', 'post', 'put']
         filtering = {
-            "question": ('exact'),
+            "question_id": ('exact'),
+            "course_id": ('exact'),
+            "unit_id": ('exact'),
+            "kq_id": ('exact'),
         }
         validation = AnswerValidation()
 
-    def obj_get_list(self, request=None, **kwargs):
-        user = self._get_or_create_user(request, **kwargs)
-        question_id = request.GET.get('question', None)
-
-        results = []
-        if question_id is None:
-            for qid, question in user['questions'].items():
-                if qid == question_id:
-                    obj = MongoObj(initial=question)
-                    obj.uuid = question_id
-                    results.append(obj)
-        else:
-            question = user['questions'].get(question_id, None)
-            if question is not None:
-                obj = MongoObj(initial=question)
-                obj.uuid = question_id
-                results.append(obj)
-
-        return results
-
     def obj_create(self, bundle, request=None, **kwargs):
-        user = self._get_or_create_user(request, **kwargs)
-
         bundle = self.full_hydrate(bundle)
 
-        unit = Question.objects.get(id=bundle.obj.uuid).kq.unit
-        if unit.unittype != 'n' and unit.deadline and datetime.now(unit.deadline.tzinfo) > unit.deadline:
+        question = Question.objects.get(id=bundle.obj.uuid)
+        unit = question.kq.unit
+        if (unit.unittype != 'n' and unit.deadline and
+                datetime.now(unit.deadline.tzinfo) > unit.deadline):
             return bundle
 
         if (len(bundle.obj.answer['replyList']) > 0):
-            user['questions'][bundle.obj.uuid] = bundle.obj.answer
-
-            self._collection.update({'_id': user['_id']}, user, safe=True)
+            self._collection.insert({
+                'question_id': question.id,
+                'course_id': unit.course.id,
+                'unit_id': unit.id,
+                'kq_id': question.kq.id,
+                'replyList': bundle.obj.answer["replyList"],
+                "date": datetime.utcnow(),
+            }, safe=True)
 
         bundle.uuid = bundle.obj.uuid
 
@@ -727,14 +726,14 @@ class ActivityResource(MongoUserResource):
         kq_id = fields.IntegerField(null=False)
         user_id = fields.IntegerField(null=False)
 
-
     def _initial(self, request, **kwargs):
         course_id = kwargs['pk']
-        return {"course_id": course_id,
-                "unit_id": -1,
-                "kq_id": -1,
-                "user_id": -1
-                }
+        return {
+            "course_id": course_id,
+            "unit_id": -1,
+            "kq_id": -1,
+            "user_id": -1,
+        }
 
 
 class UserResource(ModelResource):
@@ -813,7 +812,8 @@ class UserResource(ModelResource):
         return self.alt_get_list(request, courses)
 
     def get_passed_courses(self, request, **kwargs):
-        # In tastypie, the override_urls don't call Authentication/Authorization
+        # In tastypie, the override_urls don't call
+        # Authentication/Authorization
         self.is_authenticated(request)
         self.is_authorized(request)
         obj = self.get_object(request, kwargs)
