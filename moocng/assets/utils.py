@@ -109,13 +109,15 @@ def get_suitable_begin_times(slot_duration, date, specific_date=None):
     return res
 
 
-def is_asset_bookable(user, asset, availability, reservation_begins, reservation_ends):
+def is_asset_bookable(user, asset, availability, reservation_begins, reservation_ends, old_reservation=None):
     """This method checks if there is possible to create a new reservation
     with the given parameters.
     It returns a tuple whose first parameter is a boolean which specifies if
     it's possible to create the reservation, and if it's not possible the
     second parameter would be a string which specifies why it's not possible
     to create the reservation"""
+
+    is_modification = (old_reservation is not None)
 
     if not availability.assets.filter(id=asset.id).exists():
         return(False, _('This asset is not available from this nugget.'))
@@ -133,16 +135,21 @@ def is_asset_bookable(user, asset, availability, reservation_begins, reservation
     if reservation_begins.date() < availability.available_from or reservation_ends.date() > availability.available_to:
         return (False, _('The specified time is not in the bookable period.'))
 
-    course = availability.kq.unit.course
-    if user_course_get_pending_reservations(user, course).count() >= course.max_reservations_pending:
-        return (False, _('You have reached the pending reservations limit for this course.'))
-    elif user_course_get_reservations(user, course).count() >= course.max_reservations_total:
-        return (False, _('You have reached the reservations limit for this course.'))
+    if not is_modification:
+        course = availability.kq.unit.course
+        if user_course_get_pending_reservations(user, course).count() >= course.max_reservations_pending:
+            return (False, _('You have reached the pending reservations limit for this course.'))
+        elif user_course_get_reservations(user, course).count() >= course.max_reservations_total:
+            return (False, _('You have reached the reservations limit for this course.'))
 
     collisions = Reservation.objects.filter(asset__id=asset.id)
     collisions = collisions.exclude(Q(reservation_begins__gte=reservation_ends)
                                     | Q(reservation_ends__lte=reservation_begins))
-    if collisions.count() >= (asset.max_bookable_slots * asset.capacity):
+    if is_modification:
+        collisions = collisions.exclude(Q(id=old_reservation.id))
+
+    collision_count = collisions.count()
+    if collision_count >= (asset.max_bookable_slots * asset.capacity):
         return (False, _("No available places left at selected time."))
 
     own_collisions = collisions.filter(user__id=user.id)
