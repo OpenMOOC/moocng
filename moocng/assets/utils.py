@@ -26,7 +26,7 @@ from moocng.courses.models import KnowledgeQuantum, Course
 
 
 def course_get_assets(course):
-    return Asset.objects.filter(available_in__kq__unit__course__id=course.id)
+    return Asset.objects.filter(available_in__kq__unit__course__id=course.id).distinct()
 
 
 def course_get_kq_with_bookable_assets(course):
