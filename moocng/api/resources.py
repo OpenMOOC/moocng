@@ -880,6 +880,7 @@ class AssetResource(ModelResource):
         availability = request.GET.get('availability', None)
         kq = request.GET.get('kq', None)
         exclude_kq = request.GET.get('exclude_kq', None)
+        course = request.GET.get('course', None)
 
         if availability is not None:
             results = Asset.objects.filter(available_in__id=availability)
@@ -887,6 +888,8 @@ class AssetResource(ModelResource):
             results = Asset.objects.filter(available_in__kq__id=kq)
         elif exclude_kq is not None:
             results = Asset.objects.exclude(available_in__kq__id=exclude_kq)
+        elif course is not None:
+            results = Asset.objects.filter(available_in__kq__unit__course__id=course)
         else:
             results = Asset.objects.all()
         return results
@@ -909,6 +912,7 @@ class PrivateAssetResource(ModelResource):
         availability = request.GET.get('availability', None)
         kq = request.GET.get('kq', None)
         exclude_kq = request.GET.get('exclude_kq', None)
+        course = request.GET.get('course', None)
 
         if availability is not None:
             results = Asset.objects.filter(available_in__id=availability)
@@ -916,6 +920,9 @@ class PrivateAssetResource(ModelResource):
             results = Asset.objects.filter(available_in__kq__id=kq)
         elif exclude_kq is not None:
             results = Asset.objects.exclude(available_in__kq__id=exclude_kq)
+        elif course is not None:
+            results = Asset.objects.filter(available_in__kq__unit__course__id=course)
+
         else:
             results = Asset.objects.all()
         return results
