@@ -1,0 +1,30 @@
+{% extends "teacheradmin/base_teacheradmin.html" %}
+
+{% load i18n %}
+
+{% block nav-teacheradmin-assets %}active{% endblock %}
+
+{% block section %}
+  {% if assets %}
+    <table class="table table-striped">
+    <tbody>
+      {% for asset in assets %}
+      <tr>
+        <td>{{ asset.name }}</td>
+        <td>  {{ asset.description|safe }}</td>
+        <td><a class="btn btn-small pull-right"
+              href="{% url teacheradmin_assets_edit course_slug=course.slug asset_id=asset.id %}">
+            <i class="icon-edit"></i></a>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="alert">
+      {% trans "There are not assets yet" %}
+    </div>
+  {% endif %}
+  <div>
+</div>
+{% endblock %}

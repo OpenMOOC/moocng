@@ -1,0 +1,21 @@
+{% extends "teacheradmin/base_teacheradmin.html" %}
+
+{% load i18n %}
+
+{% block nav-teacheradmin-assets %}active{% endblock %}
+
+{% block section %}
+
+{{ form.media }}
+
+<form method="post">{% csrf_token %}
+  {{ form.as_bootstrap }}
+  <div class="form-actions">
+    {% if asset %}
+    <input type="submit" class="btn btn-primary" value="{% trans 'Save changes' %}" />
+    {% endif %}
+  </div>
+
+</form>
+
+{% endblock %}
