@@ -1312,26 +1312,33 @@ if (_.isUndefined(window.MOOC)) {
                 this.model.set("assetAvailabilityInstance", asset_availability);
 
                 self = this;
-                this.save(evt, _.bind(function () {
-                    self.model.fetch({
-                        success: function () {
-                            var assetAvailUrl,
-                                createdId;
-                            assetAvailUrl = self.model.get("asset_availability").split("/");
-                            createdId = assetAvailUrl.pop();
-                            while (_.isNaN(parseInt(createdId, 10))) {
-                                createdId = assetAvailUrl.pop();
-                            }
-                            self.model.get("assetAvailabilityInstance").set("id", parseInt(createdId, 10));
-                            self.render();
-                            MOOC.ajax.hideLoading();
-                        },
-                        error: function () {
-                            MOOC.ajax.hideLoading();
-                            MOOC.ajax.showAlert("generic");
-                        }
-                    });
-                }, this));
+                asset_availability.save(null, {
+                    success: function() {
+                        self.save(evt, _.bind(function () {
+                            self.model.fetch({
+                                success: function () {
+                                    var assetAvailUrl,
+                                        createdId;
+                                    assetAvailUrl = self.model.get("asset_availability").split("/");
+                                    createdId = assetAvailUrl.pop();
+                                    while (_.isNaN(parseInt(createdId, 10))) {
+                                        createdId = assetAvailUrl.pop();
+                                    }
+                                    self.model.get("assetAvailabilityInstance").set("id", parseInt(createdId, 10));
+                                    self.render();
+                                    MOOC.ajax.hideLoading();
+                                },
+                                error: function () {
+                                    MOOC.ajax.hideLoading();
+                                    MOOC.ajax.showAlert("generic");
+                                }
+                            });
+                        }, this));
+                    },
+                    error: function() {
+                        MOOC.ajax.showAlert("generic");
+                    }
+                });
             },
 
             forceProcess: function (evt) {
