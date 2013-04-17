@@ -948,9 +948,7 @@ class AssetAvailabilityResource(ModelResource):
         return bundle.obj.kq.unit.course.max_reservations_total
 
     def dehydrate_can_be_booked(self, bundle):
-        if bundle.obj.available_from > date.today():
-            return False
-        elif bundle.obj.available_to < date.today():
+        if bundle.obj.available_to < date.today():
             return False
         else:
             return True
@@ -997,9 +995,7 @@ class PrivateAssetAvailabilityResource(ModelResource):
         return bundle.obj.kq.unit.course.max_reservations_total
 
     def dehydrate_can_be_booked(self, bundle):
-        if bundle.obj.available_from > date.today():
-            return False
-        elif bundle.obj.available_to < date.today():
+        if bundle.obj.available_to < date.today():
             return False
         else:
             return True
