@@ -188,6 +188,16 @@ MOOC.models.AssetAvailability = Backbone.Model.extend({
         }
 
         return MOOC.ajax.getAbsoluteUrl("asset_availability/");
+    },
+
+    sync: function (method, model, options) {
+        "use strict";
+        var model2send = model.clone();
+
+        model2send.unset("_assetList");
+        model2send.unset("knowledgeQuantumInstance");
+        model2send.unset("_otherAssets");
+        Backbone.sync(method, model2send, options);
     }
 });
 
