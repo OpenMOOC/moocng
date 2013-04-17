@@ -7,6 +7,7 @@
 {% block extrajs %}
 
 <script type="text/javascript">
+    var cancelationForm;
     $(document).ready(function () {
         $('#past-reservations-message').css('cursor', 'pointer');
         $("#course-past-reservations").hide();
@@ -18,11 +19,37 @@
                 $("#past-message").text("{% trans "Display past reservations" %}");
             }
         });
+        $(".btn-remove").click(function(evt) {
+            evt.preventDefault();
+            cancelationForm = evt.target.form;
+            $("#confirm-cancelation").modal({ show: true });
+        });
+        $("#confirmBtn").click(function(evt) {
+            evt.preventDefault();
+            $("#confirm-cancelation").modal("hide");
+            cancelationForm.submit();
+        });
     });
 </script>
 {% endblock %}
 
 {% block content %}
+
+<div id="confirm-cancelation" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>{% trans "Confirm cancelation" %}</h3>
+    </div>
+    <div class="modal-body">
+        <p>{% trans "Are you completely sure you want to cancel the registration? You cannot undo this action." %}</p>
+    </div>
+    <div class="modal-footer">
+        <!-- Using "Cancel" for closing the modal doing nothing might be confusing, the user might think that
+             the reservation is what is being cancelled. -->
+        <button type="button" class="btn" data-dismiss="modal">{% trans "Back" %}</button>
+        <button type="button" class="btn btn-danger" id="confirmBtn">{% trans "Confirm cancelation" %}</button>
+    </div>
+</div>
 
 {% if active_reservations %}
 <h2>{% trans "Active Reservations" %}</h2>
@@ -55,8 +82,8 @@
         {% endblocktrans %}
         <div class="row">
             <div class="align-right span4">
-                <form action="{% url cancel_reservation course.slug reservation.id %}"  method="post">{% csrf_token %}
-                    <input type="submit" value="{% trans "Remove" %}" class="btn btn-danger" />
+                <form action="{% url cancel_reservation course.slug reservation.id %}" id="r{{ reservation.id }}-form" method="post">{% csrf_token %}
+                    <input type="submit" value="{% trans "Remove" %}" class="btn btn-danger btn-remove" id="r{{ reservation.id }}-removeBtn" />
                 </form>
             </div>
         </div>
