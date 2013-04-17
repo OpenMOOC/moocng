@@ -102,8 +102,8 @@ def is_asset_bookable(user, asset, availability, reservation_begins, reservation
         return (False, _('You have reached the reservations limit for this course.'))
 
     collisions = Reservation.objects.filter(asset__id=asset.id)
-    collisions = collisions.exclude(Q(reservation_begins__gt=reservation_begins)
-                                    | Q(reservation_ends__lt=reservation_ends))
+    collisions = collisions.exclude(Q(reservation_begins__gte=reservation_ends)
+                                    | Q(reservation_ends__lte=reservation_begins))
     if (collisions.count() >= asset.max_bookable_slots):
         return (False, _("There's not a free slot available."))
 
@@ -121,8 +121,8 @@ def book_asset(user, asset, availability, reservation_begins, reservation_ends):
         return can_create
 
     collisions = Reservation.objects.filter(asset__id=asset.id)
-    collisions = collisions.exclude(Q(reservation_begins__gt=reservation_ends)
-                                    | Q(reservation_ends__lt=reservation_begins))
+    collisions = collisions.exclude(Q(reservation_begins__gte=reservation_ends)
+                                    | Q(reservation_ends__lte=reservation_begins))
     used_slots = collisions.values_list('slot_id', flat=True)
 
     free_slots = range(asset.max_bookable_slots)
