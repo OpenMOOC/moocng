@@ -14,7 +14,7 @@
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import signals
+from django.db.models import signals, Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 
@@ -22,6 +22,8 @@ from moocng.assets import cache
 from moocng.courses.models import KnowledgeQuantum
 
 from tinymce.models import HTMLField
+
+from datetime import timedelta
 
 
 class Asset(models.Model):
@@ -66,6 +68,24 @@ class AssetAvailability(models.Model):
         return ugettext(u'Assets availables for {0}').format(self.kq)
 
 
+def remove_reservations(sender, instance, **kwargs):
+    limit = instance.available_to+timedelta(1, 0) #The final day is allowed
+    assetIds=instance.assets.values_list('id', flat=True)
+    affected_reservations = Reservation.objects.filter(reserved_from__id=instance.id)
+    affected_reservations = affected_reservations.filter(~Q(asset__id__in=assetIds)
+                                                         | Q(reservation_begins__lt=instance.available_from)
+                                                         | Q(reservation_ends__gt=limit))
+    affected_reservations = affected_reservations.distinct()
+    for i in affected_reservations:
+        i.delete()
+
+
+def remove_reservations_delete(sender, instance, **kwargs):
+    affected_reservations = Reservation.objects.filter(reserved_from__id=instance.id)
+    for i in affected_reservations:
+        i.delete()
+
+
 def invalidate_cache(sender, instance, **kwargs):
     try:
         cache.invalidate_course_has_assets_in_cache(instance.kq.unit.course)
@@ -73,6 +93,8 @@ def invalidate_cache(sender, instance, **kwargs):
         pass
 
 
+signals.post_save.connect(remove_reservations, sender=AssetAvailability)
+signals.pre_delete.connect(remove_reservations_delete, sender=AssetAvailability)
 signals.post_save.connect(invalidate_cache, sender=AssetAvailability)
 signals.post_delete.connect(invalidate_cache, sender=AssetAvailability)
 
