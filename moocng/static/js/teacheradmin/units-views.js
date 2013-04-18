@@ -1057,7 +1057,7 @@ if (_.isUndefined(window.MOOC)) {
 
                 if (this.model.has("assetAvailabilityInstance")) {
                     assetAvail = this.model.get("assetAvailabilityInstance");
-                    if (!this.$el.find("#asset-availability").is(".hidden")) {
+                    if (!this.$el.find("#asset-availability-tab").is(".hidden")) {
                         assetAvail.set("available_from", this.$el.find("#availablefrom").val());
                         assetAvail.set("available_to", this.$el.find("#availableto").val());
                     }
