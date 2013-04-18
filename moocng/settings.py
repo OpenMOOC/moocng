@@ -374,6 +374,8 @@ PEER_REVIEW_TEXT_MAX_SIZE = 5000  # in chars
 PEER_REVIEW_FILE_MAX_SIZE = 5  # in MB
 PEER_REVIEW_ASSIGNATION_EXPIRE = 24  # in hours
 
+ASSET_SLOT_GRANULARITY = 5  # Slot time of assets should be a multiple of this value (in minutes)
+
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 LOGIN_URL = '/saml2/login/'
 LOGIN_REDIRECT_URL = '/'

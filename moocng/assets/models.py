@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import signals, Q
@@ -68,6 +69,17 @@ class AssetAvailability(models.Model):
         return ugettext(u'Assets availables for {0}').format(self.kq)
 
 
+def assure_granularity(sender, instance, **kwargs):
+    difference = instance.slot_duration % settings.ASSET_SLOT_GRANULARITY
+    if difference != 0:
+        if difference > (settings.ASSET_SLOT_GRANULARITY / 2):
+            instance.slot_duration += settings.ASSET_SLOT_GRANULARITY - difference
+        else:
+            instance.slot_duration -= difference
+    if instance.slot_duration == 0:
+        instance.slot_duration = settings.ASSET_SLOT_GRANULARITY
+
+
 def remove_reservations(sender, instance, **kwargs):
     limit = instance.available_to+timedelta(1, 0) #The final day is allowed
     assetIds=instance.assets.values_list('id', flat=True)
@@ -93,6 +105,7 @@ def invalidate_cache(sender, instance, **kwargs):
         pass
 
 
+signals.pre_save.connect(assure_granularity, sender=Asset)
 signals.post_save.connect(remove_reservations, sender=AssetAvailability)
 signals.pre_delete.connect(remove_reservations_delete, sender=AssetAvailability)
 signals.post_save.connect(invalidate_cache, sender=AssetAvailability)
