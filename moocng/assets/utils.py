@@ -16,7 +16,7 @@
 import datetime
 
 from django.db import IntegrityError
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.utils.translation import ugettext as _
 
 from moocng.mongodb import get_db
@@ -104,10 +104,11 @@ def is_asset_bookable(user, asset, availability, reservation_begins, reservation
     collisions = Reservation.objects.filter(asset__id=asset.id)
     collisions = collisions.exclude(Q(reservation_begins__gte=reservation_ends)
                                     | Q(reservation_ends__lte=reservation_begins))
-    if (collisions.count() >= asset.max_bookable_slots):
-        return (False, _("There's not a free slot available."))
+    if collisions.count() >= (asset.max_bookable_slots * asset.capacity):
+        return (False, _("No available places left at selected time."))
 
     return (True, None)
+
 
 def book_asset(user, asset, availability, reservation_begins, reservation_ends):
     """This method checks if there is possible to create a new reservation
@@ -123,25 +124,27 @@ def book_asset(user, asset, availability, reservation_begins, reservation_ends):
     collisions = Reservation.objects.filter(asset__id=asset.id)
     collisions = collisions.exclude(Q(reservation_begins__gte=reservation_ends)
                                     | Q(reservation_ends__lte=reservation_begins))
-    used_slots = collisions.values_list('slot_id', flat=True)
+    slot_load = collisions.values('slot_id').order_by().annotate(Count('slot_id'))
 
-    free_slots = range(asset.max_bookable_slots)
+    candidate_slots = filter(lambda x: x['slot_id__count'] < asset.capacity, slot_load)
+    if len(candidate_slots) > 0:
+        candidate_slots.sort(key=lambda x: x['slot_id__count'])
+        slot_id = candidate_slots[0]['slot_id']
+    else:
+        #All used slots are full
+        used_slots = map(lambda x: x['slot_id'], slot_load)
+        free_slots = filter(lambda x: x not in used_slots, range(asset.max_bookable_slots))
 
-    for i in used_slots:
-        try:
-            free_slots.remove(i)
-        except ValueError:
-            pass
-    if len(free_slots) == 0:
-        return (False, _("There's not a free slot available."))
+        if len(free_slots) == 0:
+            return (False, _("There's not a free slot available."))
 
-    slot = free_slots[0]
+        slot_id = free_slots[0]
 
-    new_reservation = Reservation(user=user, asset=asset, slot_id = slot,
+    new_reservation = Reservation(user=user, asset=asset, slot_id=slot_id,
                                   reserved_from=availability,
                                   reservation_begins=reservation_begins,
                                   reservation_ends=reservation_ends)
 
-    new_reservation.save();
+    new_reservation.save()
 
-    return (True, _("Reservation created successfully."));
+    return (True, _("Reservation created successfully."))
