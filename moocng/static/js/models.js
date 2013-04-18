@@ -146,29 +146,67 @@ MOOC.models.PeerReviewAssignmentList = MOOC.models.TastyPieCollection.extend({
 
 MOOC.models.Activity = Backbone.Model.extend({
     defaults: {
-        kqs: []
+        local: true
+    },
+
+    isNew: function () {
+        "use strict";
+        return this.get("local");
     },
 
     url: function () {
         "use strict";
-        return MOOC.ajax.getAbsoluteUrl('activity/') + this.get('id') + '/';
+        if (this.isNew()) {
+            return MOOC.ajax.getAbsoluteUrl('activity/');
+        }
+        return MOOC.ajax.getAbsoluteUrl('activity/') + this.get('kq_id') + "/";
+    },
+
+    parse: function (resp, xhr) {
+        "use strict";
+        var result = {};
+        if (!_.isNull(resp)) {
+            result = _.pick(resp, "course_id", "kq_id", "unit_id");
+        }
+        result.local = false;
+        return result;
+    }
+});
+
+MOOC.models.ActivityCollection = MOOC.models.TastyPieCollection.extend({
+    model: MOOC.models.Activity,
+
+    course_id: undefined,  // Don't forget to initialize this
+
+    url: function () {
+        "use strict";
+        return MOOC.ajax.getAbsoluteUrl('activity/') + "?course_id=" + this.course_id;
     },
 
     addKQ: function (kq, callback) {
         "use strict";
-        if (!_.include(this.get('kqs'), kq)) {
-            this.set('kqs', _.union(this.get('kqs'), [kq]));
+        kq = parseInt(kq, 10);
+        if (!this.hasKQ(kq)) {
+            var unit = MOOC.models.course.getByKQ(kq).get("id"),
+                activity = new MOOC.models.Activity({
+                    course_id: this.course_id,
+                    unit_id: unit,
+                    kq_id: kq
+                });
+            this.add(activity);
             if (_.isUndefined(callback)) {
-                this.save();
+                activity.save();
             } else {
-                this.save("kqs", this.get("kqs"), { success: callback });
+                activity.save({ success: callback });
             }
         }
     },
 
     hasKQ: function (kq) {
         "use strict";
-        return _.include(this.get('kqs'), String(kq));
+        return this.find(function (activity) {
+            return parseInt(kq, 10) === parseInt(activity.get("kq_id"), 10);
+        }) !== undefined;
     }
 });
 

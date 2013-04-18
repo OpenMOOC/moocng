@@ -342,7 +342,8 @@ MOOC.init = function (course_id, KQRoute) {
         MOOC.router.route("unit:unit/kq:kq/a", "kqA");
         MOOC.router.route("unit:unit/kq:kq/p", "kqP");
 
-        MOOC.models.activity = new MOOC.models.Activity({id: course_id});
+        MOOC.models.activity = new MOOC.models.ActivityCollection();
+        MOOC.models.activity.course_id = course_id;
         MOOC.models.activity.fetch();
 
         MOOC.router.on('route:kq', function (u, kq) {
