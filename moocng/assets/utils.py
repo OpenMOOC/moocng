@@ -71,6 +71,21 @@ def user_course_get_pending_reservations(user, course, time=None):
     return result
 
 
+def get_concurrent_reservations(reservation):
+
+        reservation_begins = reservation.reservation_begins
+        reservation_ends = reservation.reservation_ends
+        slot = reservation.slot_id
+        asset = reservation.asset
+        collisions = Reservation.objects.filter(asset__id=asset.id)
+        collisions = collisions.exclude(Q(reservation_begins__gte=reservation_ends)
+                                        | Q(reservation_ends__lte=reservation_begins))
+
+        total_reservations = collisions.filter(slot_id=slot).count()
+
+        return total_reservations
+
+
 def is_asset_bookable(user, asset, availability, reservation_begins, reservation_ends):
     """This method checks if there is possible to create a new reservation
     with the given parameters.
