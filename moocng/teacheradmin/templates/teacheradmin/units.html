@@ -403,6 +403,22 @@
     </div>
 </div>
 
+
+<div id="confirm-assets-action" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>{% trans "Confirm operation" %}</h3>
+    </div>
+    <div class="modal-body">
+        <p>{% trans "Are you completely sure you want to do this operation? It is possible that some reservations are cancelled after this change " %}</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" id="cancelasset" class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
+        <button type="button" class="btn btn-danger">{% trans "Confirm" %}</button>
+    </div>
+</div>
+
+
 <div id="units-container" class="viewport"></div>
 <div id="unit-editor" class="viewport hide"></div>
 <div id="kq-editor" class="viewport hide"></div>
