@@ -1063,10 +1063,8 @@ if (_.isUndefined(window.MOOC)) {
 
                 if (this.model.has("assetAvailabilityInstance")) {
                     assetAvail = this.model.get("assetAvailabilityInstance");
-                    if (!this.$el.find("#asset-availability-tab").is(".hidden")) {
-                        assetAvail.set("available_from", this.$el.find("#availablefrom").val());
-                        assetAvail.set("available_to", this.$el.find("#availableto").val());
-                    }
+                    assetAvail.set("available_from", this.$el.find("#availablefrom").val());
+                    assetAvail.set("available_to", this.$el.find("#availableto").val());
                     steps.push(function (asyncCB) {
                         assetAvail.save(null, {
                             success: function () {
@@ -1316,6 +1314,9 @@ if (_.isUndefined(window.MOOC)) {
                 asset_availability.set("assets", []);
                 asset_availability.set("_assetList", new MOOC.models.AssetList());
                 this.model.set("assetAvailabilityInstance", asset_availability);
+
+                this.$el.find("#availablefrom").val(asset_availability.get("available_from"));
+                this.$el.find("#availableto").val(asset_availability.get("available_to"));
 
                 self = this;
                 asset_availability.save(null, {
