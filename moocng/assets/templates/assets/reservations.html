@@ -58,10 +58,11 @@
     <h3>{% blocktrans with asset_name=reservation.asset kq_title=reservation.reserved_from.kq.title%}
     {{ asset_name}} of {{kq_title }}   {% endblocktrans %} </h3>
     <ul id="active-reservation{{ reservation.id }}" >
-        {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends slot_id=reservation.slot_id %}
+        {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends slot_id=reservation.slot_id concurrent=reservation.concurrent %}
         <li> From: {{ from }} </li>
-        <li> To:  {{ to }} </li> 
+        <li> To:  {{ to }} </li>
         <li> Slot: {{slot_id}} </li>
+        <li> Students sharing this slot: {{concurrent}} </li>
         {% endblocktrans %}
     </ul>
     {% endfor %}
@@ -75,10 +76,11 @@
     <h3>{% blocktrans with asset_name=reservation.asset kq_title=reservation.reserved_from.kq.title%}
     {{ asset_name}} of {{kq_title }}   {% endblocktrans %} </h3>
     <ul id="pending-reservation{{ reservation.id }}" >
-        {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends slot_id=reservation.slot_id %}
+        {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends slot_id=reservation.slot_id concurrent=reservation.concurrent %}
         <li> From: {{ from }} </li>
-        <li> To:  {{ to }} </li> 
-        <li> Slot: {{slot_id}} </li>
+        <li> To:  {{ to }} </li>
+        <li> Slot: {{ slot_id }} </li>
+        <li> Students sharing this slot: {{concurrent}} </li>
         {% endblocktrans %}
         <div class="row">
             <div class="align-right span4">
@@ -109,10 +111,11 @@
     <h3>{% blocktrans with asset_name=reservation.asset kq_title=reservation.reserved_from.kq.title%}
     {{ asset_name}} of {{kq_title }}   {% endblocktrans %} </h3>
     <ul id="past-reservation{{ reservation.id }}" >
-        {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends slot_id=reservation.slot_id %}
+        {% blocktrans with from=reservation.reservation_begins to=reservation.reservation_ends slot_id=reservation.slot_id concurrent=reservation.concurrent %}
         <li> From: {{ from }} </li>
-        <li> To:  {{ to }} </li> 
+        <li> To:  {{ to }} </li>
         <li> Slot: {{slot_id}} </li>
+        <li> Students sharing this slot: {{concurrent}} </li>
         {% endblocktrans %}
     </ul>
     {% endfor %}

@@ -15,6 +15,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.forms.models import model_to_dict
 from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
@@ -51,11 +52,29 @@ def course_reservations(request, course_slug):
             'ask_admin': ask_admin,
         }, context_instance=RequestContext(request))
 
-    active_reservations = user_course_get_active_reservations(request.user, course)
+    active_reservations = []
+    for i in user_course_get_active_reservations(request.user, course):
+        base = model_to_dict(i)
+        base['concurrent'] = get_concurrent_reservations(i)
+        base['asset'] = i.asset
+        base['reserved_from'] = i.reserved_from
+        active_reservations.append(base)
 
-    past_reservations = user_course_get_past_reservations(request.user, course)
+    past_reservations = []
+    for i in user_course_get_past_reservations(request.user, course):
+        base = model_to_dict(i)
+        base['concurrent'] = get_concurrent_reservations(i)
+        base['asset'] = i.asset
+        base['reserved_from'] = i.reserved_from
+        past_reservations.append(base)
 
-    pending_reservations = user_course_get_pending_reservations(request.user, course)
+    pending_reservations = []
+    for i in user_course_get_pending_reservations(request.user, course):
+        base = model_to_dict(i)
+        base['concurrent'] = get_concurrent_reservations(i)
+        base['asset'] = i.asset
+        base['reserved_from'] = i.reserved_from
+        pending_reservations.append(base)
 
     return render_to_response('assets/reservations.html', {
         'course': course,
