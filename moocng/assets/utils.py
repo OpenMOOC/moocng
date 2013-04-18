@@ -107,6 +107,10 @@ def is_asset_bookable(user, asset, availability, reservation_begins, reservation
     if collisions.count() >= (asset.max_bookable_slots * asset.capacity):
         return (False, _("No available places left at selected time."))
 
+    own_collisions = collisions.filter(user__id=user.id)
+    if own_collisions.count() >= 1:
+        return (False, _('You already have a reservation for the same asset at the same time'))
+
     return (True, None)
 
 
