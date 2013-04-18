@@ -737,6 +737,7 @@ class ActivityResource(MongoResource):
         validation = AnswerValidation()
 
     def obj_update(self, bundle, request=None, **kwargs):
+
         user = self._get_or_create_user(request, **kwargs)
         course_id = kwargs['pk']
 

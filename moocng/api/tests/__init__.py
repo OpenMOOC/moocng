@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from moocng.api.tests.test_api import ServicesTestCase
-from moocng.api.tests.test_course import CoursesTestCase, CourseTestCase
+#from moocng.api.tests.test_api import ServicesTestCase
+#from moocng.api.tests.test_course import CoursesTestCase, CourseTestCase
 from moocng.api.tests.test_unit import UnitsTestCase, UnitTestCase
-from moocng.api.tests.test_user import UserTestCase
+#from moocng.api.tests.test_kq import KqsTestCase, KqTestCase
+#from moocng.api.tests.test_privkq import PrivKqsTestCase, PrivKqTestCase
+#from moocng.api.tests.test_user import UserTestCase

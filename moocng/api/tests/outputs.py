@@ -25,7 +25,12 @@ BASIC_UNITS =  '{"meta": {"limit": 0, "offset": 0, "total_count": 1}, "objects":
 
 BASIC_UNIT = '{"course": "/api/v1/course/1/", "deadline": null, "id": "1", "order": 1, "resource_uri": "/api/v1/unit/1/", "start": null, "status": "d", "title": "test_basic_unit", "unittype": "n", "weight": 0}'
 
-NORMAL_USER = '{"email": "test@example.com", "first_name": "", "id": "2", "last_name": "", "resource_uri": "/api/v1/user/2/"}'
+BASIC_UNIT_PK = '{"course": "/api/v1/course/1/", "deadline": null, "id": "1", "order": 1, "pk": "1", "resource_uri": "/api/v1/unit/1/", "start": null, "status": "d", "title": "test_basic_unit", "unittype": "n", "weight": 0}'
 
+BASIC_KQS = '{"meta": {"limit": 0, "offset": 0, "total_count": 1}, "objects": [{"completed": false, "correct": false, "id": "1", "normalized_weight": 100.0, "order": 1, "peer_review_assignment": null, "peer_review_score": [null, false], "question": null, "resource_uri": "/api/v1/kq/1/", "supplementary_material": "", "teacher_comments": "", "title": "test_basic_kq", "unit": "/api/v1/unit/1/", "video": "http://www.youtube.com/watch?v=eW3gMGqcZQc", "videoID": "eW3gMGqcZQc", "weight": 0}]}'
+
+BASIC_KQ = '{"completed": false, "correct": false, "id": "1", "normalized_weight": 100.0, "order": 1, "peer_review_assignment": null, "peer_review_score": [null, false], "question": null, "resource_uri": "/api/v1/kq/1/", "supplementary_material": "", "teacher_comments": "", "title": "test_basic_kq", "unit": "/api/v1/unit/1/", "video": "http://www.youtube.com/watch?v=eW3gMGqcZQc", "videoID": "eW3gMGqcZQc", "weight": 0}'
+
+NORMAL_USER = '{"email": "test@example.com", "first_name": "", "id": "2", "last_name": "", "resource_uri": "/api/v1/user/2/"}'
 
 BASIC_ALLCOURSES = '{"meta": {"limit": 0, "offset": 0, "total_count": 2}, "objects": [{"certification_available": false, "description": "course1_description", "end_date": null, "enrollment_method": "free", "estimated_effort": "", "id": "1", "intended_audience": "", "learning_goals": "", "name": "course1_course", "order": 1, "promotion_video": "", "requirements": "", "resource_uri": "/api/v1/course/1/", "slug": "course1_course", "start_date": null, "status": "d", "threshold": null}, {"certification_available": false, "description": "course2_description", "end_date": null, "enrollment_method": "free", "estimated_effort": "", "id": "2", "intended_audience": "", "learning_goals": "", "name": "course2_course", "order": 2, "promotion_video": "", "requirements": "", "resource_uri": "/api/v1/course/2/", "slug": "course2_course", "start_date": null, "status": "d", "threshold": null}]}'
