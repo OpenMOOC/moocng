@@ -14,6 +14,7 @@
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.db import models
 from django.db.models import signals, Q
 from django.utils.translation import ugettext_lazy as _
@@ -21,6 +22,7 @@ from django.utils.translation import ugettext
 
 from moocng.assets import cache
 from moocng.courses.models import KnowledgeQuantum
+from moocng.courses.utils import send_mail_wrapper
 
 from tinymce.models import HTMLField
 
@@ -69,6 +71,19 @@ class AssetAvailability(models.Model):
         return ugettext(u'Assets availables for {0}').format(self.kq)
 
 
+def send_cancellation_email(reservation):
+    subject = _('Your reservation of has been cancelled')
+    template = 'assets/email_reservation_cancelled.txt'
+    context = {
+        'user': reservation.user.get_full_name(),
+        'asset': reservation.asset.name,
+        'kq': reservation.reserved_from.kq,
+        'site': Site.objects.get_current().name
+    }
+    to = [reservation.user.email]
+    send_mail_wrapper(subject, template, context, to)
+
+
 def assure_granularity(sender, instance, **kwargs):
     difference = instance.slot_duration % settings.ASSET_SLOT_GRANULARITY
     if difference != 0:
@@ -81,20 +96,22 @@ def assure_granularity(sender, instance, **kwargs):
 
 
 def remove_reservations(sender, instance, **kwargs):
-    limit = instance.available_to+timedelta(1, 0) #The final day is allowed
-    assetIds=instance.assets.values_list('id', flat=True)
+    limit = instance.available_to + timedelta(1, 0)  # The final day is allowed
+    assetIds = instance.assets.values_list('id', flat=True)
     affected_reservations = Reservation.objects.filter(reserved_from__id=instance.id)
     affected_reservations = affected_reservations.filter(~Q(asset__id__in=assetIds)
                                                          | Q(reservation_begins__lt=instance.available_from)
                                                          | Q(reservation_ends__gt=limit))
     affected_reservations = affected_reservations.distinct()
     for i in affected_reservations:
+        send_cancellation_email(i)
         i.delete()
 
 
 def remove_reservations_delete(sender, instance, **kwargs):
     affected_reservations = Reservation.objects.filter(reserved_from__id=instance.id)
     for i in affected_reservations:
+        send_cancellation_email(i)
         i.delete()
 
 
@@ -133,4 +150,3 @@ class Reservation(models.Model):
 
     def __unicode__(self):
         return ugettext(u'Reservation of {0}, made by {1}').format(self.asset, self.user)
-
