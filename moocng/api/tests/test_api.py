@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from moocng.api.tests.utils import ApiTestCase
 from moocng.api.tests.outputs import API_DESCRIPTION
+from moocng.api.tests.utils import ApiTestCase
+
 
 
 class ServicesTestCase(ApiTestCase):

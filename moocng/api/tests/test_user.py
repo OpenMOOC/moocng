@@ -14,12 +14,17 @@
 
 import uuid
 
+from datetime import datetime, timedelta
+
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
+from django.utils import simplejson
+from django.utils.timezone import utc
 
-from moocng.api.tests.utils import ApiTestCase
 from moocng.api.tests.outputs import (NO_OBJECTS, NORMAL_USER,
-                                      BASIC_ALLCOURSES)
+                                      BASIC_ALLCOURSES, BASIC_COURSES)
+from moocng.api.tests.utils import ApiTestCase
+
 
 
 class UserTestCase(ApiTestCase):
@@ -306,3 +311,225 @@ class UserTestCase(ApiTestCase):
         response = self.client.get('/api/%s/user/2/allcourses/%s&key=%s' % (self.api_name, self.format_append, key))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, NO_OBJECTS)
+
+    # Get passed courses of the user
+    def test_get_passedcourses_annonymous(self):
+        owner = self.create_test_user_owner()
+
+        self.create_test_user_user()
+
+        test_user = self.create_test_user_test()
+
+        self.create_test_basic_course(owner=owner,
+                                      student=test_user,
+                                      name='course1')
+        self.create_test_basic_course(owner=owner,
+                                      student=test_user,
+                                      name='course2')
+
+        response = self.client.get('/api/%s/user/3/passedcourses/%s' % (self.api_name, self.format_append))
+        self.assertEqual(response.status_code, 401)
+
+        response = self.client.get('/api/%s/user/2/passedcourses/%s' % (self.api_name, self.format_append))
+        self.assertEqual(response.status_code, 401)
+
+    def test_get_passedcourses_user(self):
+        owner = self.create_test_user_owner()
+
+        user = self.create_test_user_user()
+        self.client = self.django_login_user(self.client, user)
+
+        test_user = self.create_test_user_test()
+
+        self.create_test_basic_course(owner=owner,
+                                      student=test_user,
+                                      name='course1')
+        self.create_test_basic_course(owner=owner,
+                                      student=test_user,
+                                      name='course2')
+
+        response = self.client.get('/api/%s/user/3/passedcourses/%s' % (self.api_name, self.format_append))
+        self.assertEqual(response.status_code, 401)
+
+        response = self.client.get('/api/%s/user/2/passedcourses/%s' % (self.api_name, self.format_append))
+        self.assertEqual(response.status_code, 401)
+
+    def test_get_passedcourses_alum(self):
+        owner = self.create_test_user_owner()
+
+        alum1 = self.create_test_user_alum1()
+        self.client = self.django_login_user(self.client, alum1)
+
+        test_user = self.create_test_user_test()
+
+        course1 = self.create_test_basic_course(owner=owner,
+                                                student=test_user,
+                                                name='course1')
+        course2 = self.create_test_basic_course(owner=owner,
+                                                student=test_user,
+                                                name='course2')
+
+        response = self.client.get('/api/%s/user/3/passedcourses/%s' % (self.api_name, self.format_append))
+        self.assertEqual(response.status_code, 401)
+
+        response = self.client.get('/api/%s/user/2/passedcourses/%s' % (self.api_name, self.format_append))
+        self.assertEqual(response.status_code, 401)
+
+        course1.students.add(alum1)
+        course1.save()
+        course2.students.add(alum1)
+        course2.save()
+
+        response = self.client.get('/api/%s/user/2/passedcourses/%s' % (self.api_name, self.format_append))
+        self.assertEqual(response.status_code, 401)
+
+    def test_get_passedcourses_teacher(self):
+        owner = self.create_test_user_owner()
+
+        teacher1 = self.create_test_user_teacher1()
+        self.client = self.django_login_user(self.client, teacher1)
+
+        test_user = self.create_test_user_test()
+
+        self.create_test_basic_course(owner=owner,
+                                      teacher=teacher1,
+                                      student=test_user,
+                                      name='course1')
+        self.create_test_basic_course(owner=owner,
+                                      teacher=teacher1,
+                                      student=test_user,
+                                      name='course2')
+
+        response = self.client.get('/api/%s/user/3/passedcourses/%s' % (self.api_name, self.format_append))
+        self.assertEqual(response.status_code, 401)
+
+        response = self.client.get('/api/%s/user/2/passedcourses/%s' % (self.api_name, self.format_append))
+        self.assertEqual(response.status_code, 401)
+
+    def test_get_passedcourses_owner(self):
+        teacher1 = self.create_test_user_teacher1()
+
+        owner = self.create_test_user_owner()
+        self.client = self.django_login_user(self.client, owner)
+
+        test_user = self.create_test_user_test()
+
+        self.create_test_basic_course(owner=owner,
+                                      teacher=teacher1,
+                                      student=test_user,
+                                      name='course1')
+        self.create_test_basic_course(owner=owner,
+                                      teacher=teacher1,
+                                      student=test_user,
+                                      name='course2')
+
+        response = self.client.get('/api/%s/user/3/passedcourses/%s' % (self.api_name, self.format_append))
+        self.assertEqual(response.status_code, 401)
+
+        response = self.client.get('/api/%s/user/2/passedcourses/%s' % (self.api_name, self.format_append))
+        self.assertEqual(response.status_code, 401)
+
+    def test_get_passedcourses_admin(self):
+        owner = self.create_test_user_owner()
+
+        admin = self.create_test_user_admin()
+        self.client = self.django_login_user(self.client, admin)
+
+        test_user = self.create_test_user_test()
+
+        self.create_test_basic_course(owner=owner,
+                                      student=test_user,
+                                      name='course1')
+        self.create_test_basic_course(owner=owner,
+                                      student=test_user,
+                                      name='course2')
+
+        response = self.client.get('/api/%s/user/2/passedcourses/%s' % (self.api_name, self.format_append))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, NO_OBJECTS)
+
+        response = self.client.get('/api/%s/user/3/passedcourses/%s' % (self.api_name, self.format_append))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, NO_OBJECTS)
+
+
+    def test_get_passedcourses_userkey(self):
+        owner = self.create_test_user_owner()
+
+        user = self.create_test_user_user()
+
+        key = str(uuid.uuid4())
+        self.generate_apikeyuser(user, key)
+
+        test_user = self.create_test_user_test()
+
+        response = self.client.get('/api/%s/user/3/passedcourses/%s&key=%s' % (self.api_name, self.format_append, key))
+        self.assertEqual(response.status_code, 401)
+
+        self.create_test_basic_course(owner=owner,
+                                      student=test_user,
+                                      name='course1')
+        self.create_test_basic_course(owner=owner,
+                                      student=test_user,
+                                      name='course2')
+
+        response = self.client.get('/api/%s/user/3/passedcourses/%s&key=%s' % (self.api_name, self.format_append, key))
+        self.assertEqual(response.status_code, 401)
+
+        response = self.client.get('/api/%s/user/2/passedcourses/%s&key=%s' % (self.api_name, self.format_append, key))
+        self.assertEqual(response.status_code, 401)
+
+    def test_get_passedcourses_certificator(self):
+        owner = self.create_test_user_owner()
+
+        certificator = self.create_test_user_user()
+
+        ct = ContentType.objects.get(model='course', app_label='courses')
+        perm = Permission.objects.get(content_type=ct, codename='can_list_passedcourses')
+        certificator.user_permissions.add(perm)
+
+        key = str(uuid.uuid4())
+        self.generate_apikeyuser(certificator, key)
+
+        test_user = self.create_test_user_test()
+
+        response = self.client.get('/api/%s/user/3/passedcourses/%s&key=%s' % (self.api_name, self.format_append, key))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, NO_OBJECTS)
+
+        course1 = self.create_test_basic_course(owner=owner,
+                                      student=test_user,
+                                      name='course1')
+        self.create_test_basic_course(owner=owner,
+                                      student=test_user,
+                                      name='course2')
+
+        response = self.client.get('/api/%s/user/2/passedcourses/%s&key=%s' % (self.api_name, self.format_append, key))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, NO_OBJECTS)
+
+        response = self.client.get('/api/%s/user/3/passedcourses/%s&key=%s' % (self.api_name, self.format_append, key))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, NO_OBJECTS)
+
+        # Create unit in the course, create a simple kq with a video. 
+        course1.threshold = 1
+        course1.save()
+
+        now = datetime.utcnow().replace(tzinfo=utc)
+        start = now + timedelta(days=1)
+        deadline = now + timedelta(days=2)
+        test_unit = self.create_test_basic_unit(course1, 'e', unicode(start.isoformat()), unicode(deadline.isoformat()), 100)
+        test_kq = self.create_test_basic_kq(unit=test_unit, weight=100)
+
+        self.create_activity(user=test_user, kq=test_kq)
+
+        response = self.client.get('/api/%s/user/3/passedcourses/%s&key=%s' % (self.api_name, self.format_append, key))
+        self.assertEqual(response.status_code, 200)
+
+        aux_basic_courses = simplejson.loads(BASIC_COURSES)
+        aux_basic_courses['objects'][0]['name'] = u'course1_course'
+        aux_basic_courses['objects'][0]['description'] = u'course1_description'
+        aux_basic_courses['objects'][0]['slug'] = u'course1_course'
+        aux_basic_courses['objects'][0]['threshold'] = u'1'
+        self.assertEqual(simplejson.loads(response.content), aux_basic_courses)
