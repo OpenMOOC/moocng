@@ -746,6 +746,7 @@ if (_.isUndefined(window.MOOC)) {
                        a question, the peer review assignment creation button should
                        be hidden as well */
                     this.$el.find("#nopeerreviewassignment").addClass("hide");
+                    this.$el.find("#noassetavailability").addClass("hide");
                     this.$el.find("#question-tab").removeClass("hide");
                     this.$el.find("#question img").attr("src", question.get("lastFrame"));
                     if (question.has("solution_media_content_id") && question.get("solution_media_content_id") !== "") {
@@ -784,6 +785,8 @@ if (_.isUndefined(window.MOOC)) {
                     assignment = this.model.get("peerReviewAssignmentInstance");
                     this.$el.find("#peer-review-assignment-tab").removeClass("hide");
                     this.$el.find("#nopeerreviewassignment").addClass("hide");
+                    this.$el.find("#noassetavailability").addClass("hide");
+
                     /* A KQ can only have a question OR a peer review, so if it has
                        a peer review assignment, the question creation button should
                        be hidden as well */
@@ -831,6 +834,9 @@ if (_.isUndefined(window.MOOC)) {
                     assetAvail = this.model.get("assetAvailabilityInstance");
                     this.$el.find("#asset-availability-tab").removeClass("hide");
                     this.$el.find("#noassetavailability").addClass("hide");
+                    this.$el.find("#nopeerreviewassignment").addClass("hide");
+                    this.$el.find("#noquestion").addClass("hide");
+
                     this.$el.find("#availablefrom").val(assetAvail.get("available_from"));
                     this.$el.find("#availableto").val(assetAvail.get("available_to"));
                     assetList = assetAvail.get("_assetList");
