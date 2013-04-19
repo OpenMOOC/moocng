@@ -82,7 +82,7 @@ if (_.isUndefined(window.MOOC)) {
             return result;
         },
 
-        checkMediaContentId = function ($el) {
+        checkMediaContentIdAux = function ($el) {
             var content_id,
                 content_type,
                 patterns,
@@ -117,9 +117,9 @@ if (_.isUndefined(window.MOOC)) {
             };
 
             result_kqmedia = false;
-            $("#kqmedia_content_id").each(function (idx, elem) {
+            $el.find("#kqmedia_content_id").each(function (idx, elem) {
                 content_id = $(elem).val();
-                content_type = $("#kqmedia_content_type").val();
+                content_type = $el.find("#kqmedia_content_type").val();
 
                 if (!$(elem).is(':visible')) {
                     result_kqmedia = true;
@@ -133,9 +133,9 @@ if (_.isUndefined(window.MOOC)) {
             });
 
             result_question = false;
-            $("#questionmedia_content_id").each(function (idx, elem) {
+            $el.find("#questionmedia_content_id").each(function (idx, elem) {
                 content_id = $(elem).val();
-                content_type = $("#questionmedia_content_type").val();
+                content_type = $el.find("#questionmedia_content_type").val();
 
                 if (!$(elem).is(':visible')) {
                     result_question = true;
@@ -610,11 +610,19 @@ if (_.isUndefined(window.MOOC)) {
                 return checkRequiredAux(this.$el);
             },
 
+            checkMediaContentId: function () {
+                return checkMediaContentIdAux(this.$el);
+            },
+
             save: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
                 if (!this.checkRequired()) {
                     MOOC.ajax.showAlert("required");
+                    return;
+                }
+                if (!this.checkMediaContentId()) {
+                    MOOC.ajax.showAlert("media_content_id");
                     return;
                 }
                 MOOC.ajax.showLoading();
@@ -690,7 +698,8 @@ if (_.isUndefined(window.MOOC)) {
                 "click button#delete-kq": "remove",
                 "click button.removecriterion": "removePeerReviewCriterion",
                 "click button.back": "goBack",
-                "change select#kqmedia_content_type": "redrawCanGetLastFrame"
+                "change select#kqmedia_content_type": "redrawCanGetLastFrame",
+                "show a[data-toggle='tab']": "checkBeforeToggleTab"
             },
 
             initialize: function () {
@@ -698,7 +707,8 @@ if (_.isUndefined(window.MOOC)) {
                     "checkRequired", "useBlankCanvas", "useLastFrame",
                     "toggleSolution", "addQuestion", "addPeerReviewAssignment",
                     "addCriterion", "forceProcess", "removeQuestion",
-                    "removePeerReviewAssignment", "go2options");
+                    "removePeerReviewAssignment", "go2options",
+                    "checkBeforeToggleTab");
             },
 
             render: function () {
@@ -871,6 +881,24 @@ if (_.isUndefined(window.MOOC)) {
                 return checkRequiredAux(this.$el);
             },
 
+            checkMediaContentId: function () {
+                return checkMediaContentIdAux(this.$el);
+            },
+
+            checkBeforeToggleTab: function (evt) {
+                if (!this.checkRequired()) {
+                    MOOC.ajax.showAlert("required");
+                    evt.preventDefault();
+                    return;
+                }
+                if (!this.checkMediaContentId()) {
+                    MOOC.ajax.showAlert("media_content_id");
+                    evt.preventDefault();
+                    return;
+                }
+            },
+
+
             save: function (evt, callback) {
                 evt.preventDefault();
                 evt.stopPropagation();
@@ -878,7 +906,7 @@ if (_.isUndefined(window.MOOC)) {
                     MOOC.ajax.showAlert("required");
                     return;
                 }
-                if (!checkMediaContentId()) {
+                if (!this.checkMediaContentId()) {
                     MOOC.ajax.showAlert("media_content_id");
                     return;
                 }
@@ -1075,7 +1103,7 @@ if (_.isUndefined(window.MOOC)) {
                     MOOC.ajax.showAlert("required");
                     return;
                 }
-                if (!checkMediaContentId()) {
+                if (!this.checkMediaContentId()) {
                     MOOC.ajax.showAlert("media_content_id");
                     return;
                 }
@@ -1097,7 +1125,7 @@ if (_.isUndefined(window.MOOC)) {
                     return;
                 }
 
-                if (!checkMediaContentId()) {
+                if (!this.checkMediaContentId()) {
                     MOOC.ajax.showAlert("media_content_id");
                     return;
                 }
@@ -1158,7 +1186,7 @@ if (_.isUndefined(window.MOOC)) {
                     MOOC.ajax.showAlert("required");
                     return;
                 }
-                if (!checkMediaContentId()) {
+                if (!this.checkMediaContentId()) {
                     MOOC.ajax.showAlert("media_content_id");
                     return;
                 }
