@@ -91,13 +91,13 @@ if (_.isUndefined(window.MOOC)) {
 
             patterns = {
                 'youtube': [
-                    /youtube\.com\/watch[#\?].*\?v=([^"\& ]+)/,
-                    /youtube\.com\/embed\/([^"\&\? ]+)/,
-                    /youtube\.com\/v\/([^"\&\? ]+)/,
-                    /youtube\.com\/\?v=([^"\& ]+)/,
-                    /youtu\.be\/([^"\&\? ]+)/,
-                    /gdata\.youtube\.com\/feeds\/api\/videos\/([^"\&\? ]+)/,
-                    /^([^"\&\? ]+)$/
+                    /youtube\.com\/watch[#\?].*\?v=(\w+)/,
+                    /youtube\.com\/embed\/(\w+)/,
+                    /youtube\.com\/v\/(\w+)/,
+                    /youtube\.com\/\?v=(\w+)/,
+                    /youtu\.be\/(\w+)/,
+                    /gdata\.youtube\.com\/feeds\/api\/videos\/(\w+)/,
+                    /^(\w+)$/
                 ],
                 'vimeo': [
                     /vimeo\.com\/(\d+)/,
@@ -111,8 +111,8 @@ if (_.isUndefined(window.MOOC)) {
                     /^(\d+)$/
                 ],
                 'prezi': [
-                    /prezi\.com\/([a-zA-Z0-9\-]+)\/.*/,
-                    /^([a-zA-Z0-9\-]+)$/
+                    /prezi\.com\/([a-zA-Z\d\-]+)\/.*/,
+                    /^([a-zA-Z\d\-]+)$/ // Can't use \w because can't accept the _ char
                 ]
             };
 
@@ -123,13 +123,13 @@ if (_.isUndefined(window.MOOC)) {
 
                 if (!$(elem).is(':visible')) {
                     result_kqmedia = true;
+                } else {
+                    _.each(patterns[content_type], function (pattern) {
+                        if (content_id.match(pattern) !== null) {
+                            result_kqmedia = true;
+                        }
+                    });
                 }
-
-                _.each(patterns[content_type], function (pattern) {
-                    if (content_id.match(pattern) !== null) {
-                        result_kqmedia = true;
-                    }
-                });
             });
 
             result_question = false;
@@ -139,13 +139,13 @@ if (_.isUndefined(window.MOOC)) {
 
                 if (!$(elem).is(':visible')) {
                     result_question = true;
+                } else {
+                    _.each(patterns[content_type], function (pattern) {
+                        if (content_id.match(pattern) !== null) {
+                            result_question = true;
+                        }
+                    });
                 }
-
-                _.each(patterns[content_type], function (pattern) {
-                    if (content_id.match(pattern) !== null) {
-                        result_question = true;
-                    }
-                });
             });
 
             return result_kqmedia && result_question;
