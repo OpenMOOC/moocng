@@ -1303,6 +1303,8 @@ if (_.isUndefined(window.MOOC)) {
                 }
                 var asset_availability,
                     self,
+                    kq,
+                    data,
                     date;
 
                 asset_availability = new MOOC.models.AssetAvailability();
@@ -1313,6 +1315,14 @@ if (_.isUndefined(window.MOOC)) {
                 asset_availability.set("available_to", date.toISOString().split('T')[0]);
                 asset_availability.set("assets", []);
                 asset_availability.set("_assetList", new MOOC.models.AssetList());
+                asset_availability.set("_otherAssets", new MOOC.models.AssetList());
+
+                kq = asset_availability.get("kq");
+                data = _.pick(asset_availability, "_otherAssets");
+                asset_availability.get("_otherAssets").fetch({
+                    data: { 'exclude_kq': kq.id }
+                });
+
                 this.model.set("assetAvailabilityInstance", asset_availability);
 
                 this.$el.find("#availablefrom").val(asset_availability.get("available_from"));
