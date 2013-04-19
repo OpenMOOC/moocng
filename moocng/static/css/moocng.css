@@ -444,6 +444,7 @@ code {
     display: inline-block;
     margin-top: 0;
     padding-left: 15px;
+    max-width: 500px;
 }
 
 .teacheradmin-units .kq h4 {

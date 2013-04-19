@@ -329,15 +329,21 @@ if (_.isUndefined(window.MOOC)) {
                     add,
                     html;
 
-                header = "<span class='badge " + MOOC.unitBadgeClasses[this.model.get("type")] +
+                header = ["<span class='badge " + MOOC.unitBadgeClasses[this.model.get("type")] +
                     "' title='" + MOOC.trans.unit[this.model.get("type")] + "'>" +
                     this.model.get("type").toUpperCase() + "</span> " +
                     "<span class='label " + this.getStatusLabel() + "'>" +
-                    MOOC.trans.unit[this.model.get("status")] + "</span> " +
-                    "<h3>" + this.model.get("title") + "</h3>" +
-                    "<button class='btn pull-right edit' title='" + MOOC.trans.edit +
+                    MOOC.trans.unit[this.model.get("status")] + "</span> "];
+
+                if (this.model.get("title").length > 40) {
+                    header.push("<h3>" + this.model.get("title").substring(0, 37) + "...</h3>");
+                } else {
+                    header.push("<h3>" + this.model.get("title") + "</h3>");
+                }
+                header.push("<button class='btn pull-right edit' title='" + MOOC.trans.edit +
                     " " + MOOC.trans.unit.unit + "'><i class='icon-edit'></i> " +
-                    MOOC.trans.edit + "</button>";
+                    MOOC.trans.edit + "</button>");
+                header = header.join("");
                 add = "<button class='btn pull-right add'><i class='icon-plus'></i> " +
                     MOOC.trans.add + " " + MOOC.trans.kq.kq + "</button>";
                 html = inlineb({ classes: "drag-handle" });
@@ -610,19 +616,11 @@ if (_.isUndefined(window.MOOC)) {
                 return checkRequiredAux(this.$el);
             },
 
-            checkMediaContentId: function () {
-                return checkMediaContentIdAux(this.$el);
-            },
-
             save: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
                 if (!this.checkRequired()) {
                     MOOC.ajax.showAlert("required");
-                    return;
-                }
-                if (!this.checkMediaContentId()) {
-                    MOOC.ajax.showAlert("media_content_id");
                     return;
                 }
                 MOOC.ajax.showLoading();
