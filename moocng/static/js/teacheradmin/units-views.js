@@ -336,7 +336,7 @@ if (_.isUndefined(window.MOOC)) {
                     MOOC.trans.unit[this.model.get("status")] + "</span> "];
 
                 if (this.model.get("title").length > 40) {
-                    header.push("<h3>" + this.model.get("title").substring(0, 37) + "...</h3>");
+                    header.push("<h3 title='" + this.model.get("title").replace("'", "") + "'>" + this.model.get("title").substring(0, 37) + "...</h3>");
                 } else {
                     header.push("<h3>" + this.model.get("title") + "</h3>");
                 }
