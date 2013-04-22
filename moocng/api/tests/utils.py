@@ -15,24 +15,15 @@
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.test import TestCase
+from django.test.utils import override_settings
 from django.core.exceptions import ImproperlyConfigured
 
 from moocng.api.models import UserApi
-from moocng.mongodb import MongoDB
-from moocng.courses.models import Course, Unit, CourseTeacher
+from moocng.mongodb import get_db
+from moocng.courses.models import Course, Unit, KnowledgeQuantum, CourseTeacher
 
 
-def get_mongodb():
-    """ GetDB - simple function to wrap getting a database
-    connection from the connection pool.
-    """
-    try:
-        db_uri = '%s_%s' % (settings.MONGODB_URI, 'test')
-    except AttributeError:
-        raise ImproperlyConfigured('Missing required MONGODB_URI setting')
-    return MongoDB(db_uri)
-
-
+@override_settings(MONGODB_URI='mongodb://localhost:27017/moocng_test')
 class ApiTestCase(TestCase):
 
     api_name = 'v1'
@@ -42,7 +33,7 @@ class ApiTestCase(TestCase):
 
     def setUp(self):
         super(ApiTestCase, self).setUp()
-        self.mongodb = get_mongodb()
+        self.mongodb = get_db()
         for collection in self.up_collections:
             self.mongodb.database.drop_collection(collection)
             self.mongodb.database.create_collection(collection)
@@ -92,6 +83,10 @@ class ApiTestCase(TestCase):
                              description='%s_description' % name,
                              owner=owner)
         test_course.save()
+
+        # A owner is a teacher
+        CourseTeacher.objects.create(course=test_course, teacher=owner)
+
         if teacher:
             CourseTeacher.objects.create(course=test_course, teacher=teacher)
         if student:
@@ -99,10 +94,16 @@ class ApiTestCase(TestCase):
         test_course.save()
         return test_course
 
-    def create_test_basic_unit(self, course, unittype='n'):
+    def create_test_basic_unit(self, course, unittype='n', start=None, deadline=None, weight=None):
         test_unit = Unit(title='test_basic_unit',
                          course=course,
                          unittype=unittype)
+        if start:
+            test_unit.start = start
+        if deadline:
+            test_unit.deadline = deadline
+        if weight:
+            test_unit.weight = weight
         test_unit.save()
         return test_unit
 
@@ -117,3 +118,25 @@ class ApiTestCase(TestCase):
 
         test_unit.save()
         return test_unit
+
+    def create_test_basic_kq(self, unit, video='http://www.youtube.com/watch?v=eW3gMGqcZQc', weight=0):
+        test_kq = KnowledgeQuantum.objects.create(title='test_basic_kq',
+                                unit=unit,
+                                video=video,
+                                weight=weight)
+        return test_kq
+
+    def create_activity(self, user, kq):
+        key = 'courses'
+        course_id = str(kq.unit.course.id)
+        activity_collection = get_db().get_collection('activity')
+        user_data = activity_collection.find_one({'user': user.id}, safe=True)
+        if user_data is None or not (key in user_data or course_id in user_data[key]):
+            initial = {course_id: {'kqs': []}}
+            user_data = {'user': user.id, key: initial}
+            user_data['_id'] = activity_collection.insert(user_data)
+            user_data[key][course_id]['kqs'] = [str(kq.id)]
+        else:
+            user_data[key][course_id]['kqs'].append(str(kq.id))
+
+        activity_collection.update({'_id': user_data['_id']}, user_data)

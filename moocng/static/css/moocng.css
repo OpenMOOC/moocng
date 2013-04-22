@@ -444,11 +444,13 @@ code {
     display: inline-block;
     margin-top: 0;
     padding-left: 15px;
+    max-width: 500px;
 }
 
 .teacheradmin-units .kq h4 {
     display: inline-block;
     margin-top: 0;
+    max-width: 400px;
 }
 
 .teacheradmin-units .kq p {

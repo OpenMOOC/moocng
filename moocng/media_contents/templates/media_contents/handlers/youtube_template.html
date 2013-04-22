@@ -1,0 +1,13 @@
+<iframe
+    id="ytplayer"
+    width='<%= width %>'
+    height='<%= height %>'
+    src='//www.youtube.com/embed/{{content_id}}?rel=0&origin=<%= origin %><% if (!controls) { print("&controls=0"); } %>&enablejsapi=1'
+    frameborder='0'
+    <%
+    if (allowfullscreen) {
+        print("allowfullscreen");
+    }
+    %>
+    >
+</iframe>

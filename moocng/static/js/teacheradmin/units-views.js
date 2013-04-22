@@ -1,8 +1,7 @@
 /*jslint vars: false, browser: true, nomen: true, regexp: true */
-/*global MOOC:true, _, jQuery, Backbone, tinyMCE, async */
+/*global MOOC:true, _, jQuery, Backbone, tinyMCE, async, MEDIA_CONTENT_TYPES */
 
 // Copyright 2012 Rooter Analysis S.L.
-// Copyright (c) 2013 Grupo Opentia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -83,34 +82,77 @@ if (_.isUndefined(window.MOOC)) {
             return result;
         },
 
-        stripTags = function (str) {
-            return str.replace(/<\/?[^>]+>/ig, '');
+        checkMediaContentIdAux = function ($el) {
+            var content_id,
+                content_type,
+                patterns,
+                result_kqmedia,
+                result_question;
+
+            patterns = {
+                'youtube': [
+                    /youtube\.com\/watch[#\?].*\?v=(\w+)/,
+                    /youtube\.com\/embed\/(\w+)/,
+                    /youtube\.com\/v\/(\w+)/,
+                    /youtube\.com\/\?v=(\w+)/,
+                    /youtu\.be\/(\w+)/,
+                    /gdata\.youtube\.com\/feeds\/api\/videos\/(\w+)/,
+                    /^(\w+)$/
+                ],
+                'vimeo': [
+                    /vimeo\.com\/(\d+)/,
+                    /vimeo\.com\/video\/(\d+)/,
+                    /vimeo\.com\/groups\/.+\/videos\/(\d+)/,
+                    /vimeo\.com\/channels\/.+#(\d+)/,
+                    /^(\d+)$/
+                ],
+                'scribd': [
+                    /scribd\.com\/doc\/(\d+)\/.*/,
+                    /^(\d+)$/
+                ],
+                'prezi': [
+                    /prezi\.com\/([a-zA-Z\d\-]+)\/.*/,
+                    /^([a-zA-Z\d\-]+)$/ // Can't use \w because can't accept the _ char
+                ]
+            };
+
+            result_kqmedia = false;
+            $el.find("#kqmedia_content_id").each(function (idx, elem) {
+                content_id = $(elem).val();
+                content_type = $el.find("#kqmedia_content_type").val();
+
+                if (!$(elem).is(':visible')) {
+                    result_kqmedia = true;
+                } else {
+                    _.each(patterns[content_type], function (pattern) {
+                        if (content_id.match(pattern) !== null) {
+                            result_kqmedia = true;
+                        }
+                    });
+                }
+            });
+
+            result_question = false;
+            $el.find("#questionmedia_content_id").each(function (idx, elem) {
+                content_id = $(elem).val();
+                content_type = $el.find("#questionmedia_content_type").val();
+
+                if (!$(elem).is(':visible')) {
+                    result_question = true;
+                } else {
+                    _.each(patterns[content_type], function (pattern) {
+                        if (content_id.match(pattern) !== null) {
+                            result_question = true;
+                        }
+                    });
+                }
+            });
+
+            return result_kqmedia && result_question;
         },
 
-        extractVideoID = function (video_url) {
-            video_url = $.trim(video_url);
-            if (video_url[video_url.length - 1] === '/') {
-                // Remove trailing '/'
-                video_url = video_url.substring(0, video_url.length - 1);
-            }
-            video_url = video_url.split('/');
-            video_url = video_url[video_url.length - 1];
-            if (video_url.indexOf('=') > 0) {
-                if (video_url.indexOf("watch") === 0) {
-                    // Long url, remove "watch?"
-                    video_url = video_url.substring(video_url.indexOf('?') + 1);
-                    // Look for 'v' parameter
-                    video_url = _.find(video_url.split('&'), function (parameter) {
-                        return parameter.indexOf("v=") === 0;
-                    });
-                    // Remove "v="
-                    video_url = video_url.substring(2);
-                } else {
-                    // Short url, remove all parameters
-                    video_url = video_url.substring(0, video_url.indexOf('?'));
-                }
-            }
-            return video_url;
+        stripTags = function (str) {
+            return str.replace(/<\/?[^>]+>/ig, '');
         },
 
         getCookie = function (name) {
@@ -287,15 +329,21 @@ if (_.isUndefined(window.MOOC)) {
                     add,
                     html;
 
-                header = "<span class='badge " + MOOC.unitBadgeClasses[this.model.get("type")] +
+                header = ["<span class='badge " + MOOC.unitBadgeClasses[this.model.get("type")] +
                     "' title='" + MOOC.trans.unit[this.model.get("type")] + "'>" +
                     this.model.get("type").toUpperCase() + "</span> " +
                     "<span class='label " + this.getStatusLabel() + "'>" +
-                    MOOC.trans.unit[this.model.get("status")] + "</span> " +
-                    "<h3>" + this.model.get("title") + "</h3>" +
-                    "<button class='btn pull-right edit' title='" + MOOC.trans.edit +
+                    MOOC.trans.unit[this.model.get("status")] + "</span> "];
+
+                if (this.model.get("title").length > 40) {
+                    header.push("<h3 title='" + this.model.get("title").replace("'", "") + "'>" + this.model.get("title").substring(0, 37) + "...</h3>");
+                } else {
+                    header.push("<h3>" + this.model.get("title") + "</h3>");
+                }
+                header.push("<button class='btn pull-right edit' title='" + MOOC.trans.edit +
                     " " + MOOC.trans.unit.unit + "'><i class='icon-edit'></i> " +
-                    MOOC.trans.edit + "</button>";
+                    MOOC.trans.edit + "</button>");
+                header = header.join("");
                 add = "<button class='btn pull-right add'><i class='icon-plus'></i> " +
                     MOOC.trans.add + " " + MOOC.trans.kq.kq + "</button>";
                 html = inlineb({ classes: "drag-handle" });
@@ -429,6 +477,7 @@ if (_.isUndefined(window.MOOC)) {
                     header,
                     iframe,
                     video_thumbnail,
+                    thumbnail_url,
                     data;
 
                 header = "<h4>" + this.model.get("title") + "</h4><button " +
@@ -447,21 +496,19 @@ if (_.isUndefined(window.MOOC)) {
                         "'>" + MOOC.trans.kq.pr + "</span>";
                 }
 
-                iframe = "<iframe width='110px' height='71px' src='//www.youtube.com/embed/" +
-                    this.model.get("videoID") + "?rel=0&controls=0&origin=" +
-                    MOOC.host + "' frameborder='0'></iframe>";
+                thumbnail_url = this.model.get("thumbnail_url");
 
-                video_thumbnail = "<a class='thumbnail' data-toggle='modal' href='#player-" + this.model.id + "'>" +
-                                  "<img class='youtube-thumbnail' src='//img.youtube.com/vi/" +
-                                    this.model.get("videoID") + "/1.jpg'/></a>";
+                video_thumbnail = "";
+                if (thumbnail_url) {
+                    video_thumbnail = "<a class='thumbnail' data-toggle='modal' href='#player-" + this.model.id + "'>" +
+                                  "<img src='" + this.model.get("thumbnail_url") + "'/></a>";
+                }
 
                 data = "<p>" + MOOC.trans.kq.teacher_comments + ": " +
                     truncate(_.escape(stripTags(this.model.get("teacher_comments")))) + "</p>" +
                     "<p>" + MOOC.trans.kq.supplementary_material + ": " +
                     truncate(_.escape(stripTags(this.model.get("supplementary_material")))) + "<p/>";
 
-
-                // inlineb(iframe, { style: "margin-left: 30px;" }) +
 
                 html = inlineb({ classes: "drag-handle" }) +
                     inlineb(video_thumbnail, { style: "margin-left: 30px;" }) +
@@ -476,16 +523,22 @@ if (_.isUndefined(window.MOOC)) {
                 });
             },
 
-            player_template: _.template($("#modal-video-player-tpl").html()),
-
             openVideoPlayer: function (evt) {
-                var context = {
-                    videoID: this.model.get("videoID"),
+                var iframe_template,
+                    iframe,
+                    context,
+                    modal_template;
+
+                modal_template = _.template($("#modal-video-player-tpl").html());
+                iframe_template = _.template(this.model.get("iframe_code"));
+                iframe = iframe_template({ width: '620px', height: '372px', allowfullscreen: false, controls: false, origin: MOOC.host });
+
+                context = {
                     title: this.model.get("title"),
-                    host: MOOC.host
+                    iframe_code: iframe
                 };
 
-                $("#media-player").html(this.player_template(context));
+                $("#media-player").html(modal_template(context));
                 $("#media-player").modal("show");
                 $("#media-player").on('hidden', function (evt) {
                     $(evt.target).html("");
@@ -642,7 +695,9 @@ if (_.isUndefined(window.MOOC)) {
                 "click button#save-kq": "save",
                 "click button#delete-kq": "remove",
                 "click button.removecriterion": "removePeerReviewCriterion",
-                "click button.back": "goBack"
+                "click button.back": "goBack",
+                "change select#kqmedia_content_type": "redrawCanGetLastFrame",
+                "show a[data-toggle='tab']": "checkBeforeToggleTab"
             },
 
             initialize: function () {
@@ -650,7 +705,8 @@ if (_.isUndefined(window.MOOC)) {
                     "checkRequired", "useBlankCanvas", "useLastFrame",
                     "toggleSolution", "addQuestion", "addPeerReviewAssignment",
                     "addCriterion", "forceProcess", "removeQuestion",
-                    "removePeerReviewAssignment", "go2options");
+                    "removePeerReviewAssignment", "go2options",
+                    "checkBeforeToggleTab");
             },
 
             render: function () {
@@ -660,6 +716,8 @@ if (_.isUndefined(window.MOOC)) {
                     assignment,
                     criterionList,
                     criterionListDiv,
+                    content_type,
+                    can_get_last_frame,
                     self;
 
                 $(".viewport").addClass("hide");
@@ -669,16 +727,20 @@ if (_.isUndefined(window.MOOC)) {
                 this.$el.html($("#edit-kq-tpl").text());
 
                 this.$el.find("input#kqtitle").val(this.model.get("title"));
-                if (this.model.has("videoID") && this.model.get("videoID") !== "") {
-                    this.$el.find("input#kqvideo").val("http://youtu.be/" + this.model.get("videoID"));
-                }
-                this.$el.find("input#kqweight").val(this.model.get("normalized_weight"));
+                this.$el.find("select#kqmedia_content_type").val(this.model.get("media_content_type"));
+                this.$el.find("input#kqmedia_content_id").val(this.model.get("media_content_id"));
+                this.$el.find("input#kqweight").val(this.model.get("weight"));
+
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
                     this.$el.find("#noquestion").addClass("hide");
+                    /* A KQ can only have a question OR a peer review, so if it has
+                       a question, the peer review assignment creation button should
+                       be hidden as well */
+                    this.$el.find("#nopeerreviewassignment").addClass("hide");
                     this.$el.find("#question-tab").removeClass("hide");
                     this.$el.find("#question img").attr("src", question.get("lastFrame"));
-                    if (question.has("solutionVideo") && question.get("solutionVideo") !== "") {
+                    if (question.has("solution_media_content_id") && question.get("solution_media_content_id") !== "") {
                         this.$el.find("button#use-solution-video-btn").trigger("click");
                     } else if (question.has("solutionText") && question.get("solutionText") !== "") {
                         this.$el.find("button#use-solution-text-btn").trigger("click");
@@ -686,13 +748,23 @@ if (_.isUndefined(window.MOOC)) {
                         // Default
                         this.$el.find("button#use-solution-video-btn").trigger("click");
                     }
-                    if (question.has("solutionVideo") && question.get("solutionVideo") !== "") {
-                        this.$el.find("#questionvideo").val("http://youtu.be/" + question.get("solutionVideo"));
+                    if (question.has("solution_media_content_type") && question.get("solution_media_content_type") !== "") {
+                        this.$el.find("#questionmedia_content_type").val(question.get("solution_media_content_type"));
+                    }
+                    if (question.has("solution_media_content_id") && question.get("solution_media_content_id") !== "") {
+                        this.$el.find("#questionmedia_content_id").val(question.get("solution_media_content_id"));
                     }
                     this.$el.find("textarea#solution-text").val(question.get("solutionText"));
                     if (!question.get("use_last_frame")) {
                         this.$el.find("#last-frame").addClass("hide");
                         this.$el.find("#no-last-frame").removeClass("hide");
+                    }
+                    content_type = this.model.get('media_content_type');
+                    can_get_last_frame = MEDIA_CONTENT_TYPES[content_type].can_get_last_frame;
+                    if (!can_get_last_frame) {
+                        this.$el.find("#last-frame").addClass("hide");
+                        this.$el.find("#no-last-frame").addClass("hide");
+                        this.$el.find("#cant-last-frame").removeClass("hide");
                     }
                     if (question.get("lastFrame").indexOf("no-image.png") >= 0) {
                         this.$el.find("#question img").css("margin-bottom", "10px");
@@ -704,6 +776,10 @@ if (_.isUndefined(window.MOOC)) {
                     assignment = this.model.get("peerReviewAssignmentInstance");
                     this.$el.find("#peer-review-assignment-tab").removeClass("hide");
                     this.$el.find("#nopeerreviewassignment").addClass("hide");
+                    /* A KQ can only have a question OR a peer review, so if it has
+                       a peer review assignment, the question creation button should
+                       be hidden as well */
+                    this.$el.find("#noquestion").addClass("hide");
                     this.$el.find("#reviewdescription").val(assignment.get("description"));
                     this.$el.find("#reviewminreviews").val(assignment.get("minimum_reviewers"));
                     criterionList = assignment.get("_criterionList");
@@ -774,16 +850,62 @@ if (_.isUndefined(window.MOOC)) {
                 return this;
             },
 
+            redrawCanGetLastFrame: function (event) {
+                var target,
+                    content_type,
+                    can_get_last_frame,
+                    question;
+
+                target = $(event.currentTarget);
+                content_type = target.val();
+                can_get_last_frame = MEDIA_CONTENT_TYPES[content_type].can_get_last_frame;
+                question = this.model.get('questionInstance');
+                if (!can_get_last_frame) {
+                    this.$el.find("#last-frame").addClass("hide");
+                    this.$el.find("#no-last-frame").addClass("hide");
+                    this.$el.find("#cant-last-frame").removeClass("hide");
+                } else {
+                    if (question.get("use_last_frame")) {
+                        this.$el.find("#last-frame").removeClass("hide");
+                    } else {
+                        this.$el.find("#no-last-frame").removeClass("hide");
+                    }
+                    this.$el.find("#cant-last-frame").addClass("hide");
+                }
+            },
+
             // Returns true if all required fields are filled, false otherwise
             checkRequired: function () {
                 return checkRequiredAux(this.$el);
             },
+
+            checkMediaContentId: function () {
+                return checkMediaContentIdAux(this.$el);
+            },
+
+            checkBeforeToggleTab: function (evt) {
+                if (!this.checkRequired()) {
+                    MOOC.ajax.showAlert("required");
+                    evt.preventDefault();
+                    return;
+                }
+                if (!this.checkMediaContentId()) {
+                    MOOC.ajax.showAlert("media_content_id");
+                    evt.preventDefault();
+                    return;
+                }
+            },
+
 
             save: function (evt, callback) {
                 evt.preventDefault();
                 evt.stopPropagation();
                 if (!this.checkRequired()) {
                     MOOC.ajax.showAlert("required");
+                    return;
+                }
+                if (!this.checkMediaContentId()) {
+                    MOOC.ajax.showAlert("media_content_id");
                     return;
                 }
                 MOOC.ajax.showLoading();
@@ -794,22 +916,33 @@ if (_.isUndefined(window.MOOC)) {
                     assignment,
                     criterionList,
                     criterionListSaveTasks,
+                    content_type,
+                    can_get_last_frame,
                     attachCB;
 
                 this.model.unset("new");
                 this.model.set("title", $.trim(this.$el.find("input#kqtitle").val()));
-                this.model.set("videoID", extractVideoID(this.$el.find("input#kqvideo").val()));
-                this.model.set("normalized_weight", parseInt(this.$el.find("input#kqweight").val(), 10));
+                this.model.set("media_content_id", $.trim(this.$el.find("input#kqmedia_content_id").val()));
+                this.model.set("media_content_type", this.$el.find("select#kqmedia_content_type").val());
+                this.model.set("weight", parseInt(this.$el.find("input#kqweight").val(), 10));
                 this.model.set("supplementary_material", tinyMCE.get("kqsupplementary").getContent());
                 this.model.set("teacher_comments", tinyMCE.get("kqcomments").getContent());
 
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
+                    content_type = this.$el.find("select#kqmedia_content_type").val();
+                    can_get_last_frame = MEDIA_CONTENT_TYPES[content_type].can_get_last_frame;
+                    if (!can_get_last_frame) {
+                        question.set("use_last_frame", false);
+                    }
+
                     if (this.$el.find("#use-solution-video-btn").is(".active")) {
-                        question.set("solutionVideo", extractVideoID(this.$el.find("#questionvideo").val()));
+                        question.set("solution_media_content_type", this.$el.find("#questionmedia_content_type").val());
+                        question.set("solution_media_content_id", this.$el.find("#questionmedia_content_id").val());
                         question.set("solutionText", null);
                     } else {
-                        question.set("solutionVideo", null);
+                        question.set("solution_media_content_type", null);
+                        question.set("solution_media_content_id", null);
                         question.set("solutionText", tinyMCE.get("solution-text").getContent());
                     }
 
@@ -968,6 +1101,10 @@ if (_.isUndefined(window.MOOC)) {
                     MOOC.ajax.showAlert("required");
                     return;
                 }
+                if (!this.checkMediaContentId()) {
+                    MOOC.ajax.showAlert("media_content_id");
+                    return;
+                }
                 var question = new MOOC.models.Question(),
                     view = this;
                 this.model.set("questionInstance", question);
@@ -983,6 +1120,11 @@ if (_.isUndefined(window.MOOC)) {
                 evt.stopPropagation();
                 if (!this.checkRequired()) {
                     MOOC.ajax.showAlert("required");
+                    return;
+                }
+
+                if (!this.checkMediaContentId()) {
+                    MOOC.ajax.showAlert("media_content_id");
                     return;
                 }
 
@@ -1040,6 +1182,10 @@ if (_.isUndefined(window.MOOC)) {
                 evt.stopPropagation();
                 if (!this.checkRequired()) {
                     MOOC.ajax.showAlert("required");
+                    return;
+                }
+                if (!this.checkMediaContentId()) {
+                    MOOC.ajax.showAlert("media_content_id");
                     return;
                 }
                 var peer_review_assignment,

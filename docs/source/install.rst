@@ -183,8 +183,8 @@ longer mantained by FFmpeg team and its use is discouraged.
   $ apt-get install ffmpeg
 
 In CentOS/Redhat 6 there are no easy packages for FFmpeg so in this platform it
-is recommended to use a statically compiled ffmpeg binary. You can find an
-example of it at http://dl.dropbox.com/u/24633983/ffmpeg/index.html
+is recommended to use a statically compiled ffmpeg binary. You can download it
+from here: http://bit.ly/ZaIPfe
 
 
 Creating the database

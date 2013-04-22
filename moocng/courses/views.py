@@ -266,7 +266,7 @@ def transcript(request):
             passed = True
             cert_url = settings.CERTIFICATE_URL % {
                 'courseid': course.id,
-                'email': request.user.email
+                'email': request.user.email.lower()
             }
             badge = course.completion_badge
             if badge is not None:

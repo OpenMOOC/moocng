@@ -18,9 +18,9 @@ from datetime import datetime, timedelta
 from django.utils.timezone import utc
 from django.utils import simplejson
 
+from moocng.api.tests.outputs import BASIC_UNITS, BASIC_UNIT, BASIC_UNIT_PK
 from moocng.api.tests.utils import ApiTestCase
-
-from moocng.api.tests.outputs import (BASIC_UNITS, BASIC_UNIT)
+from moocng.courses.models import Unit
 
 
 class UnitsTestCase(ApiTestCase):
@@ -123,7 +123,10 @@ class UnitsTestCase(ApiTestCase):
         aux_basic_units['objects'][0]['start'] = unicode(start.isoformat())
         aux_basic_units['objects'][0]['deadline'] = unicode(deadline.isoformat())
 
-        response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
+        if key:
+            response = self.client.get('/api/%s/unit/%s&key=%s' % (self.api_name, self.format_append, key))
+        else:
+            response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
         if is_possible:
             self.assertEqual(response.status_code, 200)
             self.assertEqual(simplejson.loads(response.content), aux_basic_units)
@@ -134,7 +137,10 @@ class UnitsTestCase(ApiTestCase):
         aux_basic_units['objects'][0]['unittype'] = u'e'
         unit.save()
 
-        response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
+        if key:
+            response = self.client.get('/api/%s/unit/%s&key=%s' % (self.api_name, self.format_append, key))
+        else:
+            response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
         if is_possible:
             self.assertEqual(response.status_code, 200)
             self.assertEqual(simplejson.loads(response.content), aux_basic_units)
@@ -154,7 +160,10 @@ class UnitsTestCase(ApiTestCase):
         aux_basic_units['objects'][0]['start'] = unicode(start.isoformat())
         aux_basic_units['objects'][0]['deadline'] = unicode(deadline.isoformat())
 
-        response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
+        if key:
+            response = self.client.get('/api/%s/unit/%s&key=%s' % (self.api_name, self.format_append, key))
+        else:
+            response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
         if is_possible:
             self.assertEqual(response.status_code, 200)
             self.assertEqual(simplejson.loads(response.content), aux_basic_units)
@@ -165,7 +174,10 @@ class UnitsTestCase(ApiTestCase):
         aux_basic_units['objects'][0]['unittype'] = u'e'
         unit.save()
 
-        response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
+        if key:
+            response = self.client.get('/api/%s/unit/%s&key=%s' % (self.api_name, self.format_append, key))
+        else:
+            response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
         if is_possible:
             self.assertEqual(response.status_code, 200)
             self.assertEqual(simplejson.loads(response.content), aux_basic_units)
@@ -185,7 +197,10 @@ class UnitsTestCase(ApiTestCase):
         aux_basic_units['objects'][0]['start'] = unicode(start.isoformat())
         aux_basic_units['objects'][0]['deadline'] = unicode(deadline.isoformat())
 
-        response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
+        if key:
+            response = self.client.get('/api/%s/unit/%s&key=%s' % (self.api_name, self.format_append, key))
+        else:
+            response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
         if is_possible:
             self.assertEqual(response.status_code, 200)
             self.assertEqual(simplejson.loads(response.content), aux_basic_units)
@@ -196,7 +211,10 @@ class UnitsTestCase(ApiTestCase):
         aux_basic_units['objects'][0]['unittype'] = u'e'
         unit.save()
 
-        response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
+        if key:
+            response = self.client.get('/api/%s/unit/%s&key=%s' % (self.api_name, self.format_append, key))
+        else:
+            response = self.client.get('/api/%s/unit/%s' % (self.api_name, self.format_append))
         if is_possible:
             self.assertEqual(response.status_code, 200)
             self.assertEqual(simplejson.loads(response.content), aux_basic_units)
@@ -277,7 +295,10 @@ class UnitTestCase(ApiTestCase):
     def check_test_get_unit(self, course, is_possible=False, key=None):
         # Test unit with no start, no deadline (normal unit)
         unit = self.create_test_basic_unit(course, 'n')
-        response = self.client.get('/api/%s/unit/1/%s&key=%s' % (self.api_name, self.format_append, key))
+        if key:
+            response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
+        else:
+            response = self.client.get('/api/%s/unit/1/%s&key=%s' % (self.api_name, self.format_append, key))
         if is_possible:
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.content, BASIC_UNIT)
@@ -301,7 +322,10 @@ class UnitTestCase(ApiTestCase):
         aux_basic_unit['start'] = unicode(start.isoformat())
         aux_basic_unit['deadline'] = unicode(deadline.isoformat())
 
-        response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
+        if key:
+            response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
+        else:
+            response = self.client.get('/api/%s/unit/1/%s&key=%s' % (self.api_name, self.format_append, key))
         if is_possible:
             self.assertEqual(response.status_code, 200)
             self.assertEqual(simplejson.loads(response.content), aux_basic_unit)
@@ -312,7 +336,10 @@ class UnitTestCase(ApiTestCase):
         aux_basic_unit['unittype'] = u'e'
         unit.save()
 
-        response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
+        if key:
+            response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
+        else:
+            response = self.client.get('/api/%s/unit/1/%s&key=%s' % (self.api_name, self.format_append, key))
         if is_possible:
             self.assertEqual(response.status_code, 200)
             self.assertEqual(simplejson.loads(response.content), aux_basic_unit)
@@ -332,7 +359,10 @@ class UnitTestCase(ApiTestCase):
         aux_basic_unit['start'] = unicode(start.isoformat())
         aux_basic_unit['deadline'] = unicode(deadline.isoformat())
 
-        response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
+        if key:
+            response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
+        else:
+            response = self.client.get('/api/%s/unit/1/%s&key=%s' % (self.api_name, self.format_append, key))
         if is_possible:
             self.assertEqual(response.status_code, 200)
             self.assertEqual(simplejson.loads(response.content), aux_basic_unit)
@@ -343,7 +373,10 @@ class UnitTestCase(ApiTestCase):
         aux_basic_unit['unittype'] = u'e'
         unit.save()
 
-        response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
+        if key:
+            response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
+        else:
+            response = self.client.get('/api/%s/unit/1/%s&key=%s' % (self.api_name, self.format_append, key))
         if is_possible:
             self.assertEqual(response.status_code, 200)
             self.assertEqual(simplejson.loads(response.content), aux_basic_unit)
@@ -363,7 +396,10 @@ class UnitTestCase(ApiTestCase):
         aux_basic_unit['start'] = unicode(start.isoformat())
         aux_basic_unit['deadline'] = unicode(deadline.isoformat())
 
-        response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
+        if key:
+            response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
+        else:
+            response = self.client.get('/api/%s/unit/1/%s&key=%s' % (self.api_name, self.format_append, key))
         if is_possible:
             self.assertEqual(response.status_code, 200)
             self.assertEqual(simplejson.loads(response.content), aux_basic_unit)
@@ -374,9 +410,277 @@ class UnitTestCase(ApiTestCase):
         aux_basic_unit['unittype'] = u'e'
         unit.save()
 
-        response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
+        if key:
+            response = self.client.get('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
+        else:
+            response = self.client.get('/api/%s/unit/1/%s&key=%s' % (self.api_name, self.format_append, key))
         if is_possible:
             self.assertEqual(response.status_code, 200)
             self.assertEqual(simplejson.loads(response.content), aux_basic_unit)
         else:
             self.assertEqual(response.status_code, 401)
+
+    # Create Unit
+    def test_create_unit_annonymous(self):
+        owner = self.create_test_user_owner()
+        course = self.create_test_basic_course(owner)
+
+        response = self.client.post('/api/%s/unit/%s' % (self.api_name, self.format_append), 
+                                    BASIC_UNIT, content_type='application/json')
+        self.assertEqual(response.status_code, 401)
+
+    def test_create_unit_user(self):
+        owner = self.create_test_user_owner()
+
+        user = self.create_test_user_user()
+        self.client = self.django_login_user(self.client, user)
+
+        course = self.create_test_basic_course(owner)
+
+        response = self.client.post('/api/%s/unit/%s' % (self.api_name, self.format_append), 
+                                    BASIC_UNIT, content_type='application/json')
+        self.assertEqual(response.status_code, 401)
+
+    def test_create_unit_alum(self):
+        owner = self.create_test_user_owner()
+
+        alum1 = self.create_test_user_alum1()
+        self.client = self.django_login_user(self.client, alum1)
+
+        course = self.create_test_basic_course(owner=owner, student=alum1)
+
+        response = self.client.post('/api/%s/unit/%s' % (self.api_name, self.format_append), 
+                                    BASIC_UNIT, content_type='application/json')
+        self.assertEqual(response.status_code, 401)
+
+    def test_create_unit_teacher(self):
+        owner = self.create_test_user_owner()
+
+        teacher1 = self.create_test_user_teacher1()
+        self.client = self.django_login_user(self.client, teacher1)
+
+        course = self.create_test_basic_course(owner=owner, teacher=teacher1)
+
+        response = self.client.post('/api/%s/unit/%s' % (self.api_name, self.format_append), 
+                                    BASIC_UNIT, content_type='application/json')
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.content, BASIC_UNIT)
+        created_unit = Unit.objects.filter(id=1)
+        self.assertEqual(len(created_unit), 1)
+
+    def test_create_unit_owner(self):
+        owner = self.create_test_user_owner()
+        self.client = self.django_login_user(self.client, owner)
+
+        course = self.create_test_basic_course(owner=owner)
+
+        response = self.client.post('/api/%s/unit/%s' % (self.api_name, self.format_append), 
+                                    BASIC_UNIT, content_type='application/json')
+                        
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.content, BASIC_UNIT)
+        created_unit = Unit.objects.filter(id=1)
+        self.assertEqual(len(created_unit), 1)
+
+    def test_create_unit__admin(self):
+        owner = self.create_test_user_owner()
+
+        admin = self.create_test_user_admin()
+        self.client = self.django_login_user(self.client, admin)
+
+        course = self.create_test_basic_course(owner=owner)
+
+        response = self.client.post('/api/%s/unit/%s' % (self.api_name, self.format_append),
+                                    BASIC_UNIT, content_type='application/json')
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.content, BASIC_UNIT)
+        created_unit = Unit.objects.filter(id=1)
+        self.assertEqual(len(created_unit), 1)
+
+    def test_create_unit_userkey(self):
+        owner = self.create_test_user_owner()
+        course = self.create_test_basic_course(owner=owner)
+
+        user = self.create_test_user_user()
+        key = str(uuid.uuid4())
+        self.generate_apikeyuser(user, key)
+
+        response = self.client.post('/api/%s/unit/%s&key=%s' % (self.api_name, self.format_append, key), 
+                                    BASIC_UNIT, content_type='application/json')
+        self.assertEqual(response.status_code, 401)
+
+    # Update Unit
+    def test_put_unit_annonymous(self):
+        owner = self.create_test_user_owner()
+        course = self.create_test_basic_course(owner)
+
+        self.create_test_basic_unit(course, 'n')
+
+        response = self.client.put('/api/%s/unit/1/%s' % (self.api_name, self.format_append), 
+                                    BASIC_UNIT, content_type='application/json')
+        self.assertEqual(response.status_code, 401)
+
+    def test_put_unit_user(self):
+        owner = self.create_test_user_owner()
+        course = self.create_test_basic_course(owner)
+
+        user = self.create_test_user_user()
+        self.client = self.django_login_user(self.client, user)
+
+        self.create_test_basic_unit(course, 'n')
+
+        response = self.client.put('/api/%s/unit/1/%s' % (self.api_name, self.format_append), 
+                                    BASIC_UNIT, content_type='application/json')
+        self.assertEqual(response.status_code, 401)
+
+    def test_put_unit_alum(self):
+        owner = self.create_test_user_owner()
+
+        alum1 = self.create_test_user_alum1()
+        self.client = self.django_login_user(self.client, alum1)
+
+        course = self.create_test_basic_course(owner=owner, student=alum1)
+        self.create_test_basic_unit(course, 'n')
+
+        response = self.client.put('/api/%s/unit/1/%s' % (self.api_name, self.format_append), 
+                                    BASIC_UNIT, content_type='application/json')
+        self.assertEqual(response.status_code, 401)
+
+    def test_put_unit_teacher(self):
+        owner = self.create_test_user_owner()
+
+        teacher1 = self.create_test_user_teacher1()
+        self.client = self.django_login_user(self.client, teacher1)
+
+        course = self.create_test_basic_course(owner=owner, teacher=teacher1)
+        self.create_test_basic_unit(course, 'n')
+
+        response = self.client.put('/api/%s/unit/1/%s' % (self.api_name, self.format_append), 
+                                    BASIC_UNIT, content_type='application/json')
+        self.assertEqual(response.status_code, 202)
+        self.assertEqual(response.content, BASIC_UNIT_PK)
+
+    def test_put_unit_owner(self):
+        owner = self.create_test_user_owner()
+        self.client = self.django_login_user(self.client, owner)
+
+        course = self.create_test_basic_course(owner=owner)
+        self.create_test_basic_unit(course, 'n')
+
+        response = self.client.put('/api/%s/unit/1/%s' % (self.api_name, self.format_append), 
+                                    BASIC_UNIT, content_type='application/json')
+        self.assertEqual(response.status_code, 202)
+        self.assertEqual(response.content, BASIC_UNIT_PK)
+
+    def test_put_unit_admin(self):
+        owner = self.create_test_user_owner()
+
+        admin = self.create_test_user_admin()
+        self.client = self.django_login_user(self.client, admin)
+
+        course = self.create_test_basic_course(owner=owner)
+        self.create_test_basic_unit(course, 'n')
+
+        response = self.client.put('/api/%s/unit/1/%s' % (self.api_name, self.format_append),
+                                    BASIC_UNIT, content_type='application/json')
+        self.assertEqual(response.status_code, 202)
+        self.assertEqual(response.content, BASIC_UNIT_PK)
+
+    def test_put_unit_userkey(self):
+        owner = self.create_test_user_owner()
+        course = self.create_test_basic_course(owner=owner)
+        self.create_test_basic_unit(course, 'n')
+
+        user = self.create_test_user_user()
+        key = str(uuid.uuid4())
+        self.generate_apikeyuser(user, key)
+
+        response = self.client.put('/api/%s/unit/1/%s&key=%s' % (self.api_name, self.format_append, key), 
+                                    BASIC_UNIT, content_type='application/json')
+        self.assertEqual(response.status_code, 401)
+
+    # Delete Unit
+    def test_delete_unit_annonymous(self):
+        owner = self.create_test_user_owner()
+        course = self.create_test_basic_course(owner)
+
+        self.create_test_basic_unit(course, 'n')
+
+        response = self.client.delete('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
+        self.assertEqual(response.status_code, 401)
+
+    def test_delete_unit_user(self):
+        owner = self.create_test_user_owner()
+        course = self.create_test_basic_course(owner)
+
+        user = self.create_test_user_user()
+        self.client = self.django_login_user(self.client, user)
+
+        self.create_test_basic_unit(course, 'n')
+
+        response = self.client.delete('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
+        self.assertEqual(response.status_code, 401)
+
+    def test_delete_unit_alum(self):
+        owner = self.create_test_user_owner()
+
+        alum1 = self.create_test_user_alum1()
+        self.client = self.django_login_user(self.client, alum1)
+
+        course = self.create_test_basic_course(owner=owner, student=alum1)
+        self.create_test_basic_unit(course, 'n')
+
+        response = self.client.delete('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
+        self.assertEqual(response.status_code, 401)
+
+    def test_delete_unit_teacher(self):
+        owner = self.create_test_user_owner()
+
+        teacher1 = self.create_test_user_teacher1()
+        self.client = self.django_login_user(self.client, teacher1)
+
+        course = self.create_test_basic_course(owner=owner, teacher=teacher1)
+        self.create_test_basic_unit(course, 'n')
+
+        response = self.client.delete('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
+        self.assertEqual(response.status_code, 204)
+        unit = Unit.objects.filter(id=1)
+        self.assertEqual(len(unit), 0)
+
+    def test_delete_unit_owner(self):
+        owner = self.create_test_user_owner()
+        self.client = self.django_login_user(self.client, owner)
+
+        course = self.create_test_basic_course(owner=owner)
+        self.create_test_basic_unit(course, 'n')
+
+        response = self.client.delete('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
+        self.assertEqual(response.status_code, 204)
+        unit = Unit.objects.filter(id=1)
+        self.assertEqual(len(unit), 0)
+
+    def test_delete_unit_admin(self):
+        owner = self.create_test_user_owner()
+
+        admin = self.create_test_user_admin()
+        self.client = self.django_login_user(self.client, admin)
+
+        course = self.create_test_basic_course(owner=owner)
+        self.create_test_basic_unit(course, 'n')
+
+        response = self.client.delete('/api/%s/unit/1/%s' % (self.api_name, self.format_append))
+        self.assertEqual(response.status_code, 204)
+        unit = Unit.objects.filter(id=1)
+        self.assertEqual(len(unit), 0)
+
+    def test_delete_unit_userkey(self):
+        owner = self.create_test_user_owner()
+        course = self.create_test_basic_course(owner=owner)
+        self.create_test_basic_unit(course, 'n')
+
+        user = self.create_test_user_user()
+        key = str(uuid.uuid4())
+        self.generate_apikeyuser(user, key)
+
+        response = self.client.delete('/api/%s/unit/1/%s&key=%s' % (self.api_name, self.format_append, key))
+        self.assertEqual(response.status_code, 401)
