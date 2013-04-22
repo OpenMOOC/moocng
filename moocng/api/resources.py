@@ -721,33 +721,6 @@ class ActivityResource(MongoUserResource):
             "kq_id": 1,
             "user_id": 1
         }
-        validation = AnswerValidation()
-
-    def obj_update(self, bundle, request=None, **kwargs):
-
-        user = self._get_or_create_user(request, **kwargs)
-        course_id = kwargs['pk']
-
-        bundle = self.full_hydrate(bundle)
-
-        user[self._meta.datakey][course_id] = bundle.obj.kqs
-
-        self._collection.update({'_id': user['_id']}, user, safe=True)
-
-        bundle.uuid = bundle.obj.uuid
-
-        return bundle
-
-    def hydrate(self, bundle):
-        bundle.obj.kqs = {}
-        if 'kqs' in bundle.data:
-            bundle.obj.kqs['kqs'] = bundle.data['kqs']
-
-        return bundle
-
-    def dehydrate(self, bundle):
-        bundle.data['kqs'] = bundle.obj.kqs
-        return bundle
 
     def _initial(self, request, **kwargs):
         course_id = kwargs['pk']

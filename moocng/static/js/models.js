@@ -145,13 +145,11 @@ MOOC.models.PeerReviewAssignmentList = MOOC.models.TastyPieCollection.extend({
 });
 
 MOOC.models.Activity = Backbone.Model.extend({
-    defaults: {
-        local: true
-    },
+    local: true,
 
     isNew: function () {
         "use strict";
-        return this.get("local");
+        return this.local;
     },
 
     url: function () {
@@ -168,7 +166,7 @@ MOOC.models.Activity = Backbone.Model.extend({
         if (!_.isNull(resp)) {
             result = _.pick(resp, "course_id", "kq_id", "unit_id");
         }
-        result.local = false;
+        this.local = false;
         return result;
     }
 });
