@@ -8,6 +8,9 @@
 
 {{ form.media }}
 
+<div class="alert" id="edit-warning">
+    {% trans "Please take into account than this change will affect all courses which use this asset" %}
+</div>
 <form method="post">{% csrf_token %}
   {{ form.as_bootstrap }}
   <div class="form-actions">
