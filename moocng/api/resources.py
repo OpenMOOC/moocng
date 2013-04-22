@@ -16,6 +16,7 @@
 
 
 from datetime import datetime
+import logging
 
 from bson import ObjectId
 from bson.errors import InvalidId
@@ -40,7 +41,8 @@ from moocng.api.authentication import (DjangoAuthentication,
 from moocng.api.authorization import (PublicReadTeachersModifyAuthorization,
                                       TeacherAuthorization,
                                       UserResourceAuthorization)
-from moocng.api.mongodb import MongoObj, MongoResource, MongoUserResource
+from moocng.api.mongodb import (MongoObj, MongoResource, MongoUserResource,
+                                mongo_object_updated, mongo_object_created)
 from moocng.api.validation import (AnswerValidation, answer_validate_date,
                                    PeerReviewSubmissionsResourceValidation)
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
@@ -692,7 +694,7 @@ class AnswerResource(MongoUserResource):
             }, safe=True, new=True)
 
         bundle.obj = newobj
-        self.send_updated_signal(bundle.obj)
+        self.send_updated_signal(request.user.id, bundle.obj)
         return bundle
 
 
@@ -827,3 +829,29 @@ class UserResource(ModelResource):
                 if float(course.threshold) <= total_mark:
                     passed_courses.append(course)
         return self.alt_get_list(request, passed_courses)
+
+
+api_task_logger = logging.getLogger("api_tasks")
+
+
+def on_activity_created(sender, user_id, mongo_object, **kwargs):
+    # TODO
+    api_task_logger.debug("activity created")
+
+
+def on_answer_created(sender, user_id, mongo_object, **kwargs):
+    # TODO
+    api_task_logger.debug("answer created")
+
+
+def on_answer_updated(sender, user_id, mongo_object, **kwargs):
+    # TODO
+    api_task_logger.debug("answer updated")
+
+
+mongo_object_created.connect(on_activity_created, sender=ActivityResource,
+                             dispatch_uid="activity_created")
+mongo_object_created.connect(on_answer_created, sender=AnswerResource,
+                             dispatch_uid="answer_created")
+mongo_object_updated.connect(on_answer_updated, sender=AnswerResource,
+                             dispatch_uid="answer_updated")

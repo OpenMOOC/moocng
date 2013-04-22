@@ -17,8 +17,8 @@
 from tastypie.authentication import Authentication
 from tastypie.http import HttpUnauthorized
 
-from moocng.courses.models import Course
 from moocng.api.models import UserApi
+from moocng.courses.models import Course
 from moocng.courses.utils import is_teacher
 
 
@@ -52,6 +52,7 @@ class ApiKeyAuthentication(Authentication):
         return False
 
     def get_identifier(self, request):
+
         key = request.GET.get('key', None)
         if key:
             userapi = UserApi.objects.filter(key=key)

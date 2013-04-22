@@ -296,6 +296,14 @@ class KnowledgeQuantum(Sortable):
 
         return True
 
+    def kq_type(self):
+        if self.question_set.count() > 0:
+            return "Question"
+        elif self.peerreviewassignment:
+            return "PeerReviewAssignment"
+        else:
+            return "Video"
+
     def kq_visited_by(self, user):
         db = get_db()
 

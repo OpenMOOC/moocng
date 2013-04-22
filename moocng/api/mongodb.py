@@ -23,8 +23,8 @@ from django.dispatch import Signal
 from moocng.mongodb import get_db
 
 
-mongo_object_created = Signal(providing_args=["user_id", "obj"])
-mongo_object_updated = Signal(providing_args=["user_id", "obj"])
+mongo_object_created = Signal(providing_args=["user_id", "mongo_object"])
+mongo_object_updated = Signal(providing_args=["user_id", "mongo_object"])
 
 
 def validate_dict_schema(obj, schema):
@@ -140,17 +140,17 @@ class MongoResource(Resource):
 
         _id = self._collection.insert(bundle.obj.to_dict(), safe=True)
 
-        self.send_created_signal(bundle.obj)
+        self.send_created_signal(request.user.id, bundle.obj)
         bundle.obj.uuid = str(_id)
         return bundle
 
-    def send_created_signal(self, obj):
-        mongo_object_created.send_robust(sender=self,
-                                         mongo_object=obj)
+    def send_created_signal(self, user_id, obj):
+        mongo_object_created.send(self.__class__, user_id=user_id,
+                                  mongo_object=obj)
 
-    def send_updated_signal(self, obj):
-        mongo_object_updated.send_robust(sender=self,
-                                         mongo_object=obj)
+    def send_updated_signal(self, user_id, obj):
+        mongo_object_updated.send(self.__class__, user_id=user_id,
+                                  mongo_object=obj)
 
     def dehydrate(self, bundle):
         bundle.data.update(bundle.obj.to_dict())
