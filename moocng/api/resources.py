@@ -16,7 +16,6 @@
 
 
 from datetime import datetime
-import re
 
 from bson import ObjectId
 from bson.errors import InvalidId
@@ -42,7 +41,7 @@ from moocng.api.authorization import (PublicReadTeachersModifyAuthorization,
                                       TeacherAuthorization,
                                       UserResourceAuthorization)
 from moocng.api.mongodb import MongoObj, MongoResource, MongoUserResource
-from moocng.api.validation import (AnswerValidation,
+from moocng.api.validation import (AnswerValidation, answer_validate_date,
                                    PeerReviewSubmissionsResourceValidation)
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment, Course)
@@ -66,7 +65,8 @@ class CourseResource(ModelResource):
         resource_name = 'course'
         allowed_methods = ['get']
         excludes = ['certification_banner']
-        authentication = MultiAuthentication(DjangoAuthentication(), ApiKeyAuthentication())
+        authentication = MultiAuthentication(DjangoAuthentication(),
+                                             ApiKeyAuthentication())
         authorization = DjangoAuthorization()
 
 
@@ -573,9 +573,11 @@ class PrivateQuestionResource(ModelResource):
         return bundle
 
     def hydrate_solutionID(self, bundle):
-        if 'solutionID' in bundle.data and bundle.data['solutionID'] is not None:
+        if ('solutionID' in bundle.data and
+                bundle.data['solutionID'] is not None):
             if bundle.data['solutionID'] != '':
-                bundle.data['solution_video'] = 'http://youtu.be/' + bundle.data['solutionID']
+                bundle.data['solution_video'] = ('http://youtu.be/' +
+                                                 bundle.data['solutionID'])
             else:
                 bundle.data['solution_video'] = ''
         return bundle
@@ -620,7 +622,8 @@ class OptionResource(ModelResource):
                 unicode(bundle.obj.question.id), None)
             if answer is not None:
                 unit = bundle.obj.question.kq.unit
-                if (unit.unittype == 'n' or not(unit.deadline and
+                if (unit.unittype == 'n' or not
+                   (unit.deadline and
                         datetime.now(unit.deadline.tzinfo) < unit.deadline)):
                     solution = bundle.obj.solution
         return solution
@@ -638,10 +641,17 @@ class OptionResource(ModelResource):
 
 class AnswerResource(MongoUserResource):
 
+    course_id = fields.IntegerField(null=False)
+    unit_id = fields.IntegerField(null=False)
+    kq_id = fields.IntegerField(null=False)
+    question_id = fields.IntegerField(null=False)
+    created = fields.DateTimeField(readonly=True, default=datetime.now)
+    replyList = fields.ListField(null=False)
+
     class Meta:
         resource_name = 'answer'
         collection = 'answers'
-        datakey = 'answer'
+        datakey = 'question_id'
         object_class = MongoObj
         authentication = DjangoAuthentication()
         authorization = DjangoAuthorization()
@@ -653,78 +663,65 @@ class AnswerResource(MongoUserResource):
             "kq_id": ('exact'),
         }
         validation = AnswerValidation()
+        input_schema = {
+            "course_id": 1,
+            "unit_id": 1,
+            "kq_id": 1,
+            "question_id": 1,
+            "replyList": 1,
+            "user_id": 0,
+            "created": 0,
+        }
 
     def obj_create(self, bundle, request=None, **kwargs):
-        bundle = self.full_hydrate(bundle)
-
-        question = Question.objects.get(id=bundle.obj.uuid)
-        unit = question.kq.unit
-        if (unit.unittype != 'n' and unit.deadline and
-                datetime.now(unit.deadline.tzinfo) > unit.deadline):
-            return bundle
-
-        if (len(bundle.obj.answer['replyList']) > 0):
-            self._collection.insert({
-                'question_id': question.id,
-                'course_id': unit.course.id,
-                'unit_id': unit.id,
-                'kq_id': question.kq.id,
-                'replyList': bundle.obj.answer["replyList"],
-                "date": datetime.utcnow(),
-            }, safe=True)
-
-        bundle.uuid = bundle.obj.uuid
-
+        bundle.data["created"] = datetime.utcnow()
+        bundle = super(AnswerResource, self).obj_create(bundle, request)
+        bundle.uuid = bundle.obj.question_id
         return bundle
 
     def obj_update(self, bundle, request=None, **kwargs):
-        return self.obj_create(bundle, request, **kwargs)
 
-    def hydrate(self, bundle):
-        if 'question' in bundle.data:
-            question = bundle.data['question']
-            pattern = (r'^/api/%s/question/(?P<question_id>\d+)/$' %
-                       self._meta.api_name)
-            result = re.findall(pattern, question)
-            if result and len(result) == 1:
-                bundle.obj.uuid = result[0]
+        answer_validate_date(bundle, request)
+        question_id = kwargs.get("pk")
+        if (len(bundle.data.get("replyList", [])) > 0):
+            newobj = self._collection.find_and_modify({
+                'user_id': request.user.id,
+                'question_id': question_id,
+            }, {
+                'replyList': bundle.data.get("replyList"),
+                "date": datetime.utcnow(),
+            }, safe=True, new=True)
 
-        bundle.obj.answer = {}
-
-        if 'date' in bundle.data:
-            bundle.obj.answer['date'] = bundle.data['date']
-
-        if 'replyList' in bundle.data:
-            bundle.obj.answer['replyList'] = bundle.data['replyList']
-
-        return bundle
-
-    def dehydrate(self, bundle):
-        bundle.data['date'] = bundle.obj.date
-        bundle.data['replyList'] = bundle.obj.replyList
+        bundle.obj = newobj
+        self.send_updated_signal(bundle.obj)
         return bundle
 
 
 class ActivityResource(MongoUserResource):
 
+    course_id = fields.IntegerField(null=False)
+    unit_id = fields.IntegerField(null=False)
+    kq_id = fields.IntegerField(null=False)
+
     class Meta:
         resource_name = 'activity'
         collection = 'activity'
-        datakey = 'activity'
+        datakey = 'kq_id'
         object_class = MongoObj
         authentication = DjangoAuthentication()
         authorization = DjangoAuthorization()
-        allowed_methods = ['get', 'push']
+        allowed_methods = ['get', 'post']
         filtering = {
             "course_id": ('exact'),
             "unit_id": ('exact'),
             "kq_id": ('exact'),
         }
-        # validation = AnswerValidation()
-        course_id = fields.IntegerField(null=False)
-        unit_id = fields.IntegerField(null=False)
-        kq_id = fields.IntegerField(null=False)
-        user_id = fields.IntegerField(null=False)
+        input_schema = {
+            "course_id": 1,
+            "unit_id": 1,
+            "kq_id": 1,
+            "user_id": 1
+        }
 
     def _initial(self, request, **kwargs):
         course_id = kwargs['pk']

@@ -24,6 +24,7 @@ from moocng.mongodb import get_db
 
 
 mongo_object_created = Signal(providing_args=["user_id", "obj"])
+mongo_object_updated = Signal(providing_args=["user_id", "obj"])
 
 
 def validate_dict_schema(obj, schema):
@@ -33,7 +34,7 @@ def validate_dict_schema(obj, schema):
 
     for (key, value) in schema.items():
         if value == 1 and key not in obj:
-            return BadRequest("required field %s is not in data provide" % key)
+            raise BadRequest("required field %s is not in data provide" % key)
 
     return True
 
@@ -60,7 +61,9 @@ class MongoObj(object):
 class MongoResource(Resource):
 
     collection = None  # subclasses should implement this
-    mongo_schema = None
+
+    class Meta:
+        input_schema = {}
 
     def __init__(self, *args, **kwargs):
         super(MongoResource, self).__init__(*args, **kwargs)
@@ -107,7 +110,10 @@ class MongoResource(Resource):
             if self._meta.datakey == '_id':
                 filter["_id"] = ObjectId(kwargs["pk"])
             else:
-                filter[self._meta.datakey] = kwargs["pk"]
+                try:
+                    filter[self._meta.datakey] = int(kwargs["pk"])
+                except ValueError:
+                    filter[self._meta.datakey] = kwargs["pk"]
             filter.pop("pk")
 
         result = self._collection.find(filter)
@@ -124,10 +130,27 @@ class MongoResource(Resource):
         bundle = self.full_hydrate(bundle)
         self.validate_schema(bundle)
         bundle.obj = MongoObj(bundle.data)
-        _id = self._collection.insert(bundle.data, safe=True)
-        mongo_object_created.send_robust(sender=self, mongo_object=bundle.data)
+
+        query_discover = kwargs.get("query_discover", {})
+        query_discover[self._meta.datakey] = getattr(bundle.obj,
+                                                     self._meta.datakey)
+
+        if self._collection.find_one(query_discover):
+            raise BadRequest("This object already exists")
+
+        _id = self._collection.insert(bundle.obj.to_dict(), safe=True)
+
+        self.send_created_signal(bundle.obj)
         bundle.obj.uuid = str(_id)
         return bundle
+
+    def send_created_signal(self, obj):
+        mongo_object_created.send_robust(sender=self,
+                                         mongo_object=obj)
+
+    def send_updated_signal(self, obj):
+        mongo_object_updated.send_robust(sender=self,
+                                         mongo_object=obj)
 
     def dehydrate(self, bundle):
         bundle.data.update(bundle.obj.to_dict())
@@ -137,8 +160,9 @@ class MongoResource(Resource):
         return {}
 
     def validate_schema(self, bundle):
-        if self.mongo_schema:
-            validate_dict_schema(bundle.data, self.mongo_schema)
+        schema = getattr(self._meta, "input_schema", {})
+        if schema:
+            validate_dict_schema(bundle.data, schema)
 
 
 class MongoUserResource(MongoResource):
@@ -157,9 +181,15 @@ class MongoUserResource(MongoResource):
         if not isinstance(kwargs, dict):
             kwargs = {}
         kwargs[self.user_id_field] = request.user.id
-
         return super(MongoUserResource, self).obj_get(request, **kwargs)
 
     def obj_create(self, bundle, request=None, **kwargs):
         bundle.data[self.user_id_field] = request.user.id
-        return super(MongoUserResource, self).obj_create(bundle, request, **kwargs)
+
+        query_discover = kwargs.get("query_discover", {})
+        query_discover[self.user_id_field] = request.user.id
+        query_discover[self._meta.datakey] = bundle.data.get(self._meta.datakey)
+
+        return super(MongoUserResource, self).obj_create(
+            bundle, request, query_discover=query_discover, **kwargs
+        )
