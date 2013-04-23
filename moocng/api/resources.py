@@ -610,8 +610,15 @@ class OptionResource(ModelResource):
 
     def dispatch(self, request_type, request, **kwargs):
         # We need the request to dehydrate some fields
+        try:
+            question_id = int(request.GET.get("question", None))
+        except ValueError:
+            raise BadRequest("question filter isn't a integer value")
         collection = get_db().get_collection('answers')
-        self.user = get_user(request, collection)
+        self.answer = collection.find_one({
+            "user_id": request.user.id,
+            "question_id": question_id
+        })
         return super(OptionResource, self).dispatch(request_type, request,
                                                     **kwargs)
 
@@ -619,25 +626,17 @@ class OptionResource(ModelResource):
         # Only return the solution if the user has given an answer
         # If there is a deadline, then only return the solution if the deadline
         # has been reached too
-        solution = None
-        if self.user:
-            answer = self.user['questions'].get(
-                unicode(bundle.obj.question.id), None)
-            if answer is not None:
-                unit = bundle.obj.question.kq.unit
-                if unit.unittype == 'n' or not(unit.deadline and datetime.now(unit.deadline.tzinfo) > unit.deadline):
-                    solution = bundle.obj.solution
-        return solution
+        if self.answer:
+            unit = bundle.obj.question.kq.unit
+            if (unit.unittype == 'n' or
+                not(unit.deadline and
+                    datetime.now(unit.deadline.tzinfo) > unit.deadline)):
+                return bundle.obj.solution
 
     def dehydrate_feedback(self, bundle):
         # Only return the feedback if the user has given an answer
-        feedback = None
-        if self.user:
-            answer = self.user['questions'].get(
-                unicode(bundle.obj.question.id), None)
-            if answer is not None:
-                feedback = bundle.obj.feedback
-        return feedback
+        if self.answer:
+            return bundle.obj.feedback
 
 
 class AnswerResource(MongoUserResource):
