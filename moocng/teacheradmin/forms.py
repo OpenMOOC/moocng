@@ -49,12 +49,21 @@ class CourseForm(forms.ModelForm):
                 widget.mce_attrs['width'] = '780'  # bootstrap span10
 
     def clean_promotion_media_content_id(self):
-        content_type = self.cleaned_data.get('promotion_media_content_type')
-        content_id = self.cleaned_data.get('promotion_media_content_id')
+        content_type = self.data.get('promotion_media_content_type')
+        content_id = self.data.get('promotion_media_content_id')
         if content_type and content_id:
             if not media_content_extract_id(content_type, content_id):
                 raise forms.ValidationError(_('Invalid content id or url'))
+        elif content_type and not content_id:
+            raise forms.ValidationError(_('Invalid content id or url'))
         return content_id
+
+    def clean_promotion_media_content_type(self):
+        content_type = self.data.get('promotion_media_content_type')
+        content_id = self.data.get('promotion_media_content_id')
+        if content_id and not content_type:
+            raise forms.ValidationError(_('You must select a content type or remove the content id'))
+        return content_type
 
 
 class AnnouncementForm(CoursesAnnouncementForm, BootstrapMixin):

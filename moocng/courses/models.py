@@ -68,11 +68,11 @@ class Course(Sortable):
     promotion_media_content_type = models.CharField(verbose_name=_(u'Content type'),
                                                     max_length=20,
                                                     null=True,
-                                                    blank=False,
+                                                    blank=True,
                                                     choices=get_media_content_types_choices())
     promotion_media_content_id = models.CharField(verbose_name=_(u'Content id'),
                                                   null=True,
-                                                  blank=False,
+                                                  blank=True,
                                                   max_length=200)
     threshold = models.DecimalField(
         verbose_name=_(u'Pass threshold'),
