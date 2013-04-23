@@ -363,6 +363,7 @@ MOOC.init = function (course_id, KQRoute) {
     MOOC.players_listener = _.extend({}, Backbone.Events);
     MOOC.players_listener.on('mediaContentFinished', function (view) {
         _.bind(view.loadExercise, view)();
+        _.bind(view.loadAssets, view)();
     });
 
     if (KQRoute) {
