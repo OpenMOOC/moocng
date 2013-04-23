@@ -83,7 +83,7 @@
         <li> Students sharing this slot: {{concurrent}} </li>
         {% endblocktrans %}
         <div class="row">
-            <div class="align-right span4">
+            <div class="align-right ">
                 <form action="{% url cancel_reservation course.slug reservation.id %}" id="r{{ reservation.id }}-form" method="post">{% csrf_token %}
                     <input type="submit" value="{% trans "Remove" %}" class="btn btn-danger btn-remove" id="r{{ reservation.id }}-removeBtn" />
                 </form>
