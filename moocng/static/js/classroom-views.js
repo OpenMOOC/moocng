@@ -115,6 +115,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             this.loadQuestionData();
         } else if (this.model.has("peer_review_assignment")) {
             this.loadPeerReviewData();
+        } else if (this.model.has("asset_availability")) {
+            this.loadAssetsData();
         }
 
         $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
@@ -171,6 +173,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     url += "/a";
                 } else if (!next && aux.has("peer_review_assignment")) {
                     url += "/p";
+                } else if (!next && aux.has("asset_availability")) {
+                    url += "/as";
                 }
                 return url;
             }
@@ -180,14 +184,16 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
         if (/#[\w\/]+\/q/.test(path)) { // Viewing question
             target = next ? "answer" : "same";
-        } else if (/#[\w\/]+\/a/.test(path)) { // Viewing answer
-            target = next ? "next" : "exercise";
+        } else if (/#[\w\/]+\/as/.test(path)) { // Viewing asset availability
+            target = next ? "next" : "same";
         } else if (/#[\w\/]+\/p/.test(path)) { // Viewing peer review
             target = next ? "next" : "same";
+        } else if (/#[\w\/]+\/a/.test(path)) { // Viewing answer
+            target = next ? "next" : "exercise";
         } else { // Viewing kq
             target = next ? "exercise" : "prev";
         }
-        if (target === "exercise" && !kq.has("question") && !kq.has("peer_review_assignment")) {
+        if (target === "exercise" && !kq.has("question") && !kq.has("peer_review_assignment") && !kq.has("asset_availability")) {
             target = "next";
         }
 
@@ -196,8 +202,10 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             url = "unit" + unit.get("id") + "/kq" + kq.get("id");
             if (kq.has("question")) {
                 url += "/q";
-            } else { // peer review
+            } else if (kq.has("peer_review_assignment")) {// peer review
                 url += "/p";
+            } else if (kq.has("asset_availability")) {//asset availability
+                url += "/as";
             }
             break;
         case "answer":
@@ -493,11 +501,21 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         toExecute.push(_.bind(function (callback) {
             var unit = MOOC.models.course.getByKQ(this.model),
                 assetAvailability = this.model.get("assetAvailabilityInstance"),
+                path = window.location.hash.substring(1),
                 view = MOOC.views.assetViews[assetAvailability.get("id")];
 
             assetAvailability.set("_assetList", this.model.get("_assetList"));
-
             $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
+
+            if (!(/[\w\/]+\/as/.test(path))) {
+
+                path = path + "/as";
+                MOOC.router.navigate(path, { trigger: false });
+            }
+
+            this.setEventForNavigation("#kq-previous", unit, this.model, false);
+            this.setEventForNavigation("#kq-next", unit, this.model, true);
+
 
             if (this.player && !_.isNull(this.player.getIframe())) {
                 this.player.destroy();
@@ -513,8 +531,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 MOOC.views.assetViews[assetAvailability.get("id")] = view;
             }
 
-            this.setEventForNavigation("#kq-previous", unit, this.model, false);
-            this.setEventForNavigation("#kq-next", unit, this.model, true);
+           // this.setEventForNavigation("#kq-previous", unit, this.model, false);
+           // this.setEventForNavigation("#kq-next", unit, this.model, true);
 
             view.render();
 
