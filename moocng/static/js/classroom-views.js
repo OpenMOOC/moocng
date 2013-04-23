@@ -530,10 +530,6 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 });
                 MOOC.views.assetViews[assetAvailability.get("id")] = view;
             }
-
-           // this.setEventForNavigation("#kq-previous", unit, this.model, false);
-           // this.setEventForNavigation("#kq-next", unit, this.model, true);
-
             view.render();
 
             callback();
