@@ -411,17 +411,12 @@ class Question(models.Model):
 
         # Verify if user has answered the question
         answers = db.get_collection("answers")
-        answers_exists = answers.find_one({
-            "user": user.id,
-            "questions.%s" % (self.id): {
-                "$exists": True
-            }
+        answer_exists = answers.find_one({
+            "user_id": user.id,
+            "question_id": self.id,
         })
 
-        if not answers_exists:
-            return False
-
-        return True
+        return not (answer_exists is None)
 
 
 def handle_question_post_save(sender, instance, created, **kwargs):

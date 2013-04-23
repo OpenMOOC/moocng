@@ -48,16 +48,12 @@ from moocng.api.validation import (AnswerValidation, answer_validate_date,
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment, Course)
 from moocng.courses.utils import normalize_kq_weight, calculate_course_mark
-from moocng.media_contents import media_content_get_iframe_template, media_content_get_thumbnail_url
+from moocng.media_contents import (media_content_get_iframe_template,
+                                   media_content_get_thumbnail_url)
 from moocng.mongodb import get_db
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
 from moocng.peerreview.utils import (kq_get_peer_review_score,
                                      get_peer_review_review_score)
-
-
-def get_user(request, collection):
-    # TODO remove this!!
-    return {}
 
 
 class CourseResource(ModelResource):
@@ -128,8 +124,8 @@ class KnowledgeQuantumResource(ModelResource):
 
     def dispatch(self, request_type, request, **kwargs):
         db = get_db()
-        self.user_answers = get_user(request, db.get_collection('answers'))
-        self.user_activity = get_user(request, db.get_collection('activity'))
+        self.answers = db.get_collection('answers')
+        self.activity = db.get_collection('activity')
         return super(KnowledgeQuantumResource, self).dispatch(request_type,
                                                               request,
                                                               **kwargs)
@@ -145,10 +141,12 @@ class KnowledgeQuantumResource(ModelResource):
             return question[0]
 
     def dehydrate_iframe_code(self, bundle):
-        return media_content_get_iframe_template(bundle.obj.media_content_type, bundle.obj.media_content_id)
+        return media_content_get_iframe_template(bundle.obj.media_content_type,
+                                                 bundle.obj.media_content_id)
 
     def dehydrate_thumbnail_url(self, bundle):
-        return media_content_get_thumbnail_url(bundle.obj.media_content_type, bundle.obj.media_content_id)
+        return media_content_get_thumbnail_url(bundle.obj.media_content_type,
+                                               bundle.obj.media_content_id)
 
     def dehydrate_peer_review_score(self, bundle):
         try:
@@ -166,11 +164,12 @@ class KnowledgeQuantumResource(ModelResource):
                 return False
         else:
             question = questions[0]  # there should be only one question
-            if self.user_answers is None:
-                return False
 
-            answer = self.user_answers.get('questions', {}).get(unicode(question.id))
-            if answer is None:
+            answer = self.answers.find_one({
+                "user_id": bundle.request.user.id,
+                "question_id": question.id
+            })
+            if not answer:
                 return False
 
             return question.is_correct(answer)
