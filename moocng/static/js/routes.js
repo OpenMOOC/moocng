@@ -338,6 +338,8 @@ MOOC.init = function (course_id, KQRoute) {
         unit,
         last_kq = null;
 
+    MOOC.models.course.courseId = course_id;
+
     MOOC.router = new MOOC.App();
     MOOC.router.route("unit:unit", "unit");
     MOOC.host = window.location.protocol + '//' + window.location.host;

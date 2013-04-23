@@ -92,14 +92,15 @@ MOOC.ajax.getAnswerByQuestion = function (question, callback) {
     });
 };
 
-MOOC.ajax.sendAnswer = function (answer, question_id, callback) {
+MOOC.ajax.sendAnswer = function (answer, callback) {
     "use strict";
-    var url = MOOC.ajax.host + "answer/", method = "post", data = answer.toJSON();
-    if (answer.get('id')) {
-        url += answer.get('id') + "/";
+    var url = MOOC.ajax.host + "answer/",
+        method = "post",
+        data = answer.toJSON();
+    if (!answer.isNew()) {
+        url += answer.get('question_id') + "/";
         method = "put";
     }
-    data.question = MOOC.ajax.getAbsoluteUrl('question/' + question_id + '/');
     $.ajax(url, {
         type: method,
         data: JSON.stringify(data),

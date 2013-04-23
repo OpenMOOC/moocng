@@ -174,11 +174,9 @@ MOOC.models.Activity = Backbone.Model.extend({
 MOOC.models.ActivityCollection = MOOC.models.TastyPieCollection.extend({
     model: MOOC.models.Activity,
 
-    course_id: undefined,  // Don't forget to initialize this
-
     url: function () {
         "use strict";
-        return MOOC.ajax.getAbsoluteUrl('activity/') + "?course_id=" + this.course_id;
+        return MOOC.ajax.getAbsoluteUrl('activity/') + "?course_id=" + MOOC.models.course.courseId;
     },
 
     addKQ: function (kq, callback) {
@@ -187,7 +185,7 @@ MOOC.models.ActivityCollection = MOOC.models.TastyPieCollection.extend({
         if (!this.hasKQ(kq)) {
             var unit = MOOC.models.course.getByKQ(kq).get("id"),
                 activity = new MOOC.models.Activity({
-                    course_id: this.course_id,
+                    course_id: MOOC.models.course.courseId,
                     unit_id: unit,
                     kq_id: kq
                 });
@@ -398,6 +396,13 @@ MOOC.models.Answer = Backbone.Model.extend({
         replyList: null
     },
 
+    local: true,
+
+    isNew: function () {
+        "use strict";
+        return this.local;
+    },
+
     /* Return a reply which option is opt_id or null otherwise */
     getReply: function (opt_id) {
         "use strict";
@@ -409,6 +414,17 @@ MOOC.models.Answer = Backbone.Model.extend({
             });
         }
         return result;
+    },
+
+    toJSON: function () {
+        "use strict";
+        return {
+            kq_id: this.get("kq_id"),
+            unit_id: this.get("unit_id"),
+            course_id: this.get("course_id"),
+            question_id: this.get("question_id"),
+            replyList: this.get("replyList").toJSON()
+        };
     }
 });
 
