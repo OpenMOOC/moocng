@@ -1434,6 +1434,10 @@ if (_.isUndefined(window.MOOC)) {
                                     }
                                     self.model.get("assetAvailabilityInstance").set("id", parseInt(createdId, 10));
                                     self.render();
+                                    self.$el.find("form li.active").removeClass("active");
+                                    self.$el.find("form fieldset.active").removeClass("active");
+                                    self.$el.find("#asset-availability-tab").addClass("active");
+                                    self.$el.find("#asset-availability").addClass("active");
                                     MOOC.ajax.hideLoading();
                                 },
                                 error: function () {
