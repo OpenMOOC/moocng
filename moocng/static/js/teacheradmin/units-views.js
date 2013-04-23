@@ -82,7 +82,7 @@ if (_.isUndefined(window.MOOC)) {
             return result;
         },
 
-        checkMediaContentId = function ($el) {
+        checkMediaContentIdAux = function ($el) {
             var content_id,
                 content_type,
                 patterns,
@@ -91,13 +91,13 @@ if (_.isUndefined(window.MOOC)) {
 
             patterns = {
                 'youtube': [
-                    /youtube\.com\/watch[#\?].*\?v=([^"\& ]+)/,
-                    /youtube\.com\/embed\/([^"\&\? ]+)/,
-                    /youtube\.com\/v\/([^"\&\? ]+)/,
-                    /youtube\.com\/\?v=([^"\& ]+)/,
-                    /youtu\.be\/([^"\&\? ]+)/,
-                    /gdata\.youtube\.com\/feeds\/api\/videos\/([^"\&\? ]+)/,
-                    /^([^"\&\? ]+)$/
+                    /youtube\.com\/watch[#\?].*\?v=(\w+)/,
+                    /youtube\.com\/embed\/(\w+)/,
+                    /youtube\.com\/v\/(\w+)/,
+                    /youtube\.com\/\?v=(\w+)/,
+                    /youtu\.be\/(\w+)/,
+                    /gdata\.youtube\.com\/feeds\/api\/videos\/(\w+)/,
+                    /^(\w+)$/
                 ],
                 'vimeo': [
                     /vimeo\.com\/(\d+)/,
@@ -111,41 +111,41 @@ if (_.isUndefined(window.MOOC)) {
                     /^(\d+)$/
                 ],
                 'prezi': [
-                    /prezi\.com\/([a-zA-Z0-9\-]+)\/.*/,
-                    /^([a-zA-Z0-9\-]+)$/
+                    /prezi\.com\/([a-zA-Z\d\-]+)\/.*/,
+                    /^([a-zA-Z\d\-]+)$/ // Can't use \w because can't accept the _ char
                 ]
             };
 
             result_kqmedia = false;
-            $("#kqmedia_content_id").each(function (idx, elem) {
+            $el.find("#kqmedia_content_id").each(function (idx, elem) {
                 content_id = $(elem).val();
-                content_type = $("#kqmedia_content_type").val();
+                content_type = $el.find("#kqmedia_content_type").val();
 
                 if (!$(elem).is(':visible')) {
                     result_kqmedia = true;
+                } else {
+                    _.each(patterns[content_type], function (pattern) {
+                        if (content_id.match(pattern) !== null) {
+                            result_kqmedia = true;
+                        }
+                    });
                 }
-
-                _.each(patterns[content_type], function (pattern) {
-                    if (content_id.match(pattern) !== null) {
-                        result_kqmedia = true;
-                    }
-                });
             });
 
             result_question = false;
-            $("#questionmedia_content_id").each(function (idx, elem) {
+            $el.find("#questionmedia_content_id").each(function (idx, elem) {
                 content_id = $(elem).val();
-                content_type = $("#questionmedia_content_type").val();
+                content_type = $el.find("#questionmedia_content_type").val();
 
                 if (!$(elem).is(':visible')) {
                     result_question = true;
+                } else {
+                    _.each(patterns[content_type], function (pattern) {
+                        if (content_id.match(pattern) !== null) {
+                            result_question = true;
+                        }
+                    });
                 }
-
-                _.each(patterns[content_type], function (pattern) {
-                    if (content_id.match(pattern) !== null) {
-                        result_question = true;
-                    }
-                });
             });
 
             return result_kqmedia && result_question;
@@ -350,15 +350,21 @@ if (_.isUndefined(window.MOOC)) {
                     add,
                     html;
 
-                header = "<span class='badge " + MOOC.unitBadgeClasses[this.model.get("type")] +
+                header = ["<span class='badge " + MOOC.unitBadgeClasses[this.model.get("type")] +
                     "' title='" + MOOC.trans.unit[this.model.get("type")] + "'>" +
                     this.model.get("type").toUpperCase() + "</span> " +
                     "<span class='label " + this.getStatusLabel() + "'>" +
-                    MOOC.trans.unit[this.model.get("status")] + "</span> " +
-                    "<h3>" + this.model.get("title") + "</h3>" +
-                    "<button class='btn pull-right edit' title='" + MOOC.trans.edit +
+                    MOOC.trans.unit[this.model.get("status")] + "</span> "];
+
+                if (this.model.get("title").length > 40) {
+                    header.push("<h3 title='" + this.model.get("title").replace("'", "") + "'>" + this.model.get("title").substring(0, 37) + "...</h3>");
+                } else {
+                    header.push("<h3>" + this.model.get("title") + "</h3>");
+                }
+                header.push("<button class='btn pull-right edit' title='" + MOOC.trans.edit +
                     " " + MOOC.trans.unit.unit + "'><i class='icon-edit'></i> " +
-                    MOOC.trans.edit + "</button>";
+                    MOOC.trans.edit + "</button>");
+                header = header.join("");
                 add = "<button class='btn pull-right add'><i class='icon-plus'></i> " +
                     MOOC.trans.add + " " + MOOC.trans.kq.kq + "</button>";
                 html = inlineb({ classes: "drag-handle" });
@@ -720,7 +726,8 @@ if (_.isUndefined(window.MOOC)) {
                 "click button#delete-asset-availability": "removeAssetAvailability",
                 "change select#kqmedia_content_type": "redrawCanGetLastFrame",
                 "click button.removeasset": "removeAssetOfAvailability",
-                "click button#addasset": "addAssetToAvailability"
+                "click button#addasset": "addAssetToAvailability",
+                "show a[data-toggle='tab']": "checkBeforeToggleTab"
             },
 
             initialize: function () {
@@ -729,7 +736,7 @@ if (_.isUndefined(window.MOOC)) {
                     "toggleSolution", "addQuestion", "addPeerReviewAssignment",
                     "addCriterion", "forceProcess", "removeQuestion",
                     "removePeerReviewAssignment", "go2options", "addAssetAvailability",
-                    "removeAssetAvailability");
+                    "removeAssetAvailability", "checkBeforeToggleTab");
             },
 
             render: function () {
@@ -888,7 +895,7 @@ if (_.isUndefined(window.MOOC)) {
                         assetListDiv.find("#" + nameInputId).text(asset.get("name"));
                     });
 
-                    //get the list of the assets which are not available for this kq             
+                    //get the list of the assets which are not available for this kq
                     otherAssets = assetAvail.get("_otherAssets");
 
                     this.$el.find("#addasset").hide();
@@ -971,6 +978,24 @@ if (_.isUndefined(window.MOOC)) {
                 return checkRequiredAux(this.$el);
             },
 
+            checkMediaContentId: function () {
+                return checkMediaContentIdAux(this.$el);
+            },
+
+            checkBeforeToggleTab: function (evt) {
+                if (!this.checkRequired()) {
+                    MOOC.ajax.showAlert("required");
+                    evt.preventDefault();
+                    return;
+                }
+                if (!this.checkMediaContentId()) {
+                    MOOC.ajax.showAlert("media_content_id");
+                    evt.preventDefault();
+                    return;
+                }
+            },
+
+
             save: function (evt, callback) {
                 evt.preventDefault();
                 evt.stopPropagation();
@@ -978,7 +1003,7 @@ if (_.isUndefined(window.MOOC)) {
                     MOOC.ajax.showAlert("required");
                     return;
                 }
-                if (!checkMediaContentId()) {
+                if (!this.checkMediaContentId()) {
                     MOOC.ajax.showAlert("media_content_id");
                     return;
                 }
@@ -1238,7 +1263,7 @@ if (_.isUndefined(window.MOOC)) {
                     MOOC.ajax.showAlert("required");
                     return;
                 }
-                if (!checkMediaContentId()) {
+                if (!this.checkMediaContentId()) {
                     MOOC.ajax.showAlert("media_content_id");
                     return;
                 }
@@ -1260,7 +1285,7 @@ if (_.isUndefined(window.MOOC)) {
                     return;
                 }
 
-                if (!checkMediaContentId()) {
+                if (!this.checkMediaContentId()) {
                     MOOC.ajax.showAlert("media_content_id");
                     return;
                 }
@@ -1321,7 +1346,7 @@ if (_.isUndefined(window.MOOC)) {
                     MOOC.ajax.showAlert("required");
                     return;
                 }
-                if (!checkMediaContentId()) {
+                if (!this.checkMediaContentId()) {
                     MOOC.ajax.showAlert("media_content_id");
                     return;
                 }

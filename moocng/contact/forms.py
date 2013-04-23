@@ -38,7 +38,7 @@ class ContactForm(forms.Form, BootstrapMixin):
         label=_(u'Communication type'),
         required=True,
         queryset=CommunicationType.objects.all(),
-        empty_label=None,
+        empty_label=' ',
     )
     message = forms.CharField(
         label=_(u'Message'),
