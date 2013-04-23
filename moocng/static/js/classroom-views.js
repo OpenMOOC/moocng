@@ -1182,7 +1182,7 @@ MOOC.views.Asset = Backbone.View.extend({
 
         html = [];
 
-        html.push("<h2>" + MOOC.trans.classroom.asRequisites + "</h2>");
+        html.push("<h3>" + MOOC.trans.classroom.asRequisites + "</h3>");
         html.push("<div id='availability-information' class='solution-wrapper white'>");
         html.push("<div class='row'>");
         html.push("<div class='span3'><ul><li>" + MOOC.trans.classroom.asDates + "<ul>");
@@ -1202,13 +1202,13 @@ MOOC.views.Asset = Backbone.View.extend({
             html.push("</div>");
         }
 
-        html.push("<h2>" + MOOC.trans.classroom.asAssetList + "</h2>");
+        html.push("<h3>" + MOOC.trans.classroom.asAssetList + "</h3>");
         this.model.get("_assetList").each(function (asset) {
             buttonId = "reservationnew-" + asset.get("id");
             divId = "asset-information-" + asset.get("id");
             html.push("<div class='solution-wrapper white'>");
             html.push("<div id='" + divId + "'>");
-            html.push("<h3>" + asset.get("name") + "</h3>");
+            html.push("<h4>" + asset.get("name") + "</h4>");
             html.push(asset.get("description"));
             html.push("<div class=\"row\"><div class=\"span3\">");
             html.push("<ul><li>" + MOOC.trans.classroom.asSlotLength + asset.get("slot_duration") + "</li>");
