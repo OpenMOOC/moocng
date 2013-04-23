@@ -683,14 +683,16 @@ class AnswerResource(MongoUserResource):
     def obj_update(self, bundle, request=None, **kwargs):
 
         answer_validate_date(bundle, request)
-        question_id = kwargs.get("pk")
+        question_id = int(kwargs.get("pk"))
         if (len(bundle.data.get("replyList", [])) > 0):
             newobj = self._collection.find_and_modify({
                 'user_id': request.user.id,
                 'question_id': question_id,
-            }, {
-                'replyList': bundle.data.get("replyList"),
-                "date": datetime.utcnow(),
+            }, update={
+                "$set": {
+                    'replyList': bundle.data.get("replyList"),
+                    "created": datetime.utcnow(),
+                }
             }, safe=True, new=True)
 
         bundle.obj = newobj

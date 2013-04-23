@@ -310,8 +310,8 @@ class KnowledgeQuantum(Sortable):
         activity = db.get_collection("activity")
         # Verify if user has watch the video from kq
         user_activity_exists = activity.find({
-            "user": user.id,
-            "courses.%s.kqs" % (self.unit.course.id): unicode(self.id)
+            "user_id": user.id,
+            "kq_id": self.id,
         })
 
         return user_activity_exists.count() > 0
