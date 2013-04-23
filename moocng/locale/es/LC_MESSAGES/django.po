@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-19 09:50+0200\n"
+"POT-Creation-Date: 2013-04-23 07:36+0200\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Antonio Perez-Aranda <aperezaranda@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -1603,15 +1603,20 @@ msgstr "Este curso no tiene ningúna actividad a revisar por compañeros"
 msgid "You can try enrolling in another course"
 msgstr "Puedes probar matriculándote en otro curso"
 
-#: teacheradmin/forms.py:56 teacheradmin/templates/teacheradmin/units.html:333
+#: teacheradmin/forms.py:56 teacheradmin/forms.py:58
+#: teacheradmin/templates/teacheradmin/units.html:333
 msgid "Invalid content id or url"
 msgstr "Id o url del contenido inválido"
 
-#: teacheradmin/forms.py:64
+#: teacheradmin/forms.py:65
+msgid "You must select a content type or remove the content id"
+msgstr "Debes elegir un tipo de contenido o quitar el id de contenido"
+
+#: teacheradmin/forms.py:73
 msgid "Send the announcement via email to all the students in this course"
 msgstr "Enviar comunicado via email a todos los estudiantes de este curso"
 
-#: teacheradmin/forms.py:66
+#: teacheradmin/forms.py:75
 msgid "Please use this with caution as some courses has many students"
 msgstr ""
 "Por favor use esto con cuidado ya que algunos cursos tienen muchos "
