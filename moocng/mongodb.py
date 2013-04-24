@@ -58,20 +58,19 @@ class MongoDB(object):
         return self.database[collection]
 
 
-
 # this is not a thread local because we want
 # the server workers to reuse as many connections as possible
 _mongodb_connection = None
 
 
-def get_db():
+def get_db(force_connect=False):
     global _mongodb_connection
     try:
         db_uri = settings.MONGODB_URI
     except AttributeError:
         raise ImproperlyConfigured('Missing required MONGODB_URI setting')
 
-    if _mongodb_connection is None:
+    if _mongodb_connection is None or force_connect:
         _mongodb_connection = MongoDB(db_uri)
 
     return _mongodb_connection
