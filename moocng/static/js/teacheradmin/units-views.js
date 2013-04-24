@@ -885,11 +885,11 @@ if (_.isUndefined(window.MOOC)) {
                         nameInputId = "assetname-" + asset.get("id");
                         removeBtnId = "assetremove-" + asset.get("id");
 
-                        nameInput = "<h3 class=\"input-large\" id=\"" + nameInputId + "\" ></h3>";
+                        nameInput = "<h4 id=\"" + nameInputId + "\" ></h4>";
                         removeBtn = "<button id=\"" + removeBtnId + "\" class=\"removeasset btn btn-danger\">" + MOOC.trans.asset.remove + "</button>";
                         assetDiv = "<div id=\"" + assetDivId + "\">"
-                                       + "<div> <div class=\"span4\">" + nameInput + "</div>"
-                                       + "<div class=\"row mb20\"><div class=\"align-right span10\">" + removeBtn + "</div></div></divZ";
+                                       + "<div>" + nameInput + "</div>"
+                                       + "<div class=\"row mb20\"><div class=\"align-right span4\">" + removeBtn + "</div></div></divZ";
 
                         assetListDiv.append(assetDiv);
                         assetListDiv.find("#" + nameInputId).text(asset.get("name"));
@@ -901,7 +901,8 @@ if (_.isUndefined(window.MOOC)) {
                     this.$el.find("#addasset").hide();
                     totalOtherAssets = otherAssets.length;
                     if (totalOtherAssets !== 0) {
-                        assetSelect = "<select id=\"assetsForSelect\" >";
+                        assetSelect =  "<label for=\"infoadd\">" + MOOC.trans.asset.infoadd + "</label>";
+                        assetSelect += "<select id=\"assetsForSelect\" >";
                         otherAssets.each(function (asset) {
 
                             var assetName,
