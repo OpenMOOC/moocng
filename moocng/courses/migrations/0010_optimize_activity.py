@@ -1,101 +1,52 @@
 # -*- coding: utf-8 -*-
 
-from pymongo.errors import OperationFailure
 from south.v2 import DataMigration
 
+from django.utils import simplejson
+
 from moocng.mongodb import get_db
-
-
-def mongo_safe_operation(db, operation, *args, **kwargs):
-    depth = kwargs.get("depth", 0)
-    if depth > 10:
-        raise OperationFailure("Can't connect to mongo")
-    try:
-        result = operation(*args)
-    except OperationFailure:
-        print 'Lost connection, reconnecting...'
-        db = get_db(force_connect=True).get_database()
-        kwargs['depth'] += 1
-        mongo_safe_operation(db, operation, *args, **kwargs)
-    return (db, result)
 
 
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        db = get_db().get_database()
-        users = orm['auth.user'].objects.all()
-        total = users.count()
-        counter = 0
+        kq_unit = {}
 
-        for user in users:
-            db, act = mongo_safe_operation(db, db.activity.find_one, {"user": user.id})
-            new_activities = []
+        for course in orm['courses.course'].objects.all():
+            for unit in course.unit_set.all():
+                for kq in unit.knowledgequantum_set.all():
+                    kq_unit[kq.id] = unit.id
 
-            if act is None:
-                continue
+        js_migration = """
+var kq_unit = '%s';
 
-            for course in act['courses'].keys():
-                for kq in act['courses'][course]['kqs']:
-                    try:
-                        kq_instance = orm['courses.knowledgequantum'].objects.get(id=kq)
-                        new_act = {
-                            'course_id': int(course),
-                            'unit_id': kq_instance.unit.id,
-                            'kq_id': int(kq),
-                            'user_id': int(act['user'])
-                        }
-                        new_activities.append(new_act)
-                    except orm['courses.knowledgequantum'].DoesNotExist:
-                        #print "Couldn't find this KQ: %s" % kq
-                        pass
+db.activity_tmp.drop();
 
-            if new_activities:
-                db, _ = mongo_safe_operation(db, db.activity2.insert, new_activities)
+db.activity.find().forEach(function (activity) {
+    var internal_counter = 0, course;
+    for (cp in activity.courses) {
+        course = activity.courses[cp];
+        internal_counter += course.kqs.length;
+        course.kqs.forEach(function (kq) {
+            db.activity_tmp.insert({
+                user_id: parseInt(activity.user, 10),
+                course_id: parseInt(cp, 10),
+                kq_id: parseInt(kq, 10),
 
-            if counter % 10 == 0:
-                print "PROGRESS: %d/%d users" % (counter, total)
-            counter += 1
+            });
+        });
+    }
+});
+        """ % simplejson.dumps(kq_unit)
 
-        db, _ = mongo_safe_operation(db, db.activity.rename, 'pre_optimize_migration_activity')
-        db, _ = mongo_safe_operation(db, db.activity2.rename, 'activity')
+        connector = get_db()
+        db = connector.get_database()
+        db.eval(js_migration)
 
-# Old structure
+        db.activity.rename('pre_optimization_activity')
+        db.activity_tmp.rename('activity')
 
-#{
-    #"_id" : ObjectId("XXXXXXXXXXXXXXXXXXXX"),
-    #"courses" : {
-            #"24" : {
-                    #"kqs" : [
-                            #"1065",
-                            #"1066",
-                            #"1059",
-                            #"555",
-                            #"1067",
-                            #...
-                    #]
-            #},
-            #"23" : {
-                    #"kqs" : [
-                            #"316",
-                            #"317",
-                            #"318",
-                            #"319",
-                            #...
-                    #]
-            #}
-    #},
-    #"user" : 12345
-#}
-
-# New structure
-#{
-    #"_id" : ObjectId("XXXXXXXXXXXXXXXXXXXX"),
-    #"course_id" : 1,
-    #"user_id" : 1,
-    #"unit_id" : 1,
-    #"kq_id" : 1
-#}
+        print 'The old activity collection is still in your mongo database, its new name is "pre_optimization_activity"'
 
     def backwards(self, orm):
         "Write your backwards methods here."
