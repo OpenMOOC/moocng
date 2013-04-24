@@ -22,7 +22,8 @@ from zipfile import ZipFile, ZipInfo
 from django.core.management.base import BaseCommand, CommandError
 
 from moocng.courses.models import Course
-from moocng.courses.utils import calculate_course_mark
+from moocng.courses.marks import calculate_course_mark
+
 
 class Command(BaseCommand):
 

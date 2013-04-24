@@ -47,7 +47,7 @@ from moocng.api.validation import (AnswerValidation, answer_validate_date,
                                    PeerReviewSubmissionsResourceValidation)
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment, Course)
-from moocng.courses.utils import normalize_kq_weight, calculate_course_mark
+from moocng.courses.marks import normalize_kq_weight, calculate_course_mark
 from moocng.media_contents import (media_content_get_iframe_template,
                                    media_content_get_thumbnail_url)
 from moocng.mongodb import get_db
