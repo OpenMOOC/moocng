@@ -389,8 +389,11 @@ class Question(models.Model):
 
     def is_correct(self, answer):
         correct = True
-        replies = dict([(int(r['option']),
-                         r['value']) for r in answer['replyList']])
+        if answer['replyList'] is not None:
+            replies = dict([(int(r['option']), r['value'])
+                            for r in answer['replyList']])
+        else:
+            replies = {}
 
         for option in self.option_set.all():
             reply = replies.get(option.id, None)
