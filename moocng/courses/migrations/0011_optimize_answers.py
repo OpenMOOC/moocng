@@ -35,11 +35,14 @@ var question_course = %s,
 db.answers_new.drop();
 
 db.answers.find().forEach(function (answer) {
-    var replyList, question, question_id;
+    var replyList,
+        question,
+        question_id;
     for (question_id in answer.questions) {
+        replyList = [];
         question = answer.questions[question_id];
-        replyList = question.replyList.forEach(function (reply) {
-            return({
+        question.replyList.forEach(function (reply) {
+            replyList.push({
                 option: parseInt(reply.option, 10),
                 value: reply.value
             });
