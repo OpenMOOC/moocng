@@ -14,7 +14,6 @@
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
 from django.db import models
 from django.db.models import signals, Q
 from django.utils.translation import ugettext_lazy as _
@@ -22,7 +21,6 @@ from django.utils.translation import ugettext
 
 from moocng.assets import cache
 from moocng.courses.models import KnowledgeQuantum
-from moocng.courses.utils import send_mail_wrapper
 
 from tinymce.models import HTMLField
 
@@ -71,17 +69,30 @@ class AssetAvailability(models.Model):
         return ugettext(u'Assets availables for {0}').format(self.kq)
 
 
-def send_cancellation_email(reservation):
-    subject = _('Your reservation of has been cancelled')
-    template = 'assets/email_reservation_cancelled.txt'
-    context = {
-        'user': reservation.user.get_full_name(),
-        'asset': reservation.asset.name,
-        'kq': reservation.reserved_from.kq,
-        'site': Site.objects.get_current().name
-    }
-    to = [reservation.user.email]
-    send_mail_wrapper(subject, template, context, to)
+class Reservation(models.Model):
+
+    user = models.ForeignKey(User, verbose_name=_(u'User'),
+                             null=True, blank=True)
+    reserved_from = models.ForeignKey(AssetAvailability,
+                                      verbose_name=_(u'Reserved from'),
+                                      null=True, blank=True)
+    asset = models.ForeignKey(Asset, verbose_name=_(u'Asset'),
+                              null=False)
+    slot_id = models.PositiveSmallIntegerField(null=True)
+    reservation_begins = models.DateTimeField(verbose_name=_(u'Datetime'),
+                                              null=False, blank=False)
+    reservation_ends = models.DateTimeField(verbose_name=_(u'Datetime'),
+                                            null=False, blank=False)
+
+    class Meta:
+        verbose_name = _(u'reservation')
+        verbose_name_plural = _(u'reservations')
+
+    def __unicode__(self):
+        return ugettext(u'Reservation of {0}, made by {1}').format(self.asset, self.user)
+
+
+from moocng.assets.utils import send_cancellation_email
 
 
 def assure_granularity(sender, instance, **kwargs):
@@ -127,26 +138,3 @@ signals.post_save.connect(remove_reservations, sender=AssetAvailability)
 signals.pre_delete.connect(remove_reservations_delete, sender=AssetAvailability)
 signals.post_save.connect(invalidate_cache, sender=AssetAvailability)
 signals.post_delete.connect(invalidate_cache, sender=AssetAvailability)
-
-
-class Reservation(models.Model):
-
-    user = models.ForeignKey(User, verbose_name=_(u'User'),
-                             null=True, blank=True)
-    reserved_from = models.ForeignKey(AssetAvailability,
-                                      verbose_name=_(u'Reserved from'),
-                                      null=True, blank=True)
-    asset = models.ForeignKey(Asset, verbose_name=_(u'Asset'),
-                              null=False)
-    slot_id = models.PositiveSmallIntegerField(null=True)
-    reservation_begins = models.DateTimeField(verbose_name=_(u'Datetime'),
-                                              null=False, blank=False)
-    reservation_ends = models.DateTimeField(verbose_name=_(u'Datetime'),
-                                            null=False, blank=False)
-
-    class Meta:
-        verbose_name = _(u'reservation')
-        verbose_name_plural = _(u'reservations')
-
-    def __unicode__(self):
-        return ugettext(u'Reservation of {0}, made by {1}').format(self.asset, self.user)

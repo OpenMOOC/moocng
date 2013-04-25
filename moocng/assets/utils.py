@@ -15,6 +15,7 @@
 
 import datetime
 
+from django.contrib.sites.models import Site
 from django.db import IntegrityError
 from django.db.models import Q, Count
 from django.utils.translation import ugettext as _
@@ -23,6 +24,7 @@ from moocng.mongodb import get_db
 from moocng.assets import cache
 from moocng.assets.models import Asset, AssetAvailability, Reservation
 from moocng.courses.models import KnowledgeQuantum, Course
+from moocng.courses.utils import send_mail_wrapper
 
 
 def course_get_assets(course):
@@ -167,3 +169,16 @@ def book_asset(user, asset, availability, reservation_begins, reservation_ends):
     new_reservation.save()
 
     return (True, _("Reservation created successfully."))
+
+
+def send_cancellation_email(reservation):
+    subject = _('Your reservation has been cancelled')
+    template = 'assets/email_reservation_cancelled.txt'
+    context = {
+        'user': reservation.user.get_full_name(),
+        'asset': reservation.asset.name,
+        'kq': reservation.reserved_from.kq,
+        'site': Site.objects.get_current().name
+    }
+    to = [reservation.user.email]
+    send_mail_wrapper(subject, template, context, to)
