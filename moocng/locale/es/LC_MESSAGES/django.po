@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-25 12:37+0200\n"
+"POT-Creation-Date: 2013-04-25 13:48+0200\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Antonio Perez-Aranda <aperezaranda@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -170,38 +170,36 @@ msgid "The specified time is in the past."
 msgstr "Se ha especificado un momento en el pasado."
 
 #: assets/utils.py:109
-msgid "Not enought time in advance for this reservation"
+msgid "Not enough time in advance for this reservation"
 msgstr "La reserva debe hacerse con más antelación"
 
 #: assets/utils.py:111
 msgid "The specified time is not in the bookable period."
-msgstr ""
+msgstr "El tiempo indicado no se corresponde con un periodo de reserva"
 
 #: assets/utils.py:115
 msgid "You have reached the pending reservations limit for this course."
-msgstr ""
+msgstr "Ha alcanzado el maximo de reservas pendientes para este curso"
 
 #: assets/utils.py:117
 msgid "You have reached the reservations limit for this course."
-msgstr ""
+msgstr "Ha alcanzado el limite de reservas para este curso"
 
 #: assets/utils.py:123
 msgid "No available places left at selected time."
-msgstr ""
+msgstr "No hay plazas disponibles para la hora seleccionada"
 
 #: assets/utils.py:127
 msgid "You already have a reservation for the same asset at the same time"
-msgstr ""
+msgstr "Ya tiene una reserva del mismo recurso para la misma hora"
 
 #: assets/utils.py:158
-#, fuzzy
 msgid "There's not a free slot available."
-msgstr "La solución no se encuentra disponible"
+msgstr "No hay slots disponibles"
 
 #: assets/utils.py:169
-#, fuzzy
 msgid "Reservation created successfully."
-msgstr "Sus cambios han sido guardados con éxito."
+msgstr "La reserva ha sido registrada con éxito."
 
 #: assets/views.py:42 assets/views.py:98 assets/views.py:130
 #: courses/views.py:169 courses/views.py:212 peerreview/views.py:50
@@ -210,26 +208,24 @@ msgid "You are not enrolled in this course"
 msgstr "No estás matriculado en este curso"
 
 #: assets/views.py:104
-#, fuzzy
 msgid "You are not the owner of this reservation"
-msgstr "No estás matriculado en este curso"
+msgstr "No es quien registró esta reserva"
 
 #: assets/views.py:111
-msgid "Not enought advance time to cancel this reservation."
-msgstr ""
+msgid "Not enough time in advance to cancel this reservation."
+msgstr "Ha sobrepasado la hora límite para cancelar la reserva"
 
 #: assets/views.py:140
-#, fuzzy
 msgid "This nugget has no available asset"
-msgstr "Pero esta sección aún no está disponible."
+msgstr "Esta píldora no tiene recursos disponibles."
 
 #: assets/views.py:145
 msgid "No initial time specified"
-msgstr ""
+msgstr "Hora inicial no especificada"
 
 #: assets/views.py:153
 msgid "Incorrect booking time specified"
-msgstr ""
+msgstr "Hora de reserva incorrecta"
 
 #: assets/templates/assets/email_reservation_cancelled.txt:3
 #, python-format
@@ -245,27 +241,25 @@ msgstr ""
 
 #: assets/templates/assets/reservations.html:17
 msgid "Hide past reservations"
-msgstr ""
+msgstr "Ocultar reservas pasadas"
 
 #: assets/templates/assets/reservations.html:19
 #: assets/templates/assets/reservations.html:104
 msgid "Display past reservations"
-msgstr ""
+msgstr "Mostrar reservas pasadas"
 
 #: assets/templates/assets/reservations.html:41
 #: assets/templates/assets/reservations.html:50
-#, fuzzy
 msgid "Confirm cancelation"
-msgstr "Información"
+msgstr "Confirme la cancelación"
 
 #: assets/templates/assets/reservations.html:44
-#, fuzzy
 msgid ""
 "Are you completely sure you want to cancel the registration? You cannot undo "
 "this action."
 msgstr ""
-"¿Está completamente seguro de que quiere eliminarlo? Esta acción no se puede "
-"deshacer."
+"¿Está completamente seguro de que quiere cancelar la reserva? Esta acción no "
+"se puede deshacer."
 
 #: assets/templates/assets/reservations.html:49
 #: teacheradmin/templates/teacheradmin/units.html:124
@@ -274,9 +268,8 @@ msgid "Back"
 msgstr "Atrás"
 
 #: assets/templates/assets/reservations.html:55
-#, fuzzy
 msgid "Active Reservations"
-msgstr "Descripción de la actividad"
+msgstr "Reservas Activas"
 
 #: assets/templates/assets/reservations.html:58
 #: assets/templates/assets/reservations.html:76
@@ -299,10 +292,16 @@ msgid ""
 "        <li> Students sharing this slot: %(concurrent)s </li>\n"
 "        "
 msgstr ""
+"\n"
+"        <li> Desde: %(from)s </li>\n"
+"        <li> Hasta:  %(to)s </li>\n"
+"        <li> Slot: %(slot_id)s </li>\n"
+"        <li> Estudiantes que comparten este slot: %(concurrent)s </li>\n"
+"        "
 
 #: assets/templates/assets/reservations.html:72
 msgid "Pending Reservations"
-msgstr ""
+msgstr "Reservas Pendientes"
 
 #: assets/templates/assets/reservations.html:88
 #: courses/templates/admin/courses/question/options.html:163
@@ -315,11 +314,11 @@ msgstr "Eliminar"
 
 #: assets/templates/assets/reservations.html:96
 msgid "You do not have any pending asset reservation for this course."
-msgstr ""
+msgstr "No tiene reservas de recursos pendientes para este curso"
 
 #: assets/templates/assets/reservations.html:100
 msgid "Past Reservations"
-msgstr ""
+msgstr "Reservas Pasadas"
 
 #: badges/admin.py:30 categories/admin.py:15
 msgid "Image"
@@ -631,11 +630,11 @@ msgstr "Id del contenido"
 
 #: courses/models.py:77
 msgid "Pending reservations allowed:"
-msgstr ""
+msgstr "Reservas pendientes permitidas:"
 
 #: courses/models.py:79
 msgid "Total reservations allowed:"
-msgstr ""
+msgstr "Total de reservas permitidas:"
 
 #: courses/models.py:82
 msgid "Pass threshold"
@@ -1127,9 +1126,8 @@ msgid "Reviews"
 msgstr "Revisiones"
 
 #: courses/templates/courses/base_course.html:31
-#, fuzzy
 msgid "Reservations"
-msgstr "preguntas"
+msgstr "Reservas"
 
 #: courses/templates/courses/base_course.html:36
 msgid "Progress"
@@ -1209,7 +1207,7 @@ msgstr ""
 
 #: courses/templates/courses/classroom.html:82
 msgid "New reservation"
-msgstr ""
+msgstr "Nueva reserva"
 
 #: courses/templates/courses/classroom.html:94
 #: teacheradmin/templates/teacheradmin/units.html:402
@@ -1258,14 +1256,12 @@ msgstr "Actividad Revisada por Compañeros"
 
 #: courses/templates/courses/classroom.html:186
 #: teacheradmin/templates/teacheradmin/units.html:50
-#, fuzzy
 msgid "AS"
-msgstr "R"
+msgstr "RE"
 
 #: courses/templates/courses/classroom.html:187
-#, fuzzy
 msgid "Assets available"
-msgstr "Certificación disponible"
+msgstr "Recursos disponibles"
 
 #: courses/templates/courses/classroom.html:188
 msgid "Answers sent"
@@ -1341,82 +1337,79 @@ msgstr "Comprobar mi progreso"
 
 #: courses/templates/courses/classroom.html:201
 msgid "Available Assets: "
-msgstr ""
+msgstr "Recursos Disponibles: "
 
 #: courses/templates/courses/classroom.html:202
 msgid "Book"
-msgstr ""
+msgstr "Reservar"
 
 #: courses/templates/courses/classroom.html:203
-#, fuzzy
 msgid "Date: "
-msgstr "Fecha"
+msgstr "Fecha: "
 
 #: courses/templates/courses/classroom.html:204
 msgid "Time: "
-msgstr ""
+msgstr "Hora: "
 
 #: courses/templates/courses/classroom.html:205
-#, fuzzy
 msgid "Cancelations: "
-msgstr "Cancelar"
+msgstr "Anulaciones: "
 
 #: courses/templates/courses/classroom.html:206
 msgid "Assets in this nugget can no longer be booked."
-msgstr ""
+msgstr "Los recursos de esta píldora ya no podrán ser reservados."
 
 #: courses/templates/courses/classroom.html:207
 msgid "Capacity: "
-msgstr ""
+msgstr "Capacidad: "
 
 #: courses/templates/courses/classroom.html:208
 msgid "Assets can be booked:"
-msgstr ""
+msgstr "Disponibilidad para reservar:"
 
 #: courses/templates/courses/classroom.html:209
 msgid "From: "
-msgstr ""
+msgstr "Desde: "
 
 #: courses/templates/courses/classroom.html:210
 msgid "To: "
-msgstr ""
+msgstr "Hasta: "
 
 #: courses/templates/courses/classroom.html:211
 msgid "Time in advance required for: "
-msgstr ""
+msgstr "Antelación mínima para: "
 
 #: courses/templates/courses/classroom.html:212
 msgid "Limits for this course: "
-msgstr ""
+msgstr "Límites para este curso: "
 
 #: courses/templates/courses/classroom.html:213
 msgid "Number of slots: "
-msgstr ""
+msgstr "Número de slots: "
 
 #: courses/templates/courses/classroom.html:214
 msgid "Pending reservations: "
-msgstr ""
+msgstr "Reservas pendientes: "
 
 #: courses/templates/courses/classroom.html:215
 msgid "Total reservations: "
-msgstr ""
+msgstr "Reservas totales: "
 
 #: courses/templates/courses/classroom.html:216
 msgid "minutes"
-msgstr ""
+msgstr "minutos"
 
 #: courses/templates/courses/classroom.html:217
 msgid "Requisites for making a reservation:"
-msgstr ""
+msgstr "Requisitos para hacer una reserva:"
 
 #: courses/templates/courses/classroom.html:218
-#, fuzzy
 msgid "Reservations: "
-msgstr "Descripción:"
+msgstr "Reservas: "
 
 #: courses/templates/courses/classroom.html:219
 msgid "Slot length: "
-msgstr ""
+msgstr "Duración del slot: "
 
 #: courses/templates/courses/classroom.html:222
 msgid "Your file is too big"
@@ -2061,11 +2054,12 @@ msgid ""
 "Please take into account than this change will affect all courses which use "
 "this asset"
 msgstr ""
+"Por favor, tenga en cuenta que estos cambios afectarán a todos los cursos "
+"que utilicen este recurso"
 
 #: teacheradmin/templates/teacheradmin/assets.html:25
-#, fuzzy
 msgid "There are not assets yet"
-msgstr "No hay aún ningún fichero adjunto."
+msgstr "No hay ningún recurso todavía."
 
 #: teacheradmin/templates/teacheradmin/base_teacheradmin.html:12
 msgid "Course edition"
@@ -2380,7 +2374,7 @@ msgstr "Actividad revisada por compañeros"
 #: teacheradmin/templates/teacheradmin/units.html:51
 #: teacheradmin/templates/teacheradmin/units.html:135
 msgid "Asset Availability"
-msgstr ""
+msgstr "Disponibilidad de Recursos"
 
 #: teacheradmin/templates/teacheradmin/units.html:55
 #: teacheradmin/templates/teacheradmin/units.html:60
@@ -2396,18 +2390,16 @@ msgid "Title:"
 msgstr "Título:"
 
 #: teacheradmin/templates/teacheradmin/units.html:61
-#, fuzzy
 msgid "Remove Asset"
-msgstr "Eliminar"
+msgstr "Eliminar Recurso"
 
 #: teacheradmin/templates/teacheradmin/units.html:62
-#, fuzzy
 msgid "Name:"
-msgstr "Nombre"
+msgstr "Nombre:"
 
 #: teacheradmin/templates/teacheradmin/units.html:63
 msgid "Add an asset:"
-msgstr ""
+msgstr "Añadir un recurso:"
 
 #: teacheradmin/templates/teacheradmin/units.html:123
 #: teacheradmin/templates/teacheradmin/units.html:348
@@ -2428,9 +2420,8 @@ msgid "Save changes and add a peer review assignment to this nugget"
 msgstr "Guardar cambios y añadir una actividad revisada por compañeros"
 
 #: teacheradmin/templates/teacheradmin/units.html:185
-#, fuzzy
 msgid "Save changes and add an asset availability to this nugget"
-msgstr "Guardar cambios y añadir una pregunta a esta píldora"
+msgstr "Guardar cambios y añadir disponibilidad de recursos a esta píldora"
 
 #: teacheradmin/templates/teacheradmin/units.html:205
 msgid "File name"
@@ -2525,20 +2516,19 @@ msgstr "Eliminar la actividad revisada por compañeros"
 
 #: teacheradmin/templates/teacheradmin/units.html:313
 msgid "Available from:"
-msgstr ""
+msgstr "Disponible desde:"
 
 #: teacheradmin/templates/teacheradmin/units.html:317
 msgid "Available to:"
-msgstr ""
+msgstr "Disponible hasta:"
 
 #: teacheradmin/templates/teacheradmin/units.html:330
-#, fuzzy
 msgid "Save changes and add an asset"
-msgstr "Guardar cambios y añadir una pregunta a esta píldora"
+msgstr "Guardar cambios y añadir un recurso"
 
 #: teacheradmin/templates/teacheradmin/units.html:337
 msgid "Remove the asset availability"
-msgstr ""
+msgstr "Eliminar la disponibilidad de recursos"
 
 #: teacheradmin/templates/teacheradmin/units.html:369
 msgid "The changes were saved successfully."
@@ -2571,15 +2561,16 @@ msgstr ""
 "deshacer."
 
 #: teacheradmin/templates/teacheradmin/units.html:410
-#, fuzzy
 msgid "Confirm operation"
-msgstr "Información"
+msgstr "Confirmar operación"
 
 #: teacheradmin/templates/teacheradmin/units.html:413
 msgid ""
 "Are you completely sure you want to do this operation? It is possible that "
 "some reservations are cancelled after this change "
 msgstr ""
+"¿Está completamente seguro de que quiere realizar esta operación? "
+"Es posible que algunas reservas sean canceladas después de este cambio "
 
 #: templates/403.html:19
 msgid "Access denied"
