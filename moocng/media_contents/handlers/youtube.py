@@ -41,13 +41,13 @@ class YoutubeMediaContentHandler(MediaContentHandlerBase):
 
     def extract_id(self, url):
         patterns = [
-            'youtube\.com/watch[#\?].*?v=([^"\& ]+)',
-            'youtube\.com/embed/([^"\&\? ]+)',
-            'youtube\.com/v/([^"\&\? ]+)',
-            'youtube\.com/\?v=([^"\& ]+)',
-            'youtu\.be/([^"\&\? ]+)',
-            'gdata\.youtube\.com/feeds/api/videos/([^"\&\? ]+)',
-            '^([^"\&\? ]+)$',
+            'youtube\.com/watch[#\?].*?v=([\w\-]+)',
+            'youtube\.com/embed/([\w\-]+)',
+            'youtube\.com/v/([\w\-]+)',
+            'youtube\.com/\?v=([\w\-]+)',
+            'youtu\.be/([\w\-]+)',
+            'gdata\.youtube\.com/feeds/api/videos/([\w\-]+)',
+            '^([\w\-]+)$',
         ]
         for pattern in patterns:
             result = re.search(pattern, url, re.IGNORECASE)
