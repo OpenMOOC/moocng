@@ -577,7 +577,7 @@ MOOC.views.Question = Backbone.View.extend({
             }
 
             return new MOOC.models.Reply({
-                option: view.model.get("id"),
+                option: parseInt(view.model.get("id"), 10),
                 value: value
             });
         });
@@ -591,6 +591,7 @@ MOOC.views.Question = Backbone.View.extend({
 
             MOOC.ajax.sendAnswer(answer, function (data, textStatus, jqXHR) {
                 if (jqXHR.status === 201 || jqXHR.status === 204) {
+                    answer.local = false;
                     self.model.set('answer', answer);
                     self.loadSolution(fetch_solutions);
                 }
@@ -724,7 +725,7 @@ MOOC.views.Option = Backbone.View.extend({
         this.$el.find("#" + attributes.id).remove();
         this.$el.find("#" + attributes.id + "-fb").remove();
 
-        if (this.reply && this.reply.get('option') === this.model.get('id') && optiontype !== 'l') {
+        if (this.reply && this.reply.get('option') === parseInt(this.model.get('id'), 10) && optiontype !== 'l') {
             correct = false;
             if (optiontype === 't') {
                 attributes.value = this.reply.get('value');

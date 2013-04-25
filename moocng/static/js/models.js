@@ -410,7 +410,7 @@ MOOC.models.Answer = Backbone.Model.extend({
             result = null;
         if (replies) {
             result = replies.find(function (reply) {
-                return reply.get('option') === opt_id;
+                return reply.get('option') === parseInt(opt_id, 10);
             });
         }
         return result;

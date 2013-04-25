@@ -54,7 +54,7 @@ db.answers.find().forEach(function (answer) {
             unit_id: question_unit[question_id],
             kq_id: question_kq[question_id],
             replyList: replyList,
-            created: ISODate(question.date)
+            date: ISODate(question.date)
         });
     }
 });

@@ -644,7 +644,7 @@ class AnswerResource(MongoUserResource):
     unit_id = fields.IntegerField(null=False)
     kq_id = fields.IntegerField(null=False)
     question_id = fields.IntegerField(null=False)
-    created = fields.DateTimeField(readonly=True, default=datetime.now)
+    date = fields.DateTimeField(readonly=True, default=datetime.now)
     replyList = fields.ListField(null=False)
 
     class Meta:
@@ -669,11 +669,11 @@ class AnswerResource(MongoUserResource):
             "question_id": 1,
             "replyList": 1,
             "user_id": 0,
-            "created": 0,
+            "date": 0,
         }
 
     def obj_create(self, bundle, request=None, **kwargs):
-        bundle.data["created"] = datetime.utcnow()
+        bundle.data["date"] = datetime.utcnow()
         bundle = super(AnswerResource, self).obj_create(bundle, request)
         bundle.uuid = bundle.obj.question_id
         return bundle
@@ -689,7 +689,7 @@ class AnswerResource(MongoUserResource):
             }, update={
                 "$set": {
                     'replyList': bundle.data.get("replyList"),
-                    "created": datetime.utcnow(),
+                    "date": datetime.utcnow(),
                 }
             }, safe=True, new=True)
 
