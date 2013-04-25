@@ -59,6 +59,6 @@ def kq_viewed(kq):
 
 
 def question_answered(question):
-    answers = get_db().get_collection('activity')
+    answers = get_db().get_collection('answers')
 
     return answers.find({"question_id": question.id}).count()
