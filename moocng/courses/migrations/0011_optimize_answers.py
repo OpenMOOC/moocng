@@ -12,48 +12,65 @@ from moocng.mongodb import get_db
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        kq_unit = {}
+        question_course = {}
+        question_unit = {}
+        question_kq = {}
 
         for course in orm['courses.course'].objects.all():
             for unit in course.unit_set.all():
                 for kq in unit.knowledgequantum_set.all():
-                    kq_unit[str(kq.id)] = unit.id
+                    try:
+                        question = kq.question_set.get()
+                    except kq.question_set.model.DoesNotExist:
+                        continue
+                    question_course[str(question.id)] = course.id
+                    question_unit[str(question.id)] = unit.id
+                    question_kq[str(question.id)] = kq.id
 
         js_migration = """
-var kq_unit = %s;
+var question_course = %s,
+    question_unit = %s,
+    question_kq = %s;
 
-db.activity_tmp.drop();
+db.answers_new.drop();
 
-db.activity.find().forEach(function (activity) {
-    var internal_counter = 0, course;
-    for (cp in activity.courses) {
-        course = activity.courses[cp];
-        internal_counter += course.kqs.length;
-        course.kqs.forEach(function (kq) {
-            db.activity_tmp.insert({
-                user_id: parseInt(activity.user, 10),
-                course_id: parseInt(cp, 10),
-                kq_id: parseInt(kq, 10),
-                unit_id: kq_unit[kq]
+db.answers.find().forEach(function (answer) {
+    var replyList, question, question_id;
+    for (question_id in answer.questions) {
+        question = answer.questions[question_id];
+        replyList = question.replyList.forEach(function (reply) {
+            return({
+                option: parseInt(reply.option, 10),
+                value: reply.value
             });
+        });
+        db.answers_new.insert({
+            user_id: parseInt(answer.user, 10),
+            question_id: parseInt(question_id, 10),
+            course_id: question_course[question_id],
+            unit_id: question_unit[question_id],
+            kq_id: question_kq[question_id],
+            replyList: replyList,
+            created: ISODate(question.date)
         });
     }
 });
-        """ % simplejson.dumps(kq_unit)
+        """ % (simplejson.dumps(question_course),
+               simplejson.dumps(question_unit),
+               simplejson.dumps(question_kq))
 
         connector = get_db()
         db = connector.get_database()
         db.eval(Code(js_migration))
 
-        db.activity.drop()
-        db.activity_tmp.rename('activity')
+        db.answers.drop()
+        db.answers_new.rename('answers')
 
-        print "Activity collection migrated, old collection dropped. Creating indexes..."
+        print "Answers collection migrated, old collection dropped. Creating indexes..."
 
-        db.activity.create_index([("user_id", pymongo.ASCENDING),
-                                  ("unit_id", pymongo.ASCENDING),
-                                  ("kq_id", pymongo.ASCENDING)])
-        db.activity.create_index([("kq_id", pymongo.ASCENDING)])
+        db.answers.create_index([("user_id", pymongo.ASCENDING),
+                                 ("question_id", pymongo.ASCENDING)])
+        db.answers.create_index([("question_id", pymongo.ASCENDING)])
 
     def backwards(self, orm):
         "Write your backwards methods here."
