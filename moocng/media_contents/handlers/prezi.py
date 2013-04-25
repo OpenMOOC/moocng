@@ -41,8 +41,8 @@ class PreziMediaContentHandler(MediaContentHandlerBase):
 
     def extract_id(self, url):
         patterns = [
-            'prezi\.com/([a-zA-Z0-9-]+)/.*',
-            '^([a-zA-Z0-9-]+)$',
+            'prezi\.com/([a-zA-Z\d\-]+)/.*',
+            '^([a-zA-Z\d\-]+)$',
         ]
         for pattern in patterns:
             result = re.search(pattern, url, re.IGNORECASE)
