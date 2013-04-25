@@ -16,7 +16,7 @@
             <li class="{% block nav-teacheradmin-categories %}{% endblock %}"><a href="{% url teacheradmin_categories course.slug %}">{% trans "Categories" %}</a></li>
             <li class="{% block nav-teacheradmin-announcements %}{% endblock %}"><a href="{% url teacheradmin_announcements course.slug %}">{% trans "Announcements" %}</a></li>
             <li class="nav-header">{% trans "Extra" %}</li>
-            <li class="{% block nav-teacheradmin-stats %}{% endblock %}"><a href="{% url teacheradmin_stats course.slug %}">{% trans "Statistics" %}</a></li>
+            <!--<li class="{% block nav-teacheradmin-stats %}{% endblock %}"><a href="{% url teacheradmin_stats course.slug %}">{% trans "Statistics" %}</a></li>-->
             <li class="{% block nav-teacheradmin-emails %}{% endblock %}"><a href="{% url teacheradmin_emails course.slug %}">{% trans "Send mail" %}</a></li>
         </ul>
     </div>

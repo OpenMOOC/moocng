@@ -51,6 +51,12 @@ from moocng.media_contents import get_media_content_types_choices
 @is_teacher_or_staff
 def teacheradmin_stats(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
+
+    # TODO DELETE THIS
+    return HttpResponseRedirect(reverse('teacheradmin_info',
+                                        args=[course_slug]))
+    # END DELETE THIS
+
     is_enrolled = course.students.filter(id=request.user.id).exists()
 
     (completed, started) = course_completed_started(course)
