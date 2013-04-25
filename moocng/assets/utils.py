@@ -106,7 +106,7 @@ def is_asset_bookable(user, asset, availability, reservation_begins, reservation
     if reservation_begins < datetime.datetime.today():
         return (False, _('The specified time is in the past.'))
     if reservation_begins < reservation_limit:
-        return (False, _('Not enought time in advance for this reservation'))
+        return (False, _('Not enough time in advance for this reservation'))
     if reservation_begins.date() < availability.available_from or reservation_ends.date() > availability.available_to:
         return (False, _('The specified time is not in the bookable period.'))
 

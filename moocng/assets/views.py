@@ -108,7 +108,7 @@ def cancel_reservation(request, course_slug, reservation_id):
         cancel_limit += timedelta(0, reserv_remove.asset.cancelation_in_advance * 60)
 
         if reserv_remove.reservation_begins < cancel_limit:
-            messages.error(request, _('Not enought advance time to cancel this reservation.'))
+            messages.error(request, _('Not enough time in advance to cancel this reservation.'))
             return HttpResponseRedirect(reverse('course_reservations', args=[course.slug]))
 
         reserv_remove.delete()
