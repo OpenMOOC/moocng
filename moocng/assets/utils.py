@@ -210,3 +210,43 @@ def send_cancellation_email(reservation):
     }
     to = [reservation.user.email]
     send_mail_wrapper(subject, template, context, to)
+
+
+def get_reservations_not_compatible_with_slot_duration(asset):
+    slot_duration = asset.slot_duration
+    query_list = []
+    parameter_list = ()
+    if slot_duration == 1:
+        query_list.append("TRUE")  # All reservations are be compatible
+    elif 60 % slot_duration == 0:  # In this case, only minutes need to be checked
+        valid_time_list = get_suitable_begin_times(asset.slot_duration,
+                                                   datetime.datetime.now())
+        valid_minutes_set = set(map(lambda x: x.minute, valid_time_list))
+        for valid_minute in valid_minutes_set:
+            query_list.append("(extract (minute from reservation_begins) = %s)")
+            parameter_list += (valid_minute, )
+    else:
+        valid_time_list = get_suitable_begin_times(asset.slot_duration,
+                                                   datetime.datetime.now())
+        for valid_time in valid_time_list:
+            query_list.append("""((extract(hour from reservation_begins) = %s)
+                              AND (extract (minute from reservation_begins) = %s))""")
+            parameter_list += (valid_time.hour, valid_time.minute)
+
+    query = """((mod(CAST((extract(epoch FROM (reservation_ends-reservation_begins))) AS NUMERIC),
+                    %s) != 0)
+               OR NOT (""" + " OR ".join(query_list) + """)
+               OR (extract (second from reservation_begins) != 0))"""
+    parameter_list = (slot_duration * 60, ) + parameter_list
+    reservations = Reservation.objects.extra(where=[query],
+                                             params=parameter_list)
+    filter_from = datetime.datetime.now() + datetime.timedelta(minutes=asset.cancelation_in_advance)
+    reservations = reservations.filter(Q(asset__id=asset.id)
+                                       & Q(reservation_begins__gt=filter_from))
+    return reservations
+
+
+def check_reservations_slot_duration(asset):
+    for i in get_reservations_not_compatible_with_slot_duration(asset):
+        send_cancellation_email(i)
+        i.delete()
