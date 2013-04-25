@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from bson import Code
 from south.v2 import DataMigration
+import pymongo
 
 from django.utils import simplejson
 
@@ -15,10 +17,10 @@ class Migration(DataMigration):
         for course in orm['courses.course'].objects.all():
             for unit in course.unit_set.all():
                 for kq in unit.knowledgequantum_set.all():
-                    kq_unit[kq.id] = unit.id
+                    kq_unit[str(kq.id)] = unit.id
 
         js_migration = """
-var kq_unit = '%s';
+var kq_unit = %s;
 
 db.activity_tmp.drop();
 
@@ -32,7 +34,7 @@ db.activity.find().forEach(function (activity) {
                 user_id: parseInt(activity.user, 10),
                 course_id: parseInt(cp, 10),
                 kq_id: parseInt(kq, 10),
-
+                unit_id: kq_unit[kq]
             });
         });
     }
@@ -41,12 +43,16 @@ db.activity.find().forEach(function (activity) {
 
         connector = get_db()
         db = connector.get_database()
-        db.eval(js_migration)
+        db.eval(Code(js_migration))
 
-        db.activity.rename('pre_optimization_activity')
+        db.activity.drop()
         db.activity_tmp.rename('activity')
 
-        print 'The old activity collection is still in your mongo database, its new name is "pre_optimization_activity"'
+        print "Activity collection migrated, old collection dropped. Creating index..."
+
+        db.activity.create_index([("user_id", pymongo.ASCENDING),
+                                  ("unit_id", pymongo.ASCENDING),
+                                  ("kq_id", pymongo.ASCENDING)])
 
     def backwards(self, orm):
         "Write your backwards methods here."
