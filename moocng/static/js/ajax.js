@@ -86,7 +86,7 @@ MOOC.ajax.getOptionsByQuestion = function (question, callback) {
 
 MOOC.ajax.getAnswerByQuestion = function (question, callback) {
     "use strict";
-    $.ajax(MOOC.ajax.host + "answer/?format=json&question=" + question, {
+    $.ajax(MOOC.ajax.host + "answer/?format=json&question_id=" + question, {
         success: callback,
         error: MOOC.ajax.genericError
     });
