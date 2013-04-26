@@ -16,6 +16,8 @@ def calculate_question_mark(kq, question, user):
         else:
             return (0.0, True)
 
+    return (0.0, True)
+
 
 def calculate_peer_review_mark(kq, peer_review_assignment, user):
     from moocng.peerreview.utils import kq_get_peer_review_score
@@ -62,7 +64,7 @@ def calculate_unit_mark(unit, user, normalized_unit_weight):
     unit_mark = 0
     entries = []
     use_unit_in_total = False
-    for unit_kq in unit.kq_set.all():
+    for unit_kq in unit.knowledgequantum_set.all():
         mark, use_in_total = calculate_kq_mark(unit_kq, user)
         if use_in_total and mark is not None:
             use_unit_in_total = True
