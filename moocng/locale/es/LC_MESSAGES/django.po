@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-25 13:48+0200\n"
+"POT-Creation-Date: 2013-04-26 17:08+0200\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Antonio Perez-Aranda <aperezaranda@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -37,7 +37,7 @@ msgstr "Español"
 msgid "Change key of selected %(verbose_name_plural)s"
 msgstr "Cambiar la key de las %(verbose_name_plural)s seleccionada(s)"
 
-#: api/models.py:28 assets/models.py:134
+#: api/models.py:28 assets/models.py:74
 msgid "User"
 msgstr "Usuario"
 
@@ -61,145 +61,149 @@ msgstr "User Apis"
 msgid "Apikey of {0}  :::  {1}"
 msgstr "Apikey de {0}  :::  {1}"
 
-#: assets/models.py:34
+#: assets/models.py:32
 msgid "Slot duration"
 msgstr "Duración del slot"
 
-#: assets/models.py:35 categories/models.py:10 courses/models.py:42
+#: assets/models.py:33 categories/models.py:10 courses/models.py:42
 msgid "Name"
 msgstr "Nombre"
 
-#: assets/models.py:37 courses/models.py:44
+#: assets/models.py:35 courses/models.py:44
 #: courses/templates/courses/progress.html:57 peerreview/models.py:32
 #: peerreview/models.py:89
 msgid "Description"
 msgstr "Descripción"
 
-#: assets/models.py:39
+#: assets/models.py:37
 msgid "Student capacity"
 msgstr "Capacidad"
 
-#: assets/models.py:40
+#: assets/models.py:38
 msgid "Maximun bookable slots"
 msgstr "Número máximo de slots simultáneos"
 
-#: assets/models.py:41
+#: assets/models.py:39
 msgid "Time required in advance for reservation"
 msgstr "Antelación requerida para hacer una reserva"
 
-#: assets/models.py:43
+#: assets/models.py:41
 msgid "Time required in advance to cancel a reservation"
 msgstr "Antelación requerida para cancelar una reserva"
 
-#: assets/models.py:47
+#: assets/models.py:45
 msgid "asset"
 msgstr "recurso"
 
-#: assets/models.py:48
+#: assets/models.py:46
 msgid "assets"
 msgstr "Recursos"
 
-#: assets/models.py:57
+#: assets/models.py:55
 msgid "KnowledgeQuantum"
 msgstr "Píldora"
 
-#: assets/models.py:59
+#: assets/models.py:57
 #: teacheradmin/templates/teacheradmin/base_teacheradmin.html:17
 #: teacheradmin/templates/teacheradmin/units.html:323
 msgid "Assets"
 msgstr "Recursos"
 
-#: assets/models.py:61
+#: assets/models.py:59
 msgid "Available from"
 msgstr "Disponible desde"
 
-#: assets/models.py:63
+#: assets/models.py:61
 msgid "Available to"
 msgstr "Disponible hasta"
 
-#: assets/models.py:67
+#: assets/models.py:65
 msgid "asset availability"
 msgstr "disponibilidad de recursos"
 
-#: assets/models.py:68
+#: assets/models.py:66
 msgid "asset availabilities"
 msgstr "disponibilidades de recursos"
 
-#: assets/models.py:71
+#: assets/models.py:69
 msgid "Assets availables for {0}"
 msgstr "Recursos disponibles para {0}"
 
-#: assets/models.py:75
-msgid "Your reservation of has been cancelled"
-msgstr "Su reserva ha sido anulada"
-
-#: assets/models.py:137
+#: assets/models.py:77
 msgid "Reserved from"
 msgstr "Reservado para"
 
-#: assets/models.py:139
+#: assets/models.py:79
 msgid "Asset"
 msgstr "Recurso"
 
-#: assets/models.py:142 assets/models.py:144 courses/models.py:176
+#: assets/models.py:82 assets/models.py:84 courses/models.py:176
 msgid "Datetime"
 msgstr "Fecha y hora"
 
-#: assets/models.py:148
+#: assets/models.py:88
 msgid "reservation"
 msgstr "reserva"
 
-#: assets/models.py:149
+#: assets/models.py:89
 msgid "reservations"
 msgstr "reservas"
 
-#: assets/models.py:152
+#: assets/models.py:92
 msgid "Reservation of {0}, made by {1}"
 msgstr "Reserva de {0}, hecha por {1}"
 
-#: assets/utils.py:98
+#: assets/utils.py:114
 msgid "This asset is not available from this nugget."
 msgstr "Este recurso no está disponible desde esta píldora."
 
-#: assets/utils.py:101
+#: assets/utils.py:117
 msgid "A reservation should not finish before it starts."
 msgstr "Una reserva no puede acabar antes de comenzar."
 
-#: assets/utils.py:107
+#: assets/utils.py:123
 msgid "The specified time is in the past."
 msgstr "Se ha especificado un momento en el pasado."
 
-#: assets/utils.py:109
+#: assets/utils.py:125
 msgid "Not enough time in advance for this reservation"
 msgstr "La reserva debe hacerse con más antelación"
 
-#: assets/utils.py:111
+#: assets/utils.py:127
 msgid "The specified time is not in the bookable period."
 msgstr "El tiempo indicado no se corresponde con un periodo de reserva"
 
-#: assets/utils.py:115
+#: assets/utils.py:132
 msgid "You have reached the pending reservations limit for this course."
 msgstr "Ha alcanzado el maximo de reservas pendientes para este curso"
 
-#: assets/utils.py:117
+#: assets/utils.py:134
 msgid "You have reached the reservations limit for this course."
 msgstr "Ha alcanzado el limite de reservas para este curso"
 
-#: assets/utils.py:123
+#: assets/utils.py:140
 msgid "No available places left at selected time."
 msgstr "No hay plazas disponibles para la hora seleccionada"
 
-#: assets/utils.py:127
+#: assets/utils.py:144
 msgid "You already have a reservation for the same asset at the same time"
 msgstr "Ya tiene una reserva del mismo recurso para la misma hora"
 
-#: assets/utils.py:158
+#: assets/utils.py:175
 msgid "There's not a free slot available."
 msgstr "No hay slots disponibles"
 
-#: assets/utils.py:169
+#: assets/utils.py:186
 msgid "Reservation created successfully."
 msgstr "La reserva ha sido registrada con éxito."
+
+#: assets/utils.py:190
+msgid "Your reservation has been cancelled"
+msgstr "Su reserva ha sido anulada"
+
+#: assets/utils.py:203
+msgid "Your reservation has been modified"
+msgstr "Su reserva ha sido modificada"
 
 #: assets/views.py:42 assets/views.py:98 assets/views.py:130
 #: courses/views.py:169 courses/views.py:212 peerreview/views.py:50
@@ -238,6 +242,34 @@ msgid ""
 "\n"
 "Best regards, %(site)s's team\n"
 msgstr ""
+"\n"
+"Estimado %(user)s\n"
+"\n"
+"Su reserva de \"%(asset)s\" para \"%(kq)s\" ha sido cancelada.\n"
+"Rogamos disculpe las molestias que hayamos podido ocasionarle.\n"
+"\n"
+"Un cordial saludo, el equipo de %(site)s\n"
+
+#: assets/templates/assets/email_reservation_modified.txt:3
+#, python-format
+msgid ""
+"\n"
+"Dear %(user)s\n"
+"\n"
+"Your reservation of \"%(asset)s\" for \"%(kq)s\" has been modified.\n"
+"Now, your reservation begins at \"%(begin)s\" and ends at \"%(end)s\"\n"
+"We deeply apologize for the inconvenience.\n"
+"\n"
+"Best regards, %(site)s's team\n"
+msgstr ""
+"\n"
+"Estimado %(user)s\n"
+"\n"
+"Su reserva de \"%(asset)s\" para \"%(kq)s\" ha sido modificada.\n"
+"Ahora, su reserva comienza a \"%(begin)s\" y termina a \"%(end)s\"\n"
+"Rogamos disculpe las molestias que hayamos podido ocasionarle.\n"
+"\n"
+"Un cordial saludo, el equipo de %(site)s\n"
 
 #: assets/templates/assets/reservations.html:17
 msgid "Hide past reservations"
@@ -2569,8 +2601,8 @@ msgid ""
 "Are you completely sure you want to do this operation? It is possible that "
 "some reservations are cancelled after this change "
 msgstr ""
-"¿Está completamente seguro de que quiere realizar esta operación? "
-"Es posible que algunas reservas sean canceladas después de este cambio "
+"¿Está completamente seguro de que quiere realizar esta operación? Es posible "
+"que algunas reservas sean canceladas después de este cambio "
 
 #: templates/403.html:19
 msgid "Access denied"
