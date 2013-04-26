@@ -69,7 +69,7 @@ setup(
         'South==0.7.6',
         'psycopg2==2.4.2',
         'pymongo==2.4.2',
-        'djangosaml2==0.9.1',
+        'djangosaml2==0.9.2',
         'PIL>=1.1.7',
         'django_compressor==1.1.2',
         'python-memcached==1.48',
