@@ -31,7 +31,7 @@ def calculate_peer_review_mark(kq, peer_review_assignment, user):
 
 
 def calculate_kq_video_mark(kq, user):
-    if kq.kq_visited():
+    if kq.kq_visited_by(user):
         return (10.0, True)
     else:
         return (0, True)
@@ -39,7 +39,7 @@ def calculate_kq_video_mark(kq, user):
 
 def calculate_kq_mark(kq, user):
     """ Don't use this in loops """
-
+    from moocng.peerreview.models import PeerReviewAssignment
     try:
         question = kq.question_set.get()
         # KQ has a question
@@ -47,15 +47,15 @@ def calculate_kq_mark(kq, user):
     except kq.question_set.model.DoesNotExist:
         pass
     else:
-        if kq.peerreviewassignment:
+        try:
             # KQ has a peer review
-            return calculate_peer_review_mark(kq, kq.peerreviewassignment,
-                                              user)
-        else:
-            # KQ hasn't a question or peer review
-            return calculate_kq_video_mark(kq, user)
+            pra = kq.peerreviewassignment
+            return calculate_peer_review_mark(kq, pra, user)
+        except PeerReviewAssignment.DoesNotExist:
+            pass
 
-    return (0, True)
+    # KQ hasn't a question or peer review
+    return calculate_kq_video_mark(kq, user)
 
 
 def calculate_unit_mark(unit, user, normalized_unit_weight):
