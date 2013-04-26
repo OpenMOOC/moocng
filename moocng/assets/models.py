@@ -107,6 +107,8 @@ def assure_granularity(sender, instance, **kwargs):
     if instance.slot_duration == 0:
         instance.slot_duration = settings.ASSET_SLOT_GRANULARITY
 
+
+def check_duration_reservations(sender, instance, **kwargs):
     check_reservations_slot_duration(instance)
 
 
@@ -138,6 +140,7 @@ def invalidate_cache(sender, instance, **kwargs):
 
 
 signals.pre_save.connect(assure_granularity, sender=Asset)
+signals.post_save.connect(check_duration_reservations, sender=Asset)
 signals.post_save.connect(remove_reservations, sender=AssetAvailability)
 signals.pre_delete.connect(remove_reservations_delete, sender=AssetAvailability)
 signals.post_save.connect(invalidate_cache, sender=AssetAvailability)

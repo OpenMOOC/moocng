@@ -199,6 +199,75 @@ def book_asset(user, asset, availability, reservation_begins, reservation_ends):
     return (True, _("Reservation created successfully."))
 
 
+def try_to_adjust_reservation(reservation):
+    slot_duration = reservation.asset.slot_duration
+    could_adjust = False
+
+    old_length = (reservation.reservation_ends - reservation.reservation_begins).total_seconds()
+
+    if (old_length % (slot_duration * 60) != 0):
+        new_length = slot_duration * 60
+    else:
+        new_length = old_length
+
+    first_available_time = datetime.datetime.now() + datetime.timedelta(minutes = reservation.asset.reservation_in_advance)
+    suitable_times = get_suitable_begin_times(slot_duration,
+                                              reservation.reservation_begins,
+                                              first_available_time)
+    suitable_times = map(lambda x: x.replace(tzinfo=None), suitable_times)
+    res_begins = reservation.reservation_begins.replace(tzinfo=None)
+    suitable_times.sort(key=lambda x: abs((res_begins - x).total_seconds()))
+    for i in suitable_times[0:2]:
+        candidate_ending_time = i + datetime.timedelta(0, new_length)
+        candidate_begin_time = i
+
+        canBook = is_asset_bookable(reservation.user, reservation.asset,
+                                    reservation.reserved_from,
+                                    candidate_begin_time,
+                                    candidate_ending_time, reservation)[0]
+        if canBook:
+            collisions = Reservation.objects.filter(asset__id=reservation.asset.id)
+            collisions = collisions.exclude(Q(reservation_begins__gte=reservation.reservation_ends)
+                                            | Q(reservation_ends__lte=reservation.reservation_begins)
+                                            | Q(id=reservation.id))
+            slot_load = collisions.values('slot_id').order_by().annotate(Count('slot_id'))
+
+            candidate_slots = filter(lambda x: x['slot_id__count'] < reservation.asset.capacity,
+                                     slot_load)
+            if reservation.slot_id in map(lambda x: x['slot_id'],
+                                          candidate_slots):
+                slot_id = reservation.slot_id
+                could_adjust = True
+                break
+            elif len(candidate_slots) > 0:
+                candidate_slots.sort(key=lambda x: x['slot_id__count'])
+                slot_id = candidate_slots[0]['slot_id']
+                could_adjust = True
+                break
+            else:
+                #All used slots are full
+                used_slots = map(lambda x: x['slot_id'], slot_load)
+                free_slots = filter(lambda x: x not in used_slots,
+                                    range(reservation.asset.max_bookable_slots))
+                if reservation.slot_id in free_slots:
+                    slot_id = reservation.slot_id
+                    could_adjust = True
+                    break
+                elif len(free_slots) == 0:
+                    continue
+                else:
+                    slot_id = free_slots[0]
+                    could_adjust = True
+                    break
+
+    if could_adjust:
+        reservation.reservation_begins = candidate_begin_time
+        reservation.reservation_ends = candidate_ending_time
+        reservation.slot_id = slot_id
+        reservation.save()
+    return could_adjust
+
+
 def send_cancellation_email(reservation):
     subject = _('Your reservation has been cancelled')
     template = 'assets/email_reservation_cancelled.txt'
@@ -262,6 +331,11 @@ def get_reservations_not_compatible_with_slot_duration(asset):
 
 
 def check_reservations_slot_duration(asset):
-    for i in get_reservations_not_compatible_with_slot_duration(asset):
-        send_cancellation_email(i)
-        i.delete()
+    affected_reservations = get_reservations_not_compatible_with_slot_duration(asset)
+    affected_reservations = affected_reservations.order_by('-reservation_ends')
+    for i in affected_reservations:
+        if try_to_adjust_reservation(i):
+            send_modification_email(i)
+        else:
+            send_cancellation_email(i)
+            i.delete()
