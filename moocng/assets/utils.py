@@ -212,6 +212,21 @@ def send_cancellation_email(reservation):
     send_mail_wrapper(subject, template, context, to)
 
 
+def send_modification_email(reservation):
+    subject = _('Your reservation has been modified')
+    template = 'assets/email_reservation_modified.txt'
+    context = {
+        'user': reservation.user.get_full_name(),
+        'asset': reservation.asset.name,
+        'kq': reservation.reserved_from.kq,
+        'site': Site.objects.get_current().name,
+        'begin': reservation.reservation_begins,
+        'end': reservation.reservation_ends
+    }
+    to = [reservation.user.email]
+    send_mail_wrapper(subject, template, context, to)
+
+
 def get_reservations_not_compatible_with_slot_duration(asset):
     slot_duration = asset.slot_duration
     query_list = []
