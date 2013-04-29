@@ -18,11 +18,22 @@ from moocng.assets.models import Reservation, Asset, AssetAvailability
 
 from moocng.assets.forms import AssetForm, ReservationForm, AssetAvailabilityForm
 
+from django.conf import settings
+
+
+def check_granularity(modeladmin, request, queryset):
+    for item in queryset:
+        difference = item.slot_duration % settings.ASSET_SLOT_GRANULARITY
+        if difference != 0:
+            #by calling save it can be assured that slot_duration will be adjusted
+            #and incompatible reservations may be handled
+            item.save()
+
 
 class AssetAdmin(admin.ModelAdmin):
 
     form = AssetForm
-    #filter_horizontal = ('kq',)
+    actions = [check_granularity]
 
 
 class AssetAvailabilityAdmin(admin.ModelAdmin):
