@@ -17,6 +17,7 @@
 
 from datetime import datetime, date
 import re
+import logging
 
 from bson import ObjectId
 from bson.errors import InvalidId
@@ -41,13 +42,15 @@ from moocng.api.authentication import (DjangoAuthentication,
 from moocng.api.authorization import (PublicReadTeachersModifyAuthorization,
                                       TeacherAuthorization,
                                       UserResourceAuthorization)
-from moocng.api.mongodb import get_user, MongoObj, MongoResource
-from moocng.api.validation import (AnswerValidation,
+from moocng.api.mongodb import (MongoObj, MongoResource, MongoUserResource,
+                                mongo_object_updated, mongo_object_created)
+from moocng.api.validation import (AnswerValidation, answer_validate_date,
                                    PeerReviewSubmissionsResourceValidation)
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment, Course)
-from moocng.courses.utils import normalize_kq_weight, calculate_course_mark
-from moocng.media_contents import media_content_get_iframe_template, media_content_get_thumbnail_url
+from moocng.courses.marks import normalize_kq_weight, calculate_course_mark
+from moocng.media_contents import (media_content_get_iframe_template,
+                                   media_content_get_thumbnail_url)
 from moocng.mongodb import get_db
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
 from moocng.peerreview.utils import (kq_get_peer_review_score,
@@ -63,7 +66,8 @@ class CourseResource(ModelResource):
         resource_name = 'course'
         allowed_methods = ['get']
         excludes = ['certification_banner']
-        authentication = MultiAuthentication(DjangoAuthentication(), ApiKeyAuthentication())
+        authentication = MultiAuthentication(DjangoAuthentication(),
+                                             ApiKeyAuthentication())
         authorization = DjangoAuthorization()
 
 
@@ -128,8 +132,8 @@ class KnowledgeQuantumResource(ModelResource):
 
     def dispatch(self, request_type, request, **kwargs):
         db = get_db()
-        self.user_answers = get_user(request, db.get_collection('answers'))
-        self.user_activity = get_user(request, db.get_collection('activity'))
+        self.answers = db.get_collection('answers')
+        self.activity = db.get_collection('activity')
         return super(KnowledgeQuantumResource, self).dispatch(request_type,
                                                               request,
                                                               **kwargs)
@@ -145,10 +149,12 @@ class KnowledgeQuantumResource(ModelResource):
             return question[0]
 
     def dehydrate_iframe_code(self, bundle):
-        return media_content_get_iframe_template(bundle.obj.media_content_type, bundle.obj.media_content_id)
+        return media_content_get_iframe_template(bundle.obj.media_content_type,
+                                                 bundle.obj.media_content_id)
 
     def dehydrate_thumbnail_url(self, bundle):
-        return media_content_get_thumbnail_url(bundle.obj.media_content_type, bundle.obj.media_content_id)
+        return media_content_get_thumbnail_url(bundle.obj.media_content_type,
+                                               bundle.obj.media_content_id)
 
     def dehydrate_peer_review_score(self, bundle):
         try:
@@ -166,11 +172,12 @@ class KnowledgeQuantumResource(ModelResource):
                 return False
         else:
             question = questions[0]  # there should be only one question
-            if self.user_answers is None:
-                return False
 
-            answer = self.user_answers.get('questions', {}).get(unicode(question.id))
-            if answer is None:
+            answer = self.answers.find_one({
+                "user_id": bundle.request.user.id,
+                "question_id": question.id
+            })
+            if not answer:
                 return False
 
             return question.is_correct(answer)
@@ -309,7 +316,8 @@ class EvaluationCriterionResource(ModelResource):
         return results.filter(
             Q(assignment__kq__unit__unittype='n') |
             Q(assignment__kq__unit__start__isnull=True) |
-            Q(assignment__kq__unit__start__isnull=False, assignment__kq__unit__start__lte=datetime.now)
+            Q(assignment__kq__unit__start__isnull=False,
+              assignment__kq__unit__start__lte=datetime.now)
         )
 
 
@@ -519,7 +527,8 @@ class QuestionResource(ModelResource):
         # Only return solution if the deadline has been reached, or there is
         # no deadline
         unit = bundle.obj.kq.unit
-        if unit.unittype != 'n' and unit.deadline > datetime.now(unit.deadline.tzinfo):
+        if (unit.unittype != 'n' and
+                unit.deadline > datetime.now(unit.deadline.tzinfo)):
             return None
         return bundle.obj.solution_media_content_type
 
@@ -527,7 +536,8 @@ class QuestionResource(ModelResource):
         # Only return solution if the deadline has been reached, or there is
         # no deadline
         unit = bundle.obj.kq.unit
-        if unit.unittype != 'n' and unit.deadline > datetime.now(unit.deadline.tzinfo):
+        if (unit.unittype != 'n' and
+                unit.deadline > datetime.now(unit.deadline.tzinfo)):
             return None
         return bundle.obj.solution_media_content_id
 
@@ -535,7 +545,8 @@ class QuestionResource(ModelResource):
         # Only return solution if the deadline has been reached, or there is
         # no deadline
         unit = bundle.obj.kq.unit
-        if unit.unittype != 'n' and unit.deadline > datetime.now(unit.deadline.tzinfo):
+        if (unit.unittype != 'n' and
+                unit.deadline > datetime.now(unit.deadline.tzinfo)):
             return None
         return bundle.obj.solution_text
 
@@ -605,13 +616,21 @@ class OptionResource(ModelResource):
         return objects.filter(
             Q(question__kq__unit__unittype='n') |
             Q(question__kq__unit__start__isnull=True) |
-            Q(question__kq__unit__start__isnull=False, question__kq__unit__start__lte=datetime.now)
+            Q(question__kq__unit__start__isnull=False,
+              question__kq__unit__start__lte=datetime.now)
         )
 
     def dispatch(self, request_type, request, **kwargs):
         # We need the request to dehydrate some fields
+        try:
+            question_id = int(request.GET.get("question", None))
+        except ValueError:
+            raise BadRequest("question filter isn't a integer value")
         collection = get_db().get_collection('answers')
-        self.user = get_user(request, collection)
+        self.answer = collection.find_one({
+            "user_id": request.user.id,
+            "question_id": question_id
+        })
         return super(OptionResource, self).dispatch(request_type, request,
                                                     **kwargs)
 
@@ -619,152 +638,113 @@ class OptionResource(ModelResource):
         # Only return the solution if the user has given an answer
         # If there is a deadline, then only return the solution if the deadline
         # has been reached too
-        solution = None
-        if self.user:
-            answer = self.user['questions'].get(
-                unicode(bundle.obj.question.id), None)
-            if answer is not None:
-                unit = bundle.obj.question.kq.unit
-                if unit.unittype == 'n' or not(unit.deadline and datetime.now(unit.deadline.tzinfo) > unit.deadline):
-                    solution = bundle.obj.solution
-        return solution
+        if self.answer:
+            unit = bundle.obj.question.kq.unit
+            if (unit.unittype == 'n' or
+                not(unit.deadline and
+                    datetime.now(unit.deadline.tzinfo) > unit.deadline)):
+                return bundle.obj.solution
 
     def dehydrate_feedback(self, bundle):
         # Only return the feedback if the user has given an answer
-        feedback = None
-        if self.user:
-            answer = self.user['questions'].get(
-                unicode(bundle.obj.question.id), None)
-            if answer is not None:
-                feedback = bundle.obj.feedback
-        return feedback
+        if self.answer:
+            return bundle.obj.feedback
 
 
-class AnswerResource(MongoResource):
+class AnswerResource(MongoUserResource):
+
+    course_id = fields.IntegerField(null=False)
+    unit_id = fields.IntegerField(null=False)
+    kq_id = fields.IntegerField(null=False)
+    question_id = fields.IntegerField(null=False)
+    date = fields.DateTimeField(readonly=True, default=datetime.now)
+    replyList = fields.ListField(null=False)
 
     class Meta:
         resource_name = 'answer'
         collection = 'answers'
-        datakey = 'questions'
+        datakey = 'question_id'
         object_class = MongoObj
         authentication = DjangoAuthentication()
         authorization = DjangoAuthorization()
         allowed_methods = ['get', 'post', 'put']
         filtering = {
-            "question": ('exact'),
+            "question_id": ('exact'),
+            "course_id": ('exact'),
+            "unit_id": ('exact'),
+            "kq_id": ('exact'),
         }
         validation = AnswerValidation()
-
-    def obj_get_list(self, request=None, **kwargs):
-        user = self._get_or_create_user(request, **kwargs)
-        question_id = request.GET.get('question', None)
-
-        results = []
-        if question_id is None:
-            for qid, question in user['questions'].items():
-                if qid == question_id:
-                    obj = MongoObj(initial=question)
-                    obj.uuid = question_id
-                    results.append(obj)
-        else:
-            question = user['questions'].get(question_id, None)
-            if question is not None:
-                obj = MongoObj(initial=question)
-                obj.uuid = question_id
-                results.append(obj)
-
-        return results
+        input_schema = {
+            "course_id": 1,
+            "unit_id": 1,
+            "kq_id": 1,
+            "question_id": 1,
+            "replyList": 1,
+            "user_id": 0,
+            "date": 0,
+        }
 
     def obj_create(self, bundle, request=None, **kwargs):
-        user = self._get_or_create_user(request, **kwargs)
-
-        bundle = self.full_hydrate(bundle)
-
-        unit = Question.objects.get(id=bundle.obj.uuid).kq.unit
-        if unit.unittype != 'n' and unit.deadline and datetime.now(unit.deadline.tzinfo) > unit.deadline:
-            return bundle
-
-        if (len(bundle.obj.answer['replyList']) > 0):
-            user['questions'][bundle.obj.uuid] = bundle.obj.answer
-
-            self._collection.update({'_id': user['_id']}, user, safe=True)
-
-        bundle.uuid = bundle.obj.uuid
-
+        bundle.data["date"] = datetime.utcnow()
+        bundle = super(AnswerResource, self).obj_create(bundle, request)
+        bundle.uuid = bundle.obj.question_id
         return bundle
 
     def obj_update(self, bundle, request=None, **kwargs):
-        return self.obj_create(bundle, request, **kwargs)
 
-    def hydrate(self, bundle):
-        if 'question' in bundle.data:
-            question = bundle.data['question']
-            pattern = (r'^/api/%s/question/(?P<question_id>\d+)/$' %
-                       self._meta.api_name)
-            result = re.findall(pattern, question)
-            if result and len(result) == 1:
-                bundle.obj.uuid = result[0]
+        answer_validate_date(bundle, request)
+        question_id = int(kwargs.get("pk"))
+        if (len(bundle.data.get("replyList", [])) > 0):
+            newobj = self._collection.find_and_modify({
+                'user_id': request.user.id,
+                'question_id': question_id,
+            }, update={
+                "$set": {
+                    'replyList': bundle.data.get("replyList"),
+                    "date": datetime.utcnow(),
+                }
+            }, safe=True, new=True)
 
-        bundle.obj.answer = {}
-
-        if 'date' in bundle.data:
-            bundle.obj.answer['date'] = bundle.data['date']
-
-        if 'replyList' in bundle.data:
-            bundle.obj.answer['replyList'] = bundle.data['replyList']
-
-        return bundle
-
-    def dehydrate(self, bundle):
-        bundle.data['date'] = bundle.obj.date
-        bundle.data['replyList'] = bundle.obj.replyList
+        bundle.obj = newobj
+        self.send_updated_signal(request.user.id, bundle.obj)
         return bundle
 
 
-class ActivityResource(MongoResource):
+class ActivityResource(MongoUserResource):
+
+    course_id = fields.IntegerField(null=False)
+    unit_id = fields.IntegerField(null=False)
+    kq_id = fields.IntegerField(null=False)
 
     class Meta:
         resource_name = 'activity'
         collection = 'activity'
-        datakey = 'courses'
+        datakey = 'kq_id'
         object_class = MongoObj
         authentication = DjangoAuthentication()
         authorization = DjangoAuthorization()
-        allowed_methods = ['get', 'put']
+        allowed_methods = ['get', 'post']
         filtering = {
-            "unit": ('exact'),
+            "course_id": ('exact'),
+            "unit_id": ('exact'),
+            "kq_id": ('exact'),
         }
-        validation = AnswerValidation()
-
-    def obj_update(self, bundle, request=None, **kwargs):
-
-        user = self._get_or_create_user(request, **kwargs)
-        course_id = kwargs['pk']
-
-        bundle = self.full_hydrate(bundle)
-
-        user[self._meta.datakey][course_id] = bundle.obj.kqs
-
-        self._collection.update({'_id': user['_id']}, user, safe=True)
-
-        bundle.uuid = bundle.obj.uuid
-
-        return bundle
-
-    def hydrate(self, bundle):
-        bundle.obj.kqs = {}
-        if 'kqs' in bundle.data:
-            bundle.obj.kqs['kqs'] = bundle.data['kqs']
-
-        return bundle
-
-    def dehydrate(self, bundle):
-        bundle.data['kqs'] = bundle.obj.kqs
-        return bundle
+        input_schema = {
+            "course_id": 1,
+            "unit_id": 1,
+            "kq_id": 1,
+            "user_id": 1
+        }
 
     def _initial(self, request, **kwargs):
         course_id = kwargs['pk']
-        return {course_id: {'kqs': []}}
+        return {
+            "course_id": course_id,
+            "unit_id": -1,
+            "kq_id": -1,
+            "user_id": -1,
+        }
 
 
 class UserResource(ModelResource):
@@ -843,7 +823,8 @@ class UserResource(ModelResource):
         return self.alt_get_list(request, courses)
 
     def get_passed_courses(self, request, **kwargs):
-        # In tastypie, the override_urls don't call Authentication/Authorization
+        # In tastypie, the override_urls don't call
+        # Authentication/Authorization
         self.is_authenticated(request)
         self.is_authorized(request)
         obj = self.get_object(request, kwargs)
@@ -1059,3 +1040,29 @@ class ReservationResource(ModelResource):
             results = results.filter(reserved_from__kq=kq)
 
         return results
+
+
+api_task_logger = logging.getLogger("api_tasks")
+
+
+def on_activity_created(sender, user_id, mongo_object, **kwargs):
+    # TODO
+    api_task_logger.debug("activity created")
+
+
+def on_answer_created(sender, user_id, mongo_object, **kwargs):
+    # TODO
+    api_task_logger.debug("answer created")
+
+
+def on_answer_updated(sender, user_id, mongo_object, **kwargs):
+    # TODO
+    api_task_logger.debug("answer updated")
+
+
+mongo_object_created.connect(on_activity_created, sender=ActivityResource,
+                             dispatch_uid="activity_created")
+mongo_object_created.connect(on_answer_created, sender=AnswerResource,
+                             dispatch_uid="answer_created")
+mongo_object_updated.connect(on_answer_updated, sender=AnswerResource,
+                             dispatch_uid="answer_updated")

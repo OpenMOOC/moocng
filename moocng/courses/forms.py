@@ -15,6 +15,7 @@
 import os
 
 from django.forms import ModelForm, ValidationError, TextInput
+from django import forms
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 
@@ -74,3 +75,9 @@ class AnnouncementForm(ModelForm):
             'title': TextInput(attrs={'class': 'input-xxlarge'}),
             'content': TinyMCE(attrs={'class': 'input-xxlarge'}),
         }
+
+
+class ActivityForm(forms.Form):
+    course_id = forms.IntegerField(required=True)
+    unit_id = forms.IntegerField(required=True)
+    kq_id = forms.IntegerField(required=True)

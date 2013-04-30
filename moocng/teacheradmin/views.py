@@ -29,16 +29,19 @@ from django.utils.translation import ugettext as _
 
 from moocng.courses.models import (Course, CourseTeacher, KnowledgeQuantum,
                                    Option, Announcement, Unit, Attachment)
-from moocng.courses.utils import (UNIT_BADGE_CLASSES, calculate_course_mark,
-                                  calculate_unit_mark, calculate_kq_mark)
+from moocng.courses.utils import UNIT_BADGE_CLASSES
+from moocng.courses.marks import (calculate_course_mark, calculate_unit_mark,
+                                  calculate_kq_mark)
 from moocng.categories.models import Category
-from moocng.mongodb import get_db
 from moocng.portal.templatetags.gravatar import gravatar_img_for_email
 from moocng.teacheradmin.decorators import is_teacher_or_staff
 from moocng.teacheradmin.forms import (CourseForm, AnnouncementForm,
                                        MassiveEmailForm, AssetTeacherForm)
 from moocng.teacheradmin.models import Invitation, MassiveEmail
 from moocng.teacheradmin.tasks import send_massive_email_task
+from moocng.teacheradmin.stats import (course_completed_started,
+                                       unit_completed_started, kq_viewed,
+                                       question_answered)
 from moocng.teacheradmin.utils import (send_invitation,
                                        send_removed_notification)
 from moocng.videos.tasks import process_video_task
@@ -52,13 +55,20 @@ from moocng.assets.forms import AssetForm
 @is_teacher_or_staff
 def teacheradmin_stats(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
+
+    # TODO DELETE THIS
+    return HttpResponseRedirect(reverse('teacheradmin_info',
+                                        args=[course_slug]))
+    # END DELETE THIS
+
     is_enrolled = course.students.filter(id=request.user.id).exists()
-    activity = get_db().get_collection('activity')
+
+    (completed, started) = course_completed_started(course)
 
     data = {
         'enrolled': course.students.count(),
-        'started': 0,
-        'completed': 0
+        'started': started,
+        'completed': completed
     }
 
     # if course.threshold is not None:
@@ -68,21 +78,6 @@ def teacheradmin_stats(request, course_slug):
     #     for student in course.students.all():
     #         if calculate_course_mark(course, student)[0] >= float(course.threshold):
     #             data['passed'] += 1
-
-    kqs = [str(kq.id)
-           for kq in KnowledgeQuantum.objects.filter(unit__course=course)]
-
-    data["completed"] = activity.find({
-        "courses.%s" % course.id: {"$exists": True},
-        "courses.%s.kqs" % course.id: {"$all": kqs}
-    }).count()
-    print data["completed"]
-
-    data["started"] = activity.find({
-        "courses.%s" % course.id: {
-            "$exists": True
-        }
-    }).count()
 
     return render_to_response('teacheradmin/stats.html', {
         'course': course,
@@ -98,15 +93,17 @@ def teacheradmin_stats_units(request, course_slug):
     use_old_calculus = False
     if course.slug in settings.COURSES_USING_OLD_TRANSCRIPT:
         use_old_calculus = True
-    activity = get_db().get_collection('activity')
 
     unit_list = course.unit_set.all()
     for unit in unit_list:
+
+        (completed, started) = unit_completed_started(unit)
+
         unit_data = {
             'id': unit.id,
             'title': unit.title,
-            'started': 0,
-            'completed': 0
+            'started': started,
+            'completed': completed,
         }
 
         # if course.threshold is not None:
@@ -116,22 +113,6 @@ def teacheradmin_stats_units(request, course_slug):
         #     for student in course.students.all():
         #         if calculate_unit_mark(unit, student, use_old_calculus)[0] >= float(course.threshold):
         #             unit_data['passed'] += 1
-
-        kqs = [str(kq.id) for kq in unit.knowledgequantum_set.all()]
-
-        unit_data["completed"] = activity.find({
-            "courses.%s" % course.id: {"$exists": True},
-            "courses.%s.kqs" % course.id: {
-                "$all": kqs
-            }
-        }).count()
-
-        unit_data["started"] = activity.find({
-            "courses.%s" % course.id: {"$exists": True},
-            "courses.%s.kqs" % course.id: {
-                "$in": kqs
-            }
-        }).count()
 
         data.append(unit_data)
 
@@ -148,15 +129,13 @@ def teacheradmin_stats_kqs(request, course_slug):
     if not unit in course.unit_set.all():
         return HttpResponse(status=400)
     data = []
-    activity = get_db().get_collection('activity')
-    answers = get_db().get_collection('answers')
 
     kq_list = unit.knowledgequantum_set.all()
     for kq in kq_list:
         kq_data = {
             'id': kq.id,
             'title': kq.title,
-            'viewed': 0
+            'viewed': kq_viewed(kq)
         }
 
         question = None
@@ -172,16 +151,11 @@ def teacheradmin_stats_kqs(request, course_slug):
             #         if calculate_kq_mark(kq, student) >= float(course.threshold):
             #             kq_data['passed'] += 1
 
-        kq_data["viewed"] = activity.find({
-            "courses.%s.kqs" % course.id: str(kq.id)
-        }).count()
-
-        for question in kq.question_set.all():
-            kq_data["answered"] = answers.find({
-                "questions.%s" % question.id: {
-                    "$exists": True
-                }
-            }).count()
+        try:
+            question = kq.question_set.get()
+            kq_data["answered"] = question_answered(question)
+        except kq.question_set.model.DoesNotExist:
+            kq_data["answered"] = 0
 
         data.append(kq_data)
 
@@ -234,7 +208,8 @@ def teacheradmin_units_attachment(request, course_slug):
         if not 'attachment' in request.GET:
             return HttpResponse(status=400)
 
-        attachment = get_object_or_404(Attachment, id=request.GET['attachment'])
+        attachment = get_object_or_404(Attachment,
+                                       id=request.GET['attachment'])
         attachment.delete()
 
         return HttpResponse()

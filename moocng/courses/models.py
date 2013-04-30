@@ -300,14 +300,26 @@ class KnowledgeQuantum(Sortable):
 
         return True
 
+    def kq_type(self):
+        from moocng.peerreview.models import PeerReviewAssignment
+        if self.question_set.count() > 0:
+            return "Question"
+        else:
+            try:
+                if self.peerreviewassignment is not None:
+                    return "PeerReviewAssignment"
+            except PeerReviewAssignment.DoesNotExist:
+                pass
+        return "Video"
+
     def kq_visited_by(self, user):
         db = get_db()
 
         activity = db.get_collection("activity")
         # Verify if user has watch the video from kq
         user_activity_exists = activity.find({
-            "user": user.id,
-            "courses.%s.kqs" % (self.unit.course.id): unicode(self.id)
+            "user_id": user.id,
+            "kq_id": self.id,
         })
 
         return user_activity_exists.count() > 0
@@ -385,8 +397,11 @@ class Question(models.Model):
 
     def is_correct(self, answer):
         correct = True
-        replies = dict([(int(r['option']),
-                         r['value']) for r in answer['replyList']])
+        if answer['replyList'] is not None:
+            replies = dict([(int(r['option']), r['value'])
+                            for r in answer['replyList']])
+        else:
+            replies = {}
 
         for option in self.option_set.all():
             reply = replies.get(option.id, None)
@@ -407,17 +422,12 @@ class Question(models.Model):
 
         # Verify if user has answered the question
         answers = db.get_collection("answers")
-        answers_exists = answers.find_one({
-            "user": user.id,
-            "questions.%s" % (self.id): {
-                "$exists": True
-            }
+        answer_exists = answers.find_one({
+            "user_id": user.id,
+            "question_id": self.id,
         })
 
-        if not answers_exists:
-            return False
-
-        return True
+        return not (answer_exists is None)
 
 
 def handle_question_post_save(sender, instance, created, **kwargs):

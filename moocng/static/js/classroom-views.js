@@ -275,20 +275,28 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 });
                 // Load Answer for Question
                 MOOC.ajax.getAnswerByQuestion(question.get("id"), function (data, textStatus, jqXHR) {
-                    var obj, replies, answer;
+                    var obj, replies, answer, unit;
+                    unit = MOOC.models.course.getByKQ(kqObj.get("id"));
                     if (data.objects.length === 1) {
                         obj = data.objects[0];
                         replies = _.map(obj.replyList, function (reply) {
                             return new MOOC.models.Reply(_.pick(reply, "option", "value"));
                         });
                         answer = new MOOC.models.Answer({
-                            id: question.get('id'),
+                            course_id: parseInt(MOOC.models.course.courseId, 10),
+                            unit_id: parseInt(unit.get("id"), 10),
+                            kq_id: parseInt(kqObj.get("id"), 10),
+                            question_id: parseInt(question.get('id'), 10),
                             date: obj.date,
                             replyList: new MOOC.models.ReplyList(replies)
                         });
+                        answer.local = false;
                     } else {
                         answer = new MOOC.models.Answer({
-                            date: null,
+                            course_id: parseInt(MOOC.models.course.courseId, 10),
+                            unit_id: parseInt(unit.get("id"), 10),
+                            kq_id: parseInt(kqObj.get("id"), 10),
+                            question_id: parseInt(question.get('id'), 10),
                             replyList: new MOOC.models.ReplyList([])
                         });
                     }
@@ -675,7 +683,7 @@ MOOC.views.Question = Backbone.View.extend({
             }
 
             return new MOOC.models.Reply({
-                option: view.model.get("id"),
+                option: parseInt(view.model.get("id"), 10),
                 value: value
             });
         });
@@ -687,11 +695,10 @@ MOOC.views.Question = Backbone.View.extend({
                 return _.isNull(option.get("solution"));
             });
 
-            MOOC.ajax.sendAnswer(answer, this.model.get('id'), function (data, textStatus, jqXHR) {
+            MOOC.ajax.sendAnswer(answer, function (data, textStatus, jqXHR) {
                 if (jqXHR.status === 201 || jqXHR.status === 204) {
-                    answer.set('id', self.model.get('id'));
+                    answer.local = false;
                     self.model.set('answer', answer);
-
                     self.loadSolution(fetch_solutions);
                 }
             });
@@ -824,7 +831,7 @@ MOOC.views.Option = Backbone.View.extend({
         this.$el.find("#" + attributes.id).remove();
         this.$el.find("#" + attributes.id + "-fb").remove();
 
-        if (this.reply && this.reply.get('option') === this.model.get('id') && optiontype !== 'l') {
+        if (this.reply && this.reply.get('option') === parseInt(this.model.get('id'), 10) && optiontype !== 'l') {
             correct = false;
             if (optiontype === 't') {
                 attributes.value = this.reply.get('value');

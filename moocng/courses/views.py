@@ -31,10 +31,10 @@ from django.utils.translation import ugettext as _
 
 from moocng.badges.models import Award
 from moocng.courses.models import Course, CourseTeacher, Announcement
-from moocng.courses.utils import (calculate_course_mark, get_unit_badge_class,
-                                  is_course_ready,
+from moocng.courses.utils import (get_unit_badge_class, is_course_ready,
                                   is_teacher as is_teacher_test,
                                   send_mail_wrapper)
+from moocng.courses.marks import calculate_course_mark
 from moocng.courses.security import (check_user_can_view_course,
                                      get_courses_available_for_user,
                                      get_units_available_for_user)

@@ -227,30 +227,64 @@ MOOC.models.Reservation = Backbone.Model.extend({
 });
 
 MOOC.models.Activity = Backbone.Model.extend({
-    defaults: {
-        kqs: []
+    local: true,
+
+    isNew: function () {
+        "use strict";
+        return this.local;
     },
 
     url: function () {
         "use strict";
-        return MOOC.ajax.getAbsoluteUrl('activity/') + this.get('id') + '/';
+        if (this.isNew()) {
+            return MOOC.ajax.getAbsoluteUrl('activity/');
+        }
+        return MOOC.ajax.getAbsoluteUrl('activity/') + this.get('kq_id') + "/";
+    },
+
+    parse: function (resp, xhr) {
+        "use strict";
+        var result = {};
+        if (!_.isNull(resp)) {
+            result = _.pick(resp, "course_id", "kq_id", "unit_id");
+        }
+        this.local = false;
+        return result;
+    }
+});
+
+MOOC.models.ActivityCollection = MOOC.models.TastyPieCollection.extend({
+    model: MOOC.models.Activity,
+
+    url: function () {
+        "use strict";
+        return MOOC.ajax.getAbsoluteUrl('activity/') + "?course_id=" + MOOC.models.course.courseId;
     },
 
     addKQ: function (kq, callback) {
         "use strict";
-        if (!_.include(this.get('kqs'), kq)) {
-            this.set('kqs', _.union(this.get('kqs'), [kq]));
+        kq = parseInt(kq, 10);
+        if (!this.hasKQ(kq)) {
+            var unit = MOOC.models.course.getByKQ(kq).get("id"),
+                activity = new MOOC.models.Activity({
+                    course_id: MOOC.models.course.courseId,
+                    unit_id: unit,
+                    kq_id: kq
+                });
+            this.add(activity);
             if (_.isUndefined(callback)) {
-                this.save();
+                activity.save();
             } else {
-                this.save("kqs", this.get("kqs"), { success: callback });
+                activity.save({ success: callback });
             }
         }
     },
 
     hasKQ: function (kq) {
         "use strict";
-        return _.include(this.get('kqs'), String(kq));
+        return this.find(function (activity) {
+            return parseInt(kq, 10) === parseInt(activity.get("kq_id"), 10);
+        }) !== undefined;
     }
 });
 
@@ -444,6 +478,13 @@ MOOC.models.Answer = Backbone.Model.extend({
         replyList: null
     },
 
+    local: true,
+
+    isNew: function () {
+        "use strict";
+        return this.local;
+    },
+
     /* Return a reply which option is opt_id or null otherwise */
     getReply: function (opt_id) {
         "use strict";
@@ -451,10 +492,21 @@ MOOC.models.Answer = Backbone.Model.extend({
             result = null;
         if (replies) {
             result = replies.find(function (reply) {
-                return reply.get('option') === opt_id;
+                return reply.get('option') === parseInt(opt_id, 10);
             });
         }
         return result;
+    },
+
+    toJSON: function () {
+        "use strict";
+        return {
+            kq_id: this.get("kq_id"),
+            unit_id: this.get("unit_id"),
+            course_id: this.get("course_id"),
+            question_id: this.get("question_id"),
+            replyList: this.get("replyList").toJSON()
+        };
     }
 });
 

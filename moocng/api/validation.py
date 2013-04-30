@@ -15,6 +15,7 @@
 # limitations under the License.
 
 from cgi import escape
+from datetime import datetime
 import logging
 
 from django.conf import settings
@@ -28,6 +29,20 @@ from moocng.mongodb import get_db
 logger = logging.getLogger(__name__)
 
 
+def answer_validate_date(bundle, request=None):
+    question_id = bundle.data.get("question_id", None)
+    if question_id is None:
+        raise ValidationError("question_id is required")
+
+    question = Question.objects.get(id=question_id)
+    unit = question.kq.unit
+
+    if (unit.unittype != 'n' and unit.deadline and
+            datetime.now(unit.deadline.tzinfo) > unit.deadline):
+        raise ValidationError("Unit's deadline is exceed")
+    return {}
+
+
 class AnswerValidation(Validation):
 
     def _gen_message(self, username, reply, should_be):
@@ -36,9 +51,23 @@ class AnswerValidation(Validation):
             escape(unicode(type(reply['value']))))
 
     def is_valid(self, bundle, request=None):
-        questionID = None
-        if 'question' in bundle.data:
-            questionID = bundle.data['question'].split('/')[-2]
+        errors = {}
+        errors.update(self.validate_date(bundle, request))
+        errors.update(self.validate_replyList(bundle, request))
+        return errors
+
+    def validate_date(self, bundle, request=None):
+        return answer_validate_date(bundle, request)
+
+    def validate_replyList(self, bundle, request=None):
+        questionID = bundle.data.get("question_id", None)
+        replyList = bundle.data.get("replyList", None)
+
+        if (replyList is None or not isinstance(replyList, list) or
+                len(replyList) == 0):
+            msg = "replyList is empty or isn't a list"
+            logger.error(msg)
+            raise ValidationError(msg)
 
         if (questionID is not None) and (len(bundle.data['replyList']) > 0):
             try:
