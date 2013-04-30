@@ -1009,18 +1009,31 @@ class ReservationResource(ModelResource):
     user = fields.ToOneField(UserResource, 'user')
     asset = fields.ToOneField(AssetResource, 'asset')
     reserved_from = fields.ToOneField(AssetAvailabilityResource, 'reserved_from')
+    remaining_time = fields.IntegerField(readonly=True)
+    active_in = fields.IntegerField(readonly=True)
 
     class Meta:
         queryset = Reservation.objects.all()
         resource_name = 'reservation'
         allowed_methods = ['get']
-        authentication = DjangoAuthentication()
+        authentication = MultiAuthentication(DjangoAuthentication(),
+                                             ApiKeyAuthentication())
         authorization = DjangoAuthorization()
         filtering = {
             "asset": ('exact'),
             "user": ('exact'),
             "reserved_from": ('exact'),
         }
+
+    def dehydrate_active_in(self, bundle):
+        reservation_begins = bundle.obj.reservation_begins.replace(tzinfo=None)
+        return (reservation_begins - datetime.utcnow()).total_seconds()
+
+    def dehydrate_remaining_time(self, bundle):
+        reservation_begins = bundle.obj.reservation_begins.replace(tzinfo=None)
+        reservation_ends = bundle.obj.reservation_ends.replace(tzinfo=None)
+        now = max(datetime.utcnow(), reservation_begins)
+        return (reservation_ends - now).total_seconds()
 
     def obj_get_list(self, request=None, **kwargs):
 
