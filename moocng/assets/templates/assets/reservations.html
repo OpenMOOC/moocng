@@ -64,6 +64,14 @@
         <li> Slot: {{slot_id}} </li>
         <li> Students sharing this slot: {{concurrent}} </li>
         {% endblocktrans %}
+        <div class="row">
+            <div class="align-right ">
+                <form action="{{ reservation.asset.asset_url }}" id="r{{ reservation.id }}-form" method="post">{% csrf_token %}
+                    <input type="hidden" name="reservation_id" value="{{ reservation.id }}" />
+                    <input type="submit" value="{% trans "Activate" %}" class="btn" id="r{{ reservation.id }}-goBtn" />
+                </form>
+            </div>
+        </div>
     </ul>
     {% endfor %}
 </div>

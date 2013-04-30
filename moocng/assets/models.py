@@ -40,6 +40,8 @@ class Asset(models.Model):
                                                          default=120)
     cancelation_in_advance = models.PositiveIntegerField(verbose_name=_(u'Time required in advance to cancel a reservation'),
                                                          default=120)
+    asset_url = models.URLField(verbose_name=_('Asset URL'),
+                                blank=True, null=False)
 
     class Meta:
         verbose_name = _(u'asset')
