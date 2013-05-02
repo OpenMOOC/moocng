@@ -747,7 +747,7 @@ class UserResource(ModelResource):
         filtering = {
             'first_name': ['istartswith'],
             'last_name': ['istartswith'],
-            'email': ('exact')
+            'email': ('iexact')
         }
 
     def apply_filters(self, request, applicable_filters):
@@ -772,13 +772,12 @@ class UserResource(ModelResource):
     def get_object(self, request, kwargs):
         try:
             if not kwargs['pk'].isdigit():
-                kwargs['email'] = kwargs['pk']
-                del kwargs['pk']
-            obj = self.cached_obj_get(request=request,
+                return User.objects.get(email__iexact=kwargs['pk'])
+            else:
+                return self.cached_obj_get(request=request,
                                       **self.remove_api_resource_names(kwargs))
-        except self.Meta.object_class.DoesNotExist:
-            return HttpResponse(status=404)
-        return obj
+        except self._Meta.object_class.DoesNotExist:
+            raise NotFound('User does not exist')
 
     def alt_get_list(self, request, courses):
         resource = CourseResource()
