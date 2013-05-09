@@ -61,7 +61,7 @@ setup(
     install_requires=[
         'boto==2.8.0',
         'celery==3.0.11',
-        'Django>=1.4.1',
+        'Django==1.4.5',
         'django-admin-sortable==1.3.8',
         'django-celery==3.0.11',
         'django-tinymce==1.5.1b2',
