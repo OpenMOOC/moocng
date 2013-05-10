@@ -782,7 +782,7 @@ class UserResource(ModelResource):
             else:
                 return self.cached_obj_get(request=request,
                                            **self.remove_api_resource_names(kwargs))
-        except self._Meta.object_class.DoesNotExist:
+        except self.Meta.object_class.DoesNotExist:
             raise NotFound('User does not exist')
 
     def alt_get_list(self, request, courses):
