@@ -251,10 +251,16 @@ class PeerReviewAssignmentResource(ModelResource):
         authorization = DjangoAuthorization()
         filtering = {
             "kq": ('exact'),
+            "unit": ('exact'),
         }
 
     def get_object_list(self, request):
         objects = super(PeerReviewAssignmentResource, self).get_object_list(request)
+
+        unit = request.GET.get('unit', None)
+        if unit is not None:
+            objects = objects.filter(kq__unit_id=unit)
+
         return objects.filter(
             Q(kq__unit__unittype='n') |
             Q(kq__unit__start__isnull=True) |
@@ -775,7 +781,7 @@ class UserResource(ModelResource):
                 return User.objects.get(email__iexact=kwargs['pk'])
             else:
                 return self.cached_obj_get(request=request,
-                                      **self.remove_api_resource_names(kwargs))
+                                           **self.remove_api_resource_names(kwargs))
         except self._Meta.object_class.DoesNotExist:
             raise NotFound('User does not exist')
 
