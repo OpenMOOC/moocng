@@ -203,7 +203,8 @@ def try_to_adjust_reservation(reservation):
     slot_duration = reservation.asset.slot_duration
     could_adjust = False
 
-    old_length = (reservation.reservation_ends - reservation.reservation_begins).total_seconds()
+    dif = (reservation.reservation_ends - reservation.reservation_begins)
+    old_length = dif.seconds + dif.days * 86400
 
     if (old_length % (slot_duration * 60) != 0):
         new_length = slot_duration * 60
@@ -216,7 +217,7 @@ def try_to_adjust_reservation(reservation):
                                               first_available_time)
     suitable_times = map(lambda x: x.replace(tzinfo=None), suitable_times)
     res_begins = reservation.reservation_begins.replace(tzinfo=None)
-    suitable_times.sort(key=lambda x: abs((res_begins - x).total_seconds()))
+    suitable_times.sort(key=lambda x: abs((res_begins - x).seconds + (res_begins - x).days * 86400))
     for i in suitable_times[0:2]:
         candidate_ending_time = i + datetime.timedelta(0, new_length)
         candidate_begin_time = i

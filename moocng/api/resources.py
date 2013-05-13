@@ -1027,13 +1027,15 @@ class ReservationResource(ModelResource):
 
     def dehydrate_active_in(self, bundle):
         reservation_begins = bundle.obj.reservation_begins.replace(tzinfo=None)
-        return (reservation_begins - datetime.utcnow()).total_seconds()
+        dif = (reservation_begins - datetime.utcnow())
+        return dif.seconds + dif.days * 86400
 
     def dehydrate_remaining_time(self, bundle):
         reservation_begins = bundle.obj.reservation_begins.replace(tzinfo=None)
         reservation_ends = bundle.obj.reservation_ends.replace(tzinfo=None)
         now = max(datetime.utcnow(), reservation_begins)
-        return (reservation_ends - now).total_seconds()
+        dif = (reservation_ends - now)
+        return dif.seconds + dif.days * 86400
 
     def obj_get_list(self, request=None, **kwargs):
 
