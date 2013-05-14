@@ -17,24 +17,25 @@ MOOC.views.players.Youtube = Backbone.View.extend({
     initialize: function (options) {
         "use strict";
         this.kq = options.kq;
-        this.try_to_initialize_until_success();
+        _.bindAll(this, "onPlayerStateChange", "onPlayerReady");
+        this.player = new YT.Player("ytplayer", {
+            events: {
+                'onReady': this.onPlayerReady,
+                'onStateChange': this.onPlayerStateChange
+            }
+        });
     },
 
-    try_to_initialize_until_success: function () {
+    onPlayerStateChange: function (event) {
         "use strict";
-        var self = this,
-            triggerFinish = function (event) {
-                if (event.data === 0) {
-                    MOOC.players_listener.trigger('mediaContentFinished', MOOC.views.kqViews[self.kq]);
-                }
-            };
-
-        try {
-            this.player = new YT.Player("ytplayer");
-            this.player.addEventListener("onStateChange", triggerFinish);
-        } catch (err) {
-            setTimeout(this.try_to_initialize_until_success, 1000);
+        if (event.data === 0) {
+            MOOC.players_listener.trigger('mediaContentFinished', MOOC.views.kqViews[this.kq]);
         }
+    },
+
+    onPlayerReady: function () {
+        "use strict";
+        this.player.unMute();
     },
 
     destroyPlayer: function (callback) {
