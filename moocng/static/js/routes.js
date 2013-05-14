@@ -184,12 +184,6 @@ MOOC.App = Backbone.Router.extend({
         unit = parseInt(unit, 10);
         kq = parseInt(kq, 10);
         var toExecute = this.kqSteps(unit, kq, true);
-        toExecute.push(function (callback) {
-            _.each(MOOC.views.players, function (PlayerView) {
-                var player = new PlayerView(MOOC.views.kqViews[kq]);
-            });
-            callback();
-        });
         async.series(toExecute);
     },
 
