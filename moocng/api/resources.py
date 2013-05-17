@@ -14,12 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 from datetime import datetime
 import logging
 
 from bson import ObjectId
 from bson.errors import InvalidId
+from celery import task
 
 from tastypie import fields
 from tastypie.authorization import DjangoAuthorization
@@ -839,9 +839,39 @@ class UserResource(ModelResource):
 api_task_logger = logging.getLogger("api_tasks")
 
 
+@task
+def on_activity_created_task(activity_created):
+    db = get_db()
+    kq = KnowledgeQuantum.objects.get(id=activity_created['kq_id'])
+    #if kq.kq_type() == 'Video': TODO passed + 1?
+
+    stats_kq = db.get_collection('stats_kq')
+    stats_kq_dict = stats_kq.find_and_modify(
+        query={'kq_id': activity_created['kq_id']},
+        update={'$inc': {'viewed': 1}},
+        safe=True
+    )
+    if stats_kq_dict is None:
+        stats_kq_dict = {
+            'kq_id': activity_created['kq_id'],
+            'unit_id': kq.unit.id,
+            'course_id': kq.unit.course.id,
+            'viewed': 1,
+            'submitted': 0,
+            'reviews': 0,
+            'passed': 0,
+        }
+        stats_kq.insert(stats_kq_dict, safe=True)
+    print stats_kq_dict
+
+
 def on_activity_created(sender, user_id, mongo_object, **kwargs):
-    # TODO
     api_task_logger.debug("activity created")
+
+    on_activity_created_task.apply_async(
+        args=[mongo_object.to_dict()],
+        queue='stats',
+    )
 
 
 def on_answer_created(sender, user_id, mongo_object, **kwargs):
