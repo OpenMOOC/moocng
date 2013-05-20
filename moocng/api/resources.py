@@ -15,7 +15,7 @@
 # limitations under the License.
 
 
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import re
 import logging
 
@@ -25,15 +25,16 @@ from bson.errors import InvalidId
 from tastypie import fields
 from tastypie.authorization import DjangoAuthorization
 from tastypie.exceptions import NotFound, BadRequest
-from tastypie.resources import ModelResource
+from tastypie.resources import ModelResource, Resource
 
 from django.conf import settings
 from django.conf.urls import url
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.db.models.fields.files import ImageFieldFile
 from django.http import HttpResponse
+from django.utils import timezone
 
 from moocng.api.authentication import (DjangoAuthentication,
                                        TeacherAuthentication,
@@ -1060,6 +1061,41 @@ class ReservationResource(ModelResource):
             results = results.filter(reserved_from__kq=kq)
 
         return results
+
+
+class ReservationCount(Resource):
+    count = fields.IntegerField(readonly=True)
+    reservation_begins = fields.DateTimeField(readonly=True)
+
+    class Meta:
+        resource_name = 'reservation_count'
+        allowed_methods = 'get'
+
+    def dehydrate_count(self, bundle):
+        return bundle.obj['reservation_begins__count']
+
+    def dehydrate_reservation_begins(self, bundle):
+        base_date = bundle.obj['reservation_begins']
+        return timezone.localtime(base_date, timezone.get_default_timezone())
+
+    def obj_get(self, request, **kwargs):
+        #Information can only be obtained if asking for a list
+        return {'reservation_begins': '', 'reservation_begins__count': ''}
+
+    def obj_get_list(self, request, **kwargs):
+        asset_id = request.GET.get('asset', None)
+        ret = Reservation.objects.filter(asset__id=asset_id)
+
+        try:
+            date = datetime.strptime(request.GET.get('date', None), '%Y-%m-%d')
+            ret = ret.filter(Q(reservation_begins__gte=date) &
+                             Q(reservation_begins__lt=(date + timedelta(1))))
+        except:
+            pass
+
+        ret = ret.values('reservation_begins').order_by('reservation_begins')
+        ret = ret.annotate(Count('reservation_begins'))
+        return ret
 
 
 api_task_logger = logging.getLogger("api_tasks")

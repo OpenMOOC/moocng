@@ -166,6 +166,18 @@ MOOC.models.Asset = Backbone.Model.extend({
     }
 });
 
+MOOC.models.ReservationCount = Backbone.Model.extend({
+    defaults: {
+        reservation_begins: null,
+        count: null
+    }
+});
+
+MOOC.models.ReservationCountList = MOOC.models.TastyPieCollection.extend({
+    model: MOOC.models.ReservationCount,
+    url: MOOC.ajax.getAbsoluteUrl('reservation_count/')
+});
+
 MOOC.models.AssetList = MOOC.models.TastyPieCollection.extend({
     model: MOOC.models.Asset,
     url: MOOC.ajax.getAbsoluteUrl('asset/')

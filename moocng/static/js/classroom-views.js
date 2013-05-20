@@ -1200,14 +1200,63 @@ MOOC.views.Asset = Backbone.View.extend({
         "click button.as-new-reservation": "newReservation"
     },
 
+    checkDate: function (asset, dateText) {
+        var formModal,
+            reservationCountLists,
+            self = this;
+
+        formModal = this.getFormModal();
+        if (dateText in this.reservationCountLists) {
+            this.fillWithAvailableTimes(this.reservationCountLists[dateText]);
+        } else {
+            reservationCountList = new MOOC.models.ReservationCountList();
+            reservationCountList.fetch({
+                data: { 'asset': asset.get('id'),
+                        'date': dateText },
+                success: function (collection, resp, options) {
+                    self.reservationCountLists[dateText] = reservationCountList;
+                    self.fillWithAvailableTimes(asset, reservationCountList);
+                }
+            });
+        }
+    },
+
+    fillWithAvailableTimes: function (asset, reservationCountList) {
+        var key,
+            counts,
+            maxBookings,
+            options;
+
+        counts = new Array();
+        reservationCountList.each(function (count) {
+            key = count.get("reservation_begins").split('T')[1].slice(0,5);
+            counts[key] = count.get("count");
+        });
+        maxBookings = asset.get('max_bookable_slots') * asset.get('capacity');
+
+        options = [];
+        currentTime = new Date('2000-01-01T00:00:00.000Z'); //The day itself is irrelevant
+        while (currentTime.getUTCDate() === 1) {
+            key = currentTime.toISOString().split('T')[1].slice(0, 5);
+            if (!(key in counts) || counts[key] < maxBookings) {
+                options.push("<option>");
+                options.push(key);
+                options.push("</option>");
+            }
+            currentTime = new Date(currentTime.getTime() + asset.get("slot_duration") * 60000);
+        }
+        this.getFormModal().find("#as-fromtime").html(options.join(""));
+    },
+
     initialize: function () {
         "use strict";
         _.bindAll(this, "render", "getFormModal", "submit",
-                  "confirmedSubmit");
+                  "confirmedSubmit", "checkDate", "fillWithAvailableTimes");
     },
 
     modal: undefined,
     formModal: undefined,
+    reservationCountLists: new Array(),
 
     getFormModal: function () {
         "use strict";
@@ -1299,7 +1348,8 @@ MOOC.views.Asset = Backbone.View.extend({
             firstDate,
             lastDate,
             defaultDate,
-            currentTime;
+            currentTime,
+            self = this;
 
         asset = assetList.find(function (candidate) {
             return (parseInt(candidate.get("id"), 10) === assetId);
@@ -1329,13 +1379,6 @@ MOOC.views.Asset = Backbone.View.extend({
         formContent.push(MOOC.trans.classroom.asBookTime + "</label>");
         formContent.push("<select class=\"input-small\" name=\"reservation_time\" id=\"as-fromtime\">");
 
-        currentTime = new Date('2000-01-01T00:00:00.000Z'); //The day itself is irrelevant
-        while (currentTime.getUTCDate() === 1) {
-            formContent.push("<option>");
-            formContent.push(currentTime.toISOString().split('T')[1].slice(0, 5));
-            formContent.push("</option>");
-            currentTime = new Date(currentTime.getTime() + asset.get("slot_duration") * 60000);
-        }
         formContent.push("</select></p></div></div>");
 
         baseURL = document.URL.split('#')[0];
@@ -1350,7 +1393,14 @@ MOOC.views.Asset = Backbone.View.extend({
         formModal.find("#new-asset-reservation-form-content").html(formContent.join(""));
         formModal.find("#new-asset-reservation-form").attr("action", actionURL);
 
-        formModal.find("#as-date").datepicker({dateFormat: "yy-mm-dd", minDate: firstDate, maxDate: lastDate, defaultDate: defaultDate});
+        formModal.find("#as-date").datepicker( {dateFormat: "yy-mm-dd",
+            minDate: firstDate,
+            maxDate: lastDate,
+            defaultDate: defaultDate,
+            onSelect: function(dateText) {
+                self.checkDate(asset, dateText);
+            }
+        });
 
         this.submit();
     },
