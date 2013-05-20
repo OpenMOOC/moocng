@@ -119,14 +119,17 @@ MOOC.models.EvaluationCriterionList = MOOC.models.TastyPieCollection.extend({
 });
 
 MOOC.models.PeerReviewAssignment = Backbone.Model.extend({
-    defaults: {
-        description: "",
-        minimum_reviewers: null,
-        kq: null,
+    defaults: function () {
+        "use strict";
+        return {
+            description: "",
+            minimum_reviewers: null,
+            kq: null,
 
-        _criterionList: new MOOC.models.EvaluationCriterionList(),
-        _knowledgeQuantumInstance: null,
-        _submitted: false
+            _criterionList: new MOOC.models.EvaluationCriterionList(),
+            _knowledgeQuantumInstance: null,
+            _submitted: false
+        };
     },
 
     url: function () {
@@ -535,12 +538,15 @@ MOOC.models.AttachmentList = MOOC.models.TastyPieCollection.extend({
 
 MOOC.models.PeerReviewReview  = Backbone.Model.extend({
     idAttribute: '_id',
-    defaults: {
-        kq: null,
-        created: null,
-        criteria: [],
-        comment: null,
-        score: 0
+    defaults: function () {
+        "use strict";
+        return {
+            kq: null,
+            created: null,
+            criteria: [],
+            comment: null,
+            score: 0
+        };
     },
 
     parse: function (resp, xhr) {
@@ -667,18 +673,17 @@ MOOC.models.KnowledgeQuantumList  = MOOC.models.TastyPieCollection.extend({
 
     setEvaluationCriterionList: function (evaluationCriterionList) {
         "use strict";
-        evaluationCriterionList.each(function (ec) {
-            this.each(function (kq) {
-                var pra = kq.get('peerReviewAssignmentInstance'),
-                    criterionList;
-                if (pra !== null) {
-                    if (ec.get('assignment') === pra.url()) {
-                        criterionList = pra.get('_criterionList');
-                        criterionList.add(ec);
+        this.each(function (kq) {
+            var pra = kq.get("peerReviewAssignmentInstance");
+            if (!_.isNull(pra)) {
+                pra.set("_criterionList", new MOOC.models.EvaluationCriterionList());
+                evaluationCriterionList.each(function (ec) {
+                    if (ec.get("assignment") === pra.url()) {
+                        pra.get("_criterionList").add(ec);
                     }
-                }
-            });
-        }, this);
+                });
+            }
+        });
     },
 
     setPeerReviewSubmissionList: function (peerReviewSubmissionList) {

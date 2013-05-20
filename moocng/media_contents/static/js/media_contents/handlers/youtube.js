@@ -11,28 +11,48 @@ if (_.isUndefined(MOOC.views.players)) {
     MOOC.views.players = {};
 }
 
-function triggerFinish(event) {
-    "use strict";
-    if (event.data === 0) {
-        MOOC.players_listener.trigger('mediaContentFinished', event.target.view);
-    }
-}
-
 MOOC.views.players.Youtube = Backbone.View.extend({
     el: $('#ytplayer'),
-    initialize: function (view) {
+
+    initialize: function (options) {
         "use strict";
-        this.view = view;
-        this.try_to_initialize_until_success();
+        this.kq = options.kq;
+        _.bindAll(this, "onPlayerStateChange", "onPlayerReady");
+        this.player = new YT.Player("ytplayer", {
+            events: {
+                'onReady': this.onPlayerReady,
+                'onStateChange': this.onPlayerStateChange
+            }
+        });
     },
-    try_to_initialize_until_success: function () {
+
+    onPlayerStateChange: function (event) {
         "use strict";
-        try {
-            this.player = new YT.Player('ytplayer');
-            this.player.addEventListener("onStateChange", "triggerFinish");
-            this.player.view = this.view;
-        } catch (err) {
-            setTimeout(this.try_to_initialize_until_success, 1000);
+        if (event.data === 0) {
+            MOOC.players_listener.trigger('mediaContentFinished', MOOC.views.kqViews[this.kq]);
         }
+    },
+
+    onPlayerReady: function () {
+        "use strict";
+        this.player.unMute();
+    },
+
+    destroyPlayer: function (callback) {
+        "use strict";
+        var player = this.player;
+        player.mute();
+        player.stopVideo();
+        $(player.getIframe()).hide();
+        setTimeout(function () { // IE HACK
+            player.destroy();
+            callback();
+        }, 1000);
+        this.player = null;
     }
 });
+
+MOOC.views.players.Youtube.test = function (node) {
+    "use strict";
+    return $(node).find("#ytplayer").length > 0;
+};

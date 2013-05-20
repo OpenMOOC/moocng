@@ -506,6 +506,7 @@ CACHES = {
 }
 
 MATHJAX_ENABLED = False
+MATHJAX_LOCAL_PATH = STATIC_URL + 'js/libs/mathjax'
 MATHJAX_CONFIG_FILE = "TeX-AMS-MML_HTMLorMML"
 MATHJAX_CONFIG_DATA = {
   "elements": ['false-id-to-not-proccess-by-default'],

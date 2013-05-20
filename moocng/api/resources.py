@@ -264,10 +264,16 @@ class PeerReviewAssignmentResource(ModelResource):
         authorization = DjangoAuthorization()
         filtering = {
             "kq": ('exact'),
+            "unit": ('exact'),
         }
 
     def get_object_list(self, request):
         objects = super(PeerReviewAssignmentResource, self).get_object_list(request)
+
+        unit = request.GET.get('unit', None)
+        if unit is not None:
+            objects = objects.filter(kq__unit_id=unit)
+
         return objects.filter(
             Q(kq__unit__unittype='n') |
             Q(kq__unit__start__isnull=True) |
@@ -760,7 +766,7 @@ class UserResource(ModelResource):
         filtering = {
             'first_name': ['istartswith'],
             'last_name': ['istartswith'],
-            'email': ('exact')
+            'email': ('iexact')
         }
 
     def apply_filters(self, request, applicable_filters):
@@ -785,13 +791,12 @@ class UserResource(ModelResource):
     def get_object(self, request, kwargs):
         try:
             if not kwargs['pk'].isdigit():
-                kwargs['email'] = kwargs['pk']
-                del kwargs['pk']
-            obj = self.cached_obj_get(request=request,
-                                      **self.remove_api_resource_names(kwargs))
+                return User.objects.get(email__iexact=kwargs['pk'])
+            else:
+                return self.cached_obj_get(request=request,
+                                           **self.remove_api_resource_names(kwargs))
         except self.Meta.object_class.DoesNotExist:
-            return HttpResponse(status=404)
-        return obj
+            raise NotFound('User does not exist')
 
     def alt_get_list(self, request, courses):
         resource = CourseResource()
