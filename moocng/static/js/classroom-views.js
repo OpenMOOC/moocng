@@ -1316,7 +1316,7 @@ MOOC.views.Asset = Backbone.View.extend({
         lastDate = this.model.get("available_to");
 
         if (new Date(firstDate) < (new Date())) {
-            defaultDate = (new Date()).toISOString().split('T')[0];
+            defaultDate = new Date();
         } else {
             defaultDate = firstDate;
         }
@@ -1324,9 +1324,8 @@ MOOC.views.Asset = Backbone.View.extend({
         formContent = [];
         formContent.push("<div class=\"row\">");
         formContent.push("<div class=\"span3\"><p><label for=\"as-date\">" + MOOC.trans.classroom.asBookDate + "</label>");
-        formContent.push("<input type=\"date\" class=\"input-medium\" name=\"reservation_date\" id=\"as-date\"");
-        formContent.push("min=\"" + firstDate + "\" max=\"" + lastDate + "\" value=\"" + defaultDate + "\"/></p>");
-        formContent.push("</div><div class=\"span3\"><p><label for=\"as-fromtime\">");
+        formContent.push("<input type=\"text\" class=\"input-medium\" name=\"reservation_date\" id=\"as-date\">");
+        formContent.push("</p></div><div class=\"span3\"><p><label for=\"as-fromtime\">");
         formContent.push(MOOC.trans.classroom.asBookTime + "</label>");
         formContent.push("<select class=\"input-small\" name=\"reservation_time\" id=\"as-fromtime\">");
 
@@ -1350,6 +1349,8 @@ MOOC.views.Asset = Backbone.View.extend({
 
         formModal.find("#new-asset-reservation-form-content").html(formContent.join(""));
         formModal.find("#new-asset-reservation-form").attr("action", actionURL);
+
+        formModal.find("#as-date").datepicker({dateFormat: "yy-mm-dd", minDate: firstDate, maxDate: lastDate, defaultDate: defaultDate});
 
         this.submit();
     },
