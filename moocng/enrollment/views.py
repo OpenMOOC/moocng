@@ -14,7 +14,7 @@ def free_enrollment(request, course_slug):
     if request.method == 'POST':
         course.students.add(request.user)
         course.save()
-        if settings.get('FREE_ENROLLMENT_CONSISTENT', False):
+        if getattr(settings, 'FREE_ENROLLMENT_CONSISTENT', False):
             enroll_course_at_idp(request.user, course)
         success(request,
                 _(u'Congratulations, you have successfully enroll in the course %(course)s')
