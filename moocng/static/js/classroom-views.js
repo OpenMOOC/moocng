@@ -1210,6 +1210,7 @@ MOOC.views.Asset = Backbone.View.extend({
         if (this.reservationCounts.hasOwnProperty(dateText)) {
             this.fillWithAvailableTimes(asset, this.reservationCounts[dateText]);
         } else {
+            this.getFormModal().find("#as-confirm").addClass("disabled");
             reservationCountList = new MOOC.models.ReservationCountList();
             reservationCountList.fetch({
                 data: { 'asset': asset.get('id'),
@@ -1248,6 +1249,11 @@ MOOC.views.Asset = Backbone.View.extend({
                 options.push("</option>");
             }
             currentTime = new Date(currentTime.getTime() + asset.get("slot_duration") * 60000);
+        }
+        if (options.length === 0) {
+            this.getFormModal().find("#as-confirm").addClass("disabled");
+        } else {
+            this.getFormModal().find("#as-confirm").removeClass("disabled");
         }
         this.getFormModal().find("#as-fromtime").html(options.join(""));
     },
@@ -1477,9 +1483,12 @@ MOOC.views.Asset = Backbone.View.extend({
         "use strict";
         var modal = this.getFormModal();
         modal.find("#as-confirm").off("click").on("click", _.bind(function () {
-            this.confirmedSubmit();
-            modal.modal("hide");
+            if (!modal.find("#as-confirm").hasClass("disabled")) {
+                this.confirmedSubmit();
+                modal.modal("hide");
+            }
         }, this));
+        modal.find("#as-confirm").addClass("disabled");
         modal.modal("show");
     },
 
