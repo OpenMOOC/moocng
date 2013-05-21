@@ -379,6 +379,8 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_URL = '/saml2/logout/'
 LOGOUT_REDIRECT_URL = '/'
 
+FREE_ENROLLMENT_CONSISTENT = False
+
 SAML_CREATE_UNKNOWN_USER = True
 SAML_ATTRIBUTE_MAPPING = {
     'mail': ('username', 'email', ),
