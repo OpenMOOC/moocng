@@ -1201,37 +1201,37 @@ MOOC.views.Asset = Backbone.View.extend({
     },
 
     checkDate: function (asset, dateText) {
-        var formModal,
-            reservationCountLists,
+        var reservationCountList,
+            counts,
             self = this;
 
-        formModal = this.getFormModal();
-        if (dateText in this.reservationCountLists) {
-            this.fillWithAvailableTimes(this.reservationCountLists[dateText]);
+        if (dateText in this.reservationCounts) {
+            this.fillWithAvailableTimes(asset, this.reservationCounts[dateText]);
         } else {
             reservationCountList = new MOOC.models.ReservationCountList();
             reservationCountList.fetch({
                 data: { 'asset': asset.get('id'),
                         'date': dateText },
                 success: function (collection, resp, options) {
-                    self.reservationCountLists[dateText] = reservationCountList;
-                    self.fillWithAvailableTimes(asset, reservationCountList);
+                    counts = new Array();
+                    reservationCountList.each(function (count) {
+                        key = count.get("reservation_begins").split('T')[1].slice(0,5);
+                        counts[key] = count.get("count");
+                    });
+                    self.reservationCounts[dateText] = counts;
+
+                    self.fillWithAvailableTimes(asset, counts);
                 }
             });
         }
     },
 
-    fillWithAvailableTimes: function (asset, reservationCountList) {
+    fillWithAvailableTimes: function (asset, counts) {
         var key,
-            counts,
             maxBookings,
             options;
 
-        counts = new Array();
-        reservationCountList.each(function (count) {
-            key = count.get("reservation_begins").split('T')[1].slice(0,5);
-            counts[key] = count.get("count");
-        });
+
         maxBookings = asset.get('max_bookable_slots') * asset.get('capacity');
 
         options = [];
@@ -1250,13 +1250,69 @@ MOOC.views.Asset = Backbone.View.extend({
 
     initialize: function () {
         "use strict";
-        _.bindAll(this, "render", "getFormModal", "submit",
+        _.bindAll(this, "render", "getFormModal", "submit", "beforeShowDay",
                   "confirmedSubmit", "checkDate", "fillWithAvailableTimes");
     },
 
     modal: undefined,
     formModal: undefined,
-    reservationCountLists: new Array(),
+    reservationCounts: new Array(),
+    occupationInformation: new Array(),
+
+    downloadOccupationInformation: function(asset, year, month) {
+        var occupationInformationList,
+            occupationInfo,
+            self = this;
+
+        occupationInformationList = new MOOC.models.OccupationInformationList();
+        occupationInformationList.fetch({
+            data: { 'asset': asset.get('id'),
+                    'month': month,
+                    'year': year },
+            async: false,
+            success: function (collection, resp, options) {
+                occupationInfo = new Array(31);
+
+                occupationInformationList.each(function (element) {
+                    occupationInfo[element.get("day")] = element.get("occupation");
+                });
+
+                if (!(year in self.occupationInformation)) {
+                    self.occupationInformation[year] = new Array();
+                }
+
+                self.occupationInformation[year][month] = occupationInfo;
+            }
+        });
+    },
+
+    beforeShowDay: function (asset, date) {
+        var couldDownload,
+            month,
+            year;
+
+        month = date.getMonth() + 1;
+        year = date.getFullYear();
+        couldDownload = true;
+        if (!((year in this.occupationInformation) && (month in this.occupationInformation[year]))) {
+            this.downloadOccupationInformation(asset, year, month);
+            couldDownload = ((year in this.occupationInformation) && (month in this.occupationInformation[year]));
+        }
+
+        if (!couldDownload)
+            return [true, ""];
+
+        occupation = this.occupationInformation[year][month][date.getDate()]
+        if (occupation == 1) {
+            return [true, "red"];
+        } else if (occupation > 0.8) {
+            return [true, "orange"];
+        } else if (occupation > 0.5) {
+            return [true, "yellow"];
+        } else {
+            return [true, "green"];
+        }
+    },
 
     getFormModal: function () {
         "use strict";
@@ -1399,6 +1455,9 @@ MOOC.views.Asset = Backbone.View.extend({
             defaultDate: defaultDate,
             onSelect: function(dateText) {
                 self.checkDate(asset, dateText);
+            },
+            beforeShowDay: function(date) {
+                return self.beforeShowDay(asset, date);
             }
         });
 

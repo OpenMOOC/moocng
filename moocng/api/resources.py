@@ -58,6 +58,7 @@ from moocng.peerreview.utils import (kq_get_peer_review_score,
                                      get_peer_review_review_score)
 
 from moocng.assets.models import Asset, Reservation, AssetAvailability
+from moocng.assets.utils import get_occupation_for_month
 
 
 class CourseResource(ModelResource):
@@ -1095,6 +1096,36 @@ class ReservationCount(Resource):
 
         ret = ret.values('reservation_begins').order_by('reservation_begins')
         ret = ret.annotate(Count('reservation_begins'))
+        return ret
+
+
+class OccupationInformation(Resource):
+    day = fields.IntegerField(readonly=True)
+    occupation = fields.DecimalField(readonly=True)
+
+    class Meta:
+        resource_name = 'occupation_information'
+        allowed_methods = 'get'
+
+    def dehydrate_day(self, bundle):
+        return int(bundle.obj[0])
+
+    def dehydrate_occupation(self, bundle):
+        return bundle.obj[1]
+
+    def obj_get(self, request, **kwargs):
+        #Information can only be obtained if asking for a list
+        return {'day': '', 'occupation': ''}
+
+    def obj_get_list(self, request, **kwargs):
+        try:
+            asset_id = int(request.GET.get('asset', ''))
+            month = int(request.GET.get('month', ''))
+            year = int(request.GET.get('year', ''))
+        except ValueError:
+            return []
+
+        ret = get_occupation_for_month(asset_id, month, year)
         return ret
 
 

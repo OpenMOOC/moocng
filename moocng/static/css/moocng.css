@@ -556,3 +556,19 @@ code {
     cursor: move;
     width: 16px;
 }
+
+td.red a.ui-state-default {
+    background: #ff0000;
+}
+
+td.yellow a.ui-state-default {
+    background: #ffff00;
+}
+
+td.orange a.ui-state-default {
+    background: #ff9900;
+}
+
+td.green a.ui-state-default {
+    background: #00ff00;
+}
