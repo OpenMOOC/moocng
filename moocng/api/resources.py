@@ -15,7 +15,8 @@
 # limitations under the License.
 
 
-from datetime import datetime
+from datetime import datetime, date
+import re
 import logging
 
 from bson import ObjectId
@@ -54,6 +55,8 @@ from moocng.mongodb import get_db
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
 from moocng.peerreview.utils import (kq_get_peer_review_score,
                                      get_peer_review_review_score)
+
+from moocng.assets.models import Asset, Reservation, AssetAvailability
 
 
 class CourseResource(ModelResource):
@@ -98,6 +101,11 @@ class KnowledgeQuantumResource(ModelResource):
         'moocng.api.resources.PeerReviewAssignmentResource',
         'peerreviewassignment',
         related_name='peer_review_assignment',
+        readonly=True, null=True)
+    asset_availability = fields.ToOneField(
+        'moocng.api.resources.AssetAvailabilityResource',
+        'asset_availability',
+        related_name='asset_availability',
         readonly=True, null=True)
     peer_review_score = fields.IntegerField(readonly=True)
     correct = fields.BooleanField(readonly=True)
@@ -189,6 +197,11 @@ class PrivateKnowledgeQuantumResource(ModelResource):
         'moocng.api.resources.PeerReviewAssignmentResource',
         'peerreviewassignment',
         related_name='peer_review_assignment',
+        readonly=True, null=True)
+    asset_availability = fields.ToOneField(
+        'moocng.api.resources.AssetAvailabilityResource',
+        'asset_availability',
+        related_name='asset_availability',
         readonly=True, null=True)
     normalized_weight = fields.IntegerField()
 
@@ -834,6 +847,219 @@ class UserResource(ModelResource):
                 if float(course.threshold) <= total_mark:
                     passed_courses.append(course)
         return self.alt_get_list(request, passed_courses)
+
+
+class AssetResource(ModelResource):
+    available_in = fields.ToManyField('moocng.api.resources.AssetAvailabilityResource', 'available_in')
+
+    class Meta:
+        queryset = Asset.objects.all()
+        resource_name = 'asset'
+        allowed_methods = ['get']
+        authentication = DjangoAuthentication()
+        authorization = DjangoAuthorization()
+        filtering = {
+            "available_in": ('exact'),
+        }
+
+    def obj_get_list(self, request=None, **kwargs):
+
+        availability = request.GET.get('availability', None)
+        kq = request.GET.get('kq', None)
+        exclude_kq = request.GET.get('exclude_kq', None)
+        course = request.GET.get('course', None)
+
+        if availability is not None:
+            results = Asset.objects.filter(available_in__id=availability)
+        elif kq is not None:
+            results = Asset.objects.filter(available_in__kq__id=kq)
+        elif exclude_kq is not None:
+            results = Asset.objects.exclude(available_in__kq__id=exclude_kq)
+        elif course is not None:
+            results = Asset.objects.filter(available_in__kq__unit__course__id=course)
+        else:
+            results = Asset.objects.all()
+        return results
+
+
+class PrivateAssetResource(ModelResource):
+    available_in = fields.ToManyField('moocng.api.resources.AssetAvailabilityResource', 'available_in')
+
+    class Meta:
+        queryset = Asset.objects.all()
+        resource_name = 'privasset'
+        authentication = TeacherAuthentication()
+        authorization = TeacherAuthorization()
+        filtering = {
+            "available_in": ('exact'),
+        }
+
+    def obj_get_list(self, request=None, **kwargs):
+
+        availability = request.GET.get('availability', None)
+        kq = request.GET.get('kq', None)
+        exclude_kq = request.GET.get('exclude_kq', None)
+        course = request.GET.get('course', None)
+
+        if availability is not None:
+            results = Asset.objects.filter(available_in__id=availability)
+        elif kq is not None:
+            results = Asset.objects.filter(available_in__kq__id=kq)
+        elif exclude_kq is not None:
+            results = Asset.objects.exclude(available_in__kq__id=exclude_kq)
+        elif course is not None:
+            results = Asset.objects.filter(available_in__kq__unit__course__id=course)
+
+        else:
+            results = Asset.objects.all()
+        return results
+
+
+class AssetAvailabilityResource(ModelResource):
+
+    kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
+    assets = fields.ToManyField(AssetResource, 'assets')
+    can_be_booked = fields.BooleanField(readonly=True)
+
+    max_reservations_pending = fields.IntegerField(readonly=True)
+    max_reservations_total = fields.IntegerField(readonly=True)
+
+    class Meta:
+        queryset = AssetAvailability.objects.all()
+        resource_name = 'asset_availability'
+        allowed_methods = ['get']
+        authentication = DjangoAuthentication()
+        authorization = DjangoAuthorization()
+        filtering = {
+            "kq": ('exact'),
+            "assets": ('exact'),
+        }
+
+    def dehydrate_max_reservations_pending(self, bundle):
+        return bundle.obj.kq.unit.course.max_reservations_pending
+
+    def dehydrate_max_reservations_total(self, bundle):
+        return bundle.obj.kq.unit.course.max_reservations_total
+
+    def dehydrate_can_be_booked(self, bundle):
+        if bundle.obj.available_to < date.today():
+            return False
+        else:
+            return True
+
+    def obj_get_list(self, request=None, **kwargs):
+
+        kq = request.GET.get('kq', None)
+        asset = request.GET.get('asset', None)
+
+        if kq is not None and asset is not None:
+            results = AssetAvailability.objects.filter(Q(kq__id=kq) & Q(assets__available_in__id=asset))
+        elif kq is not None:
+            results = AssetAvailability.objects.filter(kq__id=kq)
+        elif asset is not None:
+            results = AssetAvailability.objects.filter(assets__available_in__id=asset)
+        else:
+            results = AssetAvailability.objects.all()
+        return results
+
+
+class PrivateAssetAvailabilityResource(ModelResource):
+
+    kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
+    assets = fields.ToManyField(AssetResource, 'assets')
+    can_be_booked = fields.BooleanField(readonly=True)
+
+    max_reservations_pending = fields.IntegerField(readonly=True)
+    max_reservations_total = fields.IntegerField(readonly=True)
+
+    class Meta:
+        queryset = AssetAvailability.objects.all()
+        resource_name = 'privasset_availability'
+        authentication = TeacherAuthentication()
+        authorization = TeacherAuthorization()
+        filtering = {
+            "kq": ('exact'),
+            "assets": ('exact'),
+        }
+
+    def dehydrate_max_reservations_pending(self, bundle):
+        return bundle.obj.kq.unit.course.max_reservations_pending
+
+    def dehydrate_max_reservations_total(self, bundle):
+        return bundle.obj.kq.unit.course.max_reservations_total
+
+    def dehydrate_can_be_booked(self, bundle):
+        if bundle.obj.available_to < date.today():
+            return False
+        else:
+            return True
+
+    def obj_get_list(self, request=None, **kwargs):
+
+        kq = request.GET.get('kq', None)
+        asset = request.GET.get('asset', None)
+
+        if kq is not None and asset is not None:
+            results = AssetAvailability.objects.filter(Q(kq__id=kq) & Q(assets__available_in__id=asset))
+        elif kq is not None:
+            results = AssetAvailability.objects.filter(kq__id=kq)
+        elif asset is not None:
+            results = AssetAvailability.objects.filter(assets__available_in__id=asset)
+        else:
+            results = AssetAvailability.objects.all()
+        return results
+
+
+class ReservationResource(ModelResource):
+    user = fields.ToOneField(UserResource, 'user')
+    asset = fields.ToOneField(AssetResource, 'asset')
+    reserved_from = fields.ToOneField(AssetAvailabilityResource, 'reserved_from')
+    remaining_time = fields.IntegerField(readonly=True)
+    active_in = fields.IntegerField(readonly=True)
+
+    class Meta:
+        queryset = Reservation.objects.all()
+        resource_name = 'reservation'
+        allowed_methods = ['get']
+        authentication = MultiAuthentication(DjangoAuthentication(),
+                                             ApiKeyAuthentication())
+        authorization = DjangoAuthorization()
+        filtering = {
+            "asset": ('exact'),
+            "user": ('exact'),
+            "reserved_from": ('exact'),
+        }
+
+    def dehydrate_active_in(self, bundle):
+        reservation_begins = bundle.obj.reservation_begins.replace(tzinfo=None)
+        dif = (reservation_begins - datetime.utcnow())
+        return dif.seconds + dif.days * 86400
+
+    def dehydrate_remaining_time(self, bundle):
+        reservation_begins = bundle.obj.reservation_begins.replace(tzinfo=None)
+        reservation_ends = bundle.obj.reservation_ends.replace(tzinfo=None)
+        now = max(datetime.utcnow(), reservation_begins)
+        dif = (reservation_ends - now)
+        return dif.seconds + dif.days * 86400
+
+    def obj_get_list(self, request=None, **kwargs):
+
+        asset = request.GET.get('asset', None)
+        user = request.GET.get('user', None)
+        kq = request.GET.get('kq', None)
+
+        results = Reservation.objects.all()
+
+        if asset is not None:
+            results = results.filter(asset__id=asset)
+
+        if user is not None:
+            results = results.filter(user__id=user)
+
+        if kq is not None:
+            results = results.filter(reserved_from__kq=kq)
+
+        return results
 
 
 api_task_logger = logging.getLogger("api_tasks")

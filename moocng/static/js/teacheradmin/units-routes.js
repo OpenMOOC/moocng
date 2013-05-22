@@ -36,6 +36,7 @@ if (_.isUndefined(window.MOOC)) {
                             var data = _.pick(kq, "id", "title",
                                 "teacher_comments", "supplementary_material",
                                 "question", "order", "correct", "completed",
+                                "peer_review_assignment", "asset_availability",
                                 "iframe_code", "media_content_type", "media_content_id",
                                 "normalized_weight", "peer_review_assignment",
                                 "thumbnail_url", "weight");
@@ -51,6 +52,10 @@ if (_.isUndefined(window.MOOC)) {
             var promises = [],
                 questionUrl,
                 peer_review_assignment,
+                asset_availability,
+                assetList,
+                assetUrl,
+                assetId,
                 criterionList,
                 assignmentUrl,
                 assignmentId;
@@ -99,6 +104,34 @@ if (_.isUndefined(window.MOOC)) {
                     })
                 );
             }
+
+            if (kq.has("asset_availability") && !kq.has("assetAvailabilityInstance")) {
+                asset_availability = new MOOC.models.AssetAvailability();
+                assetList = asset_availability.get("_assetList");
+                assetList = asset_availability.get("_otherAssets");
+
+                promises.push($.ajax(kq.get("asset_availability").replace("asset_availability", "privasset_availability"), {
+                    success: function (data, textStatus, jqXHR) {
+                        asset_availability.set("id", parseInt(data.id, 10));
+                        asset_availability.set("available_from", data.available_from);
+                        asset_availability.set("available_to", data.available_to);
+                        asset_availability.set("kq", data.kq);
+                        asset_availability.set("assets", data.assets);
+                        kq.set("assetAvailabilityInstance", asset_availability);
+                        asset_availability.set("knowledgeQuantumInstance", kq);
+                    }
+                }));
+
+                promises.push(
+                    asset_availability.get("_assetList").fetch({
+                        data: { 'kq': kq.id }
+                    }),
+                    asset_availability.get("_otherAssets").fetch({
+                        data: { 'exclude_kq': kq.id }
+                    })
+                );
+            }
+
 
             if (!kq.has("attachmentList")) {
                 promises.push($.ajax(MOOC.ajax.host + "attachment/?format=json&kq=" + kq.get("id"), {
@@ -271,6 +304,12 @@ if (_.isUndefined(window.MOOC)) {
         };
         MOOC.models.KnowledgeQuantum.prototype.url = function () {
             return MOOC.ajax.getAbsoluteUrl("privkq/") + this.get("id") + "/";
+        };
+        MOOC.models.AssetAvailability.prototype.url = function () {
+            if (this.has("id")) {
+                return MOOC.ajax.getAbsoluteUrl("privasset_availability/") + this.get("id") + "/";
+            }
+            return MOOC.ajax.getAbsoluteUrl("privasset_availability/");
         };
         MOOC.models.PeerReviewAssignment.prototype.url = function () {
             if (this.has("id")) {

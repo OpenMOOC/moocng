@@ -14,6 +14,7 @@
             <li class="{% block nav-teacheradmin-teachers %}{% endblock %}"><a href="{% url teacheradmin_teachers course.slug %}">{% trans "Teachers" %}</a></li>
             <li class="{% block nav-teacheradmin-units %}{% endblock %}"><a href="{% url teacheradmin_units course.slug %}">{% trans "Units" %}</a></li>
             <li class="{% block nav-teacheradmin-categories %}{% endblock %}"><a href="{% url teacheradmin_categories course.slug %}">{% trans "Categories" %}</a></li>
+            <li class="{% block nav-teacheradmin-assets %}{% endblock %}"><a href="{% url teacheradmin_assets course.slug %}">{% trans "Assets" %}</a></li>
             <li class="{% block nav-teacheradmin-announcements %}{% endblock %}"><a href="{% url teacheradmin_announcements course.slug %}">{% trans "Announcements" %}</a></li>
             <li class="nav-header">{% trans "Extra" %}</li>
             <!--<li class="{% block nav-teacheradmin-stats %}{% endblock %}"><a href="{% url teacheradmin_stats course.slug %}">{% trans "Statistics" %}</a></li>-->

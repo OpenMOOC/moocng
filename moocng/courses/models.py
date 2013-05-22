@@ -74,6 +74,10 @@ class Course(Sortable):
                                                   null=True,
                                                   blank=True,
                                                   max_length=200)
+    max_reservations_pending = models.PositiveSmallIntegerField(verbose_name=_('Pending reservations allowed:'),
+                                                                default=8)
+    max_reservations_total = models.PositiveSmallIntegerField(verbose_name=_('Total reservations allowed:'),
+                                                              default=8)
     threshold = models.DecimalField(
         verbose_name=_(u'Pass threshold'),
         max_digits=4, decimal_places=2,

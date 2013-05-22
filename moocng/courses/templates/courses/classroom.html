@@ -76,6 +76,25 @@
     </div>
 </div>
 
+<div id="new-reservation-form" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>{% trans "New reservation" %}</h3>
+    </div>
+    <div class="modal-body">
+        <div id="new-asset-reservation-availability-information"></div>
+        <div id="new-asset-reservation-asset-information"></div>
+        <form action="" method="post" id="new-asset-reservation-form">
+            {% csrf_token %}
+            <div id="new-asset-reservation-form-content"></div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
+        <button type="button" class="btn btn-danger" id="as-confirm">{% trans "Confirm" %}</button>
+    </div>
+</div>
+
 <div class="row"><div class="span8">
     <h2 id="kq-title"></h2>
 </div></div>
@@ -164,6 +183,8 @@
                 aTooltip: "{% trans "Answer" %}",
                 pr: "{% trans "PR" %}",
                 prTooltip: "{% trans "Peer Review" %}",
+                as: "{% trans "AS" %}",
+                asTooltip: "{% trans "Assets available" %}",
                 answersSent: "{% trans "Answers sent" %}",
                 answersCorrect: "{% trans "Congratulations, you got it right!" %}",
                 answersIncorrect: "{% trans "Wrong answer, good luck next time." %}",
@@ -176,7 +197,26 @@
                 prJust: "{% trans "Thank you for sending this submission. You have now to review #(minimum_reviewers)s submissions from other students in order to get your submission scored." %}",
                 prAlready: "{% trans "You have already sent a submission for this peer review assignment. You can now review submissions from other students or check your score." %}",
                 prReview: "{% trans "Review other students submissions" %}",
-                prProgress: "{% trans "Check my progress" %}"
+                prProgress: "{% trans "Check my progress" %}",
+                asAssetList: "{% trans "Available Assets: " %}",
+                asBook: "{% trans "Book" %}",
+                asBookDate: "{% trans "Date: " %}",
+                asBookTime: "{% trans "Time: " %}",
+                asCancelations: "{% trans "Cancelations: " %}",
+                asCannotBook: "{% trans "Assets in this nugget can no longer be booked." %}",
+                asCapacity: "{% trans "Capacity: " %}",
+                asDates: "{% trans "Assets can be booked:" %}",
+                asDatesFrom: "{% trans "From: " %}",
+                asDatesTo: "{% trans "To: " %}",
+                asInAdvance: "{% trans "Time in advance required for: " %}",
+                asLimits: "{% trans "Limits for this course: " %}",
+                asNumberOfSlots: "{% trans "Number of slots: " %}",
+                asMaxPending: "{% trans "Pending reservations: " %}",
+                asMaxTotal: "{% trans "Total reservations: " %}",
+                asMinutes: "{% trans "minutes" %}",
+                asRequisites: "{% trans "Requisites for making a reservation:" %}",
+                asReservations: "{% trans "Reservations: " %}",
+                asSlotLength:  "{% trans "Slot length: " %}"
             },
             peerreview: {
                 prFileMaxSize: "{% trans "Your file is too big" %}",

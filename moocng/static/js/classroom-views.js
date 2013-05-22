@@ -29,7 +29,8 @@ MOOC.views.Unit = Backbone.View.extend({
         "click li span.kq": "showKQ",
         "click li span.q": "showQ",
         "click li span.a": "showA",
-        "click li span.pr": "showPR"
+        "click li span.pr": "showPR",
+        "click li span.as": "showAS"
     },
 
     render: function () {
@@ -43,6 +44,8 @@ MOOC.views.Unit = Backbone.View.extend({
                 html += '/ <span class="a label" title="' + MOOC.trans.classroom.aTooltip + '">' + MOOC.trans.classroom.a + '</span>';
             } else if (kq.has("peer_review_assignment")) {
                 html += ' <span class="pr label" title="' + MOOC.trans.classroom.prTooltip + '">' + MOOC.trans.classroom.pr + '</span>';
+            } else if (kq.has("asset_availability")) {
+                html += ' <span class="as label" title="' + MOOC.trans.classroom.asTooltip + '">' + MOOC.trans.classroom.as + '</span>';
             }
             html += '</li>';
         });
@@ -73,6 +76,12 @@ MOOC.views.Unit = Backbone.View.extend({
         "use strict";
         var kq = $(evt.target).parent().attr("id").split("kq")[1];
         MOOC.router.navigate(this.id + "/kq" + kq + "/p", { trigger: true });
+    },
+
+    showAS: function (evt) {
+        "use strict";
+        var kq = $(evt.target).parent().attr("id").split("kq")[1];
+        MOOC.router.navigate(this.id + "/kq" + kq + "/as", { trigger: true });
     }
 });
 
@@ -117,6 +126,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 this.loadQuestionData();
             } else if (this.model.has("peer_review_assignment")) {
                 this.loadPeerReviewData();
+            } else if (this.model.has("asset_availability")) {
+                this.loadAssetsData();
             }
 
             $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
@@ -181,6 +192,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     url += "/a";
                 } else if (!next && aux.has("peer_review_assignment")) {
                     url += "/p";
+                } else if (!next && aux.has("asset_availability")) {
+                    url += "/as";
                 }
                 return url;
             }
@@ -190,14 +203,16 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
         if (/#[\w\/]+\/q/.test(path)) { // Viewing question
             target = next ? "answer" : "same";
-        } else if (/#[\w\/]+\/a/.test(path)) { // Viewing answer
-            target = next ? "next" : "exercise";
+        } else if (/#[\w\/]+\/as/.test(path)) { // Viewing asset availability
+            target = next ? "next" : "same";
         } else if (/#[\w\/]+\/p/.test(path)) { // Viewing peer review
             target = next ? "next" : "same";
+        } else if (/#[\w\/]+\/a/.test(path)) { // Viewing answer
+            target = next ? "next" : "exercise";
         } else { // Viewing kq
             target = next ? "exercise" : "prev";
         }
-        if (target === "exercise" && !kq.has("question") && !kq.has("peer_review_assignment")) {
+        if (target === "exercise" && !kq.has("question") && !kq.has("peer_review_assignment") && !kq.has("asset_availability")) {
             target = "next";
         }
 
@@ -206,8 +221,10 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             url = "unit" + unit.get("id") + "/kq" + kq.get("id");
             if (kq.has("question")) {
                 url += "/q";
-            } else { // peer review
+            } else if (kq.has("peer_review_assignment")) {// peer review
                 url += "/p";
+            } else if (kq.has("asset_availability")) {//asset availability
+                url += "/as";
             }
             break;
         case "answer":
@@ -310,7 +327,6 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         "use strict";
         var kqObj = this.model;
         if (!kqObj.has("peerReviewAssignmentInstance")) {
-            // Load Peer Review Data
             MOOC.ajax.getResource(kqObj.get("peer_review_assignment"), function (data, textStatus, jqXHR) {
                 var ajaxCounter = 0,
                     peerReviewObj = new MOOC.models.PeerReviewAssignment({
@@ -345,6 +361,42 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                         callback();
                     }
                 });
+            });
+        }
+    },
+
+    loadAssetsData: function () {
+        "use strict";
+        var kqObj,
+            assetList;
+
+        kqObj = this.model;
+
+        if (!kqObj.has("assetAvailabilityInstance")) {
+            if (!kqObj.has("_assetList")) {
+                assetList = new MOOC.models.AssetList();
+                assetList.fetch({
+                    data: { 'kq': kqObj.get("id") },
+                    success: function (collection, resp, options) {
+                        kqObj.set("_assetList", assetList);
+                    }
+                });
+            }
+            MOOC.ajax.getResource(kqObj.get("asset_availability"), function (data, textStatus, jqXHR) {
+                var assetAvailabilityObj;
+
+                assetAvailabilityObj = new MOOC.models.AssetAvailability({
+                    id: data.id,
+                    kq: data.kq,
+                    available_from: data.available_from,
+                    available_to: data.available_to,
+                    can_be_booked: data.can_be_booked,
+                    max_reservations_pending: data.max_reservations_pending,
+                    max_reservations_total: data.max_reservations_total,
+                    knowledgeQuantumInstance: kqObj
+                });
+
+                kqObj.set('assetAvailabilityInstance', assetAvailabilityObj);
             });
         }
     },
@@ -464,6 +516,60 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 }
             }, this));
         }
+
+        async.series(toExecute);
+
+        return this;
+    },
+
+    loadAssets: function () {
+        "use strict";
+        var toExecute = [];
+
+        if (!this.model.has("assetAvailabilityInstance")) {
+            toExecute.push(async.apply(this.setupListernerFor, this.model, "assetAvailabilityInstance"));
+        }
+
+        if (!this.model.has("_assetList")) {
+            toExecute.push(async.apply(this.setupListernerFor, this.model, "_assetList"));
+        }
+
+        toExecute.push(_.bind(function (callback) {
+            var unit = MOOC.models.course.getByKQ(this.model),
+                assetAvailability = this.model.get("assetAvailabilityInstance"),
+                path = window.location.hash.substring(1),
+                view = MOOC.views.assetViews[assetAvailability.get("id")];
+
+            assetAvailability.set("_assetList", this.model.get("_assetList"));
+            $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
+
+            if (!(/[\w\/]+\/as/.test(path))) {
+
+                path = path + "/as";
+                MOOC.router.navigate(path, { trigger: false });
+            }
+
+            this.setEventForNavigation("#kq-previous", unit, this.model, false);
+            this.setEventForNavigation("#kq-next", unit, this.model, true);
+
+
+            if (this.player && !_.isNull(this.player.getIframe())) {
+                this.player.destroy();
+            }
+            $("#kq-video").empty();
+            this.player = null;
+
+            if (_.isUndefined(view)) {
+                view = new MOOC.views.Asset({
+                    model: assetAvailability,
+                    el: $("#kq-video")[0]
+                });
+                MOOC.views.assetViews[assetAvailability.get("id")] = view;
+            }
+            view.render();
+
+            callback();
+        }, this));
 
         async.series(toExecute);
 
@@ -1088,3 +1194,180 @@ MOOC.views.PeerReviewAssignment = Backbone.View.extend({
 });
 
 MOOC.views.peerReviewAssignmentViews = {};
+
+MOOC.views.Asset = Backbone.View.extend({
+    events: {
+        "click button.as-new-reservation": "newReservation"
+    },
+
+    initialize: function () {
+        "use strict";
+        _.bindAll(this, "render", "getFormModal", "submit",
+                  "confirmedSubmit");
+    },
+
+    modal: undefined,
+    formModal: undefined,
+
+    getFormModal: function () {
+        "use strict";
+        if (_.isUndefined(this.formModal)) {
+            this.formModal = $("#new-reservation-form");
+            this.formModal.modal({
+                show: false,
+                backdrop: "static",
+                keyboard: false
+            });
+        }
+        return this.formModal;
+    },
+
+    render: function () {
+        "use strict";
+        var html,
+            buttonId,
+            divId,
+            canBeBooked;
+
+        html = [];
+
+        html.push("<h3>" + MOOC.trans.classroom.asRequisites + "</h3>");
+        html.push("<div id='availability-information' class='solution-wrapper white'>");
+        html.push("<div class='row'>");
+        html.push("<div class='span3'><ul><li>" + MOOC.trans.classroom.asDates + "<ul>");
+        html.push("<li>" + MOOC.trans.classroom.asDatesFrom + this.model.get("available_from") + "</li>");
+        html.push("<li>" + MOOC.trans.classroom.asDatesTo + this.model.get("available_to") + "</li>");
+        html.push("</ul></li></ul></div><div class='span3'><ul><li>");
+        html.push(MOOC.trans.classroom.asLimits + "<ul>");
+        html.push("<li>" + MOOC.trans.classroom.asMaxPending + this.model.get("max_reservations_pending") + "</li>");
+        html.push("<li>" + MOOC.trans.classroom.asMaxTotal + this.model.get("max_reservations_total") + "</li>");
+        html.push("</ul></li></ul></div></div></div>");
+
+        canBeBooked = this.model.get("can_be_booked");
+
+        if (!canBeBooked) {
+            html.push("<br /><div class=\"alert\">");
+            html.push(MOOC.trans.classroom.asCannotBook);
+            html.push("</div>");
+        }
+
+        html.push("<h3>" + MOOC.trans.classroom.asAssetList + "</h3>");
+        this.model.get("_assetList").each(function (asset) {
+            buttonId = "reservationnew-" + asset.get("id");
+            divId = "asset-information-" + asset.get("id");
+            html.push("<div class='solution-wrapper white'>");
+            html.push("<div id='" + divId + "'>");
+            html.push("<h4>" + asset.get("name") + "</h4>");
+            html.push(asset.get("description"));
+            html.push("<div class=\"row\"><div class=\"span3\">");
+            html.push("<ul><li>" + MOOC.trans.classroom.asSlotLength + asset.get("slot_duration") + "</li>");
+            html.push("<li>" + MOOC.trans.classroom.asNumberOfSlots + asset.get("max_bookable_slots") + "</li>");
+            html.push("<li>" + MOOC.trans.classroom.asCapacity + asset.get("capacity") + "</li>");
+            html.push("</ul></div><div class=\"span3\">");
+            html.push("<ul><li>" + MOOC.trans.classroom.asInAdvance + "<ul>");
+            html.push("<li>" + MOOC.trans.classroom.asReservations + " ");
+            html.push(asset.get("reservation_in_advance") + " " + MOOC.trans.classroom.asMinutes + "</li>");
+            html.push("<li>" + MOOC.trans.classroom.asCancelations + " ");
+            html.push(asset.get("cancelation_in_advance") + " " + MOOC.trans.classroom.asMinutes + "</li>");
+            html.push("</ul></li></ul></div></div></div><p class=\"align-right\">");
+            if (canBeBooked) {
+                html.push("<button type=\"button\" class=\"btn btn-primary as-new-reservation\" id=\"" + buttonId + "\">");
+                html.push(MOOC.trans.classroom.asBook);
+                html.push("</button>");
+            }
+            html.push("</p></div><br />");
+        });
+
+        this.$el.html(html.join(""));
+
+        $("#kq-q-showkq").addClass("hide");
+        $("#kq-q-submit").addClass("hide");
+
+        return this;
+    },
+
+    newReservation: function (evt) {
+        "use strict";
+        var assetId = parseInt(evt.target.getAttribute('id').split('-')[1], 10),
+            assetList = this.model.get("_assetList"),
+            formModal = this.getFormModal(),
+            assetDivId = "#asset-information-" + assetId,
+            actionURL,
+            baseURL = document.URL,
+            formContent,
+            asset,
+            firstDate,
+            lastDate,
+            defaultDate,
+            currentTime;
+
+        asset = assetList.find(function (candidate) {
+            return (parseInt(candidate.get("id"), 10) === assetId);
+        });
+
+        evt.preventDefault();
+        evt.stopPropagation();
+
+        formModal.find("#new-asset-reservation-availability-information").html(this.$el.find("#availability-information").html());
+        formModal.find("#new-asset-reservation-asset-information").html(this.$el.find(assetDivId).html());
+
+        firstDate = this.model.get("available_from");
+
+        lastDate = this.model.get("available_to");
+
+        if (new Date(firstDate) < (new Date())) {
+            defaultDate = (new Date()).toISOString().split('T')[0];
+        } else {
+            defaultDate = firstDate;
+        }
+
+        formContent = [];
+        formContent.push("<div class=\"row\">");
+        formContent.push("<div class=\"span3\"><p><label for=\"as-date\">" + MOOC.trans.classroom.asBookDate + "</label>");
+        formContent.push("<input type=\"date\" class=\"input-medium\" name=\"reservation_date\" id=\"as-date\"");
+        formContent.push("min=\"" + firstDate + "\" max=\"" + lastDate + "\" value=\"" + defaultDate + "\"/></p>");
+        formContent.push("</div><div class=\"span3\"><p><label for=\"as-fromtime\">");
+        formContent.push(MOOC.trans.classroom.asBookTime + "</label>");
+        formContent.push("<select class=\"input-small\" name=\"reservation_time\" id=\"as-fromtime\">");
+
+        currentTime = new Date('2000-01-01T00:00:00.000Z'); //The day itself is irrelevant
+        while (currentTime.getUTCDate() === 1) {
+            formContent.push("<option>");
+            formContent.push(currentTime.toISOString().split('T')[1].slice(0, 5));
+            formContent.push("</option>");
+            currentTime = new Date(currentTime.getTime() + asset.get("slot_duration") * 60000);
+        }
+        formContent.push("</select></p></div></div>");
+
+        baseURL = document.URL.split('#')[0];
+        if (baseURL.slice(-1) === "/") {
+            baseURL = baseURL.slice(0, baseURL.length - 1);
+        }
+        baseURL = baseURL.split('/').slice(0, -1).join('/');
+
+        actionURL = baseURL + "/reservations/" + this.model.get("knowledgeQuantumInstance").get("id");
+        actionURL += "/" + assetId + "/new";
+
+        formModal.find("#new-asset-reservation-form-content").html(formContent.join(""));
+        formModal.find("#new-asset-reservation-form").attr("action", actionURL);
+
+        this.submit();
+    },
+
+    submit: function () {
+        "use strict";
+        var modal = this.getFormModal();
+        modal.find("#as-confirm").off("click").on("click", _.bind(function () {
+            this.confirmedSubmit();
+            modal.modal("hide");
+        }, this));
+        modal.modal("show");
+    },
+
+    confirmedSubmit: function () {
+        "use strict";
+        this.getFormModal().find("#new-asset-reservation-form")[0].submit();
+    }
+});
+
+MOOC.views.assetViews = {};

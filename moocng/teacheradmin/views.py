@@ -36,7 +36,7 @@ from moocng.categories.models import Category
 from moocng.portal.templatetags.gravatar import gravatar_img_for_email
 from moocng.teacheradmin.decorators import is_teacher_or_staff
 from moocng.teacheradmin.forms import (CourseForm, AnnouncementForm,
-                                       MassiveEmailForm)
+                                       MassiveEmailForm, AssetTeacherForm)
 from moocng.teacheradmin.models import Invitation, MassiveEmail
 from moocng.teacheradmin.tasks import send_massive_email_task
 from moocng.teacheradmin.stats import (course_completed_started,
@@ -46,6 +46,10 @@ from moocng.teacheradmin.utils import (send_invitation,
                                        send_removed_notification)
 from moocng.videos.tasks import process_video_task
 from moocng.media_contents import get_media_content_types_choices
+
+from moocng.assets.utils import course_get_assets
+from moocng.assets.models import Asset
+from moocng.assets.forms import AssetForm
 
 
 @is_teacher_or_staff
@@ -512,6 +516,57 @@ def teacheradmin_categories(request, course_slug):
         'course': course,
         'is_enrolled': is_enrolled,
         'categories': categories,
+    }, context_instance=RequestContext(request))
+
+
+@is_teacher_or_staff
+def teacheradmin_assets(request, course_slug):
+    course = get_object_or_404(Course, slug=course_slug)
+    is_enrolled = course.students.filter(id=request.user.id).exists()
+    assets = course_get_assets(course).order_by('id').distinct()
+
+    return render_to_response('teacheradmin/assets.html', {
+        'course': course,
+        'is_enrolled': is_enrolled,
+        'assets': assets,
+    }, context_instance=RequestContext(request))
+
+
+@is_teacher_or_staff
+def teacheradmin_assets_edit(request, course_slug, asset_id):
+
+    asset = get_object_or_404(Asset, id=asset_id)
+    course = get_object_or_404(Course, slug=course_slug)
+    is_enrolled = course.students.filter(id=request.user.id).exists()
+
+    if request.method == 'POST':
+        form = AssetTeacherForm(request.POST, instance=asset)
+        if form.is_valid():
+
+            form_name = form.cleaned_data['name']
+            form_capacity = form.cleaned_data['capacity']
+            form_description = form.cleaned_data['description']
+
+            if asset is not None:
+
+                asset.name = form_name
+                asset.capacity = form_capacity
+                asset.description = form_description
+
+            asset.save()
+
+            return HttpResponseRedirect(
+                reverse("teacheradmin_assets",
+                        args=[course_slug]))
+
+    else:
+        form = AssetTeacherForm(instance=asset)
+
+    return render_to_response('teacheradmin/asset_edit.html', {
+        'course': course,
+        'is_enrolled': is_enrolled,
+        'form': form,
+        'asset': asset,
     }, context_instance=RequestContext(request))
 
 

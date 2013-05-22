@@ -233,3 +233,52 @@ completion at 100%.
 Bob has completed the course now, and he has learned from his mistakes. He goes
 and enrolls in another interesting course, hoping to achieve a perfect score
 this time.
+
+Assets
+======
+
+An asset can be defined as a (possibly) external resource which can be booked
+by students. Examples of assets could be physical classrooms or virtual
+videoconference rooms.
+
+Making assets available to students
+-----------------------------------
+
+In order to make an asset available for students to reserve, the asset should
+be linked to a nugget.
+
+To do so, in the nugget administration page select *Save changes and add an
+asset availability to this nugget*. Then a new tab will appear. There you
+should be able to set in which dates assets might be booked through that nugget
+and the list of assets made available to the students. To make an asset
+available, select it in the asset list and click *Save changes and add an
+asset*. To remove an asset, click the *Remove asset* button next to its name.
+
+.. note::
+
+   Be careful when changing the dates of the assets availability or making
+   unavailable an asset, already existing reservations which are not compatible
+   with the new availability will be automatically cancelled.
+
+Assets properties
+-----------------
+
+All assets can be set a name and a description, the slot duration, as well as
+a number of slots and the capacity of each slot, and the time in advance a
+reservation or a cancellation requires.
+
+A slot can be defined as the number of instances each asset can handle
+simultaneusly. Examples of slot would be each room of a plant (provided they
+have the same properties) or each instance of a virtual videoconference system.
+The capacity is the number of students which can use a slot at the same time.
+
+The slot duration is the time a reservation would last.
+
+In order to edit the asset name, the asset description or the student capacity
+of an asset which is bookable through a course, select the *Assets* page in the
+*Course edition* section of the course administration.
+
+Other asset parameters should be set by the site administrators.
+
+The number of reservations each student can make can be set in the
+*Information* page of the course administration interface.

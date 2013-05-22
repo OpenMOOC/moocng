@@ -248,6 +248,25 @@ MOOC.App = Backbone.Router.extend({
         async.series(toExecute);
     },
 
+    kqAS: function (unit, kq) {
+        "use strict";
+        unit = parseInt(unit, 10);
+        kq = parseInt(kq, 10);
+        var toExecute = this.kqSteps(unit, kq, false);
+
+        toExecute.push(function (callback) {
+            MOOC.views.kqViews[kq].loadAssetsData();
+            callback();
+        });
+
+        toExecute.push(function (callback) {
+            MOOC.views.kqViews[kq].loadAssets();
+            callback();
+        });
+
+        async.series(toExecute);
+    },
+
     loadUnitData: function (unitObj, callback) {
         "use strict";
         unitObj.set("knowledgeQuantumList", new MOOC.models.KnowledgeQuantumList());
@@ -268,7 +287,7 @@ MOOC.App = Backbone.Router.extend({
                                   "iframe_code", "media_content_type", "media_content_id",
                                   "correct", "completed", "normalized_weight",
                                   "peer_review_assignment", "peer_review_score",
-                                  "thumbnail_url");
+                                  "asset_availability", "thumbnail_url");
                 data.id = parseInt(data.id, 10);
                 if (data.peer_review_assignment !== null) {
                     hasPeerReviews = true;
@@ -340,6 +359,7 @@ MOOC.init = function (course_id, KQRoute) {
     MOOC.players_listener = _.extend({}, Backbone.Events);
     MOOC.players_listener.on('mediaContentFinished', function (view) {
         _.bind(view.loadExercise, view)();
+        _.bind(view.loadAssets, view)();
     });
 
     if (KQRoute) {
@@ -347,6 +367,7 @@ MOOC.init = function (course_id, KQRoute) {
         MOOC.router.route("unit:unit/kq:kq/q", "kqQ");
         MOOC.router.route("unit:unit/kq:kq/a", "kqA");
         MOOC.router.route("unit:unit/kq:kq/p", "kqP");
+        MOOC.router.route("unit:unit/kq:kq/as", "kqAS");
 
         MOOC.models.activity = new MOOC.models.ActivityCollection();
         MOOC.models.activity.course_id = course_id;
@@ -364,6 +385,11 @@ MOOC.init = function (course_id, KQRoute) {
             }
         });
         MOOC.router.on('route:kqA', function (u, kq) {
+            if (last_kq !== null) {
+                MOOC.models.activity.addKQ(last_kq);
+            }
+        });
+        MOOC.router.on('route:kqAS', function (u, kq) {
             if (last_kq !== null) {
                 MOOC.models.activity.addKQ(last_kq);
             }
