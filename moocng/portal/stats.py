@@ -173,7 +173,9 @@ def calculate_all_stats(user_objects=User.objects,
 
 def add_field(dictionary, field, value, increment):
     if increment:
-        dictionary['$inc'] = {field: value}
+        if not '$inc' in dictionary:
+            dictionary['$inc'] = {}
+        dictionary['$inc'][field] = value
     else:
         dictionary[field] = value
 
