@@ -65,11 +65,10 @@ def calculate_all_stats(user_objects=User.objects,
 
             for act in student_activity:
                 cid = act['course_id']
-                uid = act['unit_id']
-                nid = act['kq_id']
-
                 if cid in course_blacklist:
                     continue
+                uid = act['unit_id']
+                nid = act['kq_id']
 
                 try:
                     nugget_type = kq_type(kq_objects.only('id').get(id=nid))
