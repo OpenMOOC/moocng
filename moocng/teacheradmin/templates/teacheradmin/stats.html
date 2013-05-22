@@ -35,8 +35,8 @@
             notPassed: "{% trans "Not passed"%}",
             evolution: "{% trans "Students evolution" %}",
             viewed: "{% trans "Viewed" %}",
-            answered: "{% trans "Answered" %}",
-            notAnswered: "{% trans "Not answered" %}",
+            submitted: "{% trans "Submitted" %}",
+            notSubmitted: "{% trans "Not submitted" %}",
             unit: "{% trans "Unit" %}",
             nugget: "{% trans "Nugget" %}"
         };
@@ -133,19 +133,19 @@
 <h2 id="kq-title">{% trans "Nugget" %}: </h2>
 <h3>{% trans "Students that have..." %}</h3>
 <div class="row">
-    <div class="span10" id="answered">
-        <h4>{% trans "...answered the question"%}</h4>
+    <div class="span10" id="submitted">
+        <h4>{% trans "...submitted the exercise"%}</h4>
         <div class="pie viewport"></div>
     </div>
     <div class="span5 hide" id="passed">
-        <h4>{% trans "...passed the question"%}</h4>
+        <h4>{% trans "...passed the exercise"%}</h4>
         <div class="pie viewport"></div>
     </div>
 </div>
 <h3>{% trans "Students evolution..." %}</h3>
 <div class="row">
     <div class="span10" id="tendencies">
-        <h4>{% trans "...in the question"%}</h4>
+        <h4>{% trans "...in the exercise"%}</h4>
         <div class="viewport"></div>
     </div>
 </div>

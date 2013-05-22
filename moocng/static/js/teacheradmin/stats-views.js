@@ -304,7 +304,7 @@ if (_.isUndefined(window.MOOC)) {
                 key: MOOC.trans.viewed,
                 values: []
             }, {
-                key: MOOC.trans.answered,
+                key: MOOC.trans.submitted,
                 values: []
             }, {
                 key: MOOC.trans.passed,
@@ -326,7 +326,7 @@ if (_.isUndefined(window.MOOC)) {
                 });
 
                 // Some kqs doesn't have a question
-                aux = kq.answered;
+                aux = kq.submitted;
                 if (_.isUndefined(aux)) {
                     aux = 0;
                 }
@@ -345,7 +345,7 @@ if (_.isUndefined(window.MOOC)) {
                     y: aux
                 });
 
-                if (!_.isUndefined(kq.answered)) {
+                if (!_.isUndefined(kq.submitted)) {
                     kqsNav.append("<li><a href='#unit" + self.model.get("id") + "/kq" + kqId + "'>" + MOOC.trans.nugget + " " + idx + ": " + title + "</a></li>");
                 }
             });
@@ -395,13 +395,13 @@ if (_.isUndefined(window.MOOC)) {
             aux.text(aux.text() + this.model.get("title"));
 
             renderPie(
-                this.$el.find("#answered .viewport")[0],
-                [MOOC.trans.notAnswered, MOOC.trans.answered],
-                [data.viewed, data.answered]
+                this.$el.find("#submitted .viewport")[0],
+                [MOOC.trans.notSubmitted, MOOC.trans.submitted],
+                [data.viewed, data.submitted]
             );
 
             if (!_.isUndefined(data.passed)) {
-                this.$el.find("#answered").removeClass("span10").addClass("span5");
+                this.$el.find("#submitted").removeClass("span10").addClass("span5");
                 this.$el.find("#passed").removeClass("hide");
                 renderPie(
                     this.$el.find("#passed .viewport")[0],
@@ -414,7 +414,7 @@ if (_.isUndefined(window.MOOC)) {
                 key: MOOC.trans.evolution,
                 values: [
                     { x: 0, y: data.viewed },
-                    { x: 1, y: data.answered }
+                    { x: 1, y: data.submitted }
                 ]
             }];
 
@@ -423,7 +423,7 @@ if (_.isUndefined(window.MOOC)) {
             }
             aux = {
                 0: MOOC.trans.viewed,
-                1: MOOC.trans.answered,
+                1: MOOC.trans.submitted,
                 2: MOOC.trans.passed
             };
 

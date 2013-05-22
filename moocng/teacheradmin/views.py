@@ -14,7 +14,6 @@
 
 from datetime import datetime
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.exceptions import ValidationError
@@ -30,90 +29,76 @@ from django.utils.translation import ugettext as _
 from moocng.courses.models import (Course, CourseTeacher, KnowledgeQuantum,
                                    Option, Announcement, Unit, Attachment)
 from moocng.courses.utils import UNIT_BADGE_CLASSES
-from moocng.courses.marks import (calculate_course_mark, calculate_unit_mark,
-                                  calculate_kq_mark)
 from moocng.categories.models import Category
+from moocng.media_contents import get_media_content_types_choices
+from moocng.mongodb import get_db
 from moocng.portal.templatetags.gravatar import gravatar_img_for_email
 from moocng.teacheradmin.decorators import is_teacher_or_staff
 from moocng.teacheradmin.forms import (CourseForm, AnnouncementForm,
                                        MassiveEmailForm)
 from moocng.teacheradmin.models import Invitation, MassiveEmail
 from moocng.teacheradmin.tasks import send_massive_email_task
-from moocng.teacheradmin.stats import (course_completed_started,
-                                       unit_completed_started, kq_viewed,
-                                       question_answered)
 from moocng.teacheradmin.utils import (send_invitation,
                                        send_removed_notification)
 from moocng.videos.tasks import process_video_task
-from moocng.media_contents import get_media_content_types_choices
 
 
 @is_teacher_or_staff
 def teacheradmin_stats(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
-
-    # TODO DELETE THIS
-    return HttpResponseRedirect(reverse('teacheradmin_info',
-                                        args=[course_slug]))
-    # END DELETE THIS
-
     is_enrolled = course.students.filter(id=request.user.id).exists()
 
-    (completed, started) = course_completed_started(course)
+    stats_course = get_db().get_collection('stats_course')
+    stats = stats_course.find_one({'course_id': course.id})
 
-    data = {
-        'enrolled': course.students.count(),
-        'started': started,
-        'completed': completed
-    }
+    if stats is not None:
+        data = {
+            'enrolled': course.students.count(),
+            'started': stats['started'],
+            'completed': stats['completed'],
+        }
 
-    # if course.threshold is not None:
-    #     # if the course doesn't support certification, then don't return the
-    #     # 'passed' stat since it doesn't apply
-    #     data['passed'] = 0
-    #     for student in course.students.all():
-    #         if calculate_course_mark(course, student)[0] >= float(course.threshold):
-    #             data['passed'] += 1
+        if course.threshold is not None:
+            #if the course doesn't support certification, then don't return the
+            #'passed' stat since it doesn't apply
+            data['passed'] = stats['passed']
 
-    return render_to_response('teacheradmin/stats.html', {
-        'course': course,
-        'is_enrolled': is_enrolled,
-        'initial_data': simplejson.dumps(data),
-    }, context_instance=RequestContext(request))
+        return render_to_response('teacheradmin/stats.html', {
+            'course': course,
+            'is_enrolled': is_enrolled,
+            'initial_data': simplejson.dumps(data),
+        }, context_instance=RequestContext(request))
+    else:
+        messages.error(request, _(u"There are no statistics for this course."))
+        return HttpResponseRedirect(reverse('teacheradmin_info',
+                                            args=[course_slug]))
 
 
 @is_teacher_or_staff
 def teacheradmin_stats_units(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
+    stats_unit = get_db().get_collection('stats_unit')
     data = []
-    use_old_calculus = False
-    if course.slug in settings.COURSES_USING_OLD_TRANSCRIPT:
-        use_old_calculus = True
 
-    unit_list = course.unit_set.all()
-    for unit in unit_list:
+    for unit in course.unit_set.only('id', 'title').all():
+        stats = stats_unit.find_one({'unit_id': unit.id})
 
-        (completed, started) = unit_completed_started(unit)
+        if stats is not None:
+            unit_data = {
+                'id': unit.id,
+                'title': unit.title,
+                'started': stats['started'],
+                'completed': stats['completed'],
+            }
 
-        unit_data = {
-            'id': unit.id,
-            'title': unit.title,
-            'started': started,
-            'completed': completed,
-        }
+            if course.threshold is not None:
+                # if the course doesn't support certification, then don't return
+                # the 'passed' stat since it doesn't apply
+                unit_data['passed'] = stats['passed']
 
-        # if course.threshold is not None:
-        #     # if the course doesn't support certification, then don't return
-        #     # the 'passed' stat since it doesn't apply
-        #     unit_data['passed'] = 0
-        #     for student in course.students.all():
-        #         if calculate_unit_mark(unit, student, use_old_calculus)[0] >= float(course.threshold):
-        #             unit_data['passed'] += 1
+            data.append(unit_data)
 
-        data.append(unit_data)
-
-    return HttpResponse(simplejson.dumps(data),
-                        mimetype='application/json')
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 
 @is_teacher_or_staff
@@ -124,39 +109,35 @@ def teacheradmin_stats_kqs(request, course_slug):
     unit = get_object_or_404(Unit, id=request.GET['unit'])
     if not unit in course.unit_set.all():
         return HttpResponse(status=400)
+    stats_kq = get_db().get_collection('stats_kq')
     data = []
 
-    kq_list = unit.knowledgequantum_set.all()
-    for kq in kq_list:
-        kq_data = {
-            'id': kq.id,
-            'title': kq.title,
-            'viewed': kq_viewed(kq)
-        }
+    for kq in unit.knowledgequantum_set.only('id', 'title').all():
+        stats = stats_kq.find_one({'kq_id': kq.id})
 
-        question = None
-        if kq.question_set.count() > 0:
-            question = kq.question_set.all()[0]
-            kq_data['answered'] = 0
+        if stats is not None:
+            kq_data = {
+                'id': kq.id,
+                'title': kq.title,
+                'viewed': stats['viewed']
+            }
 
-            # if course.threshold is not None:
-            #     # if the course doesn't support certification, then don't
-            #     # return the 'passed' stat since it doesn't apply
-            #     kq_data['passed'] = 0
-            #     for student in course.students.all():
-            #         if calculate_kq_mark(kq, student) >= float(course.threshold):
-            #             kq_data['passed'] += 1
+            kq_type = kq.kq_type()
+            if kq_type == 'PeerReviewAssignment':
+                kq_data['submitted'] = stats['submitted']
+                kq_data['reviews'] = stats['reviews']
+                kq_data['reviewers'] = stats['reviewers']
+            elif kq_type == 'Question':
+                kq_data['submitted'] = stats['submitted']
 
-        try:
-            question = kq.question_set.get()
-            kq_data["answered"] = question_answered(question)
-        except kq.question_set.model.DoesNotExist:
-            kq_data["answered"] = 0
+            if course.threshold is not None:
+                # if the course doesn't support certification, then don't
+                # return the 'passed' stat since it doesn't apply
+                kq_data['passed'] = stats['passed']
 
-        data.append(kq_data)
+            data.append(kq_data)
 
-    return HttpResponse(simplejson.dumps(data),
-                        mimetype='application/json')
+    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
 
 
 @is_teacher_or_staff

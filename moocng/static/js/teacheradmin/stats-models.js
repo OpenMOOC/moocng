@@ -30,7 +30,9 @@ if (_.isUndefined(window.MOOC)) {
                 id: -1,
                 title: "",
                 passed: -1,
-                answered: -1,
+                submitted: -1,
+                reviews: -1,
+                reviewers: -1,
                 viewed: -1
             };
         },
@@ -40,11 +42,17 @@ if (_.isUndefined(window.MOOC)) {
                 viewed: this.get("viewed")
             };
 
-            if (this.get("answered") >= 0) {
-                result.answered = this.get("answered");
+            if (this.get("submitted") >= 0) {
+                result.submitted = this.get("submitted");
             }
             if (this.get("passed") >= 0) {
                 result.passed = this.get("passed");
+            }
+            if (this.get("reviews") >= 0) {
+                result.reviews = this.get("reviews");
+            }
+            if (this.get("reviewers") >= 0) {
+                result.reviewers = this.get("reviewers");
             }
 
             return result;
