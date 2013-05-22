@@ -1092,7 +1092,7 @@ class ReservationCount(Resource):
             ret = ret.filter(Q(reservation_begins__gte=date) &
                              Q(reservation_begins__lt=(date + timedelta(1))))
         except:
-            pass
+            return []
 
         ret = ret.values('reservation_begins').order_by('reservation_begins')
         ret = ret.annotate(Count('reservation_begins'))
