@@ -301,6 +301,8 @@ def send_modification_email(reservation):
 
 def get_occupation_for_month(asset_id, month, year):
     result = cache.get_occupation_from_cache(asset_id, month, year)
+    if result is not None:
+        return result
 
     try:
         asset = Asset.objects.get(id=asset_id)
