@@ -147,6 +147,88 @@ MOOC.models.PeerReviewAssignmentList = MOOC.models.TastyPieCollection.extend({
     url: MOOC.ajax.getAbsoluteUrl('peer_review_assignment/')
 });
 
+MOOC.models.Asset = Backbone.Model.extend({
+    defaults: {
+        description: "",
+        name: "",
+        slot_duration: 0,
+        max_bookable_slots: 0,
+        capacity: 0
+    },
+
+    url: function () {
+        "use strict";
+        if (this.has("id")) {
+            return MOOC.ajax.getAbsoluteUrl("asset/") + this.get("id") + "/";
+        }
+
+        return MOOC.ajax.getAbsoluteUrl("asset/");
+    }
+});
+
+MOOC.models.AssetList = MOOC.models.TastyPieCollection.extend({
+    model: MOOC.models.Asset,
+    url: MOOC.ajax.getAbsoluteUrl('asset/')
+});
+
+MOOC.models.AssetAvailability = Backbone.Model.extend({
+    defaults: {
+        kq: null,
+        available_from: null,
+        available_to: null,
+        can_be_booked: null,
+        max_reservations_pending: null,
+        max_reservations_total: null,
+
+        knowledgeQuantumInstance: null,
+        _assetList: new MOOC.models.AssetList(),
+        _otherAssets: new MOOC.models.AssetList(),
+    },
+
+    url: function () {
+        "use strict";
+        if (this.has("id")) {
+            return MOOC.ajax.getAbsoluteUrl("asset_availability/") + this.get("id") + "/";
+        }
+
+        return MOOC.ajax.getAbsoluteUrl("asset_availability/");
+    },
+
+    sync: function (method, model, options) {
+        "use strict";
+        var model2send = model.clone();
+
+        model2send.unset("_assetList");
+        model2send.unset("knowledgeQuantumInstance");
+        model2send.unset("_otherAssets");
+        Backbone.sync(method, model2send, options);
+    }
+});
+
+MOOC.models.Reservation = Backbone.Model.extend({
+    defaults: {
+        asset: null,
+        user: null,
+        kq: null,
+        slot_id: 0,
+        reservation_begins: null,
+        reservation_ends: null,
+
+        _knowledgeQuantumInstance: null,
+        _assetInstance: null,
+        _userInstance: null
+    },
+
+    url: function () {
+        "use strict";
+        if (this.has("id")) {
+            return MOOC.ajax.getAbsoluteUrl("reservation/") + this.get("id") + "/";
+        }
+
+        return MOOC.ajax.getAbsoluteUrl("reservation/");
+    }
+});
+
 MOOC.models.Activity = Backbone.Model.extend({
     local: true,
 
@@ -497,12 +579,15 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
         weight: 0,
         normalized_weight: 0,
         peer_review_assignment: null, // Optional
+        asset_availability: null,
         peer_review_score: null,
 
         attachmentList: null,
         questionInstance: null,
+        assetAvailabilityInstance: null,
         peerReviewAssignmentInstance: null,
-        _peerReviewSubmissionInstance: null
+        _peerReviewSubmissionInstance: null,
+        _assetList: null
     },
 
     url: function () {
@@ -530,6 +615,7 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
         model2send.unset("questionInstance");
         model2send.unset("attachmentList");
         model2send.unset("peerReviewAssignmentInstance");
+        model2send.unset("assetAvailabilityInstance");
         if (model.get("order") < 0) {
             model2send.unset("order");
         }

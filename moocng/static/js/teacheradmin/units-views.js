@@ -211,6 +211,27 @@ if (_.isUndefined(window.MOOC)) {
                 callback();
             });
             confirmationModal.modal("show");
+        },
+
+        assetConfirmationModal,
+        showAssetConfirmationModal = function (callback, callbackCancel) {
+            if (_.isUndefined(assetConfirmationModal)) {
+                assetConfirmationModal = $("#confirm-assets-action").modal({ show: false });
+            }
+            assetConfirmationModal.find(".btn-danger").off("click").on("click", function (evt) {
+                assetConfirmationModal.modal("hide");
+                callback();
+            });
+            assetConfirmationModal.find("#cancelasset").off("click").on("click", function (evt) {
+
+                assetConfirmationModal.modal("hide");
+                if (callbackCancel !== null) {
+                    callbackCancel();
+                }
+
+            });
+
+            assetConfirmationModal.modal("show");
         };
 
     MOOC.views = {
@@ -495,6 +516,11 @@ if (_.isUndefined(window.MOOC)) {
                         "pull-right' title='" + MOOC.trans.kq.prTooltip +
                         "'>" + MOOC.trans.kq.pr + "</span>";
                 }
+                if (this.model.has("asset_availability")) {
+                    header += "<span class='badge badge-inverse peerreview " +
+                        "pull-right' title='" + MOOC.trans.kq.assetTip +
+                        "'>" + MOOC.trans.kq.asset + "</span>";
+                }
 
                 thumbnail_url = this.model.get("thumbnail_url");
 
@@ -696,7 +722,11 @@ if (_.isUndefined(window.MOOC)) {
                 "click button#delete-kq": "remove",
                 "click button.removecriterion": "removePeerReviewCriterion",
                 "click button.back": "goBack",
+                "click button#addassetavailability": "addAssetAvailability",
+                "click button#delete-asset-availability": "removeAssetAvailability",
                 "change select#kqmedia_content_type": "redrawCanGetLastFrame",
+                "click button.removeasset": "removeAssetOfAvailability",
+                "click button#addasset": "addAssetToAvailability",
                 "show a[data-toggle='tab']": "checkBeforeToggleTab"
             },
 
@@ -705,8 +735,8 @@ if (_.isUndefined(window.MOOC)) {
                     "checkRequired", "useBlankCanvas", "useLastFrame",
                     "toggleSolution", "addQuestion", "addPeerReviewAssignment",
                     "addCriterion", "forceProcess", "removeQuestion",
-                    "removePeerReviewAssignment", "go2options",
-                    "checkBeforeToggleTab");
+                    "removePeerReviewAssignment", "go2options", "addAssetAvailability",
+                    "removeAssetAvailability", "checkBeforeToggleTab");
             },
 
             render: function () {
@@ -716,8 +746,14 @@ if (_.isUndefined(window.MOOC)) {
                     assignment,
                     criterionList,
                     criterionListDiv,
+                    assetAvail,
+                    assetList,
+                    otherAssets,
+                    assetSelect,
+                    totalOtherAssets,
                     content_type,
                     can_get_last_frame,
+                    assetListDiv,
                     self;
 
                 $(".viewport").addClass("hide");
@@ -738,6 +774,7 @@ if (_.isUndefined(window.MOOC)) {
                        a question, the peer review assignment creation button should
                        be hidden as well */
                     this.$el.find("#nopeerreviewassignment").addClass("hide");
+                    this.$el.find("#noassetavailability").addClass("hide");
                     this.$el.find("#question-tab").removeClass("hide");
                     this.$el.find("#question img").attr("src", question.get("lastFrame"));
                     if (question.has("solution_media_content_id") && question.get("solution_media_content_id") !== "") {
@@ -776,6 +813,8 @@ if (_.isUndefined(window.MOOC)) {
                     assignment = this.model.get("peerReviewAssignmentInstance");
                     this.$el.find("#peer-review-assignment-tab").removeClass("hide");
                     this.$el.find("#nopeerreviewassignment").addClass("hide");
+                    this.$el.find("#noassetavailability").addClass("hide");
+
                     /* A KQ can only have a question OR a peer review, so if it has
                        a peer review assignment, the question creation button should
                        be hidden as well */
@@ -817,6 +856,67 @@ if (_.isUndefined(window.MOOC)) {
                         criterionListDiv.find("#" + titleInputId).val(criterion.get("title"));
                         criterionListDiv.find("#" + descriptionInputId).val(criterion.get("description"));
                     });
+                }
+
+                if (this.model.has("asset_availability") && this.model.has("assetAvailabilityInstance")) {
+                    assetAvail = this.model.get("assetAvailabilityInstance");
+                    this.$el.find("#asset-availability-tab").removeClass("hide");
+                    this.$el.find("#noassetavailability").addClass("hide");
+                    this.$el.find("#nopeerreviewassignment").addClass("hide");
+                    this.$el.find("#noquestion").addClass("hide");
+
+                    this.$el.find("#availablefrom").val(assetAvail.get("available_from"));
+                    this.$el.find("#availableto").val(assetAvail.get("available_to"));
+                    assetList = assetAvail.get("_assetList");
+
+                    assetListDiv = this.$el.find("#assets");
+                    self = this;
+                    assetListDiv.empty();
+                    assetList.each(function (asset) {
+                        var assetDivId,
+                            nameInputId,
+                            removeBtnId,
+                            nameInput,
+                            nameLabel,
+                            removeBtn,
+                            assetDiv;
+
+                        assetDivId = "asset-" + asset.get("id");
+                        nameInputId = "assetname-" + asset.get("id");
+                        removeBtnId = "assetremove-" + asset.get("id");
+
+                        nameInput = "<h4 id=\"" + nameInputId + "\" ></h4>";
+                        removeBtn = "<button id=\"" + removeBtnId + "\" class=\"removeasset btn btn-danger\">" + MOOC.trans.asset.remove + "</button>";
+                        assetDiv = "<div id=\"" + assetDivId + "\">"
+                                       + "<div>" + nameInput + "</div>"
+                                       + "<div class=\"row mb20\"><div class=\"align-right span4\">" + removeBtn + "</div></div></divZ";
+
+                        assetListDiv.append(assetDiv);
+                        assetListDiv.find("#" + nameInputId).text(asset.get("name"));
+                    });
+
+                    //get the list of the assets which are not available for this kq
+                    otherAssets = assetAvail.get("_otherAssets");
+
+                    this.$el.find("#addasset").hide();
+                    totalOtherAssets = otherAssets.length;
+                    if (totalOtherAssets !== 0) {
+                        assetSelect =  "<label for=\"infoadd\">" + MOOC.trans.asset.infoadd + "</label>";
+                        assetSelect += "<select id=\"assetsForSelect\" >";
+                        otherAssets.each(function (asset) {
+
+                            var assetName,
+                                assetId;
+                            assetId = asset.get("id");
+                            assetName = asset.get("name");
+                            assetSelect += "<option value=\"" + assetId + "\">" + assetName + "</option>";
+
+                        });
+                        assetSelect += "</select>";
+                        this.$el.find("#assetsforadd").html(assetSelect);
+                        this.$el.find("#addasset").show();
+                    }
+
                 }
 
                 $attachments = this.$el.find("#attachment-list");
@@ -916,8 +1016,16 @@ if (_.isUndefined(window.MOOC)) {
                     assignment,
                     criterionList,
                     criterionListSaveTasks,
+                    assetAvail,
                     content_type,
                     can_get_last_frame,
+                    available_from,
+                    available_to,
+                    old_available_from,
+                    old_available_to,
+                    showAssetModal,
+                    cb,
+                    cb2,
                     attachCB;
 
                 this.model.unset("new");
@@ -1007,6 +1115,36 @@ if (_.isUndefined(window.MOOC)) {
                     });
                 }
 
+                if (this.model.has("assetAvailabilityInstance")) {
+
+                    assetAvail = this.model.get("assetAvailabilityInstance");
+                    old_available_from = assetAvail.get("available_from");
+                    old_available_to = assetAvail.get("available_to");
+                    available_from = this.$el.find("#availablefrom").val();
+                    available_to = this.$el.find("#availableto").val();
+
+                    assetAvail.set("available_from", available_from);
+                    assetAvail.set("available_to", available_to);
+
+                    steps.push(function (asyncCB) {
+                        assetAvail.save(null, {
+                            success: function () {
+                                asyncCB();
+                            },
+                            error: function () {
+                                asyncCB("Error saving Asset Availability");
+                            }
+                        });
+                    });
+
+                    if (available_from > old_available_from || available_to < old_available_to) {
+                        showAssetModal = true;
+                    } else {
+                        showAssetModal = false;
+                    }
+
+                }
+
                 // Look for attachments
                 if (this.$el.find("div.fileupload input[type='file']").val() !== "") {
                     steps.push(function (asyncCB) {
@@ -1055,21 +1193,46 @@ if (_.isUndefined(window.MOOC)) {
                     };
                 }
 
-                async.series(steps, function (err, results) {
-                    if (!_.isUndefined(callback)) {
-                        callback();
-                    } else {
-                        if (err) {
-                            MOOC.ajax.showAlert("generic");
+                cb = function () {
+                    async.series(steps, function (err, results) {
+
+                        if (!_.isUndefined(callback)) {
+                            callback();
                         } else {
-                            MOOC.ajax.showAlert("saved");
+                            if (err) {
+                                MOOC.ajax.showAlert("generic");
+                            } else {
+                                MOOC.ajax.showAlert("saved");
+                            }
+                            if (!_.isUndefined(attachCB)) {
+                                attachCB();
+                            }
+                            MOOC.ajax.hideLoading();
                         }
-                        if (!_.isUndefined(attachCB)) {
-                            attachCB();
-                        }
-                        MOOC.ajax.hideLoading();
-                    }
-                });
+                    });
+                };
+
+                cb2 = function() {
+                    self.$el.find("#availablefrom").val(old_available_from);
+                    self.$el.find("#availableto").val(old_available_to);
+                    assetAvail.set("available_from", old_available_from);
+                    assetAvail.set("available_to", old_available_to);
+                    assetAvail.save();
+                    self.render();
+                    self.$el.find("form li.active").removeClass("active");
+                    self.$el.find("form fieldset.active").removeClass("active");
+                    self.$el.find("#asset-availability-tab").addClass("active");
+                    self.$el.find("#asset-availability").addClass("active");
+
+                };
+
+                MOOC.ajax.hideLoading();
+                if (showAssetModal) {
+                    showAssetConfirmationModal(cb, cb2);
+                } else {
+                    cb();
+                }
+
             },
 
             remove: function (evt) {
@@ -1223,6 +1386,74 @@ if (_.isUndefined(window.MOOC)) {
                 }, this));
             },
 
+            addAssetAvailability: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                if (!this.checkRequired()) {
+                    MOOC.ajax.showAlert("required");
+                    return;
+                }
+                var asset_availability,
+                    self,
+                    kq,
+                    data,
+                    date;
+
+                asset_availability = new MOOC.models.AssetAvailability();
+                asset_availability.set("kq", this.model.url().replace('/privkq', '/kq'));
+                date = new Date();
+                asset_availability.set("available_from", date.toISOString().split('T')[0]);
+                date.setMonth(date.getMonth() + 1);
+                asset_availability.set("available_to", date.toISOString().split('T')[0]);
+                asset_availability.set("assets", []);
+                asset_availability.set("_assetList", new MOOC.models.AssetList());
+                asset_availability.set("_otherAssets", new MOOC.models.AssetList());
+
+                kq = asset_availability.get("kq");
+                data = _.pick(asset_availability, "_otherAssets");
+                asset_availability.get("_otherAssets").fetch({
+                    data: { 'exclude_kq': kq.id }
+                });
+
+                this.model.set("assetAvailabilityInstance", asset_availability);
+
+                this.$el.find("#availablefrom").val(asset_availability.get("available_from"));
+                this.$el.find("#availableto").val(asset_availability.get("available_to"));
+
+                self = this;
+                asset_availability.save(null, {
+                    success: function() {
+                        self.save(evt, _.bind(function () {
+                            self.model.fetch({
+                                success: function () {
+                                    var assetAvailUrl,
+                                        createdId;
+                                    assetAvailUrl = self.model.get("asset_availability").split("/");
+                                    createdId = assetAvailUrl.pop();
+                                    while (_.isNaN(parseInt(createdId, 10))) {
+                                        createdId = assetAvailUrl.pop();
+                                    }
+                                    self.model.get("assetAvailabilityInstance").set("id", parseInt(createdId, 10));
+                                    self.render();
+                                    self.$el.find("form li.active").removeClass("active");
+                                    self.$el.find("form fieldset.active").removeClass("active");
+                                    self.$el.find("#asset-availability-tab").addClass("active");
+                                    self.$el.find("#asset-availability").addClass("active");
+                                    MOOC.ajax.hideLoading();
+                                },
+                                error: function () {
+                                    MOOC.ajax.hideLoading();
+                                    MOOC.ajax.showAlert("generic");
+                                }
+                            });
+                        }, this));
+                    },
+                    error: function() {
+                        MOOC.ajax.showAlert("generic");
+                    }
+                });
+            },
+
             forceProcess: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
@@ -1368,6 +1599,190 @@ if (_.isUndefined(window.MOOC)) {
                 };
 
                 showConfirmationModal(cb);
+            },
+
+            removeAssetAvailability: function (evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+
+                var view = this,
+                    asset_availability = view.model.get("assetAvailabilityInstance"),
+                    old_available_from = asset_availability.get("available_from"),
+                    old_available_to = asset_availability.get("available_to"),
+                    available_from = this.$el.find("#availablefrom").val(),
+                    available_to = this.$el.find("#availableto").val(),
+                    cb2,
+                    cb = function () {
+                        MOOC.ajax.showLoading();
+                        view.model.get("assetAvailabilityInstance").destroy({
+                            success: function () {
+                                view.model.set("assetAvailabilityInstance", null);
+                                view.model.set("asset_availability", null);
+                                view.model.save(null, {
+                                    success: function () {
+                                        MOOC.ajax.hideLoading();
+                                        view.render();
+                                    },
+                                    error: function () {
+                                        MOOC.ajax.hideLoading();
+                                        MOOC.ajax.showAlert("generic");
+                                    }
+                                });
+                            },
+                            error: function () {
+                                MOOC.ajax.hideLoading();
+                                MOOC.ajax.showAlert("generic");
+                            }
+                        });
+                    };
+                cb2 = function() {
+                    view.$el.find("#availablefrom").val(old_available_from);
+                    view.$el.find("#availableto").val(old_available_to);
+                    view.render();
+                    view.$el.find("form li.active").removeClass("active");
+                    view.$el.find("form fieldset.active").removeClass("active");
+                    view.$el.find("#asset-availability-tab").addClass("active");
+                    view.$el.find("#asset-availability").addClass("active");
+                };
+
+                if (available_from > old_available_from || available_to < old_available_to) {
+                    showAssetConfirmationModal(cb, cb2);
+                } else {
+                    showAssetConfirmationModal(cb, null);
+                }
+            },
+
+            removeAssetOfAvailability: function (evt) {
+                evt.stopPropagation();
+                evt.preventDefault();
+
+                var self = this,
+                    assetId = parseInt(evt.target.getAttribute('id').split('-')[1], 10),
+                    assets,
+                    cb,
+                    cb2,
+                    assetToRemove,
+                    assetUrl,
+                    asset_availability = self.model.get("assetAvailabilityInstance"),
+                    assetList = asset_availability.get("_assetList"),
+                    otherAssets = asset_availability.get("_otherAssets"),
+                    asset = assetList.find(function (candidate) {
+                        return (parseInt(candidate.get("id"), 10) === assetId);
+                    }),
+                    assetDivId = "asset-" + asset.get("id"),
+                    old_available_from = asset_availability.get("available_from"),
+                    old_available_to = asset_availability.get("available_to"),
+                    available_from = this.$el.find("#availablefrom").val(),
+                    available_to = this.$el.find("#availableto").val();
+
+                cb = function () {
+                    MOOC.ajax.showLoading();
+
+                    asset_availability.set("available_from", available_from);
+                    asset_availability.set("available_to", available_to);
+                    assetList.remove(asset);
+                    otherAssets.add(asset);
+
+                    assets = asset_availability.get("assets");
+                    assetUrl = asset.url().replace('/privasset', '/asset');
+                    assets.splice(assets.indexOf(assetUrl), 1);
+                    asset_availability.set("assets", assets);
+                    asset_availability.save();
+
+                    self.render();
+                    self.$el.find("form li.active").removeClass("active");
+                    self.$el.find("form fieldset.active").removeClass("active");
+                    self.$el.find("#asset-availability-tab").addClass("active");
+                    self.$el.find("#asset-availability").addClass("active");
+                    MOOC.ajax.hideLoading();
+
+                };
+
+                cb2 = function() {
+                    self.$el.find("#availablefrom").val(old_available_from);
+                    self.$el.find("#availableto").val(old_available_to);
+                    self.render();
+                    self.$el.find("form li.active").removeClass("active");
+                    self.$el.find("form fieldset.active").removeClass("active");
+                    self.$el.find("#asset-availability-tab").addClass("active");
+                    self.$el.find("#asset-availability").addClass("active");
+                };
+
+
+                if (available_from > old_available_from || available_to < old_available_to) {
+                    showAssetConfirmationModal(cb, cb2);
+                } else {
+                    showAssetConfirmationModal(cb, null);
+                }
+
+
+            },
+
+            addAssetToAvailability: function (evt) {
+                evt.stopPropagation();
+                evt.preventDefault();
+
+                var self = this,
+                    idAssetToAdd = parseInt($("#assetsForSelect").val(), 10),
+                    asset_availability = self.model.get("assetAvailabilityInstance"),
+                    otherAssets = asset_availability.get("_otherAssets"),
+                    assetList = asset_availability.get("_assetList"),
+                    assets,
+                    assetUrl,
+                    old_available_from,
+                    old_available_to,
+                    available_from,
+                    available_to,
+                    cb,
+                    cb2,
+                    assetToAdd = otherAssets.find(function (candidate) {
+                        return (parseInt(candidate.get("id"), 10) === idAssetToAdd);
+                    });
+
+                old_available_from = asset_availability.get("available_from");
+                old_available_to = asset_availability.get("available_to");
+                available_from = this.$el.find("#availablefrom").val();
+                available_to = this.$el.find("#availableto").val();
+
+                cb = function () {
+
+                    MOOC.ajax.showLoading();
+
+                    asset_availability.set("available_from", available_from);
+                    asset_availability.set("available_to", available_to);
+                    otherAssets.remove(assetToAdd);
+                    assetList.add(assetToAdd);
+                    assets = asset_availability.get("assets");
+                    assetUrl = assetToAdd.url().replace('/privasset', '/asset');
+                    assets.push(assetUrl);
+                    asset_availability.set("assets", assets);
+                    asset_availability.save();
+                    self.render();
+                    self.$el.find("form li.active").removeClass("active");
+                    self.$el.find("form fieldset.active").removeClass("active");
+                    self.$el.find("#asset-availability-tab").addClass("active");
+                    self.$el.find("#asset-availability").addClass("active");
+                    MOOC.ajax.hideLoading();
+
+                };
+
+                cb2 = function() {
+                    self.$el.find("#availablefrom").val(old_available_from);
+                    self.$el.find("#availableto").val(old_available_to);
+                    self.render();
+                    self.$el.find("form li.active").removeClass("active");
+                    self.$el.find("form fieldset.active").removeClass("active");
+                    self.$el.find("#asset-availability-tab").addClass("active");
+                    self.$el.find("#asset-availability").addClass("active");
+
+                };
+
+                if (available_from > old_available_from || available_to < old_available_to) {
+                    showAssetConfirmationModal(cb, cb2);
+                } else {
+                    cb();
+                }
+
             },
 
             go2options: function (evt) {

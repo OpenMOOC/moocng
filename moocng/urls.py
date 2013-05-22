@@ -30,6 +30,7 @@ urlpatterns = patterns(
     # url(r'^$', 'moocng.views.home', name='home'),
     url(r'^', include('moocng.courses.urls')),
     url(r'^', include('moocng.peerreview.urls')),
+    url(r'^', include('moocng.assets.urls')),
 
     url(r'^enrollment/', include('moocng.enrollment.urls')),
 

@@ -1,0 +1,24 @@
+{% extends "teacheradmin/base_teacheradmin.html" %}
+
+{% load i18n %}
+
+{% block nav-teacheradmin-assets %}active{% endblock %}
+
+{% block section %}
+
+{{ form.media }}
+
+<div class="alert" id="edit-warning">
+    {% trans "Please take into account than this change will affect all courses which use this asset" %}
+</div>
+<form method="post">{% csrf_token %}
+  {{ form.as_bootstrap }}
+  <div class="form-actions">
+    {% if asset %}
+    <input type="submit" class="btn btn-primary" value="{% trans 'Save changes' %}" />
+    {% endif %}
+  </div>
+
+</form>
+
+{% endblock %}
