@@ -1243,7 +1243,7 @@ MOOC.views.Asset = Backbone.View.extend({
         currentTime = new Date('2000-01-01T00:00:00.000Z'); //The day itself is irrelevant
         while (currentTime.getUTCDate() === 1) {
             key = currentTime.toISOString().split('T')[1].slice(0, 5);
-            if (!(counts.hasOwnProperty(key) || counts[key] < maxBookings)) {
+            if (!counts.hasOwnProperty(key) || (counts[key] < maxBookings)) {
                 options.push("<option>");
                 options.push(key);
                 options.push("</option>");
