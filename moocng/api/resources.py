@@ -977,6 +977,7 @@ class PrivateAssetAvailabilityResource(ModelResource):
     class Meta:
         queryset = AssetAvailability.objects.all()
         resource_name = 'privasset_availability'
+        always_return_data = True
         authentication = TeacherAuthentication()
         authorization = TeacherAuthorization()
         filtering = {
@@ -991,6 +992,8 @@ class PrivateAssetAvailabilityResource(ModelResource):
         return bundle.obj.kq.unit.course.max_reservations_total
 
     def dehydrate_can_be_booked(self, bundle):
+        if isinstance(bundle.obj.available_to, datetime):
+            bundle.obj.available_to = bundle.obj.available_to.date()
         if bundle.obj.available_to < date.today():
             return False
         else:
