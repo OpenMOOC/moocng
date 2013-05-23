@@ -41,6 +41,8 @@ v1_api.register(resources.AssetAvailabilityResource())
 v1_api.register(resources.ReservationResource())
 v1_api.register(resources.PrivateAssetResource())
 v1_api.register(resources.PrivateAssetAvailabilityResource())
+v1_api.register(resources.ReservationCount())
+v1_api.register(resources.OccupationInformation())
 
 urlpatterns = patterns(
     '',
