@@ -15,9 +15,10 @@
 
 from django import template
 
-from moocng.mongodb import get_db
+# models should be imported in order to be able to import from utils
+from moocng.assets import models
+
 from moocng.assets.utils import course_has_assets
-from moocng.assets.models import Asset
 
 register = template.Library()
 
