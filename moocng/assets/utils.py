@@ -16,8 +16,10 @@
 import datetime
 
 from django.contrib.sites.models import Site
-from django.db import IntegrityError
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import connection, IntegrityError
 from django.db.models import Q, Count
+from django.utils import timezone
 from django.utils.translation import ugettext as _
 
 from moocng.mongodb import get_db
@@ -295,6 +297,40 @@ def send_modification_email(reservation):
     }
     to = [reservation.user.email]
     send_mail_wrapper(subject, template, context, to)
+
+
+def get_occupation_for_month(asset_id, month, year):
+    result = cache.get_occupation_from_cache(asset_id, month, year)
+    if result is not None:
+        return result
+
+    try:
+        asset = Asset.objects.get(id=asset_id)
+    except ObjectDoesNotExist:
+        return []
+
+    query = """SELECT day, SUM(length) AS total_length
+                      FROM (SELECT extract(day FROM reservation_begins) AS day,
+                                   extract(epoch FROM (reservation_ends - reservation_begins)) AS length
+                      FROM assets_reservation
+                      WHERE reservation_begins >= (%s)
+                            AND reservation_begins < (%s)
+                            AND asset_id = (%s)) tab
+               GROUP BY (day)
+               ORDER BY day"""
+    cursor = connection.cursor()
+    cursor.execute("SET TIME ZONE %s;", (timezone.get_current_timezone_name(), ))
+    first_date = str(year) + '-' + str(month) + '-01'
+    last_date = str(year + 1 if month == 12 else year) + '-' + str((month + 1) % 12) + '-01'
+    cursor.execute(query, (first_date, last_date, asset_id))
+    occupations = []
+    limit = asset.max_bookable_slots * asset.capacity * 86400
+    for i in cursor.fetchall():
+        occupations.append((i[0], float(i[1]) / limit))
+    cursor.execute("SET TIME ZONE UTC;")
+
+    cache.set_occupation_in_cache(asset_id, month, year, occupations)
+    return occupations
 
 
 def get_reservations_not_compatible_with_slot_duration(asset):

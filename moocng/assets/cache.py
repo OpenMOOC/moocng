@@ -19,12 +19,24 @@ def get_course_key(course):
     return 'course_%d_has_assets' % course.id
 
 
+def get_occupation_key(asset_id, month, year):
+    return 'occupation_%d_%d_%d' % (asset_id, year, month)
+
+
 def get_course_has_assets_from_cache(course):
     return cache.get(get_course_key(course))
 
 
 def set_course_has_assets_in_cache(course, has_assets):
     cache.set(get_course_key(course), has_assets, 3600)
+
+
+def get_occupation_from_cache(asset_id, month, year):
+    return cache.get(get_occupation_key(asset_id, month, year))
+
+
+def set_occupation_in_cache(asset_id, month, year, occupation):
+    cache.set(get_occupation_key(asset_id, month, year), occupation, 300)
 
 
 def invalidate_course_has_assets_in_cache(course):

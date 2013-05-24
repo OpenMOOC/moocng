@@ -1200,14 +1200,134 @@ MOOC.views.Asset = Backbone.View.extend({
         "click button.as-new-reservation": "newReservation"
     },
 
+    checkDate: function (asset, dateText) {
+        "use strict";
+        var reservationCountList,
+            counts,
+            key,
+            self = this;
+
+        if (this.reservationCounts.hasOwnProperty(dateText)) {
+            this.fillWithAvailableTimes(asset, this.reservationCounts[dateText]);
+        } else {
+            this.getFormModal().find("#as-confirm").addClass("disabled");
+            reservationCountList = new MOOC.models.ReservationCountList();
+            reservationCountList.fetch({
+                data: { 'asset': asset.get('id'),
+                        'date': dateText },
+                success: function (collection, resp, options) {
+                    counts = [];
+                    reservationCountList.each(function (count) {
+                        key = count.get("reservation_begins").split('T')[1].slice(0, 5);
+                        counts[key] = count.get("count");
+                    });
+                    self.reservationCounts[dateText] = counts;
+
+                    self.fillWithAvailableTimes(asset, counts);
+                }
+            });
+        }
+    },
+
+    fillWithAvailableTimes: function (asset, counts) {
+        "use strict";
+        var key,
+            maxBookings,
+            currentTime,
+            options;
+
+
+        maxBookings = asset.get('max_bookable_slots') * asset.get('capacity');
+
+        options = [];
+        currentTime = new Date('2000-01-01T00:00:00.000Z'); //The day itself is irrelevant
+        while (currentTime.getUTCDate() === 1) {
+            key = currentTime.toISOString().split('T')[1].slice(0, 5);
+            if (!counts.hasOwnProperty(key) || (counts[key] < maxBookings)) {
+                options.push("<option>");
+                options.push(key);
+                options.push("</option>");
+            }
+            currentTime = new Date(currentTime.getTime() + asset.get("slot_duration") * 60000);
+        }
+        if (options.length === 0) {
+            this.getFormModal().find("#as-confirm").addClass("disabled");
+        } else {
+            this.getFormModal().find("#as-confirm").removeClass("disabled");
+        }
+        this.getFormModal().find("#as-fromtime").html(options.join(""));
+    },
+
     initialize: function () {
         "use strict";
-        _.bindAll(this, "render", "getFormModal", "submit",
-                  "confirmedSubmit");
+        _.bindAll(this, "render", "getFormModal", "submit", "beforeShowDay",
+                  "confirmedSubmit", "checkDate", "fillWithAvailableTimes");
     },
 
     modal: undefined,
     formModal: undefined,
+    reservationCounts: [],
+    occupationInformation: [],
+
+    downloadOccupationInformation: function (asset, year, month) {
+        "use strict";
+        var occupationInformationList,
+            occupationInfo,
+            self = this;
+
+        occupationInformationList = new MOOC.models.OccupationInformationList();
+        occupationInformationList.fetch({
+            data: { 'asset': asset.get('id'),
+                    'month': month,
+                    'year': year },
+            async: false,
+            success: function (collection, resp, options) {
+                occupationInfo = new Array(31);
+
+                occupationInformationList.each(function (element) {
+                    occupationInfo[element.get("day")] = element.get("occupation");
+                });
+
+                if (!self.occupationInformation.hasOwnProperty(year)) {
+                    self.occupationInformation[year] = [];
+                }
+
+                self.occupationInformation[year][month] = occupationInfo;
+            }
+        });
+    },
+
+    beforeShowDay: function (asset, date) {
+        "use strict";
+        var couldDownload,
+            month,
+            year,
+            occupation;
+
+        month = date.getMonth() + 1;
+        year = date.getFullYear();
+        couldDownload = true;
+        if (!(this.occupationInformation.hasOwnProperty(year) && this.occupationInformation[year].hasOwnProperty(month))) {
+            this.downloadOccupationInformation(asset, year, month);
+            couldDownload = (this.occupationInformation.hasOwnProperty(year) && this.occupationInformation[year].hasOwnProperty(month));
+        }
+
+        if (!couldDownload) {
+            return [true, ""];
+        }
+
+        occupation = this.occupationInformation[year][month][date.getDate()];
+        if (occupation >= 1) {
+            return [true, "red"];
+        }
+        if (occupation > 0.8) {
+            return [true, "orange"];
+        }
+        if (occupation > 0.5) {
+            return [true, "yellow"];
+        }
+        return [true, "green"];
+    },
 
     getFormModal: function () {
         "use strict";
@@ -1299,7 +1419,8 @@ MOOC.views.Asset = Backbone.View.extend({
             firstDate,
             lastDate,
             defaultDate,
-            currentTime;
+            currentTime,
+            self = this;
 
         asset = assetList.find(function (candidate) {
             return (parseInt(candidate.get("id"), 10) === assetId);
@@ -1316,7 +1437,7 @@ MOOC.views.Asset = Backbone.View.extend({
         lastDate = this.model.get("available_to");
 
         if (new Date(firstDate) < (new Date())) {
-            defaultDate = (new Date()).toISOString().split('T')[0];
+            defaultDate = new Date();
         } else {
             defaultDate = firstDate;
         }
@@ -1324,19 +1445,11 @@ MOOC.views.Asset = Backbone.View.extend({
         formContent = [];
         formContent.push("<div class=\"row\">");
         formContent.push("<div class=\"span3\"><p><label for=\"as-date\">" + MOOC.trans.classroom.asBookDate + "</label>");
-        formContent.push("<input type=\"date\" class=\"input-medium\" name=\"reservation_date\" id=\"as-date\"");
-        formContent.push("min=\"" + firstDate + "\" max=\"" + lastDate + "\" value=\"" + defaultDate + "\"/></p>");
-        formContent.push("</div><div class=\"span3\"><p><label for=\"as-fromtime\">");
+        formContent.push("<input type=\"text\" class=\"input-medium\" name=\"reservation_date\" id=\"as-date\">");
+        formContent.push("</p></div><div class=\"span3\"><p><label for=\"as-fromtime\">");
         formContent.push(MOOC.trans.classroom.asBookTime + "</label>");
         formContent.push("<select class=\"input-small\" name=\"reservation_time\" id=\"as-fromtime\">");
 
-        currentTime = new Date('2000-01-01T00:00:00.000Z'); //The day itself is irrelevant
-        while (currentTime.getUTCDate() === 1) {
-            formContent.push("<option>");
-            formContent.push(currentTime.toISOString().split('T')[1].slice(0, 5));
-            formContent.push("</option>");
-            currentTime = new Date(currentTime.getTime() + asset.get("slot_duration") * 60000);
-        }
         formContent.push("</select></p></div></div>");
 
         baseURL = document.URL.split('#')[0];
@@ -1351,6 +1464,18 @@ MOOC.views.Asset = Backbone.View.extend({
         formModal.find("#new-asset-reservation-form-content").html(formContent.join(""));
         formModal.find("#new-asset-reservation-form").attr("action", actionURL);
 
+        formModal.find("#as-date").datepicker({dateFormat: "yy-mm-dd",
+            minDate: firstDate,
+            maxDate: lastDate,
+            defaultDate: defaultDate,
+            onSelect: function (dateText) {
+                self.checkDate(asset, dateText);
+            },
+            beforeShowDay: function (date) {
+                return self.beforeShowDay(asset, date);
+            }
+            });
+
         this.submit();
     },
 
@@ -1358,9 +1483,12 @@ MOOC.views.Asset = Backbone.View.extend({
         "use strict";
         var modal = this.getFormModal();
         modal.find("#as-confirm").off("click").on("click", _.bind(function () {
-            this.confirmedSubmit();
-            modal.modal("hide");
+            if (!modal.find("#as-confirm").hasClass("disabled")) {
+                this.confirmedSubmit();
+                modal.modal("hide");
+            }
         }, this));
+        modal.find("#as-confirm").addClass("disabled");
         modal.modal("show");
     },
 
