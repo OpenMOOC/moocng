@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.messages import success
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
@@ -5,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 from moocng.courses.models import Course
+from moocng.enrollment.idp import enroll_course_at_idp
 
 
 def free_enrollment(request, course_slug):
@@ -12,6 +14,8 @@ def free_enrollment(request, course_slug):
     if request.method == 'POST':
         course.students.add(request.user)
         course.save()
+        if getattr(settings, 'FREE_ENROLLMENT_CONSISTENT', False):
+            enroll_course_at_idp(request.user, course)
         success(request,
                 _(u'Congratulations, you have successfully enroll in the course %(course)s')
                 % {'course': unicode(course)})

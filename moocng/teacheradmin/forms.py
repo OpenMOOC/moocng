@@ -24,6 +24,9 @@ from moocng.forms import (BootstrapMixin, BootstrapClearableFileInput,
 from moocng.teacheradmin.models import MassiveEmail
 from moocng.media_contents import media_content_extract_id
 
+from moocng.assets.models import Asset
+from moocng.assets.forms import AssetForm
+
 
 class CourseForm(forms.ModelForm):
 
@@ -74,6 +77,14 @@ class AnnouncementForm(CoursesAnnouncementForm, BootstrapMixin):
         initial=False,
         help_text=_(u'Please use this with caution as some courses has many students'),
     )
+
+
+class AssetTeacherForm(forms.ModelForm, BootstrapMixin):
+
+    class Meta:
+        model = Asset
+        exclude = ('slot_duration', 'max_bookable_slots', 'reservation_in_advance',
+                   'cancelation_in_advance',)
 
 
 class MassiveEmailForm(forms.ModelForm, BootstrapMixin):

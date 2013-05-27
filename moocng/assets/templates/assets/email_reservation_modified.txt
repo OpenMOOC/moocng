@@ -1,0 +1,11 @@
+{% load i18n %}
+
+{% blocktrans %}
+Dear {{ user }}
+
+Your reservation of "{{ asset }}" for "{{ kq }}" has been modified.
+Now, your reservation begins at "{{ begin }}" and ends at "{{ end }}"
+We deeply apologize for the inconvenience.
+
+Best regards, {{ site }}'s team
+{% endblocktrans %}

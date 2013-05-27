@@ -1,0 +1,10 @@
+{% load i18n %}
+
+{% blocktrans %}
+Dear {{ user }}
+
+Your reservation of "{{ asset }}" for "{{ kq }}" has been cancelled.
+We deeply apologize for the inconvenience.
+
+Best regards, {{ site }}'s team
+{% endblocktrans %}

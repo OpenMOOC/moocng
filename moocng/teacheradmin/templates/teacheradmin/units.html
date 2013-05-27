@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block extrajs %}
-    <script src="{{ STATIC_URL }}js/libs/jquery-ui-1.9.2.custom.min.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/libs/jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/libs/underscore-1.3.3.min.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/libs/backbone-0.9.2.min.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/libs/async.min.js" type="text/javascript"></script>
@@ -47,15 +47,24 @@
                 question: "{% trans "It has a question" %}",
                 pr: "{% trans "PR" %}",
                 prTooltip: "{% trans "Peer review" %}",
+                asset: "{% trans "AS" %}",
+                assetTip: "{% trans "Asset Availability" %}",
+                
             },
             evaluationCriterion: {
                 description: "{% trans "Description:" %}",
                 remove: "{%trans "Remove criterion" %}",
                 title: "{% trans "Title:" %}",
+            },
+            asset: {
+                description: "{% trans "Description:" %}",
+                remove: "{%trans "Remove Asset" %}",
+                name: "{% trans "Name:" %}",
+                infoadd: "{% trans "Add an asset:" %}",
             }
         };
         MOOC.init({{ course.id }}, {{ unit_badge_classes|safe }});
-    </script>
+    </script>  
 {% endblock %}
 
 {% block section %}
@@ -123,6 +132,7 @@
         <li id="attachments-tab"><a href="#attachments" data-toggle="tab">{% trans "Attachments" %}</a></li>
         <li id="question-tab" class="hide"><a href="#question" data-toggle="tab">{% trans "Question" %}</a></li>
         <li id="peer-review-assignment-tab" class="hide"><a href="#peer-review-assignment" data-toggle="tab">{% trans "Peer review" %}</a></li>
+        <li id="asset-availability-tab" class="hide"><a href="#asset-availability" data-toggle="tab">{% trans "Asset Availability" %}</a></li>
     </ul>
     <div class="tab-content"><fieldset class="tab-pane active" id="nugget">
     <div class="row">
@@ -168,6 +178,11 @@
     <div id="nopeerreviewassignment" class="row mb20">
         <div class="span10 align-right">
             <button id="addpeerreviewassignment" class="btn btn-primary">{% trans "Save changes and add a peer review assignment to this nugget" %}</button>
+        </div>
+    </div>
+    <div id="noassetavailability" class="row mb20">
+        <div class="span10 align-right">
+            <button id="addassetavailability" class="btn btn-primary">{% trans "Save changes and add an asset availability to this nugget" %}</button>
         </div>
     </div>
     </fieldset>
@@ -289,7 +304,44 @@
             <button id="delete-peer-review-assignment" class="btn btn-danger">{% trans "Remove the peer review assignment" %}</button>
         </div>
     </div>
-    </fieldset></div>
+    </fieldset>
+    
+    
+    <fieldset class="tab-pane" id="asset-availability">
+    <div class="row">
+        <div class="span5">
+            <label for="availablefromlabel" class="required"> {% trans "Available from:" %}</label>
+            <input type="date" id="availablefrom" name="availablefrom" placeholder="YYYY-MM-DD" class="input-medium" ></input>
+        </div>
+        <div class="span5">
+            <label for="availabletolabel" class="required"> {% trans "Available to:" %}</label>
+            <input type="date" id="availableto" name="availableto" placeholder="YYYY-MM-DD" class="input-medium" ></input>
+        </div>
+    </div>
+    <div class="row">
+      <div class="span10">
+        <legend>{% trans "Assets" %}</legend>
+        <div id="assets" class="span5">
+        </div>
+        <div class="span4">
+            <div id="assetsforadd">
+            </div>
+            </br>
+            <button id="addasset" class="btn btn-primary">{% trans "Save changes and add an asset" %}</button>
+        </div>
+      </div>
+    </div>
+    </br>
+    <div class="row">
+        <div class="mb10 align-right span10">
+            <button id="delete-asset-availability" class="btn btn-danger">{% trans "Remove the asset availability" %}</button>
+        </div>
+    </div>
+    </fieldset>
+    </div>
+    </div>
+    
+    
     <fieldset>
     <div class="row"><div class="span10 align-right"><div class="form-actions">
         <button id="save-kq" class="btn btn-primary"><i class="icon icon-white icon-ok"></i> {% trans "Save" %}</button>
@@ -350,6 +402,22 @@
         <button type="button" class="btn btn-danger">{% trans "Confirm" %}</button>
     </div>
 </div>
+
+
+<div id="confirm-assets-action" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>{% trans "Confirm operation" %}</h3>
+    </div>
+    <div class="modal-body">
+        <p>{% trans "Are you completely sure you want to do this operation? It is possible that some reservations are cancelled after this change " %}</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" id="cancelasset" class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
+        <button type="button" class="btn btn-danger">{% trans "Confirm" %}</button>
+    </div>
+</div>
+
 
 <div id="units-container" class="viewport"></div>
 <div id="unit-editor" class="viewport hide"></div>

@@ -302,8 +302,12 @@ Now you need to add the SAML SP metadata to your IdP. First of all you need to c
 After that you can go to the idp and call update entries, You can go to a url like this: https://idp.example.com/simplesaml/module.php/metarefresh/fetch.php
 
 
+Asset configuration
+-------------------
 
+Slot duration time of assets should always be multiple of the asset slot granularity.
 
+That slot granularity is set to five minutes by default. To use another value, simply specify a different value (in minutes) in the ASSET_SLOT_GRANULARITY property of the settings file.
 
 Default site
 ------------

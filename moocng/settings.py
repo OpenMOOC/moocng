@@ -200,6 +200,7 @@ INSTALLED_APPS = (
     'moocng.contact',
     'moocng.badges',  # this must be defined before moocng.courses
     'moocng.courses',
+    'moocng.assets',
     'moocng.portal',
     'moocng.videos',
     'moocng.teacheradmin',
@@ -373,11 +374,15 @@ PEER_REVIEW_TEXT_MAX_SIZE = 5000  # in chars
 PEER_REVIEW_FILE_MAX_SIZE = 5  # in MB
 PEER_REVIEW_ASSIGNATION_EXPIRE = 24  # in hours
 
+ASSET_SLOT_GRANULARITY = 5  # Slot time of assets should be a multiple of this value (in minutes)
+
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 LOGIN_URL = '/saml2/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_URL = '/saml2/logout/'
 LOGOUT_REDIRECT_URL = '/'
+
+FREE_ENROLLMENT_CONSISTENT = False
 
 SAML_CREATE_UNKNOWN_USER = True
 SAML_ATTRIBUTE_MAPPING = {
@@ -503,6 +508,7 @@ CACHES = {
 }
 
 MATHJAX_ENABLED = False
+MATHJAX_LOCAL_PATH = STATIC_URL + 'js/libs/mathjax'
 MATHJAX_CONFIG_FILE = "TeX-AMS-MML_HTMLorMML"
 MATHJAX_CONFIG_DATA = {
   "elements": ['false-id-to-not-proccess-by-default'],

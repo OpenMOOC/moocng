@@ -41,6 +41,12 @@
                 {% if form.promotion_media_content_id.help_text %}<span class="help-inline">{{ form.promotion_media_content_id.help_text }}</span>{% endif %}
             </p>
             <p>
+                {{ form.max_reservations_pending.errors }}
+                {{ form.max_reservations_pending.label_tag }}
+                {{ form.max_reservations_pending }}
+                {% if form.max_reservations_pending.help_text %}<span class="help-inline">{{ form.max_reservations_pending.help_text }}</span>{% endif %}
+            </p>
+            <p>
                 {{ form.enrollment_method.errors }}
                 {{ form.enrollment_method.label_tag }}
                 {{ form.enrollment_method }}
@@ -65,6 +71,12 @@
                 {{ form.threshold.label_tag }}
                 {{ form.threshold }}
                 {% if form.threshold.help_text %}<span class="help-inline">{{ form.threshold.help_text }}</span>{% endif %}
+            </p>
+            <p>
+                {{ form.max_reservations_total.errors }}
+                {{ form.max_reservations_total.label_tag }}
+                {{ form.max_reservations_total }}
+                {% if form.max_reservations_total.help_text %}<span class="help-inline">{{ form.max_reservations_total.help_text }}</span>{% endif %}
             </p>
         </div>
     </div>
