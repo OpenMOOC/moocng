@@ -16,7 +16,6 @@
 
 
 from datetime import datetime, date, timedelta
-import re
 import logging
 
 from bson import ObjectId
