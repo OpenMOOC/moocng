@@ -32,7 +32,7 @@ EMAIL_SUBJECT_PREFIX = '[OpenMOOC] | '
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'moocng',                # Or path to database file if using sqlite3.
         'USER': 'moocng',                # Not used with sqlite3.
         'PASSWORD': 'moocng',            # Not used with sqlite3.
@@ -60,7 +60,7 @@ EMAIL_SUBJECT_PREFIX = '[OpenMOOC] | '
 AWS_ACCESS_KEY_ID = ""
 AWS_SECRET_ACCESS_KEY = ""
 AWS_STORAGE_BUCKET_NAME = ""
-AWS_S3_UPLOAD_EXPIRE_TIME = (60 * 5) # 5 minutes
+AWS_S3_UPLOAD_EXPIRE_TIME = (60 * 5)  # 5 minutes
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -88,7 +88,7 @@ LANGUAGE_COOKIE_NAME = 'language'
 
 LOCALE_PATHS = (
     os.path.join(BASEDIR, 'locale'),
-    )
+)
 
 SITE_ID = 1
 
@@ -139,7 +139,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder'
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -149,7 +149,7 @@ SECRET_KEY = 'r$=%l$j4(#5a%$rd*g+q5o7!m3z&amp;b@z1+n*d!n2im-hf0n%730'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    # 'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -280,7 +280,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.static',
     'django.core.context_processors.tz',
-#    'django.core.context_processors.request',
+    # 'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
     'moocng.context_processors.site',
     'moocng.context_processors.theme',
@@ -304,9 +304,9 @@ TINYMCE_DEFAULT_CONFIG = {
     'theme': 'advanced',
     'theme_advanced_toolbar_location': 'top',
     'theme_advanced_buttons1': 'bold,italic,underline,strikethrough,separator,link,unlink,separator,undo,redo,copy,paste,separator,cleanup,separator,bullist,numlist',
-    'theme_advanced_buttons2' : '',
-    'theme_advanced_buttons3' : '',
-    }
+    'theme_advanced_buttons2': '',
+    'theme_advanced_buttons3': '',
+}
 
 
 GOOGLE_ANALYTICS_CODE = ''
@@ -314,15 +314,8 @@ GOOGLE_ANALYTICS_CODE = ''
 GRAVATAR_URL_PREFIX = '//www.gravatar.com/'
 
 MOOCNG_THEME = {
-#    'logo': u'',
-#    'subtitle': u'',
-#    'top_banner': u'',
-#    'right_banner1': u'',
-#    'right_banner2': u'',
-#    'bootstrap_css': u'',
-#    'moocng_css': u'',
-#    'cert_banner': u'',
-    }
+    # 'cert_banner': u'',
+}
 
 
 ENABLED_COMUNICATIONS = (
@@ -352,12 +345,12 @@ COURSES_USING_OLD_TRANSCRIPT = []
 # Enrollment methods
 ENROLLMENT_METHODS = (
     'moocng.enrollment.methods.FreeEnrollment',
-    )
-
+)
 
 # Celery settings
 import djcelery
 djcelery.setup_loader()
+CELERY_CREATE_MISSING_QUEUES = True
 
 BROKER_URL = 'amqp://moocng:moocngpassword@localhost:5672/moocng'
 
@@ -390,7 +383,7 @@ SAML_ATTRIBUTE_MAPPING = {
     'cn': ('first_name', ),
     'sn': ('last_name', ),
     'eduPersonAffiliation': ('groups', ),
-    }
+}
 
 import saml2
 
@@ -407,20 +400,20 @@ SAML_CONFIG = {
     # this block states what services we provide
     'service': {
         # we are just a lonely SP
-        'sp' : {
+        'sp': {
             'name': 'Moocng SP',
             'endpoints': {
                 # url and binding to the assetion consumer service view
                 # do not change the binding or service name
                 'assertion_consumer_service': [
                     ('https://moocng.example.com/saml2/acs/', saml2.BINDING_HTTP_POST),
-                    ],
+                ],
                 # url and binding to the single logout service view
                 # do not change the binding or service name
                 'single_logout_service': [
                     ('https://moocng.example.com/saml2/ls/', saml2.BINDING_HTTP_REDIRECT),
-                    ],
-                },
+                ],
+            },
 
             # in this section the list of IdPs we talk to are defined
             'idp': {
@@ -432,19 +425,19 @@ SAML_CONFIG = {
                 'https://idp.example.com/simplesaml/saml2/idp/metadata.php': {
                     'single_sign_on_service': {
                         saml2.BINDING_HTTP_REDIRECT: 'https://idp.example.com/simplesaml/saml2/idp/SSOService.php',
-                        },
+                    },
                     'single_logout_service': {
                         saml2.BINDING_HTTP_REDIRECT: 'https://idp.example.com/simplesaml/saml2/idp/SingleLogoutService.php',
-                        },
                     },
                 },
             },
         },
+    },
 
     # where the remote metadata is stored
     'metadata': {
         'local': [os.path.join(BASEDIR, 'remote_metadata.xml')],
-        },
+    },
 
     # set to 1 to output debugging information
     'debug': 1,
@@ -465,14 +458,14 @@ SAML_CONFIG = {
          'company': 'Example CO',
          'email_address': 'admin@example.com',
          'contact_type': 'administrative'},
-        ],
+    ],
     # you can set multilanguage information here
     'organization': {
         'name': [('Example CO', 'es'), ('Example CO', 'en')],
         'display_name': [('Example', 'es'), ('Example', 'en')],
         'url': [('http://www.example.com', 'es'), ('http://www.example.com', 'en')],
-        },
-    }
+    },
+}
 
 MEDIA_CONTENT_TYPES = [
     {
@@ -511,18 +504,16 @@ MATHJAX_ENABLED = False
 MATHJAX_LOCAL_PATH = STATIC_URL + 'js/libs/mathjax'
 MATHJAX_CONFIG_FILE = "TeX-AMS-MML_HTMLorMML"
 MATHJAX_CONFIG_DATA = {
-  "elements": ['false-id-to-not-proccess-by-default'],
-  "tex2jax": {
-    "inlineMath":
-      [
-          ['$','$'],
-          ['\\(','\\)']
-      ]
-  }
+    "elements": ['false-id-to-not-proccess-by-default'],
+    "tex2jax": {
+        "inlineMath": [
+            ['$', '$'],
+            ['\\(', '\\)']
+        ]
+    }
 }
 
 try:
     from local_settings import *
 except ImportError:
     pass
-
