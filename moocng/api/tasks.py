@@ -112,13 +112,11 @@ def on_activity_created_task(activity_created):
             stats_course.insert(data, safe=True)
 
 
-def on_answer_created_task(answer_created):
+def do_on_answer_created_task(answer_created, kq_data):
     db = get_db()
 
     # KQ
-    data = {
-        'submitted': 1
-    }
+    data = kq_data
     # TODO passed
     stats_kq = db.get_collection('stats_kq')
     stats_kq_dict = stats_kq.find_and_modify(
@@ -131,6 +129,7 @@ def on_answer_created_task(answer_created):
         data['unit_id'] = answer_created['unit_id']
         data['course_id'] = answer_created['course_id']
         data['viewed'] = 0
+        data['submitted'] = 1
         if not 'passed' in data:
             data['passed'] = 0
         stats_kq.insert(data, safe=True)
@@ -167,3 +166,13 @@ def on_answer_created_task(answer_created):
             data['started'] = 0
             data['completed'] = 0
             stats_course.insert(data, safe=True)
+
+
+@task
+def on_answer_created_task(answer_created):
+    do_on_answer_created_task(answer_created, {'submitted': 1})
+
+
+@task
+def on_answer_updated_task(answer_updated):
+    do_on_answer_created_task(answer_updated, {})
