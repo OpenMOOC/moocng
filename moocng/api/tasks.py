@@ -113,5 +113,57 @@ def on_activity_created_task(activity_created):
 
 
 def on_answer_created_task(answer_created):
-    # TODO
-    return None
+    db = get_db()
+
+    # KQ
+    data = {
+        'submitted': 1
+    }
+    # TODO passed
+    stats_kq = db.get_collection('stats_kq')
+    stats_kq_dict = stats_kq.find_and_modify(
+        query={'kq_id': answer_created['kq_id']},
+        update={'$inc': data},
+        safe=True
+    )
+    if stats_kq_dict is None:
+        data['kq_id'] = answer_created['kq_id']
+        data['unit_id'] = answer_created['unit_id']
+        data['course_id'] = answer_created['course_id']
+        data['viewed'] = 0
+        if not 'passed' in data:
+            data['passed'] = 0
+        stats_kq.insert(data, safe=True)
+
+    # UNIT
+    data = {}
+    # TODO passed
+    if data.keys():
+        stats_unit = db.get_collection('stats_unit')
+        stats_unit_dict = stats_unit.find_and_modify(
+            query={'unit_id': answer_created['unit_id']},
+            update={'$inc': data},
+            safe=True
+        )
+        if stats_unit_dict is None:
+            data['unit_id'] = answer_created['unit_id']
+            data['course_id'] = answer_created['course_id']
+            data['started'] = 0
+            data['completed'] = 0
+            stats_unit.insert(data, safe=True)
+
+    # COURSE
+    data = {}
+    # TODO passed
+    if data.keys():
+        stats_course = db.get_collection('stats_course')
+        stats_course_dict = stats_course.find_and_modify(
+            query={'course_id': answer_created['course_id']},
+            update={'$inc': data},
+            safe=True
+        )
+        if stats_course_dict is None:
+            data['course_id'] = answer_created['course_id']
+            data['started'] = 0
+            data['completed'] = 0
+            stats_course.insert(data, safe=True)
