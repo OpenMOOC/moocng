@@ -19,6 +19,7 @@ from django.db.models import Q
 from django.core.management.base import BaseCommand
 
 from moocng.courses.models import Course
+from moocng.mongodb import get_db
 from moocng.portal.stats import calculate_all_stats
 
 
@@ -81,8 +82,22 @@ class Command(BaseCommand):
         courses = [c.id for c in courses]
         blacklist = [cid for cid in all_courses_ids if cid not in courses]
 
-        # TODO drop stats for existing courses
+        # Drop existing stats for selected courses
+        db = get_db()
+        stats_course = db.get_collection('stats_course')
+        stats_unit = db.get_collection('stats_unit')
+        stats_kq = db.get_collection('stats_kq')
+        for cid in courses:
+            stats_course.remove({'course_id': cid}, safe=True)
+            stats_unit.remove({'course_id': cid}, safe=True)
+            stats_kq.remove({'course_id': cid}, safe=True)
 
-        # TODO callback
+        # Callback to show some progress information
+        def callback(step='', counter=0, total=0):
+            if counter % int(total / 100) == 0:
+                if step == 'calculating':
+                    print 'Processed %d of %d users' % (counter, total)
+                elif step == 'storing':
+                    print 'Saved %d of %d statistics entries' % (counter, total)
 
         calculate_all_stats(callback=None, course_blacklist=blacklist)

@@ -185,6 +185,7 @@ def store_stats_in_mongo(stats, kq_objects, callback=None):
     stats_unit = db.get_collection('stats_unit')
     stats_kq = db.get_collection('stats_kq')
 
+    # TODO move indexes creation to the end if recreating an index is not dangerous
     if stats_course.count() == 0:
         stats_course.create_index([('course_id', 1)])
     if stats_unit.count() == 0:

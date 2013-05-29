@@ -20,8 +20,6 @@ class Migration(DataMigration):
             kq_objects=orm['courses.knowledgequantum'].objects,
             callback=callback)
 
-        # TODO createindexes
-
     def backwards(self, orm):
         connector = get_db()
         db = connector.get_database()
