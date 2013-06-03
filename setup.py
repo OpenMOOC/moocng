@@ -59,10 +59,11 @@ setup(
         },
     zip_safe=False,
     install_requires=[
+        'zipimportx==0.3.2', # Required for some operations during install
         'boto==2.8.0',
         'celery==3.0.11',
         'Django==1.4.5',
-        'django-admin-sortable==1.3.8',
+        'django-admin-sortable==1.4.9',
         'django-celery==3.0.11',
         'django-tinymce==1.5.1b2',
         'django-tastypie==0.9.11-openmooc',
