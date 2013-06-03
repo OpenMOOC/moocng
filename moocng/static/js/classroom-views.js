@@ -538,7 +538,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             var unit = MOOC.models.course.getByKQ(this.model),
                 assetAvailability = this.model.get("assetAvailabilityInstance"),
                 path = window.location.hash.substring(1),
-                view = MOOC.views.assetViews[assetAvailability.get("id")];
+                view = MOOC.views.assetViews[assetAvailability.get("id")],
+                removeCallback;
 
             assetAvailability.set("_assetList", this.model.get("_assetList"));
             $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
@@ -552,23 +553,27 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             this.setEventForNavigation("#kq-previous", unit, this.model, false);
             this.setEventForNavigation("#kq-next", unit, this.model, true);
 
+            removeCallback = function () {
+                $("#kq-video").empty();
 
-            if (this.player && !_.isNull(this.player.getIframe())) {
-                this.player.destroy();
+                if (_.isUndefined(view)) {
+                    view = new MOOC.views.Asset({
+                        model: assetAvailability,
+                        el: $("#kq-video")[0]
+                    });
+                    MOOC.views.assetViews[assetAvailability.get("id")] = view;
+                }
+                view.render();
+
+                callback();
+            };
+
+            if (MOOC.views.lastPlayerView) {
+                MOOC.views.lastPlayerView.destroyPlayer(removeCallback);
+                MOOC.views.lastPlayerView = null;
+            } else {
+                removeCallback();
             }
-            $("#kq-video").empty();
-            this.player = null;
-
-            if (_.isUndefined(view)) {
-                view = new MOOC.views.Asset({
-                    model: assetAvailability,
-                    el: $("#kq-video")[0]
-                });
-                MOOC.views.assetViews[assetAvailability.get("id")] = view;
-            }
-            view.render();
-
-            callback();
         }, this));
 
         async.series(toExecute);
