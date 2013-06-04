@@ -1175,7 +1175,6 @@ def on_peerreviewsubmission_created(sender, user_id, mongo_object, **kwargs):
         queue='stats',
     )
 
-# TODO P2P reviews created signal
 
 mongo_object_created.connect(on_activity_created, sender=ActivityResource,
                              dispatch_uid="activity_created")

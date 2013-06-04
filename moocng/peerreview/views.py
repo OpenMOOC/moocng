@@ -32,6 +32,7 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
 from moocng.api.mongodb import get_db
+from moocng.api.tasks import on_peerreviewreview_created_task
 from moocng.courses.models import Course, KnowledgeQuantum
 from moocng.courses.utils import send_mail_wrapper, is_course_ready
 from moocng.peerreview.forms import ReviewSubmissionForm, EvalutionCriteriaResponseForm
@@ -187,6 +188,11 @@ def course_review_review(request, course_slug, assignment_id):
             criteria_values = [(int(form.cleaned_data['evaluation_criterion_id']), int(form.cleaned_data['value'])) for form in criteria_formset]
             try:
                 review = save_review(assignment.kq, request.user, submitter, criteria_values, submission_form.cleaned_data['comments'])
+                on_peerreviewreview_created_task.apply_async(
+                    args=[request.user.id, review],
+                    queue='stats',
+                )
+
                 current_site_name = get_current_site(request).name
                 send_mail_to_submission_owner(current_site_name, assignment, review, submitter)
             except IntegrityError:

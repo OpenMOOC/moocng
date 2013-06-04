@@ -112,11 +112,10 @@ def on_activity_created_task(activity_created):
             stats_course.insert(data, safe=True)
 
 
-def process_on_submission(submitted, kq_data, p2p=False):
+def process_on_submission(submitted, data, p2p=False):
     db = get_db()
 
     # KQ
-    data = kq_data
     # TODO passed
     stats_kq = db.get_collection('stats_kq')
     stats_kq_dict = stats_kq.find_and_modify(
@@ -129,12 +128,17 @@ def process_on_submission(submitted, kq_data, p2p=False):
         data['unit_id'] = submitted['unit_id']
         data['course_id'] = submitted['course_id']
         data['viewed'] = 0
-        data['submitted'] = 1
+        if 'reviewers' in data:
+            data['submitted'] = 0
+            data['reviews'] = 1
+            data['reviewers'] = 1
+        else:
+            data['submitted'] = 1
+            if p2p:
+                data['reviews'] = 0
+                data['reviewers'] = 0
         if not 'passed' in data:
             data['passed'] = 0
-        if p2p:
-            data['reviews'] = 0
-            data['reviewers'] = 0
         stats_kq.insert(data, safe=True)
 
     # UNIT
@@ -189,3 +193,27 @@ def on_peerreviewsubmission_created_task(submission_created):
         'kq_id': submission_created['kq'],
     }
     process_on_submission(data, {'submitted': 1}, p2p=True)
+
+
+@task
+def on_peerreviewreview_created_task(user_id, review_created):
+    data = {
+        'course_id': review_created['course'],
+        'unit_id': review_created['unit'],
+        'kq_id': review_created['kq'],
+    }
+
+    reviews = get_db().get_collection('peer_review_reviews')
+    user_reviews = reviews.find({
+        'reviewer': user_id,
+        'kq': review_created['kq']
+    }).count()
+    inc_reviewers = 0
+    if user_reviews == 1:  # First review of this guy  TODO wrong!!!!
+        inc_reviewers = 1
+    increment = {
+        'reviews': 1,
+        'reviewers': inc_reviewers
+    }
+
+    process_on_submission(data, increment, p2p=True)
