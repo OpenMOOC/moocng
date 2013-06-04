@@ -45,7 +45,8 @@ from moocng.api.authorization import (PublicReadTeachersModifyAuthorization,
 from moocng.api.mongodb import (MongoObj, MongoResource, MongoUserResource,
                                 mongo_object_updated, mongo_object_created)
 from moocng.api.tasks import (on_activity_created_task, on_answer_created_task,
-                              on_answer_updated_task)
+                              on_answer_updated_task,
+                              on_peerreviewsubmission_created_task)
 from moocng.api.validation import (AnswerValidation, answer_validate_date,
                                    PeerReviewSubmissionsResourceValidation)
 from moocng.assets.models import Asset, Reservation, AssetAvailability
@@ -439,7 +440,11 @@ class PeerReviewSubmissionsResource(MongoResource):
         bundle.data["author_reviews"] = 0
         bundle.data["author"] = request.user.id
 
-        self._collection.insert(bundle.data, safe=True)
+        _id = self._collection.insert(bundle.data, safe=True)
+
+        bundle.obj = MongoObj(bundle.data)
+        self.send_created_signal(request.user.id, bundle.obj)
+        bundle.obj.uuid = str(_id)
 
         bundle.uuid = bundle.obj.uuid
 
@@ -1161,7 +1166,16 @@ def on_answer_updated(sender, user_id, mongo_object, **kwargs):
         queue='stats',
     )
 
-# TODO P2P Signals
+
+def on_peerreviewsubmission_created(sender, user_id, mongo_object, **kwargs):
+    api_task_logger.debug("peer review submission created")
+
+    on_peerreviewsubmission_created_task.apply_async(
+        args=[mongo_object.to_dict()],
+        queue='stats',
+    )
+
+# TODO P2P reviews created signal
 
 mongo_object_created.connect(on_activity_created, sender=ActivityResource,
                              dispatch_uid="activity_created")
@@ -1169,3 +1183,6 @@ mongo_object_created.connect(on_answer_created, sender=AnswerResource,
                              dispatch_uid="answer_created")
 mongo_object_updated.connect(on_answer_updated, sender=AnswerResource,
                              dispatch_uid="answer_updated")
+mongo_object_created.connect(on_peerreviewsubmission_created,
+                             sender=PeerReviewSubmissionsResource,
+                             dispatch_uid="peerreviewsubmission_created")

@@ -59,7 +59,7 @@ def on_activity_created_task(activity_created):
         'unit_id': kq.unit.id
     }).count()
     data = {}
-    if unit_activity == 0:  # TODO wrooong, the activity has just  been created
+    if unit_activity == 0:  # TODO wrooong, the activity has just been created
         data['started'] = 1
     elif kq.unit.kq_set.count() == unit_activity:
         data['completed'] = 1
@@ -89,7 +89,7 @@ def on_activity_created_task(activity_created):
     }).count()
     course_kqs = KnowledgeQuantum.objects.filter(unit__course__id=activity_created['course_id']).count()
     data = {}
-    if course_activity == 0:  # TODO wrong, the activity has just  been created
+    if course_activity == 1:  # TODO wrong, the activity has just been created
         data['started'] = 1
     elif course_kqs == course_activity:
         data['completed'] = 1
@@ -112,7 +112,7 @@ def on_activity_created_task(activity_created):
             stats_course.insert(data, safe=True)
 
 
-def do_on_answer_created_task(answer_created, kq_data):
+def process_on_submission(submitted, kq_data, p2p=False):
     db = get_db()
 
     # KQ
@@ -120,18 +120,21 @@ def do_on_answer_created_task(answer_created, kq_data):
     # TODO passed
     stats_kq = db.get_collection('stats_kq')
     stats_kq_dict = stats_kq.find_and_modify(
-        query={'kq_id': answer_created['kq_id']},
+        query={'kq_id': submitted['kq_id']},
         update={'$inc': data},
         safe=True
     )
     if stats_kq_dict is None:
-        data['kq_id'] = answer_created['kq_id']
-        data['unit_id'] = answer_created['unit_id']
-        data['course_id'] = answer_created['course_id']
+        data['kq_id'] = submitted['kq_id']
+        data['unit_id'] = submitted['unit_id']
+        data['course_id'] = submitted['course_id']
         data['viewed'] = 0
         data['submitted'] = 1
         if not 'passed' in data:
             data['passed'] = 0
+        if p2p:
+            data['reviews'] = 0
+            data['reviewers'] = 0
         stats_kq.insert(data, safe=True)
 
     # UNIT
@@ -140,13 +143,13 @@ def do_on_answer_created_task(answer_created, kq_data):
     if data.keys():
         stats_unit = db.get_collection('stats_unit')
         stats_unit_dict = stats_unit.find_and_modify(
-            query={'unit_id': answer_created['unit_id']},
+            query={'unit_id': submitted['unit_id']},
             update={'$inc': data},
             safe=True
         )
         if stats_unit_dict is None:
-            data['unit_id'] = answer_created['unit_id']
-            data['course_id'] = answer_created['course_id']
+            data['unit_id'] = submitted['unit_id']
+            data['course_id'] = submitted['course_id']
             data['started'] = 0
             data['completed'] = 0
             stats_unit.insert(data, safe=True)
@@ -157,12 +160,12 @@ def do_on_answer_created_task(answer_created, kq_data):
     if data.keys():
         stats_course = db.get_collection('stats_course')
         stats_course_dict = stats_course.find_and_modify(
-            query={'course_id': answer_created['course_id']},
+            query={'course_id': submitted['course_id']},
             update={'$inc': data},
             safe=True
         )
         if stats_course_dict is None:
-            data['course_id'] = answer_created['course_id']
+            data['course_id'] = submitted['course_id']
             data['started'] = 0
             data['completed'] = 0
             stats_course.insert(data, safe=True)
@@ -170,9 +173,19 @@ def do_on_answer_created_task(answer_created, kq_data):
 
 @task
 def on_answer_created_task(answer_created):
-    do_on_answer_created_task(answer_created, {'submitted': 1})
+    process_on_submission(answer_created, {'submitted': 1})
 
 
 @task
 def on_answer_updated_task(answer_updated):
-    do_on_answer_created_task(answer_updated, {})
+    process_on_submission(answer_updated, {})
+
+
+@task
+def on_peerreviewsubmission_created_task(submission_created):
+    data = {
+        'course_id': submission_created['course'],
+        'unit_id': submission_created['unit'],
+        'kq_id': submission_created['kq'],
+    }
+    process_on_submission(data, {'submitted': 1}, p2p=True)
