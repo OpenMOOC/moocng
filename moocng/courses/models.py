@@ -40,7 +40,7 @@ logger = logging.getLogger(__name__)
 class Course(Sortable):
 
     name = models.CharField(verbose_name=_(u'Name'), max_length=200)
-    slug = models.SlugField(verbose_name=_(u'Slug'))
+    slug = models.SlugField(verbose_name=_(u'Slug'), unique=True)
     description = HTMLField(verbose_name=_(u'Description'))
     requirements = HTMLField(verbose_name=_(u'Requirements'),
                              blank=True, null=False)
@@ -170,7 +170,7 @@ signals.post_delete.connect(courseteacher_invalidate_cache,
 class Announcement(models.Model):
 
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
-    slug = models.SlugField(verbose_name=_(u'Slug'))
+    slug = models.SlugField(verbose_name=_(u'Slug'), unique=True)
     content = HTMLField(verbose_name=_(u'Content'))
     course = models.ForeignKey(Course, verbose_name=_(u'Course'))
     datetime = models.DateTimeField(verbose_name=_(u'Datetime'),
