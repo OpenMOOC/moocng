@@ -91,7 +91,7 @@ if (_.isUndefined(window.MOOC)) {
 
             patterns = {
                 'youtube': [
-                    /youtube\.com\/watch[#\?].*\?v=([\w\-]+)/,
+                    /youtube\.com\/watch\?v=([\w\-]+).*/,
                     /youtube\.com\/embed\/([\w\-]+)/,
                     /youtube\.com\/v\/([\w\-]+)/,
                     /youtube\.com\/\?v=([\w\-]+)/,
