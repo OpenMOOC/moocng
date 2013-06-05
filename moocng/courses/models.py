@@ -100,6 +100,7 @@ class Course(Sortable):
     COURSE_STATUSES = (
         ('d', _(u'Draft')),
         ('p', _(u'Published')),
+        ('h', _(u'Hidden')),
     )
 
     status = models.CharField(
