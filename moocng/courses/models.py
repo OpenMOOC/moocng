@@ -132,7 +132,7 @@ class Course(Sortable):
 
     @property
     def is_public(self):
-        return self.status == 'p'
+        return self.status == 'p' or self.status == 'h'
 
 
 def course_invalidate_cache(sender, instance, **kwargs):
