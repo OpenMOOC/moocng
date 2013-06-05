@@ -57,13 +57,13 @@
             <p>
                 {{ form.start_date.errors }}
                 {{ form.start_date.label_tag }}
-                {{ form.start_date }}
+                <input type="date" name="start_date" id="start_date" value="{{ form.start_date.value|date:'Y-m-d' }}" class="input-xlarge" />
                 {% if form.start_date.help_text %}<span class="help-inline">{{ form.start_date.help_text }}</span>{% endif %}
             </p>
             <p>
                 {{ form.end_date.errors }}
                 {{ form.end_date.label_tag }}
-                {{ form.end_date }}
+                <input type="date" name="end_date" id="end_date" value="{{ form.end_date.value|date:'Y-m-d' }}" class="input-xlarge" />
                 {% if form.end_date.help_text %}<span class="help-inline">{{ form.end_date.help_text }}</span>{% endif %}
             </p>
             <p>

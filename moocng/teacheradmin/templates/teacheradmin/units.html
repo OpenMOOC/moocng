@@ -27,40 +27,40 @@
 {% endcompress %}
     <script type="text/javascript">
         MOOC.trans = {
-            nothing: "{% trans "Nothing" %}",
-            edit: "{% trans "Edit" %}",
-            add: "{% trans "Add" %}",
-            back: "{% trans "Go back" %}",
+            nothing: "{% trans 'Nothing' %}",
+            edit: "{% trans 'Edit' %}",
+            add: "{% trans 'Add' %}",
+            back: "{% trans 'Go back' %}",
             unit: {
-                unit: "{% trans "unit" %}",
-                d: "{% trans "Draft" %}",
-                l: "{% trans "Listable" %}",
-                p: "{% trans "Published" %}",
-                n: "{% trans "Normal" %}",
-                h: "{% trans "Homework" %}",
-                e: "{% trans "Exam" %}"
+                unit: "{% trans 'unit' %}",
+                d: "{% trans 'Draft' %}",
+                l: "{% trans 'Listable' %}",
+                p: "{% trans 'Published' %}",
+                n: "{% trans 'Normal' %}",
+                h: "{% trans 'Homework' %}",
+                e: "{% trans 'Exam' %}"
             },
             kq: {
                 teacher_comments: "{% trans "Instructor's comments" %}",
-                supplementary_material: "{% trans "Supplementary material" %}",
-                kq: "{% trans "nugget" %}",
-                question: "{% trans "It has a question" %}",
-                pr: "{% trans "PR" %}",
-                prTooltip: "{% trans "Peer review" %}",
-                asset: "{% trans "AS" %}",
-                assetTip: "{% trans "Asset Availability" %}",
+                supplementary_material: "{% trans 'Supplementary material' %}",
+                kq: "{% trans 'nugget' %}",
+                question: "{% trans 'It has a question' %}",
+                pr: "{% trans 'PR' %}",
+                prTooltip: "{% trans 'Peer review' %}",
+                asset: "{% trans 'AS' %}",
+                assetTip: "{% trans 'Asset Availability' %}",
                 
             },
             evaluationCriterion: {
-                description: "{% trans "Description:" %}",
-                remove: "{%trans "Remove criterion" %}",
-                title: "{% trans "Title:" %}",
+                description: "{% trans 'Description:' %}",
+                remove: "{%trans 'Remove criterion' %}",
+                title: "{% trans 'Title:' %}",
             },
             asset: {
-                description: "{% trans "Description:" %}",
-                remove: "{%trans "Remove Asset" %}",
-                name: "{% trans "Name:" %}",
-                infoadd: "{% trans "Add an asset:" %}",
+                description: "{% trans 'Description:' %}",
+                remove: "{%trans 'Remove Asset' %}",
+                name: "{% trans 'Name:' %}",
+                infoadd: "{% trans 'Add an asset:' %}",
             }
         };
         MOOC.init({{ course.id }}, {{ unit_badge_classes|safe }});
@@ -215,7 +215,7 @@
             <div id="last-frame">
                 <p>{% trans "Nugget's video last frame" %}</p>
                 <p><img src="" alt="{% trans "Nugget's video last frame" %}" style="max-width: 400px;" /></p>
-                <p><button id="dont-use-last-frame" class="btn" title="{% trans "Use a blank canvas instead" %}">{% trans "Don't use the last frame" %}</button></p>
+                <p><button id="dont-use-last-frame" class="btn" title="{% trans 'Use a blank canvas instead' %}">{% trans "Don't use the last frame" %}</button></p>
                 <p><button id="force-process" class="hide btn">{% trans "Force processing the nugget's video" %}</button></p>
             </div>
             <div id="no-last-frame" class="hide">

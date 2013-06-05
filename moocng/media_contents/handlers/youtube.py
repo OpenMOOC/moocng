@@ -41,7 +41,7 @@ class YoutubeMediaContentHandler(MediaContentHandlerBase):
 
     def extract_id(self, url):
         patterns = [
-            'youtube\.com/watch[#\?].*?v=([\w\-]+)',
+            'youtube\.com/watch\?v=([\w\-]+).*',
             'youtube\.com/embed/([\w\-]+)',
             'youtube\.com/v/([\w\-]+)',
             'youtube\.com/\?v=([\w\-]+)',
@@ -52,5 +52,6 @@ class YoutubeMediaContentHandler(MediaContentHandlerBase):
         for pattern in patterns:
             result = re.search(pattern, url, re.IGNORECASE)
             if result:
+                print "VIDEO: " + result.group(1)
                 return result.group(1)
         return ''
