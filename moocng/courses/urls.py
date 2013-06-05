@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from django.conf.urls import include, patterns, url
+from django.views.generic import RedirectView
 
 from moocng.courses.feeds import AnnouncementFeed
 
@@ -20,6 +21,7 @@ from moocng.courses.feeds import AnnouncementFeed
 urlpatterns = patterns(
     'moocng.courses.views',
     url(r'^$', 'home', name='home'),
+    url(r'^course/$', RedirectView.as_view(url='/'), name='course-index'),
 
     # Flatpages
     url(r'^faq/$', 'flatpage', {'page': 'faq'}, name='faq'),
