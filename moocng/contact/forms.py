@@ -19,6 +19,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 
+from moocng.courses.models import Course
 from moocng.contact.models import CommunicationType
 from moocng.forms import BootstrapMixin
 
@@ -32,6 +33,10 @@ def get_terms_of_use_link():
 
 class ContactForm(forms.Form, BootstrapMixin):
 
+    course = forms.ChoiceField(
+        label=_(u'Course'),
+        required=True,
+    )
     username = forms.CharField(label=_(u'Username'))
     sender = forms.EmailField(label=_(u'Email'))
     communication_type = forms.ModelChoiceField(
@@ -58,3 +63,10 @@ class ContactForm(forms.Form, BootstrapMixin):
         # it needs to call reverse() and that would create circular
         # imports
         self.fields['tos'].help_text = get_terms_of_use_link()
+        # This is a really dirty hack to obtain all the published courses
+        # and insert the first empty option plus an "Other" option at the
+        # end.
+        all_courses = [(c.name,c.name) for c in Course.objects.filter(status='p')]
+        all_courses.insert(0, ('', ' '))
+        all_courses.append((_('Other'),_('Other')))
+        self.fields['course'].choices = all_courses

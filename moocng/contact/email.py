@@ -16,13 +16,17 @@ import logging
 
 from django.conf import settings
 from django.core.mail.message import EmailMultiAlternatives
+from django.utils.translation import ugettext as _
 
 
 logger = logging.getLogger(__name__)
 
 
-def send_contact_message(communication_type, sender_username, sender_email,
+def send_contact_message(communication_type, course, sender_username, sender_email,
                          message, fail_silently=False, connection=None):
+
+    # Add course name to the message body
+    message = "%s: %s\n\n%s" % (_("Course"), course, message)
 
     subject = "%s | %s <%s>" % (communication_type.title,
                                 sender_username,
