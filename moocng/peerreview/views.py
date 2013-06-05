@@ -188,8 +188,14 @@ def course_review_review(request, course_slug, assignment_id):
             criteria_values = [(int(form.cleaned_data['evaluation_criterion_id']), int(form.cleaned_data['value'])) for form in criteria_formset]
             try:
                 review = save_review(assignment.kq, request.user, submitter, criteria_values, submission_form.cleaned_data['comments'])
+
+                reviews = get_db().get_collection('peer_review_reviews')
+                reviewed_count = reviews.find({
+                    'reviewer': user_id,
+                    'kq': assignment.kq.id
+                }).count()
                 on_peerreviewreview_created_task.apply_async(
-                    args=[request.user.id, review],
+                    args=[review, reviewed_count],
                     queue='stats',
                 )
 
@@ -199,12 +205,7 @@ def course_review_review(request, course_slug, assignment_id):
                 messages.error(request, _('Your can\'t submit two times the same review.'))
                 return HttpResponseRedirect(reverse('course_reviews', args=[course_slug]))
 
-            reviews = get_db().get_collection('peer_review_reviews')
-            reviewed = reviews.find({
-                'reviewer': user_id,
-                'kq': assignment.kq.id,
-            })
-            pending = assignment.minimum_reviewers - reviewed.count()
+            pending = assignment.minimum_reviewers - reviewed_count
             if pending > 0:
                 messages.success(request, _('Your review has been submitted. You have to review at least %d exercises more.') % pending)
             else:

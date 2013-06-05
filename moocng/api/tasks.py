@@ -21,9 +21,8 @@ from moocng.mongodb import get_db
 
 
 @task
-def on_activity_created_task(activity_created):
+def on_activity_created_task(activity_created, unit_activity, course_activity):
     db = get_db()
-    activity = db.get_collection('activity')
     kq = KnowledgeQuantum.objects.get(id=activity_created['kq_id'])
     kq_type = kq.kq_type()
 
@@ -54,12 +53,8 @@ def on_activity_created_task(activity_created):
         stats_kq.insert(data, safe=True)
 
     # UNIT
-    unit_activity = activity.find({
-        'user_id': activity_created['user_id'],
-        'unit_id': kq.unit.id
-    }).count()
     data = {}
-    if unit_activity == 0:  # TODO wrooong, the activity has just been created
+    if unit_activity == 1:  # First activity of the unit
         data['started'] = 1
     elif kq.unit.kq_set.count() == unit_activity:
         data['completed'] = 1
@@ -83,13 +78,9 @@ def on_activity_created_task(activity_created):
             stats_unit.insert(data, safe=True)
 
     # COURSE
-    course_activity = activity.find({
-        'user_id': activity_created['user_id'],
-        'course_id': activity_created['course_id']
-    }).count()
     course_kqs = KnowledgeQuantum.objects.filter(unit__course__id=activity_created['course_id']).count()
     data = {}
-    if course_activity == 1:  # TODO wrong, the activity has just been created
+    if course_activity == 1:  # First activity of the course
         data['started'] = 1
     elif course_kqs == course_activity:
         data['completed'] = 1
@@ -196,20 +187,15 @@ def on_peerreviewsubmission_created_task(submission_created):
 
 
 @task
-def on_peerreviewreview_created_task(user_id, review_created):
+def on_peerreviewreview_created_task(review_created, user_reviews):
     data = {
         'course_id': review_created['course'],
         'unit_id': review_created['unit'],
         'kq_id': review_created['kq'],
     }
 
-    reviews = get_db().get_collection('peer_review_reviews')
-    user_reviews = reviews.find({
-        'reviewer': user_id,
-        'kq': review_created['kq']
-    }).count()
     inc_reviewers = 0
-    if user_reviews == 1:  # First review of this guy  TODO wrong!!!!
+    if user_reviews == 1:  # First review of this guy
         inc_reviewers = 1
     increment = {
         'reviews': 1,

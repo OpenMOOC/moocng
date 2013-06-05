@@ -1143,8 +1143,19 @@ api_task_logger = logging.getLogger("api_tasks")
 def on_activity_created(sender, user_id, mongo_object, **kwargs):
     api_task_logger.debug("activity created")
 
+    data = mongo_object.to_dict()
+    activity = get_db().get_collection('activity')
+    unit_activity = activity.find({
+        'user_id': data['user_id'],
+        'unit_id': data['unit_id'],
+    }).count()
+    course_activity = activity.find({
+        'user_id': data['user_id'],
+        'course_id': data['course_id']
+    }).count()
+
     on_activity_created_task.apply_async(
-        args=[mongo_object.to_dict()],
+        args=[data, unit_activity, course_activity],
         queue='stats',
     )
 
