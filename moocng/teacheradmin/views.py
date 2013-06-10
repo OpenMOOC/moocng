@@ -44,7 +44,6 @@ from moocng.videos.tasks import process_video_task
 
 from moocng.assets.utils import course_get_assets
 from moocng.assets.models import Asset
-from moocng.assets.forms import AssetForm
 
 
 @is_teacher_or_staff
@@ -58,14 +57,14 @@ def teacheradmin_stats(request, course_slug):
     if stats is not None:
         data = {
             'enrolled': course.students.count(),
-            'started': stats['started'],
-            'completed': stats['completed'],
+            'started': stats.get('started', -1),
+            'completed': stats.get('completed', -1),
         }
 
         if course.threshold is not None:
             #if the course doesn't support certification, then don't return the
             #'passed' stat since it doesn't apply
-            data['passed'] = stats['passed']
+            data['passed'] = stats.get('passed', -1)
 
         return render_to_response('teacheradmin/stats.html', {
             'course': course,
@@ -91,14 +90,14 @@ def teacheradmin_stats_units(request, course_slug):
             unit_data = {
                 'id': unit.id,
                 'title': unit.title,
-                'started': stats['started'],
-                'completed': stats['completed'],
+                'started': stats.get('started', -1),
+                'completed': stats.get('completed', -1),
             }
 
             if course.threshold is not None:
                 # if the course doesn't support certification, then don't return
                 # the 'passed' stat since it doesn't apply
-                unit_data['passed'] = stats['passed']
+                unit_data['passed'] = stats.get('passed', -1)
 
             data.append(unit_data)
 
@@ -123,21 +122,21 @@ def teacheradmin_stats_kqs(request, course_slug):
             kq_data = {
                 'id': kq.id,
                 'title': kq.title,
-                'viewed': stats['viewed']
+                'viewed': stats.get('viewed', 1)
             }
 
             kq_type = kq.kq_type()
             if kq_type == 'PeerReviewAssignment':
-                kq_data['submitted'] = stats['submitted']
-                kq_data['reviews'] = stats['reviews']
-                kq_data['reviewers'] = stats['reviewers']
+                kq_data['submitted'] = stats.get('submitted', -1)
+                kq_data['reviews'] = stats.get('reviews', -1)
+                kq_data['reviewers'] = stats.get('reviewers', -1)
             elif kq_type == 'Question':
-                kq_data['submitted'] = stats['submitted']
+                kq_data['submitted'] = stats.get('submitted', -1)
 
             if course.threshold is not None:
                 # if the course doesn't support certification, then don't
                 # return the 'passed' stat since it doesn't apply
-                kq_data['passed'] = stats['passed']
+                kq_data['passed'] = stats.get('passed', -1)
 
             data.append(kq_data)
 

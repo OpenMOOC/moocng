@@ -387,7 +387,8 @@ if (_.isUndefined(window.MOOC)) {
             this.$el.html(this.template);
             var data = this.model.getData(),
                 chartData,
-                aux;
+                aux,
+                labels;
 
             this.$el.find("#go-back").attr("href", "#unit" + this.model.collection.unit.get("id"));
 
@@ -397,7 +398,7 @@ if (_.isUndefined(window.MOOC)) {
             renderPie(
                 this.$el.find("#submitted .viewport")[0],
                 [MOOC.trans.notSubmitted, MOOC.trans.submitted],
-                [data.viewed, data.submitted]
+                [data.viewed - data.submitted, data.submitted]
             );
 
             if (!_.isUndefined(data.passed)) {
@@ -406,26 +407,35 @@ if (_.isUndefined(window.MOOC)) {
                 renderPie(
                     this.$el.find("#passed .viewport")[0],
                     [MOOC.trans.notPassed, MOOC.trans.passed],
-                    [data.viewed, data.passed]
+                    [data.viewed - data.passed, data.passed]
                 );
+            }
+
+            aux = [
+                { x: 0, y: data.viewed },
+                { x: 1, y: data.submitted }
+            ];
+            labels = {
+                0: MOOC.trans.viewed,
+                1: MOOC.trans.submitted
+            };
+            if (!_.isUndefined(data.reviews)) {
+                aux.push({ x: 2, y: data.reviews });
+                labels[2] = MOOC.trans.reviews;
+            }
+            if (!_.isUndefined(data.reviewers)) {
+                aux.push({ x: aux.length, y: data.reviewers });
+                labels[aux.length - 1] = MOOC.trans.reviewers;
+            }
+            if (!_.isUndefined(data.passed)) {
+                aux.push({ x: aux.length, y: data.passed });
+                labels[aux.length - 1] = MOOC.trans.passed;
             }
 
             chartData = [{
                 key: MOOC.trans.evolution,
-                values: [
-                    { x: 0, y: data.viewed },
-                    { x: 1, y: data.submitted }
-                ]
+                values: aux
             }];
-
-            if (!_.isUndefined(data.passed)) {
-                chartData[0].values.push({ x: 2, y: data.passed });
-            }
-            aux = {
-                0: MOOC.trans.viewed,
-                1: MOOC.trans.submitted,
-                2: MOOC.trans.passed
-            };
 
             renderLine(
                 this.$el.find("#tendencies .viewport")[0],
@@ -435,7 +445,7 @@ if (_.isUndefined(window.MOOC)) {
                     chart.xAxis
                         .tickSubdivide(false)
                         .tickFormat(function (t) {
-                            return aux[t];
+                            return labels[t];
                         })
                         .rotateLabels(-30);
                     return chart;

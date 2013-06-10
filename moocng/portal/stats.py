@@ -56,7 +56,15 @@ def calculate_all_stats(user_objects=User.objects,
         students = all_students[lower:upper]
 
         for student_id in students:
-            student_activity = activity.find({'user_id': student_id})
+            if course_blacklist:
+                student_activity = activity.find({
+                    'user_id': student_id,
+                    'course_id': {'$nin': course_blacklist},
+                })
+            else:
+                student_activity = activity.find({
+                    'user_id': student_id,
+                })
 
             student_course_kqs = {}
             student_started_courses = []
@@ -65,8 +73,6 @@ def calculate_all_stats(user_objects=User.objects,
 
             for act in student_activity:
                 cid = act['course_id']
-                if cid in course_blacklist:
-                    continue
                 uid = act['unit_id']
                 nid = act['kq_id']
 
@@ -194,7 +200,7 @@ def store_stats_in_mongo(stats, kq_objects, callback=None):
         stats_kq.create_index([('kq_id', 1)])
 
     counter = 0
-    total = kq_objects.all().count()
+    total = kq_objects.all().count()  # TODO not a valid metric
     for cid in stats.keys():
         for uid in stats[cid]['u'].keys():
             for nid in stats[cid]['u'][uid]['n'].keys():

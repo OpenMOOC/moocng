@@ -54,6 +54,7 @@ class Command(BaseCommand):
         if options['all_courses']:
             courses = all_courses_objs
         elif not options['courses']:
+            # FIXME this crashes, there are problems with the dates
             courses = Course.objects.only('id').filter(status='p').filter(
                 # exclude courses that haven't started
                 Q(start_date__is_null=True) |
@@ -100,4 +101,4 @@ class Command(BaseCommand):
                 elif step == 'storing':
                     print 'Saved %d of %d statistics entries' % (counter, total)
 
-        calculate_all_stats(callback=None, course_blacklist=blacklist)
+        calculate_all_stats(callback=callback, course_blacklist=blacklist)
