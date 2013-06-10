@@ -78,6 +78,12 @@
                 {{ form.max_reservations_total }}
                 {% if form.max_reservations_total.help_text %}<span class="help-inline">{{ form.max_reservations_total.help_text }}</span>{% endif %}
             </p>
+            <p>
+                {{ form.completion_badge.errors }}
+                {{ form.completion_badge.label_tag }}
+                {{ form.completion_badge }}
+                {% if form.completion_badge.help_text %}<span class="help-inline">{{ form.completion_badge.help_text }}</span>{% endif %}
+            </p>
         </div>
     </div>
     <ul class="nav nav-tabs">

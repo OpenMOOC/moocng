@@ -52,6 +52,5 @@ class YoutubeMediaContentHandler(MediaContentHandlerBase):
         for pattern in patterns:
             result = re.search(pattern, url, re.IGNORECASE)
             if result:
-                print "VIDEO: " + result.group(1)
                 return result.group(1)
         return ''

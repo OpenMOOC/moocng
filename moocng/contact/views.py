@@ -31,6 +31,7 @@ def contact(request):
                 sender = request.user.email
 
             send_contact_message(form.cleaned_data['communication_type'],
+                                 form.cleaned_data['course'],
                                  form.cleaned_data['username'],
                                  sender,
                                  form.cleaned_data['message'])

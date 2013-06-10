@@ -40,7 +40,7 @@ logger = logging.getLogger(__name__)
 class Course(Sortable):
 
     name = models.CharField(verbose_name=_(u'Name'), max_length=200)
-    slug = models.SlugField(verbose_name=_(u'Slug'))
+    slug = models.SlugField(verbose_name=_(u'Slug'), unique=True)
     description = HTMLField(verbose_name=_(u'Description'))
     requirements = HTMLField(verbose_name=_(u'Requirements'),
                              blank=True, null=False)
@@ -74,9 +74,9 @@ class Course(Sortable):
                                                   null=True,
                                                   blank=True,
                                                   max_length=200)
-    max_reservations_pending = models.PositiveSmallIntegerField(verbose_name=_('Pending reservations allowed:'),
+    max_reservations_pending = models.PositiveSmallIntegerField(verbose_name=_(u'Pending reservations allowed:'),
                                                                 default=8)
-    max_reservations_total = models.PositiveSmallIntegerField(verbose_name=_('Total reservations allowed:'),
+    max_reservations_total = models.PositiveSmallIntegerField(verbose_name=_(u'Total reservations allowed:'),
                                                               default=8)
     threshold = models.DecimalField(
         verbose_name=_(u'Pass threshold'),
@@ -100,6 +100,7 @@ class Course(Sortable):
     COURSE_STATUSES = (
         ('d', _(u'Draft')),
         ('p', _(u'Published')),
+        ('h', _(u'Hidden')),
     )
 
     status = models.CharField(
@@ -131,7 +132,7 @@ class Course(Sortable):
 
     @property
     def is_public(self):
-        return self.status == 'p'
+        return self.status == 'p' or self.status == 'h'
 
 
 def course_invalidate_cache(sender, instance, **kwargs):
@@ -170,7 +171,7 @@ signals.post_delete.connect(courseteacher_invalidate_cache,
 class Announcement(models.Model):
 
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
-    slug = models.SlugField(verbose_name=_(u'Slug'))
+    slug = models.SlugField(verbose_name=_(u'Slug'), unique=True)
     content = HTMLField(verbose_name=_(u'Content'))
     course = models.ForeignKey(Course, verbose_name=_(u'Course'))
     datetime = models.DateTimeField(verbose_name=_(u'Datetime'),
