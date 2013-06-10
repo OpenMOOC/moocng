@@ -83,6 +83,8 @@ class Command(BaseCommand):
         courses = [c.id for c in courses]
         blacklist = [cid for cid in all_courses_ids if cid not in courses]
 
+        print 'Calculating stats for these courses (ids): %s' % ', '.join([str(cid) for cid in courses])
+
         # Drop existing stats for selected courses
         db = get_db()
         stats_course = db.get_collection('stats_course')

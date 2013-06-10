@@ -72,14 +72,21 @@ def calculate_all_stats(user_objects=User.objects,
             student_started_units = []
 
             for act in student_activity:
-                cid = act['course_id']
-                uid = act['unit_id']
-                nid = act['kq_id']
+                cid = int(act['course_id'])
+                nid = int(act['kq_id'])
 
                 try:
-                    nugget_type = kq_type(kq_objects.only('id').get(id=nid))
+                    kqObj = kq_objects.only('id').get(id=nid)
+                    nugget_type = kq_type(kqObj)
                 except ObjectDoesNotExist:
                     continue
+
+                try:
+                    # This is here due a bug that populated the activity
+                    # collection with documents with their unit_id set to null
+                    uid = int(act['unit_id'])
+                except TypeError:
+                    uid = int(kqObj.unit.id)
 
                 if not cid in stats:
                     stats[cid] = {
