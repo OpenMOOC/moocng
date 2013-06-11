@@ -42,9 +42,8 @@ def SlugifyUniquely(value, model, slugfield="slug"):
     potential = base = slugify(value)
     while True:
         if suffix:
-            #remove last 3 characters
-            base = base[:-3]
             potential = "-".join([base, str(suffix)])
+            print "potential " + potential
 
         if not model.objects.filter(**{slugfield: potential}).count():
             return potential
@@ -56,7 +55,11 @@ class Migration(DataMigration):
 
     def forwards(self, orm):
         """
-        Check for duplicated slugs before making the change
+        Check for duplicated slugs before making the change. This method get all
+        the objects, removes the first object from the list (to avoid duplications and
+        preserve the first found item slug) and after that it changes the matched
+        objects slugs. In case the new slug in 50 characters or more (default slug size)
+        we enter it in a while loop, deleting character by character until it fits.
         """
         courses = orm['courses.course'].objects.all()
         announcements = orm['courses.announcement'].objects.all()
@@ -69,6 +72,8 @@ class Migration(DataMigration):
             matches_list.pop(0)
             for c in matches_list:
                 c.slug = SlugifyUniquely(c.name, c.__class__)
+                while len(c.slug) >= 50:
+                    c.slug = c.slug[:-1]
                 c.save()
 
         # Same as in courses
@@ -78,6 +83,8 @@ class Migration(DataMigration):
             matches_list.pop(0)
             for a in matches_list:
                 a.slug = SlugifyUniquely(a.title, a.__class__)
+                while len(a.slug) >= 50:
+                    a.slug = a.slug[:-1]
                 a.save()
 
     def backwards(self, orm):
