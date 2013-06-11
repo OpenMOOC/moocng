@@ -15,58 +15,11 @@
 
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
-from django.template.defaultfilters import slugify
 
-
-def SlugifyUniquely(value, model, slugfield="slug"):
-    """Returns a slug on a name which is unique within a model's table
-
-    This code suffers a race condition between when a unique
-    slug is determined and when the object with that slug is saved.
-    It's also not exactly database friendly if there is a high
-    likelyhood of common slugs being attempted.
-
-    A good usage pattern for this code would be to add a custom save()
-    method to a model with a slug field along the lines of:
-
-        from django.template.defaultfilters import slugify
-
-        def save(self):
-            if not self.id:
-                # replace self.name with your prepopulate_from field
-                self.slug = SlugifyUniquely(self.name, self.__class__)
-        super(self.__class__, self).save()
-
-    Original pattern discussed at
-    http://www.b-list.org/weblog/2006/11/02/django-tips-auto-populated-fields
-    """
-    suffix = 0
-    potential = base = slugify(value)
-    while True:
-        if suffix:
-                potential = "-".join([base, str(suffix)])
-        
-        if not model.objects.filter(**{slugfield: potential}).count():
-                return potential
-        # we hit a conflicting slug, so bump the suffix & try again
-        suffix += 1
 
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-
-        """
-        Check for duplicated slugs before making the change
-        """
-        courses = orm['courses.course'].objects.all()
-        announcements = orm['courses.announcement'].objects.all()
-
-        for course in courses:
-            matches = courses.filter(slug=course.slug)
-            for c in matches:
-                c.slug = SlugifyUniquely(c.name, c.__class__)
-                super(c.__class__, c).save()
 
         # Adding unique constraint on 'Course', fields ['slug']
         db.create_unique('courses_course', ['slug'])
