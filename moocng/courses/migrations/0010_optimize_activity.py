@@ -16,6 +16,7 @@
 from bson import Code
 from south.v2 import DataMigration
 import pymongo
+from pymongo.errors import OperationFailure
 
 from django.utils import simplejson
 
@@ -59,7 +60,12 @@ db.activity.find().forEach(function (activity) {
         db.eval(Code(js_migration))
 
         db.activity.drop()
-        db.activity_tmp.rename('activity')
+        try:
+            db.activity_tmp.rename('activity')
+        except OperationFailure:
+            # if the activity collection was empty, then there is no new
+            # collection to rename, but that is okay
+            pass
 
         print "Activity collection migrated, old collection dropped. Creating indexes..."
 

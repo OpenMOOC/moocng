@@ -16,6 +16,7 @@
 from bson import Code
 from south.v2 import DataMigration
 import pymongo
+from pymongo.errors import OperationFailure
 
 from django.utils import simplejson
 
@@ -80,7 +81,12 @@ db.answers.find().forEach(function (answer) {
         db.eval(Code(js_migration))
 
         db.answers.drop()
-        db.answers_new.rename('answers')
+        try:
+            db.answers_new.rename('answers')
+        except OperationFailure:
+            # if the answers collection was empty, then there is no new
+            # collection to rename, but that is okay
+            pass
 
         print "Answers collection migrated, old collection dropped. Creating indexes..."
 
