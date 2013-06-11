@@ -56,7 +56,7 @@ def on_activity_created_task(activity_created, unit_activity, course_activity):
     data = {}
     if unit_activity == 1:  # First activity of the unit
         data['started'] = 1
-    elif kq.unit.kq_set.count() == unit_activity:
+    elif kq.unit.knowledgequantum_set.count() == unit_activity:
         data['completed'] = 1
     # TODO passed
     if data.keys():
