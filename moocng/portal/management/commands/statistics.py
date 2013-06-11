@@ -24,6 +24,10 @@ from moocng.portal.stats import calculate_all_stats
 
 
 class Command(BaseCommand):
+
+    help = ('Calculate the statistics for the active courses and store them in '
+            'the mongo database')
+
     option_list = BaseCommand.option_list + (
         make_option(
             '--courses',
