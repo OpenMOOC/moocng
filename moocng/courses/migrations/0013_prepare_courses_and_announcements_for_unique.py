@@ -1,4 +1,17 @@
 # -*- coding: utf-8 -*-
+# Copyright 2013 Rooter Analysis S.L.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 from south.v2 import DataMigration
 from django.template.defaultfilters import slugify
 
@@ -29,10 +42,12 @@ def SlugifyUniquely(value, model, slugfield="slug"):
     potential = base = slugify(value)
     while True:
         if suffix:
-                potential = "-".join([base, str(suffix)])
-        
+            #remove last 3 characters
+            base = base[:-3]
+            potential = "-".join([base, str(suffix)])
+
         if not model.objects.filter(**{slugfield: potential}).count():
-                return potential
+            return potential
         # we hit a conflicting slug, so bump the suffix & try again
         suffix += 1
 
@@ -59,9 +74,7 @@ class Migration(DataMigration):
         # Same as in courses
         for announcement in announcements:
             matches = orm['courses.announcement'].objects.filter(slug=announcement.slug)
-            print matches
             matches_list = list(matches)
-            print matches_list
             matches_list.pop(0)
             for a in matches_list:
                 a.slug = SlugifyUniquely(a.title, a.__class__)
