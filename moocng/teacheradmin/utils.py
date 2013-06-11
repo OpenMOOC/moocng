@@ -15,6 +15,7 @@
 from django.conf import settings
 from django.contrib.sites.models import get_current_site
 from django.utils.translation import ugettext_lazy as _
+from django.core.urlresolvers import reverse
 
 from moocng.courses.utils import send_mail_wrapper
 
@@ -25,7 +26,7 @@ def send_invitation(request, invitation):
     context = {
         'host': invitation.host.get_full_name() or invitation.host.username,
         'course': invitation.course.name,
-        'register': settings.REGISTRY_URL,
+        'register': reverse('register'),
         'site': get_current_site(request).name
     }
     to = [invitation.email]
