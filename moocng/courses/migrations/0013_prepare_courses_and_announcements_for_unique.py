@@ -43,7 +43,6 @@ def SlugifyUniquely(value, model, slugfield="slug"):
     while True:
         if suffix:
             potential = "-".join([base, str(suffix)])
-            print "potential " + potential
 
         if not model.objects.filter(**{slugfield: potential}).count():
             return potential
