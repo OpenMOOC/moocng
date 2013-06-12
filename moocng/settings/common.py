@@ -182,7 +182,7 @@ COMPRESS_CSS_FILTERS = [
 
 COMPRESS_OFFLINE = False
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -207,14 +207,14 @@ INSTALLED_APPS = (
     'moocng.enrollment',
     'moocng.api',
     'moocng.categories',
+    'moocng.auth_handlers',
     'moocng.peerreview',
-    'djangosaml2',
     'south',
     'django_mathjax',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'moocng.media_contents',
-)
+]
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -285,7 +285,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'moocng.context_processors.site',
     'moocng.context_processors.theme',
     'moocng.context_processors.extra_settings',
-    'moocng.context_processors.idp_urls',
     'moocng.context_processors.google_analytics',
     'moocng.context_processors.certificate_url',
 )
@@ -351,9 +350,6 @@ CELERY_CREATE_MISSING_QUEUES = True
 
 BROKER_URL = 'amqp://moocng:moocngpassword@localhost:5672/moocng'
 
-REGISTRY_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/newUser.php'
-PROFILE_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/reviewUser.php'
-CHANGEPW_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/changePassword.php'
 ASKBOT_URL_TEMPLATE = 'https://questions.example.com/%s/'
 
 CERTIFICATE_URL = 'http://example.com/idcourse/%(courseid)s/email/%(email)s'  # Example, to be overwritten in local settings
@@ -367,22 +363,24 @@ PEER_REVIEW_ASSIGNATION_EXPIRE = 24  # in hours
 ASSET_SLOT_GRANULARITY = 5  # Slot time of assets should be a multiple of this value (in minutes)
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-LOGIN_URL = '/saml2/login/'
+
 LOGIN_REDIRECT_URL = '/'
-LOGOUT_URL = '/saml2/logout/'
 LOGOUT_REDIRECT_URL = '/'
 
 FREE_ENROLLMENT_CONSISTENT = False
 
-SAML_CREATE_UNKNOWN_USER = True
-SAML_ATTRIBUTE_MAPPING = {
-    'mail': ('username', 'email', ),
-    'cn': ('first_name', ),
-    'sn': ('last_name', ),
-    'eduPersonAffiliation': ('groups', ),
-}
+AUTH_HANDLER = "moocng.auth_handlers.handlers.SAML2"
+INSTALLED_APPS.append('djangosaml2')
+REGISTRY_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/newUser.php'
+PROFILE_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/reviewUser.php'
+CHANGEPW_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/changePassword.php'
 
 from .saml_settings import *
+
+### Example config for moocng.auth_handlers.handlers.DBAuth Auth Handler
+# INSTALLED_APPS.append('moocng.auth_handlers.dbauth')
+# INSTALLED_APPS.append('registration')
+# ACCOUNT_ACTIVATION_DAYS = 15
 
 MEDIA_CONTENT_TYPES = [
     {

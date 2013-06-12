@@ -61,7 +61,7 @@
             {% enroll_button course %}
           {% else %}
           <div class="box action-box">
-              <a href="{{ registry_url }}" class="btn btn-large btn-primary">{% blocktrans with site_name=site.name %}Register in {{ site_name }} to enroll in this course{% endblocktrans %}</a>
+              <a href="{% url register %}" class="btn btn-large btn-primary">{% blocktrans with site_name=site.name %}Register in {{ site_name }} to enroll in this course{% endblocktrans %}</a>
           </div>
           {% endif %}
         {% endif %}
@@ -77,7 +77,7 @@
                         {% endif %}
                     </a>
                 {% else %}
-                    <a href="{{ registry_url }}" class="btn btn-large btn-primary mb20">{% blocktrans with site_name=site.name %}Register in {{ site_name }} to get a certification in this course{% endblocktrans %}</a>
+                    <a href="{% url register %}" class="btn btn-large btn-primary mb20">{% blocktrans with site_name=site.name %}Register in {{ site_name }} to get a certification in this course{% endblocktrans %}</a>
                 {% endif %}
             </div>
         {% endif %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+    <h1>{% trans "My profile" %}</h1>
+    <ul>
+        <li>{% trans "Username:" %} {{ user.username }}</li>
+        <li>{% trans "First name:" %} {{ user.first_name }}</li>
+        <li>{% trans "Last name:" %} {{ user.last_name }}</li>
+        <li>{% trans "Email:" %} {{ user.email }}</li>
+    </ul>
+{% endblock %}

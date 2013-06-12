@@ -1,0 +1,1 @@
+{% load i18n %}{% trans "[{{site}}] | Please confirm your registration" %}

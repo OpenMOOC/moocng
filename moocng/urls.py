@@ -45,13 +45,11 @@ urlpatterns = patterns(
     url(r'^api/', include('moocng.api.urls')),
     url(r'^badges/', include('moocng.badges.urls')),
 
-    url(r'^saml2/ls/$', 'djangosaml2.views.logout_service', name='saml2_ls',
-        kwargs={'next_page': settings.LOGOUT_REDIRECT_URL}),
-    url(r'^saml2/', include('djangosaml2.urls')),
-
     url(r'^contact/', include('moocng.contact.urls')),
 
     url(r'^category/', include('moocng.categories.urls')),
+
+    url(r'^auth/', include('moocng.auth_handlers.urls')),
 )
 
 if settings.DEBUG:
