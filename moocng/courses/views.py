@@ -38,7 +38,7 @@ from moocng.courses.marks import calculate_course_mark
 from moocng.courses.security import (check_user_can_view_course,
                                      get_courses_available_for_user,
                                      get_units_available_for_user)
-from moocng.slug import unique_slugify
+from django.template.defaultfilters import slugify
 
 
 def home(request):
@@ -108,7 +108,7 @@ def course_add(request):
             return HttpResponseRedirect(reverse('course_add'))
 
         course = Course(name=name, owner=owner, description=_('To fill'))
-        unique_slugify(course, name)
+        slugify(course, name)
         course.save()
 
         CourseTeacher.objects.create(course=course, teacher=owner)

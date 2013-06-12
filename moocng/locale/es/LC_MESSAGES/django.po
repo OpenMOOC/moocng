@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-10 13:45+0200\n"
+"POT-Creation-Date: 2013-06-12 11:18+0200\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Antonio Perez-Aranda <aperezaranda@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -202,7 +202,7 @@ msgid "Your reservation has been modified"
 msgstr "Su reserva ha sido modificada"
 
 #: assets/views.py:42 assets/views.py:98 assets/views.py:130
-#: courses/views.py:169 courses/views.py:212 peerreview/views.py:51
+#: courses/views.py:168 courses/views.py:211 peerreview/views.py:51
 #: peerreview/views.py:119 peerreview/views.py:159
 msgid "You are not enrolled in this course"
 msgstr "No estás matriculado en este curso"
@@ -353,6 +353,62 @@ msgstr "No tiene reservas de recursos pendientes para este curso"
 #: assets/templates/assets/reservations.html:108
 msgid "Past Reservations"
 msgstr "Reservas Pasadas"
+
+#: auth_handlers/dbauth/templates/dbauth/profile.html:6
+msgid "My profile"
+msgstr ""
+
+#: auth_handlers/dbauth/templates/dbauth/profile.html:8
+#, fuzzy
+msgid "Username:"
+msgstr "Nombre de usuario"
+
+#: auth_handlers/dbauth/templates/dbauth/profile.html:9
+#, fuzzy
+msgid "First name:"
+msgstr "Nombre del fichero adjunto"
+
+#: auth_handlers/dbauth/templates/dbauth/profile.html:10
+msgid "Last name:"
+msgstr ""
+
+#: auth_handlers/dbauth/templates/dbauth/profile.html:11
+#, fuzzy
+msgid "Email:"
+msgstr "Correo electrónico"
+
+#: auth_handlers/dbauth/templates/registration/activation_complete.html:6
+#, fuzzy
+msgid "Confirmation complete"
+msgstr "Enhorabuena, has completado"
+
+#: auth_handlers/dbauth/templates/registration/activation_email.txt:2
+msgid "Welcome to {{site.name}}"
+msgstr ""
+
+#: auth_handlers/dbauth/templates/registration/activation_email.txt:4
+msgid "Click the button to confirm your email."
+msgstr ""
+
+#: auth_handlers/dbauth/templates/registration/activation_email.txt:8
+msgid "The team of {{site.name}}"
+msgstr ""
+
+#: auth_handlers/dbauth/templates/registration/activation_email_subject.txt:1
+msgid "[{{site}}] | Please confirm your registration"
+msgstr ""
+
+#: auth_handlers/dbauth/templates/registration/login.html:9
+msgid "Login"
+msgstr ""
+
+#: auth_handlers/dbauth/templates/registration/registration_complete.html:6
+msgid "Registration complete (confirmation pending)"
+msgstr ""
+
+#: auth_handlers/dbauth/templates/registration/registration_form.html:9
+msgid "Signup"
+msgstr ""
 
 #: badges/admin.py:30 categories/admin.py:15
 msgid "Image"
@@ -961,36 +1017,36 @@ msgstr ""
 "Este curso no es público aún. Tienes acceso a él porque eres profesor del "
 "curso"
 
-#: courses/views.py:77
+#: courses/views.py:76
 msgid "Only administrators can create courses"
 msgstr "Sólo los administradores pueden crear cursos"
 
-#: courses/views.py:88 courses/views.py:100
+#: courses/views.py:87 courses/views.py:99
 msgid "That user doesn't exists, the owner must be an user of the platform"
 msgstr ""
 "El usuario no existe, el propietario de un curso ha de ser un usuario de la "
 "plataforma"
 
-#: courses/views.py:94
+#: courses/views.py:93
 msgid "The owner must be a name plus ID or an email"
 msgstr ""
 "El propietario debe definirse mediante un nombre más ID, o un correo "
 "electrónico"
 
-#: courses/views.py:107
+#: courses/views.py:106
 msgid "The name can't be an empty string"
 msgstr "El nombre del curso no puede ser una cadena vacía"
 
-#: courses/views.py:110
+#: courses/views.py:109
 msgid "To fill"
 msgstr "A rellenar"
 
-#: courses/views.py:117
+#: courses/views.py:116
 #, python-format
 msgid "Your course \"%s\" has been created"
 msgstr "Su curso \"%s\" ha sido creado"
 
-#: courses/views.py:127
+#: courses/views.py:126
 msgid "The course was successfully created"
 msgstr "El curso se ha creado con éxito"
 
@@ -1685,6 +1741,10 @@ msgstr "No hay certificación disponible para este curso"
 msgid "You are not enrolled in any course"
 msgstr "No estás matriculado en ningún curso"
 
+#: courses/templates/courses/usercourses.html:6
+msgid "You're not registered in any course"
+msgstr "No estás matriculado en ningún curso"
+
 #: enrollment/methods.py:11
 msgid "Free enrollment"
 msgstr "Matriculación libre"
@@ -2042,12 +2102,12 @@ msgstr "correo electrónico masivo"
 msgid "massive emails"
 msgstr "correos electrónicos masivos"
 
-#: teacheradmin/utils.py:23
+#: teacheradmin/utils.py:24
 #, python-format
 msgid "You have been invited to be a teacher in \"%s\""
 msgstr "Has sido invitado a ser profesor en \"%s\""
 
-#: teacheradmin/utils.py:36
+#: teacheradmin/utils.py:37
 #, python-format
 msgid "You have been removed as teacher from \"%s\""
 msgstr "Ya no eres profesor de \"%s\""
