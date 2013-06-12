@@ -30,7 +30,6 @@
             started: "{% trans "Started" %}",
             completed: "{% trans "Completed" %}",
             passed: "{% trans "Passed"%}",
-            reviews: "{% trans "Reviews sent"%}",
             reviewers: "{% trans "Reviewed"%}",
             notStarted: "{% trans "Not started" %}",
             notCompleted: "{% trans "Incompleted" %}",
@@ -149,6 +148,9 @@
     <div class="span10" id="tendencies">
         <h4>{% trans "...in the exercise"%}</h4>
         <div class="viewport"></div>
+        <div class="hide" id="reviews">
+            <p>{% trans "Total reviews sent by the students" %}: <strong></strong></p>
+        </div>
     </div>
 </div>
 </script>

@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-12 11:18+0200\n"
+"POT-Creation-Date: 2013-06-12 12:03+0200\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Antonio Perez-Aranda <aperezaranda@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -202,7 +202,7 @@ msgid "Your reservation has been modified"
 msgstr "Su reserva ha sido modificada"
 
 #: assets/views.py:42 assets/views.py:98 assets/views.py:130
-#: courses/views.py:168 courses/views.py:211 peerreview/views.py:51
+#: courses/views.py:169 courses/views.py:212 peerreview/views.py:51
 #: peerreview/views.py:119 peerreview/views.py:159
 msgid "You are not enrolled in this course"
 msgstr "No estás matriculado en este curso"
@@ -356,59 +356,55 @@ msgstr "Reservas Pasadas"
 
 #: auth_handlers/dbauth/templates/dbauth/profile.html:6
 msgid "My profile"
-msgstr ""
+msgstr "Mi perfil"
 
 #: auth_handlers/dbauth/templates/dbauth/profile.html:8
-#, fuzzy
 msgid "Username:"
-msgstr "Nombre de usuario"
+msgstr "Nombre de usuario:"
 
 #: auth_handlers/dbauth/templates/dbauth/profile.html:9
-#, fuzzy
 msgid "First name:"
-msgstr "Nombre del fichero adjunto"
+msgstr "Nombre:"
 
 #: auth_handlers/dbauth/templates/dbauth/profile.html:10
 msgid "Last name:"
-msgstr ""
+msgstr "Apellido:"
 
 #: auth_handlers/dbauth/templates/dbauth/profile.html:11
-#, fuzzy
 msgid "Email:"
-msgstr "Correo electrónico"
+msgstr "Correo electrónico:"
 
 #: auth_handlers/dbauth/templates/registration/activation_complete.html:6
-#, fuzzy
 msgid "Confirmation complete"
-msgstr "Enhorabuena, has completado"
+msgstr "Confirmación completada"
 
 #: auth_handlers/dbauth/templates/registration/activation_email.txt:2
 msgid "Welcome to {{site.name}}"
-msgstr ""
+msgstr "Bienvenido a {{site.name}}"
 
 #: auth_handlers/dbauth/templates/registration/activation_email.txt:4
 msgid "Click the button to confirm your email."
-msgstr ""
+msgstr "Pulse en el botón para confirmar su dirección de correo electrónico."
 
 #: auth_handlers/dbauth/templates/registration/activation_email.txt:8
 msgid "The team of {{site.name}}"
-msgstr ""
+msgstr "El equipo de {{site.name}}"
 
 #: auth_handlers/dbauth/templates/registration/activation_email_subject.txt:1
 msgid "[{{site}}] | Please confirm your registration"
-msgstr ""
+msgstr "[{{site}}] | Por favor, confirme su registro"
 
 #: auth_handlers/dbauth/templates/registration/login.html:9
 msgid "Login"
-msgstr ""
+msgstr "Entrar"
 
 #: auth_handlers/dbauth/templates/registration/registration_complete.html:6
 msgid "Registration complete (confirmation pending)"
-msgstr ""
+msgstr "Registro completado (confirmación pendiente)"
 
 #: auth_handlers/dbauth/templates/registration/registration_form.html:9
 msgid "Signup"
-msgstr ""
+msgstr "Registro"
 
 #: badges/admin.py:30 categories/admin.py:15
 msgid "Image"
@@ -570,9 +566,9 @@ msgstr "No hay cursos aún que tengan esta categoría o categorías asociada."
 
 #: contact/email.py:29 contact/forms.py:37 courses/models.py:151
 #: courses/models.py:176 courses/models.py:202 teacheradmin/models.py:32
-#: teacheradmin/models.py:45 teacheradmin/templates/teacheradmin/stats.html:52
-#: teacheradmin/templates/teacheradmin/stats.html:93
-#: teacheradmin/templates/teacheradmin/stats.html:131
+#: teacheradmin/models.py:45 teacheradmin/templates/teacheradmin/stats.html:51
+#: teacheradmin/templates/teacheradmin/stats.html:92
+#: teacheradmin/templates/teacheradmin/stats.html:130
 msgid "Course"
 msgstr "Curso"
 
@@ -889,10 +885,10 @@ msgstr "módulo"
 msgid "units"
 msgstr "módulos"
 
-#: courses/models.py:269 teacheradmin/templates/teacheradmin/stats.html:42
-#: teacheradmin/templates/teacheradmin/stats.html:94
-#: teacheradmin/templates/teacheradmin/stats.html:96
-#: teacheradmin/templates/teacheradmin/stats.html:132
+#: courses/models.py:269 teacheradmin/templates/teacheradmin/stats.html:41
+#: teacheradmin/templates/teacheradmin/stats.html:93
+#: teacheradmin/templates/teacheradmin/stats.html:95
+#: teacheradmin/templates/teacheradmin/stats.html:131
 #: teacheradmin/templates/teacheradmin/units.html:74
 msgid "Unit"
 msgstr "Módulo"
@@ -916,9 +912,9 @@ msgid "nuggets"
 msgstr "píldoras"
 
 #: courses/models.py:355 courses/models.py:363 peerreview/models.py:35
-#: teacheradmin/templates/teacheradmin/stats.html:43
-#: teacheradmin/templates/teacheradmin/stats.html:133
-#: teacheradmin/templates/teacheradmin/stats.html:135
+#: teacheradmin/templates/teacheradmin/stats.html:42
+#: teacheradmin/templates/teacheradmin/stats.html:132
+#: teacheradmin/templates/teacheradmin/stats.html:134
 #: teacheradmin/templates/teacheradmin/units.html:131
 msgid "Nugget"
 msgstr "Píldora"
@@ -1017,36 +1013,36 @@ msgstr ""
 "Este curso no es público aún. Tienes acceso a él porque eres profesor del "
 "curso"
 
-#: courses/views.py:76
+#: courses/views.py:77
 msgid "Only administrators can create courses"
 msgstr "Sólo los administradores pueden crear cursos"
 
-#: courses/views.py:87 courses/views.py:99
+#: courses/views.py:88 courses/views.py:100
 msgid "That user doesn't exists, the owner must be an user of the platform"
 msgstr ""
 "El usuario no existe, el propietario de un curso ha de ser un usuario de la "
 "plataforma"
 
-#: courses/views.py:93
+#: courses/views.py:94
 msgid "The owner must be a name plus ID or an email"
 msgstr ""
 "El propietario debe definirse mediante un nombre más ID, o un correo "
 "electrónico"
 
-#: courses/views.py:106
+#: courses/views.py:107
 msgid "The name can't be an empty string"
 msgstr "El nombre del curso no puede ser una cadena vacía"
 
-#: courses/views.py:109
+#: courses/views.py:110
 msgid "To fill"
 msgstr "A rellenar"
 
-#: courses/views.py:116
+#: courses/views.py:117
 #, python-format
 msgid "Your course \"%s\" has been created"
 msgstr "Su curso \"%s\" ha sido creado"
 
-#: courses/views.py:126
+#: courses/views.py:127
 msgid "The course was successfully created"
 msgstr "El curso se ha creado con éxito"
 
@@ -1941,7 +1937,7 @@ msgstr ""
 "alumno."
 
 #: peerreview/templates/peerreview/review_review.html:62
-#: teacheradmin/templates/teacheradmin/stats.html:160
+#: teacheradmin/templates/teacheradmin/stats.html:162
 #: teacheradmin/templates/teacheradmin/teachers.html:41
 #: teacheradmin/templates/teacheradmin/teachers.html:45
 #: teacheradmin/templates/teacheradmin/teachers.html:49
@@ -2310,114 +2306,114 @@ msgid "Passed"
 msgstr "Aprobado"
 
 #: teacheradmin/templates/teacheradmin/stats.html:33
-msgid "Reviews sent"
-msgstr "Revisiones enviadas"
+msgid "Reviewed"
+msgstr "Han revisado"
 
 #: teacheradmin/templates/teacheradmin/stats.html:34
-msgid "Reviewed"
-msgstr "Revisaron"
-
-#: teacheradmin/templates/teacheradmin/stats.html:35
 msgid "Not started"
 msgstr "No comenzado"
 
-#: teacheradmin/templates/teacheradmin/stats.html:36
+#: teacheradmin/templates/teacheradmin/stats.html:35
 msgid "Incompleted"
 msgstr "No completado"
 
-#: teacheradmin/templates/teacheradmin/stats.html:37
+#: teacheradmin/templates/teacheradmin/stats.html:36
 msgid "Not passed"
 msgstr "Suspendido"
 
-#: teacheradmin/templates/teacheradmin/stats.html:38
+#: teacheradmin/templates/teacheradmin/stats.html:37
 msgid "Students evolution"
 msgstr "Evolución de los estudiantes"
 
-#: teacheradmin/templates/teacheradmin/stats.html:39
+#: teacheradmin/templates/teacheradmin/stats.html:38
 msgid "Viewed"
 msgstr "Visto"
 
-#: teacheradmin/templates/teacheradmin/stats.html:40
+#: teacheradmin/templates/teacheradmin/stats.html:39
 msgid "Submitted"
 msgstr "Entregado"
 
-#: teacheradmin/templates/teacheradmin/stats.html:41
+#: teacheradmin/templates/teacheradmin/stats.html:40
 msgid "Not submitted"
 msgstr "No entregado"
 
-#: teacheradmin/templates/teacheradmin/stats.html:54
+#: teacheradmin/templates/teacheradmin/stats.html:53
 msgid "General statistics of the course"
 msgstr "Estadísticas generales del curso"
 
-#: teacheradmin/templates/teacheradmin/stats.html:55
-#: teacheradmin/templates/teacheradmin/stats.html:97
-#: teacheradmin/templates/teacheradmin/stats.html:136
+#: teacheradmin/templates/teacheradmin/stats.html:54
+#: teacheradmin/templates/teacheradmin/stats.html:96
+#: teacheradmin/templates/teacheradmin/stats.html:135
 msgid "Students that have..."
 msgstr "Estudiantes que han..."
 
-#: teacheradmin/templates/teacheradmin/stats.html:58
+#: teacheradmin/templates/teacheradmin/stats.html:57
 msgid "...started the course"
 msgstr "...comenzado el curso"
 
-#: teacheradmin/templates/teacheradmin/stats.html:62
+#: teacheradmin/templates/teacheradmin/stats.html:61
 msgid "...completed the course"
 msgstr "...completado el curso"
 
-#: teacheradmin/templates/teacheradmin/stats.html:66
+#: teacheradmin/templates/teacheradmin/stats.html:65
 msgid "...passed the course"
 msgstr "...aprobado el curso"
 
-#: teacheradmin/templates/teacheradmin/stats.html:70
-#: teacheradmin/templates/teacheradmin/stats.html:108
-#: teacheradmin/templates/teacheradmin/stats.html:147
+#: teacheradmin/templates/teacheradmin/stats.html:69
+#: teacheradmin/templates/teacheradmin/stats.html:107
+#: teacheradmin/templates/teacheradmin/stats.html:146
 msgid "Students evolution..."
 msgstr "Evolución de los estudiantes..."
 
-#: teacheradmin/templates/teacheradmin/stats.html:73
+#: teacheradmin/templates/teacheradmin/stats.html:72
 msgid "...in general"
 msgstr "...en general"
 
-#: teacheradmin/templates/teacheradmin/stats.html:79
+#: teacheradmin/templates/teacheradmin/stats.html:78
 msgid "...per unit"
 msgstr "...por módulo"
 
-#: teacheradmin/templates/teacheradmin/stats.html:82
+#: teacheradmin/templates/teacheradmin/stats.html:81
 msgid "All units"
 msgstr "Todos los módulos"
 
-#: teacheradmin/templates/teacheradmin/stats.html:100
+#: teacheradmin/templates/teacheradmin/stats.html:99
 msgid "...completed the unit"
 msgstr "...completado el módulo"
 
-#: teacheradmin/templates/teacheradmin/stats.html:104
+#: teacheradmin/templates/teacheradmin/stats.html:103
 msgid "...passed the unit"
 msgstr "...aprobado el módulo"
 
-#: teacheradmin/templates/teacheradmin/stats.html:111
+#: teacheradmin/templates/teacheradmin/stats.html:110
 msgid "...in the unit"
 msgstr "...en el módulo"
 
-#: teacheradmin/templates/teacheradmin/stats.html:117
+#: teacheradmin/templates/teacheradmin/stats.html:116
 msgid "...per nugget"
 msgstr "...por píldora"
 
-#: teacheradmin/templates/teacheradmin/stats.html:120
+#: teacheradmin/templates/teacheradmin/stats.html:119
 msgid "All nuggets"
 msgstr "Todas las píldoras"
 
-#: teacheradmin/templates/teacheradmin/stats.html:139
+#: teacheradmin/templates/teacheradmin/stats.html:138
 msgid "...submitted the exercise"
 msgstr "...entregado el ejercicio"
 
-#: teacheradmin/templates/teacheradmin/stats.html:143
+#: teacheradmin/templates/teacheradmin/stats.html:142
 msgid "...passed the exercise"
 msgstr "...aprobado el ejercicio"
 
-#: teacheradmin/templates/teacheradmin/stats.html:150
+#: teacheradmin/templates/teacheradmin/stats.html:149
 msgid "...in the exercise"
 msgstr "...en el ejercicio"
 
-#: teacheradmin/templates/teacheradmin/stats.html:161
+#: teacheradmin/templates/teacheradmin/stats.html:152
+msgid "Total reviews sent by the students"
+msgstr "Revisiones totales enviadas por los estudiantes"
+
+#: teacheradmin/templates/teacheradmin/stats.html:163
 #: teacheradmin/templates/teacheradmin/teachers.html:50
 #: teacheradmin/templates/teacheradmin/units.html:377
 msgid "Something went wrong, please try again later."

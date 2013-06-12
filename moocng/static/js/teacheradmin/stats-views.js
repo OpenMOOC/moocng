@@ -421,10 +421,6 @@ if (_.isUndefined(window.MOOC)) {
                 0: MOOC.trans.viewed,
                 1: MOOC.trans.submitted
             };
-            if (!_.isUndefined(data.reviews)) {
-                aux.push({ x: 2, y: data.reviews });
-                labels[2] = MOOC.trans.reviews;
-            }
             if (!_.isUndefined(data.reviewers)) {
                 aux.push({ x: aux.length, y: data.reviewers });
                 labels[aux.length - 1] = MOOC.trans.reviewers;
@@ -453,6 +449,14 @@ if (_.isUndefined(window.MOOC)) {
                     return chart;
                 }
             );
+
+            if (!_.isUndefined(data.reviews)) {
+                this.$el
+                    .find("#tendencies")
+                        .find(".viewport").addClass("mb20").end()
+                        .find("#reviews").removeClass("hide")
+                            .find("strong").text(data.reviews);
+            }
         },
 
         destroy: function () {
