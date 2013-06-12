@@ -1,3 +1,7 @@
+{% load i18n %}
+
 {% for course in courses %}
-<li><a href="{% url course_classroom course.slug %}">{{ course|truncatechars:30 }}</a></li>
+    <li><a href="{% url course_classroom course.slug %}">{{ course|truncatechars:30 }}</a></li>
+{% empty %}
+    <li>{% trans "You're not registered in any course" %}</li>
 {% endfor %}
