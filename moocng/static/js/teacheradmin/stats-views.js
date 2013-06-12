@@ -22,23 +22,25 @@ if (_.isUndefined(window.MOOC)) {
 (function ($, Backbone, _, d3, nv) {
     "use strict";
 
-    var renderPie = function (viewport, labels, values, key) {
-            var data = _.zip(labels, values);
-            if (_.isUndefined(key)) {
-                key = "";
-            }
+    var renderPie = function (viewport, labels, values) {
+            var data = [];
+            _.each(labels, function (label, index) {
+                data.push({
+                    key: label,
+                    y: values[index]
+                });
+            });
             nv.addGraph(function () {
                 var chart = nv.models.pieChart()
-                    .x(function (d) { return d[0]; }) // label
-                    .y(function (d) { return d[1]; }) // value
-                    .showLegend(true)
-                    .showLabels(false);
+                        .x(function (d) { return d.key; }) // label
+                        .y(function (d) { return d.y; }) // value
+                        .values(function(d) { return d; })
+                        .showLegend(true)
+                        .showLabels(false);
 
                 d3.select(viewport).append("svg")
-                    .datum([{
-                        key: key,
-                        values: data
-                    }]).transition().duration(1200)
+                    .datum([data])
+                    .transition().duration(1200)
                     .call(chart);
 
                 nv.utils.windowResize(chart.update);
