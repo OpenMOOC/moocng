@@ -108,7 +108,7 @@ def course_add(request):
             return HttpResponseRedirect(reverse('course_add'))
 
         course = Course(name=name, owner=owner, description=_('To fill'))
-        slugify(course, name)
+        course.slug = slugify(course)
         course.save()
 
         CourseTeacher.objects.create(course=course, teacher=owner)
