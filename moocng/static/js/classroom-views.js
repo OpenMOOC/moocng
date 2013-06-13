@@ -97,8 +97,6 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         callback = _.bind(function () {
             var html,
                 unit,
-                comments,
-                supplementary,
                 iframe_template;
 
             iframe_template = _.template(this.model.get('iframe_code'));
@@ -139,22 +137,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             this.$el.parent().children().removeClass("active");
             this.$el.addClass("active");
 
-            comments = this.model.get("teacher_comments") || '';
-            $("#comments").html(comments);
-
-            supplementary = this.model.get("supplementary_material") || '';
-            supplementary += "<ul id='attachments'></ul>";
-            $("#supplementary").html(supplementary);
-
-            this.setupListernerFor(this.model, "attachmentList", _.bind(function () {
-                this.model.get("attachmentList").each(function (attachment) {
-                    var view = new MOOC.views.Attachment({
-                        model: attachment,
-                        el: $("#supplementary").find("ul#attachments")[0]
-                    });
-                    view.render();
-                });
-            }, this));
+            this.renderExtraTabs();
 
             if (_.isObject(window.MathJax)) {
                 _.each($('.mathjax'), function (item) {
@@ -171,6 +154,29 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         }
 
         return this;
+    },
+
+    renderExtraTabs: function () {
+        "use strict";
+        var comments,
+            supplementary;
+
+        comments = this.model.get("teacher_comments") || '';
+        $("#comments").html(comments);
+
+        supplementary = this.model.get("supplementary_material") || '';
+        supplementary += "<ul id='attachments'></ul>";
+        $("#supplementary").html(supplementary);
+
+        this.setupListernerFor(this.model, "attachmentList", _.bind(function () {
+            this.model.get("attachmentList").each(function (attachment) {
+                var view = new MOOC.views.Attachment({
+                    model: attachment,
+                    el: $("#supplementary").find("ul#attachments")[0]
+                });
+                view.render();
+            });
+        }, this));
     },
 
     setEventForNavigation: function (selector, unit, kq, next) {
@@ -463,6 +469,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                     callback();
                 };
 
+                this.renderExtraTabs();
+
                 if (MOOC.views.lastPlayerView) {
                     MOOC.views.lastPlayerView.destroyPlayer(removeCallback);
                     MOOC.views.lastPlayerView = null;
@@ -507,6 +515,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
                     callback();
                 };
+
+                this.renderExtraTabs();
 
                 if (MOOC.views.lastPlayerView) {
                     MOOC.views.lastPlayerView.destroyPlayer(removeCallback);
@@ -568,6 +578,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
                 callback();
             };
 
+            this.renderExtraTabs();
+
             if (MOOC.views.lastPlayerView) {
                 MOOC.views.lastPlayerView.destroyPlayer(removeCallback);
                 MOOC.views.lastPlayerView = null;
@@ -614,6 +626,8 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             $("#kq-q-buttons").addClass("hide");
             $("#kq-next-container").addClass("offset4");
             $("#kq-title").html(this.model.truncateTitle(MOOC.views.KQ_TITLE_MAX_LENGTH));
+
+            this.renderExtraTabs();
 
             this.setEventForNavigation("#kq-previous", unit, this.model, false);
             this.setEventForNavigation("#kq-next", unit, this.model, true);
