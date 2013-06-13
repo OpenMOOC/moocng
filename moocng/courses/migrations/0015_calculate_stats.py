@@ -22,6 +22,8 @@ class Migration(DataMigration):
 
     def forwards(self, orm):
         def callback(step='', counter=0, total=0):
+            if total == 0:
+                return
             if counter % int(total / 100) == 0:
                 if step == 'calculating':
                     print 'Processed %d of %d users' % (counter, total)

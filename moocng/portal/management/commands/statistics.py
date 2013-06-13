@@ -101,6 +101,8 @@ class Command(BaseCommand):
 
         # Callback to show some progress information
         def callback(step='', counter=0, total=0):
+            if total == 0:
+                return
             if counter % int(total / 100) == 0:
                 if step == 'calculating':
                     print 'Processed %d of %d users' % (counter, total)
