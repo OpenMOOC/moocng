@@ -3,5 +3,5 @@
 {% for course in courses %}
     <li><a href="{% url course_classroom course.slug %}">{{ course|truncatechars:30 }}</a></li>
 {% empty %}
-    <li>{% trans "You're not registered in any course" %}</li>
+    <li class="disabled"><a href="#">{% trans "You're not registered in any course" %}</a></li>
 {% endfor %}
