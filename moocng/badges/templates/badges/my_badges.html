@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
+{% block extrajs %}
+    <script src="https://{{ openbadges_service_url }}/issuer.js"></script>
+    <script src="{{ STATIC_URL }}js/badges.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div id="my-badges">
+    <p><big>{% blocktrans with first_name=user.first_name last_name=user.last_name %}The user "<b>{{ first_name }} {{ last_name }}</b>" has the following awards:{% endblocktrans %}
+    </big><p>
+
+    {% for award in award_list %}
+        <p>
+            <img src="{{ award.badge.image.url }}" alt="{{ award.badge.title }}" title="{{ award.badge.title }}" width="50" height="50" class="award" />
+            <a href="{{ award.get_image_url }}">{% trans "Download Badge" %}</a>
+            <a href="#" class="btn publish-badge" rel="{{ award.get_absolute_url }}">{% trans "Add to backpack" %}</a>
+        </p>
+
+        {% if award.badge.description %}
+            <p>{{ award.badge.description }}</p>
+        {% endif %}
+
+        {% if not forloop.last %}
+            <hr>
+        {% endif %}
+    {% endfor %}
+    </div>
+{% endblock %}

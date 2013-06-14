@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-16 10:38+0200\n"
+"POT-Creation-Date: 2013-10-17 12:39+0200\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Antonio Perez-Aranda <aperezaranda@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -50,6 +50,7 @@ msgid "User Apis"
 msgstr "User Apis"
 
 #: api/models.py:40
+#, python-brace-format
 msgid "Apikey of {0}  :::  {1}"
 msgstr "Apikey de {0}  :::  {1}"
 
@@ -57,11 +58,12 @@ msgstr "Apikey de {0}  :::  {1}"
 msgid "Slot duration"
 msgstr "Duración del slot"
 
-#: assets/models.py:33 categories/models.py:10 courses/models.py:48
+#: assets/models.py:33 badges/models.py:80 badges/models.py:235
+#: categories/models.py:10 courses/models.py:48
 msgid "Name"
 msgstr "Nombre"
 
-#: assets/models.py:35 courses/models.py:50
+#: assets/models.py:35 badges/models.py:239 courses/models.py:50
 #: courses/templates/courses/progress.html:57 peerreview/models.py:32
 #: peerreview/models.py:89
 msgid "Description"
@@ -122,6 +124,7 @@ msgid "asset availabilities"
 msgstr "disponibilidades de recursos"
 
 #: assets/models.py:71
+#, python-brace-format
 msgid "Assets availables for {0}"
 msgstr "Recursos disponibles para {0}"
 
@@ -146,6 +149,7 @@ msgid "reservations"
 msgstr "reservas"
 
 #: assets/models.py:94
+#, python-brace-format
 msgid "Reservation of {0}, made by {1}"
 msgstr "Reserva de {0}, hecha por {1}"
 
@@ -406,91 +410,197 @@ msgstr "Registro completado (confirmación pendiente)"
 msgid "Signup"
 msgstr "Registro"
 
-#: badges/admin.py:30 categories/admin.py:15
+#: badges/admin.py:34 categories/admin.py:15
 msgid "Image"
 msgstr "Imagen"
 
-#: badges/models.py:29
+#: badges/models.py:36
 msgid "The image is not a png"
 msgstr "La imagen no es un png"
 
-#: badges/models.py:35
-msgid "Badge title"
-msgstr "Título de la medalla"
+#: badges/models.py:45
+msgid "User email"
+msgstr "Email del usuario"
 
-#: badges/models.py:36
+#: badges/models.py:50
+msgid "User identity"
+msgstr "Identidad de usuario"
+
+#: badges/models.py:53 badges/models.py:160
+msgid "Identity type"
+msgstr "Tipo de identidad"
+
+#: badges/models.py:57 badges/models.py:164
+msgid "Identity hash"
+msgstr "Hash de la identidad"
+
+#: badges/models.py:59 badges/models.py:166
+msgid "Hashed"
+msgstr "Hasheado"
+
+#: badges/models.py:60 badges/models.py:168
+msgid "Identity salt"
+msgstr "Salt de la identidad"
+
+#: badges/models.py:64
+msgid "identity"
+msgstr "identidad"
+
+#: badges/models.py:65
+msgid "identities"
+msgstr "identidades"
+
+#: badges/models.py:68
+#, python-brace-format
+msgid "Identity of {0}"
+msgstr "Identidad de {0}"
+
+#: badges/models.py:83
 msgid "Short, descriptive title"
 msgstr "Título corto y descriptivo"
 
-#: badges/models.py:38
-msgid "Badge slug"
-msgstr "Slug de la medalla"
-
-#: badges/models.py:39
-msgid "Very short name, for use in URLs and links"
-msgstr "Nombre muy corto, para utilizar en URLs y enlaces"
-
-#: badges/models.py:41
+#: badges/models.py:84
 msgid "Badge description"
 msgstr "Descripción de la medalla"
 
-#: badges/models.py:42
+#: badges/models.py:86
 msgid "Longer description of the badge and its criteria"
 msgstr "Descripción larga de la medalla y sus criterios"
 
-#: badges/models.py:44
+#: badges/models.py:88
 msgid "Badge image"
 msgstr "Imagen de la medalla"
 
-#: badges/models.py:46
+#: badges/models.py:91
 msgid "Upload an image to represent the badge, it must be png"
 msgstr "Suba una imagen que represente la medalla, debe ser un png"
 
-#: badges/models.py:49
-msgid "Creation date and time"
-msgstr "Fecha y hora de creación"
+#: badges/models.py:93
+msgid "Criteria"
+msgstr "Criterio"
 
-#: badges/models.py:52 badges/models.py:75
-msgid "Last modification date and time"
-msgstr "Fecha y hora de la última modificación"
+#: badges/models.py:95
+msgid ""
+"URL of the criteria for earning the achievement (recomended: marked up this "
+"up with LRMI)"
+msgstr ""
+"URL del criterio para conseguir un logro (recomendado: que el recurso este "
+"en  LRMI)"
 
-#: badges/models.py:56
+#: badges/models.py:99
+msgid "Alignments"
+msgstr "Alineamientos"
+
+#: badges/models.py:101 badges/models.py:244
+msgid "alignments"
+msgstr "alineamientos"
+
+#: badges/models.py:102
+msgid "Tags"
+msgstr "Etiquetas"
+
+#: badges/models.py:104 badges/models.py:263
+msgid "tags"
+msgstr "etiquetas"
+
+#: badges/models.py:105
+msgid "Badge slug (moocng)"
+msgstr "Slug de la medalla (moocng)"
+
+#: badges/models.py:107
+msgid "Very short name, for use in URLs and links"
+msgstr "Nombre muy corto, para utilizar en URLs y enlaces"
+
+#: badges/models.py:108
+msgid "Creation date and time (moocng)"
+msgstr "Fecha y hora de creación (moocng)"
+
+#: badges/models.py:110
+msgid "Last modification date and time (moocng)"
+msgstr "Fecha y hora de la última modificación (moocng)"
+
+#: badges/models.py:115
 msgid "badge"
 msgstr "medalla"
 
-#: badges/models.py:57
+#: badges/models.py:116
 msgid "badges"
 msgstr "medallas"
 
-#: badges/models.py:65
-msgid "Badge"
-msgstr "Medalla"
+#: badges/models.py:142
+msgid "Award uuid"
+msgstr "Uuid del premio"
 
-#: badges/models.py:68
+#: badges/models.py:145
 msgid "Awardee"
 msgstr "Premiado"
 
-#: badges/models.py:72
+#: badges/models.py:148
+msgid "Badge"
+msgstr "Medalla"
+
+#: badges/models.py:151
 msgid "Awarding date and time"
 msgstr "Fecha y hora del premio"
 
-#: badges/models.py:80
+#: badges/models.py:153
+msgid "URL with assertion evidence"
+msgstr "URL con la asserción"
+
+#: badges/models.py:156
+msgid "When a badge should no longer be considered valid"
+msgstr "Cuando una medalla ya no se considera valida"
+
+#: badges/models.py:158
+msgid "Last modification date and time"
+msgstr "Fecha y hora de la última modificación"
+
+#: badges/models.py:174
 msgid "award"
 msgstr "premio"
 
-#: badges/models.py:81
+#: badges/models.py:175
 msgid "awards"
 msgstr "premios"
 
-#: badges/models.py:84
+#: badges/models.py:178
+#, python-brace-format
 msgid "{0} awarded to {1}"
 msgstr "{0} otorgado a {1}"
 
-#: badges/templates/badges/user_badge.html:9
-#, python-format
-msgid "The user \"<b>%(first_name)s %(last_name)s</b>\" has the award:"
-msgstr "El usuario \"<b>%(first_name)s %(last_name)s</b>\" tiene el premio:"
+#: badges/models.py:216
+msgid "Award"
+msgstr "Premio"
 
+#: badges/models.py:218
+msgid "Reason for revocation"
+msgstr "Motivo de revocación"
+
+#: badges/models.py:222
+msgid "revocation list"
+msgstr "lista de revocación"
+
+#: badges/models.py:223
+msgid "revocations list"
+msgstr "lista de revocaciones"
+
+#: badges/models.py:237 externalapps/models.py:125 externalapps/models.py:135
+msgid "Url"
+msgstr "Url"
+
+#: badges/models.py:243
+msgid "alignment"
+msgstr "alineamiento"
+
+#: badges/models.py:258
+msgid "Tag name"
+msgstr "Nombre de la etiqueta"
+
+#: badges/models.py:262
+msgid "tag"
+msgstr "etiqueta"
+
+#: badges/templates/badges/my_badges.html:13
 #: badges/templates/badges/user_badges.html:9
 #, python-format
 msgid ""
@@ -498,6 +608,19 @@ msgid ""
 msgstr ""
 "El usuario \"<b>%(first_name)s %(last_name)s</b>\" tiene los siguientes "
 "premios:"
+
+#: badges/templates/badges/my_badges.html:19
+msgid "Download Badge"
+msgstr "Descargar medalla"
+
+#: badges/templates/badges/my_badges.html:20
+msgid "Add to backpack"
+msgstr "Añadir a mi mochila"
+
+#: badges/templates/badges/user_badge.html:9
+#, python-format
+msgid "The user \"<b>%(first_name)s %(last_name)s</b>\" has the award:"
+msgstr "El usuario \"<b>%(first_name)s %(last_name)s</b>\" tiene el premio:"
 
 #: categories/admin.py:11
 #: teacheradmin/templates/teacheradmin/categories.html:18
@@ -975,6 +1098,7 @@ msgid "questions"
 msgstr "preguntas"
 
 #: courses/models.py:545
+#, python-brace-format
 msgid "{0} - Question {1}"
 msgstr "{0} - Pregunta {1}"
 
@@ -1006,6 +1130,7 @@ msgid "options"
 msgstr "opciones"
 
 #: courses/models.py:619
+#, python-brace-format
 msgid "{0} at {1} x {2}"
 msgstr "{0} en {1} x {2}"
 
@@ -1420,12 +1545,12 @@ msgstr "Entrega enviada"
 
 #: courses/templates/courses/classroom.html:203
 msgid ""
-"Thank you for sending this submission. You have now to review #"
-"(minimum_reviewers)s submissions from other students in order to get your "
+"Thank you for sending this submission. You have now to review "
+"#(minimum_reviewers)s submissions from other students in order to get your "
 "submission scored."
 msgstr ""
-"Gracias por enviar esta entrega. Ahora tienes que revisar #"
-"(minimum_reviewers)s entregas de otros estudiantes para que tu entrega se "
+"Gracias por enviar esta entrega. Ahora tienes que revisar "
+"#(minimum_reviewers)s entregas de otros estudiantes para que tu entrega se "
 "evalúe."
 
 #: courses/templates/courses/classroom.html:204
@@ -1887,10 +2012,6 @@ msgstr "Aplicaciones auxiliares"
 msgid "url not available"
 msgstr "Url no disponible"
 
-#: externalapps/models.py:125 externalapps/models.py:135
-msgid "Url"
-msgstr ""
-
 #: externalapps/models.py:154
 msgid "There are no instances available"
 msgstr "No hay instancias disponibles"
@@ -1969,6 +2090,7 @@ msgid "evaluation criteria"
 msgstr "Criterios de evaluación"
 
 #: peerreview/models.py:97
+#, python-brace-format
 msgid "{0} - EvaluationCriterion {1}"
 msgstr "{0} - Criterio de evaluación {1}"
 
@@ -2215,15 +2337,16 @@ msgstr "Este curso no tiene ningúna actividad a revisar por compañeros"
 msgid "You can try enrolling in another course"
 msgstr "Puedes probar matriculándote en otro curso"
 
-#: settings/common.py:81
+#: settings/common.py:89
 msgid "English"
 msgstr "Inglés"
 
-#: settings/common.py:82
+#: settings/common.py:90
 msgid "Spanish"
 msgstr "Español"
 
 #: teacheradmin/forms.py:43
+#, python-brace-format
 msgid "Image must be {0}px x {1}px"
 msgstr "La imagen debe tener {0}px x {1}px"
 
@@ -2929,6 +3052,9 @@ msgstr "Sitio de administración de moocng"
 #: templates/admin/base_site.html:7
 msgid "moocng administration"
 msgstr "Administración de moocng"
+
+#~ msgid "Badge title"
+#~ msgstr "Título de la medalla"
 
 #~ msgid "Discussion"
 #~ msgstr "Debates"
