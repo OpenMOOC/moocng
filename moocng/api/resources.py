@@ -1173,7 +1173,7 @@ def on_answer_updated(sender, user_id, mongo_object, **kwargs):
     api_task_logger.debug("answer updated")
 
     on_answer_updated_task.apply_async(
-        args=[mongo_object.to_dict()],
+        args=[mongo_object],  # it is already a dict
         queue='stats',
     )
 
