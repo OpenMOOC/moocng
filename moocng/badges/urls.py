@@ -13,20 +13,21 @@
 # limitations under the License.
 
 from django.conf.urls import patterns, url
+from .views import UserBadges, UserBadge, BadgeImage
 
 urlpatterns = patterns(
     'moocng.badges.views',
-    url(r'^(?P<user_pk>[\d]+)/?$', 'user_badges',
+    url(r'^(?P<user_pk>[\d]+)/?$', UserBadges.as_view(),
         {'mode': 'id'}, name='user_badges', ),
-    url(r'^(?P<badge_slug>[-\w]+)/(?P<user_pk>[\d]+)/?$', 'user_badge',
+    url(r'^(?P<badge_slug>[-\w]+)/(?P<user_pk>[\d]+)/?$', UserBadge.as_view(),
         {'mode': 'id'}, name='user_badge', ),
-    url(r'^(?P<badge_slug>[-\w]+)/(?P<user_pk>[\d]+)/image/?$', 'badge_image',
-        {'mode': 'id'}, name='badge_image'),
+    url(r'^(?P<badge_slug>[-\w]+)/(?P<user_pk>[\d]+)/image/?$',
+        BadgeImage.as_view(), {'mode': 'id'}, name='badge_image'),
 
-    url(r'^(?P<user_pk>[^/]+)/?$', 'user_badges',
-        {'mode': 'email'}, name='user_badges_email'),
-    url(r'^(?P<badge_slug>[-\w]+)/(?P<user_pk>[^/]+)/?$', 'user_badge',
+    url(r'^(?P<user_pk>[^/]+)/?$', UserBadges.as_view(), {'mode': 'email'},
+        name='user_badges_email'),
+    url(r'^(?P<badge_slug>[-\w]+)/(?P<user_pk>[^/]+)/?$', UserBadge.as_view(),
         {'mode': 'email'}, name='user_badge_email'),
-    url(r'^(?P<badge_slug>[-\w]+)/(?P<user_pk>[^/]+)/image/?$', 'badge_image',
-        {'mode': 'email'}, name='badge_image_email'),
+    url(r'^(?P<badge_slug>[-\w]+)/(?P<user_pk>[^/]+)/image/?$',
+        BadgeImage.as_view(), {'mode': 'email'}, name='badge_image_email'),
 )

@@ -14,17 +14,20 @@
 
 from django.conf.urls import patterns, url
 
+from .views import (CourseReview, CourseReviewAssign, CourseReviewReview,
+                    GetS3UploadUrl, GetS3DownloadUrl, CourseReviewUpload)
 
 urlpatterns = patterns(
     'moocng.peerreview.views',
 
-    url(r'^course/(?P<course_slug>[-\w]+)/reviews/$', 'course_reviews',
+    url(r'^course/(?P<course_slug>[-\w]+)/reviews/$', CourseReview.as_view(),
         name='course_reviews'),
-    url(r'^course/(?P<course_slug>[-\w]+)/reviews/(?P<assignment_id>\d+)/assign', 'course_review_assign',
-        name='course_review_assign'),
-    url(r'^course/(?P<course_slug>[-\w]+)/reviews/(?P<assignment_id>\d+)/review/', 'course_review_review',
-        name='course_review_review'),
-    url(r'^s3_upload_url/', 'get_s3_upload_url', name='get_s3_upload_url'),
-    url(r'^s3_download_url/', 'get_s3_download_url', name='get_s3_download_url'),
-    url(r'^course/(?P<course_slug>[-\w]+)/reviews/upload/', 'course_review_upload', name='course_review_upload'),
+    url(r'^course/(?P<course_slug>[-\w]+)/reviews/(?P<assignment_id>\d+)/assign',
+        CourseReviewAssign.as_view(), name='course_review_assign'),
+    url(r'^course/(?P<course_slug>[-\w]+)/reviews/(?P<assignment_id>\d+)/review/',
+        CourseReviewReview.as_view(), name='course_review_review'),
+    url(r'^s3_upload_url/', GetS3UploadUrl.as_view(), name='get_s3_upload_url'),
+    url(r'^s3_download_url/', GetS3DownloadUrl.as_view(), name='get_s3_download_url'),
+    url(r'^course/(?P<course_slug>[-\w]+)/reviews/upload/',
+        CourseReviewUpload.as_view(), name='course_review_upload'),
 )

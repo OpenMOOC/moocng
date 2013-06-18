@@ -14,8 +14,10 @@
 
 from django.conf.urls import patterns, url
 
+from .views import Contact
+
 
 urlpatterns = patterns(
     'moocng.contact.views',
-    url(r'^$', 'contact', name='contact'),
+    url(r'^$', Contact.as_view(), name='contact'),
 )

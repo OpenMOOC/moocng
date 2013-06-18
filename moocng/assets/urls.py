@@ -14,13 +14,15 @@
 
 from django.conf.urls import patterns, url
 
+from .views import CourseReservations, CancelReservation, ReservationCreate
+
 urlpatterns = patterns(
     'moocng.assets.views',
 
-    url(r'^course/(?P<course_slug>[-\w]+)/reservations/$', 'course_reservations',
+    url(r'^course/(?P<course_slug>[-\w]+)/reservations/$', CourseReservations.as_view(),
         name='course_reservations'),
-    url(r'^course/(?P<course_slug>[-\w]+)/reservations/(?P<reservation_id>[-\w]+)/cancel$', 'cancel_reservation',
-        name='cancel_reservation'),
-    url(r'^course/(?P<course_slug>[-\w]+)/reservations/(?P<kq_id>[-\w]+)/(?P<asset_id>[-\w]+)/new$', 'reservation_create',
-        name='reservation_create'),
+    url(r'^course/(?P<course_slug>[-\w]+)/reservations/(?P<reservation_id>[-\w]+)/cancel$',
+        CancelReservation.as_view(), name='cancel_reservation'),
+    url(r'^course/(?P<course_slug>[-\w]+)/reservations/(?P<kq_id>[-\w]+)/(?P<asset_id>[-\w]+)/new$',
+        ReservationCreate.as_view(), name='reservation_create'),
 )

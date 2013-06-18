@@ -17,13 +17,14 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
+from django.views.generic import View
 
 from moocng.contact.forms import ContactForm
 from moocng.contact.email import send_contact_message
 
 
-def contact(request):
-    if request.method == 'POST':
+class Contact(View):
+    def post(self, request):
         form = ContactForm(request.POST)
         if form.is_valid():
             sender = form.cleaned_data['sender']
@@ -37,7 +38,11 @@ def contact(request):
                                  form.cleaned_data['message'])
             messages.success(request, _(u'Thank you for contacting us. The provided information will be sent to the appropiate staff. We will contact you soon to tell you about the state of your request.'))
             return HttpResponseRedirect(reverse('home'))
-    else:
+        return render(request, 'contact/contact.html', {
+            'form': form,
+        })
+
+    def get(self, request):
         initial = {}
         if request.user.is_authenticated():
             name = ''
@@ -56,6 +61,6 @@ def contact(request):
 
         form = ContactForm(initial=initial)
 
-    return render(request, 'contact/contact.html', {
-        'form': form,
-    })
+        return render(request, 'contact/contact.html', {
+            'form': form,
+        })

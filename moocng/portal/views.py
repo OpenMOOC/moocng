@@ -18,21 +18,28 @@ from django.conf import settings
 from django.contrib.sites.models import get_current_site
 from django.views import i18n
 from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+from django.views.generic import View
 
 
-def set_language(request):
-    response = i18n.set_language(request)
-    if request.method == 'POST':
+class SetLanguage(View):
+    def get(self, request):
+        response = i18n.set_language(request)
+        return response
+
+    def post(self, request):
+        response = i18n.set_language(request)
         site = get_current_site(request)
         lang_code = request.POST.get('language', None)
         response.set_cookie(settings.LANGUAGE_COOKIE_NAME,
                             lang_code,
                             domain=site.domain,
                             httponly=False)
-    return response
+        return response
 
 # every time the server is restarted key_prefix will be different
 # effectively invalidating this cache
-@cache_page(3600, key_prefix='jsi18n-%s' % time.time())
-def cached_javascript_catalog(request, domain='djangojs', packages=None):
-    return i18n.javascript_catalog(request, domain, packages)
+class CachedJavascriptCatalog(View):
+    @method_decorator(cache_page(3600, key_prefix='jsi18n-%s' % time.time()))
+    def get(self, request, domain='djangojs', packages=None):
+        return i18n.javascript_catalog(request, domain, packages)
