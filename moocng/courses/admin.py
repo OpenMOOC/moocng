@@ -46,6 +46,13 @@ logger = logging.getLogger(__name__)
 
 class CourseAdmin(SortableAdmin):
 
+    """
+    Administration panel for the Course. This inherits from SortableAdmin, which
+    allows to sort the list of courses as desired.
+
+    .. versionadded:: 0.1
+    """
+
     prepopulated_fields = {'slug': ('name', )}
     exclude = ('students', 'teachers')
     raw_id_fields = ('owner',)
@@ -54,6 +61,13 @@ class CourseAdmin(SortableAdmin):
 
 class CourseTeacherAdmin(SortableAdmin):
 
+    """
+    CourseTeacher administration panel. Here you can manage the teachers for any
+    especified course. Inherits from SortableAdmin, which allows to sort the
+    teachers as desired.
+
+    .. versionadded:: 0.1
+    """
     raw_id_fields = ('teacher',)
     autocomplete_lookup_fields = {'fk': ['teacher'], }
 
@@ -62,6 +76,11 @@ class CourseTeacherAdmin(SortableAdmin):
 
 class AnnouncementAdmin(admin.ModelAdmin):
 
+    """
+    Administration for the announcements.
+
+    .. versionadded:: 0.1
+    """
     prepopulated_fields = {'slug': ('title', )}
     list_display = ('course', 'title', 'datetime')
     list_filter = ('course', )
@@ -69,6 +88,13 @@ class AnnouncementAdmin(admin.ModelAdmin):
 
 class UnitAdmin(SortableAdmin):
 
+    """
+    Course unit administration. Here you can manage the units themselves, but
+    not the nuggets associated with them. Inherits from SortableAdmin, which
+    allows to sort the units as desired, ignoring the creation order.
+
+    .. versionadded:: 0.1
+    """
     form = UnitForm
     list_display = ('__unicode__', 'unittype', 'start', 'deadline', 'weight')
     list_filter = ('course', )
@@ -79,12 +105,22 @@ class UnitAdmin(SortableAdmin):
 
 class AttachmentInline(admin.TabularInline):
 
+    """
+    Inline for including the attachments in KnowledgeQuantums.
+
+    .. versionadded:: 0.1
+    """
     model = Attachment
     form = AttachmentForm
 
 
 class KnowledgeQuantumAdmin(SortableAdmin):
 
+    """
+    Administration for the KnowledgeQuantums. Has an inline for attachments.
+
+    .. versionadded:: 0.1
+    """
     inlines = [
         AttachmentInline,
     ]
@@ -99,6 +135,17 @@ ensure_csrf_cookie_m = method_decorator(ensure_csrf_cookie)
 
 class QuestionAdmin(admin.ModelAdmin):
 
+    """
+    Administration for questions inside nuggets. The URLs are extended to process
+    extra stuff like videos and options. It has a get_state, _is_scheduled and
+    _is_active method to obtain the current status of the last frame of the video.
+
+
+    :context: title, object_id, original, is_popup, app_label, opts, has_absolute_url,
+              content_type_id, add, change, options_json
+
+    .. versionadded: 0.1
+    """
     list_display = ('kq', 'solution_media_content_type', 'solution_media_content_id')
     list_filter = ('kq', )
     formfield_overrides = {
@@ -287,6 +334,11 @@ class QuestionAdmin(admin.ModelAdmin):
 
 class OptionAdmin(admin.ModelAdmin):
 
+    """
+    Options administration panel.
+
+    .. versionadded:: 0.1
+    """
     list_display = ('question', 'x', 'y', 'optiontype')
     list_filter = ('question', )
 
