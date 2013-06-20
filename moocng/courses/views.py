@@ -28,6 +28,7 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
+from django.template.defaultfilters import slugify
 
 from moocng.badges.models import Award
 from moocng.courses.models import Course, CourseTeacher, Announcement
@@ -38,10 +39,18 @@ from moocng.courses.marks import calculate_course_mark
 from moocng.courses.security import (check_user_can_view_course,
                                      get_courses_available_for_user,
                                      get_units_available_for_user)
-from django.template.defaultfilters import slugify
 
 
 def home(request):
+
+    """
+    Home view for the courses. This view will show a list of all the available
+    courses in the platform if they're published, unless the user is is_superuser
+    in which case we show everything (check **get_courses_available_for_user()**)
+
+    :context: courses, use_cache
+    .. versionadded:: 0.1
+    """
     use_cache = True
     if (request.user.is_superuser or request.user.is_staff or
             CourseTeacher.objects.filter(teacher=request.user.id).exists()):
@@ -55,6 +64,14 @@ def home(request):
 
 
 def flatpage(request, page=""):
+
+    """
+    Function for translating flatpages. This function picks up the pagename
+    followed by a dash and the language code. If it's not found it returns
+    a 404.
+
+    .. versionadded:: 0.1
+    """
     # Translate flatpages
     lang = request.LANGUAGE_CODE.lower()
     fpage = get_object_or_404(FlatPage, url__exact=("/%s-%s/" % (page, lang)),
@@ -67,6 +84,20 @@ name_and_id_regex = re.compile('[^\(]+\((\d+)\)')
 
 @login_required
 def course_add(request):
+
+    """
+    Create new courses. By default courses are created by platform admins unless
+    ALLOW_PUBLIC_COURSE_CREATION is set to True.
+
+    The view validates the email of the course_owner field and the course_name
+    unless a regular user is creating the course, in which case the course_owner
+    is directly taken from the current user.
+
+    After that the course name is slugified and the CourseTeacher and Course are
+    saved, and the user is returned to the TeacherAdmin module.
+
+    .. versionadded:: 0.1
+    """
     allow_public = False
     try:
         allow_public = settings.ALLOW_PUBLIC_COURSE_CREATION
@@ -125,13 +156,28 @@ def course_add(request):
             send_mail_wrapper(subject, template, context, to)
 
         messages.success(request, _('The course was successfully created'))
-        return HttpResponseRedirect(reverse('teacheradmin_info', args=[course.slug]))
+        return HttpResponseRedirect(reverse('teacheradmin_info',
+                                            args=[course.slug]))
 
     return render_to_response('courses/add.html', {},
                               context_instance=RequestContext(request))
 
 
 def course_overview(request, course_slug):
+
+    """
+    Show the course main page. This will show the main information about the
+    course and the 'register to this course' button.
+
+    .. note:: **use_old_calculus** is a compatibility method with old evaluation
+              methods, which allowed the normal units to be evaluated. The new
+              system does not evaluate normal units, only tasks and exams.
+
+    :context: course, units, is_enrolled, is_teacher, request, course_teachers,
+              announcements, use_old_calculus
+
+    .. versionadded:: 0.1
+    """
     course = get_object_or_404(Course, slug=course_slug)
 
     check_user_can_view_course(course, request)
@@ -162,6 +208,17 @@ def course_overview(request, course_slug):
 
 @login_required
 def course_classroom(request, course_slug):
+
+    """
+    Main view of the course content (class). If the user is not enrolled we
+    show him a message. If the course is not ready and the user is not admin
+    we redirect the user to a denied access page.
+
+    :permissions: login
+    :context: course, is_enrolled, ask_admin, unit_list, is_teacher, peer_view
+
+    .. versionadded:: 0.1
+    """
     course = get_object_or_404(Course, slug=course_slug)
 
     is_enrolled = course.students.filter(id=request.user.id).exists()
@@ -205,6 +262,16 @@ def course_classroom(request, course_slug):
 
 @login_required
 def course_progress(request, course_slug):
+
+    """
+    Main view for the user progress in the course. This will return the units for
+    the user in the current course.
+
+    :permissions: login
+    :context: course, is_enrolled, ask_admin, course, unit_list, is_teacher
+
+    .. versionadded:: 0.1
+    """
     course = get_object_or_404(Course, slug=course_slug)
 
     is_enrolled = course.students.filter(id=request.user.id).exists()
@@ -241,6 +308,14 @@ def course_progress(request, course_slug):
 
 
 def announcement_detail(request, course_slug, announcement_id, announcement_slug):
+
+    """
+    Show a detail view of an announcement.
+
+    :context: course, announcement
+
+    .. versionadded:: 0.1
+    """
     course = get_object_or_404(Course, slug=course_slug)
     announcement = get_object_or_404(Announcement, id=announcement_id)
 
@@ -252,6 +327,17 @@ def announcement_detail(request, course_slug, announcement_id, announcement_slug
 
 @login_required
 def transcript(request):
+
+    """
+    Transcript is the main view of the user progress, here the user is show with
+    the overall progress per course, quallifications and badges if he obtained
+    any. We also give the access to the certification.
+
+    :permissions: login
+    :context: course, units_info, mark, award, passed, cert_url, use_old_calculus
+
+    .. versionadded:: 0.1
+    """
     course_list = request.user.courses_as_student.all()
     courses_info = []
     cert_url = ''
