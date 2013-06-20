@@ -23,6 +23,11 @@ from moocng.teacheradmin.models import Invitation
 
 class Saml2BackendExtension(Saml2Backend):
 
+    """
+    Extend the SAML2 backend for the integration with OpenMOOC.
+
+    .. versionadded:: 0.1
+    """
     # This function is called when a new user is created
     # we will check here if a pending teacher invitation
     # exists for this user
