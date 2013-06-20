@@ -4,6 +4,13 @@ from moocng.mongodb import get_db
 
 
 def calculate_question_mark(kq, question, user):
+
+    """
+    Calculate if the user answer is the correct one, and punctuate accordingly.
+    If the user did the task right the platform gives a 10, if not, a 0.
+
+    .. versionadded:: 0.1
+    """
     db = get_db()
     answers = db.get_collection('answers')
     user_answer = answers.find_one({
@@ -20,6 +27,13 @@ def calculate_question_mark(kq, question, user):
 
 
 def calculate_peer_review_mark(kq, peer_review_assignment, user):
+
+    """
+    Calculate if the user has done the peer reviewed task. This is done by
+    checking if the minimum reviews of the task have been done.
+
+    .. versionadded:: 0.1
+    """
     from moocng.peerreview.utils import kq_get_peer_review_score
 
     mark, use_in_total = kq_get_peer_review_score(kq, user,
@@ -31,6 +45,12 @@ def calculate_peer_review_mark(kq, peer_review_assignment, user):
 
 
 def calculate_kq_video_mark(kq, user):
+
+    """
+    Mark the video as viewed and give the user the punctuation.
+
+    .. versionadded:: 0.1
+    """
     if kq.kq_visited_by(user):
         return (10.0, True)
     else:
@@ -38,7 +58,15 @@ def calculate_kq_video_mark(kq, user):
 
 
 def calculate_kq_mark(kq, user):
-    """ Don't use this in loops """
+
+    """
+    Calculate is a answer was right or wrong, this is the main function that
+    calls the others depending on the content (peerreview, normal, etc.)
+
+    .. warning:: Don't use this in loops
+
+    .. versionadded:: 0.1
+    """
     from moocng.peerreview.models import PeerReviewAssignment
     try:
         question = kq.question_set.get()
@@ -59,7 +87,13 @@ def calculate_kq_mark(kq, user):
 
 
 def calculate_unit_mark(unit, user, normalized_unit_weight):
-    """ Don't use this in loops """
+    """
+    Calculate if a unit is approved.
+
+    .. warning:: Don't use this in loops
+
+    .. versionadded:: 0.1
+    """
     kqs_total_weight_unnormalized = 0
     unit_mark = 0
     entries = []
