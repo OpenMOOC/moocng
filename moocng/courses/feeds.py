@@ -22,6 +22,13 @@ from moocng.courses.models import Course, Announcement
 
 class AnnouncementFeed(Feed):
 
+    """
+    Default RSS feed for the course announcements.
+
+    :returns: RSS Feed
+
+    .. versionadded:: 0.1
+    """
     def get_object(self, request, course_slug):
         return get_object_or_404(Course, slug=course_slug)
 
