@@ -31,6 +31,8 @@
             edit: "{% trans 'Edit' %}",
             add: "{% trans 'Add' %}",
             back: "{% trans 'Go back' %}",
+            empty: "{% trans 'This course is empty' %}",
+            emptyLong: "{% trans 'You need to add content to this course. Please, start adding a unit.' %}",
             unit: {
                 unit: "{% trans 'unit' %}",
                 d: "{% trans 'Draft' %}",
@@ -49,7 +51,7 @@
                 prTooltip: "{% trans 'Peer review' %}",
                 asset: "{% trans 'AS' %}",
                 assetTip: "{% trans 'Asset Availability' %}",
-                
+
             },
             evaluationCriterion: {
                 description: "{% trans 'Description:' %}",
@@ -64,7 +66,7 @@
             }
         };
         MOOC.init({{ course.id }}, {{ unit_badge_classes|safe }});
-    </script>  
+    </script>
 {% endblock %}
 
 {% block section %}
@@ -305,8 +307,6 @@
         </div>
     </div>
     </fieldset>
-    
-    
     <fieldset class="tab-pane" id="asset-availability">
     <div class="row">
         <div class="span5">
@@ -340,8 +340,6 @@
     </fieldset>
     </div>
     </div>
-    
-    
     <fieldset>
     <div class="row"><div class="span10 align-right"><div class="form-actions">
         <button id="save-kq" class="btn btn-primary"><i class="icon icon-white icon-ok"></i> {% trans "Save" %}</button>

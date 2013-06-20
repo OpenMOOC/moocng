@@ -33,24 +33,11 @@ def on_activity_created_task(activity_created, unit_activity, course_activity):
     if kq_type == 'Video':
         data['passed'] = 1
     stats_kq = db.get_collection('stats_kq')
-    stats_kq_dict = stats_kq.find_and_modify(
-        query={'kq_id': activity_created['kq_id']},
-        update={'$inc': data},
+    stats_kq.update(
+        {'kq_id': activity_created['kq_id']},
+        {'$inc': data},
         safe=True
     )
-    if stats_kq_dict is None:
-        data['kq_id'] = activity_created['kq_id']
-        data['unit_id'] = kq.unit.id
-        data['course_id'] = activity_created['course_id']
-        if not 'passed' in data:
-            data['passed'] = 0
-        if kq_type == "PeerReviewAssignment":
-            data['submitted'] = 0
-            data['reviews'] = 0
-            data['reviewers'] = 0
-        elif kq_type == "Question":
-            data['submitted'] = 0
-        stats_kq.insert(data, safe=True)
 
     # UNIT
     data = {}
@@ -61,21 +48,11 @@ def on_activity_created_task(activity_created, unit_activity, course_activity):
     # TODO passed
     if data.keys():
         stats_unit = db.get_collection('stats_unit')
-        stats_unit_dict = stats_unit.find_and_modify(
-            query={'unit_id': kq.unit.id},
-            update={'$inc': data},
+        stats_unit.update(
+            {'unit_id': kq.unit.id},
+            {'$inc': data},
             safe=True
         )
-        if stats_unit_dict is None:
-            data['course_id'] = activity_created['course_id']
-            data['unit_id'] = kq.unit.id
-            if not 'started' in data:
-                data['started'] = 0
-            if not 'completed' in data:
-                data['completed'] = 0
-            if not 'passed' in data:
-                data['passed'] = 0
-            stats_unit.insert(data, safe=True)
 
     # COURSE
     course_kqs = KnowledgeQuantum.objects.filter(unit__course__id=activity_created['course_id']).count()
@@ -87,83 +64,46 @@ def on_activity_created_task(activity_created, unit_activity, course_activity):
     # TODO passed
     if data.keys():
         stats_course = db.get_collection('stats_course')
-        stats_course_dict = stats_course.find_and_modify(
-            query={'course_id': activity_created['course_id']},
-            update={'$inc': data},
+        stats_course.update(
+            {'course_id': activity_created['course_id']},
+            {'$inc': data},
             safe=True
         )
-        if stats_course_dict is None:
-            data['course_id'] = activity_created['course_id']
-            if not 'started' in data:
-                data['started'] = 0
-            if not 'completed' in data:
-                data['completed'] = 0
-            if not 'passed' in data:
-                data['passed'] = 0
-            stats_course.insert(data, safe=True)
 
 
-def process_on_submission(submitted, data, p2p=False):
+def process_on_submission(submitted, data):
     db = get_db()
 
     # KQ
     # TODO passed
     stats_kq = db.get_collection('stats_kq')
-    stats_kq_dict = stats_kq.find_and_modify(
-        query={'kq_id': submitted['kq_id']},
-        update={'$inc': data},
+    stats_kq.update(
+        {'kq_id': submitted['kq_id']},
+        {'$inc': data},
         safe=True
     )
-    if stats_kq_dict is None:
-        data['kq_id'] = submitted['kq_id']
-        data['unit_id'] = submitted['unit_id']
-        data['course_id'] = submitted['course_id']
-        data['viewed'] = 0
-        if 'reviewers' in data:
-            data['submitted'] = 0
-            data['reviews'] = 1
-            data['reviewers'] = 1
-        else:
-            data['submitted'] = 1
-            if p2p:
-                data['reviews'] = 0
-                data['reviewers'] = 0
-        if not 'passed' in data:
-            data['passed'] = 0
-        stats_kq.insert(data, safe=True)
 
     # UNIT
     data = {}
     # TODO passed
     if data.keys():
         stats_unit = db.get_collection('stats_unit')
-        stats_unit_dict = stats_unit.find_and_modify(
-            query={'unit_id': submitted['unit_id']},
-            update={'$inc': data},
+        stats_unit.update(
+            {'unit_id': submitted['unit_id']},
+            {'$inc': data},
             safe=True
         )
-        if stats_unit_dict is None:
-            data['unit_id'] = submitted['unit_id']
-            data['course_id'] = submitted['course_id']
-            data['started'] = 0
-            data['completed'] = 0
-            stats_unit.insert(data, safe=True)
 
     # COURSE
     data = {}
     # TODO passed
     if data.keys():
         stats_course = db.get_collection('stats_course')
-        stats_course_dict = stats_course.find_and_modify(
-            query={'course_id': submitted['course_id']},
-            update={'$inc': data},
+        stats_course.update(
+            {'course_id': submitted['course_id']},
+            {'$inc': data},
             safe=True
         )
-        if stats_course_dict is None:
-            data['course_id'] = submitted['course_id']
-            data['started'] = 0
-            data['completed'] = 0
-            stats_course.insert(data, safe=True)
 
 
 @task
@@ -183,7 +123,7 @@ def on_peerreviewsubmission_created_task(submission_created):
         'unit_id': submission_created['unit'],
         'kq_id': submission_created['kq'],
     }
-    process_on_submission(data, {'submitted': 1}, p2p=True)
+    process_on_submission(data, {'submitted': 1})
 
 
 @task
@@ -202,4 +142,4 @@ def on_peerreviewreview_created_task(review_created, user_reviews):
         'reviewers': inc_reviewers
     }
 
-    process_on_submission(data, increment, p2p=True)
+    process_on_submission(data, increment)

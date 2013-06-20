@@ -246,26 +246,38 @@ if (_.isUndefined(window.MOOC)) {
 
             render: function () {
                 var node = this.$el,
-                    listNode;
+                    listNode,
+                    aux;
                 $(".viewport").addClass("hide");
                 node.html("<div id='unit-list-container'></div>");
                 listNode = node.find('#unit-list-container');
-                this.model.each(function (unit) {
-                    var view = MOOC.views.unitViews[unit.get("id")],
-                        el = $("<div id='unit" + unit.get("id") + "' class='unit ui-widget ui-widget-content ui-helper-clearfix ui-corner-all status-" + unit.get("status") + "'></div>")[0];
-                    listNode.append(el);
-                    if (_.isUndefined(view)) {
-                        view = new MOOC.views.Unit({
-                            model: unit,
-                            id: "unit" + unit.get("id"),
-                            el: el
-                        });
-                        MOOC.views.unitViews[unit.get("id")] = view;
-                    } else {
-                        view.setElement(el);
-                    }
-                    view.render();
-                });
+                if (this.model.length === 0) {
+                    aux = [
+                        "<div class='alert alert-info'><h4>",
+                        MOOC.trans.empty,
+                        "</h4>",
+                        MOOC.trans.emptyLong,
+                        "</div>"
+                    ];
+                    listNode.html(aux.join(""));
+                } else {
+                    this.model.each(function (unit) {
+                        var view = MOOC.views.unitViews[unit.get("id")],
+                            el = $("<div id='unit" + unit.get("id") + "' class='unit ui-widget ui-widget-content ui-helper-clearfix ui-corner-all status-" + unit.get("status") + "'></div>")[0];
+                        listNode.append(el);
+                        if (_.isUndefined(view)) {
+                            view = new MOOC.views.Unit({
+                                model: unit,
+                                id: "unit" + unit.get("id"),
+                                el: el
+                            });
+                            MOOC.views.unitViews[unit.get("id")] = view;
+                        } else {
+                            view.setElement(el);
+                        }
+                        view.render();
+                    });
+                }
                 node.append(block("<button id='addUnit' class='btn'>" +
                     "<i class='icon-plus'></i> " + MOOC.trans.add + " " +
                     MOOC.trans.unit.unit + "</button>",

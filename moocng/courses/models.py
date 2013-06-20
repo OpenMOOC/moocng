@@ -141,7 +141,19 @@ def course_invalidate_cache(sender, instance, **kwargs):
     invalidate_template_fragment('course_overview_secondary_info', instance.id)
 
 
+def course_stats(sender, instance, created, **kwargs):
+    if created:
+        stats_course = get_db().get_collection('stats_course')
+        stats_course.insert({
+            'course_id': instance.id,
+            'started': 0,
+            'completed': 0,
+            'passed': 0,
+        }, data=True)
+
+
 signals.post_save.connect(course_invalidate_cache, sender=Course)
+signals.post_save.connect(course_stats, sender=Course)
 signals.post_delete.connect(course_invalidate_cache, sender=Course)
 
 
@@ -259,7 +271,25 @@ def unit_invalidate_cache(sender, instance, **kwargs):
         pass
 
 
+def unit_stats(sender, instance, created, **kwargs):
+    stats_unit = get_db().get_collection('stats_unit')
+    if created:
+        stats_unit.insert({
+            'course_id': instance.course.id,
+            'unit_id': instance.id,
+            'started': 0,
+            'completed': 0,
+            'passed': 0,
+        }, safe=True)
+    else:
+        stats_unit.update(
+            {'unit_id': instance.id},
+            {'$set': {'course_id': instance.course.id}},
+            safe=True
+        )
+
 signals.post_save.connect(unit_invalidate_cache, sender=Unit)
+signals.post_save.connect(unit_stats, sender=Unit)
 signals.post_delete.connect(unit_invalidate_cache, sender=Unit)
 
 
@@ -346,7 +376,34 @@ def handle_kq_post_save(sender, instance, created, **kwargs):
         process_video_task.delay(question_list[0].id)
 
 
+def kq_stats(sender, instance, created, **kwargs):
+    stats_kq = get_db().get_collection('stats_kq')
+    if created:
+        stats_kq.insert({
+            'course_id': instance.unit.course.id,
+            'unit_id': instance.unit.id,
+            'kq_id': instance.id,
+            'viewed': 0,
+            'submitted': 0,
+            'reviews': 0,
+            'reviewers': 0,
+            'passed': 0,
+        }, safe=True)
+        # It doesn't matter if it has all the fields because the teacheradmin
+        # view only returns the proper fields depending on the kq type
+    else:
+        stats_kq.update(
+            {'kq_id': instance.id},
+            {'$set': {
+                'course_id': instance.unit.course.id,
+                'unit_id': instance.unit.id,
+            }},
+            safe=True
+        )
+
+
 signals.post_save.connect(handle_kq_post_save, sender=KnowledgeQuantum)
+signals.post_save.connect(kq_stats, sender=KnowledgeQuantum)
 
 
 class Attachment(models.Model):
