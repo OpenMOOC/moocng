@@ -29,6 +29,14 @@ logger = logging.getLogger(__name__)
 
 
 def is_teacher(user, courses):
+
+    """
+    Return if a user is teacher of a course or not
+
+    :returns: Boolean
+
+    .. versionadded:: 0.1
+    """
     is_teacher = False
     if isinstance(courses, Course):
         courses = [courses]
@@ -46,10 +54,23 @@ UNIT_BADGE_CLASSES = {
 
 
 def get_unit_badge_class(unit):
+
+    """
+    .. versionadded:: 0.1
+    """
     return UNIT_BADGE_CLASSES[unit.unittype]
 
 
 def is_course_ready(course):
+
+    """
+    Return if the current course is ready for users. This is done by comparing
+    the start and end dates of the course.
+
+    :returns: Boolean pair
+
+    .. versionadded:: 0.1
+    """
     has_content = course.unit_set.count() > 0
     is_ready = True
     ask_admin = False
@@ -66,6 +87,12 @@ def is_course_ready(course):
 
 
 def send_mail_wrapper(subject, template, context, to):
+
+    """
+    Simple wrapper on top of the django send_mail function.
+
+    .. versionadded:: 0.1
+    """
     try:
         email = EmailMessage(
             subject=subject,
@@ -79,6 +106,12 @@ def send_mail_wrapper(subject, template, context, to):
 
 
 def send_mass_mail_wrapper(subject, message, recipients, html_content=False):
+
+    """
+    Simple wrapper on top of the django send_mass_mail function.
+
+    .. versionadded: 0.1
+    """
     mails = []
     content = message
     if html_content:

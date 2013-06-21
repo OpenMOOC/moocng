@@ -19,6 +19,14 @@ from django.utils.translation import ugettext as _
 
 class ImageReadOnlyWidget(Widget):
 
+    """
+    Show the status of the last_frame process.
+
+    :returns: String
+
+    .. versionadded:: 0.1
+    """
+
     def render(self, name, value, attrs=None):
         if value is None:
             return u''  # the question is not saved yet
