@@ -30,6 +30,14 @@ from moocng.assets.forms import AssetForm
 
 class CourseForm(forms.ModelForm):
 
+    """
+    Course form. Make some changes to the form classes and clean the media fields
+    to prevent errors processing the content.
+
+    :returns: HTML Form
+
+    ..versionadded:: 0.1        
+    """
     class Meta:
         model = Course
         exclude = ('slug', 'teachers', 'owner', 'students')

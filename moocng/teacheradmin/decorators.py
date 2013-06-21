@@ -21,6 +21,15 @@ from moocng.decorators import user_passes_test
 
 def is_teacher_or_staff(original_function=None):
 
+    """
+    Security decorator to detect if the user is teacher or part of the staff
+    team.
+
+    :returns: Boolean pair
+
+    .. versionadded:: 0.1
+    """
+
     def decorated(request, course_slug=None, *args, **kwargs):
         course = get_object_or_404(Course, slug=course_slug)
 

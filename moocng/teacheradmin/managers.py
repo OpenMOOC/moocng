@@ -17,6 +17,12 @@ from django.db import models
 
 class MassiveEmailManager(models.Manager):
 
+    """
+    Manager function for mass amil sending when the teacher creates an announcement
+    in the course.
+
+    .. versionadded:: 0.1
+    """
     def create_from_announcement(self, announcement):
         return super(MassiveEmailManager, self).create(
             course=announcement.course,
