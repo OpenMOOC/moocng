@@ -27,9 +27,16 @@ from moocng.courses.models import Course, Unit, CourseTeacher
 
 
 def can_user_view_course(course, user):
-    """Returns a pair where the first element is a bool indicating if the user
+
+    """
+    Returns a pair where the first element is a bool indicating if the user
     can view the course and the second one is a string code explaining the
-    reason."""
+    reason.
+
+    :returns: Bool
+
+    .. versionadded:: 0.1
+    """
     if course.is_public:
         return True, 'public'
 
@@ -52,7 +59,14 @@ def can_user_view_course(course, user):
 
 
 def check_user_can_view_course(course, request):
-    """Raises a 404 error if the user can't see the course"""
+
+    """
+    Raises a 404 error if the user can't see the course.
+
+    :returns: message or 404
+
+    .. versionadded:: 0.1
+    """
     yes_he_can, reason = can_user_view_course(course, request.user)
 
     if yes_he_can:
@@ -68,7 +82,14 @@ def check_user_can_view_course(course, request):
 
 
 def get_courses_available_for_user(user):
-    """Filter in a list of courses what courses are availabled for the user"""
+
+    """
+    Filter in a list of courses what courses are available for the user.
+
+    :returns: Object list
+
+    .. versionadded:: 0.1
+    """
     if user.is_superuser or user.is_staff:
         # Return every course that hasn't finished
         return Course.objects.exclude(end_date__lt=date.today())
@@ -81,7 +102,14 @@ def get_courses_available_for_user(user):
 
 
 def get_units_available_for_user(course, user, is_overview=False):
-    """Filter units of a course what courses are availabled for the user"""
+
+    """
+    Filter units of a course what courses are available for the user.
+
+    :returns: Object list
+
+    .. versionadded:: 0.1
+    """
     if user.is_superuser or user.is_staff:
         return course.unit_set.all()
     elif user.is_anonymous():
