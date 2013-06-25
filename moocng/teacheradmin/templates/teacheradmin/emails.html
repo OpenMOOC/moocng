@@ -24,6 +24,13 @@ $(document).ready(function () {
 
         $("#modal" + id + ".modal").modal();
     });
+
+    $("#sendemails").click(function (evt) {
+        // Prevent double clicking or multiple POST signals
+        $(this).parents('form').submit();
+        $(this).prop('disabled', true);
+        $(this).addClass("disabled");
+    })
 });
 </script>
 {% endblock %}
@@ -39,7 +46,7 @@ $(document).ready(function () {
         <form method="POST">{% csrf_token %}
             {{ form.as_bootstrap }}
             <div class="form-actions">
-                <input type="submit" class="btn btn-primary" value="{% trans "Send" %}" />
+                <input id="sendemails" type="submit" class="btn btn-primary" value="{% trans "Send" %}" />
             </div>
         </form>
     </div>
