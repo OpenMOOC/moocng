@@ -13,8 +13,11 @@
 # limitations under the License.
 
 import csv
+from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
+
+from pymongo import ASCENDING
 
 from moocng.badges.models import Award
 from moocng.courses.marks import calculate_course_mark
@@ -26,21 +29,31 @@ class Command(BaseCommand):
 
     help = ('Generate a csv file with one row per student with their stats on '
             'the given course')
-    args = '<course_id_or_slug filename.csv>'
+    args = '<course_id_or_slug>'
+    option_list = BaseCommand.option_list + (
+        make_option(
+            '--filename',
+            dest='filename',
+            default=None,
+            help='Output filename.'
+        ),
+    )
 
     def handle(self, *args, **options):
-        if len(args) != 2:
+        if len(args) != 1:
             raise CommandError('Wrong number of arguments')
 
         try:
             if args[0].isdigit():
-                course = Course.objects.only('id').get(id=args[0])
+                course = Course.objects.only('id', 'slug').get(id=args[0])
             else:
-                course = Course.objects.only('id').get(slug=args[0])
+                course = Course.objects.only('id', 'slug').get(slug=args[0])
         except Course.DoesNotExist:
-            raise CommandError('"%s" does not exist' % args[0])
+            raise CommandError('The course defined by "%s" does not exist' % args[0])
 
-        # Global stats (course level)
+        filename = options.get('filename') or '%s.csv' % course.slug
+
+        # Global stats (course level), repeated in every student
         units = course.unit_set.all().count()
         kqs = KnowledgeQuantum.objects.filter(unit__course__id=course.id).count()
         completed_first_unit = 0
@@ -60,12 +73,22 @@ class Command(BaseCommand):
                 kqs,
             ]
 
-            course_act = activity.find({
-                'course_id': course.id,
-                'user_id': student.id,
-            }).count()
+            course_act = activity.find(
+                {
+                    'course_id': course.id,
+                    'user_id': student.id,
+                },
+                sort=[('_id', ASCENDING), ]
+            )
+            course_act_count = course_act.count()
 
-            progress = (course_act * 100) / kqs
+            # Per students stats
+            if course_act_count > 0:
+                row.append(course_act[0]['_id'].generation_time.isoformat())
+            else:
+                row.append('N/A')
+
+            progress = (course_act_count * 100) / kqs
             row.append(progress)
 
             completed_units = 0
@@ -83,7 +106,7 @@ class Command(BaseCommand):
                     completed_first_unit += completed_units
             row.append(completed_units)
 
-            row.append(course_act)
+            row.append(course_act_count)
 
             mark, _ = calculate_course_mark(course, student)
             row.append(mark)
@@ -95,7 +118,7 @@ class Command(BaseCommand):
 
             rows.append(row)
 
-        with open(args[1], 'wb') as csvfile:
+        with open(filename, 'wb') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow([
                 'email',
@@ -104,6 +127,7 @@ class Command(BaseCommand):
                 'course_id',
                 'course_units',
                 'course_nuggets',
+                'first_activity_date',
                 'progress_percentage',
                 'completed_units',
                 'completed_nuggets',
