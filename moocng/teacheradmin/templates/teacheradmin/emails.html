@@ -26,10 +26,12 @@ $(document).ready(function () {
     });
 
     $("#sendemails").click(function (evt) {
+        evt.preventDefault();
         // Prevent double clicking or multiple POST signals
-        $(this).parents('form').submit();
-        $(this).prop('disabled', true);
-        $(this).addClass("disabled");
+        $(this)
+            .parents('form').submit().end()
+            .prop('disabled', true)
+            .addClass("disabled");
     })
 });
 </script>
