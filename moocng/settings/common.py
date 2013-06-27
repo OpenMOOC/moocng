@@ -182,21 +182,34 @@ COMPRESS_CSS_FILTERS = [
 
 COMPRESS_OFFLINE = False
 
-INSTALLED_APPS = [
+
+# This section describes the installed applications for OpenMOOC, it's splitted
+# into three for the sake of clarity and usefulness when processing locales
+# and application dependant stuff.
+
+DJANGO_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'grappelli',
-    'django.contrib.admin',
     'django.contrib.flatpages',
+]
+
+THIRDPARTY_APPS = [
+    'grappelli',
+    'django.contrib.admin',  # This has to be here because of Grappelli
     'adminsortable',
     'djcelery',
     'tinymce',
     'tastypie',
     'compressor',
+    'south',
+    'django_mathjax',
+]
+
+OPENMOOC_APPS = [
     'moocng.contact',
     'moocng.badges',  # this must be defined before moocng.courses
     'moocng.courses',
@@ -209,12 +222,10 @@ INSTALLED_APPS = [
     'moocng.categories',
     'moocng.auth_handlers',
     'moocng.peerreview',
-    'south',
-    'django_mathjax',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
     'moocng.media_contents',
 ]
+
+INSTALLED_APPS = DJANGO_APPS + THIRDPARTY_APPS + OPENMOOC_APPS
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
