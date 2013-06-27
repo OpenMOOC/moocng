@@ -15,17 +15,42 @@
 import logging
 
 from django.contrib.auth.models import User
+from django.conf import settings
 
 from celery import task
 
 from moocng.courses.utils import send_mass_mail_wrapper
-from moocng.teacheradmin.models import MassiveEmail
 
 logger = logging.getLogger(__name__)
 
 
 @task
+def massmail_send_in_batches(massiveemail, email_send_task):
+
+    """
+    Create a task to create the sending mass mail task. This is done this way
+    so the form in mass mailing section in the teacher admin can reply as
+    fast as possible.
+
+    .. versionadded:: 0.1
+    """
+    try:
+        batch = settings.MASSIVE_EMAIL_BATCH_SIZE
+    except AttributeError:
+        batch = 30
+
+    students = massiveemail.course.students.all()
+    batches = (students.count() / batch) + 1
+    for i in range(batches):
+        init = batch * i
+        end = init + batch
+        students_ids = [s.id for s in students[init:end]]
+        email_send_task.apply_async(args=[massiveemail.id, students_ids], queue='massmail')
+
+
+@task
 def send_massive_email_task(email_id, students_ids):
+    from moocng.teacheradmin.models import MassiveEmail
     try:
         email = MassiveEmail.objects.get(id=email_id)
     except MassiveEmail.DoesNotExist:

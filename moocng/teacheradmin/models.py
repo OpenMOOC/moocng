@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -21,6 +20,7 @@ from tinymce.models import HTMLField
 
 from moocng.courses.models import Course
 from moocng.teacheradmin.managers import MassiveEmailManager
+from moocng.teacheradmin.tasks import massmail_send_in_batches
 
 
 class Invitation(models.Model):
@@ -59,15 +59,10 @@ class MassiveEmail(models.Model):
         verbose_name_plural = _(u'massive emails')
 
     def send_in_batches(self, email_send_task):
-        try:
-            batch = settings.MASSIVE_EMAIL_BATCH_SIZE
-        except AttributeError:
-            batch = 30
+        """
+        Start the celery task that will start the batch assignment. Take in mind
+        that we are sending the whole MassiveEmail object to the batches task.
 
-        students = self.course.students.all()
-        batches = (students.count() / batch) + 1
-        for i in range(batches):
-            init = batch * i
-            end = init + batch
-            students_ids = [s.id for s in students[init:end]]
-            email_send_task.delay(self.id, students_ids)
+        .. versionadded:: 0.1
+        """
+        massmail_send_in_batches.delay(self, email_send_task)
