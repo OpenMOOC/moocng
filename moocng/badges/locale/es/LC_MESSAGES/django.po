@@ -1,0 +1,112 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: moocng 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-06-27 10:32+0200\n"
+"PO-Revision-Date: 2013-06-27 09:39:+0200\n"
+"Last-Translator: Oscar Carballal Prego <ocarballal@yaco.es>\n"
+"Language-Team: es_ES <es_ES@li.org>\n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: admin.py:30 categories/admin.py:15
+msgid "Image"
+msgstr "Imagen"
+
+#: models.py:29
+msgid "The image is not a png"
+msgstr "La imagen no es un png"
+
+#: models.py:35
+msgid "Badge title"
+msgstr "Título de la medalla"
+
+#: models.py:36
+msgid "Short, descriptive title"
+msgstr "Título corto y descriptivo"
+
+#: models.py:38
+msgid "Badge slug"
+msgstr "Slug de la medalla"
+
+#: models.py:39
+msgid "Very short name, for use in URLs and links"
+msgstr "Nombre muy corto, para utilizar en URLs y enlaces"
+
+#: models.py:41
+msgid "Badge description"
+msgstr "Descripción de la medalla"
+
+#: models.py:42
+msgid "Longer description of the badge and its criteria"
+msgstr "Descripción larga de la medalla y sus criterios"
+
+#: models.py:44
+msgid "Badge image"
+msgstr "Imagen de la medalla"
+
+#: models.py:46
+msgid "Upload an image to represent the badge, it must be png"
+msgstr "Suba una imagen que represente la medalla, debe ser un png"
+
+#: models.py:49
+msgid "Creation date and time"
+msgstr "Fecha y hora de creación"
+
+#: models.py:52 models.py:75
+msgid "Last modification date and time"
+msgstr "Fecha y hora de la última modificación"
+
+#: models.py:56
+msgid "badge"
+msgstr "medalla"
+
+#: models.py:57
+msgid "badges"
+msgstr "medallas"
+
+#: models.py:65
+msgid "Badge"
+msgstr "Medalla"
+
+#: models.py:68
+msgid "Awardee"
+msgstr "Premiado"
+
+#: models.py:72
+msgid "Awarding date and time"
+msgstr "Fecha y hora del premio"
+
+#: models.py:80
+msgid "award"
+msgstr "premio"
+
+#: models.py:81
+msgid "awards"
+msgstr "premios"
+
+#: models.py:84
+msgid "{0} awarded to {1}"
+msgstr "{0} otorgado a {1}"
+
+#: templates/badges/user_badge.html:9
+#, python-format
+msgid "The user \"<b>%(first_name)s %(last_name)s</b>\" has the award:"
+msgstr "El usuario \"<b>%(first_name)s %(last_name)s</b>\" tiene el premio:"
+
+#: templates/badges/user_badges.html:9
+#, python-format
+msgid ""
+"The user \"<b>%(first_name)s %(last_name)s</b>\" has the following awards:"
+msgstr ""
+"El usuario \"<b>%(first_name)s %(last_name)s</b>\" tiene los siguientes "
+"premios:"

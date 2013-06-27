@@ -1,0 +1,316 @@
+# Copyright 2013 Rooter Analysis S.L.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: moocng 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-06-27 10:32+0200\n"
+"PO-Revision-Date: 2013-06-27 09:39:+0200\n"
+"Last-Translator: Oscar Carballal Prego <ocarballal@yaco.es>\n"
+"Language-Team: es_ES <es_ES@li.org>\n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: models.py:33
+msgid "Slot duration"
+msgstr "Duración del slot"
+
+#: models.py:34
+msgid "Name"
+msgstr "Nombre"
+
+#: models.py:36
+msgid "Description"
+msgstr "Descripción"
+
+#: models.py:38
+msgid "Student capacity"
+msgstr "Capacidad"
+
+#: models.py:39
+msgid "Maximun bookable slots"
+msgstr "Número máximo de slots simultáneos"
+
+#: models.py:40
+msgid "Time required in advance for reservation"
+msgstr "Antelación requerida para hacer una reserva"
+
+#: models.py:42
+msgid "Time required in advance to cancel a reservation"
+msgstr "Antelación requerida para cancelar una reserva"
+
+#: models.py:44
+msgid "Asset URL"
+msgstr "Url del recurso"
+
+#: models.py:48
+msgid "asset"
+msgstr "recurso"
+
+#: models.py:49
+msgid "assets"
+msgstr "Recursos"
+
+#: models.py:58
+msgid "KnowledgeQuantum"
+msgstr "Píldora"
+
+#: models.py:60
+msgid "Assets"
+msgstr "Recursos"
+
+#: models.py:62
+msgid "Available from"
+msgstr "Disponible desde"
+
+#: models.py:64
+msgid "Available to"
+msgstr "Disponible hasta"
+
+#: models.py:68
+msgid "asset availability"
+msgstr "disponibilidad de recursos"
+
+#: models.py:69
+msgid "asset availabilities"
+msgstr "disponibilidades de recursos"
+
+#: models.py:72
+msgid "Assets availables for {0}"
+msgstr "Recursos disponibles para {0}"
+
+#: models.py:77
+msgid "User"
+msgstr ""
+
+#: models.py:80
+msgid "Reserved from"
+msgstr "Reservado para"
+
+#: models.py:82
+msgid "Asset"
+msgstr "Recurso"
+
+#: models.py:85 models.py:87
+msgid "Datetime"
+msgstr "Fecha y hora"
+
+#: models.py:91
+msgid "reservation"
+msgstr "reserva"
+
+#: models.py:92
+msgid "reservations"
+msgstr "reservas"
+
+#: models.py:95
+msgid "Reservation of {0}, made by {1}"
+msgstr "Reserva de {0}, hecha por {1}"
+
+#: utils.py:125
+msgid "This asset is not available from this nugget."
+msgstr "Este recurso no está disponible desde esta píldora."
+
+#: utils.py:128
+msgid "A reservation should not finish before it starts."
+msgstr "Una reserva no puede acabar antes de comenzar."
+
+#: utils.py:134
+msgid "The specified time is in the past."
+msgstr "Se ha especificado un momento en el pasado."
+
+#: utils.py:136
+msgid "Not enough time in advance for this reservation"
+msgstr "La reserva debe hacerse con más antelación"
+
+#: utils.py:138
+msgid "The specified time is not in the bookable period."
+msgstr "El tiempo indicado no se corresponde con un periodo de reserva"
+
+#: utils.py:143
+msgid "You have reached the pending reservations limit for this course."
+msgstr "Ha alcanzado el maximo de reservas pendientes para este curso"
+
+#: utils.py:145
+msgid "You have reached the reservations limit for this course."
+msgstr "Ha alcanzado el limite de reservas para este curso"
+
+#: utils.py:155
+msgid "No available places left at selected time."
+msgstr "No hay plazas disponibles para la hora seleccionada"
+
+#: utils.py:159
+msgid "You already have a reservation for the same asset at the same time"
+msgstr "Ya tiene una reserva del mismo recurso para la misma hora"
+
+#: utils.py:190
+msgid "There's not a free slot available."
+msgstr "No hay slots disponibles"
+
+#: utils.py:201
+msgid "Reservation created successfully."
+msgstr "La reserva ha sido registrada con éxito."
+
+#: utils.py:275
+msgid "Your reservation has been cancelled"
+msgstr "Su reserva ha sido anulada"
+
+#: utils.py:288
+msgid "Your reservation has been modified"
+msgstr "Su reserva ha sido modificada"
+
+#: views.py:42 views.py:98 views.py:130
+msgid "You are not enrolled in this course"
+msgstr "No estás matriculado en este curso"
+
+#: views.py:104
+msgid "You are not the owner of this reservation"
+msgstr "No es quien registró esta reserva"
+
+#: views.py:111
+msgid "Not enough time in advance to cancel this reservation."
+msgstr "Ha sobrepasado la hora límite para cancelar la reserva"
+
+#: views.py:140
+msgid "This nugget has no available asset"
+msgstr "Esta píldora no tiene recursos disponibles."
+
+#: views.py:145
+msgid "No initial time specified"
+msgstr "Hora inicial no especificada"
+
+#: views.py:153
+msgid "Incorrect booking time specified"
+msgstr "Hora de reserva incorrecta"
+
+#: templates/assets/email_reservation_cancelled.txt:3
+#, python-format
+msgid ""
+"\n"
+"Dear %(user)s\n"
+"\n"
+"Your reservation of \"%(asset)s\" for \"%(kq)s\" has been cancelled.\n"
+"We deeply apologize for the inconvenience.\n"
+"\n"
+"Best regards, %(site)s's team\n"
+msgstr ""
+"\n"
+"Estimado %(user)s\n"
+"\n"
+"Su reserva de \"%(asset)s\" para \"%(kq)s\" ha sido cancelada.\n"
+"Rogamos disculpe las molestias que hayamos podido ocasionarle.\n"
+"\n"
+"Un cordial saludo, el equipo de %(site)s\n"
+
+#: templates/assets/email_reservation_modified.txt:3
+#, python-format
+msgid ""
+"\n"
+"Dear %(user)s\n"
+"\n"
+"Your reservation of \"%(asset)s\" for \"%(kq)s\" has been modified.\n"
+"Now, your reservation begins at \"%(begin)s\" and ends at \"%(end)s\"\n"
+"We deeply apologize for the inconvenience.\n"
+"\n"
+"Best regards, %(site)s's team\n"
+msgstr ""
+"\n"
+"Estimado %(user)s\n"
+"\n"
+"Su reserva de \"%(asset)s\" para \"%(kq)s\" ha sido modificada.\n"
+"Ahora, su reserva comienza a \"%(begin)s\" y termina a \"%(end)s\"\n"
+"Rogamos disculpe las molestias que hayamos podido ocasionarle.\n"
+"\n"
+"Un cordial saludo, el equipo de %(site)s\n"
+
+#: templates/assets/reservations.html:17
+msgid "Hide past reservations"
+msgstr "Ocultar reservas pasadas"
+
+#: templates/assets/reservations.html:19
+#: templates/assets/reservations.html:112
+msgid "Display past reservations"
+msgstr "Mostrar reservas pasadas"
+
+#: templates/assets/reservations.html:41 templates/assets/reservations.html:50
+msgid "Confirm cancelation"
+msgstr "Confirme la cancelación"
+
+#: templates/assets/reservations.html:44
+msgid ""
+"Are you completely sure you want to cancel the registration? You cannot undo "
+"this action."
+msgstr ""
+"¿Está completamente seguro de que quiere cancelar la reserva? Esta acción no "
+"se puede deshacer."
+
+#: templates/assets/reservations.html:49
+msgid "Back"
+msgstr "Atrás"
+
+#: templates/assets/reservations.html:55
+msgid "Active Reservations"
+msgstr "Reservas Activas"
+
+#: templates/assets/reservations.html:58 templates/assets/reservations.html:84
+#: templates/assets/reservations.html:119
+#, python-format
+msgid ""
+"\n"
+"    %(asset_name)s of %(kq_title)s   "
+msgstr ""
+"\n"
+"    %(asset_name)s de %(kq_title)s   "
+
+#: templates/assets/reservations.html:61 templates/assets/reservations.html:87
+#: templates/assets/reservations.html:122
+#, python-format
+msgid ""
+"\n"
+"        <li> From: %(from)s </li>\n"
+"        <li> To:  %(to)s </li>\n"
+"        <li> Slot: %(slot_id)s </li>\n"
+"        <li> Students sharing this slot: %(concurrent)s </li>\n"
+"        "
+msgstr ""
+"\n"
+"        <li> Desde: %(from)s </li>\n"
+"        <li> Hasta:  %(to)s </li>\n"
+"        <li> Slot: %(slot_id)s </li>\n"
+"        <li> Estudiantes que comparten este slot: %(concurrent)s </li>\n"
+"        "
+
+#: templates/assets/reservations.html:71
+msgid "Activate"
+msgstr "Activar"
+
+#: templates/assets/reservations.html:80
+msgid "Pending Reservations"
+msgstr "Reservas Pendientes"
+
+#: templates/assets/reservations.html:96
+msgid "Remove"
+msgstr "Eliminar"
+
+#: templates/assets/reservations.html:104
+msgid "You do not have any pending asset reservation for this course."
+msgstr "No tiene reservas de recursos pendientes para este curso"
+
+#: templates/assets/reservations.html:108
+msgid "Past Reservations"
+msgstr "Reservas Pasadas"

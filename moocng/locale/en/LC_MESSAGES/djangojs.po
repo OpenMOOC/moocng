@@ -1,104 +1,91 @@
-# Copyright 2012 Rooter Analysis S.L.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: moocng 0.1\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-27 10:33+0200\n"
-"PO-Revision-Date: 2013-03-14 17:13+0100\n"
-"Last-Translator: Alejandro Blanco <ablanco@yaco.es>\n"
-"Language-Team: es_ES <es_ES@li.org>\n"
-"Language: es_ES\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: static/js/ajax.js:45
 msgid "Error"
-msgstr "Error"
+msgstr ""
 
 #: static/js/ajax.js:47
 msgid "Unknown error with ajax petition"
-msgstr "Error desconocido al hacer la petición ajax"
+msgstr ""
 
 #: static/js/ajax.js:52
 msgid "error"
-msgstr "error"
+msgstr ""
 
 #: static/js/progress-views.js:81 static/js/progress-views.js.c:84
 msgid "completed"
-msgstr "completado"
+msgstr ""
 
 #: static/js/progress-views.js:145
 msgid ""
 "This score will not be applied to your final score until you get the minimum "
 "number of reviews"
 msgstr ""
-"Esta nota no se aplicará a tu nota final hasta que obtengas el número mínimo "
-"de revisiones"
 
 #: static/js/progress-views.js:163
 msgid "pending"
-msgstr "pendiente"
+msgstr ""
 
 #: static/js/progress-views.js:171
 msgid "correct"
-msgstr "correcto"
+msgstr ""
 
 #: static/js/progress-views.js:173
 msgid "incorrect"
-msgstr "incorrecto"
+msgstr ""
 
 #: static/js/progress-views.js:203
 msgid "Reviews of your submission"
-msgstr "Revisiones de tu entrega"
+msgstr ""
 
 #: static/js/progress-views.js:206
 msgid "Date"
-msgstr "Fecha"
+msgstr ""
 
 #: static/js/progress-views.js:207
 msgid "Score"
-msgstr "Nota"
+msgstr ""
 
 #: static/js/progress-views.js:212
 msgid "You have not received any review yet"
-msgstr "Aún no has recibido ninguna revisión"
+msgstr ""
 
 #: static/js/progress-views.js:216
 msgid ""
 "You have sent %(sent_reviews)s reviews of the %(mandatory_reviews)s "
 "mandatory reviews."
 msgstr ""
-"Has enviado %(sent_reviews)s revisiones de las %(mandatory_reviews)s "
-"obligatorias."
 
 #: static/js/progress-views.js:223
 msgid "Do more reviews"
-msgstr "Hacer más revisiones"
+msgstr ""
 
 #: static/js/progress-views.js:276
 msgid "View details"
-msgstr "Ver detalles"
+msgstr ""
 
 #: static/js/routes.js:81
 msgid "The module is not ready"
-msgstr "El módulo no está listo"
+msgstr ""
 
 #: static/js/routes.js:82
 msgid ""
 "This module has no nuggets. Probably the start date hasn't been reached yet."
 msgstr ""
-"Este módulo no tiene píldoras. Probablemente aún no se ha alcanzado la fecha "
-"de inicio."

@@ -1,0 +1,109 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-06-27 10:32+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: admin.py:30
+msgid "Image"
+msgstr ""
+
+#: models.py:29
+msgid "The image is not a png"
+msgstr ""
+
+#: models.py:35
+msgid "Badge title"
+msgstr ""
+
+#: models.py:36
+msgid "Short, descriptive title"
+msgstr ""
+
+#: models.py:38
+msgid "Badge slug"
+msgstr ""
+
+#: models.py:39
+msgid "Very short name, for use in URLs and links"
+msgstr ""
+
+#: models.py:41
+msgid "Badge description"
+msgstr ""
+
+#: models.py:42
+msgid "Longer description of the badge and its criteria"
+msgstr ""
+
+#: models.py:44
+msgid "Badge image"
+msgstr ""
+
+#: models.py:46
+msgid "Upload an image to represent the badge, it must be png"
+msgstr ""
+
+#: models.py:49
+msgid "Creation date and time"
+msgstr ""
+
+#: models.py:52 models.py:75
+msgid "Last modification date and time"
+msgstr ""
+
+#: models.py:56
+msgid "badge"
+msgstr ""
+
+#: models.py:57
+msgid "badges"
+msgstr ""
+
+#: models.py:65
+msgid "Badge"
+msgstr ""
+
+#: models.py:68
+msgid "Awardee"
+msgstr ""
+
+#: models.py:72
+msgid "Awarding date and time"
+msgstr ""
+
+#: models.py:80
+msgid "award"
+msgstr ""
+
+#: models.py:81
+msgid "awards"
+msgstr ""
+
+#: models.py:84
+msgid "{0} awarded to {1}"
+msgstr ""
+
+#: templates/badges/user_badge.html:9
+#, python-format
+msgid "The user \"<b>%(first_name)s %(last_name)s</b>\" has the award:"
+msgstr ""
+
+#: templates/badges/user_badges.html:9
+#, python-format
+msgid ""
+"The user \"<b>%(first_name)s %(last_name)s</b>\" has the following awards:"
+msgstr ""

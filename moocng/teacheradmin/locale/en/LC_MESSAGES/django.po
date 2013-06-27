@@ -1,0 +1,871 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-06-27 10:32+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: forms.py:67 forms.py:69 templates/teacheradmin/units.html:383
+msgid "Invalid content id or url"
+msgstr ""
+
+#: forms.py:76
+msgid "You must select a content type or remove the content id"
+msgstr ""
+
+#: forms.py:84
+msgid "Send the announcement via email to all the students in this course"
+msgstr ""
+
+#: forms.py:86
+msgid "Please use this with caution as some courses has many students"
+msgstr ""
+
+#: models.py:28
+msgid "Host"
+msgstr ""
+
+#: models.py:30
+msgid "Email"
+msgstr ""
+
+#: models.py:32 models.py:45 templates/teacheradmin/stats.html:51
+#: templates/teacheradmin/stats.html:92 templates/teacheradmin/stats.html:130
+msgid "Course"
+msgstr ""
+
+#: models.py:34 models.py:48
+msgid "Date and time"
+msgstr ""
+
+#: models.py:39
+msgid "invitation"
+msgstr ""
+
+#: models.py:40
+msgid "invitations"
+msgstr ""
+
+#: models.py:51 templates/teacheradmin/emails.html:79
+msgid "Subject"
+msgstr ""
+
+#: models.py:53 templates/teacheradmin/emails.html:81
+#: templates/teacheradmin/question.html:100
+msgid "Content"
+msgstr ""
+
+#: models.py:58
+msgid "massive email"
+msgstr ""
+
+#: models.py:59
+msgid "massive emails"
+msgstr ""
+
+#: utils.py:24
+#, python-format
+msgid "You have been invited to be a teacher in \"%s\""
+msgstr ""
+
+#: utils.py:37
+#, python-format
+msgid "You have been removed as teacher from \"%s\""
+msgstr ""
+
+#: views.py:75
+msgid "There are no statistics for this course."
+msgstr ""
+
+#: views.py:218
+#, python-format
+msgid "The KQ with the %s id doesn't exists"
+msgstr ""
+
+#: views.py:437 views.py:476
+msgid "Your changes were saved."
+msgstr ""
+
+#: views.py:442 views.py:468
+msgid ""
+"There were problems with some data you introduced, please fix them and try "
+"again."
+msgstr ""
+
+#: views.py:607 views.py:649
+msgid ""
+"The email has been queued, and it will be send in batches to every student "
+"in the course."
+msgstr ""
+
+#: templates/teacheradmin/announcement_edit.html:15
+#: templates/teacheradmin/asset_edit.html:18
+msgid "Save changes"
+msgstr ""
+
+#: templates/teacheradmin/announcement_edit.html:17
+msgid "Create announcement"
+msgstr ""
+
+#: templates/teacheradmin/announcement_view.html:12
+msgid "Date"
+msgstr ""
+
+#: templates/teacheradmin/announcements.html:28
+msgid "There isn't announcements yet"
+msgstr ""
+
+#: templates/teacheradmin/announcements.html:32
+msgid "Add announcement"
+msgstr ""
+
+#: templates/teacheradmin/asset_edit.html:12
+msgid ""
+"Please take into account than this change will affect all courses which use "
+"this asset"
+msgstr ""
+
+#: templates/teacheradmin/assets.html:25
+msgid "There are not assets yet"
+msgstr ""
+
+#: templates/teacheradmin/base_teacheradmin.html:12
+msgid "Course edition"
+msgstr ""
+
+#: templates/teacheradmin/base_teacheradmin.html:13
+msgid "Information"
+msgstr ""
+
+#: templates/teacheradmin/base_teacheradmin.html:14
+msgid "Teachers"
+msgstr ""
+
+#: templates/teacheradmin/base_teacheradmin.html:15
+msgid "Units"
+msgstr ""
+
+#: templates/teacheradmin/base_teacheradmin.html:16
+msgid "Categories"
+msgstr ""
+
+#: templates/teacheradmin/base_teacheradmin.html:17
+#: templates/teacheradmin/units.html:323
+msgid "Assets"
+msgstr ""
+
+#: templates/teacheradmin/base_teacheradmin.html:18
+msgid "Announcements"
+msgstr ""
+
+#: templates/teacheradmin/base_teacheradmin.html:19
+msgid "Extra"
+msgstr ""
+
+#: templates/teacheradmin/base_teacheradmin.html:20
+msgid "Statistics"
+msgstr ""
+
+#: templates/teacheradmin/base_teacheradmin.html:21
+msgid "Send mail"
+msgstr ""
+
+#: templates/teacheradmin/base_teacheradmin.html:28
+msgid "We are sorry"
+msgstr ""
+
+#: templates/teacheradmin/base_teacheradmin.html:29
+msgid "But this section is not available yet."
+msgstr ""
+
+#: templates/teacheradmin/categories.html:16
+msgid "Category's icon"
+msgstr ""
+
+#: templates/teacheradmin/categories.html:18
+msgid "This category doesn't have an icon"
+msgstr ""
+
+#: templates/teacheradmin/categories.html:28
+#: templates/teacheradmin/info.html:153 templates/teacheradmin/units.html:124
+#: templates/teacheradmin/units.html:345
+msgid "Save"
+msgstr ""
+
+#: templates/teacheradmin/categories.html:32
+msgid "Empty"
+msgstr ""
+
+#: templates/teacheradmin/categories.html:33
+msgid "There aren't categories defined yet, please contact an administrator."
+msgstr ""
+
+#: templates/teacheradmin/email_invitation_teacher.txt:3
+#, python-format
+msgid ""
+"\n"
+"Hello,\n"
+"\n"
+"you have been invited to be a teacher in the course \"%(course)s\" by "
+"%(host)s. After your registration in the platform is complete, you will be "
+"automatically assigned as a teacher to the course.\n"
+"\n"
+"You can register here: %(register)s\n"
+"\n"
+"Best regards, %(site)s's team\n"
+msgstr ""
+
+#: templates/teacheradmin/email_remove_teacher.txt:3
+#, python-format
+msgid ""
+"\n"
+"Hello,\n"
+"\n"
+"you have been removed as teacher from the course \"%(course)s\" by "
+"%(host)s.\n"
+"\n"
+"Best regards, %(site)s's team\n"
+msgstr ""
+
+#: templates/teacheradmin/emails.html:43
+msgid "Send an email to every student"
+msgstr ""
+
+#: templates/teacheradmin/emails.html:45
+msgid "Be aware!"
+msgstr ""
+
+#: templates/teacheradmin/emails.html:46
+#, python-format
+msgid ""
+"You are about to send an email to <strong>%(students)s students</strong>."
+msgstr ""
+
+#: templates/teacheradmin/emails.html:51
+msgid "Send"
+msgstr ""
+
+#: templates/teacheradmin/emails.html:61
+msgid "Previous emails"
+msgstr ""
+
+#: templates/teacheradmin/emails.html:66
+msgid "There aren't massive emails sent yet."
+msgstr ""
+
+#: templates/teacheradmin/emails.html:76
+msgid "Sent at"
+msgstr ""
+
+#: templates/teacheradmin/emails.html:85
+msgid "Close"
+msgstr ""
+
+#: templates/teacheradmin/info.html:39 templates/teacheradmin/units.html:154
+#: templates/teacheradmin/units.html:259
+msgid "Content id or url"
+msgstr ""
+
+#: templates/teacheradmin/info.html:142
+msgid "Certification available"
+msgstr ""
+
+#: templates/teacheradmin/question.html:39
+#: templates/teacheradmin/question.html:74
+msgid "Label"
+msgstr ""
+
+#: templates/teacheradmin/question.html:40
+#: templates/teacheradmin/question.html:75
+msgid "Input text"
+msgstr ""
+
+#: templates/teacheradmin/question.html:41
+#: templates/teacheradmin/question.html:76
+msgid "Checkbox"
+msgstr ""
+
+#: templates/teacheradmin/question.html:42
+#: templates/teacheradmin/question.html:77
+msgid "Radio"
+msgstr ""
+
+#: templates/teacheradmin/question.html:44
+#: templates/teacheradmin/teachers.html:100
+#: templates/teacheradmin/units.html:32
+msgid "Add"
+msgstr ""
+
+#: templates/teacheradmin/question.html:62
+#: templates/teacheradmin/question.html:64
+#: templates/teacheradmin/question.html:94
+msgid "Property"
+msgstr ""
+
+#: templates/teacheradmin/question.html:63
+#: templates/teacheradmin/question.html:65
+#: templates/teacheradmin/question.html:95
+msgid "Value"
+msgstr ""
+
+#: templates/teacheradmin/question.html:69
+msgid "Id"
+msgstr ""
+
+#: templates/teacheradmin/question.html:71
+#: templates/teacheradmin/units.html:97
+msgid "Type"
+msgstr ""
+
+#: templates/teacheradmin/question.html:88
+msgid "width"
+msgstr ""
+
+#: templates/teacheradmin/question.html:90
+msgid "height"
+msgstr ""
+
+#: templates/teacheradmin/question.html:99
+msgid "Solution"
+msgstr ""
+
+#: templates/teacheradmin/question.html:105
+msgid "Feedback"
+msgstr ""
+
+#: templates/teacheradmin/question.html:112
+#: templates/teacheradmin/units.html:202 templates/teacheradmin/units.html:207
+msgid "Remove"
+msgstr ""
+
+#: templates/teacheradmin/question.html:123
+#: templates/teacheradmin/units.html:33
+msgid "Go back"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:29
+msgid "Enrolled"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:30
+msgid "Started"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:31
+msgid "Completed"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:32
+msgid "Passed"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:33
+msgid "Reviewed"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:34
+msgid "Not started"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:35
+msgid "Incompleted"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:36
+msgid "Not passed"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:37
+msgid "Students evolution"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:38
+msgid "Viewed"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:39
+msgid "Submitted"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:40
+msgid "Not submitted"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:41 templates/teacheradmin/stats.html:93
+#: templates/teacheradmin/stats.html:95 templates/teacheradmin/stats.html:131
+#: templates/teacheradmin/units.html:76
+msgid "Unit"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:42 templates/teacheradmin/stats.html:132
+#: templates/teacheradmin/stats.html:134 templates/teacheradmin/units.html:133
+msgid "Nugget"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:53
+msgid "General statistics of the course"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:54 templates/teacheradmin/stats.html:96
+#: templates/teacheradmin/stats.html:135
+msgid "Students that have..."
+msgstr ""
+
+#: templates/teacheradmin/stats.html:57
+msgid "...started the course"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:61
+msgid "...completed the course"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:65
+msgid "...passed the course"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:69 templates/teacheradmin/stats.html:107
+#: templates/teacheradmin/stats.html:146
+msgid "Students evolution..."
+msgstr ""
+
+#: templates/teacheradmin/stats.html:72
+msgid "...in general"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:78
+msgid "...per unit"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:81
+msgid "All units"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:99
+msgid "...completed the unit"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:103
+msgid "...passed the unit"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:110
+msgid "...in the unit"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:116
+msgid "...per nugget"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:119
+msgid "All nuggets"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:138
+msgid "...submitted the exercise"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:142
+msgid "...passed the exercise"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:149
+msgid "...in the exercise"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:152
+msgid "Total reviews sent by the students"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:162
+#: templates/teacheradmin/teachers.html:41
+#: templates/teacheradmin/teachers.html:45
+#: templates/teacheradmin/teachers.html:49
+#: templates/teacheradmin/units.html:374 templates/teacheradmin/units.html:378
+#: templates/teacheradmin/units.html:382 templates/teacheradmin/units.html:386
+msgid "Error"
+msgstr ""
+
+#: templates/teacheradmin/stats.html:163
+#: templates/teacheradmin/teachers.html:50
+#: templates/teacheradmin/units.html:375
+msgid "Something went wrong, please try again later."
+msgstr ""
+
+#: templates/teacheradmin/teachers.html:17
+msgid "Pending"
+msgstr ""
+
+#: templates/teacheradmin/teachers.html:18
+#: templates/teacheradmin/teachers.html:63
+msgid "Owner"
+msgstr ""
+
+#: templates/teacheradmin/teachers.html:29
+#: templates/teacheradmin/teachers.html:33
+#: templates/teacheradmin/teachers.html:37
+#: templates/teacheradmin/units.html:366 templates/teacheradmin/units.html:370
+msgid "Success"
+msgstr ""
+
+#: templates/teacheradmin/teachers.html:30
+msgid "The teacher has been added to the course or invited."
+msgstr ""
+
+#: templates/teacheradmin/teachers.html:34
+msgid "The teacher has been removed from the course."
+msgstr ""
+
+#: templates/teacheradmin/teachers.html:38
+msgid "The teachers have been reordered."
+msgstr ""
+
+#: templates/teacheradmin/teachers.html:42
+msgid ""
+"That teacher doesn't exists. Please, introduce a valid user or an email."
+msgstr ""
+
+#: templates/teacheradmin/teachers.html:46
+msgid "The email introduced has already received an invitation."
+msgstr ""
+
+#: templates/teacheradmin/teachers.html:53
+msgid "Current teachers"
+msgstr ""
+
+#: templates/teacheradmin/teachers.html:66
+msgid "Transfer ownership"
+msgstr ""
+
+#: templates/teacheradmin/teachers.html:81
+msgid "Invited teachers who are not registered yet"
+msgstr ""
+
+#: templates/teacheradmin/teachers.html:99
+msgid "Name or email"
+msgstr ""
+
+#: templates/teacheradmin/units.html:30
+msgid "Nothing"
+msgstr ""
+
+#: templates/teacheradmin/units.html:31
+msgid "Edit"
+msgstr ""
+
+#: templates/teacheradmin/units.html:34
+msgid "This course is empty"
+msgstr ""
+
+#: templates/teacheradmin/units.html:35
+msgid "You need to add content to this course. Please, start adding a unit."
+msgstr ""
+
+#: templates/teacheradmin/units.html:37
+msgid "unit"
+msgstr ""
+
+#: templates/teacheradmin/units.html:38 templates/teacheradmin/units.html:87
+msgid "Draft"
+msgstr ""
+
+#: templates/teacheradmin/units.html:39 templates/teacheradmin/units.html:84
+msgid "Listable"
+msgstr ""
+
+#: templates/teacheradmin/units.html:40 templates/teacheradmin/units.html:81
+msgid "Published"
+msgstr ""
+
+#: templates/teacheradmin/units.html:41 templates/teacheradmin/units.html:99
+msgid "Normal"
+msgstr ""
+
+#: templates/teacheradmin/units.html:42 templates/teacheradmin/units.html:100
+msgid "Homework"
+msgstr ""
+
+#: templates/teacheradmin/units.html:43 templates/teacheradmin/units.html:101
+msgid "Exam"
+msgstr ""
+
+#: templates/teacheradmin/units.html:46
+msgid "Instructor comments"
+msgstr ""
+
+#: templates/teacheradmin/units.html:47 templates/teacheradmin/units.html:167
+msgid "Supplementary material"
+msgstr ""
+
+#: templates/teacheradmin/units.html:48
+msgid "nugget"
+msgstr ""
+
+#: templates/teacheradmin/units.html:49
+msgid "It has a question"
+msgstr ""
+
+#: templates/teacheradmin/units.html:50
+msgid "PR"
+msgstr ""
+
+#: templates/teacheradmin/units.html:51 templates/teacheradmin/units.html:136
+msgid "Peer review"
+msgstr ""
+
+#: templates/teacheradmin/units.html:52
+msgid "AS"
+msgstr ""
+
+#: templates/teacheradmin/units.html:53 templates/teacheradmin/units.html:137
+msgid "Asset Availability"
+msgstr ""
+
+#: templates/teacheradmin/units.html:57 templates/teacheradmin/units.html:62
+msgid "Description:"
+msgstr ""
+
+#: templates/teacheradmin/units.html:58
+msgid "Remove criterion"
+msgstr ""
+
+#: templates/teacheradmin/units.html:59
+msgid "Title:"
+msgstr ""
+
+#: templates/teacheradmin/units.html:63
+msgid "Remove Asset"
+msgstr ""
+
+#: templates/teacheradmin/units.html:64
+msgid "Name:"
+msgstr ""
+
+#: templates/teacheradmin/units.html:65
+msgid "Add an asset:"
+msgstr ""
+
+#: templates/teacheradmin/units.html:79
+msgid "Status"
+msgstr ""
+
+#: templates/teacheradmin/units.html:93 templates/teacheradmin/units.html:142
+msgid "Title"
+msgstr ""
+
+#: templates/teacheradmin/units.html:105 templates/teacheradmin/units.html:158
+msgid "Weight"
+msgstr ""
+
+#: templates/teacheradmin/units.html:114
+msgid "Start date"
+msgstr ""
+
+#: templates/teacheradmin/units.html:118
+msgid "End date"
+msgstr ""
+
+#: templates/teacheradmin/units.html:125 templates/teacheradmin/units.html:346
+msgid "Delete"
+msgstr ""
+
+#: templates/teacheradmin/units.html:126 templates/teacheradmin/units.html:347
+msgid "Back"
+msgstr ""
+
+#: templates/teacheradmin/units.html:134
+msgid "Attachments"
+msgstr ""
+
+#: templates/teacheradmin/units.html:135
+msgid "Question"
+msgstr ""
+
+#: templates/teacheradmin/units.html:146 templates/teacheradmin/units.html:251
+msgid "Content type"
+msgstr ""
+
+#: templates/teacheradmin/units.html:171
+msgid "Instructor's comments"
+msgstr ""
+
+#: templates/teacheradmin/units.html:177
+msgid "Save changes and add a question to this nugget"
+msgstr ""
+
+#: templates/teacheradmin/units.html:182
+msgid "Save changes and add a peer review assignment to this nugget"
+msgstr ""
+
+#: templates/teacheradmin/units.html:187
+msgid "Save changes and add an asset availability to this nugget"
+msgstr ""
+
+#: templates/teacheradmin/units.html:198
+msgid "Select file"
+msgstr ""
+
+#: templates/teacheradmin/units.html:199
+msgid "Change"
+msgstr ""
+
+#: templates/teacheradmin/units.html:207
+msgid "File name"
+msgstr ""
+
+#: templates/teacheradmin/units.html:211
+msgid "There are no attachments yet."
+msgstr ""
+
+#: templates/teacheradmin/units.html:216
+msgid "Question's background"
+msgstr ""
+
+#: templates/teacheradmin/units.html:218 templates/teacheradmin/units.html:219
+msgid "Nugget's video last frame"
+msgstr ""
+
+#: templates/teacheradmin/units.html:220
+msgid "Use a blank canvas instead"
+msgstr ""
+
+#: templates/teacheradmin/units.html:220
+msgid "Don't use the last frame"
+msgstr ""
+
+#: templates/teacheradmin/units.html:221
+msgid "Force processing the nugget's video"
+msgstr ""
+
+#: templates/teacheradmin/units.html:225 templates/teacheradmin/units.html:232
+msgid "Using blank canvas"
+msgstr ""
+
+#: templates/teacheradmin/units.html:226 templates/teacheradmin/units.html:233
+msgid ""
+"You are using a blank canvas for the question instead of the last frame of "
+"the nugget's video."
+msgstr ""
+
+#: templates/teacheradmin/units.html:228
+msgid "Use the last frame of the nugget's video"
+msgstr ""
+
+#: templates/teacheradmin/units.html:228
+msgid "Use the last frame"
+msgstr ""
+
+#: templates/teacheradmin/units.html:240
+msgid "Question's solution"
+msgstr ""
+
+#: templates/teacheradmin/units.html:244
+msgid "Use a media content as solution"
+msgstr ""
+
+#: templates/teacheradmin/units.html:245
+msgid "Use a text as solution"
+msgstr ""
+
+#: templates/teacheradmin/units.html:265
+msgid "Solution text"
+msgstr ""
+
+#: templates/teacheradmin/units.html:273
+msgid "Save changes and edit question's options"
+msgstr ""
+
+#: templates/teacheradmin/units.html:274
+msgid "Remove the question from this nugget"
+msgstr ""
+
+#: templates/teacheradmin/units.html:281
+msgid "Assignment description"
+msgstr ""
+
+#: templates/teacheradmin/units.html:285
+msgid "Minimun reviewers"
+msgstr ""
+
+#: templates/teacheradmin/units.html:293
+msgid "Evaluation criterions"
+msgstr ""
+
+#: templates/teacheradmin/units.html:298
+msgid "Save changes and add an evaluation criterion"
+msgstr ""
+
+#: templates/teacheradmin/units.html:306
+msgid "Remove the peer review assignment"
+msgstr ""
+
+#: templates/teacheradmin/units.html:313
+msgid "Available from:"
+msgstr ""
+
+#: templates/teacheradmin/units.html:317
+msgid "Available to:"
+msgstr ""
+
+#: templates/teacheradmin/units.html:330
+msgid "Save changes and add an asset"
+msgstr ""
+
+#: templates/teacheradmin/units.html:337
+msgid "Remove the asset availability"
+msgstr ""
+
+#: templates/teacheradmin/units.html:367
+msgid "The changes were saved successfully."
+msgstr ""
+
+#: templates/teacheradmin/units.html:371
+msgid ""
+"A task for processing the video has been queued. Refresh in a few moments."
+msgstr ""
+
+#: templates/teacheradmin/units.html:379
+msgid "A required field is empty."
+msgstr ""
+
+#: templates/teacheradmin/units.html:387
+msgid "This item is new and must be saved before going back."
+msgstr ""
+
+#: templates/teacheradmin/units.html:393
+msgid "Confirm removal"
+msgstr ""
+
+#: templates/teacheradmin/units.html:396
+msgid ""
+"Are you completely sure you want to remove this? You cannot undo this action."
+msgstr ""
+
+#: templates/teacheradmin/units.html:399 templates/teacheradmin/units.html:414
+msgid "Cancel"
+msgstr ""
+
+#: templates/teacheradmin/units.html:400 templates/teacheradmin/units.html:415
+msgid "Confirm"
+msgstr ""
+
+#: templates/teacheradmin/units.html:408
+msgid "Confirm operation"
+msgstr ""
+
+#: templates/teacheradmin/units.html:411
+msgid ""
+"Are you completely sure you want to do this operation? It is possible that "
+"some reservations are cancelled after this change "
+msgstr ""

@@ -1,0 +1,1036 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-06-27 10:32+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: admin.py:230 admin.py:278 admin.py:326
+#, python-format
+msgid "%(name)s object with primary key %(key)r does not exist."
+msgstr ""
+
+#: admin.py:249
+msgid "Edit options for question"
+msgstr ""
+
+#: admin.py:285
+#, python-format
+msgid "Option %(option)d for question %(question)s does not exist."
+msgstr ""
+
+#: feeds.py:36
+#, python-format
+msgid "Announcements of %(course_title)s"
+msgstr ""
+
+#: feeds.py:42
+#, python-format
+msgid ""
+"Announcements of the online course \"%(course_title)s\" on the platform "
+"\"%(site_name)s\"."
+msgstr ""
+
+#: forms.py:37
+msgid "The deadline date is mandatory for homework and exams."
+msgstr ""
+
+#: forms.py:38
+msgid "The start date is later than the deadline."
+msgstr ""
+
+#: models.py:42
+msgid "Name"
+msgstr ""
+
+#: models.py:43 models.py:186
+msgid "Slug"
+msgstr ""
+
+#: models.py:44 templates/courses/progress.html:57
+msgid "Description"
+msgstr ""
+
+#: models.py:45
+msgid "Requirements"
+msgstr ""
+
+#: models.py:47 models.py:53 templates/courses/overview.html:30
+msgid "Learning goals"
+msgstr ""
+
+#: models.py:49 templates/courses/overview.html:44
+msgid "Intended audience"
+msgstr ""
+
+#: models.py:51
+msgid "Estimated effort"
+msgstr ""
+
+#: models.py:55
+msgid "Start date"
+msgstr ""
+
+#: models.py:57
+msgid "End date"
+msgstr ""
+
+#: models.py:59 templates/courses/overview.html:87
+msgid "Teachers"
+msgstr ""
+
+#: models.py:62 templates/courses/add.html:40
+msgid "Teacher owner"
+msgstr ""
+
+#: models.py:65
+msgid "Students"
+msgstr ""
+
+#: models.py:68 models.py:304 models.py:421
+msgid "Content type"
+msgstr ""
+
+#: models.py:73 models.py:309 models.py:426
+msgid "Content id"
+msgstr ""
+
+#: models.py:77
+msgid "Pending reservations allowed:"
+msgstr ""
+
+#: models.py:79
+msgid "Total reservations allowed:"
+msgstr ""
+
+#: models.py:82
+msgid "Pass threshold"
+msgstr ""
+
+#: models.py:87
+msgid "Certification available"
+msgstr ""
+
+#: models.py:89
+msgid "Certification banner"
+msgstr ""
+
+#: models.py:92
+msgid "Completion badge"
+msgstr ""
+
+#: models.py:95
+msgid "Enrollment method"
+msgstr ""
+
+#: models.py:101 models.py:240 templates/courses/home.html:26
+msgid "Draft"
+msgstr ""
+
+#: models.py:102 models.py:242
+msgid "Published"
+msgstr ""
+
+#: models.py:103
+msgid "Hidden"
+msgstr ""
+
+#: models.py:107 models.py:246
+msgid "Status"
+msgstr ""
+
+#: models.py:114
+msgid "course"
+msgstr ""
+
+#: models.py:115
+msgid "courses"
+msgstr ""
+
+#: models.py:117
+msgid "Can list courses of an user"
+msgstr ""
+
+#: models.py:118
+msgid "Can list passed courses of an user"
+msgstr ""
+
+#: models.py:162
+msgid "Teacher"
+msgstr ""
+
+#: models.py:163 models.py:188 models.py:214
+msgid "Course"
+msgstr ""
+
+#: models.py:166
+msgid "course teacher"
+msgstr ""
+
+#: models.py:167
+msgid "course teachers"
+msgstr ""
+
+#: models.py:185 models.py:213 models.py:298
+msgid "Title"
+msgstr ""
+
+#: models.py:187 templates/admin/courses/question/options.html:151
+msgid "Content"
+msgstr ""
+
+#: models.py:189
+msgid "Datetime"
+msgstr ""
+
+#: models.py:193
+msgid "announcement"
+msgstr ""
+
+#: models.py:194
+msgid "announcements"
+msgstr ""
+
+#: models.py:217
+msgid "Normal"
+msgstr ""
+
+#: models.py:218
+msgid "Homework"
+msgstr ""
+
+#: models.py:219
+msgid "Exam"
+msgstr ""
+
+#: models.py:221 models.py:513
+#: templates/admin/courses/question/options.html:122
+msgid "Type"
+msgstr ""
+
+#: models.py:223
+msgid "Start"
+msgstr ""
+
+#: models.py:225
+msgid ""
+"Until this date is reached, no contents of this module will be shown to the "
+"students."
+msgstr ""
+
+#: models.py:228
+msgid "Deadline"
+msgstr ""
+
+#: models.py:230
+msgid ""
+"Until this date is reached, the students will be able to modify their "
+"answers, but won't see the solution"
+msgstr ""
+
+#: models.py:234 models.py:300
+msgid "Weight"
+msgstr ""
+
+#: models.py:241
+msgid "Listable"
+msgstr ""
+
+#: models.py:253
+msgid "unit"
+msgstr ""
+
+#: models.py:254
+msgid "units"
+msgstr ""
+
+#: models.py:299
+msgid "Unit"
+msgstr ""
+
+#: models.py:313
+msgid "Teacher comments"
+msgstr ""
+
+#: models.py:316 templates/courses/classroom.html:155
+msgid "Supplementary material"
+msgstr ""
+
+#: models.py:359
+msgid "nugget"
+msgstr ""
+
+#: models.py:360
+msgid "nuggets"
+msgstr ""
+
+#: models.py:412 models.py:420
+msgid "Nugget"
+msgstr ""
+
+#: models.py:413
+msgid "Attachment"
+msgstr ""
+
+#: models.py:431
+msgid "Solution text"
+msgstr ""
+
+#: models.py:432
+msgid "If the solution video is specified then this text will be ignored."
+msgstr ""
+
+#: models.py:436
+msgid "Last frame of the nugget's video"
+msgstr ""
+
+#: models.py:439
+msgid "Use the last frame of the video"
+msgstr ""
+
+#: models.py:440
+msgid ""
+"Chooses if the nugget's video last frame is used, or a white canvas instead."
+msgstr ""
+
+#: models.py:445
+msgid "question"
+msgstr ""
+
+#: models.py:446
+msgid "questions"
+msgstr ""
+
+#: models.py:454
+msgid "{0} - Question {1}"
+msgstr ""
+
+#: models.py:501 templates/courses/classroom.html:187
+msgid "Question"
+msgstr ""
+
+#: models.py:516 templates/admin/courses/question/options.html:150
+msgid "Solution"
+msgstr ""
+
+#: models.py:517
+msgid "Label text"
+msgstr ""
+
+#: models.py:520
+msgid "Solution feedback for the student"
+msgstr ""
+
+#: models.py:524
+msgid "option"
+msgstr ""
+
+#: models.py:525
+msgid "options"
+msgstr ""
+
+#: models.py:528
+msgid "{0} at {1} x {2}"
+msgstr ""
+
+#: security.py:75
+msgid ""
+"This course is not public yet. Your have access to it because you are staff "
+"member"
+msgstr ""
+
+#: security.py:76
+msgid ""
+"This course is not public yet. Your have access to it because you are a "
+"super user"
+msgstr ""
+
+#: security.py:77
+msgid ""
+"This course is not public yet. Your have access to it because you are a "
+"teacher of the course"
+msgstr ""
+
+#: views.py:108
+msgid "Only administrators can create courses"
+msgstr ""
+
+#: views.py:119 views.py:131
+msgid "That user doesn't exists, the owner must be an user of the platform"
+msgstr ""
+
+#: views.py:125
+msgid "The owner must be a name plus ID or an email"
+msgstr ""
+
+#: views.py:138
+msgid "The name can't be an empty string"
+msgstr ""
+
+#: views.py:141
+msgid "To fill"
+msgstr ""
+
+#: views.py:148
+#, python-format
+msgid "Your course \"%s\" has been created"
+msgstr ""
+
+#: views.py:158
+msgid "The course was successfully created"
+msgstr ""
+
+#: views.py:226 views.py:279
+msgid "You are not enrolled in this course"
+msgstr ""
+
+#: widgets.py:36
+msgid "There has been a problem downloading the video. Please check the logs"
+msgstr ""
+
+#: widgets.py:38
+msgid "The video is about to be downloaded. Please be patient"
+msgstr ""
+
+#: widgets.py:40
+msgid "The video is being downloaded at this moment. Please be patient"
+msgstr ""
+
+#: widgets.py:42
+msgid "Unknown error"
+msgstr ""
+
+#: templates/admin/courses/question/change_form.html:16
+msgid "Process video"
+msgstr ""
+
+#: templates/admin/courses/question/change_form.html:18
+msgid "Options"
+msgstr ""
+
+#: templates/admin/courses/question/options.html:56
+msgid "Home"
+msgstr ""
+
+#: templates/admin/courses/question/options.html:59
+#: templates/admin/courses/question/options.html:83
+msgid "Add"
+msgstr ""
+
+#: templates/admin/courses/question/options.html:69
+msgid "Back to question form"
+msgstr ""
+
+#: templates/admin/courses/question/options.html:70
+msgid "View on site"
+msgstr ""
+
+#: templates/admin/courses/question/options.html:78
+#: templates/admin/courses/question/options.html:125
+msgid "Label"
+msgstr ""
+
+#: templates/admin/courses/question/options.html:79
+#: templates/admin/courses/question/options.html:126
+msgid "Input text"
+msgstr ""
+
+#: templates/admin/courses/question/options.html:80
+#: templates/admin/courses/question/options.html:127
+msgid "Checkbox"
+msgstr ""
+
+#: templates/admin/courses/question/options.html:81
+#: templates/admin/courses/question/options.html:128
+msgid "Radio"
+msgstr ""
+
+#: templates/admin/courses/question/options.html:92
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/admin/courses/question/options.html:113
+#: templates/admin/courses/question/options.html:115
+#: templates/admin/courses/question/options.html:145
+msgid "Property"
+msgstr ""
+
+#: templates/admin/courses/question/options.html:114
+#: templates/admin/courses/question/options.html:116
+#: templates/admin/courses/question/options.html:146
+msgid "Value"
+msgstr ""
+
+#: templates/admin/courses/question/options.html:120
+msgid "Id"
+msgstr ""
+
+#: templates/admin/courses/question/options.html:139
+msgid "width"
+msgstr ""
+
+#: templates/admin/courses/question/options.html:141
+msgid "height"
+msgstr ""
+
+#: templates/admin/courses/question/options.html:156
+msgid "Feedback"
+msgstr ""
+
+#: templates/admin/courses/question/options.html:163
+#: templates/courses/classroom.html:48
+msgid "Remove"
+msgstr ""
+
+#: templates/courses/add.html:36 templates/courses/include.useractions.html:32
+msgid "Create course"
+msgstr ""
+
+#: templates/courses/add.html:37
+msgid "Course name"
+msgstr ""
+
+#: templates/courses/add.html:41
+msgid "Name or email"
+msgstr ""
+
+#: templates/courses/add.html:44 templates/courses/classroom.html:77
+msgid "Send"
+msgstr ""
+
+#: templates/courses/add.html:45 templates/courses/classroom.html:76
+#: templates/courses/classroom.html:95
+msgid "Cancel"
+msgstr ""
+
+#: templates/courses/announcement.html:9
+msgid "Published on:"
+msgstr ""
+
+#: templates/courses/announcement.html:11
+msgid "Go back to Course Overview"
+msgstr ""
+
+#: templates/courses/base_course.html:12
+msgid "Overview"
+msgstr ""
+
+#: templates/courses/base_course.html:16
+msgid "Classes"
+msgstr ""
+
+#: templates/courses/base_course.html:20
+msgid "Discussion"
+msgstr ""
+
+#: templates/courses/base_course.html:25
+msgid "Reviews"
+msgstr ""
+
+#: templates/courses/base_course.html:31
+msgid "Reservations"
+msgstr ""
+
+#: templates/courses/base_course.html:36
+msgid "Progress"
+msgstr ""
+
+#: templates/courses/base_course.html:41
+msgid "Course administration"
+msgstr ""
+
+#: templates/courses/classroom.html:22
+msgid "Peer review assignment"
+msgstr ""
+
+#: templates/courses/classroom.html:26
+msgid "View the evaluation criteria"
+msgstr ""
+
+#: templates/courses/classroom.html:30
+msgid "Remember!"
+msgstr ""
+
+#: templates/courses/classroom.html:30
+msgid "At least one, the text or the file, must be present in the submission."
+msgstr ""
+
+#: templates/courses/classroom.html:33
+msgid "Write your submission here:"
+msgstr ""
+
+#: templates/courses/classroom.html:34
+#, python-format
+msgid "The max length of the text is %(max)s characters."
+msgstr ""
+
+#: templates/courses/classroom.html:37
+msgid "Attach a file to your submission:"
+msgstr ""
+
+#: templates/courses/classroom.html:44
+msgid "Select file"
+msgstr ""
+
+#: templates/courses/classroom.html:45
+msgid "Change"
+msgstr ""
+
+#: templates/courses/classroom.html:60 templates/courses/overview.html:112
+#: templates/courses/overview.html:114 templates/courses/progress.html:53
+#: templates/courses/transcript.html:33 templates/courses/transcript.html:35
+msgid "Evaluation criteria"
+msgstr ""
+
+#: templates/courses/classroom.html:64 templates/courses/progress.html:74
+msgid "Close"
+msgstr ""
+
+#: templates/courses/classroom.html:70
+msgid "Confirm submission"
+msgstr ""
+
+#: templates/courses/classroom.html:73
+msgid ""
+"Are you completely sure you want to submit your assignment? You can't change "
+"it later, this will be your final submission for this assignment."
+msgstr ""
+
+#: templates/courses/classroom.html:84
+msgid "New reservation"
+msgstr ""
+
+#: templates/courses/classroom.html:96
+msgid "Confirm"
+msgstr ""
+
+#: templates/courses/classroom.html:110
+msgid "Previous"
+msgstr ""
+
+#: templates/courses/classroom.html:113
+msgid "Show lecture"
+msgstr ""
+
+#: templates/courses/classroom.html:114
+msgid "Submit"
+msgstr ""
+
+#: templates/courses/classroom.html:117
+msgid "Next"
+msgstr ""
+
+#: templates/courses/classroom.html:154
+msgid "Instructor's comments"
+msgstr ""
+
+#: templates/courses/classroom.html:186
+msgid "Q"
+msgstr ""
+
+#: templates/courses/classroom.html:188
+msgid "A"
+msgstr ""
+
+#: templates/courses/classroom.html:189
+msgid "Answer"
+msgstr ""
+
+#: templates/courses/classroom.html:190
+msgid "PR"
+msgstr ""
+
+#: templates/courses/classroom.html:191
+msgid "Peer Review"
+msgstr ""
+
+#: templates/courses/classroom.html:192
+msgid "AS"
+msgstr ""
+
+#: templates/courses/classroom.html:193
+msgid "Assets available"
+msgstr ""
+
+#: templates/courses/classroom.html:194
+msgid "Answers sent"
+msgstr ""
+
+#: templates/courses/classroom.html:195
+msgid "Congratulations, you got it right!"
+msgstr ""
+
+#: templates/courses/classroom.html:196
+msgid "Wrong answer, good luck next time."
+msgstr ""
+
+#: templates/courses/classroom.html:197
+msgid ""
+"Your answers were stored, but can't be corrected until the deadline is "
+"reached."
+msgstr ""
+
+#: templates/courses/classroom.html:198
+msgid "Your browser is outdated"
+msgstr ""
+
+#: templates/courses/classroom.html:199
+msgid ""
+"You need a modern browser to send this submission, try a recent Chrome, "
+"Firefox, Opera or Safari."
+msgstr ""
+
+#: templates/courses/classroom.html:200
+msgid "Required field missing"
+msgstr ""
+
+#: templates/courses/classroom.html:201
+msgid "Please, send the text or the file. At least one of them must be filled."
+msgstr ""
+
+#: templates/courses/classroom.html:202
+msgid "Submission sent"
+msgstr ""
+
+#: templates/courses/classroom.html:203
+msgid ""
+"Thank you for sending this submission. You have now to review "
+"#(minimum_reviewers)s submissions from other students in order to get your "
+"submission scored."
+msgstr ""
+
+#: templates/courses/classroom.html:204
+msgid ""
+"You have already sent a submission for this peer review assignment. You can "
+"now review submissions from other students or check your score."
+msgstr ""
+
+#: templates/courses/classroom.html:205
+msgid "Review other students submissions"
+msgstr ""
+
+#: templates/courses/classroom.html:206
+msgid "Check my progress"
+msgstr ""
+
+#: templates/courses/classroom.html:207
+msgid "Available Assets: "
+msgstr ""
+
+#: templates/courses/classroom.html:208
+msgid "Book"
+msgstr ""
+
+#: templates/courses/classroom.html:209
+msgid "Date: "
+msgstr ""
+
+#: templates/courses/classroom.html:210
+msgid "Time: "
+msgstr ""
+
+#: templates/courses/classroom.html:211
+msgid "Cancelations: "
+msgstr ""
+
+#: templates/courses/classroom.html:212
+msgid "Assets in this nugget can no longer be booked."
+msgstr ""
+
+#: templates/courses/classroom.html:213
+msgid "Capacity: "
+msgstr ""
+
+#: templates/courses/classroom.html:214
+msgid "Assets can be booked:"
+msgstr ""
+
+#: templates/courses/classroom.html:215
+msgid "From: "
+msgstr ""
+
+#: templates/courses/classroom.html:216
+msgid "To: "
+msgstr ""
+
+#: templates/courses/classroom.html:217
+msgid "Time in advance required for: "
+msgstr ""
+
+#: templates/courses/classroom.html:218
+msgid "Limits for this course: "
+msgstr ""
+
+#: templates/courses/classroom.html:219
+msgid "Number of slots: "
+msgstr ""
+
+#: templates/courses/classroom.html:220
+msgid "Pending reservations: "
+msgstr ""
+
+#: templates/courses/classroom.html:221
+msgid "Total reservations: "
+msgstr ""
+
+#: templates/courses/classroom.html:222
+msgid "minutes"
+msgstr ""
+
+#: templates/courses/classroom.html:223
+msgid "Requisites for making a reservation:"
+msgstr ""
+
+#: templates/courses/classroom.html:224
+msgid "Reservations: "
+msgstr ""
+
+#: templates/courses/classroom.html:225
+msgid "Slot length: "
+msgstr ""
+
+#: templates/courses/classroom.html:228
+msgid "Your file is too big"
+msgstr ""
+
+#: templates/courses/classroom.html:229
+#, python-format
+msgid "Your file must be smaller than %(file_max_size)sMB."
+msgstr ""
+
+#: templates/courses/classroom.html:232
+msgid "The solution is not available"
+msgstr ""
+
+#: templates/courses/classroom.html:233
+msgid "Please wait until the deadline of the module."
+msgstr ""
+
+#: templates/courses/email_new_course.txt:3
+#, python-format
+msgid ""
+"\n"
+"Dear %(user)s\n"
+"\n"
+"Your course \"%(course)s\" has been created, and you have been assigned as "
+"the teacher owner. You can now access to the course administration interface "
+"and start adding content.\n"
+"\n"
+"Best regards, %(site)s's team\n"
+msgstr ""
+
+#: templates/courses/home.html:18
+msgid "Courses"
+msgstr ""
+
+#: templates/courses/home.html:30
+msgid "More information about this course"
+msgstr ""
+
+#: templates/courses/include.useractions.html:5
+msgid "My courses"
+msgstr ""
+
+#: templates/courses/include.useractions.html:11
+msgid "See all courses"
+msgstr ""
+
+#: templates/courses/include.useractions.html:16
+msgid "Welcome"
+msgstr ""
+
+#: templates/courses/include.useractions.html:20
+#: templates/courses/transcript.html:11
+msgid "My transcript"
+msgstr ""
+
+#: templates/courses/include.useractions.html:21
+msgid "Profile settings"
+msgstr ""
+
+#: templates/courses/include.useractions.html:22
+msgid "Change Password"
+msgstr ""
+
+#: templates/courses/include.useractions.html:26
+msgid "Admin interface"
+msgstr ""
+
+#: templates/courses/include.useractions.html:36
+msgid "Log out"
+msgstr ""
+
+#: templates/courses/no_content.html:8
+msgid "This course is not ready yet"
+msgstr ""
+
+#: templates/courses/no_content.html:10
+#, python-format
+msgid "The course \"%(course_name)s\" has no content."
+msgstr ""
+
+#: templates/courses/no_content.html:13
+#, python-format
+msgid ""
+"Consider <a href=\"%(contact_url)s\">getting in touch with an administrator</"
+"a>."
+msgstr ""
+
+#: templates/courses/no_content.html:15
+#, python-format
+msgid "It starts in %(date)s."
+msgstr ""
+
+#: templates/courses/no_content.html:17
+#, python-format
+msgid ""
+"Please, use this <a href=\"%(contact_url)s\">contact form</a> if you have "
+"any questions."
+msgstr ""
+
+#: templates/courses/overview.html:24
+msgid "Course summary"
+msgstr ""
+
+#: templates/courses/overview.html:37
+msgid "Recommended requirements"
+msgstr ""
+
+#: templates/courses/overview.html:55
+msgid "You are enrolled in this course"
+msgstr ""
+
+#: templates/courses/overview.html:64
+#, python-format
+msgid "Register in %(site_name)s to enroll in this course"
+msgstr ""
+
+#: templates/courses/overview.html:74 templates/courses/overview.html.py:76
+msgid "Get a certification in this course"
+msgstr ""
+
+#: templates/courses/overview.html:80
+#, python-format
+msgid "Register in %(site_name)s to get a certification in this course"
+msgstr ""
+
+#: templates/courses/overview.html:99
+msgid "Information"
+msgstr ""
+
+#: templates/courses/overview.html:101
+msgid "Course Code"
+msgstr ""
+
+#: templates/courses/overview.html:103
+msgid "Classes Start"
+msgstr ""
+
+#: templates/courses/overview.html:106
+msgid "Classes End"
+msgstr ""
+
+#: templates/courses/overview.html:109
+msgid "Estimated Effort"
+msgstr ""
+
+#: templates/courses/overview.html:123
+msgid "Announcements"
+msgstr ""
+
+#: templates/courses/overview.html:136
+msgid "Syllabus"
+msgstr ""
+
+#: templates/courses/overview.html:150
+msgid "Categories"
+msgstr ""
+
+#: templates/courses/overview.html:158
+msgid "Share"
+msgstr ""
+
+#: templates/courses/progress.html:48
+msgid "Review details"
+msgstr ""
+
+#: templates/courses/progress.html:51
+msgid "Review date"
+msgstr ""
+
+#: templates/courses/progress.html:58
+msgid "Score"
+msgstr ""
+
+#: templates/courses/progress.html:65
+msgid "Final score"
+msgstr ""
+
+#: templates/courses/progress.html:70
+msgid "Comment"
+msgstr ""
+
+#: templates/courses/transcript.html:21
+msgid "of the final mark"
+msgstr ""
+
+#: templates/courses/transcript.html:27
+msgid "No scoring units"
+msgstr ""
+
+#: templates/courses/transcript.html:31
+msgid "Final mark"
+msgstr ""
+
+#: templates/courses/transcript.html:39
+#, python-format
+msgid "You need at least a <strong>%(threshold)s to pass</strong> this course."
+msgstr ""
+
+#: templates/courses/transcript.html:44
+msgid "Congratulations, you have completed"
+msgstr ""
+
+#: templates/courses/transcript.html:44
+msgid "Here is a badge!"
+msgstr ""
+
+#: templates/courses/transcript.html:53
+msgid "I want a certificate of completion for this course"
+msgstr ""
+
+#: templates/courses/transcript.html:54
+msgid "Read more"
+msgstr ""
+
+#: templates/courses/transcript.html:57
+msgid ""
+"You need to complete the course before asking for a certificate of "
+"completion."
+msgstr ""
+
+#: templates/courses/transcript.html:60
+msgid "No certificate available for this course."
+msgstr ""
+
+#: templates/courses/transcript.html:64
+msgid "You are not enrolled in any course"
+msgstr ""
+
+#: templates/courses/usercourses.html:6
+msgid "You're not registered in any course"
+msgstr ""

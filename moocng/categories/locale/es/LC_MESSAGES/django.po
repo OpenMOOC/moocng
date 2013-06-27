@@ -1,0 +1,84 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: moocng 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-06-27 10:32+0200\n"
+"PO-Revision-Date: 2013-06-27 09:39:+0200\n"
+"Last-Translator: Oscar Carballal Prego <ocarballal@yaco.es>\n"
+"Language-Team: es_ES <es_ES@li.org>\n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: admin.py:11
+#: teacheradmin/templates/teacheradmin/categories.html:18
+msgid "This category doesn't have an icon"
+msgstr "Esta categoría no tiene un icono asociado"
+
+#: models.py:12 courses/models.py:43 courses/models.py:186
+msgid "Slug"
+msgstr "Slug"
+
+#: models.py:14 categories/templates/categories/category.html:14
+#: teacheradmin/templates/teacheradmin/categories.html:16
+msgid "Category's icon"
+msgstr "Icono de la categoría"
+
+#: models.py:16
+msgid "The image dimensions should be 140px x 140px"
+msgstr "Las dimensiones de la imagen deberían ser 140px x 140px"
+
+#: models.py:18
+msgid "Background banner for the category's header"
+msgstr "Imagen de fondo para la cabecera de la categoría"
+
+#: models.py:20
+msgid "The image dimensions should be 940px x 240px"
+msgstr "Las dimensiones de la imagen deberían ser 940px x 240px"
+
+#: models.py:22 courses/templates/courses/home.html:18
+msgid "Courses"
+msgstr "Cursos"
+
+#: models.py:25
+msgid "Only administrators can asign this category"
+msgstr "Sólo los administradores pueden asignar esta categoría"
+
+#: models.py:29
+msgid "category"
+msgstr "categoría"
+
+#: models.py:30
+msgid "categories"
+msgstr "categorías"
+
+#: templates/categories/category.html:11
+msgid "Category's background banner"
+msgstr "Fondo de la categoría"
+
+#: templates/categories/category.html:32
+#: courses/templates/courses/overview.html:103
+msgid "Classes Start"
+msgstr "Inicio de las Clases"
+
+#: templates/categories/category.html:35
+#: courses/templates/courses/overview.html:106
+msgid "Classes End"
+msgstr "Final de las Clases"
+
+#: templates/categories/category.html:45
+#: teacheradmin/templates/teacheradmin/categories.html:32
+msgid "Empty"
+msgstr "Vacío"
+
+#: templates/categories/category.html:46
+msgid "There are no courses with this category or categories associated yet."
+msgstr "No hay cursos aún que tengan esta categoría o categorías asociada."

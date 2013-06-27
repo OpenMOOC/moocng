@@ -1,0 +1,283 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-06-27 10:32+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: models.py:32 models.py:89
+msgid "Description"
+msgstr ""
+
+#: models.py:34
+msgid "Minimum reviewers"
+msgstr ""
+
+#: models.py:35
+msgid "Nugget"
+msgstr ""
+
+#: models.py:64
+msgid "peer review assignment"
+msgstr ""
+
+#: models.py:65
+msgid "peer review assignments"
+msgstr ""
+
+#: models.py:85
+msgid "Peer review assignment"
+msgstr ""
+
+#: models.py:87
+msgid "Title"
+msgstr ""
+
+#: models.py:93
+msgid "evaluation criterion"
+msgstr ""
+
+#: models.py:94
+msgid "evaluation criteria"
+msgstr ""
+
+#: models.py:97
+msgid "{0} - EvaluationCriterion {1}"
+msgstr ""
+
+#: views.py:51 views.py:119 views.py:159
+msgid "You are not enrolled in this course"
+msgstr ""
+
+#: views.py:55 views.py:163
+msgid "The selected peer review assignment is not part of this course."
+msgstr ""
+
+#: views.py:65
+msgid "You already have a submission assigned."
+msgstr ""
+
+#: views.py:99
+msgid ""
+"There is no submission avaliable for you at this moment. Please, try again "
+"later."
+msgstr ""
+
+#: views.py:174
+msgid "You don't have this submission assigned."
+msgstr ""
+
+#: views.py:205
+msgid "Your can't submit two times the same review."
+msgstr ""
+
+#: views.py:210
+#, python-format
+msgid ""
+"Your review has been submitted. You have to review at least %d exercises "
+"more."
+msgstr ""
+
+#: views.py:212
+msgid "Your review has been submitted."
+msgstr ""
+
+#: views.py:240
+#, python-format
+msgid "Your assignment \"%(nugget)s\" has been reviewed"
+msgstr ""
+
+#: views.py:247
+msgid "Undefined"
+msgstr ""
+
+#: views.py:329
+#, python-format
+msgid "Your file is greater than the max allowed size (%d MB)."
+msgstr ""
+
+#: views.py:333
+#, python-format
+msgid "Your text is greater than the max allowed size (%d characters)."
+msgstr ""
+
+#: templates/peerreview/email_review_submission.txt:3
+#, python-format
+msgid ""
+"\n"
+"Congratulations %(user)s\n"
+"\n"
+"The exercise you sent on %(date)s belonging the nugget \"%(nugget)s\" has "
+"been reviewed by a classmate.\n"
+"\n"
+"Evaluation criteria:\n"
+msgstr ""
+
+#: templates/peerreview/email_review_submission.txt:15
+#, python-format
+msgid ""
+"\n"
+"Your classmate's comment:\n"
+"\n"
+"%(comment)s\n"
+"\n"
+"Best regards and thank you for learning with %(site)s.\n"
+msgstr ""
+
+#: templates/peerreview/pending_reviews.html:5
+msgid ""
+"Contratulations, you have reviewed the minimum number of required "
+"submissions. Thank you so much for your amazing team work. But you can keep "
+"reviewing more. Your help is much appreciated."
+msgstr ""
+
+#: templates/peerreview/pending_reviews.html:11
+msgid "You are currently reviewing the following submissions:"
+msgstr ""
+
+#: templates/peerreview/pending_reviews.html:15
+#, python-format
+msgid "Submission sent on %(created)s."
+msgstr ""
+
+#: templates/peerreview/pending_reviews.html:16
+msgid "Finish reviewing it."
+msgstr ""
+
+#: templates/peerreview/pending_reviews.html:25
+msgid "Review another submission"
+msgstr ""
+
+#: templates/peerreview/pending_reviews.html:28
+msgid "You must send your submission before reviewing your classmates' ones"
+msgstr ""
+
+#: templates/peerreview/pending_reviews.html:35
+msgid "Submissions already reviewed"
+msgstr ""
+
+#: templates/peerreview/pending_reviews.html:39
+#, python-format
+msgid "Submission reviewed on %(created)s."
+msgstr ""
+
+#: templates/peerreview/pending_reviews.html:47
+#, python-format
+msgid "You still need to review %(pending)s more submission."
+msgid_plural "You still need to review %(pending)s more submissions."
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/peerreview/review_review.html:49
+msgid "Confirm submission"
+msgstr ""
+
+#: templates/peerreview/review_review.html:52
+msgid ""
+"Are you completely sure you want to submit your review? You can't change it "
+"later, this will be your final review of this student's assignment."
+msgstr ""
+
+#: templates/peerreview/review_review.html:55
+msgid "Cancel"
+msgstr ""
+
+#: templates/peerreview/review_review.html:56
+msgid "Send"
+msgstr ""
+
+#: templates/peerreview/review_review.html:62
+msgid "Error"
+msgstr ""
+
+#: templates/peerreview/review_review.html:63
+msgid ""
+"There were errors when submitting this form. Please check the specific "
+"errors below."
+msgstr ""
+
+#: templates/peerreview/review_review.html:67
+msgid "Review for"
+msgstr ""
+
+#: templates/peerreview/review_review.html:69
+msgid "Activity description"
+msgstr ""
+
+#: templates/peerreview/review_review.html:72
+msgid "Student response"
+msgstr ""
+
+#: templates/peerreview/review_review.html:76
+msgid "Download student's submission"
+msgstr ""
+
+#: templates/peerreview/review_review.html:79
+#: templates/peerreview/review_review.html:90
+msgid "Warning!"
+msgstr ""
+
+#: templates/peerreview/review_review.html:80
+#, python-format
+msgid ""
+"\n"
+"        You should scan this file with your antivirus software. %(site)s\n"
+"        is not responsible for any harm this may cause to your computer.\n"
+"    "
+msgstr ""
+
+#: templates/peerreview/review_review.html:87
+msgid "Your review"
+msgstr ""
+
+#: templates/peerreview/review_review.html:91
+#, python-format
+msgid ""
+"\n"
+"    This submission can be now claimed by other student. Your claim\n"
+"    expired on %(assignation_expire)s, but you still can send your review.\n"
+"    Hurry up!\n"
+"  "
+msgstr ""
+
+#: templates/peerreview/review_review.html:97
+msgid "Remember:"
+msgstr ""
+
+#: templates/peerreview/review_review.html:98
+#, python-format
+msgid ""
+"\n"
+"    You must review this exercise before %(assignation_expire)s. After "
+"this,\n"
+"    date, the review can be reassigned to another student.\n"
+"  "
+msgstr ""
+
+#: templates/peerreview/review_review.html:136
+msgid "Send review"
+msgstr ""
+
+#: templates/peerreview/reviews.html:9
+msgid "Reviews"
+msgstr ""
+
+#: templates/peerreview/reviews.html:26
+msgid "This course does not have any Peer Review Assignment"
+msgstr ""
+
+#: templates/peerreview/reviews.html:28
+msgid "You can try enrolling in another course"
+msgstr ""
