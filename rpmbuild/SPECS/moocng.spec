@@ -18,16 +18,16 @@ URL: https://github.com/OpenMOOC/moocng
 
 #         'zipimportx==0.3.2', # Required for some operations during install
 # TODO
-#         'boto==2.8.0', EPEL FIXME bad version in epel
-Requires: python-boto = 2.5.2
-#         'celery==3.0.11', EPEL FIXME bad version in epel
+#         'boto==2.8.0', EPEL
+Requires: python-boto = 2.8.0
+#         'celery==3.0.20', EPEL FIXME bad version in epel
 Requires: python-celery = 2.2.8
 #         'Django==1.4.5', EPEL
 Requires: Django14 = 1.4.5
 #         'django-admin-sortable==1.4.9',
 # TODO
-#         'django-celery==3.0.11', EPEL FIXME bad version in epel
-Requires: django-celery = 2.2.7
+#         'django-celery==3.0.17', EPEL FIXME bad version in epel
+Requires: django-celery = 3.0.17
 #         'django-tinymce==1.5.1b2', EPEL
 Requires: python-django-tinymce = 1.5.1b4
 #         'django-tastypie==0.9.11-openmooc', TODO version

@@ -2,7 +2,7 @@
 Summary:        A simple lightweight interface to Amazon Web Services
 Name:           python-boto
 Version:        2.8.0
-Release:        4%{?dist}
+Release:        1%{?dist}
 License:        MIT
 Group:          Development/Languages
 URL:            https://github.com/boto/boto
@@ -55,7 +55,7 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/*
 
 %changelog
-* Mon Jul  1 2013 Alejandro Blanco <ablanco@yaco.es> - 2.8.0
+* Mon Jul  1 2013 Alejandro Blanco <ablanco@yaco.es> - 2.8.0-1
 - Update boto version to 2.8.0
 
 * Tue Jan  8 2013 Garrett Holmstrom <gholms@fedoraproject.org> - 2.5.2-3

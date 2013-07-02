@@ -3,7 +3,7 @@
 %endif
 
 Name:           python-celery
-Version:        2.2.8
+Version:        3.0.20
 Release:        1%{?dist}
 Summary:        Distributed Task Queue
 
@@ -16,9 +16,11 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 BuildRequires:  python-devel
 BuildRequires:  python-setuptools
-Requires:       python-anyjson
+Requires:       python-anyjson >= 0.3.3
 Requires:       python-dateutil
-Requires:       python-kombu
+Requires:       pytz
+Requires:       python-kombu >= 2.5.11
+Requires:       python-billiard >= 2.7.3.28
 Requires:       pyparsing
 %if ! (0%{?fedora} > 13 || 0%{?rhel} > 6)
 Requires:       python-importlib
@@ -55,7 +57,7 @@ for script in celery/bin/camqadm.py celery/bin/celerybeat.py celery/bin/celeryd.
   %{__sed} -i.orig -e 1d ${script}
   touch -r ${script}.orig ${script}
   %{__rm} ${script}.orig
-  chmod a-x ${script} 
+  chmod a-x ${script}
 done
 rm -f docs/.static/.keep
 
@@ -67,19 +69,22 @@ rm -f docs/.static/.keep
 rm -rf $RPM_BUILD_ROOT
 %{__python} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
 
- 
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 
 %files
 %defattr(-,root,root,-)
-%doc AUTHORS LICENSE README THANKS TODO docs examples
+%doc LICENSE TODO docs examples
 %{python_sitelib}/*
 %{_bindir}/*
 
 
 %changelog
+* Tue Jul  2 2013 Alejandro Blanco <ablanco@yaco.es> - 3.0.20-1
+- Upgrade to 3.0.20 version
+
 * Mon Nov 28 2011 Andrew Colin Kissa <andrew@topdog.za.net> - 2.2.8-1
 - Security FIX CELERYSA-0001
 
