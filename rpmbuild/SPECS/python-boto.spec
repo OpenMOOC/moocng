@@ -1,8 +1,8 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 Summary:        A simple lightweight interface to Amazon Web Services
 Name:           python-boto
-Version:        2.5.2
-Release:        3%{?dist}
+Version:        2.8.0
+Release:        4%{?dist}
 License:        MIT
 Group:          Development/Languages
 URL:            https://github.com/boto/boto
@@ -10,13 +10,6 @@ Source:         http://pypi.python.org/packages/source/b/boto/boto-%{version}.ta
 BuildRequires:  python-devel >= 2.5, python-setuptools-devel
 BuildArch:      noarch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-
-# https://bugzilla.redhat.com/show_bug.cgi?id=838076
-# Fixed with upstream commit 6870daf
-Patch1:         python-boto-2.5.2-emptydata.patch
-# https://github.com/boto/boto/issues/881
-# Fixed with upstream commit a23c379
-Patch2:         python-boto-2.5.2-statechg.patch
 
 %description
 Boto is a Python package that provides interfaces to Amazon Web Services.
@@ -27,8 +20,6 @@ use, lightweight wrapper around the Amazon services.
 
 %prep
 %setup -q -n boto-%{version}
-%patch1 -p1
-%patch2 -p1
 
 %build
 %{__python} setup.py build
@@ -49,20 +40,24 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/cwutil
 %{_bindir}/elbadmin
 %{_bindir}/fetch_file
+%{_bindir}/glacier
 %{_bindir}/instance_events
 %{_bindir}/kill_instance
 %{_bindir}/launch_instance
 %{_bindir}/list_instances
 %{_bindir}/lss3
+%{_bindir}/mturk
 %{_bindir}/pyami_sendmail
 %{_bindir}/route53
-%{_bindir}/s3multiput
 %{_bindir}/s3put
 %{_bindir}/sdbadmin
 %{_bindir}/taskadmin
 %{python_sitelib}/*
 
 %changelog
+* Mon Jul  1 2013 Alejandro Blanco <ablanco@yaco.es> - 2.8.0
+- Update boto version to 2.8.0
+
 * Tue Jan  8 2013 Garrett Holmstrom <gholms@fedoraproject.org> - 2.5.2-3
 - Fixed parsing of current/previous instance state data (boto #881)
 
