@@ -1,6 +1,4 @@
-%if ! (0%{?fedora} > 12 || 0%{?rhel} > 5)
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
-%endif
+%global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(plat_specific=True)")
 
 %global srcname billiard
 
@@ -14,7 +12,6 @@ License:        BSD
 URL:            http://pypi.python.org/pypi/billiard
 Source0:        http://pypi.python.org/packages/source/b/%{srcname}/%{srcname}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildArch:      noarch
 
 BuildRequires:  python-devel
 BuildRequires:  python-setuptools
@@ -43,7 +40,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%doc AUTHORS Changelog LICENSE README TODO docs/
+%doc CHANGES.txt Doc/ INSTALL.txt LICENSE.txt README.rst
 %{python_sitelib}/_%{srcname}.so
 %{python_sitelib}/%{srcname}/
 %{python_sitelib}/%{srcname}*.egg-info
