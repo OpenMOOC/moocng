@@ -5,8 +5,8 @@
 %endif
 
 Name:           python-requests
-Version:        1.1.0
-Release:        3%{?dist}
+Version:        1.2.0
+Release:        1%{?dist}
 Summary:        HTTP library, written in Python, for human beings
 
 License:        ASL 2.0
@@ -38,9 +38,9 @@ Requires:       python-ordereddict
 %endif
 
 %description
-Most existing Python modules for sending HTTP requests are extremely verbose and 
-cumbersome. Python’s built-in urllib2 module provides most of the HTTP 
-capabilities you should need, but the API is thoroughly broken. This library is 
+Most existing Python modules for sending HTTP requests are extremely verbose and
+cumbersome. Python’s built-in urllib2 module provides most of the HTTP
+capabilities you should need, but the API is thoroughly broken. This library is
 designed to make HTTP requests easy for developers.
 
 %if 0%{?_with_python3}
@@ -130,6 +130,9 @@ popd
 %endif
 
 %changelog
+* Wed Jul 03 2013 Alejandro Blanco <ablanco@yaco.es> - 1.2.0-1
+- Upgrade to the 1.2.0 version
+
 * Thu Feb 28 2013 Ralph Bean <rbean@redhat.com> - 1.1.0-3
 - Unbundled python-urllib3.  Using system python-urllib3 now.
 - Conditionally include python-ordereddict for el6.
