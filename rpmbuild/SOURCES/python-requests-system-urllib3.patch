@@ -15,7 +15,7 @@ index 5f9d9c7..1f61bd6 100644
 +++ b/requests/adapters.py
 @@ -11,17 +11,17 @@ and maintain connections.
  import socket
- 
+
  from .models import Response
 -from .packages.urllib3.poolmanager import PoolManager, proxy_from_url
 -from .packages.urllib3.response import HTTPResponse
@@ -36,7 +36,7 @@ index 5f9d9c7..1f61bd6 100644
 +from urllib3.exceptions import HTTPError as _HTTPError
  from .cookies import extract_cookies_to_jar
  from .exceptions import ConnectionError, Timeout, SSLError
- 
+
 diff --git a/requests/compat.py b/requests/compat.py
 index 39421ed..d9ab218 100644
 --- a/requests/compat.py
@@ -51,7 +51,7 @@ index 39421ed..d9ab218 100644
 +        from collections import OrderedDict
 +    except ImportError:
 +        from ordereddict import OrderedDict
- 
+
      builtin_str = str
      bytes = str
 diff --git a/requests/models.py b/requests/models.py
@@ -59,7 +59,7 @@ index 5202e6f..218b4f2 100644
 --- a/requests/models.py
 +++ b/requests/models.py
 @@ -17,7 +17,7 @@ from .status_codes import codes
- 
+
  from .auth import HTTPBasicAuth
  from .cookies import cookiejar_from_dict, get_cookie_header
 -from .packages.urllib3.filepost import encode_multipart_formdata
@@ -67,15 +67,6 @@ index 5202e6f..218b4f2 100644
  from .exceptions import HTTPError, RequestException, MissingSchema, InvalidURL
  from .utils import (
      stream_untransfer, guess_filename, requote_uri,
-@@ -121,7 +121,7 @@ class RequestEncodingMixin(object):
-                 fp = StringIO(fp)
-             if isinstance(fp, bytes):
-                 fp = BytesIO(fp)
--            
-+
-             if ft:
-                 new_v = (fn, fp.read(), ft)
-             else:
--- 
+--
 1.8.1.2
 
