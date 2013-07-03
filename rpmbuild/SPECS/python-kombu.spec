@@ -16,7 +16,7 @@ BuildRequires:  python2-devel
 BuildRequires:  python-setuptools
 BuildRequires:  python-nose
 BuildRequires:  python-anyjson >= 0.3.3
-BuildRequires:  python-amqplib >= 1.2.0
+BuildRequires:  python-amqplib
 BuildRequires:  python-msgpack
 # For documentation
 #BuildRequires:  pymongo python-sphinx
