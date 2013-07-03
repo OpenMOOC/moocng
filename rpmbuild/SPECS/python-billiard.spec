@@ -44,8 +44,10 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %doc AUTHORS Changelog LICENSE README TODO docs/
+%{python_sitelib}/_%{srcname}.so
 %{python_sitelib}/%{srcname}/
 %{python_sitelib}/%{srcname}*.egg-info
+%{python_sitelib}/funtests
 
 
 %changelog
