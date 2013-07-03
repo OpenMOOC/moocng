@@ -11,25 +11,20 @@ diff --git a/requests/certs.py b/requests/certs.py
 index 8148276..6e07f5e 100644
 --- a/requests/certs.py
 +++ b/requests/certs.py
-@@ -10,22 +10,15 @@ This module returns the preferred default CA certificate bundle.
- If you are packaging Requests, e.g., for a Linux distribution or a managed
- environment, you can change the definition of where() to return a separately
+@@ -12,13 +12,11 @@
  packaged CA bundle.
  """
-
+ 
 -import os.path
 -
-
+ 
  def where():
      """Return the preferred certificate bundle."""
 -    # vendored bundle inside Requests
 -    return os.path.join(os.path.dirname(__file__), 'cacert.pem')
 +    # Don't use the certs bundled with requests, use ca-certificates'.
 +    return "/etc/pki/tls/certs/ca-bundle.crt"
-
-
+ 
  if __name__ == '__main__':
      print(where())
---
-1.8.1.2
 
