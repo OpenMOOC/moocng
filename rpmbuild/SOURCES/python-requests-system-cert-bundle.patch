@@ -1,0 +1,44 @@
+From 415619361cc23dd87b1a7a5fd0cfba38e33d24fd Mon Sep 17 00:00:00 2001
+From: Ralph Bean <rbean@redhat.com>
+Date: Wed, 27 Feb 2013 09:16:20 -0500
+Subject: [PATCH] system cert bundle
+
+---
+ requests/certs.py | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
+
+diff --git a/requests/certs.py b/requests/certs.py
+index 8148276..6e07f5e 100644
+--- a/requests/certs.py
++++ b/requests/certs.py
+@@ -10,22 +10,15 @@ This module returns the preferred default CA certificate bundle.
+ If you are packaging Requests, e.g., for a Linux distribution or a managed
+ environment, you can change the definition of where() to return a separately
+ packaged CA bundle.
+-"""
+-
+-import os.path
+ 
+-certifi = None
+-try:
+-    import certifi
+-except ImportError:
+-    pass
++We return "/etc/pki/tls/certs/ca-bundle.crt" provided by the ca-certificates
++package.
++"""
+ 
+ def where():
+     """Return the preferred certificate bundle."""
+-    if certifi:
+-        return certifi.where()
+-
+-    return os.path.join(os.path.dirname(__file__), 'cacert.pem')
++    # Don't use the certs bundled with requests, use ca-certificates'.
++    return "/etc/pki/tls/certs/ca-bundle.crt"
+ 
+ if __name__ == '__main__':
+     print(where())
+-- 
+1.8.1.2
+

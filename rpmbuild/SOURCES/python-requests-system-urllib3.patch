@@ -1,0 +1,81 @@
+From 5d23c608e72025f72e1f3223cb6c7e3979e93c7f Mon Sep 17 00:00:00 2001
+From: Ralph Bean <rbean@redhat.com>
+Date: Thu, 28 Feb 2013 10:57:20 -0500
+Subject: [PATCH] system-urllib3
+
+---
+ requests/adapters.py | 12 ++++++------
+ requests/compat.py   |  6 +++++-
+ requests/models.py   |  4 ++--
+ 3 files changed, 13 insertions(+), 9 deletions(-)
+
+diff --git a/requests/adapters.py b/requests/adapters.py
+index 5f9d9c7..1f61bd6 100644
+--- a/requests/adapters.py
++++ b/requests/adapters.py
+@@ -11,17 +11,17 @@ and maintain connections.
+ import socket
+ 
+ from .models import Response
+-from .packages.urllib3.poolmanager import PoolManager, proxy_from_url
+-from .packages.urllib3.response import HTTPResponse
++from urllib3.poolmanager import PoolManager, proxy_from_url
++from urllib3.response import HTTPResponse
+ from .hooks import dispatch_hook
+ from .compat import urlparse, basestring, urldefrag
+ from .utils import (DEFAULT_CA_BUNDLE_PATH, get_encoding_from_headers,
+                     prepend_scheme_if_needed)
+ from .structures import CaseInsensitiveDict
+-from .packages.urllib3.exceptions import MaxRetryError
+-from .packages.urllib3.exceptions import TimeoutError
+-from .packages.urllib3.exceptions import SSLError as _SSLError
+-from .packages.urllib3.exceptions import HTTPError as _HTTPError
++from urllib3.exceptions import MaxRetryError
++from urllib3.exceptions import TimeoutError
++from urllib3.exceptions import SSLError as _SSLError
++from urllib3.exceptions import HTTPError as _HTTPError
+ from .cookies import extract_cookies_to_jar
+ from .exceptions import ConnectionError, Timeout, SSLError
+ 
+diff --git a/requests/compat.py b/requests/compat.py
+index 39421ed..d9ab218 100644
+--- a/requests/compat.py
++++ b/requests/compat.py
+@@ -89,7 +89,11 @@ if is_py2:
+     import cookielib
+     from Cookie import Morsel
+     from StringIO import StringIO
+-    from .packages.urllib3.packages.ordered_dict import OrderedDict
++
++    try:
++        from collections import OrderedDict
++    except ImportError:
++        from ordereddict import OrderedDict
+ 
+     builtin_str = str
+     bytes = str
+diff --git a/requests/models.py b/requests/models.py
+index 5202e6f..218b4f2 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -17,7 +17,7 @@ from .status_codes import codes
+ 
+ from .auth import HTTPBasicAuth
+ from .cookies import cookiejar_from_dict, get_cookie_header
+-from .packages.urllib3.filepost import encode_multipart_formdata
++from urllib3.filepost import encode_multipart_formdata
+ from .exceptions import HTTPError, RequestException, MissingSchema, InvalidURL
+ from .utils import (
+     stream_untransfer, guess_filename, requote_uri,
+@@ -121,7 +121,7 @@ class RequestEncodingMixin(object):
+                 fp = StringIO(fp)
+             if isinstance(fp, bytes):
+                 fp = BytesIO(fp)
+-            
++
+             if ft:
+                 new_v = (fn, fp.read(), ft)
+             else:
+-- 
+1.8.1.2
+
