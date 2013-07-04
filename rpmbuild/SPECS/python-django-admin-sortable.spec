@@ -43,8 +43,8 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%{python_sitelib}/%{srcname}/
-%{python_sitelib}/%{srcname}*.egg-info
+%{python_sitelib}/adminsortable/
+%{python_sitelib}/django_admin_sortable*.egg-info
 
 
 %changelog
