@@ -6,17 +6,19 @@
 # recent Fedora releases. That's why zope subpackage is disabled.
 #%define ZPsycopgDAdir %{_localstatedir}/lib/zope/Products/ZPsycopgDA
 
+%global major 2
+%global medium 4
 
 Summary:	A PostgreSQL database adapter for Python
 Name:		python-psycopg2
-Version:	2.4.13
+Version:	%{major}.%{medium}.2
 Release:	1
 # The exceptions allow linking to OpenSSL and PostgreSQL's libpq
 License:	GPLv2+ with exceptions
 Group:		Applications/Databases
 Url:		http://www.initd.org/software/initd/psycopg
 
-Source0:	http://initd.org/pub/software/psycopg/psycopg2-%{version}.tar.gz
+Source0:	http://initd.org/psycopg/tarballs/PSYCOPG-%{major}-%{medium}/psycopg2-%{version}.tar.gz
 
 Patch1:		psycopg2-copy-refcount.patch
 
