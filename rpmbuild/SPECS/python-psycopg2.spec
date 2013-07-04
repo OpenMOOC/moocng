@@ -20,8 +20,6 @@ Url:		http://www.initd.org/software/initd/psycopg
 
 Source0:	http://initd.org/psycopg/tarballs/PSYCOPG-%{major}-%{medium}/psycopg2-%{version}.tar.gz
 
-Patch1:		psycopg2-copy-refcount.patch
-
 BuildRequires:	python-devel postgresql-devel
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -56,8 +54,6 @@ database adapter.
 %prep
 %setup -q -n psycopg2-%{version}
 
-%patch1 -p1
-
 %build
 python setup.py build
 # Fix for wrong-file-end-of-line-encoding problem; upstream also must fix this.
@@ -83,6 +79,9 @@ rm -rf %{buildroot}
 %{python_sitearch}/psycopg2/*.pyc
 %{python_sitearch}/psycopg2/*.so
 %{python_sitearch}/psycopg2/*.pyo
+%{python_sitearch}/psycopg2/tests/*.py
+%{python_sitearch}/psycopg2/tests/*.pyc
+%{python_sitearch}/psycopg2/tests/*.pyo
 %{python_sitearch}/psycopg2-%{version}-py%{pyver}.egg-info
 
 %files doc
