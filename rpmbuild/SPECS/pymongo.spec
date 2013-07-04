@@ -12,7 +12,7 @@
 }
 
 Name:           pymongo
-Version:        2.1.1
+Version:        2.4.2
 Release:        1%{?dist}
 Summary:        Python driver for MongoDB
 
@@ -186,6 +186,9 @@ nosetests --exclude="$exclude"
 popd
 
 %changelog
+* Thu Jul 04 2013 Alejandro Blanco <ablanco@yaco.es> - 2.4.2-1
+- Update to 2.4.2
+
 * Tue Apr 10 2012 Silas Sewell <silas@sewell.org> - 2.1.1-1
 - Update to 2.1.1
 
