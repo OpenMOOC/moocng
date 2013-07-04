@@ -9,8 +9,8 @@
 
 Summary:	A PostgreSQL database adapter for Python
 Name:		python-psycopg2
-Version:	2.0.13
-Release:	2%{?dist}.1
+Version:	2.4.13
+Release:	1
 # The exceptions allow linking to OpenSSL and PostgreSQL's libpq
 License:	GPLv2+ with exceptions
 Group:		Applications/Databases
@@ -27,8 +27,8 @@ Conflicts:	python-psycopg2-zope < %{version}
 
 %description
 psycopg is a PostgreSQL database adapter for the Python programming
-language (just like pygresql and popy.) It was written from scratch 
-with the aim of being very small and fast, and stable as a rock. The 
+language (just like pygresql and popy.) It was written from scratch
+with the aim of being very small and fast, and stable as a rock. The
 main advantages of psycopg are that it supports the full Python
 DBAPI-2.0 and being thread safe at level 2.
 
@@ -97,6 +97,9 @@ rm -rf %{buildroot}
 #%{ZPsycopgDAdir}/icons/*
 
 %changelog
+* Thu Jul 04 2013 Alejandro Blanco <ablanco@yaco.es> 2.4.2-1
+- Update to 2.4.2
+
 * Mon Jul 11 2011 Tom Lane <tgl@redhat.com> 2.0.13-2.el6_1.1
 - Fix failure to increment the refcount on an object during COPY operations
 Resolves: #720306
