@@ -19,6 +19,8 @@ BuildArch:      noarch
 BuildRequires:  python-devel
 BuildRequires:  python-setuptools
 
+Requires: Django14
+
 
 %description
 A jazzy skin for the Django admin interface.
@@ -46,8 +48,8 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%{python_sitelib}/%{srcname}/
-%{python_sitelib}/%{srcname}*.egg-info
+%{python_sitelib}/grappelli/
+%{python_sitelib}/django_grappelli*.egg-info
 
 
 %changelog

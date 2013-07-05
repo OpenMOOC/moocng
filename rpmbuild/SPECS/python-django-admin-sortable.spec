@@ -19,6 +19,8 @@ BuildArch:      noarch
 BuildRequires:  python-devel
 BuildRequires:  python-setuptools
 
+Requires: Django14
+
 
 %description
 Drag and drop sorting for models and inline models in Django admin.
