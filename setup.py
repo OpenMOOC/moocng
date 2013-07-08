@@ -59,7 +59,6 @@ setup(
         },
     zip_safe=False,
     install_requires=[
-        'zipimportx==0.3.2', # Required for some operations during install
         'boto==2.8.0',
         'celery==3.0.11',
         'Django==1.4.5',
