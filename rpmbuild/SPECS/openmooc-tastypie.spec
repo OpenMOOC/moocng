@@ -2,15 +2,16 @@
 # spec file for package openmooc-tastypie
 #
 
+%global srcname django-tastypie
+
 Name:           openmooc-tastypie
 Version:        0.9.11
 Release:        1%{?dist}
-Url:            http://github.com/OpenMOOC/django-tastypie/
+Url:            http://github.com/OpenMOOC/%{srcname}/
 Summary:        Fork of django-tastypie for OpenMOOC
 License:        BSD-3-Clause
 Group:          Development/Languages/Python
-# We had to hardcode the source url
-Source:         http://github.com/OpenMOOC/django-tastypie/archive/0.9.11_no_related_saved.tar.gz
+Source:         http://github.com/OpenMOOC/%{srcname}/archive/%{version}_no_related_saved.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildRequires:  python-devel
 BuildRequires:  python-distribute
@@ -25,7 +26,7 @@ BuildArch:      noarch
 Creating delicious APIs for Django apps since 2010.
 
 %prep
-%setup -q -n django-tastypie-0.9.11_no_related_saved
+%setup -q -n %{srcname}-%{version}_no_related_saved
 
 %build
 python setup.py build
