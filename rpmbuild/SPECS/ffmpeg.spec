@@ -9,7 +9,7 @@ License:        LGPL or GPL
 URL:            http://www.%{srcname}.org/
 Source0:        %{srcname}-linux64-%{version}.tar.bz2
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildArch:      ia64
+BuildArch:      x86_64
 
 
 %description
@@ -21,7 +21,7 @@ multimedia files.
 
 
 %prep
-%setup -q -n %{srcname}-%{version}
+%setup -q -c
 
 
 %build
