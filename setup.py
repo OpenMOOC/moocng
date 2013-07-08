@@ -60,10 +60,10 @@ setup(
     zip_safe=False,
     install_requires=[
         'boto==2.8.0',
-        'celery==3.0.17',
+        'celery==3.0.20',
         'Django==1.4.5',
         'django-admin-sortable==1.4.9',
-        'django-celery==3.0.11',
+        'django-celery==3.0.17',
         'django-tinymce==1.5.1b4',
         'django-tastypie==0.9.11-openmooc',
         'South==0.7.5',
