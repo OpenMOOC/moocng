@@ -63,12 +63,24 @@ It's a Django and Backbone.js application.
 
 
 %prep
-%setup -n %{name}-%{version}
+%setup -q -n %{name}-%{version}
 
 
 %build
+rm -rf rpmbuild
+# TODO build docs instead of removing them
+rm -rf docs
+rm -f celeryd
+rm -f .gitignore
 %{__python} setup.py build
 
 
 %install
 %{__python} setup.py install -O1 --skip-build --root %{buildroot}
+
+
+%files
+%defattr(-,root,root,-)
+%doc CHANGES COPYING README
+%{python_sitelib}/%{component}/
+%{python_sitelib}/%{component}*.egg-info
