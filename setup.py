@@ -59,7 +59,6 @@ setup(
     },
     zip_safe=False,
     install_requires=[
-        #'zipimportx==0.3.2', # Required for some operations during install
         'boto==2.8.0',
         'celery==3.0.17',
         'Django==1.4.5',
@@ -70,7 +69,7 @@ setup(
         'South==0.7.5',
         'psycopg2==2.4.2',
         'pymongo==2.4.2',
-        'djangosaml2==0.9.2',
+        'djangosaml2==0.10.0',
         'PIL>=1.1.6',
         'django_compressor==1.2',
         'python-memcached==1.48',

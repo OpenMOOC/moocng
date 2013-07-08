@@ -16,9 +16,6 @@ BuildArch: noarch
 Vendor: Rooter <info@rooter.es>
 URL: https://github.com/OpenMOOC/moocng
 
-#         'zipimportx==0.3.2', # Required for some operations during install
-# TODO
-
 Requires: openmooc-tastypie = 0.9.11
 
 Requires: pymongo = 2.4.2
@@ -31,13 +28,12 @@ Requires: python-requests = 1.2.0
 
 Requires: Django14 = 1.4.5
 Requires: django-celery = 3.0.17
-#         'djangosaml2==0.9.2',
-# TODO
 Requires: Django-south = 0.7.5
 Requires: python-django-admin-sortable = 1.4.9
 Requires: python-django-compressor = 1.2
 Requires: python-django-grappelli = 2.4.5
 Requires: python-django-mathjax = 0.0.2
+Requires: python-djangosaml2 = 0.10.0
 Requires: python-django-tinymce = 1.5.1b4
 
 # nginx EPEL
