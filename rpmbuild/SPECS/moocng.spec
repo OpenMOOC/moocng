@@ -1,6 +1,6 @@
 %define platform openmooc
 %define component moocng
-%define version 0.0dev
+%define version 0.1.0
 %define release 1
 
 Name: %{platform}-%{component}
@@ -15,6 +15,11 @@ Prefix: %{_prefix}
 BuildArch: noarch
 Vendor: Rooter <info@rooter.es>
 URL: https://github.com/OpenMOOC/moocng
+
+BuildRequires: python-devel
+BuildRequires: python-setuptools
+BuildRequires: python-sphinx10
+BuildRequires: make
 
 Requires: openmooc-tastypie = 0.9.11
 
@@ -67,20 +72,37 @@ It's a Django and Backbone.js application.
 
 
 %build
+# docs
+cd docs
+make html
+mv build/html ../manuals
+cd ..
+
+# clean
 rm -rf rpmbuild
-# TODO build docs instead of removing them
 rm -rf docs
 rm -f celeryd
 rm -f .gitignore
+
+# program
 %{__python} setup.py build
 
 
 %install
-%{__python} setup.py install -O1 --skip-build --root %{buildroot}
+%{__python} setup.py install -O2 --skip-build --root %{buildroot}
+
+
+%clean
+rm -rf %{buildroot}
 
 
 %files
 %defattr(-,root,root,-)
-%doc CHANGES COPYING README
+%doc CHANGES COPYING README manuals/
 %{python_sitelib}/%{component}/
 %{python_sitelib}/%{component}*.egg-info
+
+
+%changelog
+* Wed Jul 10 2013 Alejandro Blanco <ablanco@yaco.es> - 0.1.0-1
+- Initial package
