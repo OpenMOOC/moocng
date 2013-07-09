@@ -11,11 +11,16 @@ Welcome to MOOCNG's documentation!
 :Website: https://github.com/OpenMOOC/moocng/
 :Release: |release|
 
-TODO: add description about moocng
+OpenMOOC is an open source platform (Apache license 2.0) that implements a
+fully open MOOC solution.
 
+MoocNG is the engine that powers the OpenMOOC solution, is the central
+component where the courses take place.
 
-Administration Manual
-=====================
+It's a Django and Backbone.js application.
+
+Developer Manual
+================
 
 .. toctree::
    :maxdepth: 2
@@ -23,13 +28,11 @@ Administration Manual
    install
    configuration
 
-User Manual
-===========
+Other Manuals
+=============
 
-.. toctree::
-   :maxdepth: 2
-
-   teacher_manual
+You can find the complete platform documentation in the general OpenMOOC
+`documentation repository <https://github.com/OpenMOOC/documentation>`_.
 
 Support and Development
 =======================
@@ -38,7 +41,7 @@ The `moocng <https://github.com/OpenMOOC/moocng>`_ is the main online source of
 moocng support and development information.
 
 To report bugs, use the
-`issue tracker <https://github.com/OpenMOOC/moocng/>`_.
+`issue tracker <https://github.com/OpenMOOC/moocng/issues>`_.
 
 If you've got questions that aren't answered in this documentation, contact
 the `OpenMOOC mailing list <https://groups.google.com/forum/#!forum/openmooc>`_.
@@ -48,16 +51,6 @@ To check out the repository with ``git`` use this command:
 .. code-block:: bash
 
  git clone git://github.com/OpenMOOC/moocng.git
-
-
-Development Doc
-===============
-
-.. toctree::
-   :maxdepth: 2
-
-   mongo_structure
-
 
 Indices and tables
 ==================
