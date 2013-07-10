@@ -18,7 +18,7 @@ URL: https://github.com/OpenMOOC/moocng
 
 BuildRequires: python-devel
 BuildRequires: python-setuptools
-BuildRequires: python-sphinx10
+BuildRequires: python-sphinx
 BuildRequires: make
 
 Requires: openmooc-tastypie = 0.9.11
