@@ -1,3 +1,5 @@
+%{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+
 %define platform openmooc
 %define component moocng
 %define version 0.1.0
@@ -33,27 +35,20 @@ Requires: python-requests = 1.2.0
 
 Requires: Django14 = 1.4.5
 Requires: django-celery = 3.0.17
+Requires: django-mathjax = 0.0.2
 Requires: Django-south = 0.7.5
 Requires: python-django-admin-sortable = 1.4.9
 Requires: python-django-compressor = 1.2
 Requires: python-django-grappelli = 2.4.5
-Requires: python-django-mathjax = 0.0.2
 Requires: python-djangosaml2 = 0.10.0
 Requires: python-django-tinymce = 1.5.1b4
 
-# nginx EPEL
 Requires: nginx = 1.0.15
-# gunicorn EPEL
 Requires: python-gunicorn = 0.14.6
-# ffmpeg
 Requires: ffmpeg = 20120806
-# postgresql BASE
 Requires: postgresql-server = 8.4.13
-# mongodb 10GEN
-Requires: mongo-10gen-server = 2.4.4
-# rabbitmq EPEL
+Requires: mongo-10gen-server = 2.4.5
 Requires: rabbitmq-server = 2.6.1
-# memcached BASE
 Requires: memcached = 1.4.4
 
 
