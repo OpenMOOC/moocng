@@ -12,7 +12,7 @@ Source0:        https://pypi.python.org/packages/source/d/django-mathjax/%{name}
 
 BuildArch:      noarch
 BuildRequires:  python-devel python-setuptools
-Requires:       Django
+Requires:       Django14
 
 %description
 Django-mathjax is an application to easy include MathJax in your django
