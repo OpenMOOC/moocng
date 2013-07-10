@@ -18,8 +18,8 @@ BuildRequires:  python-distribute
 BuildRequires:  make
 BuildRequires:  python-sphinx
 Requires:       python-mimeparse >= 0.1.3
-Requires:       python-dateutil >= 1.5
-Requires:       python-django >= 1.2
+Requires:       python-dateutil15
+Requires:       Django14
 BuildArch:      noarch
 
 %description
