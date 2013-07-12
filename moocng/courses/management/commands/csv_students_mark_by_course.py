@@ -1,4 +1,5 @@
-# Copyright 2012 Rooter Analysis S.L.
+# -*- coding: utf-8 -*-
+# Copyright 2012-2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -88,7 +89,6 @@ class Command(BaseCommand):
             headers = ["email", "mark"]
 
             course_csv.writerow(headers)
-
 
             students = course.students.all()[:limit]
 

@@ -1,4 +1,5 @@
-# Copyright 2013 Rooter Analysis S.L.
+# -*- coding: utf-8 -*-
+# Copyright 2012-2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,11 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
+# import os
 
-from django.forms import ModelForm, ValidationError, TextInput
-from django.template.defaultfilters import slugify
-from django.utils.translation import ugettext_lazy as _
+from django.forms import ModelForm
+# from django.template.defaultfilters import slugify
+# from django.utils.translation import ugettext_lazy as _
 
 from moocng.assets.models import Asset, Reservation, AssetAvailability
 
