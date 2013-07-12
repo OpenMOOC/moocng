@@ -23,7 +23,10 @@ class BootstrapMixin(object):
     error_css_class = 'error'
 
     def as_bootstrap(self):
-        "Helper function for outputting HTML. Used by as_table(), as_ul(), as_p()."
+
+        """
+        Helper function for outputting HTML. Used by as_table(), as_ul(), as_p().
+        """
         top_errors = self.non_field_errors()  # Errors that should be displayed above all fields.
         output, hidden_fields = [], []
         normal_row = u'<div%(html_class_attr)s>%(label)s<div class="controls">%(field)s%(help_text)s</div>%(errors)s</div>'
@@ -32,6 +35,7 @@ class BootstrapMixin(object):
         row_ender = u'</div>'
         help_text_html = u'<span class="help-inline">%s</span>'
         errors_on_separate_row = False
+
         for name, field in self.fields.items():
             html_class_attr = ''
             bf = self[name]

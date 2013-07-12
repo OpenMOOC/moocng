@@ -1,4 +1,5 @@
-# Copyright 2012 Rooter Analysis S.L.
+# -*- coding: utf-8 -*-
+# Copyright 2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,33 +16,43 @@
 from django.conf.urls import patterns, url
 
 
-urlpatterns = patterns(
-    'moocng.teacheradmin.views',
+urlpatterns = patterns('moocng.teacheradmin.views',
 
     url(r'^$', 'teacheradmin_info', name='teacheradmin_index'),
+
     url(r'^stats/$', 'teacheradmin_stats', name='teacheradmin_stats'),
+
     url(r'^stats/units/$', 'teacheradmin_stats_units',
         name='teacheradmin_stats_units'),
+
     url(r'^stats/kqs/$', 'teacheradmin_stats_kqs',
         name='teacheradmin_stats_kqs'),
 
     url(r'^units/$', 'teacheradmin_units', name='teacheradmin_units'),
+
     url(r'^units/forcevideoprocess/$', 'teacheradmin_units_forcevideoprocess',
         name='teacheradmin_units_forcevideoprocess'),
+
     url(r'^units/attachment/$', 'teacheradmin_units_attachment',
         name='teacheradmin_units_attachment'),
+
     url(r'^units/question/(?P<kq_id>\d+)/$', 'teacheradmin_units_question',
         name='teacheradmin_units_question'),
+
     url(r'^units/question/(?P<kq_id>\d+)/(?P<option_id>\d+)/$',
         'teacheradmin_units_option', name='teacheradmin_units_option'),
 
     url(r'^teachers/$', 'teacheradmin_teachers', name='teacheradmin_teachers'),
+
     url(r'^teachers/delete/(?P<email_or_id>[^/]+)/$', 'teacheradmin_teachers_delete',
         name='teacheradmin_teachers_delete'),
+
     url(r'^teachers/invite/$', 'teacheradmin_teachers_invite',
         name='teacheradmin_teachers_invite'),
+
     url(r'^teachers/reorder/$', 'teacheradmin_teachers_reorder',
         name='teacheradmin_teachers_reorder'),
+
     url(r'^teachers/transfer/$', 'teacheradmin_teachers_transfer',
         name='teacheradmin_teachers_transfer'),
 

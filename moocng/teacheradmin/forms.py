@@ -1,4 +1,5 @@
-# Copyright 2012 Rooter Analysis S.L.
+# -*- coding: utf-8 -*-
+# Copyright 2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,7 +26,6 @@ from moocng.teacheradmin.models import MassiveEmail
 from moocng.media_contents import media_content_extract_id
 
 from moocng.assets.models import Asset
-from moocng.assets.forms import AssetForm
 
 
 class CourseForm(forms.ModelForm):
@@ -36,7 +36,7 @@ class CourseForm(forms.ModelForm):
 
     :returns: HTML Form
 
-    ..versionadded:: 0.1        
+    ..versionadded:: 0.1
     """
     class Meta:
         model = Course
@@ -79,6 +79,15 @@ class CourseForm(forms.ModelForm):
 
 class AnnouncementForm(CoursesAnnouncementForm, BootstrapMixin):
 
+    """
+    Announcement form. Inherits from CoursesAnnouncementForm and adds a send_email
+    field.
+
+    :returns: HTML Form
+
+    .. versionadded:: 0.1
+    """
+
     send_email = forms.BooleanField(
         required=False,
         label=_(u'Send the announcement via email to all the students in this course'),
@@ -89,6 +98,13 @@ class AnnouncementForm(CoursesAnnouncementForm, BootstrapMixin):
 
 class AssetTeacherForm(forms.ModelForm, BootstrapMixin):
 
+    """
+    AssetTeacher model form
+
+    :returns: HTML Form
+
+    .. versionadded:: 0.1
+    """
     class Meta:
         model = Asset
         exclude = ('slot_duration', 'max_bookable_slots', 'reservation_in_advance',
@@ -97,6 +113,13 @@ class AssetTeacherForm(forms.ModelForm, BootstrapMixin):
 
 class MassiveEmailForm(forms.ModelForm, BootstrapMixin):
 
+    """
+    Massive email model form. Adapts subject and message fields size.
+
+    :returns: HTML Form
+
+    .. versionadded:: 0.1
+    """
     class Meta:
         model = MassiveEmail
         exclude = ('course', )

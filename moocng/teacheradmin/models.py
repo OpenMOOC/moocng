@@ -1,4 +1,5 @@
-# Copyright 2012 Rooter Analysis S.L.
+# -*- coding: utf-8 -*-
+# Copyright 2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,6 +26,11 @@ from moocng.teacheradmin.tasks import massmail_send_in_batches
 
 class Invitation(models.Model):
 
+    """
+    Invitation data model.
+
+    .. versionadded:: 0.1
+    """
     host = models.ForeignKey(User, verbose_name=_(u'Host'), blank=False,
                              null=False)
     email = models.EmailField(verbose_name=_(u'Email'), blank=False,
@@ -42,6 +48,11 @@ class Invitation(models.Model):
 
 class MassiveEmail(models.Model):
 
+    """
+    MassiveEmail data model.
+
+    .. versionadded:: 0.1
+    """
     course = models.ForeignKey(Course, verbose_name=_(u'Course'),
                                related_name='massive_emails', blank=False,
                                null=False)

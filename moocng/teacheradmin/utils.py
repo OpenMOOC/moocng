@@ -1,4 +1,5 @@
-# Copyright 2012 Rooter Analysis S.L.
+# -*- coding: utf-8 -*-
+# Copyright 2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from django.conf import settings
 from django.contrib.sites.models import get_current_site
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
@@ -41,5 +41,5 @@ def send_removed_notification(request, email, course):
         'host': request.user.get_full_name() or request.user.username,
         'site': get_current_site(request).name
     }
-    to =  [email]
+    to = [email]
     send_mail_wrapper(subject, template, context, to)
