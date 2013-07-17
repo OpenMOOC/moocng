@@ -76,7 +76,6 @@ cd ..
 # clean
 rm -rf rpmbuild
 rm -rf docs
-rm -f celeryd
 rm -f .gitignore
 
 # program
@@ -85,6 +84,21 @@ rm -f .gitignore
 
 %install
 %{__python} setup.py install -O2 --skip-build --root %{buildroot}
+# TODO celeryd is fixed to /var/www
+cp celeryd %{_sysconfdir}/init.d/celeryd
+ln -s %{buildroot}%{python_sitelib}/%{component}/settings/local.py %{buildroot}%{_sysconfdir}/%{name}/local.py
+mkdir -p %{buildroot}%{_localstatedir}/www/%{name}/{media,static}
+
+
+%pre
+if [ -z "$(/usr/bin/getent group %{name})" ]; then
+    /usr/sbin/groupadd -r %{name}
+    /usr/bin/gpasswd -a apache %{name}
+fi
+
+
+%postun
+/usr/bin/gpasswd -d apache %{name}
 
 
 %clean
@@ -94,8 +108,11 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %doc CHANGES COPYING README manuals/
+%attr(640,root,%{name}) %config(noreplace) %{_sysconfdir}/%{name}/*
+
 %{python_sitelib}/%{component}/
 %{python_sitelib}/%{component}*.egg-info
+%{_sysconfdir}/init.d/celeryd
 
 
 %changelog
