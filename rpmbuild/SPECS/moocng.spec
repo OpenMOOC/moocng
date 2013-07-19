@@ -97,8 +97,9 @@ cp celeryd %{buildroot}%{_sysconfdir}/init.d/celeryd
 # Create local configuration file
 mkdir -p %{buildroot}%{_sysconfdir}/%{platform}/%{component}/
 ln -s %{component}/settings/* %{buildroot}%{_sysconfdir}/%{platform}/%{component}/
-# Create the manage file
+# Create the manage file and the WSGI file
 cp $RPM_SOURCE_DIR/moocng.py %{buildroot}/${bindir}/moocng.py
+cp $RPM_SOURCE_DIR/wsgi.py %{buildroot}/${_libexecdir}/moocng_wsgi.py
 # Create media and static dirs
 mkdir -p %{buildroot}%{_localstatedir}/www/%{name}/{media,static}
 
