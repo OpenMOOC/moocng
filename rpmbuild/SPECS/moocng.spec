@@ -68,7 +68,8 @@ It's a Django and Backbone.js application.
 
 
 %build
-# Remove MathJax if mathjax = 1. Intended for testing purposes.
+# Remove MathJax if mathjax = 1. Intended for testing purposes (avoid excessive
+# compilation times)
 %if %{mathjax}
     rm -rf moocng/static/js/libs/mathjax/
 %endif
@@ -90,18 +91,27 @@ rm -f .gitignore
 
 %install
 %{__python} setup.py install -O2 --skip-build --root %{buildroot}
-# TODO celeryd is fixed to /var/www
+# Add celeryd custom init
 mkdir -p %{buildroot}%{_sysconfdir}/init.d/
 cp celeryd %{buildroot}%{_sysconfdir}/init.d/celeryd
+# Create local configuration file
 mkdir -p %{buildroot}%{_sysconfdir}/%{platform}/%{component}/
-ln -s %{component}/settings/local.py.example %{buildroot}%{_sysconfdir}/%{platform}/%{component}/local.py
+ln -s %{component}/settings/* %{buildroot}%{_sysconfdir}/%{platform}/%{component}/
+# Create the manage file
+cp $RPM_SOURCE_DIR/moocng.py %{buildroot}/${bindir}/moocng.py
+# Create media and static dirs
 mkdir -p %{buildroot}%{_localstatedir}/www/%{name}/{media,static}
 
 
 %pre
-if [ -z "$(/usr/bin/getent group %{name})" ]; then
+# If the group openmooc-moocng doesn't exist, create it.
+if ! /usr/bin/getent group %{name} > /dev/null 2>&1; then
     /usr/sbin/groupadd -r %{name}
-    /usr/bin/gpasswd -a apache %{name}
+fi
+
+# If the nginx user is not on the group, add it.
+if ! /usr/bin/groups nginx | /bin/grep %{name} > /dev/null 2>&1; then
+    /usr/bin/gpasswd -a nginx %{name}
 fi
 
 
@@ -109,14 +119,14 @@ fi
 /usr/bin/gpasswd -d apache %{name}
 
 
-#%clean
+%clean
 rm -rf %{buildroot}
 
 
 %files
 %defattr(-,root,root,-)
 %doc CHANGES COPYING README manuals/
-%attr(640,root,%{name}) %config(noreplace) %{_sysconfdir}/%{platform}/%{component}/*
+%attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/%{platform}/%{component}/*
 
 %{python_sitelib}/%{component}/
 %{python_sitelib}/%{component}*.egg-info
@@ -124,7 +134,7 @@ rm -rf %{buildroot}
 
 
 %changelog
-* Thu Jul 19 2013 Oscar Carballal Prego <ocarballal@yaco.es> - 0.1.0-2
+* Fri Jul 19 2013 Oscar Carballal Prego <ocarballal@yaco.es> - 0.1.0-2
 - Fixed paths, local.py file. Changed location of the config files. Added mathjax variable to
   avoid excessive compulation times when testing.
 

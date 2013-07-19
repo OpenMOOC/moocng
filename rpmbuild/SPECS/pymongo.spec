@@ -22,7 +22,6 @@ License:        ASL 2.0 and MIT
 URL:            http://api.mongodb.org/python
 Source0:        http://pypi.python.org/packages/source/p/pymongo/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-Requires:       python-bson = %{version}-%{release}
 
 BuildRequires:  python2-devel
 BuildRequires:  python-nose
