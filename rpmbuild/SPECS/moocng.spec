@@ -132,10 +132,16 @@ rm -rf %{buildroot}
 %{python_sitelib}/%{component}/
 %{python_sitelib}/%{component}*.egg-info
 %{_sysconfdir}/init.d/celeryd
-
+%{_sysconfdir}/etc/openmooc/moocng/local.py
+%{_sysconfdir}/etc/openmooc/moocng/common.py
+%{_sysconfdir}/etc/openmooc/moocng/__init__.py
+%{_sysconfdir}/etc/openmooc/moocng/devel.py
+%{_sysconfdir}/etc/openmooc/moocng/saml_settings.py
+${bindir}/moocng.py
+${_libexecdir}/moocng_wsgi.py
 
 %changelog
-* Fri Jul 19 2013 Oscar Carballal Prego <ocarballal@yaco.es> - 0.1.0-2
+* Mon Jul 22 2013 Oscar Carballal Prego <ocarballal@yaco.es> - 0.1.0-2
 - Fixed paths, local.py file. Changed location of the config files. Added mathjax variable to
   avoid excessive compulation times when testing.
 
