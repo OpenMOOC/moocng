@@ -3,7 +3,6 @@
 %define mathjax 0
 %define platform openmooc
 %define component moocng
-%define altname openmoocengine
 %define version 0.1.0
 %define release 2
 
@@ -96,9 +95,10 @@ rm -f .gitignore
 mkdir -p %{buildroot}%{_sysconfdir}/init.d/
 cp celeryd %{buildroot}%{_sysconfdir}/init.d/celeryd
 # Create local configuration file
-mkdir -p %{buildroot}%{_sysconfdir}/%{platform}/%{altname}/
-cp -R %{component}/settings/* %{buildroot}%{_sysconfdir}/%{platform}/%{altname}/
-mv %{component}/settings/local.py.example %{buildroot}%{_sysconfdir}/%{platform}/%{altname}/local.py
+mkdir -p %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
+mkdir -p %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsaml2/
+cp -R %{component}/settings/* %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
+mv %{component}/settings/local.py.example %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/local.py
 # Create the manage file and the WSGI file
 mkdir -p %{buildroot}%{_bindir}/
 mkdir -p %{buildroot}%{_libexecdir}/
@@ -131,7 +131,7 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %doc CHANGES COPYING README manuals/
-%attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/%{platform}/%{altname}/*
+%attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/%{platform}/%{component}/moocngsettings/*
 
 %{python_sitelib}/%{component}/
 %{python_sitelib}/%{component}*.egg-info
