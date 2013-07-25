@@ -3,6 +3,7 @@
 %define mathjax 0
 %define platform openmooc
 %define component moocng
+%define altname openmoocengine
 %define version 0.1.0
 %define release 2
 
@@ -16,7 +17,7 @@ License: Apache Software License 2.0
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Prefix: %{_prefix}
 BuildArch: noarch
-Vendor: Rooter <info@rooter.es>
+Vendor: Rooter Analysis <info@rooter.es>
 URL: https://github.com/OpenMOOC/moocng
 
 BuildRequires: python-devel
@@ -33,6 +34,7 @@ Requires: python-imaging = 1.1.6
 Requires: python-memcached = 1.48
 Requires: python-psycopg2 = 2.4.2
 Requires: python-requests = 1.2.0
+Requires: python-gunicorn = 0.14.6
 
 Requires: Django14 = 1.4.5
 Requires: django-celery = 3.0.17
@@ -45,7 +47,6 @@ Requires: python-djangosaml2 = 0.10.0
 Requires: python-django-tinymce = 1.5.1b4
 
 Requires: nginx = 1.0.15
-Requires: python-gunicorn = 0.14.6
 Requires: ffmpeg = 20120806
 Requires: postgresql-server = 8.4.13
 Requires: mongo-10gen-server = 2.4.5
@@ -95,9 +96,9 @@ rm -f .gitignore
 mkdir -p %{buildroot}%{_sysconfdir}/init.d/
 cp celeryd %{buildroot}%{_sysconfdir}/init.d/celeryd
 # Create local configuration file
-mkdir -p %{buildroot}%{_sysconfdir}/%{platform}/%{component}/
-cp -R %{component}/settings/* %{buildroot}%{_sysconfdir}/%{platform}/%{component}/
-mv %{component}/settings/local.py.example %{buildroot}%{_sysconfdir}/%{platform}/%{component}/local.py
+mkdir -p %{buildroot}%{_sysconfdir}/%{platform}/%{altname}/
+cp -R %{component}/settings/* %{buildroot}%{_sysconfdir}/%{platform}/%{altname}/
+mv %{component}/settings/local.py.example %{buildroot}%{_sysconfdir}/%{platform}/%{altname}/local.py
 # Create the manage file and the WSGI file
 mkdir -p %{buildroot}%{_bindir}/
 mkdir -p %{buildroot}%{_libexecdir}/
@@ -120,7 +121,7 @@ fi
 
 
 %postun
-/usr/bin/gpasswd -d apache %{name}
+/usr/bin/gpasswd -d nginx %{name}
 
 
 %clean
@@ -130,13 +131,13 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %doc CHANGES COPYING README manuals/
-%attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/%{platform}/%{component}/*
+%attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/%{platform}/%{altname}/*
 
 %{python_sitelib}/%{component}/
 %{python_sitelib}/%{component}*.egg-info
 %{_sysconfdir}/init.d/celeryd
-%attr(755,root, %{name}) %{_bindir}/moocng.py
-%attr(755,root, %{name}) %{_libexecdir}/moocng_wsgi.py
+%attr(755,root, %{name}) %{_bindir}/moocng.py*
+%attr(755,root, %{name}) %{_libexecdir}/moocng_wsgi.py*
 
 %changelog
 * Mon Jul 22 2013 Oscar Carballal Prego <ocarballal@yaco.es> - 0.1.0-2

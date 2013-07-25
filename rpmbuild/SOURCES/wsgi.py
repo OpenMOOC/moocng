@@ -17,7 +17,7 @@ import os
 import sys
 
 sys.path.insert(0, '/etc/openmooc/')
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "moocng")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "openmoocengine")
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
