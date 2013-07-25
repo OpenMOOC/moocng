@@ -96,10 +96,13 @@ mkdir -p %{buildroot}%{_sysconfdir}/init.d/
 cp celeryd %{buildroot}%{_sysconfdir}/init.d/celeryd
 # Create local configuration file
 mkdir -p %{buildroot}%{_sysconfdir}/%{platform}/%{component}/
-ln -s %{component}/settings/* %{buildroot}%{_sysconfdir}/%{platform}/%{component}/
+cp -R %{component}/settings/* %{buildroot}%{_sysconfdir}/%{platform}/%{component}/
+mv %{component}/settings/local.py.example %{buildroot}%{_sysconfdir}/%{platform}/%{component}/local.py
 # Create the manage file and the WSGI file
-cp $RPM_SOURCE_DIR/moocng.py %{buildroot}/${bindir}/moocng.py
-cp $RPM_SOURCE_DIR/wsgi.py %{buildroot}/${_libexecdir}/moocng_wsgi.py
+mkdir -p %{buildroot}/%{bindir}/
+mkdir -p %{buildroot}/%{_libexecdir}/
+cp $RPM_SOURCE_DIR/moocng.py %{buildroot}/%{bindir}/moocng.py
+cp $RPM_SOURCE_DIR/wsgi.py %{buildroot}/%{_libexecdir}/moocng_wsgi.py
 # Create media and static dirs
 mkdir -p %{buildroot}%{_localstatedir}/www/%{name}/{media,static}
 
@@ -132,13 +135,13 @@ rm -rf %{buildroot}
 %{python_sitelib}/%{component}/
 %{python_sitelib}/%{component}*.egg-info
 %{_sysconfdir}/init.d/celeryd
-%{_sysconfdir}/etc/openmooc/moocng/local.py
-%{_sysconfdir}/etc/openmooc/moocng/common.py
-%{_sysconfdir}/etc/openmooc/moocng/__init__.py
-%{_sysconfdir}/etc/openmooc/moocng/devel.py
-%{_sysconfdir}/etc/openmooc/moocng/saml_settings.py
-${bindir}/moocng.py
-${_libexecdir}/moocng_wsgi.py
+%{_sysconfdir}/openmooc/moocng/local.py
+%{_sysconfdir}/openmooc/moocng/common.py
+%{_sysconfdir}/openmooc/moocng/__init__.py
+%{_sysconfdir}/openmooc/moocng/devel.py
+%{_sysconfdir}/openmooc/moocng/saml_settings.py
+/%{bindir}/moocng.py
+/%{_libexecdir}/moocng_wsgi.py
 
 %changelog
 * Mon Jul 22 2013 Oscar Carballal Prego <ocarballal@yaco.es> - 0.1.0-2
