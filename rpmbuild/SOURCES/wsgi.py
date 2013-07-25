@@ -16,7 +16,7 @@ framework.
 import os
 import sys
 
-sys.path.append(0, '/etc/openmooc/')
+sys.path.insert(0, '/etc/openmooc/')
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "moocng")
 
 # This application object is used by any WSGI server configured to use this

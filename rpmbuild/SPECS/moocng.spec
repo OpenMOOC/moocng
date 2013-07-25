@@ -99,10 +99,10 @@ mkdir -p %{buildroot}%{_sysconfdir}/%{platform}/%{component}/
 cp -R %{component}/settings/* %{buildroot}%{_sysconfdir}/%{platform}/%{component}/
 mv %{component}/settings/local.py.example %{buildroot}%{_sysconfdir}/%{platform}/%{component}/local.py
 # Create the manage file and the WSGI file
-mkdir -p %{buildroot}/%{bindir}/
-mkdir -p %{buildroot}/%{_libexecdir}/
-cp $RPM_SOURCE_DIR/moocng.py %{buildroot}/%{bindir}/moocng.py
-cp $RPM_SOURCE_DIR/wsgi.py %{buildroot}/%{_libexecdir}/moocng_wsgi.py
+mkdir -p %{buildroot}%{_bindir}/
+mkdir -p %{buildroot}%{_libexecdir}/
+cp $RPM_SOURCE_DIR/moocng.py %{buildroot}%{_bindir}/moocng.py
+cp $RPM_SOURCE_DIR/wsgi.py %{buildroot}%{_libexecdir}/moocng_wsgi.py
 # Create media and static dirs
 mkdir -p %{buildroot}%{_localstatedir}/www/%{name}/{media,static}
 
@@ -135,13 +135,8 @@ rm -rf %{buildroot}
 %{python_sitelib}/%{component}/
 %{python_sitelib}/%{component}*.egg-info
 %{_sysconfdir}/init.d/celeryd
-%{_sysconfdir}/openmooc/moocng/local.py
-%{_sysconfdir}/openmooc/moocng/common.py
-%{_sysconfdir}/openmooc/moocng/__init__.py
-%{_sysconfdir}/openmooc/moocng/devel.py
-%{_sysconfdir}/openmooc/moocng/saml_settings.py
-/%{bindir}/moocng.py
-/%{_libexecdir}/moocng_wsgi.py
+%attr(755,root, %{name}) %{_bindir}/moocng.py
+%attr(755,root, %{name}) %{_libexecdir}/moocng_wsgi.py
 
 %changelog
 * Mon Jul 22 2013 Oscar Carballal Prego <ocarballal@yaco.es> - 0.1.0-2

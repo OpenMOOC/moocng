@@ -2,7 +2,7 @@
 import os
 import sys
 
-sys.path.append(0, '/etc/openmooc/')
+sys.path.insert(0, '/etc/openmooc/')
 
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "moocng")
