@@ -1,6 +1,5 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
-%define mathjax 0
 %define platform openmooc
 %define component moocng
 %define version 0.1.0
@@ -10,6 +9,9 @@ Name: %{platform}-%{component}
 Version: %{version}
 Release: %{release}
 Source0: %{name}-%{version}.tar.gz
+Source1: moocng.py
+Source2: wsgi.py
+Source3: common.py
 Summary: Engine for MOOC applications (OpenMOOC core)
 
 License: Apache Software License 2.0
@@ -63,18 +65,23 @@ component where the courses take place.
 It's a Django and Backbone.js application.
 
 
+# Create a subpackage for the Mathjax static files, they take a loooong while to
+# generate.
+%package -n openmooc-moocng-mathjax
+Summary: Mathjax symbols for OpenMOOC Engine (moocng)
+Requires: %{name} = %{version}-%{release}
+
+%description openmooc-moocng-mathjax
+Static files needed in OpenMOOC Engine (moocng) for using Mathjax.
+# end mathjax
+
+
 %prep
 %setup -q -n %{name}-%{version}
 
 
 %build
-# Remove MathJax if mathjax = 1. Intended for testing purposes (avoid excessive
-# compilation times)
-%if %{mathjax}
-    rm -rf moocng/static/js/libs/mathjax/
-%endif
-
-# docs
+# Build the moocng documentation
 cd docs
 make html
 mv build/html ../manuals
@@ -98,14 +105,15 @@ cp celeryd %{buildroot}%{_sysconfdir}/init.d/celeryd
 mkdir -p %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
 mkdir -p %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsaml2/
 cp -R %{component}/settings/* %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
-mv %{component}/settings/local.py.example %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/local.py
+# Copy a special version of common.py that has static and media dirs modified
+cp %{SOURCE3} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
 # Create the manage file and the WSGI file
 mkdir -p %{buildroot}%{_bindir}/
 mkdir -p %{buildroot}%{_libexecdir}/
-cp $RPM_SOURCE_DIR/moocng.py %{buildroot}%{_bindir}/moocng.py
-cp $RPM_SOURCE_DIR/wsgi.py %{buildroot}%{_libexecdir}/moocng_wsgi.py
+cp %{SOURCE1} %{buildroot}%{_bindir}/moocngadmin
+cp %{SOURCE2} %{buildroot}%{_libexecdir}/openmooc-moocng
 # Create media and static dirs
-mkdir -p %{buildroot}%{_localstatedir}/www/%{name}/{media,static}
+mkdir -p %{buildroot}%{_localstatedir}/lib/%{platform}/%{component}/{media,static}
 
 
 %pre
@@ -136,8 +144,13 @@ rm -rf %{buildroot}
 %{python_sitelib}/%{component}/
 %{python_sitelib}/%{component}*.egg-info
 %{_sysconfdir}/init.d/celeryd
-%attr(755,root, %{name}) %{_bindir}/moocng.py*
-%attr(755,root, %{name}) %{_libexecdir}/moocng_wsgi.py*
+%attr(755,root, %{name}) %{_bindir}/moocngadmin
+%attr(755,root, %{name}) %{_libexecdir}/openmooc-moocng
+
+
+%files -n openmooc-moocng-mathjax
+%defattr(-,root,root,-)
+%{python_sitelib}/%{component}/static/js/libs/mathjax/
 
 %changelog
 * Mon Jul 22 2013 Oscar Carballal Prego <ocarballal@yaco.es> - 0.1.0-2
