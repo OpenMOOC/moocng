@@ -3,7 +3,7 @@
 %define platform openmooc
 %define component moocng
 %define version 0.1.0
-%define release 2
+%define release 1
 
 Name: %{platform}-%{component}
 Version: %{version}
@@ -66,12 +66,12 @@ It's a Django and Backbone.js application.
 
 
 # Create a subpackage for the Mathjax static files, they take a loooong while to
-# generate.
-%package -n openmooc-moocng-mathjax
+# generate. Follow this guide if you feel lost: http://www.rpm.org/max-rpm/s1-rpm-subpack-spec-file-changes.html
+# This will generate an openmooc-moocng-mathjax package
+%package mathjax
 Summary: Mathjax symbols for OpenMOOC Engine (moocng)
 Requires: %{name} = %{version}-%{release}
-
-%description openmooc-moocng-mathjax
+%description mathjax
 Static files needed in OpenMOOC Engine (moocng) for using Mathjax.
 # end mathjax
 
@@ -148,14 +148,14 @@ rm -rf %{buildroot}
 %attr(755,root, %{name}) %{_libexecdir}/openmooc-moocng
 
 
-%files -n openmooc-moocng-mathjax
+%files mathjax
 %defattr(-,root,root,-)
 %{python_sitelib}/%{component}/static/js/libs/mathjax/
 
 %changelog
-* Mon Jul 22 2013 Oscar Carballal Prego <ocarballal@yaco.es> - 0.1.0-2
-- Fixed paths, local.py file. Changed location of the config files. Added mathjax variable to
-  avoid excessive compulation times when testing.
+* Mon Jul 29 2013 Oscar Carballal Prego <ocarballal@yaco.es> - 0.1.0-1
+- Fixed paths, local.py file. Changed location of the config files. Added mathjax
+  variable to avoid excessive compulation times when testing. Added mathjax subpackage
 
 * Wed Jul 10 2013 Alejandro Blanco <ablanco@yaco.es> - 0.1.0-1
 - Initial package
