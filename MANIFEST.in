@@ -1,5 +1,17 @@
-include COPYING
-include README
 include CHANGES
-recursive-include moocng *.py *.html *.js *.txt *.css *.png *.ico *.wsgi
-recursive-include doc *.py Makefile *.rst
+include COPYING
+include *.py
+include celeryd
+recursive-include docs *.py
+recursive-include docs *.rst
+recursive-include docs Makefile
+recursive-include moocng *.py
+recursive-include moocng *.eot
+recursive-include moocng *.example
+recursive-include moocng *.gif
+recursive-include moocng *.jpg
+recursive-include moocng *.otf
+recursive-include moocng *.po
+recursive-include moocng *.svg
+recursive-include moocng *.woff
+recursive-include moocng *.xml
