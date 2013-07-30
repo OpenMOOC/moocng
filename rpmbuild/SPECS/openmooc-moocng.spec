@@ -12,6 +12,7 @@ Source0: %{name}-%{version}.tar.gz
 Source1: %{name}-moocng.py
 Source2: %{name}-wsgi.py
 Source3: %{name}-common.py
+Source4: %{name}-celeryd
 Summary: Engine for MOOC applications (OpenMOOC core)
 
 License: Apache Software License 2.0
@@ -101,9 +102,9 @@ rm -f .gitignore
 
 %install
 %{__python} setup.py install -O2 --skip-build --root %{buildroot}
-# Add celeryd custom init
+# Add custom celeryd to init
 mkdir -p %{buildroot}%{_sysconfdir}/init.d/
-cp celeryd %{buildroot}%{_sysconfdir}/init.d/celeryd
+cp %{SOURCE4} %{buildroot}%{_sysconfdir}/init.d/celeryd
 # Create local configuration file
 mkdir -p %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
 mkdir -p %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsaml2/
@@ -144,11 +145,57 @@ rm -rf %{buildroot}
 %doc CHANGES COPYING README manuals/
 %attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/%{platform}/%{component}/moocngsettings/*
 
-%{python_sitelib}/%{component}/
-%{python_sitelib}/%{component}*.egg-info
 %{_sysconfdir}/init.d/celeryd
 %attr(755,root, %{name}) %{_bindir}/moocngadmin
 %attr(755,root, %{name}) %{_libexecdir}/openmooc-moocng
+
+%{python_sitelib}/%{component}/api/
+%{python_sitelib}/%{component}/assets/
+%{python_sitelib}/%{component}/attributemaps/
+%{python_sitelib}/%{component}/auth_handlers/
+%{python_sitelib}/%{component}/badges/
+%{python_sitelib}/%{component}/categories/
+%{python_sitelib}/%{component}/contact/
+%{python_sitelib}/%{component}/courses/
+%{python_sitelib}/%{component}/enrollment/
+%{python_sitelib}/%{component}/fixtures/
+%{python_sitelib}/%{component}/formats/
+%{python_sitelib}/%{component}/locale/
+%{python_sitelib}/%{component}/media/
+%{python_sitelib}/%{component}/media_contents/
+%{python_sitelib}/%{component}/peerreview/
+%{python_sitelib}/%{component}/portal/
+%{python_sitelib}/%{component}/settings/
+%{python_sitelib}/%{component}/teacheradmin/
+%{python_sitelib}/%{component}/templates/
+%{python_sitelib}/%{component}/videos/
+%{python_sitelib}/%{component}/context_processors.py*
+%{python_sitelib}/%{component}/decorators.py*
+%{python_sitelib}/%{component}/forms.py*
+%{python_sitelib}/%{component}/mongodb.py*
+%{python_sitelib}/%{component}/urls.py*
+%{python_sitelib}/%{component}/wsgi.py*
+
+# We do this so we don't duplicate the validation of mathjax files
+%{python_sitelib}/%{component}/static/crossdomain.xml
+%{python_sitelib}/%{component}/static/favicon.ico
+%{python_sitelib}/%{component}/static/humans.txt
+%{python_sitelib}/%{component}/static/robots.txt
+%{python_sitelib}/%{component}/static/css/
+%{python_sitelib}/%{component}/static/img/
+%{python_sitelib}/%{component}/static/js/teacheradmin/
+%{python_sitelib}/%{component}/static/js/*.js
+%{python_sitelib}/%{component}/static/js/libs/*.js
+#%{python_sitelib}/%{component}/static/js/ajax.js
+#%{python_sitelib}/%{component}/static/js/classroom-views.js
+#%{python_sitelib}/%{component}/static/js/csrf-ajax.js
+#%{python_sitelib}/%{component}/static/js/models.js
+#%{python_sitelib}/%{component}/static/js/progress-view.js
+#%{python_sitelib}/%{component}/static/js/question-editor.js
+#%{python_sitelib}/%{component}/static/js/routes.js
+#%{python_sitelib}/%{component}/static/js/unit-admin.js
+#%{python_sitelib}/%{component}/static/js/libs/*.js
+%{python_sitelib}/%{component}*.egg-info
 
 
 %files mathjax
