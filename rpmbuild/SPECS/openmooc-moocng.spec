@@ -13,6 +13,7 @@ Source1: %{name}-moocng.py
 Source2: %{name}-wsgi.py
 Source3: %{name}-common.py
 Source4: %{name}-celeryd
+Source5: %{name}-saml_settings.py
 Summary: Engine for MOOC applications (OpenMOOC core)
 
 License: Apache Software License 2.0
@@ -109,8 +110,9 @@ cp %{SOURCE4} %{buildroot}%{_sysconfdir}/init.d/celeryd
 mkdir -p %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
 mkdir -p %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsaml2/
 cp -R %{component}/settings/* %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
-# Copy a special version of common.py that has static and media dirs modified
+# Copy a modified version of common.py and saml_settings
 cp %{SOURCE3} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
+cp %{SOURCE5} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
 # Create the manage file and the WSGI file
 mkdir -p %{buildroot}%{_bindir}/
 mkdir -p %{buildroot}%{_libexecdir}/

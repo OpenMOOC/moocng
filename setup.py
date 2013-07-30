@@ -32,7 +32,7 @@ def recursive_include(directory, patterns):
 
 # be careful with the syntax of this line since it is parsed from
 # the docs/conf.py file
-VERSION = '0.0'
+VERSION = '0.1.0'
 
 
 setup(
@@ -55,7 +55,7 @@ setup(
     package_dir={'moocng': 'moocng'},
     package_data={
         'moocng': recursive_include('moocng', ['*.html', '*.css', '*.js', '*.txt',
-                                               '*.png', '*.ico', '*.wsgi'])
+                                               '*.png', '*.ico', '*.wsgi', '*.xml'])
     },
     zip_safe=False,
     install_requires=[
