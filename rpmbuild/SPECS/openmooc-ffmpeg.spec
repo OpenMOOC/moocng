@@ -41,9 +41,9 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%_libexecdir/%{component}
-%_libexecdir/ffprobe
-%_libexecdir/qt-faststart
+%_libexecdir/%{platform}/%{component}
+%_libexecdir/%{platform}/ffprobe
+%_libexecdir/%{platform}/qt-faststart
 
 
 %changelog
