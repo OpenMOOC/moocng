@@ -188,15 +188,6 @@ rm -rf %{buildroot}
 %{python_sitelib}/%{component}/static/js/teacheradmin/
 %{python_sitelib}/%{component}/static/js/*.js
 %{python_sitelib}/%{component}/static/js/libs/*.js
-#%{python_sitelib}/%{component}/static/js/ajax.js
-#%{python_sitelib}/%{component}/static/js/classroom-views.js
-#%{python_sitelib}/%{component}/static/js/csrf-ajax.js
-#%{python_sitelib}/%{component}/static/js/models.js
-#%{python_sitelib}/%{component}/static/js/progress-view.js
-#%{python_sitelib}/%{component}/static/js/question-editor.js
-#%{python_sitelib}/%{component}/static/js/routes.js
-#%{python_sitelib}/%{component}/static/js/unit-admin.js
-#%{python_sitelib}/%{component}/static/js/libs/*.js
 %{python_sitelib}/%{component}*.egg-info
 
 
