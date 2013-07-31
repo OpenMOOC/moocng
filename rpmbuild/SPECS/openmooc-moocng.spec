@@ -14,6 +14,8 @@ Source2: %{name}-wsgi.py
 Source3: %{name}-common.py
 Source4: %{name}-celeryd
 Source5: %{name}-saml_settings.py
+Source6: %{name}-nginx.conf
+Source7: %{name}-supervisor.conf
 Summary: Engine for MOOC applications (OpenMOOC core)
 
 License: Apache Software License 2.0
@@ -53,6 +55,7 @@ Requires: python-djangosaml2 = 0.10.0
 Requires: python-django-tinymce = 1.5.1b4
 
 Requires: nginx = 1.0.15
+Requires: supervisor
 Requires: openmooc-ffmpeg = 20120806
 Requires: postgresql-server = 8.4.13
 Requires: mongo-10gen-server = 2.4.5
@@ -103,32 +106,46 @@ rm -f .gitignore
 
 %install
 %{__python} setup.py install -O2 --skip-build --root %{buildroot}
-# Add custom celeryd to init
+
+# Create neccesary directories, if they don't exist (if you don't create them
+# the build breaks for some reason)
 mkdir -p %{buildroot}%{_sysconfdir}/init.d/
-cp %{SOURCE4} %{buildroot}%{_sysconfdir}/init.d/celeryd
-# Create local configuration file
 mkdir -p %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
 mkdir -p %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsaml2/
+mkdir -p %{buildroot}%{_bindir}/
+mkdir -p %{buildroot}%{_libexecdir}/
+mkdir -p %{buildroot}%{_sysconfdir}/nginx/conf.d/
+mkdir -p %{buildroot}%{_localstatedir}/lib/%{platform}/%{component}/{media,static}
+
+# Add custom celeryd to init
+cp %{SOURCE4} %{buildroot}%{_sysconfdir}/init.d/celeryd
+
+# Copy the default settings to the configuration directory
 cp -R %{component}/settings/* %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
+
 # Copy a modified version of common.py and saml_settings
 cp %{SOURCE3} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
 cp %{SOURCE5} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
+
 # Create the manage file and the WSGI file
-mkdir -p %{buildroot}%{_bindir}/
-mkdir -p %{buildroot}%{_libexecdir}/
 cp %{SOURCE1} %{buildroot}%{_bindir}/moocngadmin
 cp %{SOURCE2} %{buildroot}%{_libexecdir}/openmooc-moocng
-# Create media and static dirs
-mkdir -p %{buildroot}%{_localstatedir}/lib/%{platform}/%{component}/{media,static}
+
+# Copy the nginx and supervisor configurations
+cp %{SOURCE6} %{buildroot}%{_sysconfdir}/nginx/conf.d/%{component}.conf
+cp %{SOURCE7} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/supervisord.conf
 
 
 %pre
-# If the group openmooc-moocng doesn't exist, create it.
-if ! /usr/bin/getent group %{name} > /dev/null 2>&1; then
-    /usr/sbin/groupadd -r %{name}
-fi
+# If the group openmooc-moocng doesn't exist, create it. Create a moocng user
+# and add it to the group
+getent group %{name} >/dev/null || groupadd -r %{name}
+getent passwd %{component} >/dev/null || \
+    useradd -r -g %{name} -s /sbin/nologin \
+    -c "This is the main user for the MOOC Engine, it will handle all the permissions." %{component}
+exit 0
 
-# If the nginx user is not on the group, add it.
+# If the nginx user is not on the openmooc-moocng group, add it.
 if ! /usr/bin/groups nginx | /bin/grep %{name} > /dev/null 2>&1; then
     /usr/bin/gpasswd -a nginx %{name}
 fi
@@ -142,10 +159,25 @@ fi
 rm -rf %{buildroot}
 
 
+%post
+## Preconfigure supervisor
+if ! grep "^# OPENMOOC" /etc/supervisord.conf > /dev/null ; then
+    cat /etc/supervisord.conf << EOF
+
+# OPENMOOC - Don't delete this line, this section is generate by openmooc rpms
+[include]
+files = /etc/openmooc/*/supervisord.conf
+
+EOF
+fi
+
+
 %files
 %defattr(-,root,root,-)
 %doc CHANGES COPYING README manuals/
 %attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/%{platform}/%{component}/moocngsettings/*
+%attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/%{platform}/%{component}/supervisord.conf
+%attr(644,root,%{name}) %config(noreplace) %{buildroot}%{_sysconfdir}/nginx/conf.d/%{component}.conf
 
 %{_sysconfdir}/init.d/celeryd
 %attr(755,root, %{name}) %{_bindir}/moocngadmin
@@ -171,12 +203,6 @@ rm -rf %{buildroot}
 %{python_sitelib}/%{component}/teacheradmin/
 %{python_sitelib}/%{component}/templates/
 %{python_sitelib}/%{component}/videos/
-%{python_sitelib}/%{component}/context_processors.py*
-%{python_sitelib}/%{component}/decorators.py*
-%{python_sitelib}/%{component}/forms.py*
-%{python_sitelib}/%{component}/mongodb.py*
-%{python_sitelib}/%{component}/urls.py*
-%{python_sitelib}/%{component}/wsgi.py*
 
 # We do this so we don't duplicate the validation of mathjax files
 %{python_sitelib}/%{component}/static/crossdomain.xml
