@@ -151,6 +151,7 @@ rm -rf %{buildroot}
 %attr(755,root, %{name}) %{_bindir}/moocngadmin
 %attr(755,root, %{name}) %{_libexecdir}/openmooc-moocng
 
+%{python_sitelib}/%{component}/*.py*
 %{python_sitelib}/%{component}/api/
 %{python_sitelib}/%{component}/assets/
 %{python_sitelib}/%{component}/attributemaps/
@@ -163,7 +164,6 @@ rm -rf %{buildroot}
 %{python_sitelib}/%{component}/fixtures/
 %{python_sitelib}/%{component}/formats/
 %{python_sitelib}/%{component}/locale/
-%{python_sitelib}/%{component}/media/
 %{python_sitelib}/%{component}/media_contents/
 %{python_sitelib}/%{component}/peerreview/
 %{python_sitelib}/%{component}/portal/
@@ -188,6 +188,7 @@ rm -rf %{buildroot}
 %{python_sitelib}/%{component}/static/js/teacheradmin/
 %{python_sitelib}/%{component}/static/js/*.js
 %{python_sitelib}/%{component}/static/js/libs/*.js
+%{python_sitelib}/%{component}/static/js/libs/i18n/*.js
 %{python_sitelib}/%{component}*.egg-info
 
 
