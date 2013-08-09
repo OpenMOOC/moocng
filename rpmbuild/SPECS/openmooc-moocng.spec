@@ -10,12 +10,11 @@ Version: %{version}
 Release: %{release}
 Source0: %{name}-%{version}.tar.gz
 Source1: %{name}-moocng.py
-Source2: %{name}-wsgi.py
-Source3: %{name}-common.py
-Source4: %{name}-celeryd
-Source5: %{name}-saml_settings.py
-Source6: %{name}-nginx.conf
-Source7: %{name}-supervisor.conf
+Source2: %{name}-common.py
+Source3: %{name}-celeryd
+Source4: %{name}-saml_settings.py
+Source5: %{name}-nginx.conf
+Source6: %{name}-supervisor.conf
 Summary: Engine for MOOC applications (OpenMOOC core)
 
 License: Apache Software License 2.0
@@ -107,33 +106,43 @@ rm -f .gitignore
 %install
 %{__python} setup.py install -O2 --skip-build --root %{buildroot}
 
-# Create neccesary directories, if they don't exist (if you don't create them
-# the build breaks for some reason)
-mkdir -p %{buildroot}%{_sysconfdir}/init.d/
-mkdir -p %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
-mkdir -p %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsaml2/
-mkdir -p %{buildroot}%{_bindir}/
-mkdir -p %{buildroot}%{_libexecdir}/
-mkdir -p %{buildroot}%{_sysconfdir}/nginx/conf.d/
-mkdir -p %{buildroot}%{_localstatedir}/lib/%{platform}/%{component}/{media,static}
+# Create neccesary directories
+
+# /usr/share/doc/openmooc/moocng
+install -d -m 755 %{buildroot}/%{_defaultdocdir}/%{platform}/%{component}
+# /etc/init.d
+install -d -m 755 %{buildroot}%{_sysconfdir}/init.d/
+# /etc/openmooc/moocng/moocngsettings
+install -d -m 755 %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
+# /etc/openmooc/moocng/moocngsaml2
+install -d -m 755 %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsaml2/
+# /etc/nginx/conf.d
+install -d -m 755 %{buildroot}%{_sysconfdir}/nginx/conf.d/
+# /usr/bin
+install -d -m 755 %{buildroot}%{_bindir}/
+# /var/lib/openmooc/moocng/static|media
+install -d -m 755 %{buildroot}%{_localstatedir}/lib/%{platform}/%{component}/{media,static}
+# /var/run/openmooc/moocng
+install -d -m 770 %{buildroot}%{_localstatedir}/run/%{platform}/%{component}
+# /var/log/openmooc/moocng
+install -d -m 775 %{buildroot}%{_localstatedir}/log/%{platform}/%{component}
 
 # Add custom celeryd to init
-cp %{SOURCE4} %{buildroot}%{_sysconfdir}/init.d/celeryd
+install -m 755 %{SOURCE3} %{buildroot}%{_sysconfdir}/init.d/celeryd
 
 # Copy the default settings to the configuration directory
 cp -R %{component}/settings/* %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
 
 # Copy a modified version of common.py and saml_settings
-cp %{SOURCE3} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
-cp %{SOURCE5} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
+install -m 755 %{SOURCE2} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
+install -m 755 %{SOURCE4} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
 
 # Create the manage file and the WSGI file
-cp %{SOURCE1} %{buildroot}%{_bindir}/moocngadmin
-cp %{SOURCE2} %{buildroot}%{_libexecdir}/openmooc-moocng
+install -m 755 %{SOURCE1} %{buildroot}%{_bindir}/openmooc-moocng-admin
 
 # Copy the nginx and supervisor configurations
-cp %{SOURCE6} %{buildroot}%{_sysconfdir}/nginx/conf.d/%{component}.conf
-cp %{SOURCE7} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/supervisord.conf
+install -m 755 %{SOURCE5} %{buildroot}%{_sysconfdir}/nginx/conf.d/%{component}.conf
+install -m 755 %{SOURCE6} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/supervisord.conf
 
 
 %pre
@@ -180,8 +189,7 @@ fi
 %attr(644,root,%{name}) %config(noreplace) %{buildroot}%{_sysconfdir}/nginx/conf.d/%{component}.conf
 
 %{_sysconfdir}/init.d/celeryd
-%attr(755,root, %{name}) %{_bindir}/moocngadmin
-%attr(755,root, %{name}) %{_libexecdir}/openmooc-moocng
+%attr(755,root, %{name}) %{_bindir}/openmooc-moocng-admin
 
 %{python_sitelib}/%{component}/*.py*
 %{python_sitelib}/%{component}/api/
@@ -223,7 +231,7 @@ fi
 %{python_sitelib}/%{component}/static/js/libs/mathjax/
 
 %changelog
-* Mon Jul 29 2013 Oscar Carballal Prego <ocarballal@yaco.es> - 0.1.0-1
+* Fri Aug 9 2013 Oscar Carballal Prego <ocarballal@yaco.es> - 0.1.0-1
 - Fixed paths, local.py file. Changed location of the config files. Added mathjax
   variable to avoid excessive compulation times when testing. Added mathjax subpackage
 
