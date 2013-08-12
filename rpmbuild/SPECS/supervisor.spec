@@ -10,7 +10,7 @@ Release: %{release}
 License: ZPLv2.1 and BSD and MIT
 Group: System Environment/Base
 URL: http://supervisord.org/
-Source0: http://pypi.python.org/packages/source/s/%{name}/%{name}-%{version}%{?prever}.tar.gz
+Source0: http://pypi.python.org/packages/source/s/%{name}/%{name}-%{version}.tar.gz
 Source1: supervisord.init
 Source2: supervisord.conf
 Source3: supervisor.logrotate
@@ -30,7 +30,7 @@ The supervisor is a client/server system that allows its users to control a
 number of processes on UNIX-like operating systems.
 
 %prep
-%setup -q -n %{name}-%{version}%{?prever}
+%setup -q -n %{name}-%{version}
 
 %build
 CFLAGS="%{optflags}" %{__python} setup.py build

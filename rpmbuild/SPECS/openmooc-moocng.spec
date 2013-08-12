@@ -54,7 +54,7 @@ Requires: python-djangosaml2 = 0.10.0
 Requires: python-django-tinymce = 1.5.1b4
 
 Requires: nginx = 1.0.15
-Requires: supervisor
+Requires: supervisor = 3.0
 Requires: openmooc-ffmpeg = 20120806
 Requires: postgresql-server = 8.4.13
 Requires: mongo-10gen-server = 2.4.5
