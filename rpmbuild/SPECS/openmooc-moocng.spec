@@ -186,7 +186,7 @@ fi
 %doc CHANGES COPYING README manuals/
 %attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/%{platform}/%{component}/moocngsettings/*
 %attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/%{platform}/%{component}/supervisord.conf
-%attr(644,root,%{name}) %config(noreplace) %{buildroot}%{_sysconfdir}/nginx/conf.d/%{component}.conf
+%attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/nginx/conf.d/%{component}.conf
 
 %{_sysconfdir}/init.d/celeryd
 %attr(755,root, %{name}) %{_bindir}/openmooc-moocng-admin
