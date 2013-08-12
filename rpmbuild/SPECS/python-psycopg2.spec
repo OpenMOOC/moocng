@@ -75,13 +75,9 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %doc AUTHORS ChangeLog INSTALL LICENSE README
 %dir %{python_sitearch}/psycopg2
-%{python_sitearch}/psycopg2/*.py
-%{python_sitearch}/psycopg2/*.pyc
+%{python_sitearch}/psycopg2/*.py*
 %{python_sitearch}/psycopg2/*.so
-%{python_sitearch}/psycopg2/*.pyo
-%{python_sitearch}/psycopg2/tests/*.py
-%{python_sitearch}/psycopg2/tests/*.pyc
-%{python_sitearch}/psycopg2/tests/*.pyo
+%{python_sitearch}/psycopg2/tests/*.py*
 %{python_sitearch}/psycopg2-%{version}-py%{pyver}.egg-info
 
 %files doc
