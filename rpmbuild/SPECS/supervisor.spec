@@ -66,7 +66,7 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc README.txt LICENSES.txt TODO.txt CHANGES.txt COPYRIGHT.txt
+%doc README.rst LICENSES.txt TODO.txt CHANGES.txt COPYRIGHT.txt PLUGINS.rst
 %dir %{_localstatedir}/log/%{name}
 %{_initrddir}/supervisord
 %{python_sitelib}/*
