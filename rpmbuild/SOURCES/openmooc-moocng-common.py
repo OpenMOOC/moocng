@@ -330,10 +330,6 @@ FFMPEG = '/usr/libexec/openmooc/ffmpeg'
 # Let authenticated users create their own courses
 ALLOW_PUBLIC_COURSE_CREATION = False
 
-# Make this unique, and don't share it with anybody else than payment system
-# Override this in local settings
-USER_API_KEY = '123456789'
-
 # A list with the slugs of the courses that use the old qualification system
 # where the normal units counted
 COURSES_USING_OLD_TRANSCRIPT = []
