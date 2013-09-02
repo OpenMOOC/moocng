@@ -110,6 +110,8 @@ rm -f .gitignore
 
 # /usr/share/doc/openmooc/moocng
 install -d -m 755 %{buildroot}/%{_defaultdocdir}/%{platform}/%{component}
+# /etc/supervisord.d
+install -d -m 755 %{buildroot}%{_sysconfdir}/supervisord.d/
 # /etc/init.d
 install -d -m 755 %{buildroot}%{_sysconfdir}/init.d/
 # /etc/openmooc/moocng/moocngsettings
