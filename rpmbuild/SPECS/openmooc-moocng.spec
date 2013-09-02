@@ -134,8 +134,8 @@ install -m 755 %{SOURCE3} %{buildroot}%{_sysconfdir}/init.d/celeryd
 cp -R %{component}/settings/* %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
 
 # Copy a modified version of common.py and saml_settings
-install -m 755 %{SOURCE2} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
-install -m 755 %{SOURCE4} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
+install -m 755 %{SOURCE2} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/common.py
+install -m 755 %{SOURCE4} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/saml_settings.py
 
 # Create the manage file and the WSGI file
 install -m 755 %{SOURCE1} %{buildroot}%{_bindir}/openmooc-moocng-admin
