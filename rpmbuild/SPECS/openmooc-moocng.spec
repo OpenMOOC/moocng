@@ -137,8 +137,8 @@ cp -R %{component}/settings/* %{buildroot}%{_sysconfdir}/%{platform}/%{component
 install -m 755 %{SOURCE2} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/common.py
 install -m 755 %{SOURCE4} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/saml_settings.py
 
-# Create the manage file and the WSGI file
-install -m 755 %{SOURCE1} %{buildroot}%{_bindir}/openmooc-moocng-admin
+# Create the manage file
+install -m 755 %{SOURCE1} %{buildroot}%{_bindir}/%{platform}-%{component}-admin
 
 # Copy the nginx and supervisor configurations
 install -m 755 %{SOURCE5} %{buildroot}%{_sysconfdir}/nginx/conf.d/%{component}.conf
@@ -162,7 +162,7 @@ fi
 
 %postun
 # FIXME doesn't work, it seems like the user has been already removed
-/usr/bin/gpasswd -d nginx %{name}
+# /usr/bin/gpasswd -d nginx %{name}
 
 
 %clean
@@ -170,15 +170,11 @@ rm -rf %{buildroot}
 
 
 %post
-## Preconfigure supervisor FIXME doesn't work
-if ! grep "^# OPENMOOC" /etc/supervisord.conf > /dev/null ; then
-    cat /etc/supervisord.conf << EOF
-
-# OPENMOOC - Don't delete this line, this section is generate by openmooc rpms
+## Preconfigure supervisor
+if ! grep -q "OPENMOOC" /etc/supervisord.conf ; then
+   echo "; OPENMOOC - Don't delete this line, this section is generate by openmooc rpms
 [include]
-files = /etc/openmooc/*/supervisord.conf
-
-EOF
+files = /etc/openmooc/*/supervisord.conf" >> %{_sysconfdir}/supervisord.conf
 fi
 
 
@@ -190,7 +186,7 @@ fi
 %attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/nginx/conf.d/%{component}.conf
 
 %{_sysconfdir}/init.d/celeryd
-%attr(755,root, %{name}) %{_bindir}/openmooc-moocng-admin
+%attr(755,root, %{name}) %{_bindir}/%{platform}-%{component}-admin
 
 %{python_sitelib}/%{component}/*.py*
 %{python_sitelib}/%{component}/api/
