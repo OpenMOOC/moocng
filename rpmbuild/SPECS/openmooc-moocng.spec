@@ -142,7 +142,7 @@ install -m 755 %{SOURCE1} %{buildroot}%{_bindir}/%{platform}-%{component}-admin
 
 # Copy the nginx and supervisor configurations
 install -m 755 %{SOURCE5} %{buildroot}%{_sysconfdir}/nginx/conf.d/%{component}.conf
-install -m 755 %{SOURCE6} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/supervisord.conf
+install -m 755 %{SOURCE6} %{buildroot}%{_sysconfdir}/supervisord.d/%{name}-supervisord.conf
 
 
 %pre
@@ -155,34 +155,27 @@ getent passwd %{component} >/dev/null || \
 exit 0
 
 # If the nginx user is not on the openmooc-moocng group, add it.
-if ! /usr/bin/groups nginx | /bin/grep %{name} > /dev/null 2>&1; then
+if ! /usr/bin/groups nginx | grep -q %{name} ; then
     /usr/bin/gpasswd -a nginx %{name}
 fi
 
 
 %postun
-# FIXME doesn't work, it seems like the user has been already removed
-# /usr/bin/gpasswd -d nginx %{name}
+# Remove the nginx user from the openmooc-moocng group if needed
+if /usr/bin/groups nginx | grep -q %{name} ; then
+    /usr/bin/gpasswd -d nginx %{name}
+fi
 
 
 %clean
 rm -rf %{buildroot}
 
 
-%post
-## Preconfigure supervisor
-if ! grep -q "OPENMOOC" /etc/supervisord.conf ; then
-   echo "; OPENMOOC - Don't delete this line, this section is generate by openmooc rpms
-[include]
-files = /etc/openmooc/*/supervisord.conf" >> %{_sysconfdir}/supervisord.conf
-fi
-
-
 %files
 %defattr(-,root,root,-)
 %doc CHANGES COPYING README manuals/
 %attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/%{platform}/%{component}/moocngsettings/*
-%attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/%{platform}/%{component}/supervisord.conf
+%attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/supervisord.d/%{name}-supervisord.conf
 %attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/nginx/conf.d/%{component}.conf
 
 %{_sysconfdir}/init.d/celeryd

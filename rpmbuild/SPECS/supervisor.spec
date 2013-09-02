@@ -46,6 +46,7 @@ mkdir -p %{buildroot}/%{_localstatedir}/log/%{name}
 chmod 770 %{buildroot}/%{_localstatedir}/log/%{name}
 install -p -m 755 %{SOURCE1} %{buildroot}/%{_initrddir}/supervisord
 install -p -m 644 %{SOURCE2} %{buildroot}/%{_sysconfdir}/supervisord.conf
+install -d -m 755 %{buildroot}/%{_sysconfdir}/supervisord.d
 install -p -m 644 %{SOURCE3} %{buildroot}/%{_sysconfdir}/logrotate.d/supervisor
 sed -i s'/^#!.*//' $( find %{buildroot}/%{python_sitelib}/supervisor/ -type f)
 
