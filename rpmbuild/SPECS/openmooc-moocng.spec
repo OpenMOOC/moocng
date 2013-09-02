@@ -161,6 +161,7 @@ fi
 
 
 %postun
+# FIXME doesn't work, it seems like the user has been already removed
 /usr/bin/gpasswd -d nginx %{name}
 
 
@@ -169,7 +170,7 @@ rm -rf %{buildroot}
 
 
 %post
-## Preconfigure supervisor
+## Preconfigure supervisor FIXME doesn't work
 if ! grep "^# OPENMOOC" /etc/supervisord.conf > /dev/null ; then
     cat /etc/supervisord.conf << EOF
 
