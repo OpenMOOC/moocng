@@ -43,7 +43,7 @@ Requires: python-psycopg2 = 2.4.2
 Requires: python-requests = 1.2.0
 Requires: python-gunicorn = 0.14.6
 
-Requires: Django14 = 1.4.5
+Requires: Django14
 Requires: django-celery = 3.0.17
 Requires: django-mathjax = 0.0.2
 Requires: Django-south = 0.7.5
