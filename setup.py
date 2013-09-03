@@ -12,12 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import fnmatch
 import os
 from setuptools import setup, find_packages
 
 
 def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
+
+
+def recursive_include(directory, patterns):
+    result = []
+    for root, dirs, files in os.walk(directory):
+        child_root = root.replace(directory, '').lstrip('/')
+        for pattern in patterns:
+            result.extend([os.path.join(child_root, name)
+                           for name in fnmatch.filter(files, pattern)])
+    return result
 
 
 # be careful with the syntax of this line since it is parsed from
@@ -43,6 +54,12 @@ setup(
     ],
     packages=find_packages('.'),
     package_dir={'moocng': 'moocng'},
+    package_data={
+        'moocng': recursive_include('moocng', [
+            '*.html', '*.css', '*.js', '*.txt', '*.png', '*.ico', '*.wsgi',
+            '*.xml', '*.gif', '*.jpg', '*.otf', '*.svg', '*.example', '*.woff',
+        ])
+    },
     zip_safe=False,
     install_requires=[
         'boto==2.8.0',
