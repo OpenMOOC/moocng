@@ -15,6 +15,8 @@ framework.
 """
 
 import os
+import sys
+
 
 sys.path.insert(0, '/etc/openmooc/moocng/')
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "moocngsettings")
