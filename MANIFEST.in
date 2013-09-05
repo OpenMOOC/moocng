@@ -10,6 +10,7 @@ recursive-include moocng *.eot
 recursive-include moocng *.example
 recursive-include moocng *.gif
 recursive-include moocng *.jpg
+recursive-include moocng *.png
 recursive-include moocng *.otf
 recursive-include moocng *.po
 recursive-include moocng *.svg
