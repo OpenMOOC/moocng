@@ -43,7 +43,7 @@ setup(
     url='https://github.com/OpenMOOC/moocng',
     license='Apache 2.0 Software License',
     description=('MOOC web tool'),
-    long_description=(read('README') + '\n\n' + read('CHANGES')),
+    long_description=(read('README.rst') + '\n\n' + read('CHANGES')),
     author='Rooter',
     classifiers=[
         'Development Status :: 6 - Development',
