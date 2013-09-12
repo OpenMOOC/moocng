@@ -81,4 +81,8 @@ setup(
         'django-mathjax==0.0.2',
         'requests==1.2.0',
     ],
+    entry_points = """
+        [moocng.externalapp]
+        askbot = moocng.externalapps.base:Askbot
+    """,
 )

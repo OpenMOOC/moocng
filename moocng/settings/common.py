@@ -223,6 +223,7 @@ OPENMOOC_APPS = [
     'moocng.auth_handlers',
     'moocng.peerreview',
     'moocng.media_contents',
+    'moocng.externalapps',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRDPARTY_APPS + OPENMOOC_APPS
@@ -279,6 +280,11 @@ LOGGING = {
         'moocng.courses.admin': {
             'handlers': ['console', 'mail_admins'],
             'level': 'INFO',
+            'propagate': True,
+        },
+        'moocng.externalapps.registry': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
             'propagate': True,
         },
     }
@@ -432,5 +438,34 @@ MATHJAX_CONFIG_DATA = {
             ['$', '$'],
             ['\\(', '\\)']
         ]
+    }
+}
+
+# External apps available to the teachers
+# instances is a tuple with the format:
+#  (ip, base_url, max_instances,)
+#
+# Example:
+#  MOOCNG_EXTERNALAPPS = {
+#     'askbot': {
+#         'instances':(
+#             ('127.0.0.1', 'http://localhost', 10),
+#             ('127.0.0.2', 'http://localhost', 10),
+#             ('127.0.0.3', 'http://localhost', 10),
+#         )
+#     },
+#     'wordpress': {
+#         'instances':(
+#             ('127.0.0.4', 'http://localhost', 10),
+#             ('127.0.0.5', 'http://localhost', 10),
+#             ('127.0.0.6', 'http://localhost', 10),
+#         )
+#     }
+# }
+MOOCNG_EXTERNALAPPS = {
+    'askbot': {
+        'instances':(
+            ('127.0.0.1', 'http://localhost', 10,),
+        )
     }
 }
