@@ -1,5 +1,5 @@
-from registry import PluginsRegistry
+# -*- coding: utf-8 -*-
+from registry import ExternalAppRegistry
 
 
-plugins_registry = PluginsRegistry()
-askbot = plugins_registry['askbot']
+externalapps = ExternalAppRegistry()

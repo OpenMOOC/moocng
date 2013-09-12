@@ -7,7 +7,7 @@ from django.conf import settings
 logger = logging.getLogger("moocng.externalapps.registry")
 
 
-class PluginsRegistry(dict):
+class ExternalAppRegistry(dict):
 
     def __init__(self, *args, **kwargs):
         allowed_moocng_plugins = settings.MOOCNG_EXTERNALAPPS
@@ -20,4 +20,4 @@ class PluginsRegistry(dict):
                     self[entry_point.name] = entry_point.load()
             else:
                 logger.warn("Entry point '%s' not registered. Please, check setting 'MOOCNG_EXTERNALAPPS' in your 'settings.py'" % entry_point.name)
-        super(PluginsRegistry, self).__init__(*args, **kwargs)
+        super(ExternalAppRegistry, self).__init__(*args, **kwargs)
