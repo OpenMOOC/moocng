@@ -12,13 +12,16 @@ registered_externalapps = ExternalAppRegistry()
 
 
 class ExternalApp(models.Model):
+
     ERROR = 1
-    OK = 2
-    IN_PROGRESS = 3
+    CREATED = 2
+    NOT_CREATED = 3
+    IN_PROGRESS = 4
 
     STATUSES = (
         (ERROR, _('Error')),
-        (OK, _('Ok')),
+        (CREATED, _('Ok')),
+        (NOT_CREATED, _('In Progress')),
         (IN_PROGRESS, _('In Progress')),
     )
 
@@ -49,11 +52,11 @@ class ExternalApp(models.Model):
     )
 
     status = models.SmallIntegerField(
-        verbose_name=_(u' url of the instance'),
+        verbose_name=_(u'Status of the  url of the instance'),
         null=False,
         blank=False,
         choices=STATUSES,
-        default=IN_PROGRESS,
+        default=NOT_CREATED,
     )
 
     class Meta:
