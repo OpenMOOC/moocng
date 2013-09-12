@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
 from django.utils import six
+from django.db.models.loading import get_model
 
+from moocng.externalapps.exceptions import InstanceLimitReached
 
-DEFAULT_NAMES = ('name', 'description', 'instances')
+DEFAULT_NAMES = ('name', 'description', 'instances', 'model',)
 
 
 class ExternalAppOption(object):
@@ -99,10 +101,29 @@ class ExternalApp(six.with_metaclass(ExternalAppBase)):
     def create_remote_instance(self):
         raise NotImplementedError
 
+    def get_instance(self, new_instance):
+        model = self.get_related_model()
+        name = self._meta.name
+        ip_address = new_instance.ip_address
+        db_instances = model.objects.filter(name__iexact=name,
+            ip_address__iexact=ip_address)
+        for instance in self._meta.instances:
+            max_instances = instance[2]
+            if db_instances.count() < max_instances:
+                return instance
+        raise InstanceLimitReached
+
+    def get_related_model(self):
+        model = self._meta.model
+        app_label, model_name = model.split('.')
+        model = get_model(app_label=app_label, model_name=model_name)
+        return model
+
 
 class Askbot(ExternalApp):
 
     class Meta:
+        model = 'externalapps.ExternalApp'
         name = 'askbot'
         description = 'askbot description'
         instances = settings.MOOCNG_EXTERNALAPPS['askbot']['instances']
