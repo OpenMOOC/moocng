@@ -469,3 +469,8 @@ MOOCNG_EXTERNALAPPS = {
         )
     }
 }
+
+# This settting is a tuple of strings that are not allowed for the slug in the
+# external apps
+#
+MOOCNG_EXTERNALAPPS_FORBIDDEN_WORDS = ()
