@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from django.conf import settings
 from django.utils import six
 from django.db.models.loading import get_model
 
@@ -123,10 +122,4 @@ class ExternalApp(six.with_metaclass(ExternalAppBase)):
         raise NotImplementedError
 
 
-class Askbot(ExternalApp):
 
-    class Meta:
-        model = 'externalapps.ExternalApp'
-        app_name = 'askbot'
-        description = 'askbot description'
-        instances = settings.MOOCNG_EXTERNALAPPS['askbot']['instances']

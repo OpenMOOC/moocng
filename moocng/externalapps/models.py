@@ -3,12 +3,13 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from moocng.courses.models import Course
 from moocng.externalapps.exceptions import InstanceLimitReached
 from moocng.externalapps.registry import ExternalAppRegistry
 from moocng.externalapps.validators import validate_slug, validate_forbidden_words
 
 
-registered_externalapps = ExternalAppRegistry()
+externalapps = ExternalAppRegistry()
 
 
 class ExternalApp(models.Model):
@@ -24,6 +25,13 @@ class ExternalApp(models.Model):
         (IN_PROGRESS, _('In Progress')),
         (ERROR, _('Error')),
     )
+
+    course = models.ForeignKey(
+        Course,
+        verbose_name=_(u'Course'),
+        related_name='external_apps',
+        blank=False,
+        null=True)
 
     app_name = models.CharField(
         verbose_name=_(u'External app name'),
@@ -68,14 +76,15 @@ class ExternalApp(models.Model):
         return u'%s:%s' % (self.app_name, self.ip_address)
 
     def clean(self):
-        external_app = registered_externalapps.get_app(self.app_name)
+        external_app = externalapps.get_app_by_name(self.app_name)
         if external_app:
             try:
-                instance_assigned = external_app.get_instance(self)
-                self.app_name = external_app._meta.app_name
-                self.ip_address = instance_assigned[0]
-                self.base_url = instance_assigned[1]
-                self.status = self.IN_PROGRESS
+                if not self.id:
+                    instance_assigned = external_app.get_instance(self)
+                    self.ip_address = instance_assigned[0]
+                    self.base_url = instance_assigned[1]
+                    self.status = self.IN_PROGRESS
+                    self.app_name = external_app._meta.app_name
             except InstanceLimitReached:
                 raise ValidationError(_('There are no instances available'))
         else:

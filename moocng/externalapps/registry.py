@@ -22,5 +22,8 @@ class ExternalAppRegistry(dict):
                 logger.warn("Entry point '%s' not registered. Please, check setting 'MOOCNG_EXTERNALAPPS' in your 'settings.py'" % entry_point.name)
         super(ExternalAppRegistry, self).__init__(*args, **kwargs)
 
-    def get_app(self, name):
+    def get_app_by_name(self, name):
        return self.get(name, None)
+
+    def all(self):
+        return self.keys()
