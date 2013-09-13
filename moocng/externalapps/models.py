@@ -13,20 +13,20 @@ registered_externalapps = ExternalAppRegistry()
 
 class ExternalApp(models.Model):
 
-    ERROR = 1
-    CREATED = 2
-    NOT_CREATED = 3
-    IN_PROGRESS = 4
+    CREATED = 1
+    NOT_CREATED = 2
+    IN_PROGRESS = 3
+    ERROR = 4
 
     STATUSES = (
-        (ERROR, _('Error')),
-        (CREATED, _('Ok')),
-        (NOT_CREATED, _('In Progress')),
+        (CREATED, _('Created')),
+        (NOT_CREATED, _('Not Created')),
         (IN_PROGRESS, _('In Progress')),
+        (ERROR, _('Error')),
     )
 
-    name = models.CharField(
-        verbose_name=_(u'Name'),
+    app_name = models.CharField(
+        verbose_name=_(u'External app name'),
         max_length=200,
         null=False,
         blank=False,
@@ -48,11 +48,12 @@ class ExternalApp(models.Model):
         verbose_name=_(u'Slug for the instance'),
         null=False,
         blank=False,
+        unique=True,
         validators=[validate_slug, validate_forbidden_words]
     )
 
     status = models.SmallIntegerField(
-        verbose_name=_(u'Status of the  url of the instance'),
+        verbose_name=_(u'Creation status of the instance'),
         null=False,
         blank=False,
         choices=STATUSES,
@@ -64,15 +65,19 @@ class ExternalApp(models.Model):
         verbose_name_plural = _(u'external apps')
 
     def __unicode__(self):
-        return u'%s:%s' % (self.name, self.ip_address)
+        return u'%s:%s' % (self.app_name, self.ip_address)
 
     def clean(self):
-        external_app = registered_externalapps.get_app(self.name)
+        external_app = registered_externalapps.get_app(self.app_name)
         if external_app:
             try:
-                external_app.get_instance(self)
+                instance_assigned = external_app.get_instance(self)
+                self.app_name = external_app._meta.app_name
+                self.ip_address = instance_assigned[0]
+                self.base_url = instance_assigned[1]
+                self.status = self.IN_PROGRESS
             except InstanceLimitReached:
                 raise ValidationError(_('There are no instances available'))
         else:
-            msg = _('There is no registered class to manage "%s" external app' % self.name)
+            msg = _('There is no registered class to manage "%s" external app' % self.app_name)
             raise ValidationError(msg)

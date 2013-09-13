@@ -465,12 +465,13 @@ MATHJAX_CONFIG_DATA = {
 MOOCNG_EXTERNALAPPS = {
     'askbot': {
         'instances':(
-            ('127.0.0.1', 'http://localhost', 10,),
+            ('127.0.0.1', 'http://localhost', 2,),
         )
     }
 }
 
 # This settting is a tuple of strings that are not allowed for the slug in the
-# external apps
+# external apps. For exmaple:
 #
+# MOOCNG_EXTERNALAPPS_FORBIDDEN_WORDS = ('word1', 'word2',)
 MOOCNG_EXTERNALAPPS_FORBIDDEN_WORDS = ()

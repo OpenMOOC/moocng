@@ -5,7 +5,7 @@ from django.db.models.loading import get_model
 
 from moocng.externalapps.exceptions import InstanceLimitReached
 
-DEFAULT_NAMES = ('name', 'description', 'instances', 'model',)
+DEFAULT_NAMES = ('app_name', 'description', 'instances', 'model',)
 
 
 class ExternalAppOption(object):
@@ -72,7 +72,6 @@ class ExternalAppBase(type):
 
         for obj_name, obj in attrs.items():
             new_class.add_to_class(obj_name, obj)
-
         return new_class
 
     def add_to_class(cls, name, value):
@@ -80,6 +79,28 @@ class ExternalAppBase(type):
             value.contribute_to_class(cls, name)
         else:
             setattr(cls, name, value)
+
+    def get_instance(self, new_instance):
+        model = self.get_related_model()
+        app_name = self._meta.app_name
+        if isinstance(new_instance, model):
+            ip_address = new_instance.ip_address
+            if app_name and ip_address:
+                db_instances = model.objects.filter(app_name__iexact=app_name,
+                    ip_address__iexact=ip_address)
+                for instance in self._meta.instances:
+                    db_instances = db_instances.count() + 1
+                    max_instances = int(instance[2])
+                    if db_instances <= max_instances:
+                        return instance
+        raise InstanceLimitReached
+
+    def get_related_model(self):
+        model = self._meta.model
+        app_label, model_name = model.split('.')
+        model = get_model(app_label=app_label, model_name=model_name)
+        return model
+
 
 class ExternalApp(six.with_metaclass(ExternalAppBase)):
 
@@ -101,29 +122,11 @@ class ExternalApp(six.with_metaclass(ExternalAppBase)):
     def create_remote_instance(self):
         raise NotImplementedError
 
-    def get_instance(self, new_instance):
-        model = self.get_related_model()
-        name = self._meta.name
-        ip_address = new_instance.ip_address
-        db_instances = model.objects.filter(name__iexact=name,
-            ip_address__iexact=ip_address)
-        for instance in self._meta.instances:
-            max_instances = instance[2]
-            if db_instances.count() < max_instances:
-                return instance
-        raise InstanceLimitReached
-
-    def get_related_model(self):
-        model = self._meta.model
-        app_label, model_name = model.split('.')
-        model = get_model(app_label=app_label, model_name=model_name)
-        return model
-
 
 class Askbot(ExternalApp):
 
     class Meta:
         model = 'externalapps.ExternalApp'
-        name = 'askbot'
+        app_name = 'askbot'
         description = 'askbot description'
         instances = settings.MOOCNG_EXTERNALAPPS['askbot']['instances']

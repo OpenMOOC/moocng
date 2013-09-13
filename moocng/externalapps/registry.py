@@ -23,4 +23,4 @@ class ExternalAppRegistry(dict):
         super(ExternalAppRegistry, self).__init__(*args, **kwargs)
 
     def get_app(self, name):
-       return self.get(self.name, None)
+       return self.get(name, None)
