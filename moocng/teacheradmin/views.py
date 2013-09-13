@@ -445,7 +445,6 @@ def teacheradmin_info(request, course_slug):
             messages.error(request, _(u"There were problems with some data you introduced, please fix them and try again."))
     else:
         form = CourseForm(instance=course)
-        ExternalAppForm
 
     return render_to_response('teacheradmin/info.html', {
         'course': course,
