@@ -1,0 +1,39 @@
+{% extends "teacheradmin/base_teacheradmin.html" %}
+
+{% load i18n %}
+
+{% block nav-teacheradmin-externalapps %}active{% endblock %}
+
+{% block section %}
+    {% if external_apps %}
+        <table class="table table-striped">
+            <tbody>
+                {% for external_app in external_apps %}
+                    <tr>
+                        <td>{{ external_app.app_name }}</td>
+                        <td>{{ external_app.ip_address }}</td>
+                        <td>{{ external_app.slug }}</td>
+                        <td><a href="{{ external_app.url }}" target="_blank">{{ external_app.url }}</a></td>
+                        <td>{{ external_app.get_instance_type_display }}</td>
+                        <td>{{ external_app.get_status_display }}</td>
+                        <td><a class="btn btn-small pull-right"
+                              href="{% url externalapps_delete course_slug=course.slug external_app_id=external_app.id %}">
+                            <i class="icon-remove"></i></a>
+                            <a class="btn btn-small pull-right"
+                              href="{% url externalapps_edit course_slug=course.slug external_app_id=external_app.id %}">
+                            <i class="icon-edit"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert">
+            {% trans "There isn't external apps yet" %}
+        </div>
+    {% endif %}
+
+    <div>
+      <a class="btn" href="{% url externalapps_add course_slug=course.slug %}"><i class="icon-plus"></i> {% trans "Add external app" %}</a>
+    </div>
+{% endblock %}

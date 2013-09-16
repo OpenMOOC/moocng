@@ -135,26 +135,6 @@
             {% if form.learning_goals.help_text %}<span class="help-block">{{ form.learning_goals.help_text }}</span>{% endif %}
         </div>
     </div>
-
-    <!-- EXTERNAL APPS TAB -->
-    <p>External apps</p>
-    <ul class="nav nav-tabs">
-        {% for external_app in external_apps %}
-            {% if forloop.first %}<li class="active">{% else %}<li>{% endif %}
-                <a href="#tab-{{external_app}}" data-toggle="tab">{{ external_app }}</a>
-            </li>
-        {% endfor %}
-    </ul>
-    <div class="tab-content">
-        {% for external_app in external_apps %}
-            {% if forloop.first %}<div class="tab-pane active" id="tab-{{external_app}}">{% else %}<div class="tab-pane" id="tab-{{external_app}}">{% endif %}
-                {{ external_app }}
-                <span class="help-block">{{external_app}}</span>
-            </div>
-        {% endfor %}
-    </div>
-    <!-- END EXTERNAL APPS TAB -->
-
     <p>
         {{ form.certification_available.errors }}
         <label for="id_certification_available" style="margin: 32px 0;">

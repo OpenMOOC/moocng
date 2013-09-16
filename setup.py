@@ -83,6 +83,8 @@ setup(
     ],
     entry_points = """
         [moocng.externalapp]
-        askbot = moocng.externalapps.base:Askbot
+        askbot = moocng.externalapps.apps:Askbot
+        wordpress = moocng.externalapps.apps:Wordpress
+        wiki = moocng.externalapps.apps:Wiki
     """,
 )

@@ -2,9 +2,9 @@
 from django.utils import six
 from django.db.models.loading import get_model
 
-from moocng.externalapps.exceptions import InstanceLimitReached
+from moocng.externalapps.utils import DefaultInstancePicker
 
-DEFAULT_NAMES = ('app_name', 'description', 'instances', 'model',)
+DEFAULT_NAMES = ('instance_type', 'instances', 'model',)
 
 
 class ExternalAppOption(object):
@@ -79,20 +79,10 @@ class ExternalAppBase(type):
         else:
             setattr(cls, name, value)
 
-    def get_instance(self, new_instance):
-        model = self.get_related_model()
-        app_name = self._meta.app_name
-        if isinstance(new_instance, model):
-            ip_address = new_instance.ip_address
-            if app_name and ip_address:
-                db_instances = model.objects.filter(app_name__iexact=app_name,
-                    ip_address__iexact=ip_address)
-                for instance in self._meta.instances:
-                    db_instances = db_instances.count() + 1
-                    max_instances = int(instance[2])
-                    if db_instances <= max_instances:
-                        return instance
-        raise InstanceLimitReached
+    def get_instance(self, model):
+        instance_picker = DefaultInstancePicker(external_app=self)
+        instance = instance_picker.get_instance()
+        return instance
 
     def get_related_model(self):
         model = self._meta.model
@@ -120,6 +110,3 @@ class ExternalApp(six.with_metaclass(ExternalAppBase)):
 
     def create_remote_instance(self):
         raise NotImplementedError
-
-
-
