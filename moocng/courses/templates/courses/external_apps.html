@@ -1,0 +1,3 @@
+ {% for external_app in external_apps %}
+    <li><a target="_blank" href="{{ external_app.url }}">{{ external_app.app_name|truncatechars:30 }}</a></li>
+{% endfor %}

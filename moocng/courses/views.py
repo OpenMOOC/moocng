@@ -41,6 +41,8 @@ from moocng.courses.security import (check_user_can_view_course,
                                      get_courses_available_for_user,
                                      get_units_available_for_user)
 
+from moocng.externalapps.models import ExternalApp
+
 
 def home(request):
 

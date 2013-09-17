@@ -16,8 +16,8 @@
     <a href="{% url course_classroom course.slug %}">{% trans "Classes" %}</a>
   </li>
 
-  <li {% block nav-course-discussion %}{% endblock %}>
-    <a href="{% askboturl course.slug %}">{% trans "Discussion" %}</a>
+  <li {% block nav-course-externalapps %}{% endblock %}>
+     {% externalapps %}
   </li>
 
   {% if_has_peer_review_assignments course %}

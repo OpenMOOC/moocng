@@ -14,5 +14,5 @@ def validate_forbidden_words(value):
     forbidden_words = settings.MOOCNG_EXTERNALAPPS_FORBIDDEN_WORDS
 
     for forbidden_word in forbidden_words:
-        if forbidden_word in value:
+        if forbidden_word == value:
             raise ValidationError(u'%s contains a forbidden word' % value)

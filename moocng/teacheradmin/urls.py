@@ -89,6 +89,6 @@ urlpatterns = patterns('moocng.teacheradmin.views',
         'teacheradmin_assets_edit',
         name='teacheradmin_assets_edit'),
 
-    # Course's external apps
+    # Course's external apps admin
     url(r'^externalapps/', include('moocng.externalapps.urls')),
 )
