@@ -462,21 +462,7 @@ MATHJAX_CONFIG_DATA = {
 # }
 MOOCNG_EXTERNALAPPS = {
     'askbot': {
-        'instances':(
-            ('127.0.0.1', 'http://localhost', 2,),
-            ('127.0.0.2', 'http://localhost', 2,),
-        )
-    },
-    'wordpress': {
-        'instances':(
-            ('127.0.0.1', 'http://localhost', 2,),
-        )
-    },
-    'wiki': {
-        'instances':(
-            ('127.0.0.1', 'http://localhost', 2,),
-            ('127.0.0.2', 'http://localhost', 1,),
-        )
+        'instances':()
     },
 }
 

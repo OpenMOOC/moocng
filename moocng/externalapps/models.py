@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
-from django.conf import settings
 
 from moocng.courses.models import Course
 from moocng.externalapps.exceptions import InstanceLimitReached
 from moocng.externalapps.registry import ExternalAppRegistry
 from moocng.externalapps.validators import validate_slug, validate_forbidden_words
+from moocng.externalapps.tasks import process_instance_creation
+
+
+DEFAULT_QUEUE = 'externalapps'
 
 
 externalapps = ExternalAppRegistry()
@@ -81,13 +86,21 @@ class ExternalApp(models.Model):
         default='askbot',
     )
 
+    execute_task_on_save = models.NullBooleanField(
+        verbose_name=_('Execute task on save'),
+        blank=True,
+        null=True
+    )
+
 
     class Meta:
+        unique_together = (("ip_address", "instance_type", "slug"),)
         verbose_name = _('external app')
         verbose_name_plural = _('external apps')
 
+
     def __unicode__(self):
-        return u'%s:%s' % (self.app_name, self.ip_address)
+        return u'%s:%s' % (self.instance_type, self.ip_address)
 
     def url(self):
         return u'%s/%s' % (self.base_url, self.slug)
@@ -107,3 +120,15 @@ class ExternalApp(models.Model):
         else:
             msg = _('There is no registered class to manage "%s" external app' % self.app_name)
             raise ValidationError(msg)
+
+    def in_progress(self):
+        return self.status == ExternalApp.IN_PROGRESS
+
+
+def on_process_instance_creation(sender, instance, created, **kwargs):
+    process_instance_creation.apply_async(
+        args=[instance.id],
+        queue=DEFAULT_QUEUE
+    )
+
+signals.post_save.connect(on_process_instance_creation, sender=ExternalApp)

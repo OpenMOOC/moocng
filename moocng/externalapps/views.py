@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+from django.contrib import messages
 from django.core.urlresolvers import reverse
+from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
+from django.utils.translation import ugettext as _
 
 from moocng.externalapps.forms import ExternalAppForm
 from moocng.externalapps.models import ExternalApp
@@ -39,12 +42,16 @@ def externalapps_add_or_edit(request, course_slug, external_app_id=None):
         if form.is_valid():
             external_app = form.save(commit=False)
             external_app.course = course
-            external_app.save()
-            return HttpResponseRedirect(
-                reverse("externalapps_list", args=[course_slug]))
+            try:
+                external_app.save()
+            except IntegrityError:
+                 messages.error(request, _('That ip address already has an application of the type supplied with the specified slug'))
+            return HttpResponseRedirect(reverse("externalapps_list", args=[course_slug]))
     else:
-        form = ExternalAppForm(instance=external_app)
-
+        form = ExternalAppForm(
+            instance=external_app,
+            initial={'status': external_app.status if external_app else ExternalApp.NOT_CREATED}
+        )
 
     return render_to_response('external_app_add_or_edit.html', {
         'course': course,

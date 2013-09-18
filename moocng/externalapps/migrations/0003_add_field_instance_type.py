@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-import datetime
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
 
 
 class Migration(SchemaMigration):
@@ -10,7 +8,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'ExternalApp.instance_type'
         db.add_column('externalapps_externalapp', 'instance_type',
-                      self.gf('django.db.models.fields.CharField')(default='askbot'),
+                      self.gf('django.db.models.fields.CharField')(default='askbot', max_length=50),
                       keep_default=False)
 
 
@@ -106,7 +104,7 @@ class Migration(SchemaMigration):
             'base_url': ('django.db.models.fields.TextField', [], {}),
             'course': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'external_apps'", 'null': 'True', 'to': "orm['courses.Course']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'instance_type': ('django.db.models.fields.CharField', [], {'default': "'askbot'"}),
+            'instance_type': ('django.db.models.fields.CharField', [], {'default': "'askbot'", 'max_length': '50'}),
             'ip_address': ('django.db.models.fields.IPAddressField', [], {'max_length': '15'}),
             'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'}),
             'status': ('django.db.models.fields.SmallIntegerField', [], {'default': '2'})
