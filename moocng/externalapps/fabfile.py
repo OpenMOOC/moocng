@@ -39,12 +39,3 @@ def create_instance(externalapp_id):
                     if result.succeeded:
                         created = True
         return created
-
-
-@task()
-def test():
-    from fabric.api import execute
-    fabric_user = settings.FABRIC_TASK_USER
-    host = '%s@%s' % (fabric_user, '192.168.122.109')
-    res = execute(create_instance, 54, hosts=[host])
-    print res
