@@ -65,4 +65,6 @@ def externalapps_add_or_edit(request, course_slug, external_app_id=None):
 def externalapps_delete(request, course_slug, external_app_id):
     external_app = get_object_or_404(ExternalApp, pk=external_app_id)
     external_app.delete()
+    if external_app.status != ExternalApp.ERROR:
+        messages.error(request, _('The external application has been deleted, but the instance is running. Please, contact an administrator to remove the instance too.'))
     return HttpResponseRedirect(reverse("externalapps_list", args=[course_slug]))

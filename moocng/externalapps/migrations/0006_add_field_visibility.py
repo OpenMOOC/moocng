@@ -2,39 +2,19 @@
 from south.db import db
 from south.v2 import SchemaMigration
 
-from django.db import connection
-
 
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-
-        if 'externalapps_externalapp' in connection.introspection.get_table_list(connection.cursor()):
-            return  # already migrated
-
-        # Deleting field 'ExternalApp.force_task_execution'
-        db.delete_column('externalapps_externalapp', 'force_task_execution')
-
-        # Adding field 'ExternalApp.execute_task_on_save'
-        db.add_column('externalapps_externalapp', 'execute_task_on_save',
-                      self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True),
+        # Adding field 'ExternalApp.visibility'
+        db.add_column('externalapps_externalapp', 'visibility',
+                      self.gf('django.db.models.fields.SmallIntegerField')(default=1),
                       keep_default=False)
-
-        # Adding unique constraint on 'ExternalApp', fields ['instance_type', 'ip_address', 'slug']
-        db.create_unique('externalapps_externalapp', ['instance_type', 'ip_address', 'slug'])
 
 
     def backwards(self, orm):
-        # Removing unique constraint on 'ExternalApp', fields ['instance_type', 'ip_address', 'slug']
-        db.delete_unique('externalapps_externalapp', ['instance_type', 'ip_address', 'slug'])
-
-        # Adding field 'ExternalApp.force_task_execution'
-        db.add_column('externalapps_externalapp', 'force_task_execution',
-                      self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True),
-                      keep_default=False)
-
-        # Deleting field 'ExternalApp.execute_task_on_save'
-        db.delete_column('externalapps_externalapp', 'execute_task_on_save')
+        # Deleting field 'ExternalApp.visibility'
+        db.delete_column('externalapps_externalapp', 'visibility')
 
 
     models = {
@@ -128,7 +108,8 @@ class Migration(SchemaMigration):
             'instance_type': ('django.db.models.fields.CharField', [], {'default': "'askbot'", 'max_length': '50'}),
             'ip_address': ('django.db.models.fields.IPAddressField', [], {'max_length': '15'}),
             'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'}),
-            'status': ('django.db.models.fields.SmallIntegerField', [], {'default': '2'})
+            'status': ('django.db.models.fields.SmallIntegerField', [], {'default': '2'}),
+            'visibility': ('django.db.models.fields.SmallIntegerField', [], {'default': '1'})
         }
     }
 

@@ -18,7 +18,7 @@ class ExternalAppForm(forms.ModelForm, BootstrapMixin):
 
     class Meta:
         model = ExternalApp
-        fields = ('instance_type', 'app_name', 'slug', 'status')
+        fields = ('instance_type', 'app_name', 'slug', 'status', 'visibility',)
 
     def clean(self):
         status = self.cleaned_data.get('status')

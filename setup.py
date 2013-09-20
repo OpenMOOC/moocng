@@ -80,6 +80,7 @@ setup(
         'django-grappelli==2.4.5',
         'django-mathjax==0.0.2',
         'requests==1.2.0',
+        'fabric==1.7.0',
     ],
     entry_points = """
         [moocng.externalapp]

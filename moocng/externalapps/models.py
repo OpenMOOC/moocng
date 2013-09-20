@@ -7,12 +7,13 @@ from django.utils.translation import ugettext_lazy as _
 
 from moocng.courses.models import Course
 from moocng.externalapps.exceptions import InstanceLimitReached
+from moocng.externalapps.managers import ExternalAppManager
 from moocng.externalapps.registry import ExternalAppRegistry
-from moocng.externalapps.validators import validate_slug, validate_forbidden_words
 from moocng.externalapps.tasks import process_instance_creation
+from moocng.externalapps.validators import validate_slug, validate_forbidden_words
 
 
-DEFAULT_QUEUE = 'externalapps'
+EXTERNAL_APPS_QUEUE = 'externalapps'
 
 
 externalapps = ExternalAppRegistry()
@@ -28,11 +29,19 @@ class ExternalApp(models.Model):
     IN_PROGRESS = 3
     ERROR = 4
 
+    ME = 1
+    ALL = 2
+
     STATUSES = (
         (CREATED, _('Created')),
         (NOT_CREATED, _('Not Created')),
         (IN_PROGRESS, _('In Progress')),
         (ERROR, _('Error')),
+    )
+
+    VISIBILITIES = (
+        (ME, _('Just me')),
+        (ALL, _('Everybody')),
     )
 
     course = models.ForeignKey(
@@ -83,7 +92,7 @@ class ExternalApp(models.Model):
         blank=False,
         max_length=50,
         choices=get_instance_types(),
-        default='askbot',
+        default='askbot'
     )
 
     execute_task_on_save = models.NullBooleanField(
@@ -92,12 +101,20 @@ class ExternalApp(models.Model):
         null=True
     )
 
+    visibility = models.SmallIntegerField(
+        verbose_name=_('Visibility of the instance'),
+        null=False,
+        blank=False,
+        choices=VISIBILITIES,
+        default=ME,
+    )
+
+    objects = ExternalAppManager()
 
     class Meta:
         unique_together = (("ip_address", "instance_type", "slug"),)
         verbose_name = _('external app')
         verbose_name_plural = _('external apps')
-
 
     def __unicode__(self):
         return u'%s:%s' % (self.instance_type, self.ip_address)
@@ -128,7 +145,6 @@ class ExternalApp(models.Model):
 def on_process_instance_creation(sender, instance, created, **kwargs):
     process_instance_creation.apply_async(
         args=[instance.id],
-        queue=DEFAULT_QUEUE
+        queue=EXTERNAL_APPS_QUEUE
     )
-
 signals.post_save.connect(on_process_instance_creation, sender=ExternalApp)

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-import time
 import logging
-import tempfile
 
 from celery import (task, Task,)
+
+from moocng.externalapps.exceptions import InstanceCreationError
 
 
 logger = logging.getLogger(__name__)
@@ -17,7 +17,6 @@ class BaseExternalAppTask(Task):
         logger.error('Task with id %r raised exception: %r. Traceback: %r' % (task_id, exc, einfo))
         externalapp_id = args[0]
         self.update_external_app_state(externalapp_id, ExternalApp.ERROR)
-
         super(BaseExternalAppTask, self).on_failure(exc, task_id, args, kwargs, einfo)
 
     def on_success(self, retval, task_id, args, kwargs):
@@ -37,22 +36,16 @@ class BaseExternalAppTask(Task):
         signals.post_save.connect(on_process_instance_creation, sender=ExternalApp)
 
 
-def do_process_instance_creation(externalapp_id):
-    from moocng.externalapps.models import ExternalApp
-    externalapp = ExternalApp.objects.get(pk=externalapp_id)
-
-    #sample code. Need to be changed to execute remote commands.
-    # Code run here need to raise Exceptions to reache on_failure method
-    time.sleep(2)
-    f = tempfile.NamedTemporaryFile(delete=False)
-    f.write('k4k1t4!')
-    f.write(str(externalapp.id))
-    f.close()
-    time.sleep(2)
-
-    return externalapp_id
-
-
 @task(base=BaseExternalAppTask)
 def process_instance_creation(externalapp_id):
-    return do_process_instance_creation(externalapp_id)
+    from fabric.api import execute
+    from django.conf import settings
+    from moocng.externalapps.fabfile import create_instance
+    from moocng.externalapps.models import ExternalApp
+
+    externalapp = ExternalApp.objects.get(pk=externalapp_id)
+    fabric_user = settings.FABRIC_TASK_USER
+    host = '%s@%s' % (fabric_user, externalapp.ip_address)
+    error = execute(create_instance, externalapp_id, hosts=[host])
+    if error:
+        raise InstanceCreationError

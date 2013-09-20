@@ -3,3 +3,7 @@
 
 class InstanceLimitReached(Exception):
     pass
+
+
+class InstanceCreationError(Exception):
+    pass

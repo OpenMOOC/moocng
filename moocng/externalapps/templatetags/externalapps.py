@@ -27,5 +27,5 @@ def externalapps_list(context):
     course = context['course']
     course_slug = course.slug
     course = Course.objects.filter(slug=course_slug)
-    external_apps = ExternalApp.objects.filter(course=course)
+    external_apps = ExternalApp.objects.students().filter(course=course)
     return {'external_apps': external_apps}
