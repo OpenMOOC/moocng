@@ -329,7 +329,14 @@ GOOGLE_ANALYTICS_CODE = ''
 GRAVATAR_URL_PREFIX = '//www.gravatar.com/'
 
 MOOCNG_THEME = {
-    # 'cert_banner': u'',
+#    'logo': u'',
+#    'subtitle': u'',
+#    'top_banner': u'',
+#    'right_banner1': u'',
+#    'right_banner2': u'',
+#    'bootstrap_css': u'',
+#    'moocng_css': u'',
+#    'cert_banner': u'',
 }
 
 ENABLED_COMUNICATIONS = (
