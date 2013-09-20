@@ -478,3 +478,10 @@ MOOCNG_EXTERNALAPPS = {
 #
 # MOOCNG_EXTERNALAPPS_FORBIDDEN_WORDS = ('word1', 'word2',)
 MOOCNG_EXTERNALAPPS_FORBIDDEN_WORDS = ()
+
+# User for fabric tasks execution
+FABRIC_TASK_USER = 'root'
+
+# Path where the instances are created. It is used to check if already exists
+# an instance on the server
+FABRIC_ASKBOT_INSTANCES_PATH = '/etc/openmooc/askbot/instances'
