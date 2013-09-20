@@ -120,7 +120,12 @@ class ExternalApp(models.Model):
         return u'%s:%s' % (self.instance_type, self.ip_address)
 
     def url(self):
+        if self.status in (self.NOT_CREATED, self.IN_PROGRESS, self.ERROR,):
+            return u'url not available'
         return u'%s/%s' % (self.base_url, self.slug)
+
+    def url_ready(self):
+        return self.status == self.CREATED
 
     def clean(self):
         external_app = externalapps.get_app_by_name(self.instance_type)

@@ -14,8 +14,14 @@
                         <td>{{ external_app.ip_address }}</td>
                         <td>{{ external_app.get_instance_type_display }}</td>
                         <td>{{ external_app.get_visibility_display }}</td>
-                        <td><a href="{{ external_app.url }}" target="_blank">{{ external_app.url }}</a></td>
-                        <td> <i class="{% get_icon_for_status external_app %}"></i> {{ external_app.get_status_display }}</td>
+                        <td>
+                            {% if external_app.url_ready %}
+                                <a href="{{ external_app.url }}" target="_blank">{{ external_app.url }}</a>
+                            {% else %}
+                                {{ external_app.url }}
+                            {% endif %}
+                        </td>
+                        <td><i class="{% get_icon_for_status external_app %}"></i> {{ external_app.get_status_display }}</td>
                         <td>
                             <a class="btn btn-small pull-right"
                               href="{% url externalapps_delete course_slug=course.slug external_app_id=external_app.id %}">

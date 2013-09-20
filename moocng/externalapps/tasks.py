@@ -46,6 +46,8 @@ def process_instance_creation(externalapp_id):
     externalapp = ExternalApp.objects.get(pk=externalapp_id)
     fabric_user = settings.FABRIC_TASK_USER
     host = '%s@%s' % (fabric_user, externalapp.ip_address)
-    error = execute(create_instance, externalapp_id, hosts=[host])
-    if error:
+
+    result = execute(create_instance, externalapp_id, hosts=[host])
+    created = result.get(host, False)
+    if not created:
         raise InstanceCreationError
