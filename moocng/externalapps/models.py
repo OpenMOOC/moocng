@@ -52,7 +52,7 @@ class ExternalApp(models.Model):
         null=True)
 
     app_name = models.CharField(
-        verbose_name=_('External app name'),
+        verbose_name=_('Visible app name'),
         max_length=200,
         null=False,
         blank=False,
@@ -74,7 +74,6 @@ class ExternalApp(models.Model):
         verbose_name=_('Slug for the instance'),
         null=False,
         blank=False,
-        unique=True,
         validators=[validate_slug, validate_forbidden_words]
     )
 
@@ -112,7 +111,7 @@ class ExternalApp(models.Model):
     objects = ExternalAppManager()
 
     class Meta:
-        unique_together = (("ip_address", "instance_type", "slug"),)
+        unique_together = ('ip_address', 'slug')
         verbose_name = _('external app')
         verbose_name_plural = _('external apps')
 
@@ -130,15 +129,15 @@ class ExternalApp(models.Model):
     def clean(self):
         external_app = externalapps.get_app_by_name(self.instance_type)
         if external_app:
-            try:
-                if not self.id:
+            if not self.id:
+                try:
                     instance_assigned = external_app.get_instance(self)
                     self.ip_address = instance_assigned[0]
                     self.base_url = instance_assigned[1]
                     self.status = self.IN_PROGRESS
                     self.instance_type = external_app._meta.instance_type
-            except InstanceLimitReached:
-                raise ValidationError(_('There are no instances available'))
+                except InstanceLimitReached:
+                    raise ValidationError(_('There are no instances available'))
         else:
             msg = _('There is no registered class to manage "%s" external app' % self.app_name)
             raise ValidationError(msg)
@@ -148,8 +147,9 @@ class ExternalApp(models.Model):
 
 
 def on_process_instance_creation(sender, instance, created, **kwargs):
-    process_instance_creation.apply_async(
-        args=[instance.id],
-        queue=EXTERNAL_APPS_QUEUE
-    )
+    if created:
+        process_instance_creation.apply_async(
+            args=[instance.id],
+            queue=EXTERNAL_APPS_QUEUE
+        )
 signals.post_save.connect(on_process_instance_creation, sender=ExternalApp)

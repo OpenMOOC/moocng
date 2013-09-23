@@ -15,17 +15,16 @@ def exists_instance(instance_name):
     res = run("ls %s" % settings.FABRIC_ASKBOT_INSTANCES_PATH)
     return instance_name in res
 
-
+#    warn_only=True,
 @task()
 def create_instance(externalapp_id):
     with fab_settings(
         hide('stdout', 'warnings'),
         show('running', 'stderr'),
-        warn_only=True,
     ):
         created = False
         externalapp = ExternalApp.objects.get(pk=externalapp_id)
-        instance_name = 'aaa' #externalapp.slug
+        instance_name = externalapp.slug
         exists = exists_instance(instance_name)
         if exists:
             created = False

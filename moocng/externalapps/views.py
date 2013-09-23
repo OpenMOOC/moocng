@@ -31,6 +31,7 @@ def externalapps_add_or_edit(request, course_slug, external_app_id=None):
     if external_app_id is None:
         external_app = None
         course = get_object_or_404(Course, slug=course_slug)
+        messages.info(request, _('Please set slug properly, because once it has been set, only an administrator can change it!'))
     else:
         external_app = get_object_or_404(ExternalApp, pk=external_app_id)
         course = external_app.course
@@ -45,12 +46,15 @@ def externalapps_add_or_edit(request, course_slug, external_app_id=None):
             try:
                 external_app.save()
             except IntegrityError:
-                 messages.error(request, _('That ip address already has an application of the type supplied with the specified slug'))
+                messages.error(request, _('Already exists an application with the specified slug. Please change slug'))
             return HttpResponseRedirect(reverse("externalapps_list", args=[course_slug]))
     else:
         form = ExternalAppForm(
             instance=external_app,
-            initial={'status': external_app.status if external_app else ExternalApp.NOT_CREATED}
+            initial={
+                'status': external_app.status if external_app else ExternalApp.NOT_CREATED,
+                'slug': course.slug.replace('-', '_'),
+            }
         )
 
     return render_to_response('external_app_add_or_edit.html', {
