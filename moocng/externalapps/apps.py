@@ -10,19 +10,3 @@ class Askbot(ExternalApp):
         model = 'externalapps.ExternalApp'
         instance_type = 'askbot'
         instances = settings.MOOCNG_EXTERNALAPPS['askbot']['instances']
-
-
-class Wordpress(ExternalApp):
-
-    class Meta:
-        model = 'externalapps.ExternalApp'
-        instance_type = 'wordpress'
-        instances = settings.MOOCNG_EXTERNALAPPS['wordpress']['instances']
-
-
-class Wiki(ExternalApp):
-
-    class Meta:
-        model = 'externalapps.ExternalApp'
-        instance_type = 'wiki'
-        instances = settings.MOOCNG_EXTERNALAPPS['wiki']['instances']
