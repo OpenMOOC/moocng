@@ -119,20 +119,23 @@ class ExternalApp(models.Model):
         return u'%s:%s' % (self.instance_type, self.ip_address)
 
     def url(self):
-        if self.status in (self.NOT_CREATED, self.IN_PROGRESS, self.ERROR,):
-            return u'url not available'
+        if not self.instance_ready():
+            return _('url not available')
         return u'%s/%s' % (self.base_url, self.slug)
     url.short_description = _('Url')
     url.admin_order_field = 'ip_address'
 
     def url_link(self):
-        url = self.url()
-        return '<a href="%s" target="_blank">%s</a>' % (url, url)
+        if not self.instance_ready():
+            url = _('url not available')
+        else:
+            url = '<a href="%s" target="_blank">%s</a>' % (self.url(), self.url())
+        return url
     url_link.allow_tags = True
     url_link.short_description = _('Url')
     url_link.admin_order_field = 'ip_address'
 
-    def url_ready(self):
+    def instance_ready(self):
         return self.status == self.CREATED
 
     def clean(self):
@@ -157,8 +160,9 @@ class ExternalApp(models.Model):
 
 def on_process_instance_creation(sender, instance, created, **kwargs):
     if created:
-        process_instance_creation.apply_async(
-            args=[instance.id],
-            queue=EXTERNAL_APPS_QUEUE
-        )
+        if instance and instance.execute_task_on_save:
+            process_instance_creation.apply_async(
+                args=[instance.id],
+                queue=EXTERNAL_APPS_QUEUE
+            )
 signals.post_save.connect(on_process_instance_creation, sender=ExternalApp)
