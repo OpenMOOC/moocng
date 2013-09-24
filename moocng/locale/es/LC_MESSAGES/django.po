@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-24 08:08+0200\n"
+"POT-Creation-Date: 2013-09-24 14:23+0200\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Antonio Perez-Aranda <aperezaranda@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -1764,8 +1764,8 @@ msgstr "Desmatricúlame"
 msgid ""
 "Once the slug has been set, you must contact an administrator to change it"
 msgstr ""
-"Tenga en cuenta que una vez que el slug haya sido guardado, tiene que contactar "
-"con un administrador para cambiarlo"
+"Tenga en cuenta que una vez que el slug haya sido guardado, tiene que "
+"contactar con un administrador para cambiarlo"
 
 #: externalapps/forms.py:14
 msgid ""
@@ -1777,7 +1777,8 @@ msgstr ""
 
 #: externalapps/forms.py:15
 msgid "Oops! It might seem you have tried tampering the object status..."
-msgstr "Oops! Parece ser que alguien ha intentado cambiar el estado del objeto..."
+msgstr ""
+"Oops! Parece ser que alguien ha intentado cambiar el estado del objeto..."
 
 #: externalapps/models.py:36
 msgid "Created"
@@ -1852,32 +1853,44 @@ msgstr "Aplicación externa"
 msgid "external apps"
 msgstr "Aplicaciones auxiliares"
 
-#: externalapps/models.py:140
+#: externalapps/models.py:123 externalapps/models.py:130
+msgid "url not available"
+msgstr "Url no disponible"
+
+#: externalapps/models.py:125 externalapps/models.py:135
+msgid "Url"
+msgstr ""
+
+#: externalapps/models.py:152
 msgid "There are no instances available"
 msgstr "No hay instancias disponibles"
 
-#: externalapps/models.py:142
+#: externalapps/models.py:154
 #, python-format
 msgid "There is no registered class to manage \"%s\" external app"
-msgstr "No hay registrada ninguna clase para manejar la aplicación auxiliar de tipo \"%s\""
+msgstr ""
+"No hay registrada ninguna clase para manejar la aplicación auxiliar de tipo "
+"\"%s\""
 
 #: externalapps/validators.py:11
 msgid "Enter a valid 'slug' consisting of letters, numbers or underscores."
-msgstr "Introduzca un slug válido, formado por letras, números o guiones bajos."
+msgstr ""
+"Introduzca un slug válido, formado por letras, números o guiones bajos."
 
 #: externalapps/views.py:34
 msgid ""
 "Please set slug properly, because once it has been set, only an "
 "administrator can change it!"
 msgstr ""
-"Por favor, escriba el slug correctamente porque una vez guardado, "
-"sólo un administrador podrá cambiarlo"
+"Por favor, escriba el slug correctamente porque una vez guardado, sólo un "
+"administrador podrá cambiarlo"
 
 #: externalapps/views.py:49
 msgid ""
 "Already exists an application with the specified slug. Please change slug"
 msgstr ""
-"Ya existe una aplicación auxiliar con el slug especificado. Por favor, cambie el slug"
+"Ya existe una aplicación auxiliar con el slug especificado. Por favor, "
+"cambie el slug"
 
 #: externalapps/views.py:73
 msgid ""
@@ -1897,11 +1910,11 @@ msgstr "Guardar cambios"
 msgid "Create external app"
 msgstr "Crear aplicación auxiliar"
 
-#: externalapps/templates/externalapps_list.html:39
+#: externalapps/templates/externalapps_list.html:34
 msgid "There isn't external apps yet"
 msgstr "No hay ninguna aplicación auxiliar"
 
-#: externalapps/templates/externalapps_list.html:44
+#: externalapps/templates/externalapps_list.html:39
 msgid "Add external app"
 msgstr "Añadir aplicación auxiliar"
 
