@@ -159,10 +159,9 @@ class ExternalApp(models.Model):
 
 
 def on_process_instance_creation(sender, instance, created, **kwargs):
-    if created:
-        if instance and instance.execute_task_on_save:
-            process_instance_creation.apply_async(
-                args=[instance.id],
-                queue=EXTERNAL_APPS_QUEUE
-            )
+    if created and instance:
+        process_instance_creation.apply_async(
+            args=[instance.id],
+            queue=EXTERNAL_APPS_QUEUE
+        )
 signals.post_save.connect(on_process_instance_creation, sender=ExternalApp)
