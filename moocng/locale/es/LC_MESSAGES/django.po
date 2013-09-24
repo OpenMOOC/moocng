@@ -1773,24 +1773,21 @@ msgid ""
 "allowed in that status."
 msgstr ""
 "La tarea de creación de la instancia está siendo procesada. No se puede "
-"guardar en ese estado."
+"guardar en este estado."
 
 #: externalapps/forms.py:15
 msgid "Oops! It might seem you have tried tampering the object status..."
 msgstr "Oops! Parece ser que alguien ha intentado cambiar el estado del objeto..."
 
 #: externalapps/models.py:36
-#, fuzzy
 msgid "Created"
 msgstr "Creada"
 
 #: externalapps/models.py:37
-#, fuzzy
 msgid "Not Created"
 msgstr "No creada"
 
 #: externalapps/models.py:38
-#, fuzzy
 msgid "In Progress"
 msgstr "En progreso"
 
@@ -1816,9 +1813,8 @@ msgid "Everybody"
 msgstr "Todo el mundo"
 
 #: externalapps/models.py:55
-#, fuzzy
 msgid "Visible app name"
-msgstr "Nombre visible de la aplicación externa en la web"
+msgstr "Nombre visible en la web"
 
 #: externalapps/models.py:62
 msgid "Base url of the instance"
@@ -1833,9 +1829,8 @@ msgid "Slug for the instance"
 msgstr "Slug de la instancia"
 
 #: externalapps/models.py:81
-#, fuzzy
 msgid "Creation status of the instance"
-msgstr "Fecha y hora de creación de la instancia"
+msgstr "Estado de la instancia"
 
 #: externalapps/models.py:89
 msgid "Type of instance"
@@ -1843,7 +1838,7 @@ msgstr "Tipo de instancia"
 
 #: externalapps/models.py:98
 msgid "Execute task on save"
-msgstr "Ejecutar tarea al guardar"
+msgstr "Ejecutar tarea al guardar (sólo admin)"
 
 #: externalapps/models.py:104
 msgid "Visibility of the instance"
@@ -1855,17 +1850,16 @@ msgstr "Aplicación externa"
 
 #: externalapps/models.py:116
 msgid "external apps"
-msgstr "Aplicaciones externas"
+msgstr "Aplicaciones auxiliares"
 
 #: externalapps/models.py:140
-#, fuzzy
 msgid "There are no instances available"
 msgstr "No hay instancias disponibles"
 
 #: externalapps/models.py:142
 #, python-format
 msgid "There is no registered class to manage \"%s\" external app"
-msgstr "No hay registrada ninguna clase para manejar la aplicación externa de tipo \"%s\""
+msgstr "No hay registrada ninguna clase para manejar la aplicación auxiliar de tipo \"%s\""
 
 #: externalapps/validators.py:11
 msgid "Enter a valid 'slug' consisting of letters, numbers or underscores."
@@ -1883,14 +1877,14 @@ msgstr ""
 msgid ""
 "Already exists an application with the specified slug. Please change slug"
 msgstr ""
-"Ya existe una aplicación con el slug especificado. Por favor, cambie el slug"
+"Ya existe una aplicación auxiliar con el slug especificado. Por favor, cambie el slug"
 
 #: externalapps/views.py:73
 msgid ""
 "The external application has been deleted, but the instance is running. "
 "Please, contact an administrator to remove the instance too."
 msgstr ""
-"La aplicación externa ha sido eliminada, pero la instancia sigue corriendo. "
+"La aplicación auxiliar ha sido eliminada, pero la instancia sigue corriendo. "
 "Por favor, contacte con un administrador para eliminar la instancia."
 
 #: externalapps/templates/external_app_add_or_edit.html:14
@@ -1901,16 +1895,15 @@ msgstr "Guardar cambios"
 
 #: externalapps/templates/external_app_add_or_edit.html:16
 msgid "Create external app"
-msgstr "Crear aplicación externa"
+msgstr "Crear aplicación auxiliar"
 
 #: externalapps/templates/externalapps_list.html:39
-#, fuzzy
 msgid "There isn't external apps yet"
-msgstr "No hay ninguna aplicación externa"
+msgstr "No hay ninguna aplicación auxiliar"
 
 #: externalapps/templates/externalapps_list.html:44
 msgid "Add external app"
-msgstr "Añadir aplicación externa"
+msgstr "Añadir aplicación auxiliar"
 
 #: peerreview/models.py:34
 msgid "Minimum reviewers"

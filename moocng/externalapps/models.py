@@ -122,6 +122,15 @@ class ExternalApp(models.Model):
         if self.status in (self.NOT_CREATED, self.IN_PROGRESS, self.ERROR,):
             return u'url not available'
         return u'%s/%s' % (self.base_url, self.slug)
+    url.short_description = _('Url')
+    url.admin_order_field = 'ip_address'
+
+    def url_link(self):
+        url = self.url()
+        return '<a href="%s" target="_blank">%s</a>' % (url, url)
+    url_link.allow_tags = True
+    url_link.short_description = _('Url')
+    url_link.admin_order_field = 'ip_address'
 
     def url_ready(self):
         return self.status == self.CREATED
