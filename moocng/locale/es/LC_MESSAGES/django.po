@@ -1884,7 +1884,6 @@ msgstr ""
 "Introduzca un slug válido, formado por letras, números o guiones bajos."
 
 #: externalapps/views.py:34
-#, fuzzy
 msgid ""
 "Please set slug and instance type properly, because once it has been set, "
 "only an administrator can change it!"
