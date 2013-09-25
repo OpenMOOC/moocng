@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-24 14:23+0200\n"
+"POT-Creation-Date: 2013-09-25 09:59+0200\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Antonio Perez-Aranda <aperezaranda@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -1764,18 +1764,24 @@ msgstr "Desmatricúlame"
 msgid ""
 "Once the slug has been set, you must contact an administrator to change it"
 msgstr ""
-"Tenga en cuenta que una vez que el slug haya sido guardado, tiene que "
-"contactar con un administrador para cambiarlo"
+"Tiene que contactar con un administrador para cambiar el slug de la instancia"
 
 #: externalapps/forms.py:14
 msgid ""
-"The external application creation task is being processed. Save is not "
-"allowed in that status."
+"Once the instance type has been set, you must contact an administrator to "
+"change it"
 msgstr ""
-"La tarea de creación de la instancia está siendo procesada. No se puede "
-"guardar en este estado."
+"Tiene que contactar con un administrador para cambiar el tipo de instancia"
 
 #: externalapps/forms.py:15
+msgid ""
+"The external application creation task is being processed. Saving is not "
+"allowed in this status."
+msgstr ""
+"La tarea de creación de la instancia está siendo procesada. No se puede "
+"editar en este estado."
+
+#: externalapps/forms.py:16
 msgid "Oops! It might seem you have tried tampering the object status..."
 msgstr ""
 "Oops! Parece ser que alguien ha intentado cambiar el estado del objeto..."
@@ -1878,12 +1884,13 @@ msgstr ""
 "Introduzca un slug válido, formado por letras, números o guiones bajos."
 
 #: externalapps/views.py:34
+#, fuzzy
 msgid ""
-"Please set slug properly, because once it has been set, only an "
-"administrator can change it!"
+"Please set slug and instance type properly, because once it has been set, "
+"only an administrator can change it!"
 msgstr ""
-"Por favor, escriba el slug correctamente porque una vez guardado, sólo un "
-"administrador podrá cambiarlo"
+"Por favor, escriba el slug y el tipo de instancia adecuadamente, porque "
+"una vez guardado sólo un administrador podrá cambiarlos"
 
 #: externalapps/views.py:49
 msgid ""

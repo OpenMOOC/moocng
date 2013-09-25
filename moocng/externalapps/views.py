@@ -31,7 +31,7 @@ def externalapps_add_or_edit(request, course_slug, external_app_id=None):
     if external_app_id is None:
         external_app = None
         course = get_object_or_404(Course, slug=course_slug)
-        messages.warning(request, _('Please set slug properly, because once it has been set, only an administrator can change it!'))
+        messages.warning(request, _('Please set slug and instance type properly, because once it has been set, only an administrator can change it!'))
     else:
         external_app = get_object_or_404(ExternalApp, pk=external_app_id)
         course = external_app.course
@@ -53,7 +53,7 @@ def externalapps_add_or_edit(request, course_slug, external_app_id=None):
             instance=external_app,
             initial={
                 'status': external_app.status if external_app else ExternalApp.NOT_CREATED,
-                'slug': course.slug.replace('-', '_'),
+                'slug': external_app.slug if external_app else course.slug.replace('-', '_'),
             }
         )
 
