@@ -13,7 +13,9 @@
 
 <div class="row">
     {% cache 3600 course_overview_main_info course.id %}
+
     <div class="span8">
+
         {% if course.promotion_media_content_type and course.promotion_media_content_id %}
             <div class="media-box">
                 {% media_content_iframe_code course.promotion_media_content_type course.promotion_media_content_id height="349px" width="620px" allowfullscreen="1" controls="1" %}
@@ -108,12 +110,14 @@
                 {% if course.estimated_effort %}
                     <dt>{% trans "Estimated Effort" %}</dt><dd>{{ course.estimated_effort|safe }}</dd>
                 {% endif %}
-                {% if use_old_calculus %}
-                    <dt><a target="_new" href="{% url oldscore %}" ><small>{% trans "Evaluation criteria" %}</small></a></dt>
-                {% else %}
-                    <dt><a target="_new" href="{% url score %}" ><small>{% trans "Evaluation criteria" %}</small></a></dt>
+                {% if course.static_page %}
+                    <dt><a href="{% url course_extra_info course.slug %}">{{ course.static_page.title }}</a></dt>
                 {% endif %}
-
+                {% if use_old_calculus %}
+                    <dt><a target="_new" href="{% url oldscore %}" >{% trans "Evaluation criteria" %}</a></dt>
+                {% else %}
+                    <dt><a target="_new" href="{% url score %}" >{% trans "Evaluation criteria" %}</a></dt>
+                {% endif %}
             </dl>
         </div>
 

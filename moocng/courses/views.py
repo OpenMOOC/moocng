@@ -308,6 +308,19 @@ def course_progress(request, course_slug):
     }, context_instance=RequestContext(request))
 
 
+@login_required
+def course_extra_info(request, course_slug):
+    course = get_object_or_404(Course, slug=course_slug)
+    is_enrolled = course.students.filter(id=request.user.id).exists()
+
+    return render_to_response('courses/static_page.html', {
+        'course': course,
+        'is_enrolled': is_enrolled,  # required due course nav templatetag
+        'is_teacher': is_teacher_test(request.user, course),
+        'static_page': course.static_page,
+    }, context_instance=RequestContext(request))
+
+
 def announcement_detail(request, course_slug, announcement_id, announcement_slug):
 
     """

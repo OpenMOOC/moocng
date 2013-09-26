@@ -102,6 +102,9 @@
         <li>
             <a href="#tab-learning_goals" data-toggle="tab">{{ form.learning_goals.label }}</a>
         </li>
+        <li>
+            <a href="#tab-extra_info" data-toggle="tab">{% trans "Extra info" %}</a>
+        </li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane active" id="tab-description">
@@ -133,6 +136,14 @@
             {{ form.learning_goals.label_tag }}
             {{ form.learning_goals }}
             {% if form.learning_goals.help_text %}<span class="help-block">{{ form.learning_goals.help_text }}</span>{% endif %}
+        </div>
+        <div class="tab-pane" id="tab-extra_info">
+            {{ static_page_form.errors }}
+            {{ static_page_form.title.label_tag }}
+            {{ static_page_form.title }}
+            {{ static_page_form.body.label_tag }}
+            {{ static_page_form.body }}
+            {% if static_page_form.help_text %}<span class="help-block">{{ static_page_form.help_text }}</span>{% endif %}
         </div>
     </div>
     <p>

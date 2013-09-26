@@ -35,7 +35,8 @@ from celery.task.control import inspect
 from adminsortable.admin import SortableAdmin
 
 from moocng.courses.forms import UnitForm, AttachmentForm
-from moocng.courses.models import Course, Announcement, Unit, KnowledgeQuantum
+from moocng.courses.models import (Course, Announcement, Unit, KnowledgeQuantum,
+                                   StaticPage)
 from moocng.courses.models import Question, Option, Attachment
 from moocng.courses.models import CourseTeacher
 from moocng.courses.widgets import ImageReadOnlyWidget
@@ -128,7 +129,6 @@ class KnowledgeQuantumAdmin(SortableAdmin):
 
     list_display = ('__unicode__', 'title', 'media_content_type', 'media_content_id', 'weight')
     list_filter = ('unit', )
-
 
 csrf_protect_m = method_decorator(csrf_protect)
 ensure_csrf_cookie_m = method_decorator(ensure_csrf_cookie)
@@ -349,5 +349,6 @@ admin.site.register(CourseTeacher, CourseTeacherAdmin)
 admin.site.register(Announcement, AnnouncementAdmin)
 admin.site.register(Unit, UnitAdmin)
 admin.site.register(KnowledgeQuantum, KnowledgeQuantumAdmin)
+admin.site.register(StaticPage)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Option, OptionAdmin)
