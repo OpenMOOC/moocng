@@ -14,26 +14,19 @@
 </div>
 
 <div class="row">
-  <section class="span8">
+  <section class="span9">
     <h1 class="content-title">{% trans "Courses" %}</h1>
 
     {% conditionalcache use_cache 3600 course_list %}
-        {% for course in courses %}
-            {% if course.is_public %}
-                <div class="box published">
-            {% else %}
-                <div class="box draft">
-                    <span class="label pull-right">{% trans "Draft" %}</span>
-            {% endif %}
-                    <h2><a href="{{ course.get_absolute_url }}">{{ course.name }}</a></h2>
-                    {{ course.description|safe|truncatewords_html:60 }}
-                    <p class="box-footer"><a href="{{ course.get_absolute_url }}">{% trans "More information about this course" %}</a></p>
-                </div>
-        {% endfor %}
+        {% if show_as_list %}
+            {% include "courses/courses_as_list.html" %}
+        {% else %}
+            {% include "courses/courses_as_grid.html" %}
+        {% endif %}
     {% endconditionalcache %}
 
   </section>
-  <div class="span4">
+  <div class="span3">
     {% if theme.right_banner1 %}
         <div class="media-box">
             <img src="{{ theme.right_banner1 }}" alt="" />

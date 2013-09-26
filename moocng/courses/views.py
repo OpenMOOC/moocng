@@ -61,6 +61,7 @@ def home(request):
     return render_to_response('courses/home.html', {
         'courses': courses,
         'use_cache': use_cache,
+        'show_as_list': settings.COURSE_SHOW_AS_LIST,
     }, context_instance=RequestContext(request))
 
 

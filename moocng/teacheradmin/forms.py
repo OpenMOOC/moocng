@@ -14,6 +14,8 @@
 # limitations under the License.
 
 from django import forms
+from django.conf import settings
+from django.core.files.images import get_image_dimensions
 from django.utils.translation import ugettext_lazy as _
 
 from tinymce.widgets import TinyMCE
@@ -76,6 +78,15 @@ class CourseForm(forms.ModelForm):
             raise forms.ValidationError(_('You must select a content type or remove the content id'))
         return content_type
 
+    def clean_main_image(self):
+        main_image = self.cleaned_data.get("main_image")
+        if main_image:
+           w, h = get_image_dimensions(main_image)
+           if w != settings.COURSE_MAIN_IMAGE_MAX_WIDTH:
+               raise forms.ValidationError("Uploaded main image is %i pixel wide. Maximun width for main image is %ipx" % (w, settings.COURSE_MAIN_IMAGE_MAX_WIDTH))
+           if h != settings.COURSE_MAIN_IMAGE_MAX_HEIGHT:
+               raise forms.ValidationError("Uploaded main image is %i pixel high. Maximun height for main image is %ipx" % (h, settings.COURSE_MAIN_IMAGE_MAX_HEIGHT))
+        return main_image
 
 class AnnouncementForm(CoursesAnnouncementForm, BootstrapMixin):
 

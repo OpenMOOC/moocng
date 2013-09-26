@@ -110,6 +110,13 @@ class Course(Sortable):
         max_length=10,
         default=COURSE_STATUSES[0][0],
     )
+    main_image = models.ImageField(
+        verbose_name=_(u'Main image'),
+        upload_to='course_images',
+        blank=True,
+        null=True,
+        help_text=_(u'Image shown at home in list or grid view'),
+    )
 
     class Meta(Sortable.Meta):
         verbose_name = _(u'course')
