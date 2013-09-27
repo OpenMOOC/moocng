@@ -58,12 +58,28 @@ def home(request):
         use_cache = False
     courses = get_courses_available_for_user(request.user)
 
-    return render_to_response('courses/home.html', {
-        'courses': courses,
-        'use_cache': use_cache,
-        'show_as_list': settings.COURSE_SHOW_AS_LIST,
-    }, context_instance=RequestContext(request))
+    if hasattr(settings, 'COURSE_SHOW_AS_LIST'):
+        show_as_list = settings.COURSE_SHOW_AS_LIST
+        if show_as_list:
+            template = 'courses/home_as_list.html'
+        else:
+            template = 'courses/home_as_grid.html'
+            courses = grouper(courses, 3)
+    else:
+         template = 'courses/home_as_list.html'
 
+    return render_to_response(template, {
+            'courses': courses,
+            'use_cache': use_cache,
+        }, context_instance=RequestContext(request))
+
+
+def grouper(iterable, n, fillvalue=None):
+    "Collect data into fixed-length chunks or blocks"
+    # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx
+    args = [iter(iterable)] * n
+    from itertools import izip_longest
+    return izip_longest(fillvalue=fillvalue, *args)
 
 def flatpage(request, page=""):
 

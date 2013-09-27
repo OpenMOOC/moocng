@@ -6,15 +6,15 @@ from south.v2 import SchemaMigration
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'Course.main_image'
-        db.add_column('courses_course', 'main_image',
+        # Adding field 'Course.thumbnail'
+        db.add_column('courses_course', 'thumbnail',
                       self.gf('django.db.models.fields.files.ImageField')(max_length=100, null=True, blank=True),
                       keep_default=False)
 
 
     def backwards(self, orm):
-        # Deleting field 'Course.main_image'
-        db.delete_column('courses_course', 'main_image')
+        # Deleting field 'Course.thumbnail'
+        db.delete_column('courses_course', 'thumbnail')
 
 
     models = {
@@ -91,7 +91,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'intended_audience': ('tinymce.models.HTMLField', [], {'null': 'True', 'blank': 'True'}),
             'learning_goals': ('tinymce.models.HTMLField', [], {'blank': 'True'}),
-            'main_image': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'thumbnail': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'order': ('django.db.models.fields.PositiveIntegerField', [], {'default': '1', 'db_index': 'True'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'courses_as_owner'", 'to': "orm['auth.User']"}),
