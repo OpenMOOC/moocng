@@ -437,7 +437,3 @@ MATHJAX_CONFIG_DATA = {
 
 # Show courses as a list (classic behaviour) or as a grid
 COURSE_SHOW_AS_LIST = False
-
-# Max height and width for the image shown in course grid view
-COURSE_MAIN_IMAGE_MAX_HEIGHT = 640
-COURSE_MAIN_IMAGE_MAX_WIDTH = 480
