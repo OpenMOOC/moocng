@@ -9,8 +9,14 @@
             {% if not course.is_public %}
                 <p class="label pull-right">{% trans "Draft" %}</p>
             {% endif %}
-            <h3><a href="{{ course.get_absolute_url }}"><img src="{{ MEDIA_URL }}{{ course.main_image }}"></a></h3>
-            <p>{{ course.name }}</p>
+            <h3>
+                {% if course.main_image %}
+                    <a href="{{ course.get_absolute_url }}"><img src="{{ MEDIA_URL }}{{ course.main_image }}"></a>
+                    <p>{{ course.name }}</p>
+                {% else %}
+                    <p>{{ course.name }}</p>
+                {% endif %}
+            </h3>
             <p>{{ course.description|safe|truncatewords_html:60 }}</p>
             <p class="box-footer"><a href="{{ course.get_absolute_url }}">{% trans "More information about this course" %}</a></p>
         </div>
