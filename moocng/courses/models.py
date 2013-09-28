@@ -167,8 +167,18 @@ signals.post_delete.connect(course_invalidate_cache, sender=Course)
 
 class StaticPage(models.Model):
 
-    title = models.CharField(verbose_name=_(u'Title'), max_length=100)
-    body = HTMLField(verbose_name=_(u'Body'))
+    title = models.CharField(
+        verbose_name=_(u'Title'),
+        max_length=100,
+        blank=True,
+        null=True
+    )
+
+    body = HTMLField(
+        verbose_name=_(u'Body'),
+        blank=True,
+        null=True
+    )
 
     class Meta:
         verbose_name = _(u'Static page')

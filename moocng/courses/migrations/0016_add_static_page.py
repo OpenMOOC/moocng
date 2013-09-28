@@ -9,8 +9,8 @@ class Migration(SchemaMigration):
         # Adding model 'StaticPage'
         db.create_table('courses_staticpage', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=200)),
-            ('body', self.gf('tinymce.models.HTMLField')()),
+            ('title', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True, null=True)),
+            ('body', self.gf('tinymce.models.HTMLField')(blank=True, null=True)),
         ))
         db.send_create_signal('courses', ['StaticPage'])
 
@@ -160,9 +160,9 @@ class Migration(SchemaMigration):
         },
         'courses.staticpage': {
             'Meta': {'object_name': 'StaticPage'},
-            'body': ('tinymce.models.HTMLField', [], {}),
+            'body': ('tinymce.models.HTMLField', [], {'blank': 'True', 'null': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True', 'null': 'True'})
         },
         'courses.unit': {
             'Meta': {'ordering': "['order']", 'object_name': 'Unit'},
