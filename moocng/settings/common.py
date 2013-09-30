@@ -443,4 +443,4 @@ MATHJAX_CONFIG_DATA = {
 }
 
 # Show courses as a list (classic behaviour) or as a grid
-COURSE_SHOW_AS_LIST = False
+COURSE_SHOW_AS_LIST = True
