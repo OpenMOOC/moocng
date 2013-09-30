@@ -14,7 +14,6 @@
 # limitations under the License.
 
 from django import forms
-from django.conf import settings
 from django.core.files.images import get_image_dimensions
 from django.utils.translation import ugettext_lazy as _
 
@@ -40,6 +39,11 @@ class CourseForm(forms.ModelForm):
 
     ..versionadded:: 0.1
     """
+    error_messages = {
+        'invalid_image': _('Image must be {0}px x {1}px').format(Course.THUMBNAIL_WIDTH, Course.THUMBNAIL_HEIGHT),
+    }
+
+
     class Meta:
         model = Course
         exclude = ('slug', 'teachers', 'owner', 'students')
@@ -78,12 +82,12 @@ class CourseForm(forms.ModelForm):
             raise forms.ValidationError(_('You must select a content type or remove the content id'))
         return content_type
 
-    def clean_main_image(self):
+    def clean_thumbnail(self):
         thumbnail = self.cleaned_data.get("thumbnail")
         if thumbnail:
             w, h = get_image_dimensions(thumbnail)
             if w < Course.THUMBNAIL_WIDTH or h < Course.THUMBNAIL_HEIGHT:
-                raise forms.ValidationError(_("Image must be %i x %i" % (Course.THUMBNAIL_WIDTH, Course.THUMBNAIL_HEIGHT)))
+                raise forms.ValidationError(self.error_messages['invalid_image'])
         return thumbnail
 
 class AnnouncementForm(CoursesAnnouncementForm, BootstrapMixin):

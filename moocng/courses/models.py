@@ -119,11 +119,8 @@ class Course(Sortable):
         verbose_name=_(u'Thumbnail'),
         upload_to='course_thumbnails',
         blank=True,
-        null=True,
-        help_text=_(u'Image shown on grid view. Must be %i x %i' % (THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT)),
-
+        null=True
     )
-
     static_page = models.OneToOneField(
         'StaticPage',
         verbose_name=_(u'Static page'),
