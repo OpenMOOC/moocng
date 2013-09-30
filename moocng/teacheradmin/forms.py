@@ -21,7 +21,7 @@ from django.utils.translation import ugettext_lazy as _
 from tinymce.widgets import TinyMCE
 
 from moocng.courses.forms import AnnouncementForm as CoursesAnnouncementForm
-from moocng.courses.models import Course
+from moocng.courses.models import Course, StaticPage
 from moocng.forms import (BootstrapMixin, BootstrapClearableFileInput,
                           HTML5DateInput, BootstrapInlineRadioSelect)
 from moocng.teacheradmin.models import MassiveEmail
@@ -136,3 +136,23 @@ class MassiveEmailForm(forms.ModelForm, BootstrapMixin):
             'subject': forms.TextInput(attrs={'class': 'input-xxlarge'}),
             'message': TinyMCE(attrs={'class': 'input-xxlarge'}),
         }
+
+
+class StaticPageForm(forms.ModelForm, BootstrapMixin):
+
+    class Meta:
+        model = StaticPage
+        include = ('title', 'body',)
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'input-xxlarge'}),
+            'body': TinyMCE(attrs={'class': 'input-xxlarge'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(StaticPageForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            widget = field.widget
+            if isinstance(widget, (forms.widgets.TextInput, forms.widgets.DateInput)):
+                widget.attrs['class'] = 'input-xxlarge'
+            elif isinstance(widget, forms.widgets.Textarea):
+                widget.mce_attrs['width'] = '780'  # bootstrap span10

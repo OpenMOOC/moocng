@@ -1,0 +1,10 @@
+{% extends "courses/base_course.html" %}
+
+{% load i18n %}
+
+{% block content %}
+<h1>{{ course.name }}</h1>
+<h3>{{ static_page.title }}</h3>
+<div class="content">{{ static_page.body|safe }}</div>
+<a class="btn btn-small mb20" href="{% url course_overview course.slug %}">{% trans "Go back to Course Overview" %}</a>
+{% endblock %}

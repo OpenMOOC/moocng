@@ -124,6 +124,13 @@ class Course(Sortable):
 
     )
 
+    static_page = models.OneToOneField(
+        'StaticPage',
+        verbose_name=_(u'Static page'),
+        blank=True,
+        null=True,
+    )
+
     class Meta(Sortable.Meta):
         verbose_name = _(u'course')
         verbose_name_plural = _(u'courses')
@@ -219,6 +226,29 @@ def course_stats(sender, instance, created, **kwargs):
 signals.post_save.connect(course_invalidate_cache, sender=Course)
 signals.post_save.connect(course_stats, sender=Course)
 signals.post_delete.connect(course_invalidate_cache, sender=Course)
+
+
+class StaticPage(models.Model):
+
+    title = models.CharField(
+        verbose_name=_(u'Title'),
+        max_length=100,
+        blank=True,
+        null=True
+    )
+
+    body = HTMLField(
+        verbose_name=_(u'Body'),
+        blank=True,
+        null=True
+    )
+
+    class Meta:
+        verbose_name = _(u'Static page')
+        verbose_name_plural = _(u'Static pages')
+
+    def __unicode__(self):
+        return self.title
 
 
 class CourseTeacher(Sortable):
