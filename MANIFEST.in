@@ -1,5 +1,6 @@
 include CHANGES
 include COPYING
+include README.rst
 include *.py
 include celeryd
 recursive-include docs *.py
@@ -16,3 +17,13 @@ recursive-include moocng *.po
 recursive-include moocng *.svg
 recursive-include moocng *.woff
 recursive-include moocng *.xml
+recursive-include moocng *.ico
+recursive-include moocng *.txt
+recursive-include moocng *.html
+recursive-include moocng *.js
+recursive-include moocng COPYING
+recursive-include moocng *.css
+recursive-include moocng LICENSE
+recursive-include moocng *.otf
+recursive-include moocng *.svg
+recursive-include moocng *.mo
