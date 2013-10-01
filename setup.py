@@ -81,7 +81,6 @@ setup(
         'django-mathjax==0.0.2',
         'requests==1.2.0',
         'fabric==1.7.0',
-        'moocng-externalapps-wordpress==0.1.0',
     ],
     entry_points = """
         [moocng.externalapp]
