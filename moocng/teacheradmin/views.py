@@ -46,6 +46,7 @@ from moocng.videos.tasks import process_video_task
 
 from moocng.assets.utils import course_get_assets
 from moocng.assets.models import Asset
+from moocng.externalapps.models import externalapps
 
 
 @is_teacher_or_staff
@@ -431,6 +432,7 @@ def teacheradmin_teachers_reorder(request, course_slug):
 def teacheradmin_info(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     is_enrolled = course.students.filter(id=request.user.id).exists()
+    external_apps = externalapps.all()
 
     if request.method == 'POST':
         form = CourseForm(data=request.POST, files=request.FILES, instance=course)
@@ -457,6 +459,7 @@ def teacheradmin_info(request, course_slug):
         'is_enrolled': is_enrolled,
         'form': form,
         'static_page_form': static_page_form,
+        'external_apps': external_apps,
     }, context_instance=RequestContext(request))
 
 

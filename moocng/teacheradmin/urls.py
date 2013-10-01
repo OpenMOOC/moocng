@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from django.conf.urls import patterns, url
+from django.conf.urls import include, patterns, url
 
 
 urlpatterns = patterns('moocng.teacheradmin.views',
@@ -89,4 +89,6 @@ urlpatterns = patterns('moocng.teacheradmin.views',
         'teacheradmin_assets_edit',
         name='teacheradmin_assets_edit'),
 
+    # Course's external apps admin
+    url(r'^externalapps/', include('moocng.externalapps.urls')),
 )

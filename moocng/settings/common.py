@@ -223,6 +223,7 @@ OPENMOOC_APPS = [
     'moocng.auth_handlers',
     'moocng.peerreview',
     'moocng.media_contents',
+    'moocng.externalapps',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRDPARTY_APPS + OPENMOOC_APPS
@@ -279,6 +280,11 @@ LOGGING = {
         'moocng.courses.admin': {
             'handlers': ['console', 'mail_admins'],
             'level': 'INFO',
+            'propagate': True,
+        },
+        'moocng.externalapps.registry': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
             'propagate': True,
         },
     }
@@ -364,8 +370,6 @@ CELERY_CREATE_MISSING_QUEUES = True
 
 BROKER_URL = 'amqp://moocng:moocngpassword@localhost:5672/moocng'
 
-ASKBOT_URL_TEMPLATE = 'https://questions.example.com/%s/'
-
 CERTIFICATE_URL = 'http://example.com/idcourse/%(courseid)s/email/%(email)s'  # Example, to be overwritten in local settings
 
 MASSIVE_EMAIL_BATCH_SIZE = 30
@@ -441,6 +445,46 @@ MATHJAX_CONFIG_DATA = {
         ]
     }
 }
+
+# External apps available to the teachers
+# instances is a tuple with the format:
+#  (ip, base_url, max_instances,)
+#
+# Example:
+#  MOOCNG_EXTERNALAPPS = {
+#     'askbot': {
+#         'instances':(
+#             ('127.0.0.1', 'http://localhost', 10),
+#             ('127.0.0.2', 'http://localhost', 10),
+#             ('127.0.0.3', 'http://localhost', 10),
+#         )
+#     },
+#     'wordpress': {
+#         'instances':(
+#             ('127.0.0.4', 'http://localhost', 10),
+#             ('127.0.0.5', 'http://localhost', 10),
+#             ('127.0.0.6', 'http://localhost', 10),
+#         )
+#     }
+# }
+MOOCNG_EXTERNALAPPS = {
+    'askbot': {
+        'instances':()
+    },
+}
+
+# This settting is a tuple of strings that are not allowed for the slug in the
+# external apps. For example:
+#
+# MOOCNG_EXTERNALAPPS_FORBIDDEN_WORDS = ('word1', 'word2',)
+MOOCNG_EXTERNALAPPS_FORBIDDEN_WORDS = ()
+
+# User for fabric tasks execution
+FABRIC_TASK_USER = 'root'
+
+# Path where the instances are created. It is used to check if already exists
+# an instance on the server
+FABRIC_ASKBOT_INSTANCES_PATH = '/etc/openmooc/askbot/instances'
 
 # Show courses as a list (classic behaviour) or as a grid
 COURSE_SHOW_AS_LIST = True
