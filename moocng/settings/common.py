@@ -469,7 +469,7 @@ MATHJAX_CONFIG_DATA = {
 # }
 MOOCNG_EXTERNALAPPS = {
     'askbot': {
-        'instances':()
+        'instances': ()
     },
 }
 

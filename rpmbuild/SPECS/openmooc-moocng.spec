@@ -35,7 +35,7 @@ BuildRequires: libpng-devel
 Requires: openmooc-tastypie = 0.9.11
 
 Requires: pymongo = 2.4.2
-Requires: python-boto = 2.8.0
+Requires: python-boto >= 2.8.0
 Requires: python-celery = 3.0.20
 Requires: python-imaging = 1.1.6
 Requires: python-memcached = 1.48
@@ -57,8 +57,8 @@ Requires: nginx = 1.0.15
 Requires: supervisor = 3.0
 Requires: openmooc-ffmpeg = 20120806
 Requires: postgresql-server = 8.4.13
-Requires: mongo-10gen-server = 2.4.5
-Requires: rabbitmq-server = 2.6.1
+Requires: mongo-10gen-server >= 2.4.5
+Requires: rabbitmq-server >= 2.6.1
 Requires: memcached = 1.4.4
 
 
@@ -175,7 +175,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%doc CHANGES COPYING README manuals/
+%doc CHANGES COPYING README.rst manuals/
 %attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/%{platform}/%{component}/moocngsettings/*
 %attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/supervisord.d/%{name}-supervisord.conf
 %attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/nginx/conf.d/%{component}.conf
@@ -193,6 +193,7 @@ rm -rf %{buildroot}
 %{python_sitelib}/%{component}/contact/
 %{python_sitelib}/%{component}/courses/
 %{python_sitelib}/%{component}/enrollment/
+%{python_sitelib}/%{component}/externalapps/
 %{python_sitelib}/%{component}/fixtures/
 %{python_sitelib}/%{component}/formats/
 %{python_sitelib}/%{component}/locale/
