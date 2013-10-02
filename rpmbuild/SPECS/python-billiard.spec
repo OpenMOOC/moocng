@@ -3,7 +3,7 @@
 %global srcname billiard
 
 Name:           python-%{srcname}
-Version:        2.7.3.28
+Version:        2.7.3.30
 Release:        1%{?dist}
 Summary:        Multiprocessing Pool Extensions
 
@@ -49,6 +49,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed Oct 02 2013 Alejandro Blanco <ablanco@yaco.es> - 2.7.3.30-1
+- Upgrade to 2.7.3.30 version
+
 * Wed Jul 03 2013 Alejandro Blanco <ablanco@yaco.es> - 2.7.3.28-1
 - Upgrade to 2.7.3.28 version
 

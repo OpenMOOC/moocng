@@ -4,7 +4,7 @@
 
 Name:           python-celery
 Version:        3.0.20
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Distributed Task Queue
 
 Group:          Development/Languages
@@ -20,7 +20,7 @@ Requires:       python-anyjson >= 0.3.3
 Requires:       python-dateutil15
 Requires:       pytz
 Requires:       python-kombu >= 2.5.11
-Requires:       python-billiard >= 2.7.3.28
+Requires:       python-billiard >= 2.7.3.30
 Requires:       pyparsing
 %if ! (0%{?fedora} > 13 || 0%{?rhel} > 6)
 Requires:       python-importlib
