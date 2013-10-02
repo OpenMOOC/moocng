@@ -29,15 +29,13 @@ mv NEWS.new NEWS
 rm -rf %{buildroot}
 %{__python} setup.py install --skip-build --root %{buildroot}
 
-chmod -x %{buildroot}%{python_sitelib}/python_dateutil-1.5-py2.?.egg/dateutil/*.py
-chmod -x %{buildroot}%{python_sitelib}/python_dateutil-1.5-py2.?.egg/dateutil/zoneinfo/__init__.py
-
 %clean
 rm -rf %{buildroot}
 
 %files
 %doc example.py LICENSE NEWS README
-%{python_sitelib}/python_dateutil-1.5-py2.?.egg
+%{python_sitelib}/dateutil
+%{python_sitelib}/python_dateutil-1.5-py2.6.egg-info
 
 %changelog
 * Wed Oct 02 2013 Alejandro Blanco <ablanco@yaco.es> - 1.5-2
