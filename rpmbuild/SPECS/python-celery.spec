@@ -17,7 +17,7 @@ BuildArch:      noarch
 BuildRequires:  python-devel
 BuildRequires:  python-setuptools
 Requires:       python-anyjson >= 0.3.3
-Requires:       python-dateutil
+Requires:       python-dateutil15
 Requires:       pytz
 Requires:       python-kombu >= 2.5.11
 Requires:       python-billiard >= 2.7.3.28
