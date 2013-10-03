@@ -26,7 +26,7 @@
                           {% if course.thumbnail %}
                               <a href="{{ course.get_absolute_url }}"><img src="{{ MEDIA_URL }}{{ course.thumbnail }}"></a>
                           {% else %}
-                              <a href="{{ course.get_absolute_url }}"><img src="{{ MEDIA_URL }}course_images/classroom.png"></a>
+                              <a href="{{ course.get_absolute_url }}"><img src="{{ STATIC_URL }}img/classroom.png"></a>
                           {% endif %}
                           <a href="{{ course.get_absolute_url }}">{{ course.name }}</a>
                       </h3>
