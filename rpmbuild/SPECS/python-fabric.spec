@@ -15,6 +15,8 @@ Source0:        https://pypi.python.org/packages/source/F/%{component}/%{compone
 BuildArch:      noarch
 BuildRequires:  python-devel, python-setuptools
 
+Requires:       python-paramiko >= 1.10.0
+
 %description
 Fabric is a Python (2.5 or higher) library and command-line tool for
 streamlining the use of SSH for application deployment or systems

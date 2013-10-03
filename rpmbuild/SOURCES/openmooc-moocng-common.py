@@ -209,6 +209,7 @@ INSTALLED_APPS = [
     'moocng.categories',
     'moocng.auth_handlers',
     'moocng.peerreview',
+    'moocng.externalapps',
     'south',
     'django_mathjax',
     # Uncomment the next line to enable admin documentation:

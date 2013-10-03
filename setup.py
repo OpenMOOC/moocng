@@ -63,7 +63,7 @@ setup(
     },
     zip_safe=False,
     install_requires=[
-        'boto==2.8.0',
+        'boto>=2.8.0',
         'celery==3.0.20',
         'Django>=1.4.6',
         'django-admin-sortable==1.4.9',
