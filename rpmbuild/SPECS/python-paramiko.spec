@@ -24,7 +24,7 @@ python scripts. All major ciphers and hash methods are supported. SFTP client
 and server mode are both supported too.
 
 %prep
-%setup -q
+%setup -q -n %{srcname}-%{version}
 
 %build
 %{__python} setup.py build

@@ -1,5 +1,3 @@
-%{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
-
 %define srcname pycrypto
 
 Name:           python-crypto
@@ -23,7 +21,7 @@ change in an incompatible way in the future; all that remains to be done is to
 fix any bugs that show up.
 
 %prep
-%setup -q
+%setup -q -n %{srcname}-%{version}
 
 %build
 %{__python} setup.py build
@@ -38,8 +36,8 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %doc README ACKS ChangeLog COPYRIGHT TODO
-%{python_sitelib}/%{srcname}
-%{python_sitelib}/%{srcname}-%{version}-py*.egg-info/
+/usr/lib64/python2*/site-packages/Crypto
+/usr/lib64/python2*/site-packages/%{srcname}-%{version}-py*.egg-info/
 
 %changelog
 
