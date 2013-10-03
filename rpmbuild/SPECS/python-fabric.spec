@@ -41,7 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %doc README.rst LICENSE AUTHORS INSTALL
-%{python_sitelib}/%{component}
+%attr(755,root, %{name}) %{_bindir}/fab
+%{python_sitelib}/fabfile
+%{python_sitelib}/fabric
 %{python_sitelib}/%{component}-%{version}-py*.egg-info/
 
 %changelog
