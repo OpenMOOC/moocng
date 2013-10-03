@@ -40,7 +40,6 @@ Requires: python-boto >= 2.8.0
 Requires: python-celery = 3.0.20
 Requires: python-imaging = 1.1.6
 Requires: python-memcached = 1.48
-Requires: python-mimeparse = 0.1.4
 Requires: python-psycopg2 = 2.4.2
 Requires: python-requests = 1.2.0
 Requires: python-gunicorn = 0.14.6
