@@ -35,6 +35,7 @@ BuildRequires: libpng-devel
 Requires: openmooc-tastypie = 0.9.11
 
 Requires: pymongo = 2.4.2
+Requires: python-amqp = 1.0.13
 Requires: python-boto >= 2.8.0
 Requires: python-celery = 3.0.20
 Requires: python-imaging = 1.1.6

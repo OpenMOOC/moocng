@@ -38,8 +38,8 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %doc Changelog README.rst LICENSE AUTHORS
-%attr(755,root,root) %{python_sitelib}/memcache.py
-%{python_sitelib}/python_memcached-%{version}-py*.egg-info/
+%{python_sitelib}/%{component}
+%{python_sitelib}/%{component}-%{version}-py*.egg-info/
 
 %changelog
 
