@@ -69,7 +69,7 @@ start_workers () {
                                --pidfile=$CELERYD_PID_FILE \
                                --logfile=$CELERYD_LOG_FILE \
                                --loglevel=$CELERYD_LOG_LEVEL \
-                                --quiet \
+                               --quiet \
                                $CELERYD_OPTS
     RETVAL=$?
 
@@ -151,7 +151,7 @@ stop_workers () {
     fi
 
     if [ "$RETVAL" == "0" ]; then
-        rm -f /var/lock/sybsys/$prog
+        rm -f /var/lock/subsys/$prog
         success
     else
         failure
