@@ -28,7 +28,7 @@ auxiliary functionality such as prompting the running user for input, or
 aborting execution.
 
 %prep
-%setup -q
+%setup -q -n %{component}-%{version}
 
 %build
 %{__python} setup.py build
