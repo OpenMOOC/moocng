@@ -29,7 +29,6 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
-from django.template.defaultfilters import slugify
 
 from moocng.badges.models import Award
 from moocng.courses.models import Course, CourseTeacher, Announcement
@@ -40,8 +39,8 @@ from moocng.courses.marks import calculate_course_mark
 from moocng.courses.security import (check_user_can_view_course,
                                      get_courses_available_for_user,
                                      get_units_available_for_user)
-
 from moocng.externalapps.models import ExternalApp
+from moocng.slug import unique_slugify
 
 
 def home(request):
@@ -159,7 +158,7 @@ def course_add(request):
             return HttpResponseRedirect(reverse('course_add'))
 
         course = Course(name=name, owner=owner, description=_('To fill'))
-        slugify(course, name)
+        unique_slugify(course, name)
         course.save()
 
         CourseTeacher.objects.create(course=course, teacher=owner)
