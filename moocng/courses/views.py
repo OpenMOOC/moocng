@@ -39,7 +39,6 @@ from moocng.courses.marks import calculate_course_mark
 from moocng.courses.security import (check_user_can_view_course,
                                      get_courses_available_for_user,
                                      get_units_available_for_user)
-from moocng.externalapps.models import ExternalApp
 from moocng.slug import unique_slugify
 
 
@@ -67,12 +66,12 @@ def home(request):
             template = 'courses/home_as_grid.html'
             courses = grouper(courses, 3)
     else:
-         template = 'courses/home_as_list.html'
+        template = 'courses/home_as_list.html'
 
     return render_to_response(template, {
-            'courses': courses,
-            'use_cache': use_cache,
-        }, context_instance=RequestContext(request))
+        'courses': courses,
+        'use_cache': use_cache,
+    }, context_instance=RequestContext(request))
 
 
 def grouper(iterable, n, fillvalue=None):
@@ -81,6 +80,7 @@ def grouper(iterable, n, fillvalue=None):
     args = [iter(iterable)] * n
     from itertools import izip_longest
     return izip_longest(fillvalue=fillvalue, *args)
+
 
 def flatpage(request, page=""):
 
