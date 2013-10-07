@@ -166,18 +166,6 @@ to configure these urls:
   PROFILE_URL = 'https://idp.example.com/simplesaml/module.php/userregistration/reviewUser.php'
 
 
-Askbot URLs
------------
-
-moocng uses a instance of Askbot for each course so it needs these URLs to
-display a link in the UI. The relevant setting is `ASKBOT_URL_TEMPLATE`:
-
-.. code-block:: python
-
-  ASKBOT_URL_TEMPLATE = 'https://questions.example.com/%s/questions/'
-
-Where the fragment `%s` will be replaced by the name of the course.
-
 Amazon S3 configuration
 -----------------------
 
