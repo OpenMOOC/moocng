@@ -38,10 +38,17 @@ class BaseExternalAppTask(Task):
 
 @task(base=BaseExternalAppTask)
 def process_instance_creation(externalapp_id):
+    from fabric.api import env
     from fabric.api import execute
     from django.conf import settings
     from moocng.externalapps.fabfile import create_instance
     from moocng.externalapps.models import ExternalApp
+
+    try:
+        ssh_key = settings.FABRIC_SSH_KEY_PATH
+    except AttributeError:
+        ssh_key = '/root/.ssh/id_rsa'
+    env['key_filename'] = ssh_key
 
     externalapp = ExternalApp.objects.get(pk=externalapp_id)
     fabric_user = settings.FABRIC_TASK_USER

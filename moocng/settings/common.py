@@ -486,5 +486,9 @@ FABRIC_TASK_USER = 'root'
 # an instance on the server
 FABRIC_ASKBOT_INSTANCES_PATH = '/etc/openmooc/askbot/instances'
 
+# Path to the ssh key to use to connect to the machines where the external apps
+# are going to be deployed
+FABRIC_SSH_KEY_PATH = '/root/.ssh/id_rsa'
+
 # Show courses as a list (classic behaviour) or as a grid
 COURSE_SHOW_AS_LIST = True
