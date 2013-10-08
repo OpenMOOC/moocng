@@ -149,6 +149,8 @@ class ExternalApp(models.Model):
                     self.status = self.IN_PROGRESS
                     self.instance_type = external_app._meta.instance_type
                 except InstanceLimitReached:
+                    # TODO
+                    # Send an email to the administrators so they can fix the problem
                     raise ValidationError(_('There are no instances available'))
         else:
             msg = _('There is no registered class to manage "%s" external app' % self.app_name)
