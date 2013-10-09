@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
@@ -20,6 +21,7 @@ from django.template import RequestContext
 from moocng.badges.models import Badge, Award
 
 
+@login_required
 def user_badges(request, user_pk, mode):
     if mode == 'email':
         user = get_object_or_404(User, email=user_pk)
@@ -35,6 +37,7 @@ def user_badges(request, user_pk, mode):
         return HttpResponse(status=404)
 
 
+@login_required
 def user_badge(request, badge_slug, user_pk, mode):
     badge = get_object_or_404(Badge, slug=badge_slug)
     if mode == 'email':
