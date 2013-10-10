@@ -31,6 +31,7 @@ def set_language(request):
                             httponly=False)
     return response
 
+
 # every time the server is restarted key_prefix will be different
 # effectively invalidating this cache
 @cache_page(3600, key_prefix='jsi18n-%s' % time.time())
