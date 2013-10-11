@@ -11,9 +11,12 @@ Group:          Development/Languages
 License:        MIT
 URL:            https://github.com/davedoesdev/python-%{srcname}
 Source0:        https://pypi.python.org/packages/source/p/python_%{srcname}/python_%{srcname}-%{version}.tar.gz
+Source1:        python-jwt-setup.py
 
 BuildArch:      noarch
 BuildRequires:  python-devel, python-setuptools
+
+Requires:       python-jws = 0.1.0
 
 %description
 Module for generating and verifying JSON Web Tokens.
@@ -24,6 +27,7 @@ Module for generating and verifying JSON Web Tokens.
 
 %prep
 %setup -q -n python_%{srcname}-%{version}
+cp -vf %{SOURCE1} setup.py
 
 %build
 %{__python} setup.py build
@@ -37,9 +41,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc README.rst LICENSE
-%{python_sitelib}/python_%{srcname}
-%{python_sitelib}/python_%{srcname}-%{version}-py*.egg-info/
+%doc README.rst
+%{python_sitelib}/%{srcname}
 
 %changelog
 
