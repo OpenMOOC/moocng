@@ -43,6 +43,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc README.rst
 %{python_sitelib}/%{srcname}
+%{python_sitelib}/%{srcname}-%{version}-py*.egg-info/
 
 %changelog
 

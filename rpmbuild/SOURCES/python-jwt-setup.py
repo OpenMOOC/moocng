@@ -1,7 +1,4 @@
 import os
-from bento.distutils.monkey_patch import monkey_patch
-monkey_patch()
-
 from setuptools import setup
 
 
