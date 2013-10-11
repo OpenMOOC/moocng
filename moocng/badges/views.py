@@ -11,14 +11,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import json
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 
-from moocng.badges.models import Badge, Award
-from moocng.badges.utils import get_public_key
+from moocng.badges.models import Badge, Award, BadgeAssertion
+from moocng.badges.utils import get_openbadge_public_key
 
 
 def user_badges(request, user_pk, mode):
@@ -64,17 +67,25 @@ def badge_image(request, badge_slug, user_pk, mode):
     except Award.DoesNotExist:
         return HttpResponse(status=404)
 
-
+@login_required
+def openbadge_assertion(request, badge_slug):
+    user = get_object_or_404(User, pk=request.user.pk)
+    badge = get_object_or_404(Badge, slug=badge_slug)
+    badge_assertion = BadgeAssertion.objects.get(user=user, award__badge=badge)
+    badge_assertion_json = badge_assertion.as_json_web_signature()
+    return HttpResponse(badge_assertion_json, mimetype='application/json')
 
 
 def openbadge_issuer(request):
-    pass
+    current_site = Site.objects.get_current()
+    issuer_json = {
+        'name': current_site.name,
+        'url': 'http://%s' % current_site.domain
+    }
+    return HttpResponse(json.dumps(issuer_json), mimetype='application/json')
 
 
 def openbadge_public_key(request):
-    public_key = get_public_key()
+    public_key = get_openbadge_public_key()
+    # TODO content_type is correct?
     return HttpResponse(public_key, content_type='text/plain')
-
-
-def openbadge_assertion(request):
-    pass

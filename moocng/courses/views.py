@@ -30,7 +30,7 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
-from moocng.badges.models import Award
+from moocng.badges.models import Award, BadgeAssertion
 from moocng.courses.models import Course, CourseTeacher, Announcement
 from moocng.courses.utils import (get_unit_badge_class, is_course_ready,
                                   is_teacher as is_teacher_test,
@@ -393,6 +393,9 @@ def transcript(request):
                 except Award.DoesNotExist:
                     award = Award(badge=badge, user=request.user)
                     award.save()
+                    badge_assertion = BadgeAssertion(award=award, user=request.user)
+                    badge_assertion.save()
+
         for idx, uinfo in enumerate(units_info):
             unit_class = get_unit_badge_class(uinfo['unit'])
             units_info[idx]['badge_class'] = unit_class

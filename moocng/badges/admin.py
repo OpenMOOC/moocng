@@ -15,7 +15,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from moocng.badges.models import Badge, Award
+from moocng.badges.models import Badge, Award, BadgeAssertion
 
 
 def show_image(obj):
@@ -45,3 +45,4 @@ class AwardAdmin(admin.ModelAdmin):
 
 admin.site.register(Badge, BadgeAdmin)
 admin.site.register(Award, AwardAdmin)
+admin.site.register(BadgeAssertion)

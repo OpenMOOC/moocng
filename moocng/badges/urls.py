@@ -16,6 +16,11 @@ from django.conf.urls import patterns, url
 
 urlpatterns = patterns(
     'moocng.badges.views',
+
+    url(r'^openbadge/issuer/?$', 'openbadge_issuer', name='openbadge_issuer'),
+    url(r'^openbadge/public_key/?$', 'openbadge_public_key', name='openbadge_public_key'),
+    url(r'^openbadge/assertion/(?P<badge_slug>[-\w]+)/?$', 'openbadge_assertion', name='openbadge_assertion'),
+
     url(r'^(?P<user_pk>[\d]+)/?$', 'user_badges',
         {'mode': 'id'}, name='user_badges', ),
     url(r'^(?P<badge_slug>[-\w]+)/(?P<user_pk>[\d]+)/?$', 'user_badge',
@@ -29,9 +34,4 @@ urlpatterns = patterns(
         {'mode': 'email'}, name='user_badge_email'),
     url(r'^(?P<badge_slug>[-\w]+)/(?P<user_pk>[^/]+)/image/?$', 'badge_image',
         {'mode': 'email'}, name='badge_image_email'),
-
-
-    url(r'^issuer/', 'openbadge_issuer', name='openbadge_issuer'),
-    url(r'^public_key/', 'openbadge_public_key', name='openbadge_public_key'),
-    url(r'^assertion/', 'openbadge_assertion', name='openbadge_assertion'),
 )

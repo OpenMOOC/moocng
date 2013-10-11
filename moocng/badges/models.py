@@ -26,7 +26,7 @@ from django.db import models
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
 
-from moocng.badges.utils import get_keys_from_disk
+from moocng.badges.utils import get_openbadge_keys
 from jwt import generate_jwt
 
 
@@ -66,12 +66,17 @@ class Badge(models.Model):
         return self.title
 
     def as_json(self):
+        current_site = Site.objects.get_current()
+        criteria_url = self.course.get().get_absolute_url() if self.course else ''
+        criteria_full_url = 'http://%s%s' % (current_site.domain, criteria_url)
+        issuer_url = reverse('openbadge_issuer')
+        issuer_full_url = 'http://%s%s' % (current_site.domain, issuer_url)
         badge_class_json = {
           "name": self.title,
           "description": self.description,
-          "image": self.image.url,
-          "criteria": self.course.get_absolute_url() if self.course else '',
-          "issuer": reverse('openbadge_issuer'),
+          "image": 'http://%s%s' % (current_site.domain, self.image.url) ,
+          "criteria": criteria_full_url,
+          "issuer": issuer_full_url,
           "alignment": []
         }
         return badge_class_json
@@ -126,12 +131,9 @@ class BadgeAssertion(models.Model):
     class Meta:
         unique_together = ('user', 'award')
 
-    def __unicode__(self):
-        return ugettext(u'{0} awarded to {1}').format(self.badge.title, self.user.username)
-
     def assertion_url(self):
         current_site = Site.objects.get_current()
-        url = reverse('openbadge_assertion', args=[self.assertion_key])
+        url = reverse('openbadge_assertion', args=[self.award.badge.slug])
         return 'http://%s%s' % (current_site.domain, url)
 
     def get_recipient_json(self):
@@ -150,20 +152,18 @@ class BadgeAssertion(models.Model):
         return (salt, hashed_msg)
 
     def as_json_web_signature(self):
-        keys = get_keys_from_disk()
+        openbadge_keys = get_openbadge_keys()
+        current_site = Site.objects.get_current()
         payload = {
-            "uid": self.award.badge.__hash__,
+            "uid": self.award.badge.__hash__(),
             "recipient": self.get_recipient_json(),
-            "image": self.award.get_image_public_url(),
-            "issuedOn": self.award.awarded,
-            "badge": self.award.badge.to_json(),
+            "image": 'http://%s%s' % (current_site.domain, self.award.get_image_url()),
+            "issuedOn": self.award.awarded.isoformat(),
+            "badge": self.award.badge.as_json(),
             "verify": {
                 "type": "signed",
-                "url": reverse('openbadge_public_key')
+                "url": 'http://%s%s' % (current_site.domain, reverse('openbadge_public_key'))
             }
         }
-        token = generate_jwt(payload, keys['priv_key'], 'RS256', datetime.timedelta(minutes=10))
+        token = generate_jwt(payload, openbadge_keys['priv_key'], 'RS256', datetime.timedelta(minutes=10))
         return token
-
-
-
