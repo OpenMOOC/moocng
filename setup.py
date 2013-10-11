@@ -81,6 +81,7 @@ setup(
         'django-mathjax==0.0.2',
         'requests==1.2.0',
         'fabric==1.7.0',
+        'python_jwt==0.2.0'
     ],
     entry_points = """
         [moocng.externalapp]

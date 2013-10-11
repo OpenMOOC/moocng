@@ -18,6 +18,7 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 
 from moocng.badges.models import Badge, Award
+from moocng.badges.utils import get_public_key
 
 
 def user_badges(request, user_pk, mode):
@@ -62,3 +63,18 @@ def badge_image(request, badge_slug, user_pk, mode):
         return HttpResponse(badge.image.read(), content_type="image/png")
     except Award.DoesNotExist:
         return HttpResponse(status=404)
+
+
+
+
+def openbadge_issuer(request):
+    pass
+
+
+def openbadge_public_key(request):
+    public_key = get_public_key()
+    return HttpResponse(public_key, content_type='text/plain')
+
+
+def openbadge_assertion(request):
+    pass

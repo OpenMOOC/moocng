@@ -492,3 +492,9 @@ FABRIC_SSH_KEY_PATH = '/root/.ssh/id_rsa'
 
 # Show courses as a list (classic behaviour) or as a grid
 COURSE_SHOW_AS_LIST = True
+
+# Path to ssh keys used by mozilla openbadge
+SSH_KEY_PATH = ''
+
+# Name of ssh key used by mozilla openbadge
+SSH_KEY_NAME = ''

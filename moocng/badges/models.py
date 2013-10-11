@@ -14,14 +14,20 @@
 
 # It uses code from https://github.com/lmorchard/django-badger
 # Copyright (c) 2011, Mozilla    BSD 3-Clause License
+import datetime
+import hashlib
+import random
 
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
+from django.utils.translation import ugettext_lazy as _
+
+from moocng.badges.utils import get_keys_from_disk
+from jwt import generate_jwt
 
 
 def validate_png_image(value):
@@ -59,6 +65,17 @@ class Badge(models.Model):
     def __unicode__(self):
         return self.title
 
+    def as_json(self):
+        badge_class_json = {
+          "name": self.title,
+          "description": self.description,
+          "image": self.image.url,
+          "criteria": self.course.get_absolute_url() if self.course else '',
+          "issuer": reverse('openbadge_issuer'),
+          "alignment": []
+        }
+        return badge_class_json
+
 
 class Award(models.Model):
     badge = models.ForeignKey(
@@ -90,3 +107,63 @@ class Award(models.Model):
         current_site = Site.objects.get_current()
         url = reverse('badge_image_email', args=[self.badge.slug, self.user.email])
         return 'http://%s%s' % (current_site.domain, url)
+
+
+class BadgeAssertion(models.Model):
+
+    award = models.ForeignKey(
+        Award,
+        blank=False,
+        null=False,
+        verbose_name=_(u'Award'))
+
+    user = models.ForeignKey(
+        User,
+        blank=False,
+        null=False,
+        verbose_name=_(u'Awardee'))
+
+    class Meta:
+        unique_together = ('user', 'award')
+
+    def __unicode__(self):
+        return ugettext(u'{0} awarded to {1}').format(self.badge.title, self.user.username)
+
+    def assertion_url(self):
+        current_site = Site.objects.get_current()
+        url = reverse('openbadge_assertion', args=[self.assertion_key])
+        return 'http://%s%s' % (current_site.domain, url)
+
+    def get_recipient_json(self):
+        salt, hashed_msg = self.hash_msg(self.user.email)
+        recipient = {
+              "type": "email",
+              "hashed": True,
+              "salt": salt,
+              "identity": hashed_msg
+        }
+        return recipient
+
+    def hash_msg(self, msg):
+        salt = hashlib.sha1(str(random.random())).hexdigest()[:7]
+        hashed_msg = 'sha256$' + hashlib.sha256(msg + salt).hexdigest()
+        return (salt, hashed_msg)
+
+    def as_json_web_signature(self):
+        keys = get_keys_from_disk()
+        payload = {
+            "uid": self.award.badge.__hash__,
+            "recipient": self.get_recipient_json(),
+            "image": self.award.get_image_public_url(),
+            "issuedOn": self.award.awarded,
+            "badge": self.award.badge.to_json(),
+            "verify": {
+                "type": "signed",
+                "url": reverse('openbadge_public_key')
+            }
+        }
+        token = generate_jwt(payload, keys['priv_key'], 'RS256', datetime.timedelta(minutes=10))
+        return token
+
+
+
