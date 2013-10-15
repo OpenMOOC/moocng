@@ -18,6 +18,7 @@
     </a>
     <ul class="dropdown-menu">
       <li><a href="{% url transcript %}">{% trans "My transcript" %}</a></li>
+      <li><a href="{% url user_badges user.pk %}">{% trans "My badges" %}</a></li>
       <li><a href="{% url profile %}">{% trans "Profile settings" %}</a></li>
       <li><a href="{% url changepw %}">{% trans "Change Password" %}</a></li>
       {% if user.is_staff %}

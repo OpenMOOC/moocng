@@ -40,6 +40,7 @@ Requires: python-boto >= 2.8.0
 Requires: python-celery = 3.0.20
 Requires: python-fabric = 1.7.0
 Requires: python-imaging = 1.1.6
+Requires: python-jwt = 0.2.0
 Requires: python-memcached = 1.48
 Requires: python-psycopg2 = 2.4.2
 Requires: python-requests = 1.2.0
