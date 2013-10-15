@@ -28,20 +28,22 @@
   <div class="container">
     <header>
       {% get_language_info_list for LANGUAGES as languages %}
-      <ul class="unstyled pull-right" id="language-selector">
-        {% for language in languages %}
-        {% if LANGUAGE_CODE == language.name_local %}
-        <li>{{ language.name_local|capfirst }}</li>
-        {% else %}
-        <li><form action="{% url set_language %}" method="post">
-          {% csrf_token %}
-          <input type="hidden" name="language" value="{{ language.code }}" />
-          <input class="btn btn-link{% if LANGUAGE_CODE == language.code %} disabled{% endif %}" type="submit" value="{{ language.name_local|capfirst }}" {% if LANGUAGE_CODE == language.code %}disabled="disabled"{% endif %}/>
-        </form></li>
-        {% endif %}
-        {% if not forloop.last %}|{% endif %}
-        {% endfor %}
-      </ul>
+      {% if languages|length > 1 %}
+        <ul class="unstyled pull-right" id="language-selector">
+          {% for language in languages %}
+            {% if LANGUAGE_CODE == language.name_local %}
+              <li>{{ language.name_local|capfirst }}</li>
+            {% else %}
+              <li><form action="{% url set_language %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="language" value="{{ language.code }}" />
+                <input class="btn btn-link{% if LANGUAGE_CODE == language.code %} disabled{% endif %}" type="submit" value="{{ language.name_local|capfirst }}" {% if LANGUAGE_CODE == language.code %}disabled="disabled"{% endif %}/>
+              </form></li>
+            {% endif %}
+            {% if not forloop.last %}|{% endif %}
+          {% endfor %}
+        </ul>
+      {% endif %}
       <hgroup>
         <h1 class="logo"><a href="{% url home %}" class="hide-text"><img src="{{ theme.logo }}" alt="{{ site.name }}" />{{ site.name }}</a></h1>
         <h2 class="small pull-left">{{ theme.subtitle }}</h2>
