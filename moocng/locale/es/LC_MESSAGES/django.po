@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-09 13:15+0200\n"
+"POT-Creation-Date: 2013-10-15 11:36+0200\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Antonio Perez-Aranda <aperezaranda@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -410,81 +410,85 @@ msgstr "Registro"
 msgid "Image"
 msgstr "Imagen"
 
-#: badges/models.py:29
+#: badges/models.py:35
 msgid "The image is not a png"
 msgstr "La imagen no es un png"
 
-#: badges/models.py:35
+#: badges/models.py:41
 msgid "Badge title"
 msgstr "Título de la medalla"
 
-#: badges/models.py:36
+#: badges/models.py:42
 msgid "Short, descriptive title"
 msgstr "Título corto y descriptivo"
 
-#: badges/models.py:38
+#: badges/models.py:44
 msgid "Badge slug"
 msgstr "Slug de la medalla"
 
-#: badges/models.py:39
+#: badges/models.py:45
 msgid "Very short name, for use in URLs and links"
 msgstr "Nombre muy corto, para utilizar en URLs y enlaces"
 
-#: badges/models.py:41
+#: badges/models.py:47
 msgid "Badge description"
 msgstr "Descripción de la medalla"
 
-#: badges/models.py:42
+#: badges/models.py:48
 msgid "Longer description of the badge and its criteria"
 msgstr "Descripción larga de la medalla y sus criterios"
 
-#: badges/models.py:44
+#: badges/models.py:50
 msgid "Badge image"
 msgstr "Imagen de la medalla"
 
-#: badges/models.py:46
+#: badges/models.py:52
 msgid "Upload an image to represent the badge, it must be png"
 msgstr "Suba una imagen que represente la medalla, debe ser un png"
 
-#: badges/models.py:49
+#: badges/models.py:55
 msgid "Creation date and time"
 msgstr "Fecha y hora de creación"
 
-#: badges/models.py:52 badges/models.py:75
+#: badges/models.py:58 badges/models.py:97
 msgid "Last modification date and time"
 msgstr "Fecha y hora de la última modificación"
 
-#: badges/models.py:56
+#: badges/models.py:62
 msgid "badge"
 msgstr "medalla"
 
-#: badges/models.py:57
+#: badges/models.py:63
 msgid "badges"
 msgstr "medallas"
 
-#: badges/models.py:65
+#: badges/models.py:87
 msgid "Badge"
 msgstr "Medalla"
 
-#: badges/models.py:68
+#: badges/models.py:90 badges/models.py:129
 msgid "Awardee"
 msgstr "Premiado"
 
-#: badges/models.py:72
+#: badges/models.py:94
 msgid "Awarding date and time"
 msgstr "Fecha y hora del premio"
 
-#: badges/models.py:80
+#: badges/models.py:102
 msgid "award"
 msgstr "premio"
 
-#: badges/models.py:81
+#: badges/models.py:103
 msgid "awards"
 msgstr "premios"
 
-#: badges/models.py:84
+#: badges/models.py:106
 msgid "{0} awarded to {1}"
 msgstr "{0} otorgado a {1}"
+
+#: badges/models.py:123
+msgid "Award"
+msgstr "Premio"
 
 #: badges/templates/badges/user_badge.html:9
 #, python-format
