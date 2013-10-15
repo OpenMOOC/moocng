@@ -25,6 +25,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 from moocng.badges.utils import get_openbadge_keys
 from jwt import generate_jwt
@@ -106,12 +107,14 @@ class Award(models.Model):
         return ugettext(u'{0} awarded to {1}').format(self.badge.title, self.user.username)
 
     def get_image_url(self):
-        return self.badge.image.url
+        try:
+            assertion = BadgeAssertion.objects.get(award=self, user=self.user)
+        except BadgeAssertion.DoesNotExists:
+            return None
+        return "{0}/baker?assertion={1}".format(settings.OPENBADGES_BASE_URL, assertion.assertion_url())
 
     def get_image_public_url(self):
-        current_site = Site.objects.get_current()
-        url = reverse('badge_image_email', args=[self.badge.slug, self.user.email])
-        return 'http://%s%s' % (current_site.domain, url)
+        return self.get_image_url()
 
 
 class BadgeAssertion(models.Model):

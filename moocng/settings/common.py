@@ -499,3 +499,6 @@ SSH_KEY_PATH = ''
 
 # Name of ssh key used by mozilla openbadge
 SSH_KEY_NAME = ''
+
+# Base url of openbadges server
+OPENBADGES_BASE_URL = "https://backpack.openbadges.org"

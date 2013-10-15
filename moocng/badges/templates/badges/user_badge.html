@@ -3,6 +3,9 @@
 {% load i18n %}
 
 {% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
+{% block extraheader %}
+    <script src="{{ openbadges_base_url }}/issuer.js"></script>
+{% endblock %}
 
 {% block content %}
 
@@ -10,6 +13,7 @@
 <p>
     <img src="{{ award.get_image_url }}" alt="{{ award.badge.title }}" title="{{ award.badge.title }}" width="50" height="50" class="award" />
     <code>{{ award.get_image_public_url }}</code>
+    <a href="#" id="add-to-backpack" onClick='OpenBadges.issue(["{{ award.get_image_url }}"]);'>Add to backpack</a>
 </p>
 
 {% if award.badge.description %}

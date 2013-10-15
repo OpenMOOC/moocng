@@ -19,6 +19,7 @@ from django.contrib.sites.models import Site
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
+from django.conf import settings
 
 from moocng.badges.models import Badge, Award, BadgeAssertion
 from moocng.badges.utils import get_openbadge_public_key
@@ -34,6 +35,7 @@ def user_badges(request, user_pk, mode):
         return render_to_response('badges/user_badges.html', {
             'award_list': award_list,
             'user': user,
+            'openbadges_base_url': settings.OPENBADGES_BASE_URL,
         }, context_instance=RequestContext(request))
     except Award.DoesNotExist:
         return HttpResponse(status=404)
@@ -50,6 +52,7 @@ def user_badge(request, badge_slug, user_pk, mode):
         return render_to_response('badges/user_badge.html', {
             'award': award,
             'user': user,
+            'openbadges_base_url': settings.OPENBADGES_BASE_URL,
         }, context_instance=RequestContext(request))
     except Award.DoesNotExist:
         return HttpResponse(status=404)
