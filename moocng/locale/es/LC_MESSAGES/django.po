@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-09 13:15+0200\n"
+"POT-Creation-Date: 2013-10-16 10:38+0200\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Antonio Perez-Aranda <aperezaranda@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -635,7 +635,7 @@ msgstr ""
 "será enviada al responsable apropiado. Pronto contactaremos con usted para "
 "informarle del estado de su petición."
 
-#: contact/templates/contact/contact.html:8 templates/base.html:85
+#: contact/templates/contact/contact.html:8 templates/base.html:87
 msgid "Contact"
 msgstr "Contacto"
 
@@ -1091,7 +1091,7 @@ msgid "Options"
 msgstr "Opciones"
 
 #: courses/templates/admin/courses/question/options.html:56
-#: templates/base.html:58
+#: templates/base.html:60
 msgid "Home"
 msgstr "Inicio"
 
@@ -2898,27 +2898,27 @@ msgstr "Página no encontrada"
 msgid "We're sorry, but the requested page could not be found."
 msgstr "Lo sentimos, pero la página solicitada no se pudo encontrar."
 
-#: templates/base.html:53
+#: templates/base.html:55
 msgid "Register"
 msgstr "Registrar"
 
-#: templates/base.html:54
+#: templates/base.html:56
 msgid "Log in"
 msgstr "Entrar"
 
-#: templates/base.html:62
+#: templates/base.html:64
 msgid "Methodology"
 msgstr "Metodología"
 
-#: templates/base.html:80
+#: templates/base.html:82
 msgid "Legal"
 msgstr "Condiciones legales"
 
-#: templates/base.html:81
+#: templates/base.html:83
 msgid "All rights reserved"
 msgstr "Todos los derechos reservados"
 
-#: templates/base.html:83
+#: templates/base.html:85
 msgid "Terms of Use"
 msgstr "Términos de uso"
 
