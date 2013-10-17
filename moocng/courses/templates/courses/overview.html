@@ -130,7 +130,7 @@
             <dl>
                 {% for announcement in announcements %}
                     <dt>{{ announcement.datetime|date:"d / M / Y - H:i" }}</dt>
-                    <dd><a href="{% url courses.views.announcement_detail course.slug announcement.id announcement.slug %}">{{ announcement.title|truncatewords:8 }}</a></dd>
+                    <dd><a href="{% url announcement_detail course.slug announcement.id announcement.slug %}">{{ announcement.title|truncatewords:8 }}</a></dd>
                 {% endfor %}
             </dl>
         </div>
