@@ -11,8 +11,7 @@
 
 {% for award in award_list %}
 <p>
-    <img src="{{ award.get_image_url }}" alt="{{ award.badge.title }}" title="{{ award.badge.title }}" width="50" height="50" class="award" />
-    <code>{{ award.get_image_public_url }}</code>
+    <img src="{{ award.badge.image.url }}" alt="{{ award.badge.title }}" title="{{ award.badge.title }}" width="50" height="50" class="award" />
 </p>
 
 {% if award.badge.description %}

@@ -322,3 +322,39 @@ best to configure them to start on the server boot.
   $ chkconfig rabbitmq-server on
   $ chkconfig mongod on
   $ chkconfig celeryd on
+
+Openbadges integration
+----------------------
+
+The badges used in the platform can be integrated with Mozilla OpenBadges system (http://openbadges.org/). Every time, a student gets a badge, an assertion (OBI compliant) is created.
+
+You can configure the openbadges service to use, by default the official backpack OpenBadges service:
+
+.. code-block:: python
+
+  BADGES_SERVICE_URL = 'backpack.openbadges.org'
+
+To generate the assertion, we use some functions attached to post_save signals:
+
+.. code-block:: python
+
+  save_identity_for_user()
+
+Copies the actual user data to the assertion for future consistency.
+
+.. code-block:: python
+
+  create_identity_for_user()
+
+As the assertion identity hash contains the email information, if the email changes, the identity should also change.
+
+You must define your issuer info in the settings variables.
+
+.. code-block:: python
+
+  BADGES_SERVICE_URL = "backpack.openbadges.org"
+  BADGES_ISSUER_NAME = "OpenMOOC"
+  BADGES_ISSUER_URL = "http://openmooc.org"
+  BADGES_ISSUER_DESCRIPTION = ""
+  BADGES_ISSUER_IMAGE = ""
+  BADGES_ISSUER_EMAIL = ""
