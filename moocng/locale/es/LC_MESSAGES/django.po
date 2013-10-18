@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-17 12:39+0200\n"
+"POT-Creation-Date: 2013-10-18 10:35+0200\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Antonio Perez-Aranda <aperezaranda@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -50,7 +50,6 @@ msgid "User Apis"
 msgstr "User Apis"
 
 #: api/models.py:40
-#, python-brace-format
 msgid "Apikey of {0}  :::  {1}"
 msgstr "Apikey de {0}  :::  {1}"
 
@@ -124,7 +123,6 @@ msgid "asset availabilities"
 msgstr "disponibilidades de recursos"
 
 #: assets/models.py:71
-#, python-brace-format
 msgid "Assets availables for {0}"
 msgstr "Recursos disponibles para {0}"
 
@@ -149,7 +147,6 @@ msgid "reservations"
 msgstr "reservas"
 
 #: assets/models.py:94
-#, python-brace-format
 msgid "Reservation of {0}, made by {1}"
 msgstr "Reserva de {0}, hecha por {1}"
 
@@ -451,7 +448,6 @@ msgid "identities"
 msgstr "identidades"
 
 #: badges/models.py:68
-#, python-brace-format
 msgid "Identity of {0}"
 msgstr "Identidad de {0}"
 
@@ -564,7 +560,6 @@ msgid "awards"
 msgstr "premios"
 
 #: badges/models.py:178
-#, python-brace-format
 msgid "{0} awarded to {1}"
 msgstr "{0} otorgado a {1}"
 
@@ -601,7 +596,6 @@ msgid "tag"
 msgstr "etiqueta"
 
 #: badges/templates/badges/my_badges.html:13
-#: badges/templates/badges/user_badges.html:9
 #, python-format
 msgid ""
 "The user \"<b>%(first_name)s %(last_name)s</b>\" has the following awards:"
@@ -609,18 +603,17 @@ msgstr ""
 "El usuario \"<b>%(first_name)s %(last_name)s</b>\" tiene los siguientes "
 "premios:"
 
-#: badges/templates/badges/my_badges.html:19
+#: badges/templates/badges/my_badges.html:15
+msgid "Open Mozilla Backpack"
+msgstr "Abrir Mozilla Backpack"
+
+#: badges/templates/badges/my_badges.html:25
 msgid "Download Badge"
 msgstr "Descargar medalla"
 
-#: badges/templates/badges/my_badges.html:20
-msgid "Add to backpack"
-msgstr "Añadir a mi mochila"
-
-#: badges/templates/badges/user_badge.html:9
-#, python-format
-msgid "The user \"<b>%(first_name)s %(last_name)s</b>\" has the award:"
-msgstr "El usuario \"<b>%(first_name)s %(last_name)s</b>\" tiene el premio:"
+#: badges/templates/badges/my_badges.html:26
+msgid "Send to Mozilla Backpack"
+msgstr "Enviar a Mozilla Backpack"
 
 #: categories/admin.py:11
 #: teacheradmin/templates/teacheradmin/categories.html:18
@@ -1098,7 +1091,6 @@ msgid "questions"
 msgstr "preguntas"
 
 #: courses/models.py:545
-#, python-brace-format
 msgid "{0} - Question {1}"
 msgstr "{0} - Pregunta {1}"
 
@@ -1130,7 +1122,6 @@ msgid "options"
 msgstr "opciones"
 
 #: courses/models.py:619
-#, python-brace-format
 msgid "{0} at {1} x {2}"
 msgstr "{0} en {1} x {2}"
 
@@ -1545,12 +1536,12 @@ msgstr "Entrega enviada"
 
 #: courses/templates/courses/classroom.html:203
 msgid ""
-"Thank you for sending this submission. You have now to review "
-"#(minimum_reviewers)s submissions from other students in order to get your "
+"Thank you for sending this submission. You have now to review #"
+"(minimum_reviewers)s submissions from other students in order to get your "
 "submission scored."
 msgstr ""
-"Gracias por enviar esta entrega. Ahora tienes que revisar "
-"#(minimum_reviewers)s entregas de otros estudiantes para que tu entrega se "
+"Gracias por enviar esta entrega. Ahora tienes que revisar #"
+"(minimum_reviewers)s entregas de otros estudiantes para que tu entrega se "
 "evalúe."
 
 #: courses/templates/courses/classroom.html:204
@@ -1860,26 +1851,26 @@ msgstr "Enhorabuena, has completado"
 msgid "Here is a badge!"
 msgstr "¡Aquí tienes una medalla!"
 
-#: courses/templates/courses/transcript.html:53
+#: courses/templates/courses/transcript.html:56
 msgid "I want a certificate of completion for this course"
 msgstr "Quiero un certificado de finalización para este curso"
 
-#: courses/templates/courses/transcript.html:54
+#: courses/templates/courses/transcript.html:57
 msgid "Read more"
 msgstr "Leer más"
 
-#: courses/templates/courses/transcript.html:57
+#: courses/templates/courses/transcript.html:60
 msgid ""
 "You need to complete the course before asking for a certificate of "
 "completion."
 msgstr ""
 "Debes completar el curso antes de solicitar un certificado de finalización."
 
-#: courses/templates/courses/transcript.html:60
+#: courses/templates/courses/transcript.html:63
 msgid "No certificate available for this course."
 msgstr "No hay certificación disponible para este curso"
 
-#: courses/templates/courses/transcript.html:64
+#: courses/templates/courses/transcript.html:67
 msgid "You are not enrolled in any course"
 msgstr "No estás matriculado en ningún curso"
 
@@ -2090,7 +2081,6 @@ msgid "evaluation criteria"
 msgstr "Criterios de evaluación"
 
 #: peerreview/models.py:97
-#, python-brace-format
 msgid "{0} - EvaluationCriterion {1}"
 msgstr "{0} - Criterio de evaluación {1}"
 
@@ -2346,7 +2336,6 @@ msgid "Spanish"
 msgstr "Español"
 
 #: teacheradmin/forms.py:43
-#, python-brace-format
 msgid "Image must be {0}px x {1}px"
 msgstr "La imagen debe tener {0}px x {1}px"
 
@@ -3052,6 +3041,9 @@ msgstr "Sitio de administración de moocng"
 #: templates/admin/base_site.html:7
 msgid "moocng administration"
 msgstr "Administración de moocng"
+
+#~ msgid "The user \"<b>%(first_name)s %(last_name)s</b>\" has the award:"
+#~ msgstr "El usuario \"<b>%(first_name)s %(last_name)s</b>\" tiene el premio:"
 
 #~ msgid "Badge title"
 #~ msgstr "Título de la medalla"

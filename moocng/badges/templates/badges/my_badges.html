@@ -4,29 +4,32 @@
 
 {% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
 {% block extrajs %}
-    <script src="https://{{ openbadges_service_url }}/issuer.js"></script>
+    <script src="//{{ openbadges_service_url }}/issuer.js"></script>
     <script src="{{ STATIC_URL }}js/badges.js"></script>
 {% endblock %}
 
 {% block content %}
-    <div id="my-badges">
-    <p><big>{% blocktrans with first_name=user.first_name last_name=user.last_name %}The user "<b>{{ first_name }} {{ last_name }}</b>" has the following awards:{% endblocktrans %}
-    </big><p>
+    <p class="mb20">
+        <big>{% blocktrans with first_name=user.first_name last_name=user.last_name %}The user "<b>{{ first_name }} {{ last_name }}</b>" has the following awards:{% endblocktrans %}
+    </big>
+        <a class="pull-right btn" href="https://backpack.openbadges.org" target="_blank"><i class="icon-openbadges"></i> {% trans "Open Mozilla Backpack" %}</a>
+    </p>
 
     {% for award in award_list %}
-        <p>
-            <img src="{{ award.badge.image.url }}" alt="{{ award.badge.title }}" title="{{ award.badge.title }}" width="50" height="50" class="award" />
-            <a href="{{ award.get_image_url }}">{% trans "Download Badge" %}</a>
-            <a href="#" class="btn publish-badge" rel="{{ award.get_absolute_url }}">{% trans "Add to backpack" %}</a>
-        </p>
+        <div class="row box box-award">
+            <div class="span1">
+                <img src="{{ award.badge.image.url }}" alt="{{ award.badge.title }}" title="{{ award.badge.title }}" width="50" height="50" class="award" />
+            </div>
+            <div class="span10">
+                <p>
+                    <a class="btn" href="{{ award.get_image_url }}"><i class="icon-download-alt"></i> {% trans "Download Badge" %}</a>
+                    <a href="#" class="btn publish-badge" rel="{{ award.get_absolute_url }}"><i class="icon-share"></i> {% trans "Send to Mozilla Backpack" %}</a>
+                </p>
 
-        {% if award.badge.description %}
-            <p>{{ award.badge.description }}</p>
-        {% endif %}
-
-        {% if not forloop.last %}
-            <hr>
-        {% endif %}
+                {% if award.badge.description %}
+                    <p class="mb0">{{ award.badge.description }}</p>
+                {% endif %}
+            </div>
+        </div>
     {% endfor %}
-    </div>
 {% endblock %}

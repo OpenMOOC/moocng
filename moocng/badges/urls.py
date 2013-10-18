@@ -26,19 +26,4 @@ urlpatterns = patterns(
         name='badge'),
 
     url(r'^my_badges/$', 'my_badges', name='my_badges'),
-
-    url(r'^user_badges/(?P<user_pk>[\d]+)/?$', 'user_badges',
-        {'mode': 'id'}, name='user_badges', ),
-    url(r'^user_badge/(?P<badge_slug>[-\w]+)/(?P<user_pk>[\d]+)/?$', 'user_badge',
-        {'mode': 'id'}, name='user_badge', ),
-    url(r'^badge_image/(?P<badge_slug>[-\w]+)/(?P<user_pk>[\d]+)/image/?$', 'badge_image',
-        {'mode': 'id'}, name='badge_image'),
-
-    url(r'^user_badges_email/(?P<user_pk>[^/]+)/?$', 'user_badges',
-        {'mode': 'email'}, name='user_badges_email'),
-    url(r'^user_badge_email/(?P<badge_slug>[-\w]+)/(?P<user_pk>[^/]+)/?$', 'user_badge',
-        {'mode': 'email'}, name='user_badge_email'),
-    url(r'^badge_image_email/(?P<badge_slug>[-\w]+)/(?P<user_pk>[^/]+)/image/?$', 'badge_image',
-        {'mode': 'email'}, name='badge_image_email'),
-
 )

@@ -39,37 +39,6 @@ def my_badges(request):
         return HttpResponse(status=404)
 
 
-def user_badges(request, user_pk, mode):
-    if mode == 'email':
-        user = get_object_or_404(User, email=user_pk)
-    else:
-        user = get_object_or_404(User, id=user_pk)
-    try:
-        award_list = Award.objects.filter(user=user)
-        return render_to_response('badges/user_badges.html', {
-            'award_list': award_list,
-            'user': user,
-        }, context_instance=RequestContext(request))
-    except Award.DoesNotExist:
-        return HttpResponse(status=404)
-
-
-def user_badge(request, badge_slug, user_pk, mode):
-    badge = get_object_or_404(Badge, slug=badge_slug)
-    if mode == 'email':
-        user = get_object_or_404(User, email=user_pk)
-    else:
-        user = get_object_or_404(User, id=user_pk)
-    try:
-        award = get_object_or_404(Award, badge=badge, user=user)
-        return render_to_response('badges/user_badge.html', {
-            'award': award,
-            'user': user,
-        }, context_instance=RequestContext(request))
-    except Award.DoesNotExist:
-        return HttpResponse(status=404)
-
-
 def badge_image(request, badge_slug, user_pk, mode):
     badge = get_object_or_404(Badge, slug=badge_slug)
     if mode == 'email':

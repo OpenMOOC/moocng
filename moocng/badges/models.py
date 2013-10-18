@@ -38,7 +38,7 @@ def validate_png_image(value):
 
 def build_absolute_url(url):
     current_site = Site.objects.get_current()
-    return 'http://%s%s' % (current_site.domain, url)
+    return 'https://%s%s' % (current_site.domain, url)
 
 
 IDENTITY_CHOICES = (

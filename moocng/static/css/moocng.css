@@ -125,8 +125,16 @@ footer ul li {
     border-top: 1px solid #dddddd;
 }
 
+.box-award {
+    margin-left: 0;
+}
+
 .pointer {
     cursor: pointer;
+}
+
+.mb0 {
+    margin-bottom: 0px;
 }
 
 .mb10 {
@@ -204,6 +212,11 @@ html.ie li.teacher img {
 
 img.award {
     margin-right: 10px;
+}
+
+i.icon-openbadges {
+    background-image: url("../img/openbadges.png");
+    background-position: 0 0;
 }
 
 .unit-n {}
