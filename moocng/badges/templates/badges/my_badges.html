@@ -31,5 +31,9 @@
                 {% endif %}
             </div>
         </div>
+    {% empty %}
+        <div class="alert">
+            <strong>{% trans "You haven't earned badges yet." %}</strong>
+        </div>
     {% endfor %}
 {% endblock %}
