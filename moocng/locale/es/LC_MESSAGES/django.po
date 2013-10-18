@@ -3042,11 +3042,3 @@ msgstr "Sitio de administración de moocng"
 msgid "moocng administration"
 msgstr "Administración de moocng"
 
-#~ msgid "The user \"<b>%(first_name)s %(last_name)s</b>\" has the award:"
-#~ msgstr "El usuario \"<b>%(first_name)s %(last_name)s</b>\" tiene el premio:"
-
-#~ msgid "Badge title"
-#~ msgstr "Título de la medalla"
-
-#~ msgid "Discussion"
-#~ msgstr "Debates"
