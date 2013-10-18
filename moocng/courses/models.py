@@ -401,7 +401,7 @@ class KnowledgeQuantum(Sortable):
                                         null=True,
                                         blank=False,
                                         max_length=200)
-    teacher_comments = HTMLField(verbose_name=_(u'Teacher comments'),
+    teacher_comments = HTMLField(verbose_name=_(u'Instructor\'s comments'),
                                  blank=True, null=False)
     supplementary_material = HTMLField(
         verbose_name=_(u'Supplementary material'),

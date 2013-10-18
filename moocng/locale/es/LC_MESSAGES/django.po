@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-18 10:35+0200\n"
+"POT-Creation-Date: 2013-10-18 12:06+0200\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Antonio Perez-Aranda <aperezaranda@yaco.es>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -1028,9 +1028,11 @@ msgstr "módulos"
 msgid "Unit"
 msgstr "Módulo"
 
-#: courses/models.py:404
-msgid "Teacher comments"
-msgstr "Comentarios del Profesor"
+#: courses/models.py:404 courses/templates/courses/classroom.html:154
+#: teacheradmin/templates/teacheradmin/units.html:46
+#: teacheradmin/templates/teacheradmin/units.html:171
+msgid "Instructor's comments"
+msgstr "Comentarios del profesor"
 
 #: courses/models.py:407 courses/templates/courses/classroom.html:155
 #: teacheradmin/templates/teacheradmin/units.html:47
@@ -1452,11 +1454,6 @@ msgstr "Mostrar lección"
 #: courses/templates/courses/classroom.html:117
 msgid "Next"
 msgstr "Siguiente"
-
-#: courses/templates/courses/classroom.html:154
-#: teacheradmin/templates/teacheradmin/units.html:171
-msgid "Instructor's comments"
-msgstr "Comentarios del profesor"
 
 #: courses/templates/courses/classroom.html:186
 msgid "Q"
@@ -2780,10 +2777,6 @@ msgid "You need to add content to this course. Please, start adding a unit."
 msgstr ""
 "Tiene que añadir contenido al curso. Por favor, comience añadiendo un módulo."
 
-#: teacheradmin/templates/teacheradmin/units.html:46
-msgid "Instructor comments"
-msgstr "Comentarios del profesor"
-
 #: teacheradmin/templates/teacheradmin/units.html:49
 msgid "It has a question"
 msgstr "Tiene una pregunta"
@@ -3041,4 +3034,3 @@ msgstr "Sitio de administración de moocng"
 #: templates/admin/base_site.html:7
 msgid "moocng administration"
 msgstr "Administración de moocng"
-
