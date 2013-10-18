@@ -43,6 +43,13 @@ DATABASES = {
 
 MONGODB_URI = 'mongodb://localhost:27017/moocng'
 
+BADGES_SERVICE_URL = "backpack.openbadges.org"
+BADGES_ISSUER_NAME = "OpenMOOC"
+BADGES_ISSUER_URL = "http://openmooc.org"
+BADGES_ISSUER_DESCRIPTION = ""
+BADGES_ISSUER_IMAGE = ""
+BADGES_ISSUER_EMAIL = ""
+
 # Tastypie resource limit per page, 0 means unlimited
 API_LIMIT_PER_PAGE = 0
 
