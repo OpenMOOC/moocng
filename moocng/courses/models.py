@@ -14,7 +14,8 @@
 # limitations under the License.
 import logging
 try:
-    import Image, ImageOps
+    import Image
+    import ImageOps
 except ImportError:
     from PIL import Image, ImageOps
 
@@ -141,8 +142,11 @@ class Course(Sortable):
             self.promotion_media_content_id = media_content_extract_id(self.promotion_media_content_type, self.promotion_media_content_id)
         super(Course, self).save(*args, **kwargs)
         if self.thumbnail:
-            metadata = {'width':self.THUMBNAIL_WIDTH,
-                'height':self.THUMBNAIL_HEIGHT, 'force': True}
+            metadata = {
+                'width': self.THUMBNAIL_WIDTH,
+                'height': self.THUMBNAIL_HEIGHT,
+                'force': True
+            }
             image_path = self.thumbnail.path
             self._resize_image(image_path, metadata)
 
@@ -181,16 +185,16 @@ class Course(Sortable):
         WIDTH, HEIGHT = 0, 1
         img = Image.open(filename)
         if (img.size[WIDTH] > size['width'] or
-            img.size[HEIGHT] > size['height']):
+                img.size[HEIGHT] > size['height']):
 
             #If the image is big resize it with the cheapest resize algorithm
             factor = 1.61803398875
-            while (img.size[0]/factor > 2*size['width'] and
-                   img.size[1]*2/factor > 2*size['height']):
-                factor *=2
+            while (img.size[0] / factor > 2 * size['width'] and
+                    img.size[1] * 2 / factor > 2 * size['height']):
+                factor *= 2
             if factor > 1:
-                img.thumbnail((int(img.size[0]/factor),
-                               int(img.size[1]/factor)), Image.NEAREST)
+                img.thumbnail((int(img.size[0] / factor),
+                               int(img.size[1] / factor)), Image.NEAREST)
 
             if size['force']:
                 img = ImageOps.fit(img, (size['width'], size['height']),
