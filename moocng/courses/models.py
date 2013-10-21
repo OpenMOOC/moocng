@@ -293,7 +293,12 @@ class Announcement(models.Model):
 
 
 def announcement_invalidate_cache(sender, instance, **kwargs):
-    invalidate_template_fragment('course_overview_secondary_info', instance.course.id)
+    try:
+        invalidate_template_fragment('course_overview_secondary_info', instance.course.id)
+    except Course.DoesNotExist:
+        logger.error('Saving/removing announcement. Can\'t invalidate course '
+                     'sidebar html, not valid reference to course object, '
+                     'it is probably being deleted...')
 
 
 signals.post_save.connect(announcement_invalidate_cache, sender=Announcement)
