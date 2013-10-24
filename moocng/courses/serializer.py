@@ -71,11 +71,3 @@ class EvaluationCriterionClone(BaseMetaWalkClass):
         obj = super(EvaluationCriterionClone, cls).pre_serialize(initial_obj, obj, request, options=options)
         obj.assignment.kq.unit.course = initial_obj
         return obj
-
-#class UserClone(BaseMetaWalkClass):
-    #@classmethod
-    #def pre_serialize(cls, initial_obj, obj, request, options=None):
-        #obj = super(UserClone, cls).pre_serialize(initial_obj, obj, request, options=options)
-        #obj.username = 'xxx-' + obj.username
-        #obj.email = 'xxx-' + obj.email
-        #return obj
