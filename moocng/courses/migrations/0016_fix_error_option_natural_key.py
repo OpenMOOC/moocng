@@ -1,89 +1,40 @@
 # -*- coding: utf-8 -*-
-# Copyright 2013 Rooter Analysis S.L.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 from south.v2 import DataMigration
-from django.template.defaultfilters import slugify
-
-
-def SlugifyUniquely(value, model, slugfield="slug"):
-    """Returns a slug on a name which is unique within a model's table
-
-    This code suffers a race condition between when a unique
-    slug is determined and when the object with that slug is saved.
-    It's also not exactly database friendly if there is a high
-    likelyhood of common slugs being attempted.
-
-    A good usage pattern for this code would be to add a custom save()
-    method to a model with a slug field along the lines of:
-
-        from django.template.defaultfilters import slugify
-
-        def save(self):
-            if not self.id:
-                # replace self.name with your prepopulate_from field
-                self.slug = SlugifyUniquely(self.name, self.__class__)
-        super(self.__class__, self).save()
-
-    Original pattern discussed at
-    http://www.b-list.org/weblog/2006/11/02/django-tips-auto-populated-fields
-    """
-    suffix = 0
-    potential = base = slugify(value)
-    while True:
-        if suffix:
-            potential = "-".join([base, str(suffix)])
-
-        if not model.objects.filter(**{slugfield: potential}).count():
-            return potential
-        # we hit a conflicting slug, so bump the suffix & try again
-        suffix += 1
 
 
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        """
-        Check for duplicated slugs before making the change. This method get all
-        the objects, removes the first object from the list (to avoid duplications and
-        preserve the first found item slug) and after that it changes the matched
-        objects slugs. In case the new slug in 50 characters or more (default slug size)
-        we enter it in a while loop, deleting character by character until it fits.
-        """
-        courses = orm['courses.course'].objects.all()
-        announcements = orm['courses.announcement'].objects.all()
+        "Write your forwards methods here."
+        count_keys = {}
+        for opt in orm['courses.option'].objects.all():
+            key = '%s-%s-%s' % (opt.question_id, opt.x, opt.y)
+            if not key in count_keys:
+                count_keys[key] = []
+            count_keys[key].append(opt)
 
-        # Check for duplicates in courses, spare the first element and rename
-        # the others
-        for course in courses:
-            matches = orm['courses.course'].objects.filter(slug=course.slug).order_by('pk')
-            matches_list = list(matches)
-            matches_list.pop(0)
-            for c in matches_list:
-                c.slug = SlugifyUniquely(c.slug[:48], c.__class__)
-                c.save()
+        for key, opts in count_keys.items():
+            if len(opts) > 1:
+                for i, opt in enumerate(opts[1:]):
+                    opt.x += i + 1
+                    opt.y += i + 1
+                    opt.save()
 
-        # Same as in courses
-        for announcement in announcements:
-            matches = orm['courses.announcement'].objects.filter(slug=announcement.slug).order_by('pk')
-            matches_list = list(matches)
-            matches_list.pop(0)
-            for a in matches_list:
-                a.slug = SlugifyUniquely(a.slug[:48], a.__class__)
-                a.save()
+        count_keys = {}
+        for kq in orm['courses.knowledgequantum'].objects.all():
+            key = '%s-%s' % (kq.unit_id, kq.title)
+            if not key in count_keys:
+                count_keys[key] = []
+            count_keys[key].append(kq)
+
+        for key, kqs in count_keys.items():
+            if len(kqs) > 1:
+                for i, kq in enumerate(kqs):
+                    kq.title = '%s %s' % (kq.title, i)
+                    kq.save()
 
     def backwards(self, orm):
-        "Nothing to do here."
+        "Write your backwards methods here."
 
     models = {
         'auth.group': {

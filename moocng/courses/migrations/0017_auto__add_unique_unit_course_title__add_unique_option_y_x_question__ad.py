@@ -1,89 +1,29 @@
 # -*- coding: utf-8 -*-
-# Copyright 2013 Rooter Analysis S.L.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-from south.v2 import DataMigration
-from django.template.defaultfilters import slugify
+from south.db import db
+from south.v2 import SchemaMigration
 
 
-def SlugifyUniquely(value, model, slugfield="slug"):
-    """Returns a slug on a name which is unique within a model's table
-
-    This code suffers a race condition between when a unique
-    slug is determined and when the object with that slug is saved.
-    It's also not exactly database friendly if there is a high
-    likelyhood of common slugs being attempted.
-
-    A good usage pattern for this code would be to add a custom save()
-    method to a model with a slug field along the lines of:
-
-        from django.template.defaultfilters import slugify
-
-        def save(self):
-            if not self.id:
-                # replace self.name with your prepopulate_from field
-                self.slug = SlugifyUniquely(self.name, self.__class__)
-        super(self.__class__, self).save()
-
-    Original pattern discussed at
-    http://www.b-list.org/weblog/2006/11/02/django-tips-auto-populated-fields
-    """
-    suffix = 0
-    potential = base = slugify(value)
-    while True:
-        if suffix:
-            potential = "-".join([base, str(suffix)])
-
-        if not model.objects.filter(**{slugfield: potential}).count():
-            return potential
-        # we hit a conflicting slug, so bump the suffix & try again
-        suffix += 1
-
-
-class Migration(DataMigration):
+class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        """
-        Check for duplicated slugs before making the change. This method get all
-        the objects, removes the first object from the list (to avoid duplications and
-        preserve the first found item slug) and after that it changes the matched
-        objects slugs. In case the new slug in 50 characters or more (default slug size)
-        we enter it in a while loop, deleting character by character until it fits.
-        """
-        courses = orm['courses.course'].objects.all()
-        announcements = orm['courses.announcement'].objects.all()
+        # Adding unique constraint on 'Unit', fields ['course', 'title']
+        db.create_unique('courses_unit', ['course_id', 'title'])
 
-        # Check for duplicates in courses, spare the first element and rename
-        # the others
-        for course in courses:
-            matches = orm['courses.course'].objects.filter(slug=course.slug).order_by('pk')
-            matches_list = list(matches)
-            matches_list.pop(0)
-            for c in matches_list:
-                c.slug = SlugifyUniquely(c.slug[:48], c.__class__)
-                c.save()
+        # Adding unique constraint on 'Option', fields ['y', 'x', 'question']
+        db.create_unique('courses_option', ['y', 'x', 'question_id'])
 
-        # Same as in courses
-        for announcement in announcements:
-            matches = orm['courses.announcement'].objects.filter(slug=announcement.slug).order_by('pk')
-            matches_list = list(matches)
-            matches_list.pop(0)
-            for a in matches_list:
-                a.slug = SlugifyUniquely(a.slug[:48], a.__class__)
-                a.save()
+        # Adding unique constraint on 'KnowledgeQuantum', fields ['unit', 'title']
+        db.create_unique('courses_knowledgequantum', ['unit_id', 'title'])
 
     def backwards(self, orm):
-        "Nothing to do here."
+        # Removing unique constraint on 'KnowledgeQuantum', fields ['unit', 'title']
+        db.delete_unique('courses_knowledgequantum', ['unit_id', 'title'])
+
+        # Removing unique constraint on 'Option', fields ['y', 'x', 'question']
+        db.delete_unique('courses_option', ['y', 'x', 'question_id'])
+
+        # Removing unique constraint on 'Unit', fields ['course', 'title']
+        db.delete_unique('courses_unit', ['course_id', 'title'])
 
     models = {
         'auth.group': {
@@ -182,7 +122,7 @@ class Migration(DataMigration):
             'teacher': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
         },
         'courses.knowledgequantum': {
-            'Meta': {'ordering': "['order']", 'object_name': 'KnowledgeQuantum'},
+            'Meta': {'ordering': "['order']", 'unique_together': "(('title', 'unit'),)", 'object_name': 'KnowledgeQuantum'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'media_content_id': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True'}),
             'media_content_type': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True'}),
@@ -194,7 +134,7 @@ class Migration(DataMigration):
             'weight': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'})
         },
         'courses.option': {
-            'Meta': {'object_name': 'Option'},
+            'Meta': {'unique_together': "(('question', 'x', 'y'),)", 'object_name': 'Option'},
             'feedback': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'height': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '12'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -217,7 +157,7 @@ class Migration(DataMigration):
             'use_last_frame': ('django.db.models.fields.BooleanField', [], {'default': 'True'})
         },
         'courses.unit': {
-            'Meta': {'ordering': "['order']", 'object_name': 'Unit'},
+            'Meta': {'ordering': "['order']", 'unique_together': "(('title', 'course'),)", 'object_name': 'Unit'},
             'course': ('adminsortable.fields.SortableForeignKey', [], {'to': "orm['courses.Course']"}),
             'deadline': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -231,4 +171,3 @@ class Migration(DataMigration):
     }
 
     complete_apps = ['courses']
-    symmetrical = True
