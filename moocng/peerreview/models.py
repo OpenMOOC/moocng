@@ -25,7 +25,7 @@ from tinymce.models import HTMLField
 from moocng.courses.models import KnowledgeQuantum
 from moocng.mongodb import get_db
 from moocng.peerreview import cache
-from moocng.peerreview.managers import PeerReviewAssignmentManager
+from moocng.peerreview.managers import EvaluationCriterionManager, PeerReviewAssignmentManager
 
 
 class PeerReviewAssignment(models.Model):
@@ -35,6 +35,10 @@ class PeerReviewAssignment(models.Model):
     kq = models.OneToOneField(KnowledgeQuantum, verbose_name=_(u'Nugget'),
                               blank=False, null=False)
     objects = PeerReviewAssignmentManager()
+
+    class Meta:
+        verbose_name = _(u'peer review assignment')
+        verbose_name_plural = _(u'peer review assignments')
 
     def is_completed(self, user, visited=None):
 
@@ -60,12 +64,11 @@ class PeerReviewAssignment(models.Model):
 
         return True
 
-    class Meta:
-        verbose_name = _(u'peer review assignment')
-        verbose_name_plural = _(u'peer review assignments')
+    def natural_key(self):
+        return self.kq.natural_key()
 
     def __unicode__(self):
-        return self.kq.__unicode__()
+        return unicode(self.kq)
 
 
 def invalidate_cache(sender, instance, **kwargs):
@@ -88,10 +91,15 @@ class EvaluationCriterion(Sortable):
                              blank=False, null=False)
     description = models.TextField(verbose_name=_(u'Description'),
                                    blank=True, null=False)
+    objects = EvaluationCriterionManager()
 
     class Meta(Sortable.Meta):
         verbose_name = _(u'evaluation criterion')
         verbose_name_plural = _(u'evaluation criteria')
+        unique_together = ('title', 'assignment')
+
+    def natural_key(self):
+        return self.assignment.natural_key() + (self.title, )
 
     def __unicode__(self):
         return ugettext(u'{0} - EvaluationCriterion {1}').format(self.assignment.kq, self.title)

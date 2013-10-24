@@ -29,6 +29,7 @@ from tinymce.models import HTMLField
 
 from moocng.badges.models import Badge
 from moocng.courses.cache import invalidate_template_fragment
+from moocng.courses.managers import CourseManager, UnitManager, KnowledgeQuantumManager, QuestionManager, OptionManager
 from moocng.enrollment import enrollment_methods
 from moocng.mongodb import get_db
 from moocng.videos.tasks import process_video_task
@@ -40,7 +41,7 @@ logger = logging.getLogger(__name__)
 class Course(Sortable):
 
     name = models.CharField(verbose_name=_(u'Name'), max_length=200)
-    slug = models.SlugField(verbose_name=_(u'Slug'), unique=True)
+    slug = models.SlugField(verbose_name=_(u'Slug'), unique=True, db_index=True)
     description = HTMLField(verbose_name=_(u'Description'))
     requirements = HTMLField(verbose_name=_(u'Requirements'),
                              blank=True, null=False)
@@ -110,6 +111,8 @@ class Course(Sortable):
         default=COURSE_STATUSES[0][0],
     )
 
+    objects = CourseManager()
+
     class Meta(Sortable.Meta):
         verbose_name = _(u'course')
         verbose_name_plural = _(u'courses')
@@ -117,6 +120,9 @@ class Course(Sortable):
             ("can_list_allcourses", _("Can list courses of an user")),
             ("can_list_passedcourses", _("Can list passed courses of an user")),
         )
+
+    def natural_key(self):
+        return (self.slug,)
 
     def save(self, *args, **kwargs):
         if self.promotion_media_content_type and self.promotion_media_content_id:
@@ -249,9 +255,12 @@ class Unit(Sortable):
         default=UNIT_STATUSES[0][0],
     )
 
+    objects = UnitManager()
+
     class Meta(Sortable.Meta):
         verbose_name = _(u'unit')
         verbose_name_plural = _(u'units')
+        unique_together = ('title', 'course')
 
     def __unicode__(self):
         return u'%s - %s (%s)' % (self.course, self.title, self.unittype)
@@ -260,6 +269,9 @@ class Unit(Sortable):
         for t in self.UNIT_TYPES:
             if t[0] == self.unittype:
                 return t[1]
+
+    def natural_key(self):
+        return self.course.natural_key() + (self.title, )
 
 
 def unit_invalidate_cache(sender, instance, **kwargs):
@@ -316,6 +328,13 @@ class KnowledgeQuantum(Sortable):
         verbose_name=_(u'Supplementary material'),
         blank=True, null=False)
 
+    objects = KnowledgeQuantumManager()
+
+    class Meta(Sortable.Meta):
+        verbose_name = _(u'nugget')
+        verbose_name_plural = _(u'nuggets')
+        unique_together = ('title', 'unit')
+
     def is_completed(self, user):
         if not self.kq_visited_by(user):
             return False
@@ -355,9 +374,8 @@ class KnowledgeQuantum(Sortable):
 
         return user_activity_exists.count() > 0
 
-    class Meta(Sortable.Meta):
-        verbose_name = _(u'nugget')
-        verbose_name_plural = _(u'nuggets')
+    def natural_key(self):
+        return self.unit.natural_key() + (self.title, )
 
     def save(self, *args, **kwargs):
         if self.media_content_type and self.media_content_id:
@@ -441,9 +459,15 @@ class Question(models.Model):
                     u'white canvas instead.'),
         default=True, blank=False, null=False)
 
+    objects = QuestionManager()
+
     class Meta:
         verbose_name = _(u'question')
         verbose_name_plural = _(u'questions')
+
+    def natural_key(self):
+        # Knowledge quantum only have a question. Kq should be a one to one relation
+        return self.kq.natural_key()
 
     def save(self, *args, **kwargs):
         if self.solution_media_content_type and self.solution_media_content_id:
@@ -519,13 +543,18 @@ class Option(models.Model):
     feedback = models.CharField(
         verbose_name=_(u'Solution feedback for the student'), max_length=200,
         blank=True, null=False)
+    objects = OptionManager()
 
     class Meta:
         verbose_name = _(u'option')
         verbose_name_plural = _(u'options')
+        unique_together = ('question', 'x', 'y')
 
     def __unicode__(self):
         return ugettext(u'{0} at {1} x {2}').format(self.optiontype, self.x, self.y)
+
+    def natural_key(self):
+        return self.question.natural_key() + (self.x, self.y)
 
     def is_correct(self, reply):
         if self.optiontype == 'l':

@@ -206,6 +206,33 @@ def course_overview(request, course_slug):
     }, context_instance=RequestContext(request))
 
 
+def course_clone(request, course_slug):
+    from deep_serialize import Serializer
+    from moocng.badges.models import Badge
+    from moocng.courses.models import Unit, KnowledgeQuantum, Question, Option
+    from moocng.courses.serializer import (CourseClone, UnitClone, KnowledgeQuantumClone,
+                                           BaseMetaWalkClass, QuestionClone, PeerReviewAssignmentClone,
+                                           EvaluationCriterionClone, OptionClone)
+    from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
+    course = get_object_or_404(Course, slug=course_slug)
+
+    walking_classes = {Course: CourseClone,
+                       User: BaseMetaWalkClass,
+                       Badge: BaseMetaWalkClass,
+                       Unit: UnitClone,
+                       KnowledgeQuantum: KnowledgeQuantumClone,
+                       Question: QuestionClone,
+                       Option: OptionClone,
+                       PeerReviewAssignment: PeerReviewAssignmentClone,
+                       EvaluationCriterion: EvaluationCriterionClone}
+    fixtures_json = Serializer.serialize(course, request=request,
+                                         indent=4, natural_keys=True,
+                                         walking_classes=walking_classes)
+    objs = Serializer.deserialize(course, fixtures_json,
+                                  walking_classes=walking_classes)
+    return HttpResponseRedirect(objs[0].get_absolute_url())
+
+
 @login_required
 def course_classroom(request, course_slug):
 

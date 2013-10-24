@@ -438,3 +438,11 @@ MATHJAX_CONFIG_DATA = {
         ]
     }
 }
+
+USE_INTERNAL_SERIALIZERS = True
+
+SERIALIZATION_MODULES = {
+    "xml"    : "deep_serialize.serializers.xml_serializer",
+    "python" : "deep_serialize.serializers.python",
+    "json"   : "deep_serialize.serializers.json",
+}

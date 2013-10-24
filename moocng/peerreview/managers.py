@@ -20,8 +20,7 @@ class PeerReviewAssignmentManager(models.Manager):
 
     def from_course(self, course):
         return self.get_query_set().filter(
-            kq__unit__course=course).order_by(
-                'kq__unit__order', 'kq__order')
+            kq__unit__course=course).order_by('kq__unit__order', 'kq__order')
 
     def visible_from_course(self, user, course):
         if user.is_superuser or user.is_staff:
@@ -33,3 +32,15 @@ class PeerReviewAssignmentManager(models.Manager):
                 Q(kq__unit__status='p') |
                 Q(kq__unit__status='l', kq__unit__course__courseteacher__teacher=user, kq__unit__course__courseteacher__course=course) |
                 Q(kq__unit__status='d', kq__unit__course__courseteacher__teacher=user, kq__unit__course__courseteacher__course=course)).distinct()
+
+    def get_by_natural_key(self, course_slug, unit_title, kq_title):
+        return self.get(kq__title=kq_title, kq__unit__title=unit_title, kq__unit__course__slug=course_slug)
+
+
+class EvaluationCriterionManager(models.Manager):
+
+    def get_by_natural_key(self, course_slug, unit_title, kq_title, title):
+        return self.get(assignment__kq__title=kq_title,
+                        assignment__kq__unit__title=unit_title,
+                        assignment__kq__unit__course__slug=course_slug,
+                        title=title)
