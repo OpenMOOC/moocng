@@ -373,6 +373,7 @@ ASSET_SLOT_GRANULARITY = 5  # Slot time of assets should be a multiple of this v
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
+LOGIN_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
