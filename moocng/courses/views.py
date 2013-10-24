@@ -209,10 +209,10 @@ def course_overview(request, course_slug):
 def course_clone(request, course_slug):
     from deep_serialize import Serializer
     from moocng.badges.models import Badge
-    from moocng.courses.models import Unit, KnowledgeQuantum, Question, Option
+    from moocng.courses.models import Unit, KnowledgeQuantum, Question, Option, Attachment
     from moocng.courses.serializer import (CourseClone, UnitClone, KnowledgeQuantumClone,
                                            BaseMetaWalkClass, QuestionClone, PeerReviewAssignmentClone,
-                                           EvaluationCriterionClone, OptionClone)
+                                           EvaluationCriterionClone, OptionClone, AttachmentClone)
     from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
     course = get_object_or_404(Course, slug=course_slug)
 
@@ -221,6 +221,7 @@ def course_clone(request, course_slug):
                        Badge: BaseMetaWalkClass,
                        Unit: UnitClone,
                        KnowledgeQuantum: KnowledgeQuantumClone,
+                       Attachment: AttachmentClone,
                        Question: QuestionClone,
                        Option: OptionClone,
                        PeerReviewAssignment: PeerReviewAssignmentClone,

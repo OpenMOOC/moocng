@@ -29,7 +29,7 @@ from tinymce.models import HTMLField
 
 from moocng.badges.models import Badge
 from moocng.courses.cache import invalidate_template_fragment
-from moocng.courses.managers import CourseManager, UnitManager, KnowledgeQuantumManager, QuestionManager, OptionManager
+from moocng.courses.managers import CourseManager, UnitManager, KnowledgeQuantumManager, QuestionManager, OptionManager, AttachmentManager
 from moocng.enrollment import enrollment_methods
 from moocng.mongodb import get_db
 from moocng.videos.tasks import process_video_task
@@ -430,6 +430,18 @@ class Attachment(models.Model):
                            verbose_name=_(u'Nugget'))
     attachment = models.FileField(verbose_name=_(u'Attachment'),
                                   upload_to='attachments')
+
+    objects = AttachmentManager()
+
+    class Meta:
+        verbose_name = _(u'attachment')
+        verbose_name_plural = _(u'attachments')
+
+    def __unicode__(self):
+        return self.attachment.name
+
+    def natural_key(self):
+        return (self.attachment.name,)
 
 
 class Question(models.Model):
