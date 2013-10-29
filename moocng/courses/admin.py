@@ -14,13 +14,20 @@
 
 import logging
 
+from functools import update_wrapper
+
+
 from django.conf.urls import patterns, url
 from django.contrib import admin
+from django.contrib import messages
 from django.contrib.admin.util import unquote
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 from django.template.response import TemplateResponse
 from django.utils import simplejson
 from django.utils.decorators import method_decorator
@@ -37,6 +44,7 @@ from moocng.courses.forms import UnitForm, AttachmentForm
 from moocng.courses.models import Course, Announcement, Unit, KnowledgeQuantum
 from moocng.courses.models import Question, Option, Attachment
 from moocng.courses.models import CourseTeacher
+from moocng.courses.utils import clone_course
 from moocng.courses.widgets import ImageReadOnlyWidget
 from moocng.videos.tasks import process_video_task
 
@@ -57,6 +65,35 @@ class CourseAdmin(SortableAdmin):
     exclude = ('students', 'teachers')
     raw_id_fields = ('owner',)
     autocomplete_lookup_fields = {'fk': ['owner'], }
+
+    def get_urls(self):
+        urlpatterns = super(CourseAdmin, self).get_urls()
+
+        def wrap(view):
+            def wrapper(*args, **kwargs):
+                return self.admin_site.admin_view(view)(*args, **kwargs)
+            return update_wrapper(wrapper, view)
+
+        urlpatterns = patterns('',
+            url(r'^(.+)/clone/$',
+                wrap(self.clone_course),
+                name='clone_course'),
+        ) + urlpatterns
+        return urlpatterns
+
+    def clone_course(self, request, object_id, form_url='', extra_context=None, action='clone'):
+        course = self.get_object(request, unquote(object_id))
+        if request.method == 'POST':
+            objs = clone_course(course, request)
+            messages.info(request, _('Created %s objects succesfully') % len(objs))
+            return HttpResponseRedirect(reverse('admin:courses_course_change', args=(objs[0].pk,)))
+        opts = self.model._meta
+        return render_to_response('admin/courses/course/clone_form.html',
+                                  {'original': course,
+                                   'app_label': opts.app_label,
+                                   'opts': opts,
+                                   'title': _('Clone WebSite')},
+                                  context_instance=RequestContext(request))
 
 
 class CourseTeacherAdmin(SortableAdmin):

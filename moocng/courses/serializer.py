@@ -4,14 +4,14 @@ from shutil import copyfile
 
 from django.conf import settings
 from django.core.files.storage import get_storage_class
-from deep_serialize import BaseMetaWalkClass, WALKING_STOP, ONLY_REFERENCE, WALKING_INTO_CLASS
+from deep_serializer import BaseMetaWalkClass, WALKING_STOP, ONLY_REFERENCE, WALKING_INTO_CLASS
 from moocng.slug import unique_slugify
 
 
 class CourseClone(BaseMetaWalkClass):
 
     @classmethod
-    def walking_into_class(cls, obj, field_name, model):
+    def walking_into_class(cls, initial_obj, obj, field_name, model, request=None):
         if field_name == 'teachers':
             obj._meta.get_field(field_name).rel.through._meta.auto_created = True
             return ONLY_REFERENCE
@@ -22,8 +22,8 @@ class CourseClone(BaseMetaWalkClass):
         return WALKING_INTO_CLASS
 
     @classmethod
-    def pre_serialize(cls, initial_obj, obj, request, options=None):
-        obj = super(CourseClone, cls).pre_serialize(initial_obj, obj, request, options=options)
+    def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
+        obj = super(CourseClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         obj.name = obj.name + ' (Copy)'
         unique_slugify(obj, obj.slug, exclude_instance=False)
         return obj
@@ -32,8 +32,8 @@ class CourseClone(BaseMetaWalkClass):
 class UnitClone(BaseMetaWalkClass):
 
     @classmethod
-    def pre_serialize(cls, initial_obj, obj, request, options=None):
-        obj = super(UnitClone, cls).pre_serialize(initial_obj, obj, request, options=options)
+    def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
+        obj = super(UnitClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         obj.course = initial_obj
         return obj
 
@@ -41,8 +41,8 @@ class UnitClone(BaseMetaWalkClass):
 class KnowledgeQuantumClone(BaseMetaWalkClass):
 
     @classmethod
-    def pre_serialize(cls, initial_obj, obj, request, options=None):
-        obj = super(KnowledgeQuantumClone, cls).pre_serialize(initial_obj, obj, request, options=options)
+    def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
+        obj = super(KnowledgeQuantumClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         obj.unit.course = initial_obj
         return obj
 
@@ -50,8 +50,8 @@ class KnowledgeQuantumClone(BaseMetaWalkClass):
 class QuestionClone(BaseMetaWalkClass):
 
     @classmethod
-    def pre_serialize(cls, initial_obj, obj, request, options=None):
-        obj = super(QuestionClone, cls).pre_serialize(initial_obj, obj, request, options=options)
+    def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
+        obj = super(QuestionClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         obj.kq.unit.course = initial_obj
         return obj
 
@@ -59,8 +59,8 @@ class QuestionClone(BaseMetaWalkClass):
 class OptionClone(BaseMetaWalkClass):
 
     @classmethod
-    def pre_serialize(cls, initial_obj, obj, request, options=None):
-        obj = super(OptionClone, cls).pre_serialize(initial_obj, obj, request, options=options)
+    def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
+        obj = super(OptionClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         obj.question.kq.unit.course = initial_obj
         return obj
 
@@ -68,8 +68,8 @@ class OptionClone(BaseMetaWalkClass):
 class AttachmentClone(QuestionClone):
 
     @classmethod
-    def pre_serialize(cls, initial_obj, obj, request, options=None):
-        obj = super(AttachmentClone, cls).pre_serialize(initial_obj, obj, request, options=options)
+    def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
+        obj = super(AttachmentClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         storage = get_storage_class()()
         attachment_name = storage.get_available_name(obj.attachment.name)
         if not hasattr(initial_obj, 'attachments'):
@@ -80,8 +80,8 @@ class AttachmentClone(QuestionClone):
         return obj
 
     @classmethod
-    def post_save(cls, initial_obj, obj):
-        super(AttachmentClone, cls).post_save(initial_obj, obj)
+    def post_save(cls, initial_obj, obj, request=None):
+        super(AttachmentClone, cls).post_save(initial_obj, obj, request=request)
         new_path = obj.attachment.path
         old_path = initial_obj.attachments[new_path]
         if os.path.exists(old_path) and settings.DEBUG:
@@ -95,7 +95,7 @@ class PeerReviewAssignmentClone(QuestionClone):
 class EvaluationCriterionClone(BaseMetaWalkClass):
 
     @classmethod
-    def pre_serialize(cls, initial_obj, obj, request, options=None):
-        obj = super(EvaluationCriterionClone, cls).pre_serialize(initial_obj, obj, request, options=options)
+    def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
+        obj = super(EvaluationCriterionClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         obj.assignment.kq.unit.course = initial_obj
         return obj

@@ -77,5 +77,6 @@ setup(
         'django-grappelli==2.4.4',
         'django-mathjax==0.0.1',
         'requests==1.2.0',
+        'django-deep-serializer==0.0.1'
         ],
 )

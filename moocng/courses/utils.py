@@ -17,13 +17,20 @@
 import logging
 
 from datetime import date
+from deep_serializer import serializer, deserializer
+
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.mail import EmailMessage, EmailMultiAlternatives, get_connection
 from django.template import loader
 
-from moocng.courses.models import Course
-
+from moocng.badges.models import Badge
+from moocng.courses.models import Course, Unit, KnowledgeQuantum, Question, Option, Attachment
+from moocng.courses.serializer import (CourseClone, UnitClone, KnowledgeQuantumClone,
+                                       BaseMetaWalkClass, QuestionClone, PeerReviewAssignmentClone,
+                                       EvaluationCriterionClone, OptionClone, AttachmentClone)
+from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
 
 logger = logging.getLogger(__name__)
 
@@ -125,3 +132,28 @@ def send_mass_mail_wrapper(subject, message, recipients, html_content=False):
         get_connection().send_messages(mails)
     except IOError as ex:
         logger.error('The massive email "%s" to %s could not be sent because of %s' % (subject, recipients, str(ex)))
+
+
+def clone_course(course, request):
+    """
+    Returns a clone of the course param and its relations
+    """
+    walking_classes = {Course: CourseClone,
+                       User: BaseMetaWalkClass,
+                       Badge: BaseMetaWalkClass,
+                       Unit: UnitClone,
+                       KnowledgeQuantum: KnowledgeQuantumClone,
+                       Attachment: AttachmentClone,
+                       Question: QuestionClone,
+                       Option: OptionClone,
+                       PeerReviewAssignment: PeerReviewAssignmentClone,
+                       EvaluationCriterion: EvaluationCriterionClone}
+    fixtures_format = 'json'
+    fixtures_json = serializer(fixtures_format,
+                               course, request=request,
+                               natural_keys=True,
+                               walking_classes=walking_classes)
+    objs = deserializer(fixtures_format,
+                        course, fixtures_json,
+                        walking_classes=walking_classes)
+    return objs
