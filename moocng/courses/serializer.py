@@ -5,6 +5,7 @@ from shutil import copyfile
 from django.conf import settings
 from django.core.files.storage import get_storage_class
 from deep_serializer import BaseMetaWalkClass, WALKING_STOP, ONLY_REFERENCE, WALKING_INTO_CLASS
+from deep_serializer.exceptions import update_the_serializer
 from moocng.slug import unique_slugify
 
 
@@ -12,14 +13,16 @@ class CourseClone(BaseMetaWalkClass):
 
     @classmethod
     def walking_into_class(cls, initial_obj, obj, field_name, model, request=None):
-        if field_name == 'teachers':
+        if field_name in ('students',):
+            return WALKING_STOP
+        elif field_name == 'teachers':
             obj._meta.get_field(field_name).rel.through._meta.auto_created = True
             return ONLY_REFERENCE
         elif field_name in ('owner', 'completion_badge'):
             return ONLY_REFERENCE
-        elif field_name in ('students',):
-            return WALKING_STOP
-        return WALKING_INTO_CLASS
+        elif field_name == 'unit':
+            return WALKING_INTO_CLASS
+        update_the_serializer(obj, field_name)
 
     @classmethod
     def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
@@ -37,6 +40,14 @@ class UnitClone(BaseMetaWalkClass):
         obj.course = initial_obj
         return obj
 
+    @classmethod
+    def walking_into_class(cls, initial_obj, obj, field_name, model, request=None):
+        if field_name == 'course':
+            return WALKING_STOP
+        elif field_name == 'knowledgequantum':
+            return WALKING_INTO_CLASS
+        update_the_serializer(obj, field_name)
+
 
 class KnowledgeQuantumClone(BaseMetaWalkClass):
 
@@ -45,6 +56,14 @@ class KnowledgeQuantumClone(BaseMetaWalkClass):
         obj = super(KnowledgeQuantumClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         obj.unit.course = initial_obj
         return obj
+
+    @classmethod
+    def walking_into_class(cls, initial_obj, obj, field_name, model, request=None):
+        if field_name == 'unit':
+            return ONLY_REFERENCE
+        elif field_name in ('attachment', 'question', 'peerreviewassignment'):
+            return WALKING_INTO_CLASS
+        update_the_serializer(obj, field_name)
 
 
 class QuestionClone(BaseMetaWalkClass):
@@ -55,6 +74,14 @@ class QuestionClone(BaseMetaWalkClass):
         obj.kq.unit.course = initial_obj
         return obj
 
+    @classmethod
+    def walking_into_class(cls, initial_obj, obj, field_name, model, request=None):
+        if field_name == 'kq':
+            return ONLY_REFERENCE
+        elif field_name == 'option':
+            return WALKING_INTO_CLASS
+        update_the_serializer(obj, field_name)
+
 
 class OptionClone(BaseMetaWalkClass):
 
@@ -64,8 +91,20 @@ class OptionClone(BaseMetaWalkClass):
         obj.question.kq.unit.course = initial_obj
         return obj
 
+    @classmethod
+    def walking_into_class(cls, initial_obj, obj, field_name, model, request=None):
+        if field_name == 'question':
+            return ONLY_REFERENCE
+        update_the_serializer(obj, field_name)
+
 
 class AttachmentClone(QuestionClone):
+
+    @classmethod
+    def walking_into_class(cls, initial_obj, obj, field_name, model, request=None):
+        if field_name == 'kq':
+            return ONLY_REFERENCE
+        update_the_serializer(obj, field_name)
 
     @classmethod
     def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
@@ -89,7 +128,14 @@ class AttachmentClone(QuestionClone):
 
 
 class PeerReviewAssignmentClone(QuestionClone):
-    pass
+
+    @classmethod
+    def walking_into_class(cls, initial_obj, obj, field_name, model, request=None):
+        if field_name == 'kq':
+            return ONLY_REFERENCE
+        elif field_name == 'criteria':
+            return WALKING_INTO_CLASS
+        update_the_serializer(obj, field_name)
 
 
 class EvaluationCriterionClone(BaseMetaWalkClass):
@@ -99,3 +145,9 @@ class EvaluationCriterionClone(BaseMetaWalkClass):
         obj = super(EvaluationCriterionClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         obj.assignment.kq.unit.course = initial_obj
         return obj
+
+    @classmethod
+    def walking_into_class(cls, initial_obj, obj, field_name, model, request=None):
+        if field_name == 'assignment':
+            return ONLY_REFERENCE
+        update_the_serializer(obj, field_name)
