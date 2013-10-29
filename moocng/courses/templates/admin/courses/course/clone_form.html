@@ -1,0 +1,42 @@
+{% extends "admin/base_site.html" %}
+
+{% load i18n admin_static admin_modify %}
+{% load url from future %}
+{% load admin_urls %}
+
+{% block extrahead %}
+    {{ block.super }}
+    {{ media }}
+    {{ form.media }}
+{% endblock %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />
+{% endblock %}
+
+{% block coltype %}
+    {% if ordered_objects %}colMS{% else %}colM{% endif %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+        <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+        &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ app_label|capfirst|escape }}</a>
+        &rsaquo; <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+        &rsaquo; <a href="../">{{ original|truncatewords:"18" }}</a>
+        &rsaquo; {% trans "Clone Course" %}
+    </div>
+{% endblock %}
+
+{% block content %}
+    <h2>{% trans "Are you sure that you want to clone this course?" %} <strong> {{ original }} </strong> </h2>
+    <div id="content-main">
+        <form action="." method="POST">
+            {% csrf_token %}
+            <div class="submit-row">
+                <input type="submit" name="submit" value="{% trans "Clone course" %}"/>
+            </div>
+        </form>
+    </div>
+{% endblock %}

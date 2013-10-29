@@ -91,7 +91,7 @@ class Course(Sortable):
         upload_to='certification_banners', blank=True, null=True)
     completion_badge = models.ForeignKey(
         Badge, blank=True, null=True, verbose_name=_(u'Completion badge'),
-        related_name='course', unique=True)
+        related_name='course')
     enrollment_method = models.CharField(
         verbose_name=_(u'Enrollment method'),
         choices=enrollment_methods.get_choices(),
