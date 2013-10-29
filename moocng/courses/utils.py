@@ -15,6 +15,8 @@
 # limitations under the License.
 
 import logging
+import json
+import os
 
 from datetime import date
 from deep_serializer import serializer, deserializer
@@ -156,4 +158,12 @@ def clone_course(course, request):
     objs = deserializer(fixtures_format,
                         course, fixtures_json,
                         walking_classes=walking_classes)
-    return objs
+    file_name = '%s_original_pk_%s_copy_pk_%s.json' % (course.slug_original,
+                                                       course.pk,
+                                                       objs[0].pk)
+    file_path = os.path.join(settings.MEDIA_ROOT, 'trace_clone_course', file_name)
+    f = open(file_path, 'w')
+    f.write(json.dumps(course.trace_ids, indent=4))
+    if request:
+        return objs, file_name
+    return objs, file_path

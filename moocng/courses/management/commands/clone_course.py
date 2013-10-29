@@ -41,6 +41,7 @@ class Command(BaseCommand):
         except Course.DoesNotExist:
             raise CommandError(u"Course %s does not exist" % options["course"])
 
-        objs = clone_course(course, request=None)
+        objs, file_path = clone_course(course, request=None)
         self.message("Created %s objects succesfully" % len(objs))
         self.message("The new course is pk=%s" % objs[0].pk)
+        self.message("You have a trace in %s" % file_path)

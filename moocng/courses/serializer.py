@@ -20,12 +20,35 @@ from shutil import copyfile
 
 from django.conf import settings
 from django.core.files.storage import get_storage_class
+from django.utils.datastructures import SortedDict
 from deep_serializer import BaseMetaWalkClass, WALKING_STOP, ONLY_REFERENCE, WALKING_INTO_CLASS
 from deep_serializer.exceptions import update_the_serializer
 from moocng.slug import unique_slugify
 
 
-class CourseClone(BaseMetaWalkClass):
+class TraceCourseId(BaseMetaWalkClass):
+
+    @classmethod
+    def pre_save(cls, initial_obj, obj, request=None):
+        super(TraceCourseId, cls).pre_save(initial_obj, obj, request=request)
+        if not hasattr(initial_obj, 'trace_ids'):
+            initial_obj.trace_ids = SortedDict({})
+            initial_obj.slug_original = initial_obj.__class__.objects.get(pk=initial_obj.pk).slug
+        model_name = obj.__class__.__name__
+        if not model_name in initial_obj.trace_ids:
+            initial_obj.trace_ids[model_name] = {}
+        natural_original_key = (initial_obj.slug_original,) + obj.natural_key()[1:]
+        initial_obj.last_id = obj.__class__.objects.get_by_natural_key(*natural_original_key).pk
+
+    @classmethod
+    def post_save(cls, initial_obj, obj, request=None):
+        super(TraceCourseId, cls).post_save(initial_obj, obj, request=request)
+        model_name = obj.__class__.__name__
+        initial_obj.trace_ids[model_name][initial_obj.last_id] = obj.pk
+        initial_obj.last_id = None
+
+
+class CourseClone(TraceCourseId):
 
     @classmethod
     def walking_into_class(cls, initial_obj, obj, field_name, model, request=None):
@@ -48,7 +71,7 @@ class CourseClone(BaseMetaWalkClass):
         return obj
 
 
-class UnitClone(BaseMetaWalkClass):
+class UnitClone(TraceCourseId):
 
     @classmethod
     def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
@@ -65,7 +88,7 @@ class UnitClone(BaseMetaWalkClass):
         update_the_serializer(obj, field_name)
 
 
-class KnowledgeQuantumClone(BaseMetaWalkClass):
+class KnowledgeQuantumClone(TraceCourseId):
 
     @classmethod
     def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
@@ -82,7 +105,7 @@ class KnowledgeQuantumClone(BaseMetaWalkClass):
         update_the_serializer(obj, field_name)
 
 
-class QuestionClone(BaseMetaWalkClass):
+class QuestionClone(TraceCourseId):
 
     @classmethod
     def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
@@ -99,7 +122,7 @@ class QuestionClone(BaseMetaWalkClass):
         update_the_serializer(obj, field_name)
 
 
-class OptionClone(BaseMetaWalkClass):
+class OptionClone(TraceCourseId):
 
     @classmethod
     def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
@@ -114,7 +137,7 @@ class OptionClone(BaseMetaWalkClass):
         update_the_serializer(obj, field_name)
 
 
-class AttachmentClone(QuestionClone):
+class AttachmentClone(BaseMetaWalkClass):
 
     @classmethod
     def walking_into_class(cls, initial_obj, obj, field_name, model, request=None):
@@ -143,7 +166,7 @@ class AttachmentClone(QuestionClone):
             copyfile(old_path, new_path)
 
 
-class PeerReviewAssignmentClone(QuestionClone):
+class PeerReviewAssignmentClone(BaseMetaWalkClass):
 
     @classmethod
     def walking_into_class(cls, initial_obj, obj, field_name, model, request=None):

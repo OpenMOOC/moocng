@@ -33,6 +33,7 @@ from django.utils import simplejson
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_unicode
 from django.utils.html import escape
+
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 
@@ -84,8 +85,9 @@ class CourseAdmin(SortableAdmin):
     def clone_course(self, request, object_id, form_url='', extra_context=None, action='clone'):
         course = self.get_object(request, unquote(object_id))
         if request.method == 'POST':
-            objs = clone_course(course, request)
+            objs, file_name = clone_course(course, request)
             messages.info(request, _('Created %s objects succesfully') % len(objs))
+            messages.info(request, _('You have a trace in %s') % file_name)
             return HttpResponseRedirect(reverse('admin:courses_course_change', args=(objs[0].pk,)))
         opts = self.model._meta
         return render_to_response('admin/courses/course/clone_form.html',
