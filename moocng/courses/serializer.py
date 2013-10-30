@@ -145,7 +145,7 @@ class OptionClone(TraceCourseId):
         update_the_serializer(obj, field_name)
 
 
-class AttachmentClone(BaseMetaWalkClass):
+class AttachmentClone(TraceCourseId):
 
     @classmethod
     def walking_into_class(cls, initial_obj, obj, field_name, model, request=None):
@@ -155,7 +155,7 @@ class AttachmentClone(BaseMetaWalkClass):
 
     @classmethod
     def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
-        obj = super(AttachmentClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
+        obj.kq.unit.course = initial_obj
         storage = get_storage_class()()
         attachment_name = storage.get_available_name(obj.attachment.name)
         if not hasattr(initial_obj, 'attachments'):
@@ -163,6 +163,7 @@ class AttachmentClone(BaseMetaWalkClass):
         attachment_path = os.path.join(settings.MEDIA_ROOT, attachment_name)
         initial_obj.attachments[attachment_path] = obj.attachment.path
         obj.attachment.name = attachment_name
+        obj = super(AttachmentClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         return obj
 
     @classmethod
@@ -170,11 +171,17 @@ class AttachmentClone(BaseMetaWalkClass):
         super(AttachmentClone, cls).post_save(initial_obj, obj, request=request)
         new_path = obj.attachment.path
         old_path = initial_obj.attachments[new_path]
-        if os.path.exists(old_path) and settings.DEBUG:
+        if os.path.exists(old_path) or not settings.DEBUG:
             copyfile(old_path, new_path)
 
 
-class PeerReviewAssignmentClone(BaseMetaWalkClass):
+class PeerReviewAssignmentClone(TraceCourseId):
+
+    @classmethod
+    def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
+        obj.kq.unit.course = initial_obj
+        obj = super(PeerReviewAssignmentClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
+        return obj
 
     @classmethod
     def walking_into_class(cls, initial_obj, obj, field_name, model, request=None):
@@ -185,12 +192,12 @@ class PeerReviewAssignmentClone(BaseMetaWalkClass):
         update_the_serializer(obj, field_name)
 
 
-class EvaluationCriterionClone(BaseMetaWalkClass):
+class EvaluationCriterionClone(TraceCourseId):
 
     @classmethod
     def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
-        obj = super(EvaluationCriterionClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         obj.assignment.kq.unit.course = initial_obj
+        obj = super(EvaluationCriterionClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         return obj
 
     @classmethod

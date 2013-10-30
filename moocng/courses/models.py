@@ -441,7 +441,7 @@ class Attachment(models.Model):
         return self.attachment.name
 
     def natural_key(self):
-        return (self.attachment.name,)
+        return self.kq.natural_key() + (self.attachment.name,)
 
 
 class Question(models.Model):

@@ -21,8 +21,8 @@ class KnowledgeQuantumManager(models.Manager):
 
 class AttachmentManager(models.Manager):
 
-    def get_by_natural_key(self, attachment_name):
-        return self.get(attachment=attachment_name)
+    def get_by_natural_key(self, course_slug, unit_title, kq_title, attachment_name):
+        return self.get(kq__title=kq_title, kq__unit__title=unit_title, kq__unit__course__slug=course_slug, attachment=attachment_name)
 
 
 class QuestionManager(models.Manager):

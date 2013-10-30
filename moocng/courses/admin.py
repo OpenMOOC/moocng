@@ -66,6 +66,7 @@ class CourseAdmin(SortableAdmin):
     exclude = ('students', 'teachers')
     raw_id_fields = ('owner',)
     autocomplete_lookup_fields = {'fk': ['owner'], }
+    search_fields = ('name', 'slug')
 
     def get_urls(self):
         urlpatterns = super(CourseAdmin, self).get_urls()
@@ -151,6 +152,10 @@ class AttachmentInline(admin.TabularInline):
     """
     model = Attachment
     form = AttachmentForm
+
+
+class AttachmentAdmin(admin.ModelAdmin):
+    pass
 
 
 class KnowledgeQuantumAdmin(SortableAdmin):
@@ -389,3 +394,4 @@ admin.site.register(Unit, UnitAdmin)
 admin.site.register(KnowledgeQuantum, KnowledgeQuantumAdmin)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Option, OptionAdmin)
+admin.site.register(Attachment, AttachmentAdmin)
