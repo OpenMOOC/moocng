@@ -32,9 +32,13 @@ from moocng.courses.models import Course, Unit, KnowledgeQuantum, Question, Opti
 from moocng.courses.serializer import (CourseClone, UnitClone, KnowledgeQuantumClone,
                                        BaseMetaWalkClass, QuestionClone, PeerReviewAssignmentClone,
                                        EvaluationCriterionClone, OptionClone, AttachmentClone)
+from moocng import mongodb
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
 
 logger = logging.getLogger(__name__)
+
+
+TRACE_CLONE_COURSE_DIR = 'trace_clone_course'
 
 
 def is_teacher(user, courses):
@@ -136,6 +140,16 @@ def send_mass_mail_wrapper(subject, message, recipients, html_content=False):
         logger.error('The massive email "%s" to %s could not be sent because of %s' % (subject, recipients, str(ex)))
 
 
+def get_trace_clone_file_name(original_course, copy_course):
+    return '%s_original_pk_%s_copy_pk_%s.json' % (original_course.slug,
+                                                  original_course.pk,
+                                                  copy_course.pk)
+
+
+def get_trace_clone_file_path(file_name):
+    return os.path.join(settings.MEDIA_ROOT, TRACE_CLONE_COURSE_DIR, file_name)
+
+
 def clone_course(course, request):
     """
     Returns a clone of the course param and its relations
@@ -158,12 +172,61 @@ def clone_course(course, request):
     objs = deserializer(fixtures_format,
                         course, fixtures_json,
                         walking_classes=walking_classes)
-    file_name = '%s_original_pk_%s_copy_pk_%s.json' % (course.slug_original,
-                                                       course.pk,
-                                                       objs[0].pk)
-    file_path = os.path.join(settings.MEDIA_ROOT, 'trace_clone_course', file_name)
+    course.slug = course.slug_original
+    file_name = get_trace_clone_file_name(course, objs[0])
+    file_path = get_trace_clone_file_path(file_name)
     f = open(file_path, 'w')
     f.write(json.dumps(course.trace_ids, indent=4))
     if request:
         return objs, file_name
     return objs, file_path
+
+
+def clone_activiy_user_course(original_course, copy_course, user):
+    file_name = get_trace_clone_file_name(original_course, copy_course)
+    file_path = get_trace_clone_file_path(file_name)
+    f = open(file_path)
+    trace_ids = json.loads(f.read())
+    f.close()
+    if not copy_course.pk == trace_ids['Course'][str(original_course.pk)]:
+        raise ValueError
+
+    mongo_db = mongodb.get_db()
+    activity = mongo_db.get_collection('activity')
+    activity_rows = activity.find({"user_id": user.pk,
+                                   "course_id": original_course.pk,
+                                   "kq_id": {"$type": 1},
+                                   "unit_id": {"$type": 1}})
+    new_activity_rows = []
+    for activity_row in activity_rows:
+        new_activity_row = {}
+        new_activity_row['user_id'] = user.pk
+        new_activity_row['course_id'] = copy_course.pk
+        new_activity_row['kq_id'] = trace_ids['KnowledgeQuantum'][str(int(activity_row['kq_id']))]
+        new_activity_row['unit_id'] = trace_ids['Unit'][str(int(activity_row['unit_id']))]
+        new_activity_rows.append(new_activity_row)
+    if new_activity_rows:
+        activity.insert(new_activity_rows)
+
+    answers = mongo_db.get_collection('answers')
+    answer_rows = answers.find({"user_id": user.pk,
+                                "course_id": original_course.pk,
+                                "question_id": {"$type": 1},
+                                "unit_id": {"$type": 1},
+                                "kq_id": {"$type": 1}})
+    new_answer_rows = []
+    for answer_row in answer_rows:
+        new_answer_row = {}
+        new_answer_row['user_id'] = user.pk
+        new_answer_row['course_id'] = copy_course.pk
+        new_answer_row['kq_id'] = trace_ids['KnowledgeQuantum'][str(int(answer_row['kq_id']))]
+        new_answer_row['question_id'] = trace_ids['Question'][str(int(answer_row['question_id']))]
+        new_answer_row['unit_id'] = trace_ids['Unit'][str(int(answer_row['unit_id']))]
+        replyList = answer_row['replyList']
+        for reply in replyList:
+            reply['option'] = trace_ids['Option'][str(int(reply['option']))]
+        new_answer_row['replyList'] = answer_row['replyList']
+        new_answer_rows.append(new_activity_row)
+    if new_answer_rows:
+        answers.insert(new_answer_rows)
+    return (new_activity_rows, new_answer_rows)
