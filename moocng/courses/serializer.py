@@ -29,6 +29,16 @@ from moocng.slug import unique_slugify
 class TraceCourseId(BaseMetaWalkClass):
 
     @classmethod
+    def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
+        if not hasattr(initial_obj, 'trace_natural_keys'):
+            initial_obj.trace_natural_keys = {}
+        model_name = obj.__class__.__name__
+        if not model_name in initial_obj.trace_natural_keys:
+            initial_obj.trace_natural_keys[model_name] = {}
+        initial_obj.trace_natural_keys[model_name][obj.natural_key()] = obj.pk
+        return obj
+
+    @classmethod
     def pre_save(cls, initial_obj, obj, request=None):
         super(TraceCourseId, cls).pre_save(initial_obj, obj, request=request)
         if not hasattr(initial_obj, 'trace_ids'):
@@ -37,15 +47,13 @@ class TraceCourseId(BaseMetaWalkClass):
         model_name = obj.__class__.__name__
         if not model_name in initial_obj.trace_ids:
             initial_obj.trace_ids[model_name] = {}
-        natural_original_key = (initial_obj.slug_original,) + obj.natural_key()[1:]
-        initial_obj.last_id = obj.__class__.objects.get_by_natural_key(*natural_original_key).pk
 
     @classmethod
     def post_save(cls, initial_obj, obj, request=None):
         super(TraceCourseId, cls).post_save(initial_obj, obj, request=request)
         model_name = obj.__class__.__name__
-        initial_obj.trace_ids[model_name][initial_obj.last_id] = obj.pk
-        initial_obj.last_id = None
+        obj_old_id = initial_obj.trace_natural_keys[model_name][obj.natural_key()]
+        initial_obj.trace_ids[model_name][obj_old_id] = obj.pk
 
 
 class CourseClone(TraceCourseId):
@@ -65,9 +73,9 @@ class CourseClone(TraceCourseId):
 
     @classmethod
     def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
-        obj = super(CourseClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         obj.name = obj.name + ' (Copy)'
         unique_slugify(obj, obj.slug, exclude_instance=False)
+        obj = super(CourseClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         return obj
 
 
@@ -75,8 +83,8 @@ class UnitClone(TraceCourseId):
 
     @classmethod
     def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
-        obj = super(UnitClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         obj.course = initial_obj
+        obj = super(UnitClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         return obj
 
     @classmethod
@@ -92,8 +100,8 @@ class KnowledgeQuantumClone(TraceCourseId):
 
     @classmethod
     def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
-        obj = super(KnowledgeQuantumClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         obj.unit.course = initial_obj
+        obj = super(KnowledgeQuantumClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         return obj
 
     @classmethod
@@ -109,8 +117,8 @@ class QuestionClone(TraceCourseId):
 
     @classmethod
     def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
-        obj = super(QuestionClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         obj.kq.unit.course = initial_obj
+        obj = super(QuestionClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         return obj
 
     @classmethod
@@ -126,8 +134,8 @@ class OptionClone(TraceCourseId):
 
     @classmethod
     def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
-        obj = super(OptionClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         obj.question.kq.unit.course = initial_obj
+        obj = super(OptionClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         return obj
 
     @classmethod
