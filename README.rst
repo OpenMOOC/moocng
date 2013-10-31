@@ -21,3 +21,9 @@ Copyright 2012-2013 Rooter Analysis S.L.
 
 Licensed under the `Apache License <http://www.apache.org/licenses/LICENSE-2.0>`_,
 Version 2.0.
+
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/OpenMOOC/moocng/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
+
