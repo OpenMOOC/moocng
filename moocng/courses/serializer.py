@@ -60,11 +60,8 @@ class CourseClone(TraceCourseId):
 
     @classmethod
     def walking_into_class(cls, initial_obj, obj, field_name, model, request=None):
-        if field_name in ('students',):
+        if field_name in ('students', 'teachers'):
             return WALKING_STOP
-        elif field_name == 'teachers':
-            obj._meta.get_field(field_name).rel.through._meta.auto_created = True
-            return ONLY_REFERENCE
         elif field_name in ('owner', 'completion_badge'):
             return ONLY_REFERENCE
         elif field_name == 'unit':
@@ -77,6 +74,25 @@ class CourseClone(TraceCourseId):
         unique_slugify(obj, obj.slug, exclude_instance=False)
         obj = super(CourseClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         return obj
+
+    @classmethod
+    def post_save(cls, initial_obj, obj, request=None):
+        super(CourseClone, cls).post_save(initial_obj, obj, request=request)
+        # Save the teachers
+        course_teachers = initial_obj.courseteacher_set.all()
+        CourseTeacher = initial_obj.courseteacher_set.model
+        primary_key_field = CourseTeacher._meta.pk
+        course_field = CourseTeacher._meta.get_field('course')
+        for course_teacher in course_teachers:
+            fields = {}
+            for field in course_teacher._meta.fields:
+                if field == primary_key_field:
+                    continue
+                elif field == course_field:
+                    fields[field.name] = obj
+                else:
+                    fields[field.name] = getattr(course_teacher, field.name)
+            CourseTeacher.objects.create(**fields)
 
 
 class UnitClone(TraceCourseId):
