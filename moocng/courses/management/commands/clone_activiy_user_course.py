@@ -69,6 +69,7 @@ class Command(BaseCommand):
         except Course.DoesNotExist:
             raise CommandError(u"Course %s does not exist" % options["copy_course"])
 
-        new_activity_rows, new_answer_rows = clone_activiy_user_course(original_course, copy_course, user)
-        self.message('Cloned %s activity objects' % len(new_activity_rows))
-        self.message('Cloned %s answer objects' % len(new_answer_rows))
+        inserted_activity_rows, inserted_answer_rows, updated_answer_docs = clone_activiy_user_course(original_course, copy_course, user)
+        self.message('Cloned %s activity objects' % len(inserted_activity_rows))
+        self.message('Cloned %s answer objects' % len(inserted_answer_rows))
+        self.message('Updated %s answer objects' % len(updated_answer_docs))

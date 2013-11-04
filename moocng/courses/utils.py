@@ -193,40 +193,62 @@ def clone_activiy_user_course(original_course, copy_course, user):
 
     mongo_db = mongodb.get_db()
     activity = mongo_db.get_collection('activity')
-    activity_rows = activity.find({"user_id": user.pk,
-                                   "course_id": original_course.pk,
-                                   "kq_id": {"$type": 1},
-                                   "unit_id": {"$type": 1}})
-    new_activity_rows = []
-    for activity_row in activity_rows:
-        new_activity_row = {}
-        new_activity_row['user_id'] = user.pk
-        new_activity_row['course_id'] = copy_course.pk
-        new_activity_row['kq_id'] = trace_ids['KnowledgeQuantum'][str(int(activity_row['kq_id']))]
-        new_activity_row['unit_id'] = trace_ids['Unit'][str(int(activity_row['unit_id']))]
-        new_activity_rows.append(new_activity_row)
-    if new_activity_rows:
-        activity.insert(new_activity_rows)
+    original_act_docs = activity.find({"user_id": user.pk,
+                                       "course_id": original_course.pk})
+    new_act_docs = []
+    for ori_act_doc in original_act_docs:
+        try:
+            ori_kq_id = str(int(ori_act_doc['kq_id']))
+            ori_unit_id = str(int(ori_act_doc['unit_id']))
+        except (ValueError, TypeError):
+            continue
+        new_act_doc = {}
+        new_act_doc['user_id'] = user.pk
+        new_act_doc['course_id'] = copy_course.pk
+        new_act_doc['kq_id'] = trace_ids['KnowledgeQuantum'][ori_kq_id]
+        new_act_doc['unit_id'] = trace_ids['Unit'][ori_unit_id]
+        exists_doc = activity.find(new_act_doc).count() > 0
+        if not exists_doc:
+            new_act_docs.append(new_act_doc)
+    if new_act_docs:
+        activity.insert(new_act_docs)
 
     answers = mongo_db.get_collection('answers')
-    answer_rows = answers.find({"user_id": user.pk,
-                                "course_id": original_course.pk,
-                                "question_id": {"$type": 1},
-                                "unit_id": {"$type": 1},
-                                "kq_id": {"$type": 1}})
-    new_answer_rows = []
-    for answer_row in answer_rows:
-        new_answer_row = {}
-        new_answer_row['user_id'] = user.pk
-        new_answer_row['course_id'] = copy_course.pk
-        new_answer_row['kq_id'] = trace_ids['KnowledgeQuantum'][str(int(answer_row['kq_id']))]
-        new_answer_row['question_id'] = trace_ids['Question'][str(int(answer_row['question_id']))]
-        new_answer_row['unit_id'] = trace_ids['Unit'][str(int(answer_row['unit_id']))]
-        replyList = answer_row['replyList']
+    original_answer_docs = answers.find({"user_id": user.pk,
+                                         "course_id": original_course.pk})
+    insert_answer_docs = []
+    update_answer_docs = {}
+    for answer_doc in original_answer_docs:
+        try:
+            ori_kq_id = str(int(answer_doc['kq_id']))
+            ori_question_id = str(int(answer_doc['question_id']))
+            ori_unit_id = str(int(answer_doc['unit_id']))
+        except (ValueError, TypeError):
+            continue
+        new_answer_doc = {}
+        new_answer_doc['user_id'] = user.pk
+        new_answer_doc['course_id'] = copy_course.pk
+        new_answer_doc['kq_id'] = trace_ids['KnowledgeQuantum'][ori_kq_id]
+        new_answer_doc['question_id'] = trace_ids['Question'][ori_question_id]
+        new_answer_doc['unit_id'] = trace_ids['Unit'][ori_unit_id]
+        exists_doc_without_reply = answers.find_one(new_answer_doc)
+        replyList = answer_doc['replyList']
+        if not isinstance(replyList, list):
+            continue
         for reply in replyList:
             reply['option'] = trace_ids['Option'][str(int(reply['option']))]
-        new_answer_row['replyList'] = answer_row['replyList']
-        new_answer_rows.append(new_activity_row)
-    if new_answer_rows:
-        answers.insert(new_answer_rows)
-    return (new_activity_rows, new_answer_rows)
+        new_answer_doc['replyList'] = answer_doc['replyList']
+        exists_doc = answers.find_one(new_answer_doc)
+        if not exists_doc_without_reply:
+            new_answer_doc['date'] = answer_doc['date']
+            insert_answer_docs.append(new_answer_doc)
+        elif exists_doc_without_reply and not exists_doc:
+            update_answer_docs[exists_doc_without_reply['_id']] = new_answer_doc
+    if insert_answer_docs:
+        answers.insert(insert_answer_docs)
+    if update_answer_docs:
+        for _id, update_answer_doc in update_answer_docs.items():
+            answers.update({'_id': _id},
+                           {'$set': {'replyList': update_answer_doc['replyList']}},
+                           upsert=True)
+    return (new_act_docs, insert_answer_docs, update_answer_docs)
