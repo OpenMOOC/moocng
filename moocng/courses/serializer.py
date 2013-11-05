@@ -71,6 +71,7 @@ class CourseClone(TraceCourseId):
     @classmethod
     def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
         obj.name = obj.name + ' (Copy)'
+        obj.status = 'd'
         unique_slugify(obj, obj.slug, exclude_instance=False)
         obj = super(CourseClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         return obj
