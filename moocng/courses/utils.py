@@ -146,8 +146,12 @@ def get_trace_clone_file_name(original_course, copy_course):
                                                   copy_course.pk)
 
 
+def get_trace_clone_dir_path():
+    return os.path.join(settings.MEDIA_ROOT, TRACE_CLONE_COURSE_DIR)
+
+
 def get_trace_clone_file_path(file_name):
-    return os.path.join(settings.MEDIA_ROOT, TRACE_CLONE_COURSE_DIR, file_name)
+    return os.path.join(get_trace_clone_dir_path(), file_name)
 
 
 def clone_course(course, request):
@@ -175,6 +179,9 @@ def clone_course(course, request):
                         initial_obj=course,
                         walking_classes=walking_classes)
     course.slug = course.slug_original
+    dir_path = get_trace_clone_dir_path()
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
     file_name = get_trace_clone_file_name(course, objs[0])
     file_path = get_trace_clone_file_path(file_name)
     f = open(file_path, 'w')
