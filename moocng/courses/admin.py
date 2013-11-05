@@ -95,7 +95,7 @@ class CourseAdmin(SortableAdmin):
                                   {'original': course,
                                    'app_label': opts.app_label,
                                    'opts': opts,
-                                   'title': _('Clone WebSite')},
+                                   'title': _('Clone Course')},
                                   context_instance=RequestContext(request))
 
 
