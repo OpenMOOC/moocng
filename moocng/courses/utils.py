@@ -166,11 +166,13 @@ def clone_course(course, request):
                        EvaluationCriterion: EvaluationCriterionClone}
     fixtures_format = 'json'
     fixtures_json = serializer(fixtures_format,
-                               course, request=request,
+                               initial_obj=course,
+                               walking_classes=walking_classes,
                                natural_keys=True,
-                               walking_classes=walking_classes)
+                               request=request)
     objs = deserializer(fixtures_format,
-                        course, fixtures_json,
+                        fixtures_json,
+                        initial_obj=course,
                         walking_classes=walking_classes)
     course.slug = course.slug_original
     file_name = get_trace_clone_file_name(course, objs[0])
