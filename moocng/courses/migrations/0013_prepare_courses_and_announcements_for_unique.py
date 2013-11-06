@@ -165,6 +165,8 @@ class Migration(DataMigration):
             'learning_goals': ('tinymce.models.HTMLField', [], {'blank': 'True'}),
             'max_reservations_pending': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '8'}),
             'max_reservations_total': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '8'}),
+            'max_reservations_pending': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '8'}),
+            'max_reservations_total': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '8'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'order': ('django.db.models.fields.PositiveIntegerField', [], {'default': '1', 'db_index': 'True'}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'courses_as_owner'", 'to': "orm['auth.User']"}),

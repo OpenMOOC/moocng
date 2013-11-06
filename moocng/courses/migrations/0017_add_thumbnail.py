@@ -70,7 +70,7 @@ class Migration(SchemaMigration):
             'course': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['courses.Course']"}),
             'datetime': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '200'})
         },
         'courses.attachment': {
@@ -91,6 +91,8 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'intended_audience': ('tinymce.models.HTMLField', [], {'null': 'True', 'blank': 'True'}),
             'learning_goals': ('tinymce.models.HTMLField', [], {'blank': 'True'}),
+            'max_reservations_pending': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '8'}),
+            'max_reservations_total': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '8'}),
             'thumbnail': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'order': ('django.db.models.fields.PositiveIntegerField', [], {'default': '1', 'db_index': 'True'}),
@@ -98,8 +100,9 @@ class Migration(SchemaMigration):
             'promotion_media_content_id': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'promotion_media_content_type': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'requirements': ('tinymce.models.HTMLField', [], {'blank': 'True'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'}),
             'start_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'static_page': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['courses.StaticPage']", 'unique': 'True', 'null': 'True', 'blank': 'True'}),
             'status': ('django.db.models.fields.CharField', [], {'default': "'d'", 'max_length': '10'}),
             'students': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'courses_as_student'", 'blank': 'True', 'to': "orm['auth.User']"}),
             'teachers': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'courses_as_teacher'", 'symmetrical': 'False', 'through': "orm['courses.CourseTeacher']", 'to': "orm['auth.User']"}),
@@ -146,6 +149,12 @@ class Migration(SchemaMigration):
             'solution_media_content_type': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True'}),
             'solution_text': ('tinymce.models.HTMLField', [], {'blank': 'True'}),
             'use_last_frame': ('django.db.models.fields.BooleanField', [], {'default': 'True'})
+        },
+        'courses.staticpage': {
+            'Meta': {'object_name': 'StaticPage'},
+            'body': ('tinymce.models.HTMLField', [], {'blank': 'True', 'null': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True', 'null': 'True'})
         },
         'courses.unit': {
             'Meta': {'ordering': "['order']", 'object_name': 'Unit'},
