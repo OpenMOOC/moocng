@@ -10,11 +10,17 @@
 
 {% block content %}
     <p class="mb20">
-        <big>{% blocktrans with first_name=user.first_name last_name=user.last_name %}The user "<b>{{ first_name }} {{ last_name }}</b>" has the following awards:{% endblocktrans %}
-    </big>
-        <a class="pull-right btn" href="https://backpack.openbadges.org" target="_blank"><i class="icon-openbadges"></i> {% trans "Open Mozilla Backpack" %}</a>
+        <big>
+            {% blocktrans with first_name=user.first_name last_name=user.last_name %}The user "<b>{{ first_name }} {{ last_name }}</b>" has the following awards:{% endblocktrans %}
+        </big>
+        <a class="pull-right btn" href="https://backpack.openbadges.org" target="_blank">
+            <i class="icon-openbadges"></i> {% trans "Open Mozilla Backpack" %}
+        </a>
     </p>
-
+    <div class="alert alert-info">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {% blocktrans with username=user.username %}You should have a <a href="http://persona.org"> Mozilla Persona </a> account with this email: {{ username }}{% endblocktrans %}
+    </div>
     {% for award in award_list %}
         <div class="row box box-award">
             <div class="span1">

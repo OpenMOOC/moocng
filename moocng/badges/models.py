@@ -16,6 +16,8 @@
 
 # It uses code from https://github.com/lmorchard/django-badger
 # Copyright (c) 2011, Mozilla    BSD 3-Clause License
+import hashlib
+import uuid
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -27,12 +29,11 @@ from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 from django.contrib.sites.models import Site
-import hashlib
-import uuid
 
 
 def validate_png_image(value):
-    if value.file.content_type != 'image/png':
+    # The value.file has content_type attr only if you are sending a image
+    if hasattr(value.file, 'content_type') and value.file.content_type != 'image/png':
         raise ValidationError(_(u'The image is not a png'))
 
 

@@ -1,42 +1,24 @@
 # -*- coding: utf-8 -*-
-import uuid
-import hashlib
-
 from south.v2 import DataMigration
+from django.core.urlresolvers import reverse
+
+
+def build_absolute_url(url, orm):
+    current_site = orm['sites.site'].objects.get(id=1)
+    return 'https://%s%s' % (current_site.domain, url)
 
 
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        for award in orm['badges.Award'].objects.all():
-            user = award.user
-            try:
-                user.identity
-                current_identity_hash = user.identity.identity_hash
-                new_candidate_identity_hash = u'sha256$' + hashlib.sha256(user.email + user.identity.salt).hexdigest()
-                if current_identity_hash != new_candidate_identity_hash:
-                    salt = uuid.uuid4().hex[:5]
-                    user.identity.salt = salt
-                    user.identity.identity_hash = u'sha256$' + hashlib.sha256(user.email + salt).hexdigest()
-                    user.identity.save()
-            except:
-                salt = uuid.uuid4().hex[:5]
-                orm['badges.Identity'].objects.create(
-                    user=user,
-                    identity_hash=u'sha256$' + hashlib.sha256(user.email + salt).hexdigest(),
-                    salt=salt
-                )
-            award.uuid = uuid.uuid1()
-            award.identity_hash = award.user.identity.identity_hash
-            award.identity_type = award.user.identity.type
-            award.identity_hashed = award.user.identity.hashed
-            award.identity_salt = award.user.identity.salt
-            award.expires = None
-            award.save()
+        "Write your forwards methods here."
+        url_criteria = build_absolute_url(reverse('score'), orm)
+        for badge in orm['badges.Badge'].objects.all():
+            badge.criteria = url_criteria
+            badge.save()
 
     def backwards(self, orm):
-        # Not needed
-        pass
+        "Write your backwards methods here."
 
     models = {
         'auth.group': {
@@ -88,7 +70,7 @@ class Migration(DataMigration):
             'identity_type': ('django.db.models.fields.CharField', [], {'default': "'email'", 'max_length': '255', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'user_awards'", 'to': "orm['auth.User']"}),
-            'uuid': ('django.db.models.fields.CharField', [], {'default': "'b33e1ff2-3712-11e3-b75c-ac81126ee5f9'", 'max_length': '255', 'db_index': 'True'})
+            'uuid': ('django.db.models.fields.CharField', [], {'default': "'2407e0ac-46cb-11e3-9a39-5254005b224c'", 'max_length': '255', 'db_index': 'True'})
         },
         'badges.badge': {
             'Meta': {'ordering': "['-modified', '-created']", 'object_name': 'Badge'},
@@ -129,8 +111,14 @@ class Migration(DataMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+        },
+        'sites.site': {
+            'Meta': {'ordering': "('domain',)", 'object_name': 'Site', 'db_table': "'django_site'"},
+            'domain': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         }
     }
 
-    complete_apps = ['badges']
+    complete_apps = ['sites', 'badges']
     symmetrical = True

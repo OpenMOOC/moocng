@@ -45,6 +45,7 @@ class AwardAdmin(admin.ModelAdmin):
     raw_id_fields = ('user',)
     autocomplete_lookup_fields = {'fk': ['user']}
     list_display = ('user', 'badge', show_image, 'awarded', 'revoked')
+    search_fields = ('uuid', 'user__username')
 
 
 class RevocationAdmin(admin.ModelAdmin):
@@ -66,6 +67,7 @@ class TagAdmin(admin.ModelAdmin):
 
 class IdentityAdmin(admin.ModelAdmin):
     model = Identity
+    search_fields = ('user__username', )
     raw_id_fields = ('user',)
     autocomplete_lookup_fields = {'fk': ['user']}
     list_display = ('user', 'type', 'identity_hash', 'hashed', 'salt')
