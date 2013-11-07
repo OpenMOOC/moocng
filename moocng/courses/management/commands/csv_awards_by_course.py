@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2012-2013 Rooter Analysis S.L.
+# Copyright 2013 UNED
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,20 +22,15 @@ from zipfile import ZipFile, ZipInfo
 
 from django.core.management.base import BaseCommand, CommandError
 
+from moocng.badges.models import Award
 from moocng.courses.models import Course
 
 
 class Command(BaseCommand):
 
-    help = ("create a zip bundle with csv files with students (firt_name, "
-            "last_name, email)")
+    help = ("create a zip bundle with csv files with asigned badges per course")
 
     option_list = BaseCommand.option_list + (
-        make_option('-c', '--course',
-                    action='append',
-                    dest='courses',
-                    default=[],
-                    help='Only list this courses (can repeat this param)'),
         make_option('-f', '--filename',
                     action='store',
                     dest='filename',
@@ -54,11 +49,7 @@ class Command(BaseCommand):
         if not options["filename"]:
             raise CommandError("-f filename.zip is required")
 
-        if options["courses"]:
-            courses = options["courses"]
-            courses = Course.objects.filter(slug__in=options["courses"])
-        else:
-            courses = Course.objects.all()
+        courses = Course.objects.all()
 
         if not courses:
             raise CommandError("Courses not found")
@@ -72,30 +63,30 @@ class Command(BaseCommand):
 
         zip = ZipFile(self.filename, mode="w")
 
+        awards_file = StringIO.StringIO()
+
+        awards_csv = csv.writer(awards_file, quoting=csv.QUOTE_ALL)
+        headers = ["Course", "Badge", "Number of awards"]
+        awards_csv.writerow(headers)
+
         for course in courses:
-            self.message("Adding course file %s.csv" % course.slug)
+            self.message("Calculatiing awards for course %s" % course.slug)
 
-            course_file = StringIO.StringIO()
+            awards_counter = 0
+            badge_name = u''
+            if not course.completion_badge is None:
+                awards_counter = Award.objects.filter(badge=course.completion_badge).count()
+                badge_name = h.unescape(course.completion_badge.title.encode("ascii", "ignore"))
+            row = []
+            row.append(h.unescape(course.name.encode("ascii", "ignore")))
+            row.append(badge_name)
+            row.append(awards_counter)
+            awards_csv.writerow(row)
 
-            course_csv = csv.writer(course_file, quoting=csv.QUOTE_ALL)
-            headers = ["first_name", "last_name", "email"]
-
-            course_csv.writerow(headers)
-            for student in course.students.all():
-                row = []
-                for field in headers:
-                    fieldvalue = getattr(student, field)
-                    row.append(h.unescape(fieldvalue).encode("ascii", "ignore"))
-                course_csv.writerow(row)
-
-            course_fileinfo = ZipInfo("%s.csv" % course.slug)
-
-            course_file.seek(0)
-
-            zip.writestr(course_fileinfo, course_file.read())
-
-            course_file.close()
-
+        awards_file.seek(0)
+        awards_fileinfo = ZipInfo("awards.csv")
+        zip.writestr(awards_fileinfo, awards_file.read())
+        awards_file.close()
         zip.close()
 
         self.message("Created %s file" % self.filename)
