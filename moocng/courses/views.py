@@ -358,7 +358,7 @@ def announcement_detail(request, course_slug, announcement_id, announcement_slug
 
 
 @login_required
-def transcript(request):
+def transcript(request, course_slug=None):
 
     """
     Transcript is the main view of the user progress, here the user is show with
@@ -371,6 +371,9 @@ def transcript(request):
     .. versionadded:: 0.1
     """
     course_list = request.user.courses_as_student.all()
+    if course_slug:
+        course = get_object_or_404(Course, slug=course_slug)
+        course_list = course_list.filter(slug=course_slug)
     courses_info = []
     cert_url = ''
     for course in course_list:
@@ -410,4 +413,5 @@ def transcript(request):
         })
     return render_to_response('courses/transcript.html', {
         'courses_info': courses_info,
+        'course_slug': course_slug,
     }, context_instance=RequestContext(request))

@@ -64,7 +64,15 @@
         {% endif %}
     </div>
     {% empty %}
-      <p><b>{% trans "You are not enrolled in any course" %}</b></p>
+      <p>
+        <b>
+            {% if course_slug %}
+                {% trans "You are not enrolled in this course" %}
+            {% else %}
+                {% trans "You are not enrolled in any course" %}
+            {% endif %}
+        </b>
+      </p>
     {% endfor %}
 
   </section>
