@@ -37,7 +37,7 @@ def kq_type(kq):
 
 def calculate_all_stats(user_objects=User.objects,
                         kq_objects=KnowledgeQuantum.objects, callback=None,
-                        course_blacklist=[], student_batch=5000):
+                        course_blacklist=None, student_batch=5000):
 
     counter = 0
     lower = 0
