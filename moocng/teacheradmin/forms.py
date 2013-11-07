@@ -1,4 +1,5 @@
-# Copyright 2012 Rooter Analysis S.L.
+# -*- coding: utf-8 -*-
+# Copyright 2012-2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,19 +14,19 @@
 # limitations under the License.
 
 from django import forms
+from django.core.files.images import get_image_dimensions
 from django.utils.translation import ugettext_lazy as _
 
 from tinymce.widgets import TinyMCE
 
 from moocng.courses.forms import AnnouncementForm as CoursesAnnouncementForm
-from moocng.courses.models import Course
+from moocng.courses.models import Course, StaticPage
 from moocng.forms import (BootstrapMixin, BootstrapClearableFileInput,
                           HTML5DateInput, BootstrapInlineRadioSelect)
 from moocng.teacheradmin.models import MassiveEmail
 from moocng.media_contents import media_content_extract_id
 
 from moocng.assets.models import Asset
-from moocng.assets.forms import AssetForm
 
 
 class CourseForm(forms.ModelForm):
@@ -36,8 +37,13 @@ class CourseForm(forms.ModelForm):
 
     :returns: HTML Form
 
-    ..versionadded:: 0.1        
+    ..versionadded:: 0.1
     """
+    error_messages = {
+        'invalid_image': _('Image must be {0}px x {1}px').format(Course.THUMBNAIL_WIDTH, Course.THUMBNAIL_HEIGHT),
+    }
+
+
     class Meta:
         model = Course
         exclude = ('slug', 'teachers', 'owner', 'students')
@@ -76,8 +82,24 @@ class CourseForm(forms.ModelForm):
             raise forms.ValidationError(_('You must select a content type or remove the content id'))
         return content_type
 
+    def clean_thumbnail(self):
+        thumbnail = self.cleaned_data.get("thumbnail")
+        if thumbnail:
+            w, h = get_image_dimensions(thumbnail)
+            if w < Course.THUMBNAIL_WIDTH or h < Course.THUMBNAIL_HEIGHT:
+                raise forms.ValidationError(self.error_messages['invalid_image'])
+        return thumbnail
 
 class AnnouncementForm(CoursesAnnouncementForm, BootstrapMixin):
+
+    """
+    Announcement form. Inherits from CoursesAnnouncementForm and adds a send_email
+    field.
+
+    :returns: HTML Form
+
+    .. versionadded:: 0.1
+    """
 
     send_email = forms.BooleanField(
         required=False,
@@ -89,6 +111,13 @@ class AnnouncementForm(CoursesAnnouncementForm, BootstrapMixin):
 
 class AssetTeacherForm(forms.ModelForm, BootstrapMixin):
 
+    """
+    AssetTeacher model form
+
+    :returns: HTML Form
+
+    .. versionadded:: 0.1
+    """
     class Meta:
         model = Asset
         exclude = ('slot_duration', 'max_bookable_slots', 'reservation_in_advance',
@@ -97,6 +126,13 @@ class AssetTeacherForm(forms.ModelForm, BootstrapMixin):
 
 class MassiveEmailForm(forms.ModelForm, BootstrapMixin):
 
+    """
+    Massive email model form. Adapts subject and message fields size.
+
+    :returns: HTML Form
+
+    .. versionadded:: 0.1
+    """
     class Meta:
         model = MassiveEmail
         exclude = ('course', )
@@ -104,3 +140,23 @@ class MassiveEmailForm(forms.ModelForm, BootstrapMixin):
             'subject': forms.TextInput(attrs={'class': 'input-xxlarge'}),
             'message': TinyMCE(attrs={'class': 'input-xxlarge'}),
         }
+
+
+class StaticPageForm(forms.ModelForm, BootstrapMixin):
+
+    class Meta:
+        model = StaticPage
+        include = ('title', 'body',)
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'input-xxlarge'}),
+            'body': TinyMCE(attrs={'class': 'input-xxlarge'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(StaticPageForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            widget = field.widget
+            if isinstance(widget, (forms.widgets.TextInput, forms.widgets.DateInput)):
+                widget.attrs['class'] = 'input-xxlarge'
+            elif isinstance(widget, forms.widgets.Textarea):
+                widget.mce_attrs['width'] = '780'  # bootstrap span10

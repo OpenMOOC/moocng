@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load i18n askboturl peer_review_tags asset_tags %}
+{% load i18n peer_review_tags asset_tags externalapps %}
 
 {% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
 
@@ -16,8 +16,8 @@
     <a href="{% url course_classroom course.slug %}">{% trans "Classes" %}</a>
   </li>
 
-  <li {% block nav-course-discussion %}{% endblock %}>
-    <a href="{% askboturl course.slug %}">{% trans "Discussion" %}</a>
+  <li {% block nav-course-externalapps %}{% endblock %}>
+     {% externalapps_list %}
   </li>
 
   {% if_has_peer_review_assignments course %}

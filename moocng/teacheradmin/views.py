@@ -1,4 +1,5 @@
-# Copyright 2012 Rooter Analysis S.L.
+# -*- coding: utf-8 -*-
+# Copyright 2012-2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,7 +36,8 @@ from moocng.mongodb import get_db
 from moocng.portal.templatetags.gravatar import gravatar_img_for_email
 from moocng.teacheradmin.decorators import is_teacher_or_staff
 from moocng.teacheradmin.forms import (CourseForm, AnnouncementForm,
-                                       MassiveEmailForm, AssetTeacherForm)
+                                       MassiveEmailForm, AssetTeacherForm,
+                                       StaticPageForm)
 from moocng.teacheradmin.models import Invitation, MassiveEmail
 from moocng.teacheradmin.tasks import send_massive_email_task
 from moocng.teacheradmin.utils import (send_invitation,
@@ -44,6 +46,7 @@ from moocng.videos.tasks import process_video_task
 
 from moocng.assets.utils import course_get_assets
 from moocng.assets.models import Asset
+from moocng.externalapps.models import externalapps
 
 
 @is_teacher_or_staff
@@ -429,11 +432,18 @@ def teacheradmin_teachers_reorder(request, course_slug):
 def teacheradmin_info(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     is_enrolled = course.students.filter(id=request.user.id).exists()
+    external_apps = externalapps.all()
 
     if request.method == 'POST':
         form = CourseForm(data=request.POST, files=request.FILES, instance=course)
-        if form.is_valid():
-            form.save()
+        static_page_form = StaticPageForm(data=request.POST, instance=course.static_page)
+        if form.is_valid() and static_page_form.is_valid():
+            static_page = static_page_form.save(commit=False)
+            static_page.save()
+            course = form.save(commit=False)
+            course.static_page = static_page
+            course.save()
+
             messages.success(request, _(u"Your changes were saved."))
 
             return HttpResponseRedirect(reverse('teacheradmin_info',
@@ -442,11 +452,14 @@ def teacheradmin_info(request, course_slug):
             messages.error(request, _(u"There were problems with some data you introduced, please fix them and try again."))
     else:
         form = CourseForm(instance=course)
+        static_page_form = StaticPageForm(instance=course.static_page)
 
     return render_to_response('teacheradmin/info.html', {
         'course': course,
         'is_enrolled': is_enrolled,
         'form': form,
+        'static_page_form': static_page_form,
+        'external_apps': external_apps,
     }, context_instance=RequestContext(request))
 
 

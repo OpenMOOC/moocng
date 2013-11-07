@@ -13,9 +13,13 @@ middleware here, or combine a Django application with an application of another
 framework.
 
 """
-import os
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "moocng.settings")
+import os
+import sys
+
+
+sys.path.insert(0, '/etc/openmooc/moocng/')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "moocngsettings")
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
@@ -31,11 +35,6 @@ warnings.simplefilter("ignore")
 # from helloworld.wsgi import HelloWorldApplication
 # application = HelloWorldApplication(application)
 def application(environ, start_response):
-    virtualenv = environ.get('VIRTUALENV', None)
-    if virtualenv is not None:
-        activate_this = os.path.join(virtualenv, 'bin', 'activate_this.py')
-        execfile(activate_this, dict(__file__=activate_this))
-
     from django.core.wsgi import get_wsgi_application
     django_app = get_wsgi_application()
     return django_app(environ, start_response)

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
+{% block extrajs %}
+    <script src="//{{ openbadges_service_url }}/issuer.js"></script>
+    <script src="{{ STATIC_URL }}js/badges.js"></script>
+{% endblock %}
+
+{% block content %}
+    <p class="mb20">
+        <big>
+            {% blocktrans with first_name=user.first_name last_name=user.last_name %}The user "<b>{{ first_name }} {{ last_name }}</b>" has the following awards:{% endblocktrans %}
+        </big>
+        <a class="pull-right btn" href="https://backpack.openbadges.org" target="_blank">
+            <i class="icon-openbadges"></i> {% trans "Open Mozilla Backpack" %}
+        </a>
+    </p>
+    <div class="alert alert-info">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {% blocktrans with username=user.username %}You should have a <a href="http://persona.org"> Mozilla Persona </a> account with this email: {{ username }}{% endblocktrans %}
+    </div>
+    {% for award in award_list %}
+        <div class="row box box-award">
+            <div class="span1">
+                <img src="{{ award.badge.image.url }}" alt="{{ award.badge.title }}" title="{{ award.badge.title }}" width="50" height="50" class="award" />
+            </div>
+            <div class="span10">
+                <p>
+                    <a class="btn" href="{{ award.get_image_url }}"><i class="icon-download-alt"></i> {% trans "Download Badge" %}</a>
+                    <a href="#" class="btn publish-badge" rel="{{ award.get_absolute_url }}"><i class="icon-share"></i> {% trans "Send to Mozilla Backpack" %}</a>
+                </p>
+
+                {% if award.badge.description %}
+                    <p class="mb0">{{ award.badge.description }}</p>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <div class="alert">
+            <strong>{% trans "You haven't earned badges yet." %}</strong>
+        </div>
+    {% endfor %}
+{% endblock %}

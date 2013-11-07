@@ -1,4 +1,5 @@
-# Copyright 2013 Rooter Analysis S.L.
+# -*- coding: utf-8 -*-
+# Copyright 2012-2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -50,6 +51,13 @@ def massmail_send_in_batches(massiveemail, email_send_task):
 
 @task
 def send_massive_email_task(email_id, students_ids):
+
+    """
+    Calls send_mass_mail_wrapper to create a new email task that should be handled
+    by celery/rabbitmq.
+
+    .. versionadded:: 0.1
+    """
     from moocng.teacheradmin.models import MassiveEmail
     try:
         email = MassiveEmail.objects.get(id=email_id)

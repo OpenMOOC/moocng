@@ -42,10 +42,13 @@
 
         {% if course_info.award %}
             <p>{% trans "Congratulations, you have completed" %} "{{ course_info.course.name }}". {% trans "Here is a badge!" %}</p>
-            <p>
-                <img src="{{ course_info.award.get_image_url }}" alt="{{ course_info.award.badge.title }}" title="{{ course_info.award.badge.title }}" width="50" height="50" class="award" />
-                <code>{{ course_info.award.get_image_public_url }}</code>
-            </p>
+            <div class="row">
+                <div class="span1">
+                    <img src="{{ course_info.award.get_image_url }}" alt="{{ course_info.award.badge.title }}" title="{{ course_info.award.badge.title }}" width="50" height="50" class="award" />
+                </div><div class="span10">
+                    <pre>&lt;img src="{{ course_info.award.get_image_public_url }}" /&gt;</pre>
+                </div>
+            </div>
         {% endif %}
 
         {% if course_info.course.certification_available %}
@@ -61,7 +64,15 @@
         {% endif %}
     </div>
     {% empty %}
-      <p><b>{% trans "You are not enrolled in any course" %}</b></p>
+      <p>
+        <b>
+            {% if course_slug %}
+                {% trans "You are not enrolled in this course" %}
+            {% else %}
+                {% trans "You are not enrolled in any course" %}
+            {% endif %}
+        </b>
+      </p>
     {% endfor %}
 
   </section>

@@ -104,7 +104,7 @@ the reliability by making sure you have the same versions of the
 dependencies that the developers have tested.
 
 .. note::
-  We are using the system python and not a custom compiled one, which would
+  We are using the system's python and not a custom compiled one, which would
   improve the system isolation, because we are going to deploy the
   application with Apache and mod_wsgi and they depend on the system python.
 
@@ -131,6 +131,11 @@ Now we can install the moocng software:
 
 After a while you will have a bunch of new packages inside
 */var/www/moocng/lib/python2.7/site-packages/*
+
+.. note::
+  There is no release of moocng yet, so the previous command will fail. You
+  have to deploy moocng like the "Development Installation" section describes
+  at the end of the document.
 
 Tastypie
 ........

@@ -1,4 +1,5 @@
-# Copyright 2012 Rooter Analysis S.L.
+# -*- coding: utf-8 -*-
+# Copyright 2012-2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,10 +14,8 @@
 # limitations under the License.
 
 from django.contrib.auth.models import User
-from django.conf import settings
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.core.exceptions import ImproperlyConfigured
 
 from moocng.api.models import UserApi
 from moocng.mongodb import get_db

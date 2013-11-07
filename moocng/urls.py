@@ -1,4 +1,5 @@
-# Copyright 2012 Rooter Analysis S.L.
+# -*- coding: utf-8 -*-
+# Copyright 2012-2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,25 +25,24 @@ handler404 = 'django.views.defaults.page_not_found'
 handler500 = 'django.views.defaults.server_error'
 
 
-urlpatterns = patterns(
-    '',
-    # Examples:
-    # url(r'^$', 'moocng.views.home', name='home'),
+urlpatterns = patterns('',
+
     url(r'^', include('moocng.courses.urls')),
+
     url(r'^', include('moocng.peerreview.urls')),
+
     url(r'^', include('moocng.assets.urls')),
 
     url(r'^enrollment/', include('moocng.enrollment.urls')),
 
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
     url(r'^admin/', include(admin.site.urls)),
+
     url(r'^i18n/', include('moocng.portal.urls')),
 
     url(r'^tinymce/', include('tinymce.urls')),
 
     url(r'^api/', include('moocng.api.urls')),
+
     url(r'^badges/', include('moocng.badges.urls')),
 
     url(r'^contact/', include('moocng.contact.urls')),

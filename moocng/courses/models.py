@@ -1,4 +1,5 @@
-# Copyright 2012 Rooter Analysis S.L.
+# -*- coding: utf-8 -*-
+# Copyright 2012-2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,8 +12,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 import logging
+try:
+    import Image
+    import ImageOps
+except ImportError:
+    from PIL import Image, ImageOps
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
@@ -39,6 +44,8 @@ logger = logging.getLogger(__name__)
 
 
 class Course(Sortable):
+    THUMBNAIL_WIDTH = 300
+    THUMBNAIL_HEIGHT = 185
 
     name = models.CharField(verbose_name=_(u'Name'), max_length=200)
     slug = models.SlugField(verbose_name=_(u'Slug'), unique=True, db_index=True)
@@ -110,6 +117,18 @@ class Course(Sortable):
         max_length=10,
         default=COURSE_STATUSES[0][0],
     )
+    thumbnail = models.ImageField(
+        verbose_name=_(u'Thumbnail'),
+        upload_to='course_thumbnails',
+        blank=True,
+        null=True
+    )
+    static_page = models.OneToOneField(
+        'StaticPage',
+        verbose_name=_(u'Static page'),
+        blank=True,
+        null=True,
+    )
 
     objects = CourseManager()
 
@@ -127,7 +146,15 @@ class Course(Sortable):
     def save(self, *args, **kwargs):
         if self.promotion_media_content_type and self.promotion_media_content_id:
             self.promotion_media_content_id = media_content_extract_id(self.promotion_media_content_type, self.promotion_media_content_id)
-        return super(Course, self).save(*args, **kwargs)
+        super(Course, self).save(*args, **kwargs)
+        if self.thumbnail:
+            metadata = {
+                'width': self.THUMBNAIL_WIDTH,
+                'height': self.THUMBNAIL_HEIGHT,
+                'force': True
+            }
+            image_path = self.thumbnail.path
+            self._resize_image(image_path, metadata)
 
     def __unicode__(self):
         return self.name
@@ -139,6 +166,51 @@ class Course(Sortable):
     @property
     def is_public(self):
         return self.status == 'p' or self.status == 'h'
+
+    def _resize_image(self, filename, size):
+        """
+        ripped from:
+        https://github.com/humanfromearth/django-stdimage/blob/master/stdimage/fields.py
+
+        Resizes the image to specified width, height and force option
+
+        Arguments::
+
+        filename -- full path of image to resize
+        size -- dictionary with
+            - width: int
+            - height: int
+            - force: bool
+                if True, image will be cropped to fit the exact size,
+                if False, it will have the bigger size that fits the specified
+                size, but without cropping, so it could be smaller on width
+                or height
+
+        """
+
+        WIDTH, HEIGHT = 0, 1
+        img = Image.open(filename)
+        if (img.size[WIDTH] > size['width'] or
+                img.size[HEIGHT] > size['height']):
+
+            #If the image is big resize it with the cheapest resize algorithm
+            factor = 1.61803398875
+            while (img.size[0] / factor > 2 * size['width'] and
+                    img.size[1] * 2 / factor > 2 * size['height']):
+                factor *= 2
+            if factor > 1:
+                img.thumbnail((int(img.size[0] / factor),
+                               int(img.size[1] / factor)), Image.NEAREST)
+
+            if size['force']:
+                img = ImageOps.fit(img, (size['width'], size['height']),
+                                   Image.ANTIALIAS)
+            else:
+                img.thumbnail((size['width'], size['height']), Image.ANTIALIAS)
+            try:
+                img.save(filename, optimize=1)
+            except IOError:
+                img.save(filename)
 
 
 def course_invalidate_cache(sender, instance, **kwargs):
@@ -161,6 +233,29 @@ def course_stats(sender, instance, created, **kwargs):
 signals.post_save.connect(course_invalidate_cache, sender=Course)
 signals.post_save.connect(course_stats, sender=Course)
 signals.post_delete.connect(course_invalidate_cache, sender=Course)
+
+
+class StaticPage(models.Model):
+
+    title = models.CharField(
+        verbose_name=_(u'Title'),
+        max_length=100,
+        blank=True,
+        null=True
+    )
+
+    body = HTMLField(
+        verbose_name=_(u'Body'),
+        blank=True,
+        null=True
+    )
+
+    class Meta:
+        verbose_name = _(u'Static page')
+        verbose_name_plural = _(u'Static pages')
+
+    def __unicode__(self):
+        return self.title
 
 
 class CourseTeacher(Sortable):
@@ -189,7 +284,7 @@ signals.post_delete.connect(courseteacher_invalidate_cache,
 class Announcement(models.Model):
 
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
-    slug = models.SlugField(verbose_name=_(u'Slug'), unique=True)
+    slug = models.SlugField(verbose_name=_(u'Slug'))
     content = HTMLField(verbose_name=_(u'Content'))
     course = models.ForeignKey(Course, verbose_name=_(u'Course'))
     datetime = models.DateTimeField(verbose_name=_(u'Datetime'),
@@ -208,7 +303,12 @@ class Announcement(models.Model):
 
 
 def announcement_invalidate_cache(sender, instance, **kwargs):
-    invalidate_template_fragment('course_overview_secondary_info', instance.course.id)
+    try:
+        invalidate_template_fragment('course_overview_secondary_info', instance.course.id)
+    except Course.DoesNotExist:
+        logger.error('Saving/removing announcement. Can\'t invalidate course '
+                     'sidebar html, not valid reference to course object, '
+                     'it is probably being deleted...')
 
 
 signals.post_save.connect(announcement_invalidate_cache, sender=Announcement)
@@ -322,7 +422,7 @@ class KnowledgeQuantum(Sortable):
                                         null=True,
                                         blank=False,
                                         max_length=200)
-    teacher_comments = HTMLField(verbose_name=_(u'Teacher comments'),
+    teacher_comments = HTMLField(verbose_name=_(u'Instructor\'s comments'),
                                  blank=True, null=False)
     supplementary_material = HTMLField(
         verbose_name=_(u'Supplementary material'),

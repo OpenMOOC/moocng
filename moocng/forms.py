@@ -1,4 +1,5 @@
-# Copyright 2013 Rooter Analysis S.L.
+# -*- coding: utf-8 -*-
+# Copyright 2012-2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +24,10 @@ class BootstrapMixin(object):
     error_css_class = 'error'
 
     def as_bootstrap(self):
-        "Helper function for outputting HTML. Used by as_table(), as_ul(), as_p()."
+
+        """
+        Helper function for outputting HTML. Used by as_table(), as_ul(), as_p().
+        """
         top_errors = self.non_field_errors()  # Errors that should be displayed above all fields.
         output, hidden_fields = [], []
         normal_row = u'<div%(html_class_attr)s>%(label)s<div class="controls">%(field)s%(help_text)s</div>%(errors)s</div>'
@@ -32,6 +36,7 @@ class BootstrapMixin(object):
         row_ender = u'</div>'
         help_text_html = u'<span class="help-inline">%s</span>'
         errors_on_separate_row = False
+
         for name, field in self.fields.items():
             html_class_attr = ''
             bf = self[name]

@@ -43,6 +43,13 @@ DATABASES = {
 
 MONGODB_URI = 'mongodb://localhost:27017/moocng'
 
+BADGES_SERVICE_URL = "backpack.openbadges.org"
+BADGES_ISSUER_NAME = "OpenMOOC"
+BADGES_ISSUER_URL = "http://openmooc.org"
+BADGES_ISSUER_DESCRIPTION = ""
+BADGES_ISSUER_IMAGE = ""
+BADGES_ISSUER_EMAIL = ""
+
 # Tastypie resource limit per page, 0 means unlimited
 API_LIMIT_PER_PAGE = 0
 
@@ -156,6 +163,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'moocng.portal.middleware.LocaleMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -223,6 +231,7 @@ OPENMOOC_APPS = [
     'moocng.auth_handlers',
     'moocng.peerreview',
     'moocng.media_contents',
+    'moocng.externalapps',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRDPARTY_APPS + OPENMOOC_APPS
@@ -281,6 +290,11 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
+        'moocng.externalapps.registry': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
     }
 }
 
@@ -323,7 +337,14 @@ GOOGLE_ANALYTICS_CODE = ''
 GRAVATAR_URL_PREFIX = '//www.gravatar.com/'
 
 MOOCNG_THEME = {
-    # 'cert_banner': u'',
+#    'logo': u'',
+#    'subtitle': u'',
+#    'top_banner': u'',
+#    'right_banner1': u'',
+#    'right_banner2': u'',
+#    'bootstrap_css': u'',
+#    'moocng_css': u'',
+#    'cert_banner': u'',
 }
 
 ENABLED_COMUNICATIONS = (
@@ -341,10 +362,6 @@ FFMPEG = '/usr/bin/ffmpeg'
 # Let authenticated users create their own courses
 ALLOW_PUBLIC_COURSE_CREATION = False
 
-# Make this unique, and don't share it with anybody else than payment system
-# Override this in local settings
-USER_API_KEY = '123456789'
-
 # A list with the slugs of the courses that use the old qualification system
 # where the normal units counted
 COURSES_USING_OLD_TRANSCRIPT = []
@@ -361,8 +378,6 @@ CELERY_CREATE_MISSING_QUEUES = True
 
 BROKER_URL = 'amqp://moocng:moocngpassword@localhost:5672/moocng'
 
-ASKBOT_URL_TEMPLATE = 'https://questions.example.com/%s/'
-
 CERTIFICATE_URL = 'http://example.com/idcourse/%(courseid)s/email/%(email)s'  # Example, to be overwritten in local settings
 
 MASSIVE_EMAIL_BATCH_SIZE = 30
@@ -375,6 +390,7 @@ ASSET_SLOT_GRANULARITY = 5  # Slot time of assets should be a multiple of this v
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
+LOGIN_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
@@ -445,3 +461,51 @@ SERIALIZATION_MODULES = {
     "python": "deep_serializer.serializers.python",
     "json": "deep_serializer.serializers.json",
 }
+
+# External apps available to the teachers
+# instances is a tuple with the format:
+#  (ip, base_url, max_instances,)
+#
+# Example:
+#  MOOCNG_EXTERNALAPPS = {
+#     'askbot': {
+#         'instances':(
+#             ('127.0.0.1', 'http://localhost', 10),
+#             ('127.0.0.2', 'http://localhost', 10),
+#             ('127.0.0.3', 'http://localhost', 10),
+#         )
+#     },
+#     'wordpress': {
+#         'instances':(
+#             ('127.0.0.4', 'http://localhost', 10),
+#             ('127.0.0.5', 'http://localhost', 10),
+#             ('127.0.0.6', 'http://localhost', 10),
+#         )
+#     }
+# }
+
+MOOCNG_EXTERNALAPPS = {
+    'askbot': {
+        'instances': ()
+    },
+}
+
+# This settting is a tuple of strings that are not allowed for the slug in the
+# external apps. For example:
+#
+# MOOCNG_EXTERNALAPPS_FORBIDDEN_WORDS = ('word1', 'word2',)
+MOOCNG_EXTERNALAPPS_FORBIDDEN_WORDS = ()
+
+# User for fabric tasks execution
+FABRIC_TASK_USER = 'root'
+
+# Path where the instances are created. It is used to check if already exists
+# an instance on the server
+FABRIC_ASKBOT_INSTANCES_PATH = '/etc/openmooc/askbot/instances'
+
+# Path to the ssh key to use to connect to the machines where the external apps
+# are going to be deployed
+FABRIC_SSH_KEY_PATH = '/root/.ssh/id_rsa'
+
+# Show courses as a list (classic behaviour) or as a grid
+COURSE_SHOW_AS_LIST = True

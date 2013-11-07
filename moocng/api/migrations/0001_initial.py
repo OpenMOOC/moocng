@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2013 Rooter Analysis S.L.
+# Copyright 2012-2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
 
 
 class Migration(SchemaMigration):
@@ -30,11 +29,9 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('api', ['UserApi'])
 
-
     def backwards(self, orm):
         # Deleting model 'UserApi'
         db.delete_table('api_userapi')
-
 
     models = {
         'api.userapi': {

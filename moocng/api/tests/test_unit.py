@@ -1,4 +1,5 @@
-# Copyright 2012 Rooter Analysis S.L.
+# -*- coding: utf-8 -*-
+# Copyright 2012-2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -10,6 +11,7 @@
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
+# limitations under the License.
 
 import uuid
 
@@ -425,7 +427,7 @@ class UnitTestCase(ApiTestCase):
         owner = self.create_test_user_owner()
         course = self.create_test_basic_course(owner)
 
-        response = self.client.post('/api/%s/unit/%s' % (self.api_name, self.format_append), 
+        response = self.client.post('/api/%s/unit/%s' % (self.api_name, self.format_append),
                                     BASIC_UNIT, content_type='application/json')
         self.assertEqual(response.status_code, 401)
 
@@ -437,7 +439,7 @@ class UnitTestCase(ApiTestCase):
 
         course = self.create_test_basic_course(owner)
 
-        response = self.client.post('/api/%s/unit/%s' % (self.api_name, self.format_append), 
+        response = self.client.post('/api/%s/unit/%s' % (self.api_name, self.format_append),
                                     BASIC_UNIT, content_type='application/json')
         self.assertEqual(response.status_code, 401)
 
@@ -449,7 +451,7 @@ class UnitTestCase(ApiTestCase):
 
         course = self.create_test_basic_course(owner=owner, student=alum1)
 
-        response = self.client.post('/api/%s/unit/%s' % (self.api_name, self.format_append), 
+        response = self.client.post('/api/%s/unit/%s' % (self.api_name, self.format_append),
                                     BASIC_UNIT, content_type='application/json')
         self.assertEqual(response.status_code, 401)
 
@@ -461,7 +463,7 @@ class UnitTestCase(ApiTestCase):
 
         course = self.create_test_basic_course(owner=owner, teacher=teacher1)
 
-        response = self.client.post('/api/%s/unit/%s' % (self.api_name, self.format_append), 
+        response = self.client.post('/api/%s/unit/%s' % (self.api_name, self.format_append),
                                     BASIC_UNIT, content_type='application/json')
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.content, BASIC_UNIT)
@@ -474,7 +476,7 @@ class UnitTestCase(ApiTestCase):
 
         course = self.create_test_basic_course(owner=owner)
 
-        response = self.client.post('/api/%s/unit/%s' % (self.api_name, self.format_append), 
+        response = self.client.post('/api/%s/unit/%s' % (self.api_name, self.format_append),
                                     BASIC_UNIT, content_type='application/json')
                         
         self.assertEqual(response.status_code, 201)
@@ -505,7 +507,7 @@ class UnitTestCase(ApiTestCase):
         key = str(uuid.uuid4())
         self.generate_apikeyuser(user, key)
 
-        response = self.client.post('/api/%s/unit/%s&key=%s' % (self.api_name, self.format_append, key), 
+        response = self.client.post('/api/%s/unit/%s&key=%s' % (self.api_name, self.format_append, key),
                                     BASIC_UNIT, content_type='application/json')
         self.assertEqual(response.status_code, 401)
 
@@ -516,7 +518,7 @@ class UnitTestCase(ApiTestCase):
 
         self.create_test_basic_unit(course, 'n')
 
-        response = self.client.put('/api/%s/unit/1/%s' % (self.api_name, self.format_append), 
+        response = self.client.put('/api/%s/unit/1/%s' % (self.api_name, self.format_append),
                                     BASIC_UNIT, content_type='application/json')
         self.assertEqual(response.status_code, 401)
 
@@ -529,7 +531,7 @@ class UnitTestCase(ApiTestCase):
 
         self.create_test_basic_unit(course, 'n')
 
-        response = self.client.put('/api/%s/unit/1/%s' % (self.api_name, self.format_append), 
+        response = self.client.put('/api/%s/unit/1/%s' % (self.api_name, self.format_append),
                                     BASIC_UNIT, content_type='application/json')
         self.assertEqual(response.status_code, 401)
 
@@ -542,7 +544,7 @@ class UnitTestCase(ApiTestCase):
         course = self.create_test_basic_course(owner=owner, student=alum1)
         self.create_test_basic_unit(course, 'n')
 
-        response = self.client.put('/api/%s/unit/1/%s' % (self.api_name, self.format_append), 
+        response = self.client.put('/api/%s/unit/1/%s' % (self.api_name, self.format_append),
                                     BASIC_UNIT, content_type='application/json')
         self.assertEqual(response.status_code, 401)
 
@@ -555,7 +557,7 @@ class UnitTestCase(ApiTestCase):
         course = self.create_test_basic_course(owner=owner, teacher=teacher1)
         self.create_test_basic_unit(course, 'n')
 
-        response = self.client.put('/api/%s/unit/1/%s' % (self.api_name, self.format_append), 
+        response = self.client.put('/api/%s/unit/1/%s' % (self.api_name, self.format_append),
                                     BASIC_UNIT, content_type='application/json')
         self.assertEqual(response.status_code, 202)
         self.assertEqual(response.content, BASIC_UNIT_PK)
@@ -567,7 +569,7 @@ class UnitTestCase(ApiTestCase):
         course = self.create_test_basic_course(owner=owner)
         self.create_test_basic_unit(course, 'n')
 
-        response = self.client.put('/api/%s/unit/1/%s' % (self.api_name, self.format_append), 
+        response = self.client.put('/api/%s/unit/1/%s' % (self.api_name, self.format_append),
                                     BASIC_UNIT, content_type='application/json')
         self.assertEqual(response.status_code, 202)
         self.assertEqual(response.content, BASIC_UNIT_PK)
@@ -595,7 +597,7 @@ class UnitTestCase(ApiTestCase):
         key = str(uuid.uuid4())
         self.generate_apikeyuser(user, key)
 
-        response = self.client.put('/api/%s/unit/1/%s&key=%s' % (self.api_name, self.format_append, key), 
+        response = self.client.put('/api/%s/unit/1/%s&key=%s' % (self.api_name, self.format_append, key),
                                     BASIC_UNIT, content_type='application/json')
         self.assertEqual(response.status_code, 401)
 

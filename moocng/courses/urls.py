@@ -1,4 +1,5 @@
-# Copyright 2012 Rooter Analysis S.L.
+# -*- coding: utf-8 -*-
+# Copyright 2012-2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,6 +44,8 @@ urlpatterns = patterns(
         name='course_classroom'),
     url(r'^course/(?P<course_slug>[-\w]+)/progress/$', 'course_progress',
         name='course_progress'),
+    url(r'^course/(?P<course_slug>[-\w]+)/extra_info/$', 'course_extra_info',
+        name='course_extra_info'),
     url(r'^course/(?P<course_slug>[-\w]+)/announcement/(?P<announcement_id>\d+)/(?P<announcement_slug>[-\w]+)$',
         'announcement_detail', name='announcement_detail'),
     url(r'^course/(?P<course_slug>[-\w]+)/announcements_feed/$',

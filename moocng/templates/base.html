@@ -28,20 +28,22 @@
   <div class="container">
     <header>
       {% get_language_info_list for LANGUAGES as languages %}
-      <ul class="unstyled pull-right" id="language-selector">
-        {% for language in languages %}
-        {% if LANGUAGE_CODE == language.name_local %}
-        <li>{{ language.name_local|capfirst }}</li>
-        {% else %}
-        <li><form action="{% url set_language %}" method="post">
-          {% csrf_token %}
-          <input type="hidden" name="language" value="{{ language.code }}" />
-          <input class="btn btn-link{% if LANGUAGE_CODE == language.code %} disabled{% endif %}" type="submit" value="{{ language.name_local|capfirst }}" {% if LANGUAGE_CODE == language.code %}disabled="disabled"{% endif %}/>
-        </form></li>
-        {% endif %}
-        {% if not forloop.last %}|{% endif %}
-        {% endfor %}
-      </ul>
+      {% if languages|length > 1 %}
+        <ul class="unstyled pull-right" id="language-selector">
+          {% for language in languages %}
+            {% if LANGUAGE_CODE == language.name_local %}
+              <li>{{ language.name_local|capfirst }}</li>
+            {% else %}
+              <li><form action="{% url set_language %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="language" value="{{ language.code }}" />
+                <input class="btn btn-link{% if LANGUAGE_CODE == language.code %} disabled{% endif %}" type="submit" value="{{ language.name_local|capfirst }}" {% if LANGUAGE_CODE == language.code %}disabled="disabled"{% endif %}/>
+              </form></li>
+            {% endif %}
+            {% if not forloop.last %}|{% endif %}
+          {% endfor %}
+        </ul>
+      {% endif %}
       <hgroup>
         <h1 class="logo"><a href="{% url home %}" class="hide-text"><img src="{{ theme.logo }}" alt="{{ site.name }}" />{{ site.name }}</a></h1>
         <h2 class="small pull-left">{{ theme.subtitle }}</h2>
@@ -89,18 +91,15 @@
 
   {% block extrajs %}{% endblock %}
   {% if google_analytics %}
-  <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', '{{ google_analytics }}']);
-  _gaq.push(['_setDomainName', '{{ site.domain }}']);
-  _gaq.push(['_trackPageview']);
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script>
+      ga('create', '{{ google_analytics }}', '{{ site.domain }}');
+      ga('send', 'pageview');
+    </script>
   {% endif %}
 </body>
 </html>

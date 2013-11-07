@@ -1,0 +1,21 @@
+{% extends "teacheradmin/base_teacheradmin.html" %}
+
+{% load i18n  externalapps %}
+
+{% block nav-teacheradmin-externalapps %}active{% endblock %}
+
+{% block section %}
+
+<form method="post">{% csrf_token %}
+    {{ form.as_bootstrap }}
+
+    <div class="form-actions">
+        {% if external_app %}
+            <input type="submit" class="btn btn-primary" value="{% trans 'Save changes' %}" />
+        {% else %}
+            <input type="submit" class="btn btn-primary" value="{% trans 'Create external app' %}" />
+        {% endif %}
+    </div>
+</form>
+
+{% endblock %}

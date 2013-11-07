@@ -1,4 +1,5 @@
-# Copyright 2012 Rooter Analysis S.L.
+# -*- coding: utf-8 -*-
+# Copyright 2012-2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,7 +29,6 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
-from django.template.defaultfilters import slugify
 
 from moocng.badges.models import Award
 from moocng.courses.models import Course, CourseTeacher, Announcement
@@ -39,6 +39,7 @@ from moocng.courses.marks import calculate_course_mark
 from moocng.courses.security import (check_user_can_view_course,
                                      get_courses_available_for_user,
                                      get_units_available_for_user)
+from moocng.slug import unique_slugify
 
 
 def home(request):
@@ -57,10 +58,28 @@ def home(request):
         use_cache = False
     courses = get_courses_available_for_user(request.user)
 
-    return render_to_response('courses/home.html', {
+    if hasattr(settings, 'COURSE_SHOW_AS_LIST'):
+        show_as_list = settings.COURSE_SHOW_AS_LIST
+        if show_as_list:
+            template = 'courses/home_as_list.html'
+        else:
+            template = 'courses/home_as_grid.html'
+            courses = grouper(courses, 3)
+    else:
+        template = 'courses/home_as_list.html'
+
+    return render_to_response(template, {
         'courses': courses,
         'use_cache': use_cache,
     }, context_instance=RequestContext(request))
+
+
+def grouper(iterable, n, fillvalue=None):
+    "Collect data into fixed-length chunks or blocks"
+    # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx
+    args = [iter(iterable)] * n
+    from itertools import izip_longest
+    return izip_longest(fillvalue=fillvalue, *args)
 
 
 def flatpage(request, page=""):
@@ -139,7 +158,7 @@ def course_add(request):
             return HttpResponseRedirect(reverse('course_add'))
 
         course = Course(name=name, owner=owner, description=_('To fill'))
-        course.slug = slugify(course)
+        unique_slugify(course, name)
         course.save()
 
         CourseTeacher.objects.create(course=course, teacher=owner)
@@ -307,6 +326,19 @@ def course_progress(request, course_slug):
     }, context_instance=RequestContext(request))
 
 
+@login_required
+def course_extra_info(request, course_slug):
+    course = get_object_or_404(Course, slug=course_slug)
+    is_enrolled = course.students.filter(id=request.user.id).exists()
+
+    return render_to_response('courses/static_page.html', {
+        'course': course,
+        'is_enrolled': is_enrolled,  # required due course nav templatetag
+        'is_teacher': is_teacher_test(request.user, course),
+        'static_page': course.static_page,
+    }, context_instance=RequestContext(request))
+
+
 def announcement_detail(request, course_slug, announcement_id, announcement_slug):
 
     """
@@ -326,7 +358,7 @@ def announcement_detail(request, course_slug, announcement_id, announcement_slug
 
 
 @login_required
-def transcript(request):
+def transcript(request, course_slug=None):
 
     """
     Transcript is the main view of the user progress, here the user is show with
@@ -339,6 +371,9 @@ def transcript(request):
     .. versionadded:: 0.1
     """
     course_list = request.user.courses_as_student.all()
+    if course_slug:
+        course = get_object_or_404(Course, slug=course_slug)
+        course_list = course_list.filter(slug=course_slug)
     courses_info = []
     cert_url = ''
     for course in course_list:
@@ -378,4 +413,5 @@ def transcript(request):
         })
     return render_to_response('courses/transcript.html', {
         'courses_info': courses_info,
+        'course_slug': course_slug,
     }, context_instance=RequestContext(request))

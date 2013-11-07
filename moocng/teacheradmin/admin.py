@@ -1,4 +1,5 @@
-# Copyright 2012 Rooter Analysis S.L.
+# -*- coding: utf-8 -*-
+# Copyright 2012-2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,14 +19,26 @@ from moocng.teacheradmin.models import Invitation, MassiveEmail
 
 
 class InvitationAdmin(admin.ModelAdmin):
+
+    """
+    Invitation model administration for Moocng.
+
+    .. versionadded:: 0.1
+    """
     raw_id_fields = ('host',)
-    autocomplete_lookup_fields = { 'fk': ['host'], }
+    autocomplete_lookup_fields = {'fk': ['host'], }
 
     list_display = ('course', 'email', 'datetime')
     list_filter = ('course', )
 
 
 class MassiveEmailAdmin(admin.ModelAdmin):
+
+    """
+    MassiveEmail model administration.
+
+    .. versionadded:: 0.1
+    """
 
     list_display = ('subject', 'datetime', 'course')
     list_filter = ('course', )

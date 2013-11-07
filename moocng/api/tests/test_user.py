@@ -1,4 +1,5 @@
-# Copyright 2012 Rooter Analysis S.L.
+# -*- coding: utf-8 -*-
+# Copyright 2012-2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,7 +25,6 @@ from django.utils.timezone import utc
 from moocng.api.tests.outputs import (NO_OBJECTS, NORMAL_USER,
                                       BASIC_ALLCOURSES, BASIC_COURSES)
 from moocng.api.tests.utils import ApiTestCase
-
 
 
 class UserTestCase(ApiTestCase):
@@ -452,7 +452,6 @@ class UserTestCase(ApiTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, NO_OBJECTS)
 
-
     def test_get_passedcourses_userkey(self):
         owner = self.create_test_user_owner()
 
@@ -512,7 +511,7 @@ class UserTestCase(ApiTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, NO_OBJECTS)
 
-        # Create unit in the course, create a simple kq with a video. 
+        # Create unit in the course, create a simple kq with a video.
         course1.threshold = 1
         course1.save()
 

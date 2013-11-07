@@ -1,4 +1,5 @@
-# Copyright 2012 Rooter Analysis S.L.
+# -*- coding: utf-8 -*-
+# Copyright 2012-2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,7 +43,8 @@ from celery.task.control import inspect
 from adminsortable.admin import SortableAdmin
 
 from moocng.courses.forms import UnitForm, AttachmentForm
-from moocng.courses.models import Course, Announcement, Unit, KnowledgeQuantum
+from moocng.courses.models import (Course, Announcement, Unit, KnowledgeQuantum,
+                                   StaticPage)
 from moocng.courses.models import Question, Option, Attachment
 from moocng.courses.models import CourseTeacher
 from moocng.courses.utils import clone_course
@@ -171,7 +173,6 @@ class KnowledgeQuantumAdmin(SortableAdmin):
 
     list_display = ('__unicode__', 'title', 'media_content_type', 'media_content_id', 'weight')
     list_filter = ('unit', )
-
 
 csrf_protect_m = method_decorator(csrf_protect)
 ensure_csrf_cookie_m = method_decorator(ensure_csrf_cookie)
@@ -392,6 +393,7 @@ admin.site.register(CourseTeacher, CourseTeacherAdmin)
 admin.site.register(Announcement, AnnouncementAdmin)
 admin.site.register(Unit, UnitAdmin)
 admin.site.register(KnowledgeQuantum, KnowledgeQuantumAdmin)
+admin.site.register(StaticPage)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Option, OptionAdmin)
 admin.site.register(Attachment, AttachmentAdmin)

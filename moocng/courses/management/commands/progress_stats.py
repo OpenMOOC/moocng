@@ -1,4 +1,5 @@
-# Copyright 2012 Rooter Analysis S.L.
+# -*- coding: utf-8 -*-
+# Copyright 2012-2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -105,7 +106,7 @@ class Command(BaseCommand):
                         answered += answers.find({
                             "question_id": question.id
                         }).count()
-                    kq_answered = answered;
+                    kq_answered = answered
                 elif kq_type == "PeerReviewAssignment":
                     kq_submited = peer_review_submissions.find({
                         'kq': kq.id
