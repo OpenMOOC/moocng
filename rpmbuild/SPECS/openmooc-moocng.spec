@@ -48,6 +48,7 @@ Requires: python-gunicorn = 0.14.6
 Requires: Django14
 Requires: django-celery = 3.0.17
 Requires: django-mathjax = 0.0.2
+Requires: django-deep-serializer = 0.1.0
 Requires: Django-south = 0.7.5
 Requires: python-django-admin-sortable = 1.4.9
 Requires: python-django-compressor = 1.2
