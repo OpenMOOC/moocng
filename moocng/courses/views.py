@@ -371,8 +371,11 @@ def transcript(request, course_slug=None):
     .. versionadded:: 0.1
     """
     course_list = request.user.courses_as_student.all()
+    course_transcript = None
+    template_name = 'courses/transcript.html'
     if course_slug:
-        course = get_object_or_404(Course, slug=course_slug)
+        template_name = 'courses/transcript_course.html'
+        course_transcript = get_object_or_404(Course, slug=course_slug)
         course_list = course_list.filter(slug=course_slug)
     courses_info = []
     cert_url = ''
@@ -411,7 +414,7 @@ def transcript(request, course_slug=None):
             'cert_url': cert_url,
             'use_old_calculus': use_old_calculus,
         })
-    return render_to_response('courses/transcript.html', {
+    return render_to_response(template_name, {
         'courses_info': courses_info,
-        'course_slug': course_slug,
+        'course_transcript': course_transcript,
     }, context_instance=RequestContext(request))

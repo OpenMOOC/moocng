@@ -8,8 +8,12 @@
 
 <div class="row">
   <section class="span12">
-    <h1 class="content-title">{% trans "My transcript" %}</h1>
-
+    <h1 class="content-title">{% block content-title %}{% trans "My transcript" %}{% endblock %}</h1>
+    {% block breadcrumbs %}
+        <ul class="breadcrumb">
+            <li class="active">{% trans "My transcript" %}</li>
+        </ul>
+    {% endblock %}
     {% for course_info in courses_info %}
     <div class="box" id="{{ course_info.course.slug }}" name="{{ course_info.course.slug }}">
       <h2><a href="{{ course_info.course.get_absolute_url }}">{{ course_info.course.name }}</a></h2>
@@ -66,11 +70,9 @@
     {% empty %}
       <p>
         <b>
-            {% if course_slug %}
-                {% trans "You are not enrolled in this course" %}
-            {% else %}
+            {% block message-empty %}
                 {% trans "You are not enrolled in any course" %}
-            {% endif %}
+            {% endblock %}
         </b>
       </p>
     {% endfor %}
