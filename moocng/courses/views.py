@@ -418,3 +418,11 @@ def transcript(request, course_slug=None):
         'courses_info': courses_info,
         'course_transcript': course_transcript,
     }, context_instance=RequestContext(request))
+
+
+def transcript_v2(request, course_slug=None):
+    user = request.user
+    if not user.is_superuser:
+        from django.http import Http404
+        raise Http404
+    raise NotImplementedError
