@@ -211,10 +211,13 @@ def clone_activiy_user_course(original_course, copy_course, user):
         except (ValueError, TypeError):
             continue
         new_act_doc = {}
-        new_act_doc['user_id'] = user.pk
-        new_act_doc['course_id'] = copy_course.pk
-        new_act_doc['kq_id'] = trace_ids['KnowledgeQuantum'][ori_kq_id]
-        new_act_doc['unit_id'] = trace_ids['Unit'][ori_unit_id]
+        try:
+            new_act_doc['user_id'] = user.pk
+            new_act_doc['course_id'] = copy_course.pk
+            new_act_doc['kq_id'] = trace_ids['KnowledgeQuantum'][ori_kq_id]
+            new_act_doc['unit_id'] = trace_ids['Unit'][ori_unit_id]
+        except KeyError:
+            continue
         exists_doc = activity.find(new_act_doc).count() > 0
         if not exists_doc:
             new_act_docs.append(new_act_doc)
@@ -234,17 +237,23 @@ def clone_activiy_user_course(original_course, copy_course, user):
         except (ValueError, TypeError):
             continue
         new_answer_doc = {}
-        new_answer_doc['user_id'] = user.pk
-        new_answer_doc['course_id'] = copy_course.pk
-        new_answer_doc['kq_id'] = trace_ids['KnowledgeQuantum'][ori_kq_id]
-        new_answer_doc['question_id'] = trace_ids['Question'][ori_question_id]
-        new_answer_doc['unit_id'] = trace_ids['Unit'][ori_unit_id]
+        try:
+            new_answer_doc['user_id'] = user.pk
+            new_answer_doc['course_id'] = copy_course.pk
+            new_answer_doc['kq_id'] = trace_ids['KnowledgeQuantum'][ori_kq_id]
+            new_answer_doc['question_id'] = trace_ids['Question'][ori_question_id]
+            new_answer_doc['unit_id'] = trace_ids['Unit'][ori_unit_id]
+        except KeyError:
+            continue
         exists_doc_without_reply = answers.find_one(new_answer_doc)
         replyList = answer_doc['replyList']
         if not isinstance(replyList, list):
             continue
         for reply in replyList:
-            reply['option'] = trace_ids['Option'][str(int(reply['option']))]
+            try:
+                reply['option'] = trace_ids['Option'][str(int(reply['option']))]
+            except KeyError:
+                continue
         new_answer_doc['replyList'] = answer_doc['replyList']
         exists_doc = answers.find_one(new_answer_doc)
         if not exists_doc_without_reply:
