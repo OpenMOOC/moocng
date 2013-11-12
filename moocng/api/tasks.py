@@ -70,7 +70,7 @@ def on_activity_created_task(activity_created, unit_activity, course_activity):
         )
 
 
-def process_on_submission(submitted, data):
+def update_stats(submitted, data):
     db = get_db()
 
     # KQ
@@ -107,12 +107,12 @@ def process_on_submission(submitted, data):
 
 @task
 def on_answer_created_task(answer_created):
-    process_on_submission(answer_created, {'submitted': 1})
+    update_stats(answer_created, {'submitted': 1})
 
 
 @task
 def on_answer_updated_task(answer_updated):
-    process_on_submission(answer_updated, {})
+    update_stats(answer_updated, {})
 
 
 @task
@@ -122,7 +122,7 @@ def on_peerreviewsubmission_created_task(submission_created):
         'unit_id': submission_created['unit'],
         'kq_id': submission_created['kq'],
     }
-    process_on_submission(data, {'submitted': 1})
+    update_stats(data, {'submitted': 1})
 
 
 @task
@@ -141,4 +141,4 @@ def on_peerreviewreview_created_task(review_created, user_reviews):
         'reviewers': inc_reviewers
     }
 
-    process_on_submission(data, increment)
+    update_stats(data, increment)
