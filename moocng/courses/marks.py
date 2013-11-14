@@ -14,6 +14,7 @@
 # limitations under the License.
 
 from django.conf import settings
+from django.db.models import Sum
 
 from moocng.mongodb import get_db
 
@@ -101,7 +102,7 @@ def calculate_kq_mark(kq, user):
     return calculate_kq_video_mark(kq, user)
 
 
-def calculate_unit_mark(unit, user, normalized_unit_weight):
+def calculate_unit_mark(unit, user, normalized_unit_weight=None):
     """
     Calculate if a unit is approved.
 
@@ -109,6 +110,9 @@ def calculate_unit_mark(unit, user, normalized_unit_weight):
 
     .. versionadded:: 0.1
     """
+    if normalized_unit_weight is None:
+        unit_course_counter, total_weight_unnormalized, course_units = get_course_intermediate_calculations(unit.course)
+        normalized_unit_weight = normalize_unit_weight(unit, unit_course_counter, total_weight_unnormalized)
     kqs_total_weight_unnormalized = 0
     unit_mark = 0
     entries = []
@@ -157,32 +161,28 @@ def normalize_unit_weight(unit, course_unit_counter, total_weight_unnormalized):
     return (unit.weight * 100.0) / total_weight_unnormalized
 
 
-def calculate_course_mark(course, user):
-    from moocng.courses.models import Unit
+def get_course_intermediate_calculations(course):
     use_old_calculus = False
     if course.slug in settings.COURSES_USING_OLD_TRANSCRIPT:
         use_old_calculus = True
-    total_mark = 0
-    course_unit_list = Unit.objects.filter(course=course)
+    course_units = course.unit_set.all()
     if not use_old_calculus:
-        course_unit_list = course_unit_list.exclude(unittype='n')
+        course_units = course_units.exclude(unittype='n')
 
-    total_weight_unnormalized = 0
-    unit_course_counter = 0
-    for course_unit in course_unit_list:
-        if not(course_unit.unittype == 'n' and not use_old_calculus):
-            total_weight_unnormalized += course_unit.weight
-            unit_course_counter += 1
+    total_weight_unnormalized = course.unit_set.aggregate(Sum('weight'))['weight__sum']
+    unit_course_counter = course_units.count()
+    return (total_weight_unnormalized, unit_course_counter, course_units)
+
+
+def calculate_course_mark(course, user):
+    total_mark = 0
     units_info = []
-    for unit in course_unit_list:
+    total_weight_unnormalized, unit_course_counter, course_units = get_course_intermediate_calculations(course)
+    for unit in course_units:
         unit_info = {}
         use_unit_in_total = False
-        if unit.unittype == 'n' and not use_old_calculus:
-            normalized_unit_weight = 0
-            mark, relative_mark = (0, 0)
-        else:
-            normalized_unit_weight = normalize_unit_weight(unit, unit_course_counter, total_weight_unnormalized)
-            mark, relative_mark, use_unit_in_total = calculate_unit_mark(unit, user, normalized_unit_weight)
+        normalized_unit_weight = normalize_unit_weight(unit, unit_course_counter, total_weight_unnormalized)
+        mark, relative_mark, use_unit_in_total = calculate_unit_mark(unit, user, normalized_unit_weight)
         if use_unit_in_total:
             total_mark += relative_mark
         unit_info = {
