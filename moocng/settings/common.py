@@ -23,7 +23,7 @@ TEMPLATE_DEBUG = DEBUG
 FFMPEG_DEBUG = DEBUG
 
 ADMINS = (
-    ('Admin', 'admin@eopenmooc.org'),
+    ('Admin', 'admin@example.com'),
 )
 
 MANAGERS = ADMINS
@@ -509,3 +509,8 @@ FABRIC_SSH_KEY_PATH = '/root/.ssh/id_rsa'
 
 # Show courses as a list (classic behaviour) or as a grid
 COURSE_SHOW_AS_LIST = True
+
+# Migrate score
+
+FIRST_DAY_MIGRATE_SCORE = '2013-11-14'
+NUM_MIGRATE_SCORE_DAILY = 10000
