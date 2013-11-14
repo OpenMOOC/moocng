@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-14 11:18+0100\n"
+"POT-Creation-Date: 2013-11-14 11:45+0100\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Pablo Martin <goinnn@gmail.com>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -2037,11 +2037,11 @@ msgstr "Visibilidad de la instancia"
 
 #: externalapps/models.py:115
 msgid "external app"
-msgstr "Aplicación externa"
+msgstr "aplicación externa"
 
 #: externalapps/models.py:116
 msgid "external apps"
-msgstr "Aplicaciones auxiliares"
+msgstr "aplicaciones externas"
 
 #: externalapps/models.py:123 externalapps/models.py:130
 msgid "url not available"
@@ -2507,7 +2507,8 @@ msgid "Units"
 msgstr "Módulos"
 
 #: teacheradmin/templates/teacheradmin/base_teacheradmin.html:18
-msgid "Extra applications"
+#, fuzzy
+msgid "External applications"
 msgstr "Aplicaciones auxiliares"
 
 #: teacheradmin/templates/teacheradmin/base_teacheradmin.html:20
