@@ -125,7 +125,7 @@ def update_kq_score(db, kq, user, new_score_kq=None):
         updated_kq_score = new_score_kq == score_kq_item['score']
         scores_kq.update(
             data_kq,
-            {'score': new_score_kq},
+            {'$set': {'score': new_score_kq}},
             safe=True
         )
     else:
@@ -139,6 +139,8 @@ def update_unit_score(db, unit, user, new_score_unit=None):
     from moocng.courses.marks import calculate_unit_mark
     if not new_score_unit:
         new_score_unit, score_normalized_unit, use_unit_in_total = calculate_unit_mark(unit, user)
+        if not use_unit_in_total:
+            return False
     data_unit = {}
     data_unit['user_id'] = user.pk
     data_unit['course_id'] = unit.course.pk
@@ -150,7 +152,7 @@ def update_unit_score(db, unit, user, new_score_unit=None):
         updated_unit_score = new_score_unit == score_unit_item['score']
         scores_unit.update(
             data_unit,
-            {'score': new_score_unit},
+            {'$set': {'score': new_score_unit}},
             safe=True
         )
     else:
@@ -167,14 +169,13 @@ def update_course_score(db, course, user, new_score_course=None):
     data_course = {}
     data_course['user_id'] = user.pk
     data_course['course_id'] = course.pk
-
     scores_course = db.get_collection('scores_course')
     score_course_item = scores_course.find_one(data_course)
     if score_course_item:
         updated_course_score = new_score_course == score_course_item['score']
         scores_course.update(
             data_course,
-            {'score': new_score_course},
+            {'$set': {'score': new_score_course}},
             safe=True
         )
     else:
