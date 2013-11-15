@@ -193,3 +193,18 @@ def calculate_course_mark(course, user):
         }
         units_info.append(unit_info)
     return total_mark, units_info
+
+
+def get_course_mark(course, user):
+    data_course = {'user_id': user.pk,
+                   'course_id': course.pk}
+    db = get_db()
+    scores_course = db.get_collection('scores_course')
+    score_course_item = scores_course.find_one(data_course)
+    if score_course_item:
+        total_mark = score_course_item['score']
+    else:
+        total_mark = 0
+    scores_units = db.get_collection('scores_unit')
+    units_info = scores_units.find(data_course)
+    return (total_mark, list(units_info))
