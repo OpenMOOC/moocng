@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from django.conf import settings
 from django.db.models import Sum
 
 from moocng.mongodb import get_db
@@ -162,10 +161,7 @@ def normalize_unit_weight(unit, course_unit_counter, total_weight_unnormalized):
 
 
 def get_course_intermediate_calculations(course):
-    course_units = course.unit_set.all()
-    if not settings.COURSES_USING_OLD_TRANSCRIPT:
-        course_units = course_units.exclude(unittype='n')
-
+    course_units = course.unit_set.scorables()
     total_weight_unnormalized = course.unit_set.aggregate(Sum('weight'))['weight__sum']
     unit_course_counter = course_units.count()
     return (total_weight_unnormalized, unit_course_counter, course_units)

@@ -31,7 +31,7 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
 from moocng.badges.models import Award
-from moocng.courses.models import Course, CourseTeacher, Announcement
+from moocng.courses.models import Course, CourseTeacher, Announcement, Unit
 from moocng.courses.utils import (get_unit_badge_class, is_course_ready,
                                   is_teacher as is_teacher_test,
                                   send_mail_wrapper)
@@ -450,18 +450,18 @@ def transcript_v2(request, course_slug=None):
                     award = Award(badge=badge, user=request.user)
                     award.save()
         total_weight_unnormalized, unit_course_counter, course_units = get_course_intermediate_calculations(course)
-        all_units_in_mongo = course_units.count() == len(units_info)
-        if not all_units_in_mongo:
-            raise ValueError  # TODO Remove it when I check that this don't occurs
+        # TODO deffensive programming
+        units_pks_ordered = map(lambda x: x[0], course_units.values_list('pk'))
+        units_info = sorted(units_info, key=lambda u: units_pks_ordered.index(u['unit_id']))
         for idx, uinfo in enumerate(units_info):
             uinfo['unit'] = course_units[idx]
-            if uinfo['unit_id'] != uinfo['unit'].pk:
-                raise ValueError  # TODO Remove it when I check that this don't occurs
-            normalized_unit_weight = normalize_unit_weight(uinfo['unit'], unit_course_counter, total_weight_unnormalized)
+            normalized_unit_weight = normalize_unit_weight(uinfo['unit'],
+                                                           unit_course_counter,
+                                                           total_weight_unnormalized)
             uinfo['normalized_weight'] = normalized_unit_weight
             uinfo['mark'] = uinfo['score']
             unit_class = get_unit_badge_class(uinfo['unit'])
-            units_info[idx]['badge_class'] = unit_class
+            uinfo['badge_class'] = unit_class
         courses_info.append({
             'course': course,
             'units_info': units_info,

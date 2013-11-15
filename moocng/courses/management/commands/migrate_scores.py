@@ -57,7 +57,7 @@ class Command(BaseCommand):
         db = get_db()
         for user in users:
             for course in user.courses_as_student.all():
-                for unit in course.unit_set.all():
+                for unit in course.unit_set.scorables():
                     for kq in unit.knowledgequantum_set.all():
                         update_kq_score(db, kq, user)
                     update_unit_score(db, unit, user)

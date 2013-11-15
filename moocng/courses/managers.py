@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.db import models
+from django.db.models.query import QuerySet
 
 
 class CourseManager(models.Manager):
@@ -7,7 +9,21 @@ class CourseManager(models.Manager):
         return self.get(slug=slug)
 
 
+class UnitQuerySet(QuerySet):
+
+    def scorables(self):
+        if not settings.COURSES_USING_OLD_TRANSCRIPT:
+            return self.exclude(unittype='n')
+        return self.all()
+
+
 class UnitManager(models.Manager):
+
+    def get_query_set(self):
+        return UnitQuerySet(self.model, using=self._db)
+
+    def scorables(self):
+        return self.get_query_set().scorables()
 
     def get_by_natural_key(self, course_slug, title):
         return self.get(title=title, course__slug=course_slug)
