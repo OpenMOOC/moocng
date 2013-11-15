@@ -162,11 +162,8 @@ def normalize_unit_weight(unit, course_unit_counter, total_weight_unnormalized):
 
 
 def get_course_intermediate_calculations(course):
-    use_old_calculus = False
-    if course.slug in settings.COURSES_USING_OLD_TRANSCRIPT:
-        use_old_calculus = True
     course_units = course.unit_set.all()
-    if not use_old_calculus:
+    if not settings.COURSES_USING_OLD_TRANSCRIPT:
         course_units = course_units.exclude(unittype='n')
 
     total_weight_unnormalized = course.unit_set.aggregate(Sum('weight'))['weight__sum']

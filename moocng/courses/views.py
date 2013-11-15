@@ -31,7 +31,7 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
 from moocng.badges.models import Award
-from moocng.courses.models import Course, CourseTeacher, Announcement, Unit
+from moocng.courses.models import Course, CourseTeacher, Announcementf
 from moocng.courses.utils import (get_unit_badge_class, is_course_ready,
                                   is_teacher as is_teacher_test,
                                   send_mail_wrapper)
@@ -211,7 +211,6 @@ def course_overview(request, course_slug):
     course_teachers = CourseTeacher.objects.filter(course=course)
     announcements = Announcement.objects.filter(course=course).order_by('datetime').reverse()[:5]
     units = get_units_available_for_user(course, request.user, True)
-    use_old_calculus = course.slug in settings.COURSES_USING_OLD_TRANSCRIPT
 
     return render_to_response('courses/overview.html', {
         'course': course,
@@ -221,7 +220,7 @@ def course_overview(request, course_slug):
         'request': request,
         'course_teachers': course_teachers,
         'announcements': announcements,
-        'use_old_calculus': use_old_calculus,
+        'use_old_calculus': settings.COURSES_USING_OLD_TRANSCRIPT,
     }, context_instance=RequestContext(request))
 
 
@@ -380,9 +379,7 @@ def transcript(request, course_slug=None):
     courses_info = []
     cert_url = ''
     for course in course_list:
-        use_old_calculus = False
-        if course.slug in settings.COURSES_USING_OLD_TRANSCRIPT:
-            use_old_calculus = True
+        use_old_calculus = settings.COURSES_USING_OLD_TRANSCRIPT
         total_mark, units_info = calculate_course_mark(course, request.user)
         award = None
         passed = False
@@ -434,10 +431,8 @@ def transcript_v2(request, course_slug=None):
         course_list = course_list.filter(slug=course_slug)
     courses_info = []
     cert_url = ''
+    use_old_calculus = settings.COURSES_USING_OLD_TRANSCRIPT
     for course in course_list:
-        use_old_calculus = False
-        if course.slug in settings.COURSES_USING_OLD_TRANSCRIPT:
-            use_old_calculus = True
         total_mark, units_info = get_course_mark(course, request.user)
         award = None
         passed = False
@@ -455,9 +450,13 @@ def transcript_v2(request, course_slug=None):
                     award = Award(badge=badge, user=request.user)
                     award.save()
         total_weight_unnormalized, unit_course_counter, course_units = get_course_intermediate_calculations(course)
+        all_units_in_mongo = course_units.count() == len(units_info)
+        if not all_units_in_mongo:
+            raise ValueError  # TODO Remove it when I check that this don't occurs
         for idx, uinfo in enumerate(units_info):
-            unit_id = uinfo['unit_id']
-            uinfo['unit'] = Unit.objects.get(pk=unit_id)  # TODO
+            uinfo['unit'] = course_units[idx]
+            if uinfo['unit_id'] != uinfo['unit'].pk:
+                raise ValueError  # TODO Remove it when I check that this don't occurs
             normalized_unit_weight = normalize_unit_weight(uinfo['unit'], unit_course_counter, total_weight_unnormalized)
             uinfo['normalized_weight'] = normalized_unit_weight
             uinfo['mark'] = uinfo['score']

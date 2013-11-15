@@ -364,7 +364,7 @@ ALLOW_PUBLIC_COURSE_CREATION = False
 
 # A list with the slugs of the courses that use the old qualification system
 # where the normal units counted
-COURSES_USING_OLD_TRANSCRIPT = []
+COURSES_USING_OLD_TRANSCRIPT = False
 
 # Enrollment methods
 ENROLLMENT_METHODS = (
