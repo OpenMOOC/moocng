@@ -20,7 +20,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
 
-from moocng.api.tasks import update_kq_score, update_unit_score, update_course_score
+from moocng.api.tasks import update_kq_mark, update_unit_mark, update_course_mark
 from moocng.mongodb import get_db
 
 
@@ -44,11 +44,11 @@ class Command(BaseCommand):
                 raise CommandError(u"User %s does not exist" % options["user"])
             self.message("Migrating the user: %s" % users[0].username)
         else:
-            first_day = datetime.strptime(settings.FIRST_DAY_MIGRATE_SCORE, '%Y-%m-%d')
+            first_day = datetime.strptime(settings.FIRST_DAY_MIGRATE_MARK, '%Y-%m-%d')
             today = datetime.today()
             num_days = (today - first_day).days
-            start_pk = num_days * settings.NUM_MIGRATE_SCORE_DAILY + 1
-            end_pk = (num_days + 1) * settings.NUM_MIGRATE_SCORE_DAILY
+            start_pk = num_days * settings.NUM_MIGRATE_MARK_DAILY + 1
+            end_pk = (num_days + 1) * settings.NUM_MIGRATE_MARK_DAILY
             self.message("Migrating the users from pk=%s to pk=%s " % (start_pk, end_pk))
             users = users.filter(pk__gte=start_pk, pk__lte=end_pk)
             if not users:
@@ -59,6 +59,6 @@ class Command(BaseCommand):
             for course in user.courses_as_student.all():
                 for unit in course.unit_set.scorables():
                     for kq in unit.knowledgequantum_set.all():
-                        update_kq_score(db, kq, user)
-                    update_unit_score(db, unit, user)
-                update_course_score(db, course, user)
+                        update_kq_mark(db, kq, user)
+                    update_unit_mark(db, unit, user)
+                update_course_mark(db, course, user)

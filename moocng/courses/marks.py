@@ -110,7 +110,7 @@ def calculate_unit_mark(unit, user, normalized_unit_weight=None):
     .. versionadded:: 0.1
     """
     if normalized_unit_weight is None:
-        unit_course_counter, total_weight_unnormalized, course_units = get_course_intermediate_calculations(unit.course)
+        total_weight_unnormalized, unit_course_counter, course_units = get_course_intermediate_calculations(unit.course)
         normalized_unit_weight = normalize_unit_weight(unit, unit_course_counter, total_weight_unnormalized)
     kqs_total_weight_unnormalized = 0
     unit_mark = 0
@@ -168,36 +168,27 @@ def get_course_intermediate_calculations(course):
 
 
 def calculate_course_mark(course, user):
-    total_mark = 0
-    units_info = []
-    total_weight_unnormalized, unit_course_counter, course_units = get_course_intermediate_calculations(course)
-    for unit in course_units:
-        unit_info = {}
-        use_unit_in_total = False
-        normalized_unit_weight = normalize_unit_weight(unit, unit_course_counter, total_weight_unnormalized)
-        mark, relative_mark, use_unit_in_total = calculate_unit_mark(unit, user, normalized_unit_weight)
-        if use_unit_in_total:
-            total_mark += relative_mark
-        unit_info = {
-            'unit': unit,
-            'mark': mark,
-            'normalized_weight': normalized_unit_weight,
-            'use_unit_in_total': use_unit_in_total
-        }
-        units_info.append(unit_info)
+    units_info = get_units_info_from_course(course, user)
+    total_mark = sum([unit_info['relative_mark'] for unit_info in units_info])
     return total_mark, units_info
 
 
-def get_course_mark(course, user):
+def get_units_info_from_course(course, user, db=None):
+    db = db or get_db()
     data_course = {'user_id': user.pk,
                    'course_id': course.pk}
-    db = get_db()
-    scores_course = db.get_collection('scores_course')
-    score_course_item = scores_course.find_one(data_course)
-    if score_course_item:
-        total_mark = score_course_item['score']
+    marks_units = db.get_collection('marks_unit')
+    return list(marks_units.find(data_course))
+
+
+def get_course_mark(course, user, db=None):
+    data_course = {'user_id': user.pk,
+                   'course_id': course.pk}
+    db = db or get_db()
+    marks_course = db.get_collection('marks_course')
+    mark_course_item = marks_course.find_one(data_course)
+    if mark_course_item:
+        total_mark = mark_course_item['mark']
     else:
         total_mark = 0
-    scores_units = db.get_collection('scores_unit')
-    units_info = scores_units.find(data_course)
-    return (total_mark, list(units_info))
+    return (total_mark, get_units_info_from_course(course, user, db=db))
