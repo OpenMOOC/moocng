@@ -26,7 +26,7 @@ def on_activity_created_task(activity_created, unit_activity, course_activity):
     db = get_db()
     kq = KnowledgeQuantum.objects.get(id=activity_created['kq_id'])
     kq_type = kq.kq_type()
-
+    update_mark(activity_created)
     # KQ
     data = {
         'viewed': 1
@@ -197,13 +197,11 @@ def update_course_mark(db, course, user, new_mark_course=None):
 
 
 def update_mark(submitted):
-    from courses.marks import calculate_kq_mark, calculate_unit_mark, calculate_course_mark
+    from moocng.courses.marks import calculate_kq_mark, calculate_unit_mark, calculate_course_mark
     updated_kq_mark = updated_unit_mark = updated_course_mark = False
     kq = KnowledgeQuantum.objects.get(pk=submitted['kq_id'])
     user = User.objects.get(pk=submitted['user_id'])
     mark_kq, mark_normalized_kq, use_kq_in_total = calculate_kq_mark(kq, user)
-    mark_unit, mark_normalized_unit, use_unit_in_total = calculate_unit_mark(kq.unit, user)
-    mark_course, units_info = calculate_course_mark(kq.unit.course, user)
     if not use_kq_in_total:
         return (updated_kq_mark, updated_unit_mark, updated_course_mark)
 
@@ -213,14 +211,16 @@ def update_mark(submitted):
     updated_kq_mark = update_kq_mark(db, kq, user, mark_kq, mark_normalized_kq)
 
     # UNIT
-    if not updated_kq_mark or not use_unit_in_total:
+    if not updated_kq_mark:
         return (updated_kq_mark, updated_unit_mark, updated_course_mark)
 
+    mark_unit, mark_normalized_unit, use_unit_in_total = calculate_unit_mark(kq.unit, user)
     updated_unit_mark = update_unit_mark(db, kq.unit, user, mark_unit, mark_normalized_unit)
 
     # COURSE
-    if not updated_unit_mark:
+    if not updated_unit_mark or not use_unit_in_total:
         return (updated_kq_mark, updated_unit_mark, updated_course_mark)
+    mark_course, units_info = calculate_course_mark(kq.unit.course, user)
     updated_course_mark = update_course_mark(db, kq.unit.course, user, mark_course)
     return (updated_kq_mark, updated_unit_mark, updated_course_mark)
 
