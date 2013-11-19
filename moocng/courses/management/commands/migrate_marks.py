@@ -19,6 +19,8 @@ from optparse import make_option
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
+from django.core.mail import send_mail
+from django.db.models import Max
 
 from moocng.api.tasks import update_kq_mark, update_unit_mark, update_course_mark
 from moocng.mongodb import get_db
@@ -31,6 +33,11 @@ class Command(BaseCommand):
                     dest='user',
                     default="",
                     help='User pk'),
+        make_option('-e', '--email-list',
+                    action='store',
+                    dest='email_list',
+                    default="",
+                    help='Email recipient list'),
     )
 
     def message(self, message):
@@ -43,7 +50,10 @@ class Command(BaseCommand):
             if not users:
                 raise CommandError(u"User %s does not exist" % options["user"])
             self.message("Migrating the user: %s" % users[0].username)
-        else:
+        elif settings.NUM_MIGRATE_MARK_DAILY is not None:
+            email_list = options["email_list"]
+            if not email_list:
+                raise CommandError(u"Please you have to pass the email list")
             first_day = datetime.strptime(settings.FIRST_DAY_MIGRATE_MARK, '%Y-%m-%d')
             today = datetime.today()
             num_days = (today - first_day).days
@@ -51,9 +61,12 @@ class Command(BaseCommand):
             end_pk = (num_days + 1) * settings.NUM_MIGRATE_MARK_DAILY
             self.message("Migrating the users from pk=%s to pk=%s " % (start_pk, end_pk))
             users = users.filter(pk__gte=start_pk, pk__lte=end_pk)
-            if not users:
-                #TODO: send email
-                raise NotImplementedError
+            max_pk = User.objects.aggregate(Max('pk'))['pk__max']
+            if not users and end_pk >= max_pk:
+                send_mail('The mark migration is finished',
+                          'The mark migration is finished',
+                          settings.DEFAULT_FROM_EMAIL,
+                          email_list.split(','))
         db = get_db()
         for user in users:
             for course in user.courses_as_student.all():
