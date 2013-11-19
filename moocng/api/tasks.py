@@ -107,10 +107,12 @@ def update_stats(submitted, data):
         )
 
 
-def update_kq_mark(db, kq, user, new_mark_kq=None):
+def update_kq_mark(db, kq, user, new_mark_kq=None, new_mark_normalized_kq=None):
     from moocng.courses.marks import calculate_kq_mark
-    if not new_mark_kq:
-        new_mark_kq, use_in_total = calculate_kq_mark(kq, user)
+    if not new_mark_kq or not new_mark_normalized_kq:
+        from moocng.courses.marks_old import calculate_kq_mark_old
+        calculate_kq_mark_old(kq, user)
+        new_mark_kq, new_mark_normalized_kq, use_in_total = calculate_kq_mark(kq, user)
         if not use_in_total:
             return False
     data_kq = {}
@@ -122,11 +124,13 @@ def update_kq_mark(db, kq, user, new_mark_kq=None):
     marks_kq = db.get_collection('marks_kq')
     mark_kq_item = marks_kq.find_one(data_kq)
     if mark_kq_item:
-        updated_kq_mark = new_mark_kq != mark_kq_item['mark']
+        updated_kq_mark = (new_mark_kq != mark_kq_item['mark'] or
+                           new_mark_normalized_kq != mark_kq_item.get('relative_mark', None))
         if updated_kq_mark:
             marks_kq.update(
                 data_kq,
-                {'$set': {'mark': new_mark_kq}},
+                {'$set': {'mark': new_mark_kq,
+                          'relative_mark': new_mark_normalized_kq}},
                 safe=True
             )
     else:
@@ -196,7 +200,7 @@ def update_mark(submitted, data):
     updated_kq_mark = updated_unit_mark = updated_course_mark = False
     kq = KnowledgeQuantum.objects.get(pk=submitted['kq_id'])
     user = User.objects.get(pk=submitted['user_id'])
-    mark_kq, use_kq_in_total = calculate_kq_mark(kq, user)
+    mark_kq, mark_normalized_kq, use_kq_in_total = calculate_kq_mark(kq, user)
     mark_unit, mark_normalized_unit, use_unit_in_total = calculate_unit_mark(kq.unit, user)
     mark_course, units_info = calculate_course_mark(kq.unit.course, user)
     if not use_kq_in_total:
@@ -205,7 +209,7 @@ def update_mark(submitted, data):
     db = get_db()
 
     # KQ
-    updated_kq_mark = update_kq_mark(db, kq, user, mark_kq)
+    updated_kq_mark = update_kq_mark(db, kq, user, mark_kq, mark_normalized_kq)
 
     # UNIT
     if not updated_kq_mark or not use_unit_in_total:

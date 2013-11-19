@@ -14,8 +14,25 @@
 # limitations under the License.
 
 from moocng.courses.marks import (get_course_intermediate_calculations, normalize_unit_weight,
-                                  normalize_kq_weight, calculate_question_mark,
+                                  calculate_question_mark,
                                   calculate_peer_review_mark, calculate_kq_video_mark)
+
+
+def normalize_kq_weight_old(kq, unit_kq_counter, total_weight_unnormalized):
+
+    from moocng.courses.models import KnowledgeQuantum
+    unit_kq_list = KnowledgeQuantum.objects.filter(unit=kq.unit)
+    unit_kq_counter = len(unit_kq_list)
+    total_weight_unnormalized = 0
+    for unit_kq in unit_kq_list:
+        total_weight_unnormalized += unit_kq.weight
+
+    if total_weight_unnormalized == 0:
+        if unit_kq_counter == 0:
+            return 0
+        else:
+            return 100.0 / unit_kq_counter
+    return (kq.weight * 100.0) / total_weight_unnormalized
 
 
 def calculate_kq_mark_old(kq, user):
@@ -70,7 +87,7 @@ def calculate_unit_mark_old(unit, user, normalized_unit_weight=None):
             kqs_total_weight_unnormalized += unit_kq.weight
     kq_unit_counter = len(entries)
     for entry in entries:
-        normalized_kq_weight = normalize_kq_weight(entry[0], kq_unit_counter, kqs_total_weight_unnormalized)
+        normalized_kq_weight = normalize_kq_weight_old(entry[0], kq_unit_counter, kqs_total_weight_unnormalized)
         unit_mark += (normalized_kq_weight * entry[1]) / 100.0
     if unit_mark == 0:
         return (0, 0, use_unit_in_total)

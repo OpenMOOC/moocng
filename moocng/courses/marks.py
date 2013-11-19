@@ -83,22 +83,37 @@ def calculate_kq_mark(kq, user):
     .. versionadded:: 0.1
     """
     from moocng.peerreview.models import PeerReviewAssignment
+    mark = None
     try:
         question = kq.question_set.get()
         # KQ has a question
-        return calculate_question_mark(kq, question, user)
+        mark, use_in_total = calculate_question_mark(kq, question, user)
     except kq.question_set.model.DoesNotExist:
         pass
     else:
         try:
             # KQ has a peer review
             pra = kq.peerreviewassignment
-            return calculate_peer_review_mark(kq, pra, user)
+            mark, use_in_total = calculate_peer_review_mark(kq, pra, user)
         except PeerReviewAssignment.DoesNotExist:
             pass
+    if mark is None:
+        # KQ hasn't a question or peer review
+        mark, use_in_total = calculate_kq_video_mark(kq, user)
+    return (mark, normalize_kq_weight(kq) * mark / 100.0, use_in_total)
 
-    # KQ hasn't a question or peer review
-    return calculate_kq_video_mark(kq, user)
+
+def normalize_kq_weight(kq, unit_kq_counter=None, total_weight_unnormalized=None):
+    # KnowledgeQuantumResource does not send unit_kq_counter  [tastypie api]
+    if unit_kq_counter is None:
+        unit = kq.unit
+        total_weight_unnormalized, unit_kq_counter, uni_kqs = get_unit_intermediate_calculations(unit)
+    if total_weight_unnormalized == 0:
+        if unit_kq_counter == 0:
+            return 0
+        else:
+            return 100.0 / unit_kq_counter
+    return (kq.weight * 100.0) / total_weight_unnormalized
 
 
 def calculate_unit_mark(unit, user, normalized_unit_weight=None):
@@ -112,43 +127,21 @@ def calculate_unit_mark(unit, user, normalized_unit_weight=None):
     if normalized_unit_weight is None:
         total_weight_unnormalized, unit_course_counter, course_units = get_course_intermediate_calculations(unit.course)
         normalized_unit_weight = normalize_unit_weight(unit, unit_course_counter, total_weight_unnormalized)
-    kqs_total_weight_unnormalized = 0
     unit_mark = 0
-    entries = []
-    use_unit_in_total = False
-    for unit_kq in unit.knowledgequantum_set.all():
-        mark, use_in_total = calculate_kq_mark(unit_kq, user)
-        if use_in_total and mark is not None:
-            use_unit_in_total = True
-            entries.append((unit_kq, mark))
-            kqs_total_weight_unnormalized += unit_kq.weight
-    kq_unit_counter = len(entries)
-    for entry in entries:
-        normalized_kq_weight = normalize_kq_weight(entry[0], kq_unit_counter, kqs_total_weight_unnormalized)
-        unit_mark += (normalized_kq_weight * entry[1]) / 100.0
-    if unit_mark == 0:
-        return (0, 0, use_unit_in_total)
-    else:
-        # returns the absolute mark and the mark in relation with the course
-        return (unit_mark, (normalized_unit_weight * unit_mark) / 100.0, use_unit_in_total)
+    kqs = get_kq_info_from_course(unit, user)
+    kq_unit_counter = len(kqs)
+    use_unit_in_total = kq_unit_counter > 0
+    for kq in kqs:
+        unit_mark += kq['relative_mark']
+    return (unit_mark, (normalized_unit_weight * unit_mark) / 100.0, use_unit_in_total)
 
 
-def normalize_kq_weight(kq, unit_kq_counter=None, total_weight_unnormalized=None):
-    # KnowledgeQuantumResource does not send unit_kq_counter  [tastypie api]
-    if unit_kq_counter is None:
-        from moocng.courses.models import KnowledgeQuantum
-        unit_kq_list = KnowledgeQuantum.objects.filter(unit=kq.unit)
-        unit_kq_counter = len(unit_kq_list)
-        total_weight_unnormalized = 0
-        for unit_kq in unit_kq_list:
-            total_weight_unnormalized += unit_kq.weight
-
-    if total_weight_unnormalized == 0:
-        if unit_kq_counter == 0:
-            return 0
-        else:
-            return 100.0 / unit_kq_counter
-    return (kq.weight * 100.0) / total_weight_unnormalized
+def get_kq_info_from_course(unit, user, db=None):
+    db = db or get_db()
+    data_unit = {'user_id': user.pk,
+                 'unit_id': unit.pk}
+    marks_kq = db.get_collection('marks_kq')
+    return list(marks_kq.find(data_unit))
 
 
 def normalize_unit_weight(unit, course_unit_counter, total_weight_unnormalized):
@@ -165,6 +158,13 @@ def get_course_intermediate_calculations(course):
     total_weight_unnormalized = course.unit_set.aggregate(Sum('weight'))['weight__sum']
     unit_course_counter = course_units.count()
     return (total_weight_unnormalized, unit_course_counter, course_units)
+
+
+def get_unit_intermediate_calculations(unit):
+    unit_kqs = unit.knowledgequantum_set.all()
+    total_weight_unnormalized = unit_kqs.aggregate(Sum('weight'))['weight__sum']
+    unit_kqs_counter = unit_kqs.count()
+    return (total_weight_unnormalized, unit_kqs_counter, unit_kqs)
 
 
 def calculate_course_mark(course, user):
