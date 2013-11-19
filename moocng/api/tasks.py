@@ -125,7 +125,7 @@ def update_kq_mark(db, kq, user, new_mark_kq=None, new_mark_normalized_kq=None):
     mark_kq_item = marks_kq.find_one(data_kq)
     if mark_kq_item:
         updated_kq_mark = (new_mark_kq != mark_kq_item['mark'] or
-                           new_mark_normalized_kq != mark_kq_item.get('relative_mark', None))
+                           new_mark_normalized_kq != mark_kq_item['relative_mark'])
         if updated_kq_mark:
             marks_kq.update(
                 data_kq,
@@ -136,6 +136,7 @@ def update_kq_mark(db, kq, user, new_mark_kq=None, new_mark_normalized_kq=None):
     else:
         updated_kq_mark = True
         data_kq['mark'] = new_mark_kq
+        data_kq['relative_mark'] = new_mark_normalized_kq
         marks_kq.insert(data_kq)
     return updated_kq_mark
 
@@ -195,7 +196,7 @@ def update_course_mark(db, course, user, new_mark_course=None):
     return updated_course_mark
 
 
-def update_mark(submitted, data):
+def update_mark(submitted):
     from courses.marks import calculate_kq_mark, calculate_unit_mark, calculate_course_mark
     updated_kq_mark = updated_unit_mark = updated_course_mark = False
     kq = KnowledgeQuantum.objects.get(pk=submitted['kq_id'])
@@ -226,12 +227,13 @@ def update_mark(submitted, data):
 
 @task
 def on_answer_created_task(answer_created):
-    update_mark(answer_created, {'submitted': 1})
+    update_mark(answer_created)
     update_stats(answer_created, {'submitted': 1})
 
 
 @task
 def on_answer_updated_task(answer_updated):
+    update_mark(answer_updated)
     update_stats(answer_updated, {})
 
 
@@ -242,6 +244,7 @@ def on_peerreviewsubmission_created_task(submission_created):
         'unit_id': submission_created['unit'],
         'kq_id': submission_created['kq'],
     }
+    update_mark(data)
     update_stats(data, {'submitted': 1})
 
 
@@ -260,5 +263,5 @@ def on_peerreviewreview_created_task(review_created, user_reviews):
         'reviews': 1,
         'reviewers': inc_reviewers
     }
-
+    update_mark(data)
     update_stats(data, increment)
