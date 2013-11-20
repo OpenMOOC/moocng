@@ -12,6 +12,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import decimal
+
 
 from django.contrib.auth.models import User
 
@@ -26,12 +28,12 @@ def on_activity_created_task(activity_created, unit_activity, course_activity):
     db = get_db()
     kq = KnowledgeQuantum.objects.get(id=activity_created['kq_id'])
     kq_type = kq.kq_type()
-    update_mark(activity_created)
+    up_kq, up_u, up_c, passed_kq, passed_unit, passed_course = update_mark(activity_created)
     # KQ
     data = {
         'viewed': 1
     }
-    if kq_type == 'Video':
+    if kq_type == 'Video' or passed_kq:
         data['passed'] = 1
     stats_kq = db.get_collection('stats_kq')
     stats_kq.update(
@@ -46,7 +48,10 @@ def on_activity_created_task(activity_created, unit_activity, course_activity):
         data['started'] = 1
     elif kq.unit.knowledgequantum_set.count() == unit_activity:
         data['completed'] = 1
-    # TODO passed
+
+    if passed_unit:
+        data['passed'] = 1
+
     if data.keys():
         stats_unit = db.get_collection('stats_unit')
         stats_unit.update(
@@ -62,7 +67,10 @@ def on_activity_created_task(activity_created, unit_activity, course_activity):
         data['started'] = 1
     elif course_kqs == course_activity:
         data['completed'] = 1
-    # TODO passed
+
+    if passed_course:
+        data['passed'] = 1
+
     if data.keys():
         stats_course = db.get_collection('stats_course')
         stats_course.update(
@@ -72,42 +80,55 @@ def on_activity_created_task(activity_created, unit_activity, course_activity):
         )
 
 
-def update_stats(submitted, data):
+def update_stats(submitted, data_kq=None, data_unit=None, data_course=None):
     db = get_db()
-
+    data_kq = data_kq or {}
+    data_unit = data_unit or {}
+    data_course = data_course or {}
     # KQ
     # TODO passed
-    stats_kq = db.get_collection('stats_kq')
-    stats_kq.update(
-        {'kq_id': submitted['kq_id']},
-        {'$inc': data},
-        safe=True
-    )
+    if data_kq.keys():
+        stats_kq = db.get_collection('stats_kq')
+        stats_kq.update(
+            {'kq_id': submitted['kq_id']},
+            {'$inc': data_kq},
+            safe=True
+        )
 
     # UNIT
-    data = {}
     # TODO passed
-    if data.keys():
+    if data_unit.keys():
         stats_unit = db.get_collection('stats_unit')
         stats_unit.update(
             {'unit_id': submitted['unit_id']},
-            {'$inc': data},
+            {'$inc': data_unit},
             safe=True
         )
 
     # COURSE
-    data = {}
     # TODO passed
-    if data.keys():
+    if data_course.keys():
         stats_course = db.get_collection('stats_course')
         stats_course.update(
             {'course_id': submitted['course_id']},
-            {'$inc': data},
+            {'$inc': data_course},
             safe=True
         )
 
 
-def update_kq_mark(db, kq, user, new_mark_kq=None, new_mark_normalized_kq=None):
+def to_decimal(float_price):
+    return decimal.Decimal('%.2f' % float_price)
+
+
+def has_passed_now(mark, mark_item, threshold):
+    if threshold is None:
+        return False
+    if mark_item and to_decimal(mark_item['mark']) >= threshold:
+        return False
+    return to_decimal(mark) >= threshold
+
+
+def update_kq_mark(db, kq, user, threshold, new_mark_kq=None, new_mark_normalized_kq=None):
     from moocng.courses.marks import calculate_kq_mark
     if not new_mark_kq or not new_mark_normalized_kq:
         from moocng.courses.marks_old import calculate_kq_mark_old
@@ -138,10 +159,10 @@ def update_kq_mark(db, kq, user, new_mark_kq=None, new_mark_normalized_kq=None):
         data_kq['mark'] = new_mark_kq
         data_kq['relative_mark'] = new_mark_normalized_kq
         marks_kq.insert(data_kq)
-    return updated_kq_mark
+    return updated_kq_mark, has_passed_now(new_mark_kq, mark_kq_item, threshold)
 
 
-def update_unit_mark(db, unit, user, new_mark_unit=None, new_mark_normalized_unit=None):
+def update_unit_mark(db, unit, user, threshold, new_mark_unit=None, new_mark_normalized_unit=None):
     from moocng.courses.marks import calculate_unit_mark
     if not new_mark_unit or not new_mark_normalized_unit:
         new_mark_unit, new_mark_normalized_unit, use_unit_in_total = calculate_unit_mark(unit, user)
@@ -149,7 +170,7 @@ def update_unit_mark(db, unit, user, new_mark_unit=None, new_mark_normalized_uni
             return False
     data_unit = {}
     data_unit['user_id'] = user.pk
-    data_unit['course_id'] = unit.course.pk
+    data_unit['course_id'] = unit.course_id
     data_unit['unit_id'] = unit.pk
 
     marks_unit = db.get_collection('marks_unit')
@@ -169,7 +190,7 @@ def update_unit_mark(db, unit, user, new_mark_unit=None, new_mark_normalized_uni
         data_unit['mark'] = new_mark_unit
         data_unit['relative_mark'] = new_mark_normalized_unit
         marks_unit.insert(data_unit)
-    return updated_unit_mark
+    return updated_unit_mark, has_passed_now(new_mark_unit, mark_unit_item, threshold)
 
 
 def update_course_mark(db, course, user, new_mark_course=None):
@@ -193,48 +214,82 @@ def update_course_mark(db, course, user, new_mark_course=None):
         updated_course_mark = True
         data_course['mark'] = new_mark_course
         marks_course.insert(data_course)
-    return updated_course_mark
+    return updated_course_mark, has_passed_now(new_mark_course, mark_course_item, course.threshold)
 
 
 def update_mark(submitted):
     from moocng.courses.marks import calculate_kq_mark, calculate_unit_mark, calculate_course_mark
     updated_kq_mark = updated_unit_mark = updated_course_mark = False
+    passed_kq = passed_unit = passed_course = False
     kq = KnowledgeQuantum.objects.get(pk=submitted['kq_id'])
+    unit = kq.unit
+    course = kq.unit.course
     user = User.objects.get(pk=submitted['user_id'])
     mark_kq, mark_normalized_kq, use_kq_in_total = calculate_kq_mark(kq, user)
     if not use_kq_in_total:
-        return (updated_kq_mark, updated_unit_mark, updated_course_mark)
+        return (updated_kq_mark, updated_unit_mark, updated_course_mark,
+                passed_kq, passed_unit, passed_course)
 
     db = get_db()
 
     # KQ
-    updated_kq_mark = update_kq_mark(db, kq, user, mark_kq, mark_normalized_kq)
+    updated_kq_mark, passed_kq = update_kq_mark(db, kq, user, course.threshold,
+                                                new_mark_kq=mark_kq,
+                                                new_mark_normalized_kq=mark_normalized_kq)
 
     # UNIT
     if not updated_kq_mark:
-        return (updated_kq_mark, updated_unit_mark, updated_course_mark)
+        return (updated_kq_mark, updated_unit_mark, updated_course_mark,
+                passed_kq, passed_unit, passed_course)
 
     mark_unit, mark_normalized_unit, use_unit_in_total = calculate_unit_mark(kq.unit, user)
-    updated_unit_mark = update_unit_mark(db, kq.unit, user, mark_unit, mark_normalized_unit)
+    updated_unit_mark, passed_unit = update_unit_mark(db, unit, user, course.threshold,
+                                                      new_mark_unit=mark_unit,
+                                                      new_mark_normalized_unit=mark_normalized_unit)
 
     # COURSE
     if not updated_unit_mark or not use_unit_in_total:
-        return (updated_kq_mark, updated_unit_mark, updated_course_mark)
-    mark_course, units_info = calculate_course_mark(kq.unit.course, user)
-    updated_course_mark = update_course_mark(db, kq.unit.course, user, mark_course)
-    return (updated_kq_mark, updated_unit_mark, updated_course_mark)
+        return (updated_kq_mark, updated_unit_mark, updated_course_mark,
+                passed_kq, passed_unit, passed_course)
+    mark_course, units_info = calculate_course_mark(unit.course, user)
+    updated_course_mark, passed_course = update_course_mark(db, course, user, mark_course)
+    return (updated_kq_mark, updated_unit_mark, updated_course_mark,
+            passed_kq, passed_unit, passed_course)
+
+
+def get_data_dicts(submitted, passed_kq, passed_unit, passed_course):
+    data_kq = {}
+    data_unit = {}
+    data_course = {}
+    if submitted:
+        data_kq['submitted'] = submitted
+        data_unit['submitted'] = submitted
+        data_course['submitted'] = submitted
+
+    if passed_kq:
+        data_kq['passed'] = 1
+
+    if passed_unit:
+        data_unit['passed'] = 1
+
+    if data_course:
+        data_course['passed'] = 1
+
+    return (data_kq, data_unit, data_course)
 
 
 @task
 def on_answer_created_task(answer_created):
-    update_mark(answer_created)
-    update_stats(answer_created, {'submitted': 1})
+    up_kq, up_u, up_c, p_kq, p_u, p_c = update_mark(answer_created)
+    submitted = 1
+    update_stats(answer_created, get_data_dicts(submitted, p_kq, p_u, p_c))
 
 
 @task
 def on_answer_updated_task(answer_updated):
-    update_mark(answer_updated)
-    update_stats(answer_updated, {})
+    up_kq, up_u, up_c, p_kq, p_u, p_c = update_mark(answer_updated)
+    submitted = 0
+    update_stats(answer_updated, get_data_dicts(submitted, p_kq, p_u, p_c))
 
 
 @task
@@ -244,8 +299,9 @@ def on_peerreviewsubmission_created_task(submission_created):
         'unit_id': submission_created['unit'],
         'kq_id': submission_created['kq'],
     }
-    update_mark(data)
-    update_stats(data, {'submitted': 1})
+    submitted = 1
+    passed = False
+    update_stats(data, get_data_dicts(submitted, passed, passed, passed))
 
 
 @task
@@ -255,13 +311,30 @@ def on_peerreviewreview_created_task(review_created, user_reviews):
         'unit_id': review_created['unit'],
         'kq_id': review_created['kq'],
     }
-
+    data_author = {'user_id': review_created['author']}
+    data_author.update(data)
+    data_reviewer = {'user_id': review_created['reviewer']}
+    data_reviewer.update(data)
     inc_reviewers = 0
     if user_reviews == 1:  # First review of this guy
         inc_reviewers = 1
+    datas = [data_author, data_reviewer]
+    data_kq = {}
+    data_unit = {}
+    data_course = {}
+    for data in datas:
+        up_kq, up_u, up_c, p_kq, p_u, p_c = update_mark(data)
+        if p_kq:
+            data_kq['passed'] = data_kq.get('passed', 0) + 1
+        if p_u:
+            data_unit['passed'] = data_unit.get('passed', 0) + 1
+        if p_c:
+            data_course['passed'] = data_course.get('passed', 0) + 1
     increment = {
         'reviews': 1,
         'reviewers': inc_reviewers
     }
-    update_mark(data)
-    update_stats(data, increment)
+    data_kq.update(increment)
+    data_unit.update(increment)
+    data_course.update(increment)
+    update_stats(data, data_kq, data_unit, data_course)

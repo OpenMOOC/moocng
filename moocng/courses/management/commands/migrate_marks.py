@@ -72,6 +72,6 @@ class Command(BaseCommand):
             for course in user.courses_as_student.all():
                 for unit in course.unit_set.scorables():
                     for kq in unit.knowledgequantum_set.all():
-                        update_kq_mark(db, kq, user)
-                    update_unit_mark(db, unit, user)
+                        update_kq_mark(db, kq, user, course.threshold)
+                    update_unit_mark(db, unit, user, course.threshold)
                 update_course_mark(db, course, user)
