@@ -451,17 +451,28 @@ def transcript_v2(request, course_slug=None):
                     award = Award(badge=badge, user=request.user)
                     award.save()
         total_weight_unnormalized, unit_course_counter, course_units = get_course_intermediate_calculations(course)
-        # TODO deffensive programming
         units_pks_ordered = map(lambda x: x[0], course_units.values_list('pk'))
-        units_info = sorted(units_info, key=lambda u: units_pks_ordered.index(u['unit_id']))
+
+        def order_units_info(unit):
+            try:
+                return units_pks_ordered.index(unit['unit_id'])
+            except ValueError:
+                return len(units_pks_ordered)
+        units_info = sorted(units_info, key=order_units_info)
         for idx, uinfo in enumerate(units_info):
-            uinfo['unit'] = course_units[idx]
+            try:
+                uinfo['unit'] = course_units[idx]
+            except IndexError:
+                break  # There is some unit deleted in the postgres database
             normalized_unit_weight = normalize_unit_weight(uinfo['unit'],
                                                            unit_course_counter,
                                                            total_weight_unnormalized)
             uinfo['normalized_weight'] = normalized_unit_weight
             unit_class = get_unit_badge_class(uinfo['unit'])
             uinfo['badge_class'] = unit_class
+        units_removed = len(units_info) - idx
+        if units_removed:
+            units_info = units_info[:-units_removed]
         courses_info.append({
             'course': course,
             'units_info': units_info,
