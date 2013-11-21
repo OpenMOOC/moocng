@@ -43,6 +43,16 @@ class Command(BaseCommand):
     def message(self, message):
         self.stdout.write("%s\n" % message.encode("ascii", "replace"))
 
+    def update_passed(self, db, collection, passed_now, data):
+        if not passed_now:
+            return
+        stats_collection = db.get_collection(collection)
+        stats_collection.update(
+            data,
+            {'$inc': {'passed': 1}},
+            safe=True
+        )
+
     def handle(self, *args, **options):
         users = User.objects.all()
         if options["user"]:
@@ -72,6 +82,9 @@ class Command(BaseCommand):
             for course in user.courses_as_student.all():
                 for unit in course.unit_set.scorables():
                     for kq in unit.knowledgequantum_set.all():
-                        update_kq_mark(db, kq, user, course.threshold)
-                    update_unit_mark(db, unit, user, course.threshold)
-                update_course_mark(db, course, user)
+                        updated_kq, passed_kq_now = update_kq_mark(db, kq, user, course.threshold)
+                        self.update_passed(db, 'stats_kq', passed_kq_now, {'kq_id': kq.pk})
+                    updated_unit, passed_unit_now = update_unit_mark(db, unit, user, course.threshold)
+                    self.update_passed(db, 'stats_unit', passed_unit_now, {'unit_id': unit.pk})
+                updated_course, passed_course_now = update_course_mark(db, course, user)
+                self.update_passed(db, 'stats_course', passed_course_now, {'course_id': course.pk})
