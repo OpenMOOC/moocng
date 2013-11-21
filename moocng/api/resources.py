@@ -61,6 +61,9 @@ from moocng.peerreview.utils import (kq_get_peer_review_score,
                                      get_peer_review_review_score)
 
 
+STATS_QUEUE = 'stats'
+
+
 class CourseResource(ModelResource):
 
     class Meta:
@@ -1155,7 +1158,7 @@ def on_activity_created(sender, user_id, mongo_object, **kwargs):
 
     on_activity_created_task.apply_async(
         args=[data, unit_activity, course_activity],
-        queue='stats',
+        queue=STATS_QUEUE,
     )
 
 
@@ -1164,7 +1167,7 @@ def on_answer_created(sender, user_id, mongo_object, **kwargs):
 
     on_answer_created_task.apply_async(
         args=[mongo_object.to_dict()],
-        queue='stats',
+        queue=STATS_QUEUE,
     )
 
 
@@ -1173,7 +1176,7 @@ def on_answer_updated(sender, user_id, mongo_object, **kwargs):
 
     on_answer_updated_task.apply_async(
         args=[mongo_object],  # it is already a dict
-        queue='stats',
+        queue=STATS_QUEUE,
     )
 
 
@@ -1182,7 +1185,7 @@ def on_peerreviewsubmission_created(sender, user_id, mongo_object, **kwargs):
 
     on_peerreviewsubmission_created_task.apply_async(
         args=[mongo_object.to_dict()],
-        queue='stats',
+        queue=STATS_QUEUE,
     )
 
 

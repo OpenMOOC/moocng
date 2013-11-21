@@ -35,7 +35,8 @@ from moocng.courses.models import Course, CourseTeacher, Announcement
 from moocng.courses.utils import (get_unit_badge_class, is_course_ready,
                                   is_teacher as is_teacher_test,
                                   send_mail_wrapper)
-from moocng.courses.marks import calculate_course_mark
+from moocng.courses.marks_old import calculate_course_mark_old
+from moocng.courses.marks import get_course_mark, get_course_intermediate_calculations, normalize_unit_weight
 from moocng.courses.security import (check_user_can_view_course,
                                      get_courses_available_for_user,
                                      get_units_available_for_user)
@@ -211,7 +212,6 @@ def course_overview(request, course_slug):
     course_teachers = CourseTeacher.objects.filter(course=course)
     announcements = Announcement.objects.filter(course=course).order_by('datetime').reverse()[:5]
     units = get_units_available_for_user(course, request.user, True)
-    use_old_calculus = course.slug in settings.COURSES_USING_OLD_TRANSCRIPT
 
     return render_to_response('courses/overview.html', {
         'course': course,
@@ -221,7 +221,7 @@ def course_overview(request, course_slug):
         'request': request,
         'course_teachers': course_teachers,
         'announcements': announcements,
-        'use_old_calculus': use_old_calculus,
+        'use_old_calculus': settings.COURSES_USING_OLD_TRANSCRIPT,
     }, context_instance=RequestContext(request))
 
 
@@ -371,16 +371,17 @@ def transcript(request, course_slug=None):
     .. versionadded:: 0.1
     """
     course_list = request.user.courses_as_student.all()
+    course_transcript = None
+    template_name = 'courses/transcript.html'
     if course_slug:
-        course = get_object_or_404(Course, slug=course_slug)
+        template_name = 'courses/transcript_course.html'
+        course_transcript = get_object_or_404(Course, slug=course_slug)
         course_list = course_list.filter(slug=course_slug)
     courses_info = []
     cert_url = ''
     for course in course_list:
-        use_old_calculus = False
-        if course.slug in settings.COURSES_USING_OLD_TRANSCRIPT:
-            use_old_calculus = True
-        total_mark, units_info = calculate_course_mark(course, request.user)
+        use_old_calculus = settings.COURSES_USING_OLD_TRANSCRIPT
+        total_mark, units_info = calculate_course_mark_old(course, request.user)
         award = None
         passed = False
         if course.threshold is not None and float(course.threshold) <= total_mark:
@@ -411,7 +412,77 @@ def transcript(request, course_slug=None):
             'cert_url': cert_url,
             'use_old_calculus': use_old_calculus,
         })
-    return render_to_response('courses/transcript.html', {
+    return render_to_response(template_name, {
         'courses_info': courses_info,
-        'course_slug': course_slug,
+        'course_transcript': course_transcript,
+    }, context_instance=RequestContext(request))
+
+
+def transcript_v2(request, course_slug=None):
+    user = request.user
+    if not user.is_superuser:
+        from django.http import Http404
+        raise Http404
+    course_list = request.user.courses_as_student.all()
+    course_transcript = None
+    template_name = 'courses/transcript.html'
+    if course_slug:
+        template_name = 'courses/transcript_course.html'
+        course_transcript = get_object_or_404(Course, slug=course_slug)
+        course_list = course_list.filter(slug=course_slug)
+    courses_info = []
+    cert_url = ''
+    use_old_calculus = settings.COURSES_USING_OLD_TRANSCRIPT
+    for course in course_list:
+        total_mark, units_info = get_course_mark(course, request.user)
+        award = None
+        passed = False
+        if course.threshold is not None and float(course.threshold) <= total_mark:
+            passed = True
+            cert_url = settings.CERTIFICATE_URL % {
+                'courseid': course.id,
+                'email': request.user.email.lower()
+            }
+            badge = course.completion_badge
+            if badge is not None:
+                try:
+                    award = Award.objects.get(badge=badge, user=request.user)
+                except Award.DoesNotExist:
+                    award = Award(badge=badge, user=request.user)
+                    award.save()
+        total_weight_unnormalized, unit_course_counter, course_units = get_course_intermediate_calculations(course)
+        units_pks_ordered = map(lambda x: x[0], course_units.values_list('pk'))
+
+        def order_units_info(unit):
+            try:
+                return units_pks_ordered.index(unit['unit_id'])
+            except ValueError:
+                return len(units_pks_ordered)
+        units_info = sorted(units_info, key=order_units_info)
+        for idx, uinfo in enumerate(units_info):
+            try:
+                uinfo['unit'] = course_units[idx]
+            except IndexError:
+                break  # There is some unit deleted in the postgres database
+            normalized_unit_weight = normalize_unit_weight(uinfo['unit'],
+                                                           unit_course_counter,
+                                                           total_weight_unnormalized)
+            uinfo['normalized_weight'] = normalized_unit_weight
+            unit_class = get_unit_badge_class(uinfo['unit'])
+            uinfo['badge_class'] = unit_class
+        units_removed = len(units_info) - idx
+        if units_removed:
+            units_info = units_info[:-units_removed]
+        courses_info.append({
+            'course': course,
+            'units_info': units_info,
+            'mark': total_mark,
+            'award': award,
+            'passed': passed,
+            'cert_url': cert_url,
+            'use_old_calculus': use_old_calculus,
+        })
+    return render_to_response(template_name, {
+        'courses_info': courses_info,
+        'course_transcript': course_transcript,
     }, context_instance=RequestContext(request))

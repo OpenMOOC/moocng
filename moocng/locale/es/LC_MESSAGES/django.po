@@ -15,14 +15,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-14 11:45+0100\n"
+"POT-Creation-Date: 2013-11-21 11:30+0100\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Pablo Martin <goinnn@gmail.com>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
-"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: es_ES\n"
 
 #: api/admin.py:42
 #, python-format
@@ -204,7 +204,7 @@ msgstr "Su reserva ha sido modificada"
 
 #: assets/views.py:43 assets/views.py:99 assets/views.py:131
 #: courses/views.py:245 courses/views.py:298
-#: courses/templates/courses/transcript.html:70 peerreview/views.py:51
+#: courses/templates/courses/transcript_course.html:7 peerreview/views.py:51
 #: peerreview/views.py:119 peerreview/views.py:159
 msgid "You are not enrolled in this course"
 msgstr "No estás matriculado en este curso"
@@ -812,11 +812,11 @@ msgstr "Comunicados del %(course_title)s"
 #: courses/feeds.py:43
 #, python-format
 msgid ""
-"Announcements of the online course \"%(course_title)s\" on the platform "
-"\"%(site_name)s\"."
+"Announcements of the online course \"%(course_title)s\" on the platform \"%"
+"(site_name)s\"."
 msgstr ""
-"Comunicados del curso online \"%(course_title)s\" en la plataforma "
-"\"%(site_name)s\"."
+"Comunicados del curso online \"%(course_title)s\" en la plataforma \"%"
+"(site_name)s\"."
 
 #: courses/forms.py:38
 msgid "The deadline date is mandatory for homework and exams."
@@ -1188,36 +1188,36 @@ msgstr ""
 "Este curso no es público aún. Tienes acceso a él porque eres profesor del "
 "curso"
 
-#: courses/views.py:127
+#: courses/views.py:128
 msgid "Only administrators can create courses"
 msgstr "Sólo los administradores pueden crear cursos"
 
-#: courses/views.py:138 courses/views.py:150
+#: courses/views.py:139 courses/views.py:151
 msgid "That user doesn't exists, the owner must be an user of the platform"
 msgstr ""
 "El usuario no existe, el propietario de un curso ha de ser un usuario de la "
 "plataforma"
 
-#: courses/views.py:144
+#: courses/views.py:145
 msgid "The owner must be a name plus ID or an email"
 msgstr ""
 "El propietario debe definirse mediante un nombre más ID, o un correo "
 "electrónico"
 
-#: courses/views.py:157
+#: courses/views.py:158
 msgid "The name can't be an empty string"
 msgstr "El nombre del curso no puede ser una cadena vacía"
 
-#: courses/views.py:160
+#: courses/views.py:161
 msgid "To fill"
 msgstr "A rellenar"
 
-#: courses/views.py:167
+#: courses/views.py:168
 #, python-format
 msgid "Your course \"%s\" has been created"
 msgstr "Su curso \"%s\" ha sido creado"
 
-#: courses/views.py:177
+#: courses/views.py:178
 msgid "The course was successfully created"
 msgstr "El curso se ha creado con éxito"
 
@@ -1456,8 +1456,8 @@ msgstr "Cambie"
 #: courses/templates/courses/overview.html:117
 #: courses/templates/courses/overview.html:119
 #: courses/templates/courses/progress.html:53
-#: courses/templates/courses/transcript.html:33
-#: courses/templates/courses/transcript.html:35
+#: courses/templates/courses/transcript.html:37
+#: courses/templates/courses/transcript.html:39
 msgid "Evaluation criteria"
 msgstr "Criterios de evaluación"
 
@@ -1736,7 +1736,10 @@ msgid "Welcome"
 msgstr "Bienvenido"
 
 #: courses/templates/courses/include.useractions.html:20
+#: courses/templates/courses/overview.html:121
 #: courses/templates/courses/transcript.html:11
+#: courses/templates/courses/transcript.html:14
+#: courses/templates/courses/transcript_course.html:14
 msgid "My transcript"
 msgstr "Mis notas"
 
@@ -1831,21 +1834,21 @@ msgstr "Código del Curso"
 msgid "Estimated Effort"
 msgstr "Esfuerzo Estimado"
 
-#: courses/templates/courses/overview.html:127
+#: courses/templates/courses/overview.html:128
 #: teacheradmin/templates/teacheradmin/base_teacheradmin.html:22
 msgid "Announcements"
 msgstr "Comunicados"
 
-#: courses/templates/courses/overview.html:140
+#: courses/templates/courses/overview.html:141
 msgid "Syllabus"
 msgstr "Temario"
 
-#: courses/templates/courses/overview.html:154
+#: courses/templates/courses/overview.html:155
 #: teacheradmin/templates/teacheradmin/base_teacheradmin.html:16
 msgid "Categories"
 msgstr "Categorías"
 
-#: courses/templates/courses/overview.html:162
+#: courses/templates/courses/overview.html:163
 msgid "Share"
 msgstr "Comparte"
 
@@ -1869,54 +1872,58 @@ msgstr "Nota final"
 msgid "Comment"
 msgstr "Comentario"
 
-#: courses/templates/courses/transcript.html:21
+#: courses/templates/courses/transcript.html:25
 msgid "of the final mark"
 msgstr "de la nota final"
 
-#: courses/templates/courses/transcript.html:27
+#: courses/templates/courses/transcript.html:31
 msgid "No scoring units"
 msgstr "No hay unidades puntuables"
 
-#: courses/templates/courses/transcript.html:31
+#: courses/templates/courses/transcript.html:35
 msgid "Final mark"
 msgstr "Calificación final"
 
-#: courses/templates/courses/transcript.html:39
+#: courses/templates/courses/transcript.html:43
 #, python-format
 msgid "You need at least a <strong>%(threshold)s to pass</strong> this course."
 msgstr ""
 "Necesitas al menos un <strong>%(threshold)s para aprobar</strong> este curso."
 
-#: courses/templates/courses/transcript.html:44
+#: courses/templates/courses/transcript.html:48
 msgid "Congratulations, you have completed"
 msgstr "Enhorabuena, has completado"
 
-#: courses/templates/courses/transcript.html:44
+#: courses/templates/courses/transcript.html:48
 msgid "Here is a badge!"
 msgstr "¡Aquí tienes una medalla!"
 
-#: courses/templates/courses/transcript.html:56
+#: courses/templates/courses/transcript.html:60
 msgid "I want a certificate of completion for this course"
 msgstr "Quiero un certificado de finalización para este curso"
 
-#: courses/templates/courses/transcript.html:57
+#: courses/templates/courses/transcript.html:61
 msgid "Read more"
 msgstr "Leer más"
 
-#: courses/templates/courses/transcript.html:60
+#: courses/templates/courses/transcript.html:64
 msgid ""
 "You need to complete the course before asking for a certificate of "
 "completion."
 msgstr ""
 "Debes completar el curso antes de solicitar un certificado de finalización."
 
-#: courses/templates/courses/transcript.html:63
+#: courses/templates/courses/transcript.html:67
 msgid "No certificate available for this course."
 msgstr "No hay certificación disponible para este curso"
 
-#: courses/templates/courses/transcript.html:72
+#: courses/templates/courses/transcript.html:74
 msgid "You are not enrolled in any course"
 msgstr "No estás matriculado en ningún curso"
+
+#: courses/templates/courses/transcript_course.html:10
+msgid "My transcript:"
+msgstr "Mis notas:"
 
 #: courses/templates/courses/usercourses.html:6
 msgid "You're not registered in any course"
@@ -2198,8 +2205,8 @@ msgstr ""
 "\n"
 "Enhorabuena %(user)s\n"
 "\n"
-"El ejercicio que entregaste el %(date)s que pertenece a la píldora "
-"\"%(nugget)s\" ha sido revisado por un compañero.\n"
+"El ejercicio que entregaste el %(date)s que pertenece a la píldora \"%"
+"(nugget)s\" ha sido revisado por un compañero.\n"
 "\n"
 "Criterios de evaluación:\n"
 
@@ -2218,8 +2225,8 @@ msgstr ""
 "\n"
 "%(comment)s\n"
 "\n"
-"Saludos cordiales y agradecerte que aprendas con  %(site)s. El equipo de "
-"%(site)s.\n"
+"Saludos cordiales y agradecerte que aprendas con  %(site)s. El equipo de %"
+"(site)s.\n"
 
 #: peerreview/templates/peerreview/pending_reviews.html:5
 msgid ""
@@ -2550,8 +2557,8 @@ msgid ""
 "\n"
 "Hello,\n"
 "\n"
-"you have been invited to be a teacher in the course \"%(course)s\" by "
-"%(host)s. After your registration in the platform is complete, you will be "
+"you have been invited to be a teacher in the course \"%(course)s\" by %(host)"
+"s. After your registration in the platform is complete, you will be "
 "automatically assigned as a teacher to the course.\n"
 "\n"
 "You can register here: %(register)s\n"
@@ -2574,8 +2581,8 @@ msgid ""
 "\n"
 "Hello,\n"
 "\n"
-"you have been removed as teacher from the course \"%(course)s\" by "
-"%(host)s.\n"
+"you have been removed as teacher from the course \"%(course)s\" by %(host)"
+"s.\n"
 "\n"
 "Best regards, %(site)s's team\n"
 msgstr ""

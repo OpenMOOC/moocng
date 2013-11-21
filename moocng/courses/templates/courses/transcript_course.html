@@ -1,0 +1,17 @@
+{% extends "courses/transcript.html" %}
+
+{% load i18n %}
+
+
+{% block message-empty %}
+    {% trans "You are not enrolled in this course" %}
+{% endblock %}
+
+{% block content-title %}{% trans "My transcript:" %} {{ course_transcript }}{% endblock %}
+
+{% block breadcrumbs %}
+    <ul class="breadcrumb">
+        <li><a href="{% url transcript %}">{% trans "My transcript" %}</a> <span class="divider">/</span></li>
+        <li class="active">{{ course_transcript }}</li>
+    </ul>
+{% endblock %}

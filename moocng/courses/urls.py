@@ -35,7 +35,12 @@ urlpatterns = patterns(
     url(r'^oldscore-help/$', 'flatpage', {'page': 'oldscore'}, name='oldscore'),
     url(r'^score-help/$', 'flatpage', {'page': 'score'}, name='score'),
 
+    url(r'^transcript/v2/$', 'transcript_v2', name='transcript_v2'),
+    url(r'^transcript/v2/(?P<course_slug>[-\w]+)/$', 'transcript_v2', name='transcript_v2'),
+
+
     url(r'^transcript/$', 'transcript', name='transcript'),
+    url(r'^transcript/(?P<course_slug>[-\w]+)/$', 'transcript', name='transcript'),
 
     url(r'^course/add$', 'course_add', name='course_add'),
     url(r'^course/(?P<course_slug>[-\w]+)/$', 'course_overview',

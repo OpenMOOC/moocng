@@ -23,7 +23,7 @@ TEMPLATE_DEBUG = DEBUG
 FFMPEG_DEBUG = DEBUG
 
 ADMINS = (
-    ('Admin', 'admin@eopenmooc.org'),
+    ('Admin', 'admin@example.com'),
 )
 
 MANAGERS = ADMINS
@@ -364,7 +364,7 @@ ALLOW_PUBLIC_COURSE_CREATION = False
 
 # A list with the slugs of the courses that use the old qualification system
 # where the normal units counted
-COURSES_USING_OLD_TRANSCRIPT = []
+COURSES_USING_OLD_TRANSCRIPT = False
 
 # Enrollment methods
 ENROLLMENT_METHODS = (
@@ -509,3 +509,8 @@ FABRIC_SSH_KEY_PATH = '/root/.ssh/id_rsa'
 
 # Show courses as a list (classic behaviour) or as a grid
 COURSE_SHOW_AS_LIST = True
+
+# Migrate score
+
+FIRST_DAY_MIGRATE_MARK = '2013-11-14'
+NUM_MIGRATE_MARK_DAILY = 10000
