@@ -459,21 +459,19 @@ def transcript_v2(request, course_slug=None):
             except ValueError:
                 return len(units_pks_ordered)
         units_info = sorted(units_info, key=order_units_info)
-        for idx, uinfo in enumerate(units_info):
+        for idx, unit in enumerate(course_units):
             try:
-                uinfo['unit'] = course_units[idx]
+                uinfo = units_info[idx]
             except IndexError:
-                break  # There is some unit deleted in the postgres database
-            normalized_unit_weight = normalize_unit_weight(uinfo['unit'],
+                uinfo = {'relative_mark': 0,
+                         'mark': 0}
+            uinfo['unit'] = unit
+            normalized_unit_weight = normalize_unit_weight(unit,
                                                            unit_course_counter,
                                                            total_weight_unnormalized)
             uinfo['normalized_weight'] = normalized_unit_weight
-            unit_class = get_unit_badge_class(uinfo['unit'])
+            unit_class = get_unit_badge_class(unit)
             uinfo['badge_class'] = unit_class
-        if len(units_info) > 0:
-            units_removed = len(units_info) - idx
-            if units_removed:
-                units_info = units_info[:-units_removed]
         courses_info.append({
             'course': course,
             'units_info': units_info,
