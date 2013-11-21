@@ -470,9 +470,10 @@ def transcript_v2(request, course_slug=None):
             uinfo['normalized_weight'] = normalized_unit_weight
             unit_class = get_unit_badge_class(uinfo['unit'])
             uinfo['badge_class'] = unit_class
-        units_removed = len(units_info) - idx
-        if units_removed:
-            units_info = units_info[:-units_removed]
+        if len(units_info) > 0:
+            units_removed = len(units_info) - idx
+            if units_removed:
+                units_info = units_info[:-units_removed]
         courses_info.append({
             'course': course,
             'units_info': units_info,
