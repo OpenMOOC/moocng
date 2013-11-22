@@ -80,4 +80,4 @@ def send_massive_email_task(email_id, students_ids):
         logger.error("These users no longer exists so they won't receive the massive email. Users: %s - Course: %s" % (missing, email.course.slug))
 
     if len(recipients) > 0:
-        send_mass_mail_wrapper(email.subject, email.message, recipients, html_content=True)
+        send_mass_mail_wrapper(email.subject, email.message, recipients, html_message=email.message)

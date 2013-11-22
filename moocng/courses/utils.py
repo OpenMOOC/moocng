@@ -120,7 +120,7 @@ def send_mail_wrapper(subject, template, context, to):
         logger.error('The notification "%s" to %s could not be sent because of %s' % (subject, str(to), str(ex)))
 
 
-def send_mass_mail_wrapper(subject, message, recipients, html_content=False):
+def send_mass_mail_wrapper(subject, message, recipients, html_message=None):
 
     """
     Simple wrapper on top of the django send_mass_mail function.
@@ -129,12 +129,10 @@ def send_mass_mail_wrapper(subject, message, recipients, html_content=False):
     """
     mails = []
     content = message
-    if html_content:
-        content = ""
     for to in recipients:
         email = EmailMultiAlternatives(subject, content, settings.DEFAULT_FROM_EMAIL, [to])
-        if html_content:
-            email.attach_alternative(message, "text/html")
+        if html_message:
+            email.attach_alternative(html_message, "text/html")
         mails.append(email)
     try:
         get_connection().send_messages(mails)
