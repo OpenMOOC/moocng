@@ -679,3 +679,41 @@ class Option(models.Model):
                 return reply.lower() == self.solution.lower()
         else:
             return bool(reply) == (self.solution.lower() == u'true')
+
+
+def monkey_patching_update_maxlength_of_field(field, new_max_length):
+    from django.core.validators import MaxLengthValidator
+    field.max_length = new_max_length
+    for validator in field.validators:
+        if isinstance(validator, MaxLengthValidator):
+            validator.limit_value = new_max_length
+
+
+def monkey_patching_update_user_maxlength():
+    MAX_EMAIL_LENGTH = 254
+    username_field = User._meta.get_field_by_name('username')[0]
+    monkey_patching_update_maxlength_of_field(username_field, MAX_EMAIL_LENGTH)
+
+    from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+    username_creationform_field = UserCreationForm.base_fields['username']
+    monkey_patching_update_maxlength_of_field(username_creationform_field, MAX_EMAIL_LENGTH)
+    username_creationform_field.widget.attrs['maxlength'] = MAX_EMAIL_LENGTH
+    username_creationform_field.widget.attrs['class'] = 'vTextField'
+    username_creationform_field.help_text = ''
+
+    username_changeform_field = UserChangeForm.base_fields['username']
+    monkey_patching_update_maxlength_of_field(username_changeform_field, MAX_EMAIL_LENGTH)
+    username_changeform_field.widget.attrs['maxlength'] = MAX_EMAIL_LENGTH
+    username_changeform_field.widget.attrs['class'] = 'vTextField'
+    username_changeform_field.help_text = ''
+
+    email_field = User._meta.get_field_by_name('email')[0]
+    monkey_patching_update_maxlength_of_field(email_field, MAX_EMAIL_LENGTH)
+
+    first_name_field = User._meta.get_field_by_name('first_name')[0]
+    monkey_patching_update_maxlength_of_field(first_name_field, 100)
+
+    last_name_field = User._meta.get_field_by_name('last_name')[0]
+    monkey_patching_update_maxlength_of_field(last_name_field, 100)
+
+monkey_patching_update_user_maxlength()
