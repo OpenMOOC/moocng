@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-21 11:30+0100\n"
+"POT-Creation-Date: 2013-11-22 12:06+0100\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Pablo Martin <goinnn@gmail.com>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -1697,6 +1697,26 @@ msgstr "La solución no se encuentra disponible"
 msgid "Please wait until the deadline of the module."
 msgstr "Por favor, espere hasta alcanzar la fecha límite del módulo."
 
+#: courses/templates/courses/clone_course_activity.html:3
+#: courses/templates/courses/clone_course_activity.txt:3
+#, python-format
+msgid ""
+"\n"
+"Dear %(user)s,\n"
+"\n"
+"Your activity in \"%(original_course)s\" has been clonated to \"%"
+"(copy_course)s\"\n"
+"\n"
+"Best regards, %(site)s's team\n"
+msgstr ""
+"\n"
+"Estimado %(user)s\n"
+"\n"
+"Su actividad en \"%(original_course)s\" ha sido clonada a \"%"
+"(copy_course)s\"\n"
+"\n"
+"Un cordial saludo, el equipo de %(site)s\n"
+
 #: courses/templates/courses/email_new_course.txt:3
 #, python-format
 msgid ""
@@ -2378,11 +2398,15 @@ msgstr "Este curso no tiene ningúna actividad a revisar por compañeros"
 msgid "You can try enrolling in another course"
 msgstr "Puedes probar matriculándote en otro curso"
 
-#: settings/common.py:88
+#: settings/common.py:68
+msgid "Cloned course activity"
+msgstr "Clonada actividad del curso"
+
+#: settings/common.py:90
 msgid "English"
 msgstr "Inglés"
 
-#: settings/common.py:89
+#: settings/common.py:91
 msgid "Spanish"
 msgstr "Español"
 
