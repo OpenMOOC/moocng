@@ -14,6 +14,8 @@
 
 # Django settings for moocng project.
 
+gettext = lambda s: s
+
 import os
 BASEDIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
@@ -63,6 +65,8 @@ EMAIL_HOST_PASSWORD = ''
 
 EMAIL_SUBJECT_PREFIX = '[OpenMOOC] | '
 
+SUBJECT_CLONE_ACTIVITY = gettext('Cloned course activity')
+
 # Amazon credentials
 AWS_ACCESS_KEY_ID = ""
 AWS_SECRET_ACCESS_KEY = ""
@@ -81,8 +85,6 @@ TIME_ZONE = 'Europe/Madrid'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
-
-gettext = lambda s: s
 
 LANGUAGES = (
     ('en', gettext('English')),

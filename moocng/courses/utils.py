@@ -23,8 +23,11 @@ from deep_serializer import serializer, deserializer
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.core.mail import EmailMessage, EmailMultiAlternatives, get_connection
 from django.template import loader
+from django.template.loader import render_to_string
+from django.utils.translation import ugettext as _
 
 from moocng.badges.models import Badge
 from moocng.courses.models import Course, Unit, KnowledgeQuantum, Question, Option, Attachment
@@ -137,6 +140,17 @@ def send_mass_mail_wrapper(subject, message, recipients, html_content=False):
         get_connection().send_messages(mails)
     except IOError as ex:
         logger.error('The massive email "%s" to %s could not be sent because of %s' % (subject, recipients, str(ex)))
+
+
+def send_cloned_activity_email(original_course, copy_course, user):
+    context = {'user': user,
+               'original_course': original_course,
+               'copy_course': copy_course,
+               'site': Site.objects.get_current()}
+    message = render_to_string('courses/clone_course_activity.txt', context)
+    html_message = render_to_string('courses/clone_course_activity.html', context)
+    subject = _(settings.SUBJECT_CLONE_ACTIVITY)
+    send_mass_mail_wrapper(subject, message, [user.email], html_message)
 
 
 def get_trace_clone_file_name(original_course, copy_course):
@@ -268,4 +282,6 @@ def clone_activiy_user_course(original_course, copy_course, user):
             answers.update({'_id': _id},
                            {'$set': {'replyList': update_answer_doc['replyList']}},
                            upsert=True)
+    if new_act_docs or insert_answer_docs or update_answer_docs:
+        send_cloned_activity_email(original_course, copy_course, user)
     return (new_act_docs, insert_answer_docs, update_answer_docs)

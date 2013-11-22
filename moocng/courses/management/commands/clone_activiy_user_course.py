@@ -49,10 +49,10 @@ class Command(BaseCommand):
             raise CommandError("--user / -u param is required")
 
         if not options["original_course"]:
-            raise CommandError("--original-course / -c1 param is required")
+            raise CommandError("--original-course / -o param is required")
 
         if not options["copy_course"]:
-            raise CommandError("--copy-course / -c2 param is required")
+            raise CommandError("--copy-course / -c param is required")
 
         try:
             user = User.objects.get(pk=options["user"])
