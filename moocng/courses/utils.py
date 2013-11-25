@@ -285,8 +285,8 @@ def clone_activiy_user_course(user, copy_course, original_course=None):
                            {'$set': {'replyList': update_answer_doc['replyList']}},
                            upsert=True)
     course_student_relation = user.coursestudent_set.get(course=copy_course)
-    course_student_relation.old_course_status = 'c'
-    course_student_relation.save()
-    if new_act_docs or insert_answer_docs or update_answer_docs:
+    if new_act_docs or insert_answer_docs or update_answer_docs or course_student_relation.old_course_status != 'c':
+        course_student_relation.old_course_status = 'c'
+        course_student_relation.save()
         send_cloned_activity_email(original_course, copy_course, user)
     return (new_act_docs, insert_answer_docs, update_answer_docs)

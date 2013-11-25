@@ -494,4 +494,7 @@ def clone_activity(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     clone_activiy_user_course_task.apply_async(args=[request.user, course],
                                                queue='courses')
+    message = _(u'We are cloning the activity from %(course)s. You will receive an email soon')
+    messages.success(request,
+                     message % {'course': unicode(course)})
     return HttpResponseRedirect(course.get_absolute_url())
