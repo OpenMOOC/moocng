@@ -130,6 +130,14 @@ class Course(Sortable):
         blank=True,
         null=True,
     )
+    created_from = models.ForeignKey(
+        'self',
+        related_name='courses_created_of',
+        verbose_name=_('Created from'),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        editable=True)
 
     objects = CourseManager()
 
