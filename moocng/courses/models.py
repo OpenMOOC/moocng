@@ -137,7 +137,7 @@ class Course(Sortable):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        editable=True)
+        editable=False)
 
     objects = CourseManager()
 

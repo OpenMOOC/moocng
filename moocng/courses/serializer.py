@@ -60,9 +60,9 @@ class CourseClone(TraceCourseId):
 
     @classmethod
     def walking_into_class(cls, initial_obj, obj, field_name, model, request=None):
-        if field_name in ('students', 'teachers'):
+        if field_name in ('students', 'teachers', 'courses_created_of'):
             return WALKING_STOP
-        elif field_name in ('owner', 'completion_badge'):
+        elif field_name in ('owner', 'completion_badge', 'created_from'):
             return ONLY_REFERENCE
         elif field_name == 'unit':
             return WALKING_INTO_CLASS
@@ -72,6 +72,7 @@ class CourseClone(TraceCourseId):
     def pre_serialize(cls, initial_obj, obj, request=None, serialize_options=None):
         obj.name = obj.name + ' (Copy)'
         obj.status = 'd'
+        obj.created_from_id = initial_obj.pk
         unique_slugify(obj, obj.slug, exclude_instance=False)
         obj = super(CourseClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         return obj
