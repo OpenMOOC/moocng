@@ -59,4 +59,4 @@ class Command(BaseCommand):
                 except Course.DoesNotExist:
                     raise CommandError(u"User %s does not exist" % email)
                 self.message("Cloning activity for: %s" % user)
-                clone_activiy_user_course(original_course, copy_course, user)
+                clone_activiy_user_course(user, copy_course, original_course)

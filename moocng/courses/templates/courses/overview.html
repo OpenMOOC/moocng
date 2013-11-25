@@ -1,6 +1,6 @@
 {% extends "courses/base_course.html" %}
 
-{% load cache gravatar i18n enrollment_tags media_contents %}
+{% load cache gravatar i18n enrollment_tags media_contents usercourses %}
 
 {% block nav-course-overview %}class="active"{% endblock %}
 
@@ -56,6 +56,7 @@
             <div class="alert alert-success">
                 <strong>{% trans "You are enrolled in this course" %}</strong>
                 {% unenroll_button course %}
+                {% clone_activity course user %}
             </div>
         </div>
         {% else %}

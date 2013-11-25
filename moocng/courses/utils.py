@@ -202,7 +202,11 @@ def clone_course(course, request):
     return objs, file_path
 
 
-def clone_activiy_user_course(original_course, copy_course, user):
+def clone_activiy_user_course(user, copy_course, original_course=None):
+    if not original_course:
+        original_course = copy_course.created_from
+        if not original_course:
+            raise ValueError("This course needs a original course")
     file_name = get_trace_clone_file_name(original_course, copy_course)
     file_path = get_trace_clone_file_path(file_name)
     f = open(file_path)
@@ -280,6 +284,9 @@ def clone_activiy_user_course(original_course, copy_course, user):
             answers.update({'_id': _id},
                            {'$set': {'replyList': update_answer_doc['replyList']}},
                            upsert=True)
+    course_student_relation = user.coursestudent_set.get(course=copy_course)
+    course_student_relation.old_course_status = 'c'
+    course_student_relation.save()
     if new_act_docs or insert_answer_docs or update_answer_docs:
         send_cloned_activity_email(original_course, copy_course, user)
     return (new_act_docs, insert_answer_docs, update_answer_docs)

@@ -55,6 +55,7 @@ urlpatterns = patterns(
         'announcement_detail', name='announcement_detail'),
     url(r'^course/(?P<course_slug>[-\w]+)/announcements_feed/$',
         AnnouncementFeed(), name='announcements_feed'),
+    url(r'^course/(?P<course_slug>[-\w]+)/clone-activity/$', 'clone_activity', name='course_clone_activity'),
 
     # Teacher's course administration
     url(r'^course/(?P<course_slug>[-\w]+)/teacheradmin/',

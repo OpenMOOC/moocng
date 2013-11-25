@@ -137,7 +137,7 @@ class Course(Sortable):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        editable=False)
+        editable=True)
 
     objects = CourseManager()
 
@@ -277,6 +277,19 @@ class CourseTeacher(Sortable):
         verbose_name_plural = _(u'course teachers')
 
 
+def courseteacher_invalidate_cache(sender, instance, **kwargs):
+    try:
+        invalidate_template_fragment('course_overview_secondary_info',
+                                     instance.course.id)
+    except Course.DoesNotExist:
+        # The course is being deleted, nothing to invalidate
+        pass
+
+signals.post_save.connect(courseteacher_invalidate_cache, sender=CourseTeacher)
+signals.post_delete.connect(courseteacher_invalidate_cache,
+                            sender=CourseTeacher)
+
+
 class CourseStudent(models.Model):
 
     student = models.ForeignKey(User, verbose_name=_(u'Student'))
@@ -296,18 +309,10 @@ class CourseStudent(models.Model):
         verbose_name = _(u'course student')
         verbose_name_plural = _(u'course students')
 
-
-def courseteacher_invalidate_cache(sender, instance, **kwargs):
-    try:
-        invalidate_template_fragment('course_overview_secondary_info',
-                                     instance.course.id)
-    except Course.DoesNotExist:
-        # The course is being deleted, nothing to invalidate
-        pass
-
-signals.post_save.connect(courseteacher_invalidate_cache, sender=CourseTeacher)
-signals.post_delete.connect(courseteacher_invalidate_cache,
-                            sender=CourseTeacher)
+    def can_clone_activity(self):
+        if not self.course.created_from:
+            return False
+        return self.old_course_status == 'n'
 
 
 class Announcement(models.Model):

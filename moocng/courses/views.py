@@ -25,7 +25,7 @@ from django.contrib.sites.models import get_current_site
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import validate_email
-from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
@@ -40,6 +40,7 @@ from moocng.courses.marks import get_course_mark, get_course_intermediate_calcul
 from moocng.courses.security import (check_user_can_view_course,
                                      get_courses_available_for_user,
                                      get_units_available_for_user)
+from moocng.courses.tasks import clone_activiy_user_course_task
 from moocng.slug import unique_slugify
 
 
@@ -485,3 +486,12 @@ def transcript_v2(request, course_slug=None):
         'courses_info': courses_info,
         'course_transcript': course_transcript,
     }, context_instance=RequestContext(request))
+
+
+def clone_activity(request, course_slug):
+    if request.method != 'POST':
+        raise HttpResponseBadRequest
+    course = get_object_or_404(Course, slug=course_slug)
+    clone_activiy_user_course_task.apply_async(args=[request.user, course],
+                                               queue='courses')
+    return HttpResponseRedirect(course.get_absolute_url())

@@ -23,3 +23,10 @@ def usercourses(context):
     user = context['user']
     courses = user.courses_as_student.all()
     return {'courses': courses}
+
+
+@register.inclusion_tag('courses/clone_activity.html', takes_context=False)
+def clone_activity(course, user):
+    course_student_relation = user.coursestudent_set.get(course=course)
+    return {'course': course,
+            'course_student_relation': course_student_relation}
