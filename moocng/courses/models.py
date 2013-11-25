@@ -71,6 +71,7 @@ class Course(Sortable):
                               related_name='courses_as_owner', blank=False,
                               null=False)
     students = models.ManyToManyField(User, verbose_name=_(u'Students'),
+                                      through='CourseStudent',
                                       related_name='courses_as_student',
                                       blank=True)
     promotion_media_content_type = models.CharField(verbose_name=_(u'Content type'),
@@ -266,6 +267,26 @@ class CourseTeacher(Sortable):
     class Meta(Sortable.Meta):
         verbose_name = _(u'course teacher')
         verbose_name_plural = _(u'course teachers')
+
+
+class CourseStudent(models.Model):
+
+    student = models.ForeignKey(User, verbose_name=_(u'Student'))
+    course = models.ForeignKey(Course, verbose_name=_(u'Course'))
+
+    COURSE_STATUSES = (
+        ('f', _(u'First time in this course')),
+        ('n', _(u'No cloned')),
+        ('c', _(u'Cloned')),
+    )
+    old_course_status = models.CharField(verbose_name=_(u'Old course status'),
+                                         choices=COURSE_STATUSES,
+                                         default='f',
+                                         max_length=1)
+
+    class Meta:
+        verbose_name = _(u'course student')
+        verbose_name_plural = _(u'course students')
 
 
 def courseteacher_invalidate_cache(sender, instance, **kwargs):
