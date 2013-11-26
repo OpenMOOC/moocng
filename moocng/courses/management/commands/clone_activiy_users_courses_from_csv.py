@@ -22,7 +22,7 @@ from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
 
 from moocng.courses.models import Course
-from moocng.courses.utils import clone_activiy_user_course
+from moocng.courses.utils import clone_activity_user_course
 
 
 class Command(BaseCommand):
@@ -59,4 +59,4 @@ class Command(BaseCommand):
                 except Course.DoesNotExist:
                     raise CommandError(u"User %s does not exist" % email)
                 self.message("Cloning activity for: %s" % user)
-                clone_activiy_user_course(user, copy_course, original_course)
+                clone_activity_user_course(user, copy_course, original_course)

@@ -19,7 +19,7 @@ from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
 
 from moocng.courses.models import Course
-from moocng.courses.utils import clone_activiy_user_course
+from moocng.courses.utils import clone_activity_user_course
 
 
 class Command(BaseCommand):
@@ -69,7 +69,7 @@ class Command(BaseCommand):
         except Course.DoesNotExist:
             raise CommandError(u"Course %s does not exist" % options["copy_course"])
 
-        inserted_activity_rows, inserted_answer_rows, updated_answer_docs = clone_activiy_user_course(user, copy_course, original_course)
+        inserted_activity_rows, inserted_answer_rows, updated_answer_docs = clone_activity_user_course(user, copy_course, original_course)
         self.message('Cloned %s activity objects' % len(inserted_activity_rows))
         self.message('Cloned %s answer objects' % len(inserted_answer_rows))
         self.message('Updated %s answer objects' % len(updated_answer_docs))

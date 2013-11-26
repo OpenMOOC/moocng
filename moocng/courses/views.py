@@ -40,7 +40,7 @@ from moocng.courses.marks import get_course_mark, get_course_intermediate_calcul
 from moocng.courses.security import (check_user_can_view_course,
                                      get_courses_available_for_user,
                                      get_units_available_for_user)
-from moocng.courses.tasks import clone_activiy_user_course_task
+from moocng.courses.tasks import clone_activity_user_course_task
 from moocng.slug import unique_slugify
 
 
@@ -498,8 +498,8 @@ def clone_activity(request, course_slug):
     course_student_relation = get_object_or_404(user.coursestudent_set, course=course)
     course_student_relation.old_course_status = 'c'
     course_student_relation.save()
-    clone_activiy_user_course_task.apply_async(args=[user, course],
-                                               queue='courses')
+    clone_activity_user_course_task.apply_async(args=[user, course],
+                                                queue='courses')
     message = _(u'We are cloning the activity from %(course)s. You will receive an email soon')
     messages.success(request,
                      message % {'course': unicode(course)})

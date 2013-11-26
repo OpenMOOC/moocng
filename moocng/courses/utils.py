@@ -202,7 +202,7 @@ def clone_course(course, request):
     return objs, file_path
 
 
-def clone_activiy_user_course(user, copy_course, original_course=None, force_email=False):
+def clone_activity_user_course(user, copy_course, original_course=None, force_email=False):
     if not original_course:
         original_course = copy_course.created_from
         if not original_course:
