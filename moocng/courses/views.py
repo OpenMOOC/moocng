@@ -419,6 +419,7 @@ def transcript(request, course_slug=None):
     }, context_instance=RequestContext(request))
 
 
+@login_required
 def transcript_v2(request, course_slug=None):
     user = request.user
     if not user.is_superuser:
@@ -488,11 +489,16 @@ def transcript_v2(request, course_slug=None):
     }, context_instance=RequestContext(request))
 
 
+@login_required
 def clone_activity(request, course_slug):
     if request.method != 'POST':
         raise HttpResponseBadRequest
+    user = request.user
     course = get_object_or_404(Course, slug=course_slug)
-    clone_activiy_user_course_task.apply_async(args=[request.user, course],
+    course_student_relation = get_object_or_404(user.coursestudent_set, course=course)
+    course_student_relation.old_course_status = 'c'
+    course_student_relation.save()
+    clone_activiy_user_course_task.apply_async(args=[user, course],
                                                queue='courses')
     message = _(u'We are cloning the activity from %(course)s. You will receive an email soon')
     messages.success(request,

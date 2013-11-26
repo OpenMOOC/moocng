@@ -20,4 +20,4 @@ from moocng.courses.utils import clone_activiy_user_course
 
 @task
 def clone_activiy_user_course_task(user, course):
-    clone_activiy_user_course(user, course)
+    clone_activiy_user_course(user, course, force_email=True)
