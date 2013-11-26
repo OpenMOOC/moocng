@@ -202,20 +202,7 @@ def clone_course(course, request):
     return objs, file_path
 
 
-def clone_activity_user_course(user, copy_course, original_course=None, force_email=False):
-    if not original_course:
-        original_course = copy_course.created_from
-        if not original_course:
-            raise ValueError("This course needs a original course")
-    file_name = get_trace_clone_file_name(original_course, copy_course)
-    file_path = get_trace_clone_file_path(file_name)
-    f = open(file_path)
-    trace_ids = json.loads(f.read())
-    f.close()
-    if not copy_course.pk == trace_ids['Course'][str(original_course.pk)]:
-        raise ValueError
-
-    mongo_db = mongodb.get_db()
+def _clone_activity_user_course(mongo_db, trace_ids, user, copy_course, original_course):
     activity = mongo_db.get_collection('activity')
     original_act_docs = activity.find({"user_id": user.pk,
                                        "course_id": original_course.pk})
@@ -239,7 +226,10 @@ def clone_activity_user_course(user, copy_course, original_course=None, force_em
             new_act_docs.append(new_act_doc)
     if new_act_docs:
         activity.insert(new_act_docs)
+    return new_act_docs
 
+
+def _clone_answer_user_course(mongo_db, trace_ids, user, copy_course, original_course):
     answers = mongo_db.get_collection('answers')
     original_answer_docs = answers.find({"user_id": user.pk,
                                          "course_id": original_course.pk})
@@ -284,6 +274,31 @@ def clone_activity_user_course(user, copy_course, original_course=None, force_em
             answers.update({'_id': _id},
                            {'$set': {'replyList': update_answer_doc['replyList']}},
                            upsert=True)
+    return (insert_answer_docs, update_answer_docs)
+
+
+def clone_activity_user_course(user, copy_course, original_course=None, force_email=False):
+    if not original_course:
+        original_course = copy_course.created_from
+        if not original_course:
+            raise ValueError("This course needs a original course")
+    file_name = get_trace_clone_file_name(original_course, copy_course)
+    file_path = get_trace_clone_file_path(file_name)
+    f = open(file_path)
+    trace_ids = json.loads(f.read())
+    f.close()
+    if not copy_course.pk == trace_ids['Course'][str(original_course.pk)]:
+        raise ValueError
+
+    mongo_db = mongodb.get_db()
+
+    new_act_docs = _clone_activity_user_course(mongo_db, trace_ids, user,
+                                               copy_course, original_course)
+
+    insert_answer_docs, update_answer_docs = _clone_answer_user_course(
+        mongo_db, trace_ids, user,
+        copy_course, original_course)
+
     course_student_relation = user.coursestudent_set.get(course=copy_course)
     if (new_act_docs or insert_answer_docs or update_answer_docs or
        course_student_relation.old_course_status != 'c' or force_email):
