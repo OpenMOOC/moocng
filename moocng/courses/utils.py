@@ -30,7 +30,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 
 from moocng.badges.models import Badge
-from moocng.courses.models import Course, Unit, KnowledgeQuantum, Question, Option, Attachment
+from moocng.courses.models import Course, Unit, KnowledgeQuantum, Question, Option, Attachment, CourseStudent
 from moocng.courses.serializer import (CourseClone, UnitClone, KnowledgeQuantumClone,
                                        BaseMetaWalkClass, QuestionClone, PeerReviewAssignmentClone,
                                        EvaluationCriterionClone, OptionClone, AttachmentClone)
@@ -214,9 +214,9 @@ def _clone_activity_user_course(mongo_db, trace_ids, user, copy_course, original
         except (ValueError, TypeError):
             continue
         new_act_doc = {}
+        new_act_doc['user_id'] = user.pk
+        new_act_doc['course_id'] = copy_course.pk
         try:
-            new_act_doc['user_id'] = user.pk
-            new_act_doc['course_id'] = copy_course.pk
             new_act_doc['kq_id'] = trace_ids['KnowledgeQuantum'][ori_kq_id]
             new_act_doc['unit_id'] = trace_ids['Unit'][ori_unit_id]
         except KeyError:
@@ -299,11 +299,17 @@ def clone_activity_user_course(user, copy_course, original_course=None, force_em
         mongo_db, trace_ids, user,
         copy_course, original_course)
 
-    course_student_relation = user.coursestudent_set.get(course=copy_course)
+    try:
+        course_student_relation = user.coursestudent_set.get(course=copy_course)
+    except CourseStudent.DoesNotExist:
+        course_student_relation = CourseStudent.objects.create(course=copy_course,
+                                                               student=user,
+                                                               old_course_status='c')
     if (new_act_docs or insert_answer_docs or update_answer_docs or
        course_student_relation.old_course_status != 'c' or force_email):
         if course_student_relation.old_course_status != 'c':
             course_student_relation.old_course_status = 'c'
             course_student_relation.save()
-        send_cloned_activity_email(original_course, copy_course, user)
+        if not settings.DEBUG:
+            send_cloned_activity_email(original_course, copy_course, user)
     return (new_act_docs, insert_answer_docs, update_answer_docs)
