@@ -496,6 +496,8 @@ def clone_activity(request, course_slug):
     user = request.user
     course = get_object_or_404(Course, slug=course_slug)
     course_student_relation = get_object_or_404(user.coursestudent_set, course=course)
+    if not course_student_relation.can_clone_activity():
+        raise HttpResponseBadRequest
     course_student_relation.old_course_status = 'c'
     course_student_relation.save()
     clone_activity_user_course_task.apply_async(args=[user, course],

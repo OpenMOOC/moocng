@@ -136,8 +136,10 @@ class Course(Sortable):
         verbose_name=_('Created from'),
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
-        editable=True)
+        on_delete=models.SET_NULL)
+    is_activity_clonable = models.BooleanField(
+        verbose_name=_('Is the activity student of this course clonable?'),
+        default=False)
 
     objects = CourseManager()
 
@@ -167,6 +169,9 @@ class Course(Sortable):
 
     def __unicode__(self):
         return self.name
+
+    def can_clone_activity(self):
+        return self.created_from and self.is_activity_clonable
 
     @models.permalink
     def get_absolute_url(self):
@@ -310,9 +315,7 @@ class CourseStudent(models.Model):
         verbose_name_plural = _(u'course students')
 
     def can_clone_activity(self):
-        if not self.course.created_from:
-            return False
-        return self.old_course_status == 'n'
+        return self.course.can_clone_activity() and self.old_course_status == 'n'
 
 
 class Announcement(models.Model):
