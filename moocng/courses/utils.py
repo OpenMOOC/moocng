@@ -282,6 +282,11 @@ def clone_activity_user_course(user, copy_course, original_course=None, force_em
         original_course = copy_course.created_from
         if not original_course:
             raise ValueError("This course needs a original course")
+    try:
+        course_student_relation = user.coursestudent_set.get(course=copy_course)
+    except CourseStudent.DoesNotExist:
+        return ([], [], [])
+
     file_name = get_trace_clone_file_name(original_course, copy_course)
     file_path = get_trace_clone_file_path(file_name)
     f = open(file_path)
@@ -299,12 +304,6 @@ def clone_activity_user_course(user, copy_course, original_course=None, force_em
         mongo_db, trace_ids, user,
         copy_course, original_course)
 
-    try:
-        course_student_relation = user.coursestudent_set.get(course=copy_course)
-    except CourseStudent.DoesNotExist:
-        course_student_relation = CourseStudent.objects.create(course=copy_course,
-                                                               student=user,
-                                                               old_course_status='c')
     if (new_act_docs or insert_answer_docs or update_answer_docs or
        course_student_relation.old_course_status != 'c' or force_email):
         if course_student_relation.old_course_status != 'c':

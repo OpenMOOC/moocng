@@ -55,7 +55,7 @@ class Command(BaseCommand):
                 except Course.DoesNotExist:
                     raise CommandError(u"Course %s does not exist" % new_slug)
                 try:
-                    user = User.objects.get(username=email)
+                    user = User.objects.get(email=email)
                 except Course.DoesNotExist:
                     raise CommandError(u"User %s does not exist" % email)
                 self.message("Cloning activity for: %s" % user)
