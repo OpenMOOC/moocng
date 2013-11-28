@@ -282,14 +282,14 @@ def get_data_dicts(submitted, passed_kq, passed_unit, passed_course):
 def on_answer_created_task(answer_created):
     up_kq, up_u, up_c, p_kq, p_u, p_c = update_mark(answer_created)
     submitted = 1
-    update_stats(answer_created, get_data_dicts(submitted, p_kq, p_u, p_c))
+    update_stats(answer_created, *get_data_dicts(submitted, p_kq, p_u, p_c))
 
 
 @task
 def on_answer_updated_task(answer_updated):
     up_kq, up_u, up_c, p_kq, p_u, p_c = update_mark(answer_updated)
     submitted = 0
-    update_stats(answer_updated, get_data_dicts(submitted, p_kq, p_u, p_c))
+    update_stats(answer_updated, *get_data_dicts(submitted, p_kq, p_u, p_c))
 
 
 @task
@@ -301,7 +301,7 @@ def on_peerreviewsubmission_created_task(submission_created):
     }
     submitted = 1
     passed = False
-    update_stats(data, get_data_dicts(submitted, passed, passed, passed))
+    update_stats(data, *get_data_dicts(submitted, passed, passed, passed))
 
 
 @task
