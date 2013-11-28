@@ -111,7 +111,21 @@ footer ul li {
     background-color: transparent;
     box-shadow: none;
     text-align: center;
+    padding: 0;
 }
+
+.action-box form {
+    margin: 5px 0 10px;
+}
+
+.action-box div.alert {
+    padding: 6px;
+}
+
+#clone-activity {
+    padding: 4px;
+}
+
 
 .box h2 {
     border-bottom: 1px solid #dddddd;
