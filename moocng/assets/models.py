@@ -26,6 +26,8 @@ from moocng.courses.models import KnowledgeQuantum
 
 from tinymce.models import HTMLField
 
+from datetime import timedelta
+
 
 class Asset(models.Model):
 
@@ -94,9 +96,7 @@ class Reservation(models.Model):
         return ugettext(u'Reservation of {0}, made by {1}').format(self.asset, self.user)
 
 
-from moocng.assets.utils import get_suitable_begin_times, check_reservations_slot_duration
-from moocng.assets.utils import send_cancellation_email
-import operator
+from moocng.assets.utils import check_reservations_slot_duration, send_cancellation_email
 
 
 def assure_granularity(sender, instance, **kwargs):

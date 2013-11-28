@@ -18,15 +18,14 @@ import datetime
 
 from django.contrib.sites.models import Site
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import connection, IntegrityError
+from django.db import connection
 from django.db.models import Q, Count
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 
-from moocng.mongodb import get_db
 from moocng.assets import cache
 from moocng.assets.models import Asset, AssetAvailability, Reservation
-from moocng.courses.models import KnowledgeQuantum, Course
+from moocng.courses.models import KnowledgeQuantum
 from moocng.courses.utils import send_mail_wrapper
 
 
@@ -214,7 +213,7 @@ def try_to_adjust_reservation(reservation):
     else:
         new_length = old_length
 
-    first_available_time = datetime.datetime.now() + datetime.timedelta(minutes = reservation.asset.reservation_in_advance)
+    first_available_time = datetime.datetime.now() + datetime.timedelta(minutes=reservation.asset.reservation_in_advance)
     suitable_times = get_suitable_begin_times(slot_duration,
                                               reservation.reservation_begins,
                                               first_available_time)

@@ -29,16 +29,15 @@ from django.template import loader
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 
+from moocng import mongodb
 from moocng.badges.models import Badge
 from moocng.courses.models import Course, Unit, KnowledgeQuantum, Question, Option, Attachment, CourseStudent
 from moocng.courses.serializer import (CourseClone, UnitClone, KnowledgeQuantumClone,
                                        BaseMetaWalkClass, QuestionClone, PeerReviewAssignmentClone,
                                        EvaluationCriterionClone, OptionClone, AttachmentClone)
-from moocng import mongodb
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
 
 logger = logging.getLogger(__name__)
-
 
 TRACE_CLONE_COURSE_DIR = 'trace_clone_course'
 
