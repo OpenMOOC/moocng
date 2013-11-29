@@ -24,6 +24,7 @@ from moocng.courses.models import Course, StaticPage
 from moocng.forms import (BootstrapMixin, BootstrapClearableFileInput,
                           HTML5DateInput, BootstrapInlineRadioSelect)
 from moocng.teacheradmin.models import MassiveEmail
+from moocng.teacheradmin.tasks import send_massive_email_task
 from moocng.media_contents import media_content_extract_id
 
 from moocng.assets.models import Asset
@@ -131,7 +132,20 @@ class AssetTeacherForm(forms.ModelForm, BootstrapMixin):
                    'cancelation_in_advance',)
 
 
-class MassiveEmailForm(forms.ModelForm, BootstrapMixin):
+class BaseMassiveEmailForm(forms.ModelForm):
+
+    def save(self, commit=True):
+        instance = super(BaseMassiveEmailForm, self).save(commit=False)
+        if getattr(self, 'course', None):
+            instance.course = self.course
+            instance.massive_email_type = 'course'
+        if commit:
+            instance.save()
+            instance.send_in_batches(send_massive_email_task)
+        return instance
+
+
+class MassiveEmailForm(BaseMassiveEmailForm, BootstrapMixin):
 
     """
     Massive email model form. Adapts subject and message fields size.
@@ -142,20 +156,40 @@ class MassiveEmailForm(forms.ModelForm, BootstrapMixin):
     """
     class Meta:
         model = MassiveEmail
-        exclude = ('course', )
+        exclude = ('course', 'massive_email_type')
         widgets = {
             'subject': forms.TextInput(attrs={'class': 'input-xxlarge'}),
-            'message': TinyMCE(attrs={'class': 'input-xxlarge',
-                                      'readonly': 1}),
+            'message': TinyMCE(attrs={'class': 'input-xxlarge'}),
         }
 
-    def remain_send_emails(self, course, massive_emails):
+    def __init__(self, course, *args, **kwargs):
+        super(MassiveEmailForm, self).__init__(*args, **kwargs)
+        self.course = course
+
+    def remain_send_emails(self, massive_emails):
         num_recent_massive_emails = massive_emails.recents().count()
-        remain_send = course.max_mass_emails_month - num_recent_massive_emails
+        remain_send = self.course.max_mass_emails_month - num_recent_massive_emails
         if remain_send < 1:
             self.fields['subject'].widget.attrs['readonly'] = 'readonly'
             self.fields['message'].widget.mce_attrs['readonly'] = 1
         return remain_send
+
+
+class MassiveGlobalEmailAdminForm(BaseMassiveEmailForm):
+
+    class Meta:
+        model = MassiveEmail
+        exclude = ('course',)
+        widgets = {
+            'massive_email_type': forms.RadioSelect,
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(MassiveGlobalEmailAdminForm, self).__init__(*args, **kwargs)
+        massive_email_type_choices = dict(self.fields['massive_email_type'].choices)
+        del massive_email_type_choices['']
+        del massive_email_type_choices['course']
+        self.fields['massive_email_type'].choices = massive_email_type_choices.items()
 
 
 class StaticPageForm(forms.ModelForm, BootstrapMixin):

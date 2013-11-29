@@ -40,13 +40,13 @@ def massmail_send_in_batches(massiveemail, email_send_task):
     except AttributeError:
         batch = 30
 
-    students = massiveemail.course.students.all()
-    batches = (students.count() / batch) + 1
+    recipients = massiveemail.get_recipients()
+    batches = (recipients.count() / batch) + 1
     for i in range(batches):
         init = batch * i
         end = init + batch
-        students_ids = [s.id for s in students[init:end]]
-        email_send_task.apply_async(args=[massiveemail.id, students_ids], queue='massmail')
+        recipients_ids = [s.id for s in recipients[init:end]]
+        email_send_task.apply_async(args=[massiveemail.id, recipients_ids], queue='massmail')
 
 
 @task

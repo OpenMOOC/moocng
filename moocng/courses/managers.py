@@ -1,9 +1,28 @@
+import datetime
+
 from django.conf import settings
 from django.db import models
 from django.db.models.query import QuerySet
 
 
+class CourseQuerySet(QuerySet):
+
+    def actives(self):
+        now = datetime.datetime.now()
+        date_filters = (models.Q(**{'end_date__isnull': True}) |
+                        models.Q(**{'end_date__gte': now}),
+                        models.Q(**{'start_date__isnull': True}) |
+                        models.Q(**{'start_date__lte': now}))
+        return self.filter(status='p').filter(*date_filters)
+
+
 class CourseManager(models.Manager):
+
+    def get_query_set(self):
+        return CourseQuerySet(self.model, using=self._db)
+
+    def actives(self):
+        return self.get_query_set().actives()
 
     def get_by_natural_key(self, slug):
         return self.get(slug=slug)

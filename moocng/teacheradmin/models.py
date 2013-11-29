@@ -19,7 +19,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from tinymce.models import HTMLField
 
-from moocng.courses.models import Course
+from moocng.courses.models import Course, CourseStudent, CourseTeacher
 from moocng.teacheradmin.managers import MassiveEmailManager
 from moocng.teacheradmin.tasks import massmail_send_in_batches
 
@@ -56,9 +56,19 @@ class MassiveEmail(models.Model):
 
     .. versionadded:: 0.1
     """
+    MASSIVE_EMAIL_CHOICES = (('course', _('Course')),
+                             ('all', _('Every register user')),
+                             ('enrolled', _('Every enrolled student in a course')),
+                             ('active', _('Every enrolled student in a active course')),
+                             ('teacher', _('Every teacher')),
+                             ('admin', _('Every admin (superuser)')),)
     course = models.ForeignKey(Course, verbose_name=_(u'Course'),
-                               related_name='massive_emails', blank=False,
-                               null=False)
+                               related_name='massive_emails',
+                               blank=True,
+                               null=True)
+    massive_email_type = models.CharField(verbose_name=_(u'Massive email type'), max_length=200,
+                                          blank=False, null=False,
+                                          choices=MASSIVE_EMAIL_CHOICES)
     datetime = models.DateTimeField(verbose_name=_(u'Date and time'),
                                     blank=False, null=False,
                                     auto_now_add=True, editable=False)
@@ -71,6 +81,22 @@ class MassiveEmail(models.Model):
     class Meta:
         verbose_name = _(u'massive email')
         verbose_name_plural = _(u'massive emails')
+
+    def get_recipients(self):
+        if self.massive_email_type == 'course' and self.course:
+            return self.course.students.all()
+        elif self.massive_email_type == 'all':
+            return User.objects.all()
+        elif self.massive_email_type == 'admin':
+            return User.objects.filter(is_superuser=True)
+        elif self.massive_email_type == 'enrolled':
+            return User.objects.filter(pk__in=CourseStudent.objects.all().values('student_id').query)
+        elif self.massive_email_type == 'active':
+            course_actives = Course.objects.actives().values('pk').query
+            return User.objects.filter(pk__in=CourseStudent.objects.filter(course_id__in=course_actives).values('student_id').query)
+        elif self.massive_email_type == 'teacher':
+            return User.objects.filter(pk__in=CourseTeacher.objects.all().values('teacher_id').query)
+        raise ValueError
 
     def send_in_batches(self, email_send_task):
         """

@@ -655,13 +655,10 @@ def teacheradmin_emails(request, course_slug):
     if request.method == 'POST':
         data = request.POST
     massive_emails = course.massive_emails.all()
-    form = MassiveEmailForm(data=data)
-    remain_send_emails = form.remain_send_emails(course, massive_emails)
+    form = MassiveEmailForm(data=data, course=course)
+    remain_send_emails = form.remain_send_emails(massive_emails)
     if remain_send_emails > 0 and form.is_valid():
-        form.instance.course = course
-        form.instance.datetime = datetime.now()
         form.save()
-        form.instance.send_in_batches(send_massive_email_task)
         messages.success(request, _("The email has been queued, and it will be send in batches to every student in the course."))
         return HttpResponseRedirect(reverse('teacheradmin_stats', args=[course_slug]))
     return render_to_response('teacheradmin/emails.html', {

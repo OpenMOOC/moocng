@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.contrib.admin.options import csrf_protect_m
 from django.db import transaction
 
+from moocng.teacheradmin.forms import MassiveGlobalEmailAdminForm
 from moocng.teacheradmin.models import Invitation, MassiveEmail
 
 
@@ -63,10 +64,16 @@ class MassiveEmailAdmin(admin.ModelAdmin):
         ) + urlpatterns
         return urlpatterns
 
+    def get_form(self, request, obj=None, **kwargs):
+        if request.get_full_path().endswith('/send/'):
+            kwargs['form'] = MassiveGlobalEmailAdminForm
+        return super(MassiveEmailAdmin, self).get_form(request, obj=obj, **kwargs)
+
+
     @csrf_protect_m
     @transaction.commit_on_success
     def send_global_massive_email(self, request, form_url='', extra_context=None):
-        raise NotImplementedError
+        return self.add_view(request, form_url=form_url, extra_context=extra_context)
 
 
 admin.site.register(Invitation, InvitationAdmin)
