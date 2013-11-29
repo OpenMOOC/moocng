@@ -9,10 +9,11 @@
 {% endblock %}
 
 {% block section %}
-        {% if can_send_more_emails %}
+        {% if remain_send_emails > 0 %}
             <div class="alert alert-block">
                 <h4>{% trans "Be aware!" %}</h4>
                 {% blocktrans %}If you send this announcement via email, you will be about to send an email to <strong>{{ students }} students</strong>.{% endblocktrans %}
+                {% blocktrans with max_mass_emails_month=course.max_mass_emails_month %}This course can send <strong>{{ remain_send_emails }}</strong> (of {{ max_mass_emails_month }}) announcements via email this month still.{% endblocktrans %}
             </div>
         {% else %}
             <div class="alert alert-block">

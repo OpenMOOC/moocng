@@ -605,7 +605,7 @@ def teacheradmin_announcements_add_or_edit(request, course_slug, announ_id=None,
         data = request.POST
     massive_emails = course.massive_emails.all()
     form = AnnouncementForm(data=data, instance=announcement)
-    can_send_more_emails = form.can_send_more_emails(course, massive_emails)
+    remain_send_emails = form.remain_send_emails(course, massive_emails)
     if form.is_valid():
         announcement = form.save(commit=False)
         slug = slugify(announcement.title)
@@ -632,7 +632,7 @@ def teacheradmin_announcements_add_or_edit(request, course_slug, announ_id=None,
         'is_enrolled': is_enrolled,
         'form': form,
         'announcement': announcement,
-        'can_send_more_emails': can_send_more_emails,
+        'remain_send_emails': remain_send_emails,
         'students': students
     }, context_instance=RequestContext(request))
 
@@ -656,8 +656,8 @@ def teacheradmin_emails(request, course_slug):
         data = request.POST
     massive_emails = course.massive_emails.all()
     form = MassiveEmailForm(data=data)
-    can_send_more_emails = form.can_send_more_emails(course, massive_emails)
-    if can_send_more_emails and form.is_valid():
+    remain_send_emails = form.remain_send_emails(course, massive_emails)
+    if remain_send_emails > 0 and form.is_valid():
         form.instance.course = course
         form.instance.datetime = datetime.now()
         form.save()
@@ -667,7 +667,7 @@ def teacheradmin_emails(request, course_slug):
     return render_to_response('teacheradmin/emails.html', {
         'course': course,
         'massive_emails': massive_emails,
-        'can_send_more_emails': can_send_more_emails,
+        'remain_send_emails': remain_send_emails,
         'is_enrolled': is_enrolled,
         'students': students,
         'form': form,

@@ -108,13 +108,12 @@ class AnnouncementForm(CoursesAnnouncementForm, BootstrapMixin):
         help_text=_(u'Please use this with caution as some courses has many students'),
     )
 
-    def can_send_more_emails(self, course, massive_emails):
-        self.course = course
+    def remain_send_emails(self, course, massive_emails):
         num_recent_massive_emails = massive_emails.recents().count()
-        if num_recent_massive_emails > course.max_mass_emails_month:
+        remain_send = course.max_mass_emails_month - num_recent_massive_emails
+        if remain_send < 1:
             del self.fields['send_email']
-            return False
-        return True
+        return remain_send
 
 
 class AssetTeacherForm(forms.ModelForm, BootstrapMixin):
@@ -150,14 +149,13 @@ class MassiveEmailForm(forms.ModelForm, BootstrapMixin):
                                       'readonly': 1}),
         }
 
-    def can_send_more_emails(self, course, massive_emails):
-        self.course = course
+    def remain_send_emails(self, course, massive_emails):
         num_recent_massive_emails = massive_emails.recents().count()
-        if num_recent_massive_emails > course.max_mass_emails_month:
+        remain_send = course.max_mass_emails_month - num_recent_massive_emails
+        if remain_send < 1:
             self.fields['subject'].widget.attrs['readonly'] = 'readonly'
             self.fields['message'].widget.mce_attrs['readonly'] = 1
-            return False
-        return True
+        return remain_send
 
 
 class StaticPageForm(forms.ModelForm, BootstrapMixin):

@@ -42,10 +42,11 @@ $(document).ready(function () {
     <div class="span10">
         <h2>{% trans "Send an email to every student"%}</h2>
 
-        {% if can_send_more_emails %}
+        {% if remain_send_emails > 0 %}
             <div class="alert alert-block">
                 <h4>{% trans "Be aware!" %}</h4>
                 {% blocktrans %}You are about to send an email to <strong>{{ students }} students</strong>.{% endblocktrans %}
+                {% blocktrans with max_mass_emails_month=course.max_mass_emails_month %}This course can send <strong>{{ remain_send_emails }}</strong> (of {{ max_mass_emails_month }}) e-mails this month still.{% endblocktrans %}
             </div>
         {% else %}
             <div class="alert alert-error">
@@ -56,7 +57,7 @@ $(document).ready(function () {
 
         <form method="POST">{% csrf_token %}
             {{ form.as_bootstrap }}
-            {% if can_send_more_emails %}
+            {% if remain_send_emails > 0 %}
                 <div class="form-actions">
                     <input id="sendemails" type="submit" class="btn btn-primary" value="{% trans "Send" %}" />
                 </div>
