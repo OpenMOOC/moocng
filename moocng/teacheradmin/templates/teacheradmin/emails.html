@@ -41,15 +41,26 @@ $(document).ready(function () {
 <div class="row">
     <div class="span10">
         <h2>{% trans "Send an email to every student"%}</h2>
-        <div class="alert alert-block">
-            <h4>{% trans "Be aware!" %}</h4>
-            {% blocktrans %}You are about to send an email to <strong>{{ students }} students</strong>.{% endblocktrans %}
-        </div>
+
+        {% if can_send_more_emails %}
+            <div class="alert alert-block">
+                <h4>{% trans "Be aware!" %}</h4>
+                {% blocktrans %}You are about to send an email to <strong>{{ students }} students</strong>.{% endblocktrans %}
+            </div>
+        {% else %}
+            <div class="alert alert-error">
+                <h4>{% trans "I'm sorry!" %}</h4>
+                {% blocktrans with max_mass_emails_month=course.max_mass_emails_month %}This course has exceeded the maximum of emails that it can send this month: {{ max_mass_emails_month }}.{% endblocktrans %}
+            </div> 
+        {% endif %}
+
         <form method="POST">{% csrf_token %}
             {{ form.as_bootstrap }}
-            <div class="form-actions">
-                <input id="sendemails" type="submit" class="btn btn-primary" value="{% trans "Send" %}" />
-            </div>
+            {% if can_send_more_emails %}
+                <div class="form-actions">
+                    <input id="sendemails" type="submit" class="btn btn-primary" value="{% trans "Send" %}" />
+                </div>
+            {% endif %}
         </form>
     </div>
 </div>
@@ -60,7 +71,7 @@ $(document).ready(function () {
     <div class="span10">
         <h2>{% trans "Previous emails" %}</h2>
         <ul>
-            {% for email in course.massive_emails.all %}
+            {% for email in massive_emails %}
             <li>{{ email.datetime }}: <a id="a{{ email.id }}" class="email" href="#">{{ email.subject }}</a></li>
             {% empty %}
             <li>{% trans "There aren't massive emails sent yet." %}</li>
@@ -69,7 +80,7 @@ $(document).ready(function () {
     </div>
 </div>
 
-{% for email in course.massive_emails.all %}
+{% for email in massive_emails %}
 <div class="modal hide fade" id="modal{{ email.id }}">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

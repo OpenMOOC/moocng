@@ -599,39 +599,41 @@ def teacheradmin_announcements_add_or_edit(request, course_slug, announ_id=None,
         course = announcement.course
 
     is_enrolled = course.students.filter(id=request.user.id).exists()
-
+    students = course.students.count()
+    data = None
     if request.method == 'POST':
-        form = AnnouncementForm(request.POST, instance=announcement)
-        if form.is_valid():
-            announcement = form.save(commit=False)
-            slug = slugify(announcement.title)
-            max_length = announcement._meta.get_field_by_name('slug')[0].max_length
-            if len(slug) >= max_length:
-                slug = slug[:max_length - 1]
-            announcement.slug = slug
-            announcement.course = course
-            announcement.save()
+        data = request.POST
+    massive_emails = course.massive_emails.all()
+    form = AnnouncementForm(data=data, instance=announcement)
+    can_send_more_emails = form.can_send_more_emails(course, massive_emails)
+    if form.is_valid():
+        announcement = form.save(commit=False)
+        slug = slugify(announcement.title)
+        max_length = announcement._meta.get_field_by_name('slug')[0].max_length
+        if len(slug) >= max_length:
+            slug = slug[:max_length - 1]
+        announcement.slug = slug
+        announcement.course = course
+        announcement.save()
+        if form.cleaned_data.get('send_email', None):
+            me = MassiveEmail.objects.create_from_announcement(announcement)
+            me.send_in_batches(send_massive_email_task)
+            messages.success(
+                request,
+                _("The email has been queued, and it will be send in batches to every student in the course."),
+            )
 
-            if form.cleaned_data['send_email']:
-                me = MassiveEmail.objects.create_from_announcement(announcement)
-                me.send_in_batches(send_massive_email_task)
-                messages.success(
-                    request,
-                    _("The email has been queued, and it will be send in batches to every student in the course."),
-                )
-
-            return HttpResponseRedirect(
-                reverse("teacheradmin_announcements_view",
-                        args=[course_slug, announcement.id, announcement.slug]))
-
-    else:
-        form = AnnouncementForm(instance=announcement)
+        return HttpResponseRedirect(
+            reverse("teacheradmin_announcements_view",
+                    args=[course_slug, announcement.id, announcement.slug]))
 
     return render_to_response('teacheradmin/announcement_edit.html', {
         'course': course,
         'is_enrolled': is_enrolled,
         'form': form,
         'announcement': announcement,
+        'can_send_more_emails': can_send_more_emails,
+        'students': students
     }, context_instance=RequestContext(request))
 
 
@@ -649,23 +651,23 @@ def teacheradmin_emails(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     is_enrolled = course.students.filter(id=request.user.id).exists()
     students = course.students.count()
-
+    data = None
     if request.method == 'POST':
-        form = MassiveEmailForm(request.POST)
-        if form.is_valid():
-            form.instance.course = course
-            form.instance.datetime = datetime.now()
-            form.save()
-
-            form.instance.send_in_batches(send_massive_email_task)
-
-            messages.success(request, _("The email has been queued, and it will be send in batches to every student in the course."))
-            return HttpResponseRedirect(reverse('teacheradmin_stats', args=[course_slug]))
-    else:
-        form = MassiveEmailForm()
-
+        data = request.POST
+    massive_emails = course.massive_emails.all()
+    form = MassiveEmailForm(data=data)
+    can_send_more_emails = form.can_send_more_emails(course, massive_emails)
+    if can_send_more_emails and form.is_valid():
+        form.instance.course = course
+        form.instance.datetime = datetime.now()
+        form.save()
+        form.instance.send_in_batches(send_massive_email_task)
+        messages.success(request, _("The email has been queued, and it will be send in batches to every student in the course."))
+        return HttpResponseRedirect(reverse('teacheradmin_stats', args=[course_slug]))
     return render_to_response('teacheradmin/emails.html', {
         'course': course,
+        'massive_emails': massive_emails,
+        'can_send_more_emails': can_send_more_emails,
         'is_enrolled': is_enrolled,
         'students': students,
         'form': form,

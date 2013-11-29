@@ -43,7 +43,6 @@ class CourseForm(forms.ModelForm):
         'invalid_image': _('Image must be {0}px x {1}px').format(Course.THUMBNAIL_WIDTH, Course.THUMBNAIL_HEIGHT),
     }
 
-
     class Meta:
         model = Course
         exclude = ('slug', 'teachers', 'owner', 'students')
@@ -90,6 +89,7 @@ class CourseForm(forms.ModelForm):
                 raise forms.ValidationError(self.error_messages['invalid_image'])
         return thumbnail
 
+
 class AnnouncementForm(CoursesAnnouncementForm, BootstrapMixin):
 
     """
@@ -107,6 +107,14 @@ class AnnouncementForm(CoursesAnnouncementForm, BootstrapMixin):
         initial=False,
         help_text=_(u'Please use this with caution as some courses has many students'),
     )
+
+    def can_send_more_emails(self, course, massive_emails):
+        self.course = course
+        num_recent_massive_emails = massive_emails.recents().count()
+        if num_recent_massive_emails > course.max_mass_emails_month:
+            del self.fields['send_email']
+            return False
+        return True
 
 
 class AssetTeacherForm(forms.ModelForm, BootstrapMixin):
@@ -138,8 +146,18 @@ class MassiveEmailForm(forms.ModelForm, BootstrapMixin):
         exclude = ('course', )
         widgets = {
             'subject': forms.TextInput(attrs={'class': 'input-xxlarge'}),
-            'message': TinyMCE(attrs={'class': 'input-xxlarge'}),
+            'message': TinyMCE(attrs={'class': 'input-xxlarge',
+                                      'readonly': 1}),
         }
+
+    def can_send_more_emails(self, course, massive_emails):
+        self.course = course
+        num_recent_massive_emails = massive_emails.recents().count()
+        if num_recent_massive_emails > course.max_mass_emails_month:
+            self.fields['subject'].widget.attrs['readonly'] = 'readonly'
+            self.fields['message'].widget.mce_attrs['readonly'] = 1
+            return False
+        return True
 
 
 class StaticPageForm(forms.ModelForm, BootstrapMixin):

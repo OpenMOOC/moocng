@@ -12,8 +12,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import datetime
 
 from django.db import models
+from django.db.models.query import QuerySet
+
+
+class MassiveEmailQuerySet(QuerySet):
+
+    def recents(self):
+        now = datetime.datetime.now()
+        first_day = datetime.date(day=1, month=now.month, year=now.year)
+        return self.filter(datetime__gte=first_day, datetime__lte=now)
 
 
 class MassiveEmailManager(models.Manager):
@@ -24,6 +34,10 @@ class MassiveEmailManager(models.Manager):
 
     .. versionadded:: 0.1
     """
+
+    def get_query_set(self):
+        return MassiveEmailQuerySet(self.model, using=self._db)
+
     def create_from_announcement(self, announcement):
         return super(MassiveEmailManager, self).create(
             course=announcement.course,
@@ -31,3 +45,6 @@ class MassiveEmailManager(models.Manager):
             subject=announcement.title,
             message=announcement.content,
         )
+
+    def recents(self):
+        return self.get_query_set().recents()

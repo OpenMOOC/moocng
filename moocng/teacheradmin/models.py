@@ -45,6 +45,9 @@ class Invitation(models.Model):
         verbose_name = _(u'invitation')
         verbose_name_plural = _(u'invitations')
 
+    def __unicode__(self):
+        return self.email
+
 
 class MassiveEmail(models.Model):
 
@@ -77,3 +80,6 @@ class MassiveEmail(models.Model):
         .. versionadded:: 0.1
         """
         massmail_send_in_batches.delay(self, email_send_task)
+
+    def __unicode__(self):
+        return self.subject

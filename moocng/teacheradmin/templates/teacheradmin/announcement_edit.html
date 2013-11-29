@@ -4,22 +4,32 @@
 
 {% block nav-teacheradmin-announcements %}active{% endblock %}
 
+{% block extraheader %}
+    {{ form.media }}
+{% endblock %}
+
 {% block section %}
+        {% if can_send_more_emails %}
+            <div class="alert alert-block">
+                <h4>{% trans "Be aware!" %}</h4>
+                {% blocktrans %}If you send this announcement via email, you will be about to send an email to <strong>{{ students }} students</strong>.{% endblocktrans %}
+            </div>
+        {% else %}
+            <div class="alert alert-block">
+                <h4>{% trans "I'm sorry!" %}</h4>
+                {% blocktrans with max_mass_emails_month=course.max_mass_emails_month %}This course has exceeded the maximum of emails that it can send this month: {{ max_mass_emails_month }}. You have not the option to send this announcement via email {% endblocktrans %}
+            </div> 
+        {% endif %}
 
-{{ form.media }}
-
-<form method="post">{% csrf_token %}
-  {{ form.as_bootstrap }}
-  <div class="form-actions">
-    {% if announcement %}
-    <input type="submit" class="btn btn-primary" value="{% trans 'Save changes' %}" />
-    {% else %}
-    <input type="submit" class="btn btn-primary" value="{% trans 'Create announcement' %}" />
-    {% endif %}
-  </div>
-
-</form>
-
-
-
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_bootstrap }}
+        <div class="form-actions">
+            {% if announcement %}
+            <input type="submit" class="btn btn-primary" value="{% trans 'Save changes' %}" />
+            {% else %}
+            <input type="submit" class="btn btn-primary" value="{% trans 'Create announcement' %}" />
+            {% endif %}
+        </div>
+    </form>
 {% endblock %}

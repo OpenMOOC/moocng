@@ -19,6 +19,7 @@ try:
 except ImportError:
     from PIL import Image, ImageOps
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import MaxValueValidator
@@ -140,6 +141,9 @@ class Course(Sortable):
     is_activity_clonable = models.BooleanField(
         verbose_name=_('Is the activity student of this course clonable?'),
         default=False)
+    max_mass_emails_month = models.PositiveSmallIntegerField(
+        verbose_name=_('Maximum of massive emails that a course can send per month'),
+        default=settings.DEFAULT_MAX_EMAILS_PER_MONTH)
 
     objects = CourseManager()
 

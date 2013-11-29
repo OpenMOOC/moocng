@@ -65,6 +65,8 @@ EMAIL_HOST_PASSWORD = ''
 
 EMAIL_SUBJECT_PREFIX = '[OpenMOOC] | '
 
+DEFAULT_MAX_EMAILS_PER_MONTH = 3
+
 SUBJECT_CLONE_ACTIVITY = gettext('Cloned course activity')
 
 # Amazon credentials
