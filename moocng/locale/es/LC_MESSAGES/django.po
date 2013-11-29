@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-27 13:47+0100\n"
+"POT-Creation-Date: 2013-11-29 09:52+0100\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Pablo Martin <goinnn@gmail.com>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -1748,7 +1748,7 @@ msgstr "Por favor, espere hasta alcanzar la fecha límite del módulo."
 
 #: courses/templates/courses/clone_activity.html:6
 msgid "Clone activity from before edition"
-msgstr "Clonar la actividad del curso anterior"
+msgstr "Recuperacion de progreso, edicion anterior"
 
 #: courses/templates/courses/clone_course_activity.html:3
 #: courses/templates/courses/clone_course_activity.txt:3
