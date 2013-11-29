@@ -20,12 +20,14 @@ from functools import update_wrapper
 
 from django.conf.urls import patterns, url
 from django.contrib import admin
+from django.contrib.admin.options import csrf_protect_m
 from django.contrib import messages
 from django.contrib.admin.util import unquote
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db import transaction
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -126,6 +128,28 @@ class AnnouncementAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title', )}
     list_display = ('course', 'title', 'datetime')
     list_filter = ('course', )
+
+    def get_urls(self):
+        urlpatterns = super(AnnouncementAdmin, self).get_urls()
+        from django.conf.urls import patterns, url
+
+        def wrap(view):
+            def wrapper(*args, **kwargs):
+                return self.admin_site.admin_view(view)(*args, **kwargs)
+            return update_wrapper(wrapper, view)
+
+        info = self.model._meta.app_label, self.model._meta.module_name
+        urlpatterns = patterns('',
+            url(r'^send/$',
+                wrap(self.send_global_announcement),
+                name='%s_%s_send' % info),
+        ) + urlpatterns
+        return urlpatterns
+
+    @csrf_protect_m
+    @transaction.commit_on_success
+    def send_global_announcement(self, request, form_url='', extra_context=None):
+        raise NotImplementedError
 
 
 class UnitAdmin(SortableAdmin):
