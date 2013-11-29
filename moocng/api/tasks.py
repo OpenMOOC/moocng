@@ -135,7 +135,7 @@ def update_kq_mark(db, kq, user, threshold, new_mark_kq=None, new_mark_normalize
         calculate_kq_mark_old(kq, user)
         new_mark_kq, new_mark_normalized_kq, use_in_total = calculate_kq_mark(kq, user)
         if not use_in_total:
-            return False
+            return (False, False)
     data_kq = {}
     data_kq['user_id'] = user.pk
     data_kq['course_id'] = kq.unit.course.pk
@@ -167,7 +167,7 @@ def update_unit_mark(db, unit, user, threshold, new_mark_unit=None, new_mark_nor
     if not new_mark_unit or not new_mark_normalized_unit:
         new_mark_unit, new_mark_normalized_unit, use_unit_in_total = calculate_unit_mark(unit, user)
         if not use_unit_in_total:
-            return False
+            return (False, False)
     data_unit = {}
     data_unit['user_id'] = user.pk
     data_unit['course_id'] = unit.course_id
