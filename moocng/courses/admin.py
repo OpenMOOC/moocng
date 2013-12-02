@@ -130,8 +130,9 @@ class AnnouncementAdmin(MassiveGlobalAdmin):
     prepopulated_fields = {'slug': ('title', )}
     list_display = ('course', 'title', 'datetime')
     list_filter = ('course', )
+    subfix_url = 'publish/'
     global_massive_form = MassiveGlobalAnnouncementAdminForm
-    global_massive_title = _('Send announcement massive')
+    global_massive_title = _('Publish announcement massive')
     global_massive_message = _("The announcement was created succesfully")
 
 

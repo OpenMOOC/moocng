@@ -96,7 +96,7 @@ class BaseAnnouncementForm(forms.ModelForm):
 
     send_email = forms.BooleanField(
         required=False,
-        label=_(u'Send the announcement via email to all the students in this course'),
+        label='',
         initial=False,
     )
 
@@ -139,7 +139,8 @@ class AnnouncementForm(BaseAnnouncementForm, BootstrapMixin):
     def __init__(self, course, *args, **kwargs):
         super(AnnouncementForm, self).__init__(*args, **kwargs)
         self.course = course
-        self.fields['send_email']. help_text = _(u'Please use this with caution as some courses has many students')
+        self.fields['send_email'].label = _(u'Send the announcement via email to all the students in this course')
+        self.fields['send_email'].help_text = _(u'Please use this with caution as some courses has many students')
 
     def remain_send_emails(self, massive_emails):
         num_recent_massive_emails = massive_emails.recents().count()
@@ -159,7 +160,8 @@ class MassiveGlobalAnnouncementAdminForm(BaseAnnouncementForm):
 
     def __init__(self, *args, **kwargs):
         super(MassiveGlobalAnnouncementAdminForm, self).__init__(*args, **kwargs)
-        self.fields['send_email']. help_text = _(u'Please use this with caution there are a lot of users')
+        self.fields['send_email'].label = _(u'Send the announcement via email to all users')
+        self.fields['send_email'].help_text = _(u'Please use this with caution there are a lot of users')
 
     def clean(self):
         cleaned_data = super(MassiveGlobalAnnouncementAdminForm, self).clean()

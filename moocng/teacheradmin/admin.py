@@ -48,6 +48,7 @@ class MassiveEmailAdmin(MassiveGlobalAdmin):
     global_massive_form = MassiveGlobalEmailAdminForm
     global_massive_title = _('Send email massive')
     global_massive_message = _("The email has been queued. The emails will be sent soon")
+    subfix_url = 'send/'
 
 
 admin.site.register(Invitation, InvitationAdmin)
