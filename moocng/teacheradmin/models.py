@@ -68,7 +68,8 @@ class MassiveEmail(models.Model):
                                null=True)
     massive_email_type = models.CharField(verbose_name=_(u'Massive email type'), max_length=10,
                                           blank=False, null=False,
-                                          choices=MASSIVE_EMAIL_CHOICES)
+                                          choices=MASSIVE_EMAIL_CHOICES,
+                                          default=MASSIVE_EMAIL_CHOICES[0][0])
     datetime = models.DateTimeField(verbose_name=_(u'Date and time'),
                                     blank=False, null=False,
                                     auto_now_add=True, editable=False)

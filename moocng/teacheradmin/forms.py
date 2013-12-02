@@ -15,11 +15,12 @@
 
 from django import forms
 from django.core.files.images import get_image_dimensions
+from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 
 from tinymce.widgets import TinyMCE
 
-from moocng.courses.forms import AnnouncementForm as CoursesAnnouncementForm
+from moocng.courses.models import Announcement
 from moocng.courses.models import Course, StaticPage
 from moocng.forms import (BootstrapMixin, BootstrapClearableFileInput,
                           HTML5DateInput, BootstrapInlineRadioSelect)
@@ -91,7 +92,7 @@ class CourseForm(forms.ModelForm):
         return thumbnail
 
 
-class AnnouncementForm(CoursesAnnouncementForm, BootstrapMixin):
+class AnnouncementForm(forms.ModelForm, BootstrapMixin):
 
     """
     Announcement form. Inherits from CoursesAnnouncementForm and adds a send_email
@@ -102,6 +103,14 @@ class AnnouncementForm(CoursesAnnouncementForm, BootstrapMixin):
     .. versionadded:: 0.1
     """
 
+    class Meta:
+        model = Announcement
+        exclude = ('slug', 'course',)
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'input-xxlarge'}),
+            'content': TinyMCE(attrs={'class': 'input-xxlarge'}),
+        }
+
     send_email = forms.BooleanField(
         required=False,
         label=_(u'Send the announcement via email to all the students in this course'),
@@ -109,12 +118,31 @@ class AnnouncementForm(CoursesAnnouncementForm, BootstrapMixin):
         help_text=_(u'Please use this with caution as some courses has many students'),
     )
 
-    def remain_send_emails(self, course, massive_emails):
+    def __init__(self, course, *args, **kwargs):
+        super(AnnouncementForm, self).__init__(*args, **kwargs)
+        self.course = course
+
+    def remain_send_emails(self, massive_emails):
         num_recent_massive_emails = massive_emails.recents().count()
-        remain_send = course.max_mass_emails_month - num_recent_massive_emails
+        remain_send = self.course.max_mass_emails_month - num_recent_massive_emails
         if remain_send < 1:
             del self.fields['send_email']
         return remain_send
+
+    def save(self, commit=True):
+        instance = super(AnnouncementForm, self).save(commit=False)
+        slug = slugify(instance.title)
+        max_length = instance._meta.get_field_by_name('slug')[0].max_length
+        if len(slug) >= max_length:
+            slug = slug[:max_length - 1]
+        instance.slug = slug
+        instance.course = getattr(self, 'course', None)
+        if commit:
+            instance.save()
+        if self.cleaned_data.get('send_email', None):
+            me = MassiveEmail.objects.create_from_announcement(instance)
+            #me.send_in_batches(send_massive_email_task)
+        return instance
 
 
 class AssetTeacherForm(forms.ModelForm, BootstrapMixin):
@@ -141,7 +169,7 @@ class BaseMassiveEmailForm(forms.ModelForm):
             instance.massive_email_type = 'course'
         if commit:
             instance.save()
-            instance.send_in_batches(send_massive_email_task)
+            #instance.send_in_batches(send_massive_email_task)
         return instance
 
 
@@ -189,7 +217,6 @@ class MassiveGlobalEmailAdminForm(BaseMassiveEmailForm):
     def __init__(self, *args, **kwargs):
         super(MassiveGlobalEmailAdminForm, self).__init__(*args, **kwargs)
         massive_email_type_choices = dict(self.fields['massive_email_type'].choices)
-        del massive_email_type_choices['']
         del massive_email_type_choices['course']
         self.fields['massive_email_type'].choices = massive_email_type_choices.items()
 

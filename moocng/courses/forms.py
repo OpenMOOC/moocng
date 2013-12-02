@@ -15,24 +15,23 @@
 
 import os
 
-from django.forms import ModelForm, ValidationError, TextInput
 from django import forms
+from django.forms import ValidationError
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 
-from tinymce.widgets import TinyMCE
 
-from moocng.courses.models import Unit, Attachment, Announcement, Course
+from moocng.courses.models import Unit, Attachment, Course
 
 
-class CourseForm(ModelForm):
+class CourseForm(forms.ModelForm):
 
     class Meta:
         model = Course
         exclude = ('students', 'teachers', 'owner')
 
 
-class UnitForm(ModelForm):
+class UnitForm(forms.ModelForm):
 
     error_messages = {
         'deadline_missing': _("The deadline date is mandatory for homework and exams."),
@@ -55,7 +54,7 @@ class UnitForm(ModelForm):
         return self.cleaned_data
 
 
-class AttachmentForm(ModelForm):
+class AttachmentForm(forms.ModelForm):
 
     class Meta:
         model = Attachment
@@ -65,17 +64,6 @@ class AttachmentForm(ModelForm):
         file_name = slugify(file_name)
         self.cleaned_data["attachment"].name = "%s%s" % (file_name, file_ext)
         return self.cleaned_data["attachment"]
-
-
-class AnnouncementForm(ModelForm):
-
-    class Meta:
-        model = Announcement
-        exclude = ('slug', 'course',)
-        widgets = {
-            'title': TextInput(attrs={'class': 'input-xxlarge'}),
-            'content': TinyMCE(attrs={'class': 'input-xxlarge'}),
-        }
 
 
 class ActivityForm(forms.Form):

@@ -44,6 +44,7 @@ from celery.task.control import inspect
 
 from adminsortable.admin import SortableAdmin
 
+from moocng.admin import MassiveGlobalAdmin
 from moocng.courses.forms import UnitForm, AttachmentForm
 from moocng.courses.models import (Course, Announcement, Unit, KnowledgeQuantum,
                                    StaticPage)
@@ -118,7 +119,7 @@ class CourseTeacherAdmin(SortableAdmin):
     list_display = ('course', 'teacher')
 
 
-class AnnouncementAdmin(admin.ModelAdmin):
+class AnnouncementAdmin(MassiveGlobalAdmin):
 
     """
     Administration for the announcements.
@@ -128,28 +129,6 @@ class AnnouncementAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title', )}
     list_display = ('course', 'title', 'datetime')
     list_filter = ('course', )
-
-    def get_urls(self):
-        urlpatterns = super(AnnouncementAdmin, self).get_urls()
-        from django.conf.urls import patterns, url
-
-        def wrap(view):
-            def wrapper(*args, **kwargs):
-                return self.admin_site.admin_view(view)(*args, **kwargs)
-            return update_wrapper(wrapper, view)
-
-        info = self.model._meta.app_label, self.model._meta.module_name
-        urlpatterns = patterns('',
-            url(r'^send/$',
-                wrap(self.send_global_announcement),
-                name='%s_%s_send' % info),
-        ) + urlpatterns
-        return urlpatterns
-
-    @csrf_protect_m
-    @transaction.commit_on_success
-    def send_global_announcement(self, request, form_url='', extra_context=None):
-        raise NotImplementedError
 
 
 class UnitAdmin(SortableAdmin):

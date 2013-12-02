@@ -327,7 +327,8 @@ class Announcement(models.Model):
     title = models.CharField(verbose_name=_(u'Title'), max_length=200)
     slug = models.SlugField(verbose_name=_(u'Slug'))
     content = HTMLField(verbose_name=_(u'Content'))
-    course = models.ForeignKey(Course, verbose_name=_(u'Course'))
+    course = models.ForeignKey(Course, verbose_name=_(u'Course'),
+                               null=True, blank=True)
     datetime = models.DateTimeField(verbose_name=_(u'Datetime'),
                                     auto_now_add=True, editable=False)
 

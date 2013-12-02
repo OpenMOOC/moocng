@@ -5,7 +5,7 @@
 
 {% block breadcrumbs %}
     {% if not is_popup %}
-        {% if not is_send_email_url %}
+        {% if not is_send_global_massive_url %}
             {{ block.super }}
         {% else %}
             <ul>
@@ -19,7 +19,7 @@
 
             <!-- Submit-Row -->
 {% block submit_buttons_bottom %}
-    {% if not is_send_email_url %}
+    {% if not is_send_global_massive_url %}
         {% submit_row %}
     {% else %}
         <footer class="grp-module grp-submit-row grp-fixed-footer">

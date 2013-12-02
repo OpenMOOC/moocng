@@ -604,23 +604,16 @@ def teacheradmin_announcements_add_or_edit(request, course_slug, announ_id=None,
     if request.method == 'POST':
         data = request.POST
     massive_emails = course.massive_emails.all()
-    form = AnnouncementForm(data=data, instance=announcement)
-    remain_send_emails = form.remain_send_emails(course, massive_emails)
+    form = AnnouncementForm(data=data, instance=announcement, course=course)
+    remain_send_emails = form.remain_send_emails(massive_emails)
     if form.is_valid():
-        announcement = form.save(commit=False)
-        slug = slugify(announcement.title)
-        max_length = announcement._meta.get_field_by_name('slug')[0].max_length
-        if len(slug) >= max_length:
-            slug = slug[:max_length - 1]
-        announcement.slug = slug
-        announcement.course = course
-        announcement.save()
+        announcement = form.save()
+        messages.success(request,
+                         _("The announcement was created successfully."))
         if form.cleaned_data.get('send_email', None):
-            me = MassiveEmail.objects.create_from_announcement(announcement)
-            me.send_in_batches(send_massive_email_task)
             messages.success(
                 request,
-                _("The email has been queued, and it will be send in batches to every student in the course."),
+                _("The email has been queued, and it will be send in batches to every student in the course.")
             )
 
         return HttpResponseRedirect(
