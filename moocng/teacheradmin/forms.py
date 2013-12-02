@@ -92,7 +92,32 @@ class CourseForm(forms.ModelForm):
         return thumbnail
 
 
-class AnnouncementForm(forms.ModelForm, BootstrapMixin):
+class BaseAnnouncementForm(forms.ModelForm):
+
+    send_email = forms.BooleanField(
+        required=False,
+        label=_(u'Send the announcement via email to all the students in this course'),
+        initial=False,
+    )
+
+    def save(self, commit=True):
+        instance = super(BaseAnnouncementForm, self).save(commit=False)
+        if not 'slug' in self.fields:
+            slug = slugify(instance.title)
+            max_length = instance._meta.get_field_by_name('slug')[0].max_length
+            if len(slug) >= max_length:
+                slug = slug[:max_length - 1]
+            instance.slug = slug
+        instance.course = getattr(self, 'course', None)
+        if commit:
+            instance.save()
+        if self.cleaned_data.get('send_email', None):
+            me = MassiveEmail.objects.create_from_announcement(instance, massive_email_type='all')
+            me.send_in_batches(send_massive_email_task)
+        return instance
+
+
+class AnnouncementForm(BaseAnnouncementForm, BootstrapMixin):
 
     """
     Announcement form. Inherits from CoursesAnnouncementForm and adds a send_email
@@ -111,16 +136,10 @@ class AnnouncementForm(forms.ModelForm, BootstrapMixin):
             'content': TinyMCE(attrs={'class': 'input-xxlarge'}),
         }
 
-    send_email = forms.BooleanField(
-        required=False,
-        label=_(u'Send the announcement via email to all the students in this course'),
-        initial=False,
-        help_text=_(u'Please use this with caution as some courses has many students'),
-    )
-
     def __init__(self, course, *args, **kwargs):
         super(AnnouncementForm, self).__init__(*args, **kwargs)
         self.course = course
+        self.fields['send_email']. help_text = _(u'Please use this with caution as some courses has many students')
 
     def remain_send_emails(self, massive_emails):
         num_recent_massive_emails = massive_emails.recents().count()
@@ -129,20 +148,27 @@ class AnnouncementForm(forms.ModelForm, BootstrapMixin):
             del self.fields['send_email']
         return remain_send
 
-    def save(self, commit=True):
-        instance = super(AnnouncementForm, self).save(commit=False)
-        slug = slugify(instance.title)
-        max_length = instance._meta.get_field_by_name('slug')[0].max_length
-        if len(slug) >= max_length:
-            slug = slug[:max_length - 1]
-        instance.slug = slug
-        instance.course = getattr(self, 'course', None)
-        if commit:
-            instance.save()
-        if self.cleaned_data.get('send_email', None):
-            me = MassiveEmail.objects.create_from_announcement(instance)
-            #me.send_in_batches(send_massive_email_task)
-        return instance
+
+class MassiveGlobalAnnouncementAdminForm(BaseAnnouncementForm):
+
+    check_email = forms.BooleanField(label='', widget=forms.HiddenInput, required=False)
+
+    class Meta:
+        model = Announcement
+        exclude = ('course',)
+
+    def __init__(self, *args, **kwargs):
+        super(MassiveGlobalAnnouncementAdminForm, self).__init__(*args, **kwargs)
+        self.fields['send_email']. help_text = _(u'Please use this with caution there are a lot of users')
+
+    def clean(self):
+        cleaned_data = super(MassiveGlobalAnnouncementAdminForm, self).clean()
+        if not self.errors and self.cleaned_data.get('send_email', None) and not cleaned_data.get('check_email', None):
+            recipients = MassiveEmail.get_recipients_classmethod('all', None)
+            self.fields['check_email'].widget = forms.CheckboxInput()
+            self.fields['check_email'].label = _('Yes, I want send %s emails') % recipients.count()
+            raise forms.ValidationError(_('This action send %s emails, are you sure? Please check in the last checkbox') % recipients.count())
+        return cleaned_data
 
 
 class AssetTeacherForm(forms.ModelForm, BootstrapMixin):
@@ -169,7 +195,7 @@ class BaseMassiveEmailForm(forms.ModelForm):
             instance.massive_email_type = 'course'
         if commit:
             instance.save()
-            #instance.send_in_batches(send_massive_email_task)
+            instance.send_in_batches(send_massive_email_task)
         return instance
 
 
@@ -225,8 +251,7 @@ class MassiveGlobalEmailAdminForm(BaseMassiveEmailForm):
         if not self.errors and not cleaned_data.get('check_email', None):
             recipients = MassiveEmail.get_recipients_classmethod(cleaned_data['massive_email_type'], None)
             self.fields['check_email'].widget = forms.CheckboxInput()
-            self.fields['check_email'].label = _('Yes, I want send %s email') % recipients.count()
-            self.fields.keyOrder = ['check_email'] + self.fields.keyOrder
+            self.fields['check_email'].label = _('Yes, I want send %s emails') % recipients.count()
             raise forms.ValidationError(_('This action send %s emails, are you sure? Please check in the last checkbox') % recipients.count())
         return cleaned_data
 

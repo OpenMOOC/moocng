@@ -52,6 +52,7 @@ from moocng.courses.models import Question, Option, Attachment
 from moocng.courses.models import CourseTeacher
 from moocng.courses.utils import clone_course
 from moocng.courses.widgets import ImageReadOnlyWidget
+from moocng.teacheradmin.forms import MassiveGlobalAnnouncementAdminForm
 from moocng.videos.tasks import process_video_task
 
 
@@ -129,6 +130,9 @@ class AnnouncementAdmin(MassiveGlobalAdmin):
     prepopulated_fields = {'slug': ('title', )}
     list_display = ('course', 'title', 'datetime')
     list_filter = ('course', )
+    global_massive_form = MassiveGlobalAnnouncementAdminForm
+    global_massive_title = _('Send announcement massive')
+    global_massive_message = _("The announcement was created succesfully")
 
 
 class UnitAdmin(SortableAdmin):

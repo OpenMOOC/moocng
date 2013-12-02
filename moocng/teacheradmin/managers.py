@@ -38,12 +38,13 @@ class MassiveEmailManager(models.Manager):
     def get_query_set(self):
         return MassiveEmailQuerySet(self.model, using=self._db)
 
-    def create_from_announcement(self, announcement):
+    def create_from_announcement(self, announcement, massive_email_type='course'):
         return super(MassiveEmailManager, self).create(
             course=announcement.course,
             datetime=announcement.datetime,
             subject=announcement.title,
             message=announcement.content,
+            massive_email_type=massive_email_type,
         )
 
     def recents(self):

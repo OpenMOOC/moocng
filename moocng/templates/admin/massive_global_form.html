@@ -1,0 +1,32 @@
+{% extends "admin/change_form.html" %}
+
+{% load i18n admin_modify %}
+{% load url from future %}
+
+{% block breadcrumbs %}
+    {% if not is_popup %}
+        {% if not is_send_global_massive_url %}
+            {{ block.super }}
+        {% else %}
+            <ul>
+                <li><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a></li>
+                <li>{{ title }}</li>
+            </ul>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+
+<!-- Submit-Row -->
+{% block submit_buttons_bottom %}
+    {% if not is_send_global_massive_url %}
+        {% submit_row %}
+    {% else %}
+        <footer class="grp-module grp-submit-row grp-fixed-footer">
+            <header style="display:none"><h1>Submit Options</h1></header>
+            <ul>
+                <li><input type="submit" value="{{ title }}" class="grp-button grp-default" name="_sendemail"></li>
+            </ul>
+        </footer>
+    {% endif %}
+{% endblock %}
