@@ -177,6 +177,8 @@ class MassiveEmailForm(BaseMassiveEmailForm, BootstrapMixin):
 
 class MassiveGlobalEmailAdminForm(BaseMassiveEmailForm):
 
+    check_email = forms.BooleanField(label='', widget=forms.HiddenInput, required=False)
+
     class Meta:
         model = MassiveEmail
         exclude = ('course',)
@@ -190,6 +192,16 @@ class MassiveGlobalEmailAdminForm(BaseMassiveEmailForm):
         del massive_email_type_choices['']
         del massive_email_type_choices['course']
         self.fields['massive_email_type'].choices = massive_email_type_choices.items()
+
+    def clean(self):
+        cleaned_data = super(MassiveGlobalEmailAdminForm, self).clean()
+        if not self.errors and not cleaned_data.get('check_email', None):
+            recipients = MassiveEmail.get_recipients_classmethod(cleaned_data['massive_email_type'], None)
+            self.fields['check_email'].widget = forms.CheckboxInput()
+            self.fields['check_email'].label = _('Yes, I want send %s email') % recipients.count()
+            self.fields.keyOrder = ['check_email'] + self.fields.keyOrder
+            raise forms.ValidationError(_('This action send %s emails, are you sure? Please check in the last checkbox') % recipients.count())
+        return cleaned_data
 
 
 class StaticPageForm(forms.ModelForm, BootstrapMixin):

@@ -66,7 +66,7 @@ class MassiveEmail(models.Model):
                                related_name='massive_emails',
                                blank=True,
                                null=True)
-    massive_email_type = models.CharField(verbose_name=_(u'Massive email type'), max_length=200,
+    massive_email_type = models.CharField(verbose_name=_(u'Massive email type'), max_length=10,
                                           blank=False, null=False,
                                           choices=MASSIVE_EMAIL_CHOICES)
     datetime = models.DateTimeField(verbose_name=_(u'Date and time'),
@@ -82,21 +82,25 @@ class MassiveEmail(models.Model):
         verbose_name = _(u'massive email')
         verbose_name_plural = _(u'massive emails')
 
-    def get_recipients(self):
-        if self.massive_email_type == 'course' and self.course:
-            return self.course.students.all()
-        elif self.massive_email_type == 'all':
+    @classmethod
+    def get_recipients_classmethod(cls, massive_email_type, course):
+        if massive_email_type == 'course' and course:
+            return course.students.all()
+        elif massive_email_type == 'all':
             return User.objects.all()
-        elif self.massive_email_type == 'admin':
+        elif massive_email_type == 'admin':
             return User.objects.filter(is_superuser=True)
-        elif self.massive_email_type == 'enrolled':
+        elif massive_email_type == 'enrolled':
             return User.objects.filter(pk__in=CourseStudent.objects.all().values('student_id').query)
-        elif self.massive_email_type == 'active':
+        elif massive_email_type == 'active':
             course_actives = Course.objects.actives().values('pk').query
             return User.objects.filter(pk__in=CourseStudent.objects.filter(course_id__in=course_actives).values('student_id').query)
-        elif self.massive_email_type == 'teacher':
+        elif massive_email_type == 'teacher':
             return User.objects.filter(pk__in=CourseTeacher.objects.all().values('teacher_id').query)
         raise ValueError
+
+    def get_recipients(self):
+        return MassiveEmail.get_recipients_classmethod(self.massive_email_type, self.course)
 
     def send_in_batches(self, email_send_task):
         """

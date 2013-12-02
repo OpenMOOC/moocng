@@ -11,13 +11,13 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.CharField')(default='course', max_length=10),
                       keep_default=False)
         # Changing field 'MassiveEmail.course'
-        db.alter_column('teacheradmin_massiveemail', 'course_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['courses.Course']))
+        db.alter_column('teacheradmin_massiveemail', 'course_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['courses.Course']))
 
     def backwards(self, orm):
         # Deleting field 'MassiveEmail.massive_email_type'
         db.delete_column('teacheradmin_massiveemail', 'massive_email_type')
         # Changing field 'MassiveEmail.course'
-        db.alter_column('teacheradmin_massiveemail', 'course_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['courses.Course']))
+        db.alter_column('teacheradmin_massiveemail', 'course_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['courses.Course']))
 
     models = {
         'auth.group': {
@@ -143,7 +143,7 @@ class Migration(SchemaMigration):
         },
         'teacheradmin.massiveemail': {
             'Meta': {'object_name': 'MassiveEmail'},
-            'course': ('django.db.models.fields.related.ForeignKey', [], {'default': "'course'", 'related_name': "'massive_emails'", 'to': "orm['courses.Course']"}),
+            'course': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'massive_emails'", 'null': 'True', 'to': "orm['courses.Course']"}),
             'datetime': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'massive_email_type': ('django.db.models.fields.CharField', [], {'max_length': '10'}),

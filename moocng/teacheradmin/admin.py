@@ -14,9 +14,12 @@
 # limitations under the License.
 from functools import update_wrapper
 
+from django.core.urlresolvers import reverse
 from django.contrib import admin
 from django.contrib.admin.options import csrf_protect_m
 from django.db import transaction
+from django.http import HttpResponseRedirect
+from django.utils.translation import ugettext as _
 
 from moocng.teacheradmin.forms import MassiveGlobalEmailAdminForm
 from moocng.teacheradmin.models import Invitation, MassiveEmail
@@ -46,6 +49,7 @@ class MassiveEmailAdmin(admin.ModelAdmin):
 
     list_display = ('subject', 'datetime', 'course')
     list_filter = ('course', )
+    send_email_form = MassiveGlobalEmailAdminForm
 
     def get_urls(self):
         urlpatterns = super(MassiveEmailAdmin, self).get_urls()
@@ -64,16 +68,40 @@ class MassiveEmailAdmin(admin.ModelAdmin):
         ) + urlpatterns
         return urlpatterns
 
-    def get_form(self, request, obj=None, **kwargs):
-        if request.get_full_path().endswith('/send/'):
-            kwargs['form'] = MassiveGlobalEmailAdminForm
-        return super(MassiveEmailAdmin, self).get_form(request, obj=obj, **kwargs)
+    def is_send_email_url(self, request):
+        return request.get_full_path().endswith('/send/')
 
+    def get_form(self, request, obj=None, **kwargs):
+        defaults = {}
+        if self.is_send_email_url(request):
+            defaults.update({
+                'form': self.send_email_form,
+            })
+        defaults.update(kwargs)
+        return super(MassiveEmailAdmin, self).get_form(request, obj, **defaults)
 
     @csrf_protect_m
     @transaction.commit_on_success
     def send_global_massive_email(self, request, form_url='', extra_context=None):
         return self.add_view(request, form_url=form_url, extra_context=extra_context)
+
+    def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
+        is_send_email_url = self.is_send_email_url(request)
+        extra_context = {'is_send_email_url': is_send_email_url}
+        if is_send_email_url:
+            context['title'] = _('Send email massive')
+        extra_context.update(context)
+        return super(MassiveEmailAdmin, self).render_change_form(request, extra_context, add=add,
+                                                                 change=change,
+                                                                 form_url=form_url,
+                                                                 obj=obj)
+
+    def response_add(self, request, obj, post_url_continue='../%s/'):
+        is_send_email_url = self.is_send_email_url(request)
+        if is_send_email_url:
+            self.message_user(request, _("The emails will be sent soon"))
+            return HttpResponseRedirect(reverse('admin:index'))
+        return super(MassiveEmailAdmin, self).response_add(request, obj, post_url_continue=post_url_continue)
 
 
 admin.site.register(Invitation, InvitationAdmin)
