@@ -3,6 +3,6 @@
 {% if course_student_relation.can_clone_activity %}
     <form method="post" action="{% url course_clone_activity course.slug %}">
         {% csrf_token %}
-        <input type="submit" class="btn btn-medium btn-primary" value="{% trans "Clone activity from before edition" %}">
+        <input id="clone-activity" type="submit" class="btn btn-medium btn-primary" value="{% trans "Clone activity from before edition" %}">
     </form>
 {% endif %}

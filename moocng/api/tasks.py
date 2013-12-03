@@ -135,7 +135,7 @@ def update_kq_mark(db, kq, user, threshold, new_mark_kq=None, new_mark_normalize
         calculate_kq_mark_old(kq, user)
         new_mark_kq, new_mark_normalized_kq, use_in_total = calculate_kq_mark(kq, user)
         if not use_in_total:
-            return False
+            return (False, False)
     data_kq = {}
     data_kq['user_id'] = user.pk
     data_kq['course_id'] = kq.unit.course.pk
@@ -167,7 +167,7 @@ def update_unit_mark(db, unit, user, threshold, new_mark_unit=None, new_mark_nor
     if not new_mark_unit or not new_mark_normalized_unit:
         new_mark_unit, new_mark_normalized_unit, use_unit_in_total = calculate_unit_mark(unit, user)
         if not use_unit_in_total:
-            return False
+            return (False, False)
     data_unit = {}
     data_unit['user_id'] = user.pk
     data_unit['course_id'] = unit.course_id
@@ -282,14 +282,14 @@ def get_data_dicts(submitted, passed_kq, passed_unit, passed_course):
 def on_answer_created_task(answer_created):
     up_kq, up_u, up_c, p_kq, p_u, p_c = update_mark(answer_created)
     submitted = 1
-    update_stats(answer_created, get_data_dicts(submitted, p_kq, p_u, p_c))
+    update_stats(answer_created, *get_data_dicts(submitted, p_kq, p_u, p_c))
 
 
 @task
 def on_answer_updated_task(answer_updated):
     up_kq, up_u, up_c, p_kq, p_u, p_c = update_mark(answer_updated)
     submitted = 0
-    update_stats(answer_updated, get_data_dicts(submitted, p_kq, p_u, p_c))
+    update_stats(answer_updated, *get_data_dicts(submitted, p_kq, p_u, p_c))
 
 
 @task
@@ -301,7 +301,7 @@ def on_peerreviewsubmission_created_task(submission_created):
     }
     submitted = 1
     passed = False
-    update_stats(data, get_data_dicts(submitted, passed, passed, passed))
+    update_stats(data, *get_data_dicts(submitted, passed, passed, passed))
 
 
 @task
