@@ -339,6 +339,10 @@ class Announcement(models.Model):
     def __unicode__(self):
         return self.title
 
+    @staticmethod
+    def autocomplete_search_fields():
+        return ("id__iexact", "title__icontains",)
+
     @models.permalink
     def get_absolute_url(self):
         return ('announcement_detail', [self.course.slug, self.id, self.slug])

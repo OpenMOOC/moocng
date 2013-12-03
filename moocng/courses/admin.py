@@ -128,7 +128,7 @@ class AnnouncementAdmin(MassiveGlobalAdmin):
     .. versionadded:: 0.1
     """
     prepopulated_fields = {'slug': ('title', )}
-    list_display = ('course', 'title', 'datetime')
+    list_display = ('title', 'datetime', 'course',)
     list_filter = ('course', )
     subfix_url = 'publish/'
     global_massive_form = MassiveGlobalAnnouncementAdminForm

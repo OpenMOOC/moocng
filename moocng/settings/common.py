@@ -234,6 +234,7 @@ OPENMOOC_APPS = [
     'moocng.categories',
     'moocng.auth_handlers',
     'moocng.peerreview',
+    'moocng.profile',
     'moocng.media_contents',
     'moocng.externalapps',
 ]
@@ -405,6 +406,8 @@ INSTALLED_APPS.append('djangosaml2')
 REGISTRY_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/newUser.php'
 PROFILE_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/reviewUser.php'
 CHANGEPW_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/changePassword.php'
+
+AUTH_PROFILE_MODULE = 'profile.UserProfile'
 
 from .saml_settings import *
 
