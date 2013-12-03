@@ -8,6 +8,10 @@
     <div class="row">
         <section class="span12">
             <h1 class="content-title">{% trans "Announcements" %}</h1>
+            <ul class="breadcrumb">
+                <li><a href="{% url portal_announcements %}">{% trans "Announcements" %}</a> <span class="divider">/</span></li>
+                <li class="active">{{ announcement }}</li>
+            </ul>
             {% conditionalcache use_cache 3600 announcements %}
                 {% include "portal/inc.announcement.html" %}
             {% endconditionalcache %}
