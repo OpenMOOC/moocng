@@ -74,3 +74,18 @@ class OptionManager(models.Manager):
                         question__kq__unit__course__slug=course_slug,
                         x=x,
                         y=y)
+
+
+class AnnouncementQuerySet(QuerySet):
+
+    def portal(self):
+        return self.filter(course__isnull=True)
+
+
+class AnnouncementManager(models.Manager):
+
+    def get_query_set(self):
+        return AnnouncementQuerySet(self.model, using=self._db)
+
+    def portal(self):
+        return self.get_query_set().portal()

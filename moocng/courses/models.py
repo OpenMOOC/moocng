@@ -35,7 +35,10 @@ from tinymce.models import HTMLField
 
 from moocng.badges.models import Badge
 from moocng.courses.cache import invalidate_template_fragment
-from moocng.courses.managers import CourseManager, UnitManager, KnowledgeQuantumManager, QuestionManager, OptionManager, AttachmentManager
+from moocng.courses.managers import (CourseManager, UnitManager,
+                                     KnowledgeQuantumManager, QuestionManager,
+                                     OptionManager, AttachmentManager,
+                                     AnnouncementManager)
 from moocng.enrollment import enrollment_methods
 from moocng.mongodb import get_db
 from moocng.videos.tasks import process_video_task
@@ -331,10 +334,12 @@ class Announcement(models.Model):
                                null=True, blank=True)
     datetime = models.DateTimeField(verbose_name=_(u'Datetime'),
                                     auto_now_add=True, editable=False)
+    objects = AnnouncementManager()
 
     class Meta:
         verbose_name = _(u'announcement')
         verbose_name_plural = _(u'announcements')
+        ordering = ('-datetime',)
 
     def __unicode__(self):
         return self.title
@@ -345,7 +350,9 @@ class Announcement(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('announcement_detail', [self.course.slug, self.id, self.slug])
+        if self.course:
+            return ('announcement_detail', [self.course.slug, self.id, self.slug])
+        return ('portal_announcement_detail', [self.id, self.slug])
 
 
 def announcement_invalidate_cache(sender, instance, **kwargs):

@@ -42,6 +42,7 @@ from moocng.courses.security import (check_user_can_view_course,
                                      get_units_available_for_user)
 from moocng.courses.tasks import clone_activity_user_course_task
 from moocng.slug import unique_slugify
+from moocng.utils import use_cache
 
 
 def home(request):
@@ -54,10 +55,6 @@ def home(request):
     :context: courses, use_cache
     .. versionadded:: 0.1
     """
-    use_cache = True
-    if (request.user.is_superuser or request.user.is_staff or
-            CourseTeacher.objects.filter(teacher=request.user.id).exists()):
-        use_cache = False
     courses = get_courses_available_for_user(request.user)
 
     if hasattr(settings, 'COURSE_SHOW_AS_LIST'):
@@ -72,7 +69,7 @@ def home(request):
 
     return render_to_response(template, {
         'courses': courses,
-        'use_cache': use_cache,
+        'use_cache': use_cache(request.user),
     }, context_instance=RequestContext(request))
 
 
@@ -355,6 +352,7 @@ def announcement_detail(request, course_slug, announcement_id, announcement_slug
     return render_to_response('courses/announcement.html', {
         'course': course,
         'announcement': announcement,
+        'template_base': 'courses/base_course.html'
     }, context_instance=RequestContext(request))
 
 

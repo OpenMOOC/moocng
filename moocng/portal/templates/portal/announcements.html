@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% load conditionalcache i18n %}
+
+{% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <section class="span12">
+    <h1 class="content-title">{% trans "Announcements" %}</h1>
+    {% conditionalcache use_cache 3600 announcements %}
+        {% for announcement in announcements %}
+            <div class="box published">
+                <h2><a href="{{ announcement.get_absolute_url }}">{{ announcement.title }}</a></h2>
+                {{ announcement.content|safe }}
+                <p class="box-footer"><a href="{{ announcement.get_absolute_url }}">{% trans "Permanent link" %}</a></p>
+            </div>
+        {% endfor %}
+    {% endconditionalcache %}
+  </section>
+</div>
+{% endblock %}

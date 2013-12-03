@@ -1,12 +1,16 @@
-{% extends "courses/base_course.html" %}
+{% extends template_base %}
 
 {% load i18n %}
+
+{% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
 
 {% block mainclass %}announcement{% endblock %}
 
 {% block content %}
-<h1>{{ announcement.title }}</h1>
-<em>{% trans "Published on:" %} {{ announcement.datetime|date:"d / F / Y - H:i" }}</em>
-<div class="content">{{ announcement.content|safe }}</div>
-<a class="btn btn-small mb20" href="{% url course_overview course.slug %}">{% trans "Go back to Course Overview" %}</a>
+    <h1>{{ announcement.title }}</h1>
+    <em>{% trans "Published on:" %} {{ announcement.datetime|date:"d / F / Y - H:i" }}</em>
+    <div class="content">{{ announcement.content|safe }}</div>
+    {% if course %}
+        <a class="btn btn-small mb20" href="{% url course_overview course.slug %}">{% trans "Go back to Course Overview" %}</a>
+    {% endif %}
 {% endblock %}

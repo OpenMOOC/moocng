@@ -98,3 +98,14 @@ def extra_settings(request):
         'mathjax_enabled': mathjax_enabled,
     }
     return context
+
+
+def num_announcement_dont_viewed(request):
+    profile = request.user.get_profile()
+    from moocng.courses.models import Announcement
+    announcement_dont_viewed = Announcement.objects.portal()
+    last_announcement_viewed = profile.last_announcement
+    if last_announcement_viewed:
+        announcement_dont_viewed = announcement_dont_viewed.filter(datetime__gte=last_announcement_viewed.datetime)
+    return {'profile': request.user.get_profile(),
+            'announcements_dont_viewed': announcement_dont_viewed.count()}

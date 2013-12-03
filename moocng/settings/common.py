@@ -317,6 +317,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'moocng.context_processors.extra_settings',
     'moocng.context_processors.google_analytics',
     'moocng.context_processors.certificate_url',
+    'moocng.context_processors.num_announcement_dont_viewed',
 )
 
 AUTHENTICATION_BACKENDS = (

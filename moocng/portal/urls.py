@@ -20,8 +20,11 @@ js_info_dict = {
 
 urlpatterns = patterns(
     'moocng.portal.views',
-    url(r'^setlang/$', 'set_language', name='set_language'),
-
+    url(r'^i18n/setlang/$', 'set_language', name='set_language'),
     # JavaScript translations
-    url(r'^js/$', 'cached_javascript_catalog', js_info_dict, name='jsi18n'),
+    url(r'^i18n/js/$', 'cached_javascript_catalog', js_info_dict, name='jsi18n'),
+    url(r'^announcements/$', 'announcements', name='portal_announcements'),
+    url(r'^announcements/(?P<announcement_id>\d+)/(?P<announcement_slug>[-\w]+)/$',
+        'announcement_detail', name='portal_announcement_detail'),
+
 )

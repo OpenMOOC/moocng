@@ -37,7 +37,7 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^i18n/', include('moocng.portal.urls')),
+    url(r'^portal/', include('moocng.portal.urls')),
 
     url(r'^tinymce/', include('tinymce.urls')),
 
