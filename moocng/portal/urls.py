@@ -26,5 +26,6 @@ urlpatterns = patterns(
     url(r'^announcements/$', 'announcements', name='portal_announcements'),
     url(r'^announcements/(?P<announcement_id>\d+)/(?P<announcement_slug>[-\w]+)/$',
         'announcement_detail', name='portal_announcement_detail'),
+    url(r'^announcements/ajax/viewed/$', 'announcements_viewed', name='portal_announcements_viewed'),
 
 )

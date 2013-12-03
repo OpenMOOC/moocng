@@ -12,10 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import time
 
 from django.conf import settings
 from django.contrib.sites.models import get_current_site
+from django.http import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.views import i18n
@@ -48,13 +50,25 @@ def announcements(request):
     announcements = Announcement.objects.portal()
     return render_to_response('portal/announcements.html', {
         'announcements': announcements,
+        'view_announcement': announcements[0],
         'use_cache': use_cache(request.user)
     }, context_instance=RequestContext(request))
 
 
 def announcement_detail(request, announcement_id, announcement_slug):
     announcement = get_object_or_404(Announcement, pk=announcement_id)
-    return render_to_response('courses/announcement.html', {
+    return render_to_response('portal/announcement.html', {
         'announcement': announcement,
-        'template_base': 'base.html'
+        'view_announcement': announcement,
+        'use_cache': use_cache(request.user)
     }, context_instance=RequestContext(request))
+
+
+def announcements_viewed(request):
+    profile = request.user.get_profile()
+    announcement_id = request.POST.get('announcement_id')
+    announcement = get_object_or_404(Announcement, pk=announcement_id)
+    if not profile.last_announcement or profile.last_announcement.datetime < announcement.datetime:
+        profile.last_announcement = announcement
+        profile.save()
+    return HttpResponse(json.dumps({'ok': True}))

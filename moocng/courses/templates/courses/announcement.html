@@ -1,4 +1,4 @@
-{% extends template_base %}
+{% extends 'courses/base_course.html' %}
 
 {% load i18n %}
 
@@ -10,7 +10,5 @@
     <h1>{{ announcement.title }}</h1>
     <em>{% trans "Published on:" %} {{ announcement.datetime|date:"d / F / Y - H:i" }}</em>
     <div class="content">{{ announcement.content|safe }}</div>
-    {% if course %}
-        <a class="btn btn-small mb20" href="{% url course_overview course.slug %}">{% trans "Go back to Course Overview" %}</a>
-    {% endif %}
+    <a class="btn btn-small mb20" href="{% url course_overview course.slug %}">{% trans "Go back to Course Overview" %}</a>
 {% endblock %}

@@ -106,6 +106,6 @@ def num_announcement_dont_viewed(request):
     announcement_dont_viewed = Announcement.objects.portal()
     last_announcement_viewed = profile.last_announcement
     if last_announcement_viewed:
-        announcement_dont_viewed = announcement_dont_viewed.filter(datetime__gte=last_announcement_viewed.datetime)
+        announcement_dont_viewed = announcement_dont_viewed.filter(datetime__gt=last_announcement_viewed.datetime)
     return {'profile': request.user.get_profile(),
             'announcements_dont_viewed': announcement_dont_viewed.count()}

@@ -57,13 +57,23 @@
       </div>
       {% endif %}
       <ul class="unstyled pull-right" id="meta-buttons">
-        <li><a href="{% url home %}" class="btn btn-link">{% trans "Home"%}</a></li>
+        <li><a href="{% url home %}" class="btn btn-link">
+            {% trans "Home"%}
+        </a></li>
         |
-        <li><a href="{% url faq %}" class="btn btn-link">FAQ</a></li>
+        <li>
+            <a href="{% url faq %}" class="btn btn-link">FAQ</a>
+        </li>
         |
-        <li><a href="{% url methodology %}" class="btn btn-link">{% trans "Methodology" %}</a></li>
+        <li>
+            <a href="{% url methodology %}" class="btn btn-link">{% trans "Methodology" %}</a>
+        </li>
         |
-        <li><a href="{% url portal_announcements %}" class="btn btn-link">{% trans "Announcements" %}{% if announcements_dont_viewed %}({{ announcements_dont_viewed }}){% endif %}</a></li>
+        <li>
+            <a href="{% url portal_announcements %}" class="btn btn-link">
+                {% trans "Announcements" %}<strong id="announcements-dont-viewed">{% if announcements_dont_viewed %} ({{ announcements_dont_viewed }}){% endif %}</strong>
+            </a>
+        </li>
       </ul>
       <div class="clearfix"></div>
     </header>

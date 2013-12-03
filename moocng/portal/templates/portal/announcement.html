@@ -9,9 +9,7 @@
         <section class="span12">
             <h1 class="content-title">{% trans "Announcements" %}</h1>
             {% conditionalcache use_cache 3600 announcements %}
-                {% for announcement in announcements %}
-                    {% include "portal/inc.announcement.html" %}
-                {% endfor %}
+                {% include "portal/inc.announcement.html" %}
             {% endconditionalcache %}
         </section>
     </div>

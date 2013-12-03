@@ -1,0 +1,7 @@
+{% load i18n %}
+
+<div class="box published">
+    <h2><a href="{{ announcement.get_absolute_url }}">{{ announcement.title }}</a></h2>
+    {{ announcement.content|safe }}
+    <p class="box-footer"><a href="{{ announcement.get_absolute_url }}">{% trans "Permanent link" %}</a></p>
+</div>
