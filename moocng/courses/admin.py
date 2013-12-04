@@ -27,7 +27,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db import transaction
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -37,7 +36,8 @@ from django.utils.decorators import method_decorator
 from django.utils.encoding import force_unicode
 from django.utils.html import escape
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext
+from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 
 from celery.task.control import inspect
@@ -93,15 +93,15 @@ class CourseAdmin(SortableAdmin):
         course = self.get_object(request, unquote(object_id))
         if request.method == 'POST':
             objs, file_name = clone_course(course, request)
-            messages.info(request, _('Created %s objects succesfully') % len(objs))
-            messages.info(request, _('You have a trace in %s') % file_name)
+            messages.info(request, ugettext('Created %s objects succesfully') % len(objs))
+            messages.info(request, ugettext('You have a trace in %s') % file_name)
             return HttpResponseRedirect(reverse('admin:courses_course_change', args=(objs[0].pk,)))
         opts = self.model._meta
         return render_to_response('admin/courses/course/clone_form.html',
                                   {'original': course,
                                    'app_label': opts.app_label,
                                    'opts': opts,
-                                   'title': _('Clone Course')},
+                                   'title': ugettext('Clone Course')},
                                   context_instance=RequestContext(request))
 
 
@@ -280,7 +280,7 @@ class QuestionAdmin(admin.ModelAdmin):
             raise PermissionDenied
 
         if obj is None:
-            raise Http404(_('%(name)s object with primary key %(key)r does not exist.') % {'name': force_unicode(opts.verbose_name), 'key': escape(object_id)})
+            raise Http404(ugettext('%(name)s object with primary key %(key)r does not exist.') % {'name': force_unicode(opts.verbose_name), 'key': escape(object_id)})
 
         if request.method == 'POST':
             data = simplejson.loads(request.raw_post_data)
@@ -299,7 +299,7 @@ class QuestionAdmin(admin.ModelAdmin):
                     'width': opt.width, 'height': opt.height,
                     } for opt in obj.option_set.all()]
             context = {
-                'title': _('Edit options for question'),
+                'title': ugettext('Edit options for question'),
                 'object_id': object_id,
                 'original': obj,
                 'is_popup': '_popup' in request.REQUEST,
@@ -328,14 +328,14 @@ class QuestionAdmin(admin.ModelAdmin):
             raise PermissionDenied
 
         if obj is None:
-            raise Http404(_('%(name)s object with primary key %(key)r does not exist.')
+            raise Http404(ugettext('%(name)s object with primary key %(key)r does not exist.')
                           % {'name': force_unicode(opts.verbose_name),
                              'key': escape(object_id)})
 
         try:
             option = obj.option_set.get(id=unquote(option_id))
         except ObjectDoesNotExist:
-            raise Http404(_('Option %(option)d for question %(question)s does not exist.')
+            raise Http404(ugettext('Option %(option)d for question %(question)s does not exist.')
                           % {'option': escape(object_id),
                              'question': escape(option_id)})
 
@@ -376,7 +376,7 @@ class QuestionAdmin(admin.ModelAdmin):
             raise PermissionDenied
 
         if obj is None:
-            raise Http404(_('%(name)s object with primary key %(key)r does not exist.')
+            raise Http404(ugettext('%(name)s object with primary key %(key)r does not exist.')
                           % {'name': force_unicode(opts.verbose_name),
                              'key': escape(object_id)})
 
