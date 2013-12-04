@@ -14,11 +14,14 @@
 # limitations under the License.
 from functools import update_wrapper
 
+from django.db import transaction
 from django.core.urlresolvers import reverse
 from django.contrib import admin
 from django.contrib.admin.options import csrf_protect_m
-from django.db import transaction
 from django.http import HttpResponseRedirect
+from django.utils.decorators import method_decorator
+
+from moocng.decorators import user_passes_test
 
 
 class MassiveGlobalAdmin(admin.ModelAdmin):
@@ -59,6 +62,7 @@ class MassiveGlobalAdmin(admin.ModelAdmin):
 
     @csrf_protect_m
     @transaction.commit_on_success
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
     def send_global_massive_view(self, request, form_url='', extra_context=None):
         return self.add_view(request, form_url=form_url, extra_context=extra_context)
 
