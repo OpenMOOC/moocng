@@ -7,7 +7,12 @@
 {% block content %}
     <div class="row">
         <section class="span12">
-            <h1 class="content-title">{% trans "Announcements" %}</h1>
+            <h1 class="content-title">
+                {% trans "Announcements" %}
+                <a class="pull-right" href="{% url portal_announcements_feed %}">
+                    <img src="{{ STATIC_URL }}img/share_icons/rss.png" alt="{% trans "Subscribe to Announcements RSS" %}" />
+                </a>
+            </h1>
             <ul class="breadcrumb">
                 <li><a href="{% url portal_announcements %}">{% trans "Announcements" %}</a> <span class="divider">/</span></li>
                 <li class="active">{{ announcement }}</li>

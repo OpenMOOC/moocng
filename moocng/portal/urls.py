@@ -14,6 +14,8 @@
 
 from django.conf.urls import patterns, url
 
+from moocng.courses.feeds import AnnouncementPortalFeed
+
 js_info_dict = {
     'packages': ('moocng',),
 }
@@ -26,6 +28,8 @@ urlpatterns = patterns(
     url(r'^announcements/$', 'announcements', name='portal_announcements'),
     url(r'^announcements/(?P<announcement_id>\d+)/(?P<announcement_slug>[-\w]+)/$',
         'announcement_detail', name='portal_announcement_detail'),
+    url(r'^announcements/feed/$',
+        AnnouncementPortalFeed(), name='portal_announcements_feed'),
     url(r'^announcements/ajax/viewed/$', 'announcements_viewed', name='portal_announcements_viewed'),
 
 )

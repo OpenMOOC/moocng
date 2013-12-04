@@ -21,29 +21,10 @@ from django.utils.translation import ugettext as _
 from moocng.courses.models import Course, Announcement
 
 
-class AnnouncementFeed(Feed):
-
-    """
-    Default RSS feed for the course announcements.
-
-    :returns: RSS Feed
-
-    .. versionadded:: 0.1
-    """
-    def get_object(self, request, course_slug):
-        return get_object_or_404(Course, slug=course_slug)
+class BaseAnnouncementFeed(Feed):
 
     def title(self, obj):
-        return _("Announcements of %(course_title)s") % {"course_title": obj.name}
-
-    def link(self, obj):
-        return obj.get_absolute_url()
-
-    def description(self, obj):
-        return _('Announcements of the online course "%(course_title)s" on the platform "%(site_name)s".') % {"course_title": obj.name, "site_name": Site.objects.get_current().name}
-
-    def items(self, obj):
-        return Announcement.objects.filter(course=obj).order_by('datetime').reverse()
+        return _("Announcements of the %(title)s") % {"title": obj.name}
 
     def item_title(self, item):
         return item.title
@@ -53,3 +34,50 @@ class AnnouncementFeed(Feed):
 
     def item_pubdate(self, item):
         return item.datetime
+
+
+class AnnouncementCourseFeed(BaseAnnouncementFeed):
+
+    """
+    Default RSS feed for the course announcements.
+
+    :returns: RSS Feed
+
+    .. versionadded:: 0.1
+    """
+    def link(self, obj):
+        return obj.get_absolute_url()
+
+    def get_object(self, request, course_slug):
+        return get_object_or_404(Course, slug=course_slug)
+
+    def description(self, obj):
+        return _('Announcements of the online course "%(course_title)s" on the platform "%(site_name)s".') % {
+            "course_title": obj.name,
+            "site_name": Site.objects.get_current().name}
+
+    def items(self, obj):
+        return Announcement.objects.filter(course=obj).order_by('-datetime')
+
+
+class AnnouncementPortalFeed(BaseAnnouncementFeed):
+
+    """
+    Default RSS feed for the course announcements.
+
+    :returns: RSS Feed
+
+    .. versionadded:: 0.1
+    """
+
+    def link(self, obj):
+        return '/'
+
+    def get_object(self, request):
+        return Site.objects.get_current()
+
+    def description(self, obj):
+        return _('Announcements of the "%(site_name)s".') % {"site_name": Site.objects.get_current().name}
+
+    def items(self, obj):
+        return Announcement.objects.portal().order_by('-datetime')

@@ -127,7 +127,7 @@
         <div class="box">
             <h2>
                 {% trans "Announcements" %}
-                <a class="pull-right" href="{% url announcements_feed course.slug %}"><img src="{{ STATIC_URL }}img/share_icons/rss.png" alt="Subscribe to Announcements RSS" /></a>
+                <a class="pull-right" href="{% url announcements_feed course.slug %}"><img src="{{ STATIC_URL }}img/share_icons/rss.png" alt="{% trans "Subscribe to Announcements RSS" %}" /></a>
             </h2>
             <dl>
                 {% for announcement in announcements %}

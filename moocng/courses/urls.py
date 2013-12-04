@@ -16,7 +16,7 @@
 from django.conf.urls import include, patterns, url
 from django.views.generic import RedirectView
 
-from moocng.courses.feeds import AnnouncementFeed
+from moocng.courses.feeds import AnnouncementCourseFeed
 
 
 urlpatterns = patterns(
@@ -54,7 +54,7 @@ urlpatterns = patterns(
     url(r'^course/(?P<course_slug>[-\w]+)/announcement/(?P<announcement_id>\d+)/(?P<announcement_slug>[-\w]+)$',
         'announcement_detail', name='announcement_detail'),
     url(r'^course/(?P<course_slug>[-\w]+)/announcements_feed/$',
-        AnnouncementFeed(), name='announcements_feed'),
+        AnnouncementCourseFeed(), name='announcements_feed'),
     url(r'^course/(?P<course_slug>[-\w]+)/clone-activity/$', 'clone_activity', name='course_clone_activity'),
 
     # Teacher's course administration
