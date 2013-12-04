@@ -1,6 +1,7 @@
 {% extends "portal/base_announcement.html" %}
 
-{% load conditionalcache i18n %}
+{% load conditionalcache i18n pagination_tags %}
+
 
 {% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
 
@@ -12,9 +13,11 @@
                 <li class="active">{% trans "Announcements" %}</li>
             </ul>
             {% conditionalcache use_cache 3600 announcements %}
+                {% autopaginate announcements %}
                 {% for announcement in announcements %}
                     {% include "portal/inc.announcement.html" %}
                 {% endfor %}
+                {% paginate %}
             {% endconditionalcache %}
         </section>
     </div>

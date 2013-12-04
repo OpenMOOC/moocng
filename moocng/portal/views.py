@@ -17,7 +17,7 @@ import time
 
 from django.conf import settings
 from django.contrib.sites.models import get_current_site
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.views import i18n
@@ -65,7 +65,10 @@ def announcement_detail(request, announcement_id, announcement_slug):
 
 
 def announcements_viewed(request):
-    profile = request.user.get_profile()
+    user = request.user
+    profile = user.is_authenticated() and user.get_profile() or None
+    if not profile:
+        return HttpResponseForbidden()
     announcement_id = request.POST.get('announcement_id')
     announcement = get_object_or_404(Announcement, pk=announcement_id)
     if not profile.last_announcement or profile.last_announcement.datetime < announcement.datetime:

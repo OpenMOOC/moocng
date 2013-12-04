@@ -171,6 +171,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'pagination.middleware.PaginationMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -219,6 +220,7 @@ THIRDPARTY_APPS = [
     'compressor',
     'south',
     'django_mathjax',
+    'pagination',
 ]
 
 OPENMOOC_APPS = [
@@ -310,7 +312,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.static',
     'django.core.context_processors.tz',
-    # 'django.core.context_processors.request',
+    'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
     'moocng.context_processors.site',
     'moocng.context_processors.theme',
@@ -522,3 +524,7 @@ COURSE_SHOW_AS_LIST = True
 
 FIRST_DAY_MIGRATE_MARK = '2013-11-14'
 NUM_MIGRATE_MARK_DAILY = 10000
+
+# Pagination
+
+PAGINATION_DEFAULT_PAGINATION = 10

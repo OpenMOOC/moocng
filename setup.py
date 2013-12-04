@@ -65,7 +65,7 @@ setup(
     install_requires=[
         'boto>=2.8.0',
         'celery==3.0.20',
-        'Django>=1.4.6',
+        'Django==1.4.8',
         'django-admin-sortable==1.4.9',
         'django-celery==3.0.17',
         'django-tinymce==1.5.1b4',
@@ -82,6 +82,7 @@ setup(
         'requests==1.2.0',
         'django-deep-serializer==0.1.0',
         'fabric==1.7.0',
+        'django-pagination==1.0.7'
     ],
     entry_points = """
         [moocng.externalapp]

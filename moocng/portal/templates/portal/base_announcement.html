@@ -5,21 +5,23 @@
 {% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
 
 {% block content %}
-    <script type="text/javascript">
-        (function ($) {
-            $(document).ready(function () {
-                var data = "announcement_id=" + "{{ view_announcement.pk }}&csrfmiddlewaretoken={{ csrf_token }}";
-                $.ajax({
-                    data: data,
-                    url: "{% url portal_announcements_viewed %}",
-                    type: "POST",
-                    async: true,
-                    dataType: "json",
-                    success: function () {
-                        $("#announcements-dont-viewed").remove();
-                    }
+    {% if user.is_authenticated %}
+        <script type="text/javascript">
+            (function ($) {
+                $(document).ready(function () {
+                    var data = "announcement_id=" + "{{ view_announcement.pk }}&csrfmiddlewaretoken={{ csrf_token }}";
+                    $.ajax({
+                        data: data,
+                        url: "{% url portal_announcements_viewed %}",
+                        type: "POST",
+                        async: true,
+                        dataType: "json",
+                        success: function () {
+                            $("#announcements-dont-viewed").remove();
+                        }
+                    });
                 });
-            });
-        }(jQuery));
-    </script>
+            }(jQuery));
+        </script>
+    {% endif %}
 {% endblock %}
