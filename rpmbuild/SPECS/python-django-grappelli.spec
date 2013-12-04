@@ -5,7 +5,7 @@
 %global srcname django-grappelli
 
 Name:           python-%{srcname}
-Version:        2.4.5
+Version:        2.4.4
 Release:        1%{?dist}
 Summary:        A jazzy skin for the Django Admin-Interface
 

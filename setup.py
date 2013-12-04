@@ -77,7 +77,7 @@ setup(
         'PIL>=1.1.6',
         'django_compressor==1.2',
         'python-memcached==1.48',
-        'django-grappelli==2.4.5',
+        'django-grappelli==2.4.4',
         'django-mathjax==0.0.2',
         'requests==1.2.0',
         'django-deep-serializer==0.1.0',
