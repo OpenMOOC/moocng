@@ -102,7 +102,10 @@ def extra_settings(request):
 
 def num_announcement_dont_viewed(request):
     user = request.user
-    profile = user.is_authenticated() and user.get_profile() or None
+    if user.is_anonymous():
+        return {'profile': None,
+                'announcements_dont_viewed': 0}
+    profile = user.get_profile()
     from moocng.courses.models import Announcement
     announcement_dont_viewed = Announcement.objects.portal()
     last_announcement_viewed = getattr(profile, 'last_announcement', None)
