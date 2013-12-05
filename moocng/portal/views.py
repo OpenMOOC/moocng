@@ -48,9 +48,13 @@ def cached_javascript_catalog(request, domain='djangojs', packages=None):
 
 def announcements(request):
     announcements = Announcement.objects.portal()
+    if announcements.exists():
+        view_announcement = announcements[0]
+    else:
+        view_announcement = None
     return render_to_response('portal/announcements.html', {
         'announcements': announcements,
-        'view_announcement': announcements[0],
+        'view_announcement': view_announcement,
         'use_cache': use_cache(request.user)
     }, context_instance=RequestContext(request))
 
@@ -71,6 +75,8 @@ def announcements_viewed(request):
         return HttpResponseForbidden()
     announcement_id = request.POST.get('announcement_id')
     announcement = get_object_or_404(Announcement, pk=announcement_id)
+    if announcement.course:
+        return HttpResponseForbidden()
     if not profile.last_announcement or profile.last_announcement.datetime < announcement.datetime:
         profile.last_announcement = announcement
         profile.save()

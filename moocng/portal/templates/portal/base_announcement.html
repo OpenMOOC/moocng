@@ -5,7 +5,7 @@
 {% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
 
 {% block content %}
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and view_announcement %}
         <script type="text/javascript">
             (function ($) {
                 $(document).ready(function () {
