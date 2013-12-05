@@ -28,18 +28,13 @@ def monkey_patching_update_user_maxlength():
     username_field = User._meta.get_field_by_name('username')[0]
     monkey_patching_update_maxlength_of_field(username_field, MAX_EMAIL_LENGTH)
 
-    from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-    username_creationform_field = UserCreationForm.base_fields['username']
-    monkey_patching_update_maxlength_of_field(username_creationform_field, MAX_EMAIL_LENGTH)
-    username_creationform_field.widget.attrs['maxlength'] = MAX_EMAIL_LENGTH
-    username_creationform_field.widget.attrs['class'] = 'vTextField'
-    username_creationform_field.help_text = ''
-
-    username_changeform_field = UserChangeForm.base_fields['username']
-    monkey_patching_update_maxlength_of_field(username_changeform_field, MAX_EMAIL_LENGTH)
-    username_changeform_field.widget.attrs['maxlength'] = MAX_EMAIL_LENGTH
-    username_changeform_field.widget.attrs['class'] = 'vTextField'
-    username_changeform_field.help_text = ''
+    from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
+    for form_class in (UserCreationForm, UserChangeForm, AuthenticationForm):
+        username_field = form_class.base_fields['username']
+        monkey_patching_update_maxlength_of_field(username_field, MAX_EMAIL_LENGTH)
+        username_field.widget.attrs['maxlength'] = MAX_EMAIL_LENGTH
+        username_field.widget.attrs['class'] = 'vTextField'
+        username_field.help_text = ''
 
     email_field = User._meta.get_field_by_name('email')[0]
     monkey_patching_update_maxlength_of_field(email_field, MAX_EMAIL_LENGTH)
