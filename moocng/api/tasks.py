@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-# Copyright 2012-2013 Rooter Analysis S.L.
+
+# Copyright 2013 Rooter Analysis S.L.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -86,7 +87,6 @@ def update_stats(submitted, data_kq=None, data_unit=None, data_course=None):
     data_unit = data_unit or {}
     data_course = data_course or {}
     # KQ
-    # TODO passed
     if data_kq.keys():
         stats_kq = db.get_collection('stats_kq')
         stats_kq.update(
@@ -96,7 +96,6 @@ def update_stats(submitted, data_kq=None, data_unit=None, data_course=None):
         )
 
     # UNIT
-    # TODO passed
     if data_unit.keys():
         stats_unit = db.get_collection('stats_unit')
         stats_unit.update(
@@ -106,7 +105,6 @@ def update_stats(submitted, data_kq=None, data_unit=None, data_course=None):
         )
 
     # COURSE
-    # TODO passed
     if data_course.keys():
         stats_course = db.get_collection('stats_course')
         stats_course.update(
@@ -263,8 +261,6 @@ def get_data_dicts(submitted, passed_kq, passed_unit, passed_course):
     data_course = {}
     if submitted:
         data_kq['submitted'] = submitted
-        data_unit['submitted'] = submitted
-        data_course['submitted'] = submitted
 
     if passed_kq:
         data_kq['passed'] = 1
@@ -272,7 +268,7 @@ def get_data_dicts(submitted, passed_kq, passed_unit, passed_course):
     if passed_unit:
         data_unit['passed'] = 1
 
-    if data_course:
+    if passed_course:
         data_course['passed'] = 1
 
     return (data_kq, data_unit, data_course)
@@ -335,6 +331,4 @@ def on_peerreviewreview_created_task(review_created, user_reviews):
         'reviewers': inc_reviewers
     }
     data_kq.update(increment)
-    data_unit.update(increment)
-    data_course.update(increment)
     update_stats(data, data_kq, data_unit, data_course)
