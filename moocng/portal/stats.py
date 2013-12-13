@@ -17,7 +17,8 @@ import gc
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
-from moocng.courses.models import KnowledgeQuantum
+from moocng.api.tasks import has_passed_now
+from moocng.courses.models import KnowledgeQuantum, Course
 from moocng.mongodb import get_db
 
 
@@ -37,7 +38,8 @@ def kq_type(kq):
 
 def calculate_all_stats(user_objects=User.objects,
                         kq_objects=KnowledgeQuantum.objects, callback=None,
-                        course_blacklist=None, student_batch=5000):
+                        course_blacklist=None, student_batch=5000,
+                        course_objects=Course.objects):
 
     counter = 0
     lower = 0
@@ -53,6 +55,9 @@ def calculate_all_stats(user_objects=User.objects,
         submissions = db.get_collection('peer_review_submissions')
         reviews = db.get_collection('peer_review_reviews')
         answers = db.get_collection('answers')
+        marks_kq = db.get_collection('marks_kq')
+        marks_unit = db.get_collection('marks_unit')
+        marks_course = db.get_collection('marks_course')
         students = all_students[lower:upper]
 
         for student_id in students:
@@ -92,6 +97,7 @@ def calculate_all_stats(user_objects=User.objects,
                     stats[cid] = {
                         'u': {},
                         'total_kqs': kq_objects.filter(unit__course__id=cid).count(),
+                        'threshold': course_objects.get(id=cid).threshold,
                         'started': 0,
                         'completed': 0,
                         'passed': 0
@@ -121,6 +127,12 @@ def calculate_all_stats(user_objects=User.objects,
                 # Student course stats
                 if not cid in student_started_courses:
                     stats[cid]['started'] += 1
+                    mark = marks_course.find_one({
+                        'user_id': student_id,
+                        'course_id': cid
+                    })
+                    if mark and has_passed_now(mark['mark'], False, stats[cid]['threshold']):
+                        stats[cid]['passed'] += 1
                     student_started_courses.append(cid)
 
                 if not cid in student_course_kqs:
@@ -129,11 +141,16 @@ def calculate_all_stats(user_objects=User.objects,
                 if student_course_kqs[cid] == stats[cid]['total_kqs']:
                     stats[cid]['completed'] += 1
 
-                # TODO passed
-
                 # Student unit stats
                 if not uid in student_started_units:
                     stats[cid]['u'][uid]['started'] += 1
+                    mark = marks_unit.find_one({
+                        'user_id': student_id,
+                        'course_id': cid,
+                        'unit_id': uid
+                    })
+                    if mark and has_passed_now(mark['mark'], False, stats[cid]['threshold']):
+                        stats[cid]['u'][uid]['passed'] += 1
                     student_started_units.append(uid)
 
                 if not uid in student_unit_kqs:
@@ -141,8 +158,6 @@ def calculate_all_stats(user_objects=User.objects,
                 student_unit_kqs[uid] += 1
                 if student_unit_kqs[uid] == stats[cid]['u'][uid]['total_kqs']:
                     stats[cid]['u'][uid]['completed'] += 1
-
-                # TODO passed
 
                 # Student nugget stats
                 stats[cid]['u'][uid]['n'][nid]['viewed'] += 1
@@ -162,7 +177,6 @@ def calculate_all_stats(user_objects=User.objects,
                         stats[cid]['u'][uid]['n'][nid]['reviewers'] += 1
                         stats[cid]['u'][uid]['n'][nid]['reviews'] += revs.count()
 
-                    # TODO passed
                 elif nugget_type == 'Question':
                     submitted = answers.find({
                         'kq_id': nid,
@@ -171,7 +185,14 @@ def calculate_all_stats(user_objects=User.objects,
                     if submitted.count() > 0:
                         stats[cid]['u'][uid]['n'][nid]['submitted'] += 1
 
-                    # TODO passed
+                mark = marks_kq.find_one({
+                    'user_id': student_id,
+                    'course_id': cid,
+                    'unit_id': uid,
+                    'kq_id': nid
+                })
+                if mark and has_passed_now(mark['mark'], False, stats[cid]['threshold']):
+                    stats[cid]['u'][uid]['n'][nid]['passed'] += 1
 
             counter += 1
             if callback is not None:
