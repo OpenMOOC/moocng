@@ -5,27 +5,20 @@
 {% block nav-course-reviews %}class="active"{% endblock %}
 
 {% block content %}
-
-<h2>{% trans "Reviews" %}</h2>
-
-{% if assignments %}
-
-  {% regroup assignments by kq.unit as unit_list %}
-  {% for unit in unit_list %}
-    <h3 id="unit{{ unit.grouper.id }}">{{ unit.grouper.title }}</h3>
-    {% for pra in unit.list %}
-      <div class="well">
-        <h4 id="kq{{ pra.kq.id }}">{{ pra.kq.title }}</h4>
-        {% pending_reviews pra user course user_submissions %}
-      </div>
-    {% endfor %}
-  {% endfor %}
-
-{% else %}
-
-<p>{% trans "This course does not have any Peer Review Assignment" %}.<p>
-
-<p><a href="{% url home %}">{% trans "You can try enrolling in another course" %}.</a></p>
-{% endif %}
-
+    <h2>{% trans "Reviews" %}</h2>
+    {% if assignments %}
+        {% regroup assignments by kq.unit as unit_list %}
+        {% for unit in unit_list %}
+            <h3 id="unit{{ unit.grouper.id }}">{{ unit.grouper.title }}</h3>
+            {% for pra in unit.list %}
+            <div class="well">
+                <h4 id="kq{{ pra.kq.id }}">{{ pra.kq.title }}</h4>
+                {% pending_reviews pra user course user_submissions %}
+            </div>
+            {% endfor %}
+        {% endfor %}
+    {% else %}
+        <p>{% trans "This course does not have any Peer Review Assignment" %}.<p>
+        <p><a href="{% url home %}">{% trans "You can try enrolling in another course" %}.</a></p>
+    {% endif %}
 {% endblock %}

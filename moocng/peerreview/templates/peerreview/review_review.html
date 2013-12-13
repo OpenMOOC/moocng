@@ -44,97 +44,97 @@
 {% endblock %}
 
 {% block content %}
-<div id="confirm-review" class="modal hide fade">
-    <div class="modal-header">
-        <h3>{% trans "Confirm submission" %}</h3>
+    <div id="confirm-review" class="modal hide fade">
+        <div class="modal-header">
+            <h3>{% trans "Confirm submission" %}</h3>
+        </div>
+        <div class="modal-body">
+            <p>{% trans "Are you completely sure you want to submit your review? You can't change it later, this will be your final review of this student's assignment." %}</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
+            <button type="button" class="btn btn-danger" id="pr-confirm">{% trans "Send" %}</button>
+        </div>
     </div>
-    <div class="modal-body">
-        <p>{% trans "Are you completely sure you want to submit your review? You can't change it later, this will be your final review of this student's assignment." %}</p>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
-        <button type="button" class="btn btn-danger" id="pr-confirm">{% trans "Send" %}</button>
-    </div>
-</div>
 
-{% if criteria_formset.errors %}
-<div class="alert alert-block alert-error">
-  <h4>{% trans "Error" %}</h4>
-  {% trans "There were errors when submitting this form. Please check the specific errors below." %}
-</div>
-{% endif %}
-
-<h2>{% trans "Review for" %} {{ assignment.kq.title }}</h2>
-
-<h3>{% trans "Activity description" %}</h3>
-{{ assignment.description|safe }}
-
-<h3>{% trans "Student response" %}</h3>
-{{ submission.text }}
-{% if submission.file %}
-  <p>
-    <a href="{{ submission.file }}">{% trans "Download student's submission" %}</a>
-  </p>
-  <div class="alert">
-    <strong>{% trans "Warning!" %}</strong>
-    {% blocktrans with site=site %}
-        You should scan this file with your antivirus software. {{ site }}
-        is not responsible for any harm this may cause to your computer.
-    {% endblocktrans %}
-  </div>
-{% endif %}
-
-<h3>{% trans "Your review" %}</h3>
-<div class="alert">
-{% if is_assignation_expired %}
-  <strong>{% trans "Warning!" %}</strong>
-  {% blocktrans with assignation_expire=assignation_expire %}
-    This submission can be now claimed by other student. Your claim
-    expired on {{ assignation_expire }}, but you still can send your review.
-    Hurry up!
-  {% endblocktrans %}
-{% else %}
-  <strong>{% trans "Remember:" %}</strong>
-  {% blocktrans with assignation_expire=assignation_expire %}
-    You must review this exercise before {{ assignation_expire }}. After this,
-    date, the review can be reassigned to another student.
-  {% endblocktrans %}
-{% endif %}
-</div>
-
-<form method="post">
-  {% csrf_token %}
-  {{ criteria_formset.management_form }}
-
-  {% for criterion in criteria_formset %}
-    {% if forloop.counter0|divisibleby:"2" %}
-    <div class="row">
+    {% if criteria_formset.errors %}
+        <div class="alert alert-block alert-error">
+            <h4>{% trans "Error" %}</h4>
+            {% trans "There were errors when submitting this form. Please check the specific errors below." %}
+        </div>
     {% endif %}
-    <div class="span6">
-      {{ criterion.evaluation_criterion_id }}
-      <p><strong>{{ criterion.evaluation_criterion_id.value|get_criterion_title }}</strong></p>
-      <pre style="height: 100px; overflow: auto;"><small>{{ criterion.evaluation_criterion_id.value|get_criterion_description|escape }}</small></pre>
-      <div class="btn-group pull-right" data-toggle="buttons-radio">
-        <button type="button" data-name="{{ criterion.value.html_name }}" data-value="" class="btn btn-warning criterion_value disabled"><i class="icon-minus"></i></button>
-        {% for choice in criterion.value %}
-          <button type="button" data-name="{{ criterion.value.html_name }}" data-value="{{ choice.choice_value }}" class="btn criterion_value">{{ choice.choice_label }}</button>
-        {% endfor %}
-        <input type="hidden" class="criterion_value" name="{{ criterion.value.html_name }}" value="{% if criterion.value.value %}{{ criterion.value.value }}{% endif %}">
-        <button type="button" data-name="{{ criterion.value.html_name }}" data-value="" class="btn btn-success criterion_value disabled"><i class="icon-plus"></i></button>
-      </div>
-      {{ criterion.value.errors }}
-    </div>
-    {% if forloop.counter|divisibleby:"2" %}
-    </div>
+
+    <h2>{% trans "Review for" %} {{ assignment.kq.title }}</h2>
+
+    <h3>{% trans "Activity description" %}</h3>
+    {{ assignment.description|safe }}
+
+    <h3>{% trans "Student response" %}</h3>
+    {{ submission.text }}
+    {% if submission.file %}
+        <p>
+            <a href="{{ submission.file }}">{% trans "Download student's submission" %}</a>
+        </p>
+        <div class="alert">
+            <strong>{% trans "Warning!" %}</strong>
+            {% blocktrans with site=site %}
+                You should scan this file with your antivirus software. {{ site }}
+                is not responsible for any harm this may cause to your computer.
+            {% endblocktrans %}
+        </div>
     {% endif %}
-  {% endfor %}
-  </div>
-
-  {{ submission_form }}
-
-  <div class="form-actions">
-    <input type="submit" class="btn btn-primary" id="send_review" value="{% trans "Send review" %}" />
-  </div>
-</form>
-
+    <h3>{% trans "Your review" %}</h3>
+    <div class="alert">
+        {% if is_assignation_expired %}
+            <strong>{% trans "Warning!" %}</strong>
+            {% blocktrans with assignation_expire=assignation_expire %}
+                This submission can be now claimed by other student. Your claim
+                expired on {{ assignation_expire }}, but you still can send your review.
+                Hurry up!
+            {% endblocktrans %}
+        {% else %}
+            <strong>{% trans "Remember:" %}</strong>
+            {% blocktrans with assignation_expire=assignation_expire %}
+                You must review this exercise before {{ assignation_expire }}. After this,
+                date, the review can be reassigned to another student.
+            {% endblocktrans %}
+        {% endif %}
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        {{ criteria_formset.management_form }}
+        {% for criterion in criteria_formset %}
+            {% if forloop.counter0|divisibleby:"2" %}
+                <div class="row">
+            {% endif %}
+                <div class="span6">
+                    {{ criterion.evaluation_criterion_id }}
+                    <p><strong>{{ criterion.evaluation_criterion_id.value|get_criterion_title }}</strong></p>
+                    <pre style="height: 100px; overflow: auto;"><small>{{ criterion.evaluation_criterion_id.value|get_criterion_description|escape }}</small></pre>
+                    <div class="btn-group pull-right" data-toggle="buttons-radio">
+                        <button type="button" data-name="{{ criterion.value.html_name }}" data-value="" class="btn btn-warning criterion_value disabled">
+                            <i class="icon-minus"></i>
+                        </button>
+                        {% for choice in criterion.value %}
+                            <button type="button" data-name="{{ criterion.value.html_name }}" data-value="{{ choice.choice_value }}" class="btn criterion_value">
+                                {{ choice.choice_label }}
+                            </button>
+                        {% endfor %}
+                        <input type="hidden" class="criterion_value" name="{{ criterion.value.html_name }}" value="{% if criterion.value.value %}{{ criterion.value.value }}{% endif %}">
+                        <button type="button" data-name="{{ criterion.value.html_name }}" data-value="" class="btn btn-success criterion_value disabled">
+                            <i class="icon-plus"></i>
+                        </button>
+                    </div>
+                    {{ criterion.value.errors }}
+                </div>
+                {% if forloop.counter|divisibleby:"2" %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {{ submission_form }}
+        <div class="form-actions">
+            <input type="submit" class="btn btn-primary" id="send_review" value="{% trans "Send review" %}" />
+        </div>
+    </form>
 {% endblock %}

@@ -2,45 +2,42 @@
 
 {% load conditionalcache i18n %}
 
-{% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
-
 {% block content %}
-<div class="media-box">
-{% if theme.top_banner %}
-  <a href="#">
-    <img src="{{ theme.top_banner }}" alt="" />
-  </a>
-{% endif %}
-</div>
-
-<div class="row">
-  <section class="span12">
-    <h1 class="content-title">{% trans "Courses" %}</h1>
-    {% conditionalcache use_cache 3600 course_list %}
-          {% for course_tuple in courses %}
-             <div class="row">
-                {% for course in course_tuple %}
-                  {% if course %}
-                    <div class="span4 {% if not course.is_public %}draft{% endif %}">
-                      <h3>
-                          {% if course.thumbnail %}
-                              <a href="{{ course.get_absolute_url }}"><img src="{{ MEDIA_URL }}{{ course.thumbnail }}"></a>
-                          {% else %}
-                              <a href="{{ course.get_absolute_url }}"><img src="{{ STATIC_URL }}img/classroom.png"></a>
-                          {% endif %}
-                          <a href="{{ course.get_absolute_url }}">{{ course.name }}</a>
-                      </h3>
-                      <p>{{ course.description|safe|truncatewords_html:60 }}</p>
-                      <p class="box-footer"><a href="{{ course.get_absolute_url }}">{% trans "More information about this course" %}</a></p>
-                      {% if not course.is_public %}
-                          <p class="label pull-right">{% trans "Draft" %}</p>
-                      {% endif %}
+    <div class="media-box">
+        {% if theme.top_banner %}
+            <a href="#">
+                <img src="{{ theme.top_banner }}" alt="" />
+            </a>
+        {% endif %}
+    </div>
+    <div class="row">
+        <section class="span12">
+            <h1 class="content-title">{% trans "Courses" %}</h1>
+            {% conditionalcache use_cache 3600 course_list %}
+                {% for course_tuple in courses %}
+                    <div class="row">
+                        {% for course in course_tuple %}
+                        {% if course %}
+                            <div class="span4 {% if not course.is_public %}draft{% endif %}">
+                            <h3>
+                                {% if course.thumbnail %}
+                                    <a href="{{ course.get_absolute_url }}"><img src="{{ MEDIA_URL }}{{ course.thumbnail }}"></a>
+                                {% else %}
+                                    <a href="{{ course.get_absolute_url }}"><img src="{{ STATIC_URL }}img/classroom.png"></a>
+                                {% endif %}
+                                <a href="{{ course.get_absolute_url }}">{{ course.name }}</a>
+                            </h3>
+                            <p>{{ course.description|safe|truncatewords_html:60 }}</p>
+                            <p class="box-footer"><a href="{{ course.get_absolute_url }}">{% trans "More information about this course" %}</a></p>
+                            {% if not course.is_public %}
+                                <p class="label pull-right">{% trans "Draft" %}</p>
+                            {% endif %}
+                            </div>
+                        {% endif %}
+                        {% endfor %}
                     </div>
-                  {% endif %}
                 {% endfor %}
-              </div>
-          {% endfor %}
-    {% endconditionalcache %}
-  </section>
-</div>
+            {% endconditionalcache %}
+        </section>
+    </div>
 {% endblock %}

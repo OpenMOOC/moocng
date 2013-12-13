@@ -2,14 +2,13 @@
 
 {% load i18n %}
 
-{% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
-
 {% block content %}
-<h1>{% trans "Contact" %}</h1>
-<form action="" method="post">{% csrf_token %}
-  {{ form.as_bootstrap }}
-  <div class="form-actions">
-    <input class="btn btn-primary" type="submit" value="{% trans 'Submit' %}" />
-  </div>
-</form>
+    <h1>{% trans "Contact" %}</h1>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_bootstrap }}
+        <div class="form-actions">
+            <input class="btn btn-primary" type="submit" value="{% trans 'Submit' %}" />
+        </div>
+    </form>
 {% endblock %}

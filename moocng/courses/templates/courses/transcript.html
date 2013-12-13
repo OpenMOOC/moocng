@@ -2,81 +2,76 @@
 
 {% load i18n %}
 
-{% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
 
 {% block content %}
-
-<div class="row">
-  <section class="span12">
-    <h1 class="content-title">{% block content-title %}{% trans "My transcript" %}{% endblock %}</h1>
-    {% block breadcrumbs %}
-        <ul class="breadcrumb">
-            <li class="active">{% trans "My transcript" %}</li>
-        </ul>
-    {% endblock %}
-    {% for course_info in courses_info %}
-    <div class="box" id="{{ course_info.course.slug }}" name="{{ course_info.course.slug }}">
-      <h2><a href="{{ course_info.course.get_absolute_url }}">{{ course_info.course.name }}</a></h2>
-        {% if course_info.units_info %}
-            <ul>
-            {% for unit_info in course_info.units_info %}
-                {% if unit_info.unit.status != 'd' %}
-                    {% if not unit_info.hide %}
-                        <li><span class="badge {{ unit_info.badge_class }}">{{ unit_info.unit.unittype|capfirst }}</span> <a href="{% url course_progress course_info.course.slug %}#unit{{ unit_info.unit.id }}">{{ unit_info.unit.title }}</a> <b> {{ unit_info.mark|floatformat:"-2" }}</b>/10   ({{ unit_info.normalized_weight|floatformat:"-2" }}% {% trans "of the final mark" %})</li>
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
-            </ul>
-        {% else %}
-            <p>{% trans "No scoring units" %}</p>
-        {% endif%}
-        <hr>
-        {% if course_info.units_info %}
-            <h4>{% trans "Final mark" %}: {{ course_info.mark|floatformat:"-2" }} / 10
-            {% if course_info.use_old_calculus %}
-                <a target="_new" href="{% url oldscore %}" ><small>({% trans "Evaluation criteria" %})</small></a>
-            {% else %}
-                <a target="_new" href="{% url score %}" ><small>({% trans "Evaluation criteria" %})</small></a>
-            {% endif %}
-        </h4>
-            {% if course_info.course.threshold %}
-                <p>{% blocktrans with threshold=course_info.course.threshold %}You need at least a <strong>{{ threshold }} to pass</strong> this course.{% endblocktrans %}</p>
-            {% endif %}
-        {% endif %}
-
-        {% if course_info.award %}
-            <p>{% trans "Congratulations, you have completed" %} "{{ course_info.course.name }}". {% trans "Here is a badge!" %}</p>
-            <div class="row">
-                <div class="span1">
-                    <img src="{{ course_info.award.get_image_url }}" alt="{{ course_info.award.badge.title }}" title="{{ course_info.award.badge.title }}" width="50" height="50" class="award" />
-                </div><div class="span10">
-                    <pre>&lt;img src="{{ course_info.award.get_image_public_url }}" /&gt;</pre>
-                </div>
-            </div>
-        {% endif %}
-
-        {% if course_info.course.certification_available %}
-            {% if course_info.passed %}
-                <p><a target="_new" href="{{ course_info.cert_url }}" class="btn btn-success">{% trans "I want a certificate of completion for this course" %}</a>
-                    <a target="_new" href="{% url cert %}" ><small>{% trans "Read more" %}</small></a>
-                </p>
-            {% else %}
-                <p>{% trans "You need to complete the course before asking for a certificate of completion." %}</p>
-            {% endif %}
-        {% else %}
-                <p>{% trans "No certificate available for this course." %}</p>
-        {% endif %}
-    </div>
-    {% empty %}
-      <p>
-        <b>
-            {% block message-empty %}
-                {% trans "You are not enrolled in any course" %}
+    <div class="row">
+        <section class="span12">
+            <h1 class="content-title">{% block content-title %}{% trans "My transcript" %}{% endblock %}</h1>
+            {% block breadcrumbs %}
+                <ul class="breadcrumb">
+                    <li class="active">{% trans "My transcript" %}</li>
+                </ul>
             {% endblock %}
-        </b>
-      </p>
-    {% endfor %}
-
-  </section>
-</div>
+            {% for course_info in courses_info %}
+                <div class="box" id="{{ course_info.course.slug }}" name="{{ course_info.course.slug }}">
+                    <h2><a href="{{ course_info.course.get_absolute_url }}">{{ course_info.course.name }}</a></h2>
+                        {% if course_info.units_info %}
+                            <ul>
+                            {% for unit_info in course_info.units_info %}
+                                {% if unit_info.unit.status != 'd' %}
+                                    {% if not unit_info.hide %}
+                                        <li><span class="badge {{ unit_info.badge_class }}">{{ unit_info.unit.unittype|capfirst }}</span> <a href="{% url course_progress course_info.course.slug %}#unit{{ unit_info.unit.id }}">{{ unit_info.unit.title }}</a> <b> {{ unit_info.mark|floatformat:"-2" }}</b>/10   ({{ unit_info.normalized_weight|floatformat:"-2" }}% {% trans "of the final mark" %})</li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>{% trans "No scoring units" %}</p>
+                        {% endif%}
+                        <hr>
+                        {% if course_info.units_info %}
+                            <h4>{% trans "Final mark" %}: {{ course_info.mark|floatformat:"-2" }} / 10
+                                {% if course_info.use_old_calculus %}
+                                    <a target="_new" href="{% url oldscore %}" ><small>({% trans "Evaluation criteria" %})</small></a>
+                                {% else %}
+                                    <a target="_new" href="{% url score %}" ><small>({% trans "Evaluation criteria" %})</small></a>
+                                {% endif %}
+                            </h4>
+                            {% if course_info.course.threshold %}
+                                <p>{% blocktrans with threshold=course_info.course.threshold %}You need at least a <strong>{{ threshold }} to pass</strong> this course.{% endblocktrans %}</p>
+                            {% endif %}
+                        {% endif %}
+                        {% if course_info.award %}
+                            <p>{% trans "Congratulations, you have completed" %} "{{ course_info.course.name }}". {% trans "Here is a badge!" %}</p>
+                            <div class="row">
+                                <div class="span1">
+                                    <img src="{{ course_info.award.get_image_url }}" alt="{{ course_info.award.badge.title }}" title="{{ course_info.award.badge.title }}" width="50" height="50" class="award" />
+                                </div><div class="span10">
+                                    <pre>&lt;img src="{{ course_info.award.get_image_public_url }}" /&gt;</pre>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if course_info.course.certification_available %}
+                            {% if course_info.passed %}
+                                <p><a target="_new" href="{{ course_info.cert_url }}" class="btn btn-success">{% trans "I want a certificate of completion for this course" %}</a>
+                                    <a target="_new" href="{% url cert %}" ><small>{% trans "Read more" %}</small></a>
+                                </p>
+                            {% else %}
+                                <p>{% trans "You need to complete the course before asking for a certificate of completion." %}</p>
+                            {% endif %}
+                        {% else %}
+                                <p>{% trans "No certificate available for this course." %}</p>
+                        {% endif %}
+                    </div>
+                {% empty %}
+                <p>
+                    <b>
+                        {% block message-empty %}
+                            {% trans "You are not enrolled in any course" %}
+                        {% endblock %}
+                    </b>
+                </p>
+            {% endfor %}
+        </section>
+    </div>
 {% endblock %}
