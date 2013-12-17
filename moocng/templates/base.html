@@ -49,7 +49,9 @@
         <h2 class="small pull-left">{{ theme.subtitle }}</h2>
       </hgroup>
       {% if user.is_authenticated %}
-      {% block useractions %}{% endblock %}
+        {% block useractions %}
+            {% include "courses/include.useractions.html" %}
+        {% endblock %}
       {% else %}
       <div class="btn-toolbar pull-right">
         <a class="btn" href="{% url register %}">{% trans "Register" %}</a>
