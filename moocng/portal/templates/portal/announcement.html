@@ -1,6 +1,6 @@
 {% extends "portal/base_announcement.html" %}
 
-{% load conditionalcache i18n %}
+{% load i18n %}
 
 {% block content %}
     <div class="row">
@@ -15,9 +15,7 @@
                 <li><a href="{% url portal_announcements %}">{% trans "Announcements" %}</a> <span class="divider">/</span></li>
                 <li class="active">{{ announcement }}</li>
             </ul>
-            {% conditionalcache use_cache 3600 announcements %}
-                {% include "portal/inc.announcement.html" %}
-            {% endconditionalcache %}
+            {% include "portal/inc.announcement.html" %}
         </section>
     </div>
     {{ block.super }}

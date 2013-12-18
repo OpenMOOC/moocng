@@ -47,7 +47,7 @@ class CourseForm(forms.ModelForm):
 
     class Meta:
         model = Course
-        exclude = ('slug', 'teachers', 'owner', 'students')
+        exclude = ('slug', 'teachers', 'owner', 'students', 'max_mass_emails_month')
         widgets = {
             'start_date': HTML5DateInput(),
             'end_date': HTML5DateInput(),
