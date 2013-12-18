@@ -19,13 +19,13 @@ from moocng.courses.marks import (get_course_intermediate_calculations, normaliz
 
 
 def normalize_kq_weight_old(kq, unit_kq_counter, total_weight_unnormalized):
-
-    from moocng.courses.models import KnowledgeQuantum
-    unit_kq_list = KnowledgeQuantum.objects.filter(unit=kq.unit)
-    unit_kq_counter = len(unit_kq_list)
-    total_weight_unnormalized = 0
-    for unit_kq in unit_kq_list:
-        total_weight_unnormalized += unit_kq.weight
+    if unit_kq_counter is None:
+        from moocng.courses.models import KnowledgeQuantum
+        unit_kq_list = KnowledgeQuantum.objects.filter(unit=kq.unit)
+        unit_kq_counter = len(unit_kq_list)
+        total_weight_unnormalized = 0
+        for unit_kq in unit_kq_list:
+            total_weight_unnormalized += unit_kq.weight
 
     if total_weight_unnormalized == 0:
         if unit_kq_counter == 0:

@@ -52,7 +52,7 @@ from moocng.assets.models import Asset, Reservation, AssetAvailability
 from moocng.assets.utils import get_occupation_for_month
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
                                    Attachment, Course)
-from moocng.courses.marks import normalize_kq_weight, calculate_course_mark
+from moocng.courses.marks_old import normalize_kq_weight_old, calculate_course_mark_old
 from moocng.media_contents import (media_content_get_iframe_template,
                                    media_content_get_thumbnail_url)
 from moocng.mongodb import get_db
@@ -144,7 +144,7 @@ class KnowledgeQuantumResource(ModelResource):
                                                               **kwargs)
 
     def dehydrate_normalized_weight(self, bundle):
-        return normalize_kq_weight(bundle.obj)
+        return normalize_kq_weight_old(bundle.obj)
 
     def dehydrate_question(self, bundle):
         question = bundle.data['question']
@@ -226,7 +226,7 @@ class PrivateKnowledgeQuantumResource(ModelResource):
         return data
 
     def dehydrate_normalized_weight(self, bundle):
-        return normalize_kq_weight(bundle.obj)
+        return normalize_kq_weight_old(bundle.obj)
 
     def dehydrate_question(self, bundle):
         question = bundle.data['question']
@@ -852,7 +852,7 @@ class UserResource(ModelResource):
             courses = obj.courses_as_student.all()
         for course in courses:
             if course.threshold is not None:
-                total_mark, units_info = calculate_course_mark(course, obj)
+                total_mark, units_info = calculate_course_mark_old(course, obj)
                 if float(course.threshold) <= total_mark:
                     passed_courses.append(course)
         return self.alt_get_list(request, passed_courses)
