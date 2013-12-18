@@ -18,7 +18,7 @@ from moocng.courses.marks import (get_course_intermediate_calculations, normaliz
                                   calculate_peer_review_mark, calculate_kq_video_mark)
 
 
-def normalize_kq_weight_old(kq, unit_kq_counter, total_weight_unnormalized):
+def normalize_kq_weight_old(kq, unit_kq_counter=None, total_weight_unnormalized=None):
     if unit_kq_counter is None:
         from moocng.courses.models import KnowledgeQuantum
         unit_kq_list = KnowledgeQuantum.objects.filter(unit=kq.unit)
