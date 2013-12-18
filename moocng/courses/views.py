@@ -451,17 +451,11 @@ def transcript_v2(request, course_slug=None):
                     award = Award(badge=badge, user=request.user)
                     award.save()
         total_weight_unnormalized, unit_course_counter, course_units = get_course_intermediate_calculations(course)
-        units_pks_ordered = map(lambda x: x[0], course_units.values_list('pk'))
 
-        def order_units_info(unit):
+        units_info_ordered = []
+        for unit in course_units:
             try:
-                return units_pks_ordered.index(unit['unit_id'])
-            except ValueError:
-                return len(units_pks_ordered)
-        units_info = sorted(units_info, key=order_units_info)
-        for idx, unit in enumerate(course_units):
-            try:
-                uinfo = units_info[idx]
+                uinfo = filter((lambda u: u['unit_id'] == unit.pk), units_info)[0]
             except IndexError:
                 uinfo = {'relative_mark': 0,
                          'mark': 0}
@@ -472,9 +466,10 @@ def transcript_v2(request, course_slug=None):
             uinfo['normalized_weight'] = normalized_unit_weight
             unit_class = get_unit_badge_class(unit)
             uinfo['badge_class'] = unit_class
+            units_info_ordered.append(uinfo)
         courses_info.append({
             'course': course,
-            'units_info': units_info,
+            'units_info': units_info_ordered,
             'mark': total_mark,
             'award': award,
             'passed': passed,
