@@ -33,6 +33,16 @@ class Command(BaseCommand):
                     dest='user',
                     default="",
                     help='User pk'),
+        make_option('-c', '--courses',
+                    action='store',
+                    dest='courses_pks',
+                    default="",
+                    help='Courses pk separated by commas'),
+        make_option('-a', '--courses-actives',
+                    action='store_true',
+                    dest='courses_actives',
+                    default=False,
+                    help='Only active courses'),
         make_option('-e', '--email-list',
                     action='store',
                     dest='email_list',
@@ -52,6 +62,16 @@ class Command(BaseCommand):
             {'$inc': {'passed': 1}},
             safe=True
         )
+
+    def get_courses(self, user, courses_pks=None, courses_actives=False):
+        courses_as_student = user.courses_as_student.all()
+        if courses_pks:
+            courses_pks = courses_pks.split(',')
+            courses_as_student = courses_as_student.filter(pk__in=courses_pks)
+
+        if courses_actives:
+            courses_as_student = courses_as_student.actives()
+        return courses_as_student
 
     def handle(self, *args, **options):
         users = User.objects.all()
@@ -77,9 +97,11 @@ class Command(BaseCommand):
                           'The mark migration is finished',
                           settings.DEFAULT_FROM_EMAIL,
                           email_list.split(','))
+        courses_pks = options["courses_pks"]
+        courses_actives = options["courses_actives"]
         db = get_db()
         for user in users:
-            for course in user.courses_as_student.all():
+            for course in self.get_courses(user, courses_pks, courses_actives):
                 for unit in course.unit_set.scorables():
                     for kq in unit.knowledgequantum_set.all():
                         updated_kq, passed_kq_now = update_kq_mark(db, kq, user, course.threshold)
