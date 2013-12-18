@@ -454,11 +454,8 @@ def transcript_v2(request, course_slug=None):
 
         units_info_ordered = []
         for unit in course_units:
-            try:
-                uinfo = filter((lambda u: u['unit_id'] == unit.pk), units_info)[0]
-            except IndexError:
-                uinfo = {'relative_mark': 0,
-                         'mark': 0}
+            uinfo = next((u for u in units_info if u['unit_id'] == unit.pk),
+                         {'relative_mark': 0, 'mark': 0})
             uinfo['unit'] = unit
             normalized_unit_weight = normalize_unit_weight(unit,
                                                            unit_course_counter,
