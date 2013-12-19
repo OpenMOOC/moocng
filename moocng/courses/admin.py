@@ -200,7 +200,8 @@ class QuestionAdmin(admin.ModelAdmin):
     .. versionadded: 0.1
     """
     list_display = ('kq', 'solution_media_content_type', 'solution_media_content_id')
-    list_filter = ('kq', )
+    list_filter = ('solution_media_content_type', )
+    search_fields = ('kq__title', 'solution_media_content_id')
     formfield_overrides = {
         models.ImageField: {'widget': ImageReadOnlyWidget},
     }
