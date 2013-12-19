@@ -43,7 +43,7 @@ Requires: python-imaging = 1.1.6
 Requires: python-memcached = 1.48
 Requires: python-psycopg2 = 2.4.2
 Requires: python-requests = 1.2.0
-Requires: python-gunicorn = 0.14.6
+Requires: python-gunicorn = 18.0
 
 Requires: Django14
 Requires: django-celery = 3.0.17
@@ -61,7 +61,7 @@ Requires: memcached = 1.4.4
 Requires: mongo-10gen-server >= 2.4.5
 Requires: nginx = 1.0.15
 Requires: openmooc-ffmpeg = 20120806
-Requires: postgresql-server = 8.4.13
+Requires: postgresql-server = 8.4.18
 Requires: rabbitmq-server >= 2.6.1
 Requires: supervisor = 3.0
 Requires: xmlsec1 >= 1.2.16
