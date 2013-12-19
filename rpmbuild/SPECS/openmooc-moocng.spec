@@ -216,6 +216,7 @@ rm -rf %{buildroot}
 %{python_sitelib}/%{component}/teacheradmin/
 %{python_sitelib}/%{component}/templates/
 %{python_sitelib}/%{component}/videos/
+%{python_sitelib}/%{component}/profile/
 
 # We do this so we don't duplicate the validation of mathjax files
 %{python_sitelib}/%{component}/static/crossdomain.xml
