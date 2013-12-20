@@ -357,18 +357,8 @@ def announcement_detail(request, course_slug, announcement_id, announcement_slug
 
 
 @login_required
-def transcript(request, course_slug=None):
-
-    """
-    Transcript is the main view of the user progress, here the user is show with
-    the overall progress per course, quallifications and badges if he obtained
-    any. We also give the access to the certification.
-
-    :permissions: login
-    :context: course, units_info, mark, award, passed, cert_url, use_old_calculus
-
-    .. versionadded:: 0.1
-    """
+def transcript_v1(request, course_slug=None):
+    # This function should be removed when we are sure that the new transcript function works
     course_list = request.user.courses_as_student.all()
     course_transcript = None
     template_name = 'courses/transcript.html'
@@ -418,12 +408,9 @@ def transcript(request, course_slug=None):
 
 
 @login_required
-def transcript_v2(request, course_slug=None):
+def transcript(request, course_slug=None):
     user = request.user
-    if not user.is_superuser:
-        from django.http import Http404
-        raise Http404
-    course_list = request.user.courses_as_student.all()
+    course_list = user.courses_as_student.all()
     course_transcript = None
     template_name = 'courses/transcript.html'
     if course_slug:
@@ -434,21 +421,21 @@ def transcript_v2(request, course_slug=None):
     cert_url = ''
     use_old_calculus = settings.COURSES_USING_OLD_TRANSCRIPT
     for course in course_list:
-        total_mark, units_info = get_course_mark(course, request.user)
+        total_mark, units_info = get_course_mark(course, user)
         award = None
         passed = False
         if course.threshold is not None and float(course.threshold) <= total_mark:
             passed = True
             cert_url = settings.CERTIFICATE_URL % {
                 'courseid': course.id,
-                'email': request.user.email.lower()
+                'email': user.email.lower()
             }
             badge = course.completion_badge
             if badge is not None:
                 try:
-                    award = Award.objects.get(badge=badge, user=request.user)
+                    award = Award.objects.get(badge=badge, user=user)
                 except Award.DoesNotExist:
-                    award = Award(badge=badge, user=request.user)
+                    award = Award(badge=badge, user=user)
                     award.save()
         total_weight_unnormalized, unit_course_counter, course_units = get_course_intermediate_calculations(course)
 
