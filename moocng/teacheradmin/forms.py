@@ -195,9 +195,8 @@ class BaseMassiveEmailForm(forms.ModelForm):
         if getattr(self, 'course', None):
             instance.course = self.course
             instance.massive_email_type = 'course'
-        if commit:
-            instance.save()
-            instance.send_in_batches(send_massive_email_task)
+        instance.save()
+        instance.send_in_batches(send_massive_email_task)
         return instance
 
 
