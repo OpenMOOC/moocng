@@ -35,11 +35,7 @@ def massmail_send_in_batches(massiveemail, email_send_task):
 
     .. versionadded:: 0.1
     """
-    try:
-        batch = settings.MASSIVE_EMAIL_BATCH_SIZE
-    except AttributeError:
-        batch = 30
-
+    batch = getattr(settings, 'MASSIVE_EMAIL_BATCH_SIZE', 30)
     recipients = massiveemail.get_recipients()
     batches = (recipients.count() / batch) + 1
     for i in range(batches):

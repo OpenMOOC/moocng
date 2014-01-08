@@ -112,7 +112,7 @@ class BaseAnnouncementForm(forms.ModelForm):
         if commit:
             instance.save()
         if self.cleaned_data.get('send_email', None):
-            me = MassiveEmail.objects.create_from_announcement(instance, massive_email_type='all')
+            me = MassiveEmail.objects.create_from_announcement(instance, massive_email_type=self.massive_email_type)
             me.send_in_batches(send_massive_email_task)
         return instance
 
@@ -127,6 +127,7 @@ class AnnouncementForm(BaseAnnouncementForm, BootstrapMixin):
 
     .. versionadded:: 0.1
     """
+    massive_email_type = 'course'
 
     class Meta:
         model = Announcement
@@ -152,6 +153,7 @@ class AnnouncementForm(BaseAnnouncementForm, BootstrapMixin):
 
 class MassiveGlobalAnnouncementAdminForm(BaseAnnouncementForm):
 
+    massive_email_type = 'all'
     check_email = forms.BooleanField(label='', widget=forms.HiddenInput, required=False)
 
     class Meta:
