@@ -3,7 +3,7 @@
 {% for course in courses %}
     <li>
         {% if course.is_active %}
-            <a href="{% url course_classroom course.slug %}">{{ course|truncatechars:30 }}</a>
+            <a href="{% url course_classroom course.slug %}">{{ course|truncatechars:40 }}</a>
         {% else %}
             <a href="{% url transcript course.slug %}">{{ course|truncatechars:30 }} ({% trans "closed" %}) </a>
         {% endif %}
