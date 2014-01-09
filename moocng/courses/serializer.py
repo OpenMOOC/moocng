@@ -73,7 +73,6 @@ class CourseClone(TraceCourseId):
         obj.name = obj.name + ' (Copy)'
         obj.status = 'd'
         obj.created_from_id = initial_obj.pk
-        obj.is_activity_clonable = True
         unique_slugify(obj, obj.slug, exclude_instance=False)
         obj = super(CourseClone, cls).pre_serialize(initial_obj, obj, request, serialize_options=serialize_options)
         return obj
