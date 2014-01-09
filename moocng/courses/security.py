@@ -18,6 +18,7 @@ from datetime import date
 from django.contrib import messages
 from django.db.models import Q
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 
@@ -35,8 +36,8 @@ def can_user_view_course(course, user):
 
     .. versionadded:: 0.1
     """
-    if course.is_public:
-        return True, 'public'
+    if course.is_active:
+        return True, 'active'
 
     if user.is_superuser:
         return True, 'is_superuser'
@@ -53,7 +54,7 @@ def can_user_view_course(course, user):
             pass
 
     # at this point you don't have permissions to see a course
-    return False, 'not_public'
+    return False, 'not_active'
 
 
 def check_user_can_view_course(course, request):
@@ -65,18 +66,24 @@ def check_user_can_view_course(course, request):
 
     .. versionadded:: 0.1
     """
-    yes_he_can, reason = can_user_view_course(course, request.user)
+    can_view, reason = can_user_view_course(course, request.user)
 
-    if yes_he_can:
-        if reason != 'public':
+    if can_view:
+        if reason != 'active':
             msg_table = {
-                'is_staff': _(u'This course is not public yet. Your have access to it because you are staff member'),
-                'is_superuser': _(u'This course is not public yet. Your have access to it because you are a super user'),
-                'is_teacher': _(u'This course is not public yet. Your have access to it because you are a teacher of the course'),
+                'is_staff': _(u'This course is not public. Your have access to it because you are staff member'),
+                'is_superuser': _(u'This course is not public. Your have access to it because you are a super user'),
+                'is_teacher': _(u'This course is not public. Your have access to it because you are a teacher of the course'),
             }
             messages.warning(request, msg_table[reason])
     else:
         raise Http404()
+
+
+def get_course_if_user_can_view_or_404(course_slug, request):
+    course = get_object_or_404(Course, slug=course_slug)
+    check_user_can_view_course(course, request)
+    return course
 
 
 def get_courses_available_for_user(user):

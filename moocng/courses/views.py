@@ -37,7 +37,7 @@ from moocng.courses.utils import (get_unit_badge_class, is_course_ready,
                                   send_mail_wrapper)
 from moocng.courses.marks_old import calculate_course_mark_old
 from moocng.courses.marks import get_course_mark, get_course_intermediate_calculations, normalize_unit_weight
-from moocng.courses.security import (check_user_can_view_course,
+from moocng.courses.security import (get_course_if_user_can_view_or_404,
                                      get_courses_available_for_user,
                                      get_units_available_for_user)
 from moocng.courses.tasks import clone_activity_user_course_task
@@ -196,9 +196,7 @@ def course_overview(request, course_slug):
 
     .. versionadded:: 0.1
     """
-    course = get_object_or_404(Course, slug=course_slug)
-
-    check_user_can_view_course(course, request)
+    course = get_course_if_user_can_view_or_404(course_slug, request)
 
     if request.user.is_authenticated():
         is_enrolled = course.students.filter(id=request.user.id).exists()
@@ -236,8 +234,7 @@ def course_classroom(request, course_slug):
 
     .. versionadded:: 0.1
     """
-    course = get_object_or_404(Course, slug=course_slug)
-
+    course = get_course_if_user_can_view_or_404(course_slug, request)
     is_enrolled = course.students.filter(id=request.user.id).exists()
     if not is_enrolled:
         messages.error(request, _('You are not enrolled in this course'))
@@ -289,7 +286,7 @@ def course_progress(request, course_slug):
 
     .. versionadded:: 0.1
     """
-    course = get_object_or_404(Course, slug=course_slug)
+    course = get_course_if_user_can_view_or_404(course_slug, request)
 
     is_enrolled = course.students.filter(id=request.user.id).exists()
     if not is_enrolled:
@@ -326,7 +323,7 @@ def course_progress(request, course_slug):
 
 @login_required
 def course_extra_info(request, course_slug):
-    course = get_object_or_404(Course, slug=course_slug)
+    course = get_course_if_user_can_view_or_404(course_slug, request)
     is_enrolled = course.students.filter(id=request.user.id).exists()
 
     return render_to_response('courses/static_page.html', {
@@ -346,7 +343,7 @@ def announcement_detail(request, course_slug, announcement_id, announcement_slug
 
     .. versionadded:: 0.1
     """
-    course = get_object_or_404(Course, slug=course_slug)
+    course = get_course_if_user_can_view_or_404(course_slug, request)
     announcement = get_object_or_404(Announcement, id=announcement_id)
 
     return render_to_response('courses/announcement.html', {
@@ -471,7 +468,7 @@ def clone_activity(request, course_slug):
     if request.method != 'POST':
         raise HttpResponseBadRequest
     user = request.user
-    course = get_object_or_404(Course, slug=course_slug)
+    course = get_course_if_user_can_view_or_404(course_slug, request)
     course_student_relation = get_object_or_404(user.coursestudent_set, course=course)
     if not course_student_relation.can_clone_activity():
         raise HttpResponseBadRequest

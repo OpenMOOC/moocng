@@ -12,31 +12,36 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import pytz
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.forms.models import model_to_dict
-from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponseNotAllowed
+from django.http import HttpResponseRedirect, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
 
 from moocng.assets.models import Asset, AssetAvailability, Reservation
-from moocng.assets.utils import *
-from moocng.courses.models import Course, KnowledgeQuantum
+from moocng.assets.utils import (book_asset,
+                                 get_concurrent_reservations,
+                                 user_course_get_active_reservations,
+                                 user_course_get_past_reservations,
+                                 user_course_get_pending_reservations)
+from moocng.courses.models import KnowledgeQuantum
+from moocng.courses.security import get_course_if_user_can_view_or_404
 from moocng.courses.utils import is_course_ready
 
 from django.db.models import Q
 
 from datetime import datetime, timedelta
-import pytz
 
 
 @login_required
 def course_reservations(request, course_slug):
-    course = get_object_or_404(Course, slug=course_slug)
+    course = get_course_if_user_can_view_or_404(course_slug, request)
 
     is_enrolled = course.students.filter(id=request.user.id).exists()
     if not is_enrolled:
@@ -91,7 +96,7 @@ def cancel_reservation(request, course_slug, reservation_id):
 
     if request.method in ['POST', 'DELETE']:
 
-        course = get_object_or_404(Course, slug=course_slug)
+        course = get_course_if_user_can_view_or_404(course_slug, request)
 
         is_enrolled = course.students.filter(id=request.user.id).exists()
 
@@ -105,7 +110,7 @@ def cancel_reservation(request, course_slug, reservation_id):
             messages.error(request, _('You are not the owner of this reservation'))
             return HttpResponseRedirect(reverse('course_reservations', args=[course.slug]))
 
-        cancel_limit = datetime.utcnow().replace(tzinfo = pytz.utc)
+        cancel_limit = datetime.utcnow().replace(tzinfo=pytz.utc)
         cancel_limit += timedelta(0, reserv_remove.asset.cancelation_in_advance * 60)
 
         if reserv_remove.reservation_begins < cancel_limit:
@@ -124,7 +129,7 @@ def cancel_reservation(request, course_slug, reservation_id):
 def reservation_create(request, course_slug, kq_id, asset_id):
 
     if request.method in ['POST', 'PUT']:
-        course = get_object_or_404(Course, slug=course_slug)
+        course = get_course_if_user_can_view_or_404(course_slug, request)
         is_enrolled = course.students.filter(id=request.user.id).exists()
 
         if not is_enrolled:
@@ -149,7 +154,7 @@ def reservation_create(request, course_slug, kq_id, asset_id):
 
         try:
             reservation_starts = datetime.strptime(request.POST['reservation_date'] + ' ' + request.POST['reservation_time'],
-                                 '%Y-%m-%d %H:%M')
+                                                   '%Y-%m-%d %H:%M')
         except ValueError:
             messages.error(request, _('Incorrect booking time specified'))
             return HttpResponseRedirect(reverse('course_overview',

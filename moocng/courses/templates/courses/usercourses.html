@@ -1,7 +1,13 @@
 {% load i18n %}
 
 {% for course in courses %}
-    <li><a href="{% url course_classroom course.slug %}">{{ course|truncatechars:30 }}</a></li>
+    <li>
+        {% if course.is_active %}
+            <a href="{% url course_classroom course.slug %}">{{ course|truncatechars:30 }}</a>
+        {% else %}
+            <a href="{% url transcript course.slug %}">{{ course|truncatechars:30 }} ({% trans "closed" %}) </a>
+        {% endif %}
+    </li>
 {% empty %}
     <li class="disabled"><a href="#">{% trans "You're not registered in any course" %}</a></li>
 {% endfor %}

@@ -35,6 +35,7 @@ from moocng.api.mongodb import get_db
 from moocng.api.tasks import on_peerreviewreview_created_task
 from moocng.courses.models import Course, KnowledgeQuantum
 from moocng.courses.utils import send_mail_wrapper, is_course_ready
+from moocng.courses.security import get_course_if_user_can_view_or_404
 from moocng.peerreview.forms import ReviewSubmissionForm, EvalutionCriteriaResponseForm
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
 from moocng.peerreview.utils import course_get_visible_peer_review_assignments, save_review
@@ -42,7 +43,7 @@ from moocng.peerreview.utils import course_get_visible_peer_review_assignments, 
 
 @login_required
 def course_review_assign(request, course_slug, assignment_id):
-    course = get_object_or_404(Course, slug=course_slug)
+    course = get_course_if_user_can_view_or_404(course_slug, request)
     assignment = get_object_or_404(PeerReviewAssignment, id=assignment_id)
     user_id = request.user.id
 
@@ -112,7 +113,7 @@ def course_review_assign(request, course_slug, assignment_id):
 
 @login_required
 def course_reviews(request, course_slug):
-    course = get_object_or_404(Course, slug=course_slug)
+    course = get_course_if_user_can_view_or_404(course_slug, request)
 
     is_enrolled = course.students.filter(id=request.user.id).exists()
     if not is_enrolled:
@@ -150,7 +151,7 @@ def course_reviews(request, course_slug):
 
 @login_required
 def course_review_review(request, course_slug, assignment_id):
-    course = get_object_or_404(Course, slug=course_slug)
+    course = get_course_if_user_can_view_or_404(course_slug, request)
     assignment = get_object_or_404(PeerReviewAssignment, id=assignment_id)
     user_id = request.user.id
 
@@ -317,7 +318,7 @@ def s3_upload(user_id, kq_id, filename, file_obj):
 @login_required
 def course_review_upload(request, course_slug):
     if request.method == "POST":
-        course = get_object_or_404(Course, slug=course_slug)
+        course = get_course_if_user_can_view_or_404(course_slug, request)
 
         file_to_upload = request.FILES.get('pr_file', None)
         submission_text = request.POST.get('pr-submission', '')

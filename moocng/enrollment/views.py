@@ -2,15 +2,14 @@ from django.conf import settings
 from django.contrib.messages import success
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
-from moocng.courses.models import Course
+from moocng.courses.security import get_course_if_user_can_view_or_404
 from moocng.enrollment.idp import enroll_course_at_idp
 
 
 def free_enrollment(request, course_slug):
-    course = get_object_or_404(Course, slug=course_slug)
+    course = get_course_if_user_can_view_or_404(course_slug, request)
     if request.method == 'POST':
         user = request.user
         old_course_status = 'f'
@@ -31,7 +30,7 @@ def free_enrollment(request, course_slug):
 
 
 def free_unenrollment(request, course_slug):
-    course = get_object_or_404(Course, slug=course_slug)
+    course = get_course_if_user_can_view_or_404(course_slug, request)
     if request.method == 'POST':
         user = request.user
         course.students.through.objects.get(student=user,

@@ -12,7 +12,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+import datetime
 import logging
+
 try:
     import Image
     import ImageOps
@@ -186,7 +189,17 @@ class Course(Sortable):
 
     @property
     def is_public(self):
-        return self.status == 'p' or self.status == 'h'
+        # If you change it, you should change the public method in CourseQuerySet class
+        return self.status in ['p', 'h']
+
+    @property
+    def is_active(self):
+        # If you change it, you should change the actives method in CourseQuerySet class
+        today = datetime.date.today()
+        return (self.is_public and
+                (not self.end_date or
+                 not self.start_date and self.end_date >= today or
+                 self.start_date and self.start_date <= today and self.end_date >= today))
 
     def _resize_image(self, filename, size):
         """

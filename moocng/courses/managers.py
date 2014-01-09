@@ -2,18 +2,35 @@ import datetime
 
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from django.db.models.query import QuerySet
 
 
 class CourseQuerySet(QuerySet):
 
+    def by_status(self, status):
+        return self.filter(status=status)
+
+    def public(self):
+        # If you change it, you should change the is_public property in Course model
+        return self.filter(status__in=['h', 'p'])
+
+    def published(self):
+        return self.by_status('p')
+
+    def draft(self):
+        return self.by_status('d')
+
+    def hidden(self):
+        return self.by_status('h')
+
     def actives(self):
-        now = datetime.datetime.now()
-        date_filters = (models.Q(**{'end_date__isnull': True}) |
-                        models.Q(**{'end_date__gte': now}),
-                        models.Q(**{'start_date__isnull': True}) |
-                        models.Q(**{'start_date__lte': now}))
-        return self.filter(status='p').filter(*date_filters)
+        # If you change it, you should change the is_active property in Course model
+        today = datetime.datetime.today()
+        date_filters = (Q(**{'end_date__isnull': True}) |
+                        Q(**{'start_date__isnull': True, 'end_date__gte': today}) |
+                        Q(**{'start_date__lte': today, 'end_date__gte': today}))
+        return self.filter(date_filters).public()
 
 
 class CourseManager(models.Manager):
@@ -21,8 +38,23 @@ class CourseManager(models.Manager):
     def get_query_set(self):
         return CourseQuerySet(self.model, using=self._db)
 
+    def by_status(self, status):
+        return self.get_query_set().by_status(status)
+
+    def public(self):
+        return self.get_query_set().public()
+
     def actives(self):
         return self.get_query_set().actives()
+
+    def published(self):
+        return self.get_query_set().published()
+
+    def draft(self):
+        return self.get_query_set().draft()
+
+    def hidden(self):
+        return self.get_query_set().hidden()
 
     def get_by_natural_key(self, slug):
         return self.get(slug=slug)
