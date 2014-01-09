@@ -14,7 +14,13 @@
             {% endblock %}
             {% for course_info in courses_info %}
                 <div class="box" id="{{ course_info.course.slug }}" name="{{ course_info.course.slug }}">
-                    <h2><a href="{{ course_info.course.get_absolute_url }}">{{ course_info.course.name }}</a></h2>
+                    <h2>
+                    {% if course_info.course.is_active %}
+                        <a href="{{ course_info.course.get_absolute_url }}">{{ course_info.course.name }}</a>
+                    {% else %}
+                        {{ course_info.course.name }} ({% trans "closed" %})
+                    {% endif %}
+                    </h2>
                         {% if course_info.units_info %}
                             <ul>
                             {% for unit_info in course_info.units_info %}
