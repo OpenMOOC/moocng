@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-04 13:31+0100\n"
+"POT-Creation-Date: 2014-01-09 12:24+0100\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Pablo Martin <goinnn@gmail.com>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -58,11 +58,11 @@ msgid "Slot duration"
 msgstr "Duración del slot"
 
 #: assets/models.py:35 badges/models.py:81 badges/models.py:236
-#: categories/models.py:10 courses/models.py:54
+#: categories/models.py:10 courses/models.py:57
 msgid "Name"
 msgstr "Nombre"
 
-#: assets/models.py:37 badges/models.py:240 courses/models.py:56
+#: assets/models.py:37 badges/models.py:240 courses/models.py:59
 #: courses/templates/courses/progress.html:57 peerreview/models.py:32
 #: peerreview/models.py:92
 msgid "Description"
@@ -134,7 +134,7 @@ msgstr "Reservado para"
 msgid "Asset"
 msgstr "Recurso"
 
-#: assets/models.py:86 assets/models.py:88 courses/models.py:335
+#: assets/models.py:86 assets/models.py:88 courses/models.py:348
 msgid "Datetime"
 msgstr "Fecha y hora"
 
@@ -202,30 +202,30 @@ msgstr "Su reserva ha sido anulada"
 msgid "Your reservation has been modified"
 msgstr "Su reserva ha sido modificada"
 
-#: assets/views.py:43 assets/views.py:99 assets/views.py:131
-#: courses/views.py:243 courses/views.py:296
-#: courses/templates/courses/transcript_course.html:7 peerreview/views.py:51
-#: peerreview/views.py:119 peerreview/views.py:159
+#: assets/views.py:48 assets/views.py:104 assets/views.py:136
+#: courses/views.py:240 courses/views.py:293
+#: courses/templates/courses/transcript_course.html:6 peerreview/views.py:52
+#: peerreview/views.py:120 peerreview/views.py:160
 msgid "You are not enrolled in this course"
 msgstr "No estás matriculado en este curso"
 
-#: assets/views.py:105
+#: assets/views.py:110
 msgid "You are not the owner of this reservation"
 msgstr "No es quien registró esta reserva"
 
-#: assets/views.py:112
+#: assets/views.py:117
 msgid "Not enough time in advance to cancel this reservation."
 msgstr "Ha sobrepasado la hora límite para cancelar la reserva"
 
-#: assets/views.py:141
+#: assets/views.py:146
 msgid "This nugget has no available asset"
 msgstr "Esta píldora no tiene recursos disponibles."
 
-#: assets/views.py:146
+#: assets/views.py:151
 msgid "No initial time specified"
 msgstr "Hora inicial no especificada"
 
-#: assets/views.py:154
+#: assets/views.py:159
 msgid "Incorrect booking time specified"
 msgstr "Hora de reserva incorrecta"
 
@@ -596,7 +596,7 @@ msgstr "Nombre de la etiqueta"
 msgid "tag"
 msgstr "etiqueta"
 
-#: badges/templates/badges/my_badges.html:14
+#: badges/templates/badges/my_badges.html:13
 #, python-format
 msgid ""
 "The user \"<b>%(first_name)s %(last_name)s</b>\" has the following awards:"
@@ -604,11 +604,11 @@ msgstr ""
 "El usuario \"<b>%(first_name)s %(last_name)s</b>\" tiene los siguientes "
 "premios:"
 
-#: badges/templates/badges/my_badges.html:17
+#: badges/templates/badges/my_badges.html:16
 msgid "Open Mozilla Backpack"
 msgstr "Abrir Mozilla Backpack"
 
-#: badges/templates/badges/my_badges.html:22
+#: badges/templates/badges/my_badges.html:21
 #, python-format
 msgid ""
 "You should have a <a href=\"http://persona.org\"> Mozilla Persona </a> "
@@ -617,15 +617,15 @@ msgstr ""
 "Tu deberías tener una cuenta en <a href=\"http://persona.org\"> Mozilla "
 "Persona </a> con este email: %(username)s"
 
-#: badges/templates/badges/my_badges.html:31
+#: badges/templates/badges/my_badges.html:30
 msgid "Download Badge"
 msgstr "Descargar medalla"
 
-#: badges/templates/badges/my_badges.html:32
+#: badges/templates/badges/my_badges.html:31
 msgid "Send to Mozilla Backpack"
 msgstr "Enviar a Mozilla Backpack"
 
-#: badges/templates/badges/my_badges.html:42
+#: badges/templates/badges/my_badges.html:41
 msgid "You haven't earned badges yet."
 msgstr "Aún no has obtenido ninguna medalla."
 
@@ -634,11 +634,11 @@ msgstr "Aún no has obtenido ninguna medalla."
 msgid "This category doesn't have an icon"
 msgstr "Esta categoría no tiene un icono asociado"
 
-#: categories/models.py:12 courses/models.py:55 courses/models.py:331
+#: categories/models.py:12 courses/models.py:58 courses/models.py:344
 msgid "Slug"
 msgstr "Slug"
 
-#: categories/models.py:14 categories/templates/categories/category.html:14
+#: categories/models.py:14 categories/templates/categories/category.html:12
 #: teacheradmin/templates/teacheradmin/categories.html:16
 msgid "Category's icon"
 msgstr "Icono de la categoría"
@@ -655,8 +655,8 @@ msgstr "Imagen de fondo para la cabecera de la categoría"
 msgid "The image dimensions should be 940px x 240px"
 msgstr "Las dimensiones de la imagen deberían ser 940px x 240px"
 
-#: categories/models.py:22 courses/templates/courses/home_as_grid.html:18
-#: courses/templates/courses/home_as_list.html:18
+#: categories/models.py:22 courses/templates/courses/home_as_grid.html:15
+#: courses/templates/courses/home_as_list.html:15
 msgid "Courses"
 msgstr "Cursos"
 
@@ -672,31 +672,31 @@ msgstr "categoría"
 msgid "categories"
 msgstr "categorías"
 
-#: categories/templates/categories/category.html:11
+#: categories/templates/categories/category.html:9
 msgid "Category's background banner"
 msgstr "Fondo de la categoría"
 
-#: categories/templates/categories/category.html:32
+#: categories/templates/categories/category.html:30
 #: courses/templates/courses/overview.html:106
 msgid "Classes Start"
 msgstr "Inicio de las Clases"
 
-#: categories/templates/categories/category.html:35
+#: categories/templates/categories/category.html:33
 #: courses/templates/courses/overview.html:109
 msgid "Classes End"
 msgstr "Final de las Clases"
 
-#: categories/templates/categories/category.html:45
+#: categories/templates/categories/category.html:43
 #: teacheradmin/templates/teacheradmin/categories.html:32
 msgid "Empty"
 msgstr "Vacío"
 
-#: categories/templates/categories/category.html:46
+#: categories/templates/categories/category.html:44
 msgid "There are no courses with this category or categories associated yet."
 msgstr "No hay cursos aún que tengan esta categoría o categorías asociada."
 
-#: contact/email.py:29 contact/forms.py:37 courses/models.py:285
-#: courses/models.py:308 courses/models.py:333 courses/models.py:374
+#: contact/email.py:29 contact/forms.py:37 courses/models.py:298
+#: courses/models.py:321 courses/models.py:346 courses/models.py:387
 #: externalapps/models.py:49 teacheradmin/models.py:38
 #: teacheradmin/models.py:59 teacheradmin/models.py:65
 #: teacheradmin/templates/teacheradmin/stats.html:51
@@ -737,8 +737,8 @@ msgstr "Debe aceptar los Términos de Uso"
 msgid "Other"
 msgstr "Otro"
 
-#: contact/models.py:23 courses/models.py:262 courses/models.py:330
-#: courses/models.py:373 courses/models.py:464 peerreview/models.py:90
+#: contact/models.py:23 courses/models.py:275 courses/models.py:343
+#: courses/models.py:386 courses/models.py:477 peerreview/models.py:90
 #: teacheradmin/templates/teacheradmin/units.html:92
 #: teacheradmin/templates/teacheradmin/units.html:141
 msgid "Title"
@@ -766,11 +766,11 @@ msgstr ""
 "será enviada al responsable apropiado. Pronto contactaremos con usted para "
 "informarle del estado de su petición."
 
-#: contact/templates/contact/contact.html:8 templates/base.html:99
+#: contact/templates/contact/contact.html:6 templates/base.html:101
 msgid "Contact"
 msgstr "Contacto"
 
-#: contact/templates/contact/contact.html:12
+#: contact/templates/contact/contact.html:11
 #: courses/templates/courses/classroom.html:114
 msgid "Submit"
 msgstr "Enviar"
@@ -799,16 +799,16 @@ msgstr "Publicar comunicado masivo"
 msgid "The announcement was created succesfully"
 msgstr "El comunicado han sido creado con éxito."
 
-#: courses/admin.py:283 courses/admin.py:331 courses/admin.py:379
+#: courses/admin.py:284 courses/admin.py:332 courses/admin.py:380
 #, python-format
 msgid "%(name)s object with primary key %(key)r does not exist."
 msgstr "El objeto %(name)s con clave primaria %(key)r no existe."
 
-#: courses/admin.py:302
+#: courses/admin.py:303
 msgid "Edit options for question"
 msgstr "Editar las opciones de la pregunta"
 
-#: courses/admin.py:338
+#: courses/admin.py:339
 #, python-format
 msgid "Option %(option)d for question %(question)s does not exist."
 msgstr "La opción %(option)d de la pregunta %(question)s no existe."
@@ -840,190 +840,190 @@ msgstr "La fecha de finalización es obligatoria para las tareas y los examenes"
 msgid "The start date is later than the deadline."
 msgstr "La fecha de comienzo es posterior a la fecha de finalización"
 
-#: courses/models.py:57
+#: courses/models.py:60
 msgid "Requirements"
 msgstr "Requisitos"
 
-#: courses/models.py:59 courses/models.py:65
+#: courses/models.py:62 courses/models.py:68
 #: courses/templates/courses/overview.html:32
 msgid "Learning goals"
 msgstr "Objetivos"
 
-#: courses/models.py:61 courses/templates/courses/overview.html:46
+#: courses/models.py:64 courses/templates/courses/overview.html:46
 msgid "Intended audience"
 msgstr "Público objetivo"
 
-#: courses/models.py:63
+#: courses/models.py:66
 msgid "Estimated effort"
 msgstr "Esfuerzo estimado"
 
-#: courses/models.py:67 teacheradmin/templates/teacheradmin/units.html:113
+#: courses/models.py:70 teacheradmin/templates/teacheradmin/units.html:113
 msgid "Start date"
 msgstr "Fecha de inicio"
 
-#: courses/models.py:69 teacheradmin/templates/teacheradmin/units.html:117
+#: courses/models.py:72 teacheradmin/templates/teacheradmin/units.html:117
 msgid "End date"
 msgstr "Fecha de fin"
 
-#: courses/models.py:71 courses/templates/courses/overview.html:90
+#: courses/models.py:74 courses/templates/courses/overview.html:90
 #: teacheradmin/templates/teacheradmin/base_teacheradmin.html:14
 msgid "Teachers"
 msgstr "Profesores"
 
-#: courses/models.py:74 courses/templates/courses/add.html:40
+#: courses/models.py:77 courses/templates/courses/add.html:38
 msgid "Teacher owner"
 msgstr "Profesor propietario"
 
-#: courses/models.py:77
+#: courses/models.py:80
 msgid "Students"
 msgstr "Alumnos"
 
-#: courses/models.py:81 courses/models.py:470 courses/models.py:605
+#: courses/models.py:84 courses/models.py:483 courses/models.py:618
 #: teacheradmin/templates/teacheradmin/units.html:145
 #: teacheradmin/templates/teacheradmin/units.html:250
 msgid "Content type"
 msgstr "Tipo de contenido"
 
-#: courses/models.py:86 courses/models.py:475 courses/models.py:610
+#: courses/models.py:89 courses/models.py:488 courses/models.py:623
 msgid "Content id"
 msgstr "Id del contenido"
 
-#: courses/models.py:90
+#: courses/models.py:93
 msgid "Pending reservations allowed:"
 msgstr "Reservas pendientes permitidas:"
 
-#: courses/models.py:92
+#: courses/models.py:95
 msgid "Total reservations allowed:"
 msgstr "Total de reservas permitidas:"
 
-#: courses/models.py:95
+#: courses/models.py:98
 msgid "Pass threshold"
 msgstr "Nota de corte (Umbral)"
 
-#: courses/models.py:100 teacheradmin/templates/teacheradmin/info.html:153
+#: courses/models.py:103 teacheradmin/templates/teacheradmin/info.html:153
 msgid "Certification available"
 msgstr "Certificación disponible"
 
-#: courses/models.py:102
+#: courses/models.py:105
 msgid "Certification banner"
 msgstr "Banner de certificación"
 
-#: courses/models.py:105
+#: courses/models.py:108
 msgid "Completion badge"
 msgstr "Medalla de completado de curso"
 
-#: courses/models.py:108
+#: courses/models.py:111
 msgid "Enrollment method"
 msgstr "Método de matriculación"
 
-#: courses/models.py:114 courses/models.py:400
-#: courses/templates/courses/home_as_grid.html:36
-#: courses/templates/courses/home_as_list.html:26
+#: courses/models.py:117 courses/models.py:413
+#: courses/templates/courses/home_as_grid.html:33
+#: courses/templates/courses/home_as_list.html:22
 #: teacheradmin/templates/teacheradmin/units.html:38
 #: teacheradmin/templates/teacheradmin/units.html:86
 msgid "Draft"
 msgstr "Borrador"
 
-#: courses/models.py:115 courses/models.py:402
+#: courses/models.py:118 courses/models.py:415
 #: teacheradmin/templates/teacheradmin/units.html:40
 #: teacheradmin/templates/teacheradmin/units.html:80
 msgid "Published"
 msgstr "Publicado"
 
-#: courses/models.py:116
+#: courses/models.py:119
 msgid "Hidden"
 msgstr "Oculto"
 
-#: courses/models.py:120 courses/models.py:406
+#: courses/models.py:123 courses/models.py:419
 #: teacheradmin/templates/teacheradmin/units.html:78
 msgid "Status"
 msgstr "Estado"
 
-#: courses/models.py:126
+#: courses/models.py:129
 msgid "Thumbnail"
 msgstr "Imagen para mostrar en vista de grid"
 
-#: courses/models.py:133 courses/models.py:275
+#: courses/models.py:136 courses/models.py:288
 msgid "Static page"
 msgstr "Página estática"
 
-#: courses/models.py:140
+#: courses/models.py:143
 msgid "Created from"
 msgstr "Creada desde"
 
-#: courses/models.py:145
+#: courses/models.py:148
 msgid "Is the activity student of this course clonable?"
 msgstr "¿Se puede clonar la actividad de un estudiante en este curso?"
 
-#: courses/models.py:148
+#: courses/models.py:151
 msgid "Maximum of massive emails that a course can send per month"
 msgstr "Número máximo de emails que un curso puede enviar por mes"
 
-#: courses/models.py:154
+#: courses/models.py:157
 msgid "course"
 msgstr "curso"
 
-#: courses/models.py:155
+#: courses/models.py:158
 msgid "courses"
 msgstr "cursos"
 
-#: courses/models.py:157
+#: courses/models.py:160
 msgid "Can list courses of an user"
 msgstr "Puede listar cursos de un usuario"
 
-#: courses/models.py:158
+#: courses/models.py:161
 msgid "Can list passed courses of an user"
 msgstr "Puede listar los cursos aprobados"
 
-#: courses/models.py:269
+#: courses/models.py:282
 msgid "Body"
 msgstr "Cuerpo"
 
-#: courses/models.py:276
+#: courses/models.py:289
 msgid "Static pages"
 msgstr "Páginas estáticas"
 
-#: courses/models.py:284
+#: courses/models.py:297
 msgid "Teacher"
 msgstr "Profesor"
 
-#: courses/models.py:288
+#: courses/models.py:301
 msgid "course teacher"
 msgstr "profesor del curso"
 
-#: courses/models.py:289
+#: courses/models.py:302
 msgid "course teachers"
 msgstr "profesores de los cursos"
 
-#: courses/models.py:307
+#: courses/models.py:320
 msgid "Student"
 msgstr "Alumno"
 
-#: courses/models.py:311
+#: courses/models.py:324
 msgid "First time in this course"
 msgstr "Primera vez en este curso"
 
-#: courses/models.py:312
+#: courses/models.py:325
 msgid "No cloned"
 msgstr "No clonado"
 
-#: courses/models.py:313
+#: courses/models.py:326
 msgid "Cloned"
 msgstr "Clonado"
 
-#: courses/models.py:315
+#: courses/models.py:328
 msgid "Old course status"
 msgstr "Estado del curso anterior"
 
-#: courses/models.py:321
+#: courses/models.py:334
 msgid "course student"
 msgstr "curso estudiante"
 
-#: courses/models.py:322
+#: courses/models.py:335
 msgid "course students"
 msgstr "curso estudiantes"
 
-#: courses/models.py:332
+#: courses/models.py:345
 #: courses/templates/admin/courses/question/options.html:151
 #: teacheradmin/models.py:78
 #: teacheradmin/templates/teacheradmin/emails.html:93
@@ -1031,41 +1031,41 @@ msgstr "curso estudiantes"
 msgid "Content"
 msgstr "Contenido"
 
-#: courses/models.py:340
+#: courses/models.py:353
 msgid "announcement"
 msgstr "comunicado"
 
-#: courses/models.py:341
+#: courses/models.py:354
 msgid "announcements"
 msgstr "comunicados"
 
-#: courses/models.py:377 teacheradmin/templates/teacheradmin/units.html:41
+#: courses/models.py:390 teacheradmin/templates/teacheradmin/units.html:41
 #: teacheradmin/templates/teacheradmin/units.html:98
 msgid "Normal"
 msgstr "Normal"
 
-#: courses/models.py:378 teacheradmin/templates/teacheradmin/units.html:42
+#: courses/models.py:391 teacheradmin/templates/teacheradmin/units.html:42
 #: teacheradmin/templates/teacheradmin/units.html:99
 msgid "Homework"
 msgstr "Tareas"
 
-#: courses/models.py:379 teacheradmin/templates/teacheradmin/units.html:43
+#: courses/models.py:392 teacheradmin/templates/teacheradmin/units.html:43
 #: teacheradmin/templates/teacheradmin/units.html:100
 msgid "Exam"
 msgstr "Examen"
 
-#: courses/models.py:381 courses/models.py:703
+#: courses/models.py:394 courses/models.py:716
 #: courses/templates/admin/courses/question/options.html:122
 #: teacheradmin/templates/teacheradmin/question.html:71
 #: teacheradmin/templates/teacheradmin/units.html:96
 msgid "Type"
 msgstr "Tipo"
 
-#: courses/models.py:383
+#: courses/models.py:396
 msgid "Start"
 msgstr "Fecha de inicio"
 
-#: courses/models.py:385
+#: courses/models.py:398
 msgid ""
 "Until this date is reached, no contents of this module will be shown to the "
 "students."
@@ -1073,11 +1073,11 @@ msgstr ""
 "Mientras no se alcance esta fecha, no se mostrarán los contenidos de este "
 "módulo a los alumnos."
 
-#: courses/models.py:388
+#: courses/models.py:401
 msgid "Deadline"
 msgstr "Fecha límite"
 
-#: courses/models.py:390
+#: courses/models.py:403
 msgid ""
 "Until this date is reached, the students will be able to modify their "
 "answers, but won't see the solution"
@@ -1085,26 +1085,26 @@ msgstr ""
 "Mientras no se alcance esta fecha, los alumnos podrán modificar sus "
 "respuestas, pero no ver las soluciones."
 
-#: courses/models.py:394 courses/models.py:466
+#: courses/models.py:407 courses/models.py:479
 #: teacheradmin/templates/teacheradmin/units.html:104
 #: teacheradmin/templates/teacheradmin/units.html:157
 msgid "Weight"
 msgstr "Peso"
 
-#: courses/models.py:401 teacheradmin/templates/teacheradmin/units.html:39
+#: courses/models.py:414 teacheradmin/templates/teacheradmin/units.html:39
 #: teacheradmin/templates/teacheradmin/units.html:83
 msgid "Listable"
 msgstr "Listable"
 
-#: courses/models.py:415 teacheradmin/templates/teacheradmin/units.html:37
+#: courses/models.py:428 teacheradmin/templates/teacheradmin/units.html:37
 msgid "unit"
 msgstr "módulo"
 
-#: courses/models.py:416
+#: courses/models.py:429
 msgid "units"
 msgstr "módulos"
 
-#: courses/models.py:465 teacheradmin/templates/teacheradmin/stats.html:41
+#: courses/models.py:478 teacheradmin/templates/teacheradmin/stats.html:41
 #: teacheradmin/templates/teacheradmin/stats.html:93
 #: teacheradmin/templates/teacheradmin/stats.html:95
 #: teacheradmin/templates/teacheradmin/stats.html:131
@@ -1112,27 +1112,27 @@ msgstr "módulos"
 msgid "Unit"
 msgstr "Módulo"
 
-#: courses/models.py:479 courses/templates/courses/classroom.html:154
+#: courses/models.py:492 courses/templates/courses/classroom.html:154
 #: teacheradmin/templates/teacheradmin/units.html:46
 #: teacheradmin/templates/teacheradmin/units.html:170
 msgid "Instructor's comments"
 msgstr "Comentarios del profesor"
 
-#: courses/models.py:482 courses/templates/courses/classroom.html:155
+#: courses/models.py:495 courses/templates/courses/classroom.html:155
 #: teacheradmin/templates/teacheradmin/units.html:47
 #: teacheradmin/templates/teacheradmin/units.html:166
 msgid "Supplementary material"
 msgstr "Material suplementario"
 
-#: courses/models.py:488 teacheradmin/templates/teacheradmin/units.html:48
+#: courses/models.py:501 teacheradmin/templates/teacheradmin/units.html:48
 msgid "nugget"
 msgstr "píldora"
 
-#: courses/models.py:489
+#: courses/models.py:502
 msgid "nuggets"
 msgstr "píldoras"
 
-#: courses/models.py:584 courses/models.py:604 peerreview/models.py:35
+#: courses/models.py:597 courses/models.py:617 peerreview/models.py:35
 #: teacheradmin/templates/teacheradmin/stats.html:42
 #: teacheradmin/templates/teacheradmin/stats.html:132
 #: teacheradmin/templates/teacheradmin/stats.html:134
@@ -1140,106 +1140,106 @@ msgstr "píldoras"
 msgid "Nugget"
 msgstr "Píldora"
 
-#: courses/models.py:585
+#: courses/models.py:598
 msgid "Attachment"
 msgstr "Adjunto"
 
-#: courses/models.py:591
+#: courses/models.py:604
 msgid "attachment"
 msgstr "adjunto"
 
-#: courses/models.py:592
+#: courses/models.py:605
 msgid "attachments"
 msgstr "adjuntos"
 
-#: courses/models.py:615 teacheradmin/templates/teacheradmin/units.html:264
+#: courses/models.py:628 teacheradmin/templates/teacheradmin/units.html:264
 msgid "Solution text"
 msgstr "Texto con la solución"
 
-#: courses/models.py:616
+#: courses/models.py:629
 msgid "If the solution video is specified then this text will be ignored."
 msgstr ""
 "Si se especifica el vídeo con la solución entonces este texto será ignorado."
 
-#: courses/models.py:620
+#: courses/models.py:633
 msgid "Last frame of the nugget's video"
 msgstr "Última imagen del vídeo de la píldora"
 
-#: courses/models.py:623
+#: courses/models.py:636
 msgid "Use the last frame of the video"
 msgstr "Usar la última imagen del vídeo"
 
-#: courses/models.py:624
+#: courses/models.py:637
 msgid ""
 "Chooses if the nugget's video last frame is used, or a white canvas instead."
 msgstr ""
 "Determina si se hace uso del último cuadro del vídeo de la píldora, o si en "
 "su lugar se usa un lienzo en blanco."
 
-#: courses/models.py:631
+#: courses/models.py:644
 msgid "question"
 msgstr "pregunta"
 
-#: courses/models.py:632
+#: courses/models.py:645
 msgid "questions"
 msgstr "preguntas"
 
-#: courses/models.py:644
+#: courses/models.py:657
 msgid "{0} - Question {1}"
 msgstr "{0} - Pregunta {1}"
 
-#: courses/models.py:691 courses/templates/courses/classroom.html:187
+#: courses/models.py:704 courses/templates/courses/classroom.html:187
 #: teacheradmin/templates/teacheradmin/units.html:134
 msgid "Question"
 msgstr "Pregunta"
 
-#: courses/models.py:706
+#: courses/models.py:719
 #: courses/templates/admin/courses/question/options.html:150
 #: teacheradmin/templates/teacheradmin/question.html:99
 msgid "Solution"
 msgstr "Solución"
 
-#: courses/models.py:707
+#: courses/models.py:720
 msgid "Label text"
 msgstr "Texto de la etiqueta"
 
-#: courses/models.py:710
+#: courses/models.py:723
 msgid "Solution feedback for the student"
 msgstr "Ayuda para el estudiante"
 
-#: courses/models.py:715
+#: courses/models.py:728
 msgid "option"
 msgstr "opción"
 
-#: courses/models.py:716
+#: courses/models.py:729
 msgid "options"
 msgstr "opciones"
 
-#: courses/models.py:720
+#: courses/models.py:733
 msgid "{0} at {1} x {2}"
 msgstr "{0} en {1} x {2}"
 
-#: courses/security.py:73
-msgid ""
-"This course is not public yet. Your have access to it because you are staff "
-"member"
-msgstr ""
-"Este curso no es público aún. Tienes acceso a él porque eres miembro del "
-"equipo de administradores"
-
 #: courses/security.py:74
 msgid ""
-"This course is not public yet. Your have access to it because you are a "
-"super user"
+"This course is not public. Your have access to it because you are staff "
+"member"
 msgstr ""
-"Esto curso no es público aún. Tienes acceso a él porque eres un super usuario"
+"Este curso no es público. Tienes acceso a él porque eres miembro del "
+"equipo de administradores"
 
 #: courses/security.py:75
 msgid ""
-"This course is not public yet. Your have access to it because you are a "
-"teacher of the course"
+"This course is not public. Your have access to it because you are a super "
+"user"
 msgstr ""
-"Este curso no es público aún. Tienes acceso a él porque eres profesor del "
+"Esto curso no es público. Tienes acceso a él porque eres un super usuario"
+
+#: courses/security.py:76
+msgid ""
+"This course is not public. Your have access to it because you are a teacher "
+"of the course"
+msgstr ""
+"Este curso no es público. Tienes acceso a él porque eres profesor del "
 "curso"
 
 #: courses/views.py:126
@@ -1275,7 +1275,7 @@ msgstr "Su curso \"%s\" ha sido creado"
 msgid "The course was successfully created"
 msgstr "El curso se ha creado con éxito"
 
-#: courses/views.py:503
+#: courses/views.py:479
 #, python-format
 msgid ""
 "We are cloning the activity from %(course)s. You will receive an email soon"
@@ -1300,7 +1300,7 @@ msgstr "Error desconocido"
 
 #: courses/templates/admin/courses/course/clone_form.html:24
 #: courses/templates/admin/courses/question/options.html:56
-#: templates/base.html:61 templates/admin/massive_global_form.html:12
+#: templates/base.html:63 templates/admin/massive_global_form.html:12
 msgid "Home"
 msgstr "Inicio"
 
@@ -1408,28 +1408,28 @@ msgstr "alto"
 msgid "Feedback"
 msgstr "Ayuda"
 
-#: courses/templates/courses/add.html:36
+#: courses/templates/courses/add.html:34
 #: courses/templates/courses/include.useractions.html:33
 msgid "Create course"
 msgstr "Crear un curso"
 
-#: courses/templates/courses/add.html:37
+#: courses/templates/courses/add.html:35
 msgid "Course name"
 msgstr "Nombre del curso"
 
-#: courses/templates/courses/add.html:41
+#: courses/templates/courses/add.html:39
 #: teacheradmin/templates/teacheradmin/teachers.html:99
 msgid "Name or email"
 msgstr "Nombre o correo electrónico"
 
-#: courses/templates/courses/add.html:44
+#: courses/templates/courses/add.html:42
 #: courses/templates/courses/classroom.html:77
 #: peerreview/templates/peerreview/review_review.html:56
 #: teacheradmin/templates/teacheradmin/emails.html:62
 msgid "Send"
 msgstr "Enviar"
 
-#: courses/templates/courses/add.html:45
+#: courses/templates/courses/add.html:43
 #: courses/templates/courses/classroom.html:76
 #: courses/templates/courses/classroom.html:95
 #: peerreview/templates/peerreview/review_review.html:55
@@ -1438,37 +1438,37 @@ msgstr "Enviar"
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: courses/templates/courses/announcement.html:11
+#: courses/templates/courses/announcement.html:9
 msgid "Published on:"
 msgstr "Publicado el:"
 
-#: courses/templates/courses/announcement.html:13
+#: courses/templates/courses/announcement.html:11
 #: courses/templates/courses/static_page.html:9
 msgid "Go back to Course Overview"
 msgstr "Volver a la vista General del Curso"
 
-#: courses/templates/courses/base_course.html:12
+#: courses/templates/courses/base_course.html:9
 msgid "Overview"
 msgstr "General"
 
-#: courses/templates/courses/base_course.html:16
+#: courses/templates/courses/base_course.html:12
 msgid "Classes"
 msgstr "Clases"
 
-#: courses/templates/courses/base_course.html:25
-#: peerreview/templates/peerreview/reviews.html:9
+#: courses/templates/courses/base_course.html:19
+#: peerreview/templates/peerreview/reviews.html:8
 msgid "Reviews"
 msgstr "Revisiones"
 
-#: courses/templates/courses/base_course.html:31
+#: courses/templates/courses/base_course.html:24
 msgid "Reservations"
 msgstr "Reservas"
 
-#: courses/templates/courses/base_course.html:36
+#: courses/templates/courses/base_course.html:29
 msgid "Progress"
 msgstr "Progreso"
 
-#: courses/templates/courses/base_course.html:41
+#: courses/templates/courses/base_course.html:33
 msgid "Course administration"
 msgstr "Administración del curso"
 
@@ -1516,8 +1516,8 @@ msgstr "Cambie"
 #: courses/templates/courses/overview.html:118
 #: courses/templates/courses/overview.html:120
 #: courses/templates/courses/progress.html:53
+#: courses/templates/courses/transcript.html:35
 #: courses/templates/courses/transcript.html:37
-#: courses/templates/courses/transcript.html:39
 msgid "Evaluation criteria"
 msgstr "Criterios de evaluación"
 
@@ -1806,8 +1806,8 @@ msgstr ""
 "\n"
 "Un afectuoso saludo, el equipo de %(site)s\n"
 
-#: courses/templates/courses/home_as_grid.html:34
-#: courses/templates/courses/home_as_list.html:30
+#: courses/templates/courses/home_as_grid.html:31
+#: courses/templates/courses/home_as_list.html:26
 msgid "More information about this course"
 msgstr "Más información sobre este curso"
 
@@ -1825,9 +1825,9 @@ msgstr "Bienvenido"
 
 #: courses/templates/courses/include.useractions.html:20
 #: courses/templates/courses/overview.html:122
-#: courses/templates/courses/transcript.html:11
-#: courses/templates/courses/transcript.html:14
-#: courses/templates/courses/transcript_course.html:14
+#: courses/templates/courses/transcript.html:9
+#: courses/templates/courses/transcript.html:12
+#: courses/templates/courses/transcript_course.html:13
 msgid "My transcript"
 msgstr "Mis notas"
 
@@ -1924,18 +1924,18 @@ msgid "Estimated Effort"
 msgstr "Esfuerzo Estimado"
 
 #: courses/templates/courses/overview.html:129
-#: portal/templates/portal/announcement.html:11
-#: portal/templates/portal/announcement.html:17
-#: portal/templates/portal/announcements.html:12
-#: portal/templates/portal/announcements.html:18
+#: portal/templates/portal/announcement.html:9
+#: portal/templates/portal/announcement.html:15
+#: portal/templates/portal/announcements.html:10
+#: portal/templates/portal/announcements.html:16
 #: teacheradmin/templates/teacheradmin/base_teacheradmin.html:22
-#: templates/base.html:74
+#: templates/base.html:76
 msgid "Announcements"
 msgstr "Comunicados"
 
 #: courses/templates/courses/overview.html:130
-#: portal/templates/portal/announcement.html:13
-#: portal/templates/portal/announcements.html:14
+#: portal/templates/portal/announcement.html:11
+#: portal/templates/portal/announcements.html:12
 msgid "Subscribe to Announcements RSS"
 msgstr "Subscribete a los comunicados vía RSS"
 
@@ -1972,60 +1972,64 @@ msgstr "Nota final"
 msgid "Comment"
 msgstr "Comentario"
 
-#: courses/templates/courses/transcript.html:25
+#: courses/templates/courses/transcript.html:23
 msgid "of the final mark"
 msgstr "de la nota final"
 
-#: courses/templates/courses/transcript.html:31
+#: courses/templates/courses/transcript.html:29
 msgid "No scoring units"
 msgstr "No hay unidades puntuables"
 
-#: courses/templates/courses/transcript.html:35
+#: courses/templates/courses/transcript.html:33
 msgid "Final mark"
 msgstr "Calificación final"
 
-#: courses/templates/courses/transcript.html:43
+#: courses/templates/courses/transcript.html:41
 #, python-format
 msgid "You need at least a <strong>%(threshold)s to pass</strong> this course."
 msgstr ""
 "Necesitas al menos un <strong>%(threshold)s para aprobar</strong> este curso."
 
-#: courses/templates/courses/transcript.html:48
+#: courses/templates/courses/transcript.html:45
 msgid "Congratulations, you have completed"
 msgstr "Enhorabuena, has completado"
 
-#: courses/templates/courses/transcript.html:48
+#: courses/templates/courses/transcript.html:45
 msgid "Here is a badge!"
 msgstr "¡Aquí tienes una medalla!"
 
-#: courses/templates/courses/transcript.html:60
+#: courses/templates/courses/transcript.html:56
 msgid "I want a certificate of completion for this course"
 msgstr "Quiero un certificado de finalización para este curso"
 
-#: courses/templates/courses/transcript.html:61
+#: courses/templates/courses/transcript.html:57
 msgid "Read more"
 msgstr "Leer más"
 
-#: courses/templates/courses/transcript.html:64
+#: courses/templates/courses/transcript.html:60
 msgid ""
 "You need to complete the course before asking for a certificate of "
 "completion."
 msgstr ""
 "Debes completar el curso antes de solicitar un certificado de finalización."
 
-#: courses/templates/courses/transcript.html:67
+#: courses/templates/courses/transcript.html:63
 msgid "No certificate available for this course."
 msgstr "No hay certificación disponible para este curso"
 
-#: courses/templates/courses/transcript.html:74
+#: courses/templates/courses/transcript.html:70
 msgid "You are not enrolled in any course"
 msgstr "No estás matriculado en ningún curso"
 
-#: courses/templates/courses/transcript_course.html:10
+#: courses/templates/courses/transcript_course.html:9
 msgid "My transcript:"
 msgstr "Mis notas:"
 
-#: courses/templates/courses/usercourses.html:6
+#: courses/templates/courses/usercourses.html:8
+msgid "closed"
+msgstr "cerrado"
+
+#: courses/templates/courses/usercourses.html:12
 msgid "You're not registered in any course"
 msgstr "No estás matriculado en ningún curso"
 
@@ -2033,12 +2037,12 @@ msgstr "No estás matriculado en ningún curso"
 msgid "Free enrollment"
 msgstr "Matriculación libre"
 
-#: enrollment/views.py:26
+#: enrollment/views.py:25
 #, python-format
 msgid "Congratulations, you have successfully enroll in the course %(course)s"
 msgstr "Enhorabuena, te has matriculado correctamente en el curso %(course)s"
 
-#: enrollment/views.py:40
+#: enrollment/views.py:39
 #, python-format
 msgid "You have successfully unenroll in the course %(course)s"
 msgstr "Te has desmatriculado correctamente del curso %(course)s"
@@ -2235,16 +2239,16 @@ msgstr "Criterios de evaluación"
 msgid "{0} - EvaluationCriterion {1}"
 msgstr "{0} - Criterio de evaluación {1}"
 
-#: peerreview/views.py:55 peerreview/views.py:163
+#: peerreview/views.py:56 peerreview/views.py:164
 msgid "The selected peer review assignment is not part of this course."
 msgstr ""
 "La actividad revisada por compañeros seleccionada no es parte de este curso"
 
-#: peerreview/views.py:65
+#: peerreview/views.py:66
 msgid "You already have a submission assigned."
 msgstr "Ya has enviado esta actividad"
 
-#: peerreview/views.py:99
+#: peerreview/views.py:100
 msgid ""
 "There is no submission avaliable for you at this moment. Please, try again "
 "later."
@@ -2252,15 +2256,15 @@ msgstr ""
 "No hay ninguna entrega que necesite revisión en este momento. Por favor, "
 "pruebe más tarde."
 
-#: peerreview/views.py:174
+#: peerreview/views.py:175
 msgid "You don't have this submission assigned."
 msgstr "No tienes asignado para revisión este ejercicio"
 
-#: peerreview/views.py:205
+#: peerreview/views.py:206
 msgid "Your can't submit two times the same review."
 msgstr "No puedes enviar 2 veces la misma revisión"
 
-#: peerreview/views.py:210
+#: peerreview/views.py:211
 #, python-format
 msgid ""
 "Your review has been submitted. You have to review at least %d exercises "
@@ -2268,25 +2272,25 @@ msgid ""
 msgstr ""
 "Tu revisión ha sido enviada. Tienes que revisar al menos %d ejercicios más."
 
-#: peerreview/views.py:212
+#: peerreview/views.py:213
 msgid "Your review has been submitted."
 msgstr "Su revisión ha sido enviada."
 
-#: peerreview/views.py:240
+#: peerreview/views.py:241
 #, python-format
 msgid "Your assignment \"%(nugget)s\" has been reviewed"
 msgstr "Su trabajo \"%(nugget)s\" ha sido revisado"
 
-#: peerreview/views.py:247
+#: peerreview/views.py:248
 msgid "Undefined"
 msgstr "Indefinido"
 
-#: peerreview/views.py:329
+#: peerreview/views.py:330
 #, python-format
 msgid "Your file is greater than the max allowed size (%d MB)."
 msgstr "Tu fichero es mayor del tamaño máximo permitido (%d MB)."
 
-#: peerreview/views.py:333
+#: peerreview/views.py:334
 #, python-format
 msgid "Your text is greater than the max allowed size (%d characters)."
 msgstr "Tu texto es mayor del tamaño máximo permitod (%d caracteres)."
@@ -2410,17 +2414,19 @@ msgid "Download student's submission"
 msgstr "Descargar la entrega del estudiante"
 
 #: peerreview/templates/peerreview/review_review.html:79
-#: peerreview/templates/peerreview/review_review.html:90
+#: peerreview/templates/peerreview/review_review.html:89
 msgid "Warning!"
 msgstr "¡Atención!"
 
 #: peerreview/templates/peerreview/review_review.html:80
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "\n"
-"        You should scan this file with your antivirus software. %(site)s\n"
-"        is not responsible for any harm this may cause to your computer.\n"
-"    "
+"                You should scan this file with your antivirus software. %"
+"(site)s\n"
+"                is not responsible for any harm this may cause to your "
+"computer.\n"
+"            "
 msgstr ""
 "\n"
 "        Debes revisar este fichero con tu antivirus. %(site)s no es\n"
@@ -2428,18 +2434,20 @@ msgstr ""
 "ordenador.\n"
 "    "
 
-#: peerreview/templates/peerreview/review_review.html:87
+#: peerreview/templates/peerreview/review_review.html:86
 msgid "Your review"
 msgstr "Tu revisión"
 
-#: peerreview/templates/peerreview/review_review.html:91
-#, python-format
+#: peerreview/templates/peerreview/review_review.html:90
+#, fuzzy, python-format
 msgid ""
 "\n"
-"    This submission can be now claimed by other student. Your claim\n"
-"    expired on %(assignation_expire)s, but you still can send your review.\n"
-"    Hurry up!\n"
-"  "
+"                This submission can be now claimed by other student. Your "
+"claim\n"
+"                expired on %(assignation_expire)s, but you still can send "
+"your review.\n"
+"                Hurry up!\n"
+"            "
 msgstr ""
 "\n"
 "    Este ejercicio puede ahora ser asignado a otro alumno. Su consesión\n"
@@ -2447,18 +2455,18 @@ msgstr ""
 "    Dese prisa!\n"
 "  "
 
-#: peerreview/templates/peerreview/review_review.html:97
+#: peerreview/templates/peerreview/review_review.html:96
 msgid "Remember:"
 msgstr "Recuerda:"
 
-#: peerreview/templates/peerreview/review_review.html:98
-#, python-format
+#: peerreview/templates/peerreview/review_review.html:97
+#, fuzzy, python-format
 msgid ""
 "\n"
-"    You must review this exercise before %(assignation_expire)s. After "
-"this,\n"
-"    date, the review can be reassigned to another student.\n"
-"  "
+"                You must review this exercise before %(assignation_expire)s. "
+"After this,\n"
+"                date, the review can be reassigned to another student.\n"
+"            "
 msgstr ""
 "\n"
 "    Debes revisar este ejericio antes del %(assignation_expire)s. "
@@ -2466,15 +2474,15 @@ msgstr ""
 "estudiante.\n"
 "  "
 
-#: peerreview/templates/peerreview/review_review.html:136
+#: peerreview/templates/peerreview/review_review.html:137
 msgid "Send review"
 msgstr "Enviar revisión"
 
-#: peerreview/templates/peerreview/reviews.html:26
+#: peerreview/templates/peerreview/reviews.html:21
 msgid "This course does not have any Peer Review Assignment"
 msgstr "Este curso no tiene ningúna actividad a revisar por compañeros"
 
-#: peerreview/templates/peerreview/reviews.html:28
+#: peerreview/templates/peerreview/reviews.html:22
 msgid "You can try enrolling in another course"
 msgstr "Puedes probar matriculándote en otro curso"
 
@@ -2527,35 +2535,36 @@ msgstr "Id o url del contenido inválido"
 msgid "You must select a content type or remove the content id"
 msgstr "Debes elegir un tipo de contenido o quitar el id de contenido"
 
-#: teacheradmin/forms.py:142
+#: teacheradmin/forms.py:143
 msgid "Send the announcement via email to all the students in this course"
 msgstr "Enviar comunicado via email a todos los estudiantes de este curso"
 
-#: teacheradmin/forms.py:143
+#: teacheradmin/forms.py:144
 msgid "Please use this with caution as some courses has many students"
-msgstr "Por favor use esto con cuidado ya que algunos cursos tienen muchos "
+msgstr ""
+"Por favor use esto con cuidado ya que algunos cursos tienen muchos "
 "estudiantes"
 
-#: teacheradmin/forms.py:163
+#: teacheradmin/forms.py:165
 msgid "Send the announcement via email to all users"
 msgstr "Enviar comunicado via email a todos los usuarios"
 
-#: teacheradmin/forms.py:164
+#: teacheradmin/forms.py:166
 msgid "Please use this with caution there are a lot of users"
-msgstr ""
-"Por favor use esto con cuidado hay muchos usuarios"
+msgstr "Por favor use esto con cuidado hay muchos usuarios"
 
-#: teacheradmin/forms.py:171 teacheradmin/forms.py:256
+#: teacheradmin/forms.py:173 teacheradmin/forms.py:257
 #, python-format
 msgid "Yes, I want send %s emails"
 msgstr "Si, quiero enviar %s correos"
 
-#: teacheradmin/forms.py:172 teacheradmin/forms.py:257
+#: teacheradmin/forms.py:174 teacheradmin/forms.py:258
 #, python-format
 msgid ""
 "This action send %s emails, are you sure? Please check in the last checkbox"
 msgstr ""
-"Esta acción enviará %s correos, estas seguro? Por favor clica en el último checkbox"
+"Esta acción enviará %s correos, estas seguro? Por favor clica en el último "
+"checkbox"
 
 #: teacheradmin/models.py:34
 msgid "Host"
@@ -2664,8 +2673,8 @@ msgid ""
 "If you send this announcement via email, you will be about to send an email "
 "to <strong>%(students)s students</strong>."
 msgstr ""
-"Si envia este comunicado via email, va a mandar un email "
-"a <strong>%(students)s estudiantes</strong>."
+"Si envia este comunicado via email, va a mandar un email a <strong>%"
+"(students)s estudiantes</strong>."
 
 #: teacheradmin/templates/teacheradmin/announcement_edit.html:16
 #, python-format
@@ -3270,43 +3279,43 @@ msgstr ""
 "¿Está completamente seguro de que quiere realizar esta operación? Es posible "
 "que algunas reservas sean canceladas después de este cambio "
 
-#: templates/403.html:19
+#: templates/403.html:15
 msgid "Access denied"
 msgstr "Acceso denegado"
 
-#: templates/403.html:21
+#: templates/403.html:16
 msgid "We're sorry, but you are not authorized to view this page."
 msgstr "Lo sentimos, pero usted no está autorizado a ver esta página."
 
-#: templates/404.html:5 templates/404.html.py:19
+#: templates/404.html:5 templates/404.html.py:15
 msgid "Page not found"
 msgstr "Página no encontrada"
 
-#: templates/404.html:21
+#: templates/404.html:16
 msgid "We're sorry, but the requested page could not be found."
 msgstr "Lo sentimos, pero la página solicitada no se pudo encontrar."
 
-#: templates/base.html:55
+#: templates/base.html:57
 msgid "Register"
 msgstr "Registrar"
 
-#: templates/base.html:56
+#: templates/base.html:58
 msgid "Log in"
 msgstr "Entrar"
 
-#: templates/base.html:69
+#: templates/base.html:71
 msgid "Methodology"
 msgstr "Metodología"
 
-#: templates/base.html:94
+#: templates/base.html:96
 msgid "Legal"
 msgstr "Condiciones legales"
 
-#: templates/base.html:95
+#: templates/base.html:97
 msgid "All rights reserved"
 msgstr "Todos los derechos reservados"
 
-#: templates/base.html:97
+#: templates/base.html:99
 msgid "Terms of Use"
 msgstr "Términos de uso"
 
