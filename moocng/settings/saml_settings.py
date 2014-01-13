@@ -3,9 +3,6 @@ from .common import *
 import os
 import saml2
 
-
-BASEDIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-
 SAML_CREATE_UNKNOWN_USER = True
 SAML_ATTRIBUTE_MAPPING = {
     'mail': ('username', 'email', ),

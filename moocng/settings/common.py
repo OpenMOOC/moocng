@@ -21,7 +21,7 @@ gettext = lambda s: s
 
 def get_config_local(name, default):
     try:
-        from moocng.settings import config_local
+        from moocngsettings import config_local
         if hasattr(config_local, name):
             return getattr(config_local, name)
     except ImportError:
