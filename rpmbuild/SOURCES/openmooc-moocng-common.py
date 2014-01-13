@@ -14,6 +14,8 @@
 
 # Django settings for moocng project.
 
+gettext = lambda s: s
+
 import os
 BASEDIR = '/usr/lib/python2.6/site-packages/moocng'
 
@@ -23,7 +25,7 @@ TEMPLATE_DEBUG = DEBUG
 FFMPEG_DEBUG = DEBUG
 
 ADMINS = (
-    ('Admin', 'admin@eopenmooc.org'),
+    ('Admin', 'admin@example.com'),
 )
 
 MANAGERS = ADMINS
@@ -63,6 +65,10 @@ EMAIL_HOST_PASSWORD = ''
 
 EMAIL_SUBJECT_PREFIX = '[OpenMOOC] | '
 
+DEFAULT_MAX_EMAILS_PER_MONTH = 3
+
+SUBJECT_CLONE_ACTIVITY = gettext('Cloned course activity')
+
 # Amazon credentials
 AWS_ACCESS_KEY_ID = ""
 AWS_SECRET_ACCESS_KEY = ""
@@ -81,8 +87,6 @@ TIME_ZONE = 'Europe/Madrid'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
-
-gettext = lambda s: s
 
 LANGUAGES = (
     ('en', gettext('English')),
@@ -163,9 +167,11 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'moocng.portal.middleware.LocaleMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'pagination.middleware.PaginationMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -189,21 +195,35 @@ COMPRESS_CSS_FILTERS = [
 
 COMPRESS_OFFLINE = False
 
-INSTALLED_APPS = [
+
+# This section describes the installed applications for OpenMOOC, it's splitted
+# into three for the sake of clarity and usefulness when processing locales
+# and application dependant stuff.
+
+DJANGO_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'grappelli',
-    'django.contrib.admin',
     'django.contrib.flatpages',
+]
+
+THIRDPARTY_APPS = [
+    'grappelli',
+    'django.contrib.admin',  # This has to be here because of Grappelli
     'adminsortable',
     'djcelery',
     'tinymce',
     'tastypie',
     'compressor',
+    'south',
+    'django_mathjax',
+    'pagination',
+]
+
+OPENMOOC_APPS = [
     'moocng.contact',
     'moocng.badges',  # this must be defined before moocng.courses
     'moocng.courses',
@@ -216,13 +236,12 @@ INSTALLED_APPS = [
     'moocng.categories',
     'moocng.auth_handlers',
     'moocng.peerreview',
-    'moocng.externalapps',
-    'south',
-    'django_mathjax',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
+    'moocng.profile',
     'moocng.media_contents',
+    'moocng.externalapps',
 ]
+
+INSTALLED_APPS = DJANGO_APPS + THIRDPARTY_APPS + OPENMOOC_APPS
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -278,6 +297,11 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
+        'moocng.externalapps.registry': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
     }
 }
 
@@ -288,13 +312,14 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.static',
     'django.core.context_processors.tz',
-    # 'django.core.context_processors.request',
+    'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
     'moocng.context_processors.site',
     'moocng.context_processors.theme',
     'moocng.context_processors.extra_settings',
     'moocng.context_processors.google_analytics',
     'moocng.context_processors.certificate_url',
+    'moocng.context_processors.num_announcement_dont_viewed',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -347,7 +372,7 @@ ALLOW_PUBLIC_COURSE_CREATION = False
 
 # A list with the slugs of the courses that use the old qualification system
 # where the normal units counted
-COURSES_USING_OLD_TRANSCRIPT = []
+COURSES_USING_OLD_TRANSCRIPT = False
 
 # Enrollment methods
 ENROLLMENT_METHODS = (
@@ -384,6 +409,8 @@ INSTALLED_APPS.append('djangosaml2')
 REGISTRY_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/newUser.php'
 PROFILE_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/reviewUser.php'
 CHANGEPW_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/changePassword.php'
+
+AUTH_PROFILE_MODULE = 'profile.UserProfile'
 
 from .saml_settings import *
 
@@ -438,6 +465,13 @@ MATHJAX_CONFIG_DATA = {
     }
 }
 
+
+SERIALIZATION_MODULES = {
+    "xml": "deep_serializer.serializers.xml_serializer",
+    "python": "deep_serializer.serializers.python",
+    "json": "deep_serializer.serializers.json",
+}
+
 # External apps available to the teachers
 # instances is a tuple with the format:
 #  (ip, base_url, max_instances,)
@@ -459,6 +493,7 @@ MATHJAX_CONFIG_DATA = {
 #         )
 #     }
 # }
+
 MOOCNG_EXTERNALAPPS = {
     'askbot': {
         'instances': ()
@@ -484,3 +519,12 @@ FABRIC_SSH_KEY_PATH = '/root/.ssh/id_rsa'
 
 # Show courses as a list (classic behaviour) or as a grid
 COURSE_SHOW_AS_LIST = True
+
+# Migrate score
+
+FIRST_DAY_MIGRATE_MARK = '2013-11-14'
+NUM_MIGRATE_MARK_DAILY = 10000
+
+# Pagination
+
+PAGINATION_DEFAULT_PAGINATION = 10
