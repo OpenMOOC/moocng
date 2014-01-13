@@ -191,7 +191,6 @@ rm -rf %{buildroot}
 %attr(644,root,%{name}) %config %{_sysconfdir}/%{platform}/%{component}/moocngsettings/__init__.py
 %attr(644,root,%{name}) %config %{_sysconfdir}/%{platform}/%{component}/moocngsettings/devel.py
 %attr(644,root,%{name}) %config %{_sysconfdir}/%{platform}/%{component}/moocngsettings/local.py.example
-%attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/%{platform}/%{component}/moocngsettings/local.py
 %attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/%{platform}/%{component}/moocngsettings/saml_settings.py
 
 %attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/supervisord.d/%{name}-supervisord.conf
