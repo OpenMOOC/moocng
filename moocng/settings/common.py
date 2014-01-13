@@ -14,10 +14,22 @@
 
 # Django settings for moocng project.
 
+import os
+
 gettext = lambda s: s
 
-import os
-BASEDIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+
+def get_config_local(name, default):
+    try:
+        from moocng.settings import config_local
+        if hasattr(config_local, name):
+            return getattr(config_local, name)
+    except ImportError:
+        pass
+    return default
+
+BASEDIR = get_config_local('BASEDIR',
+                           os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -119,7 +131,8 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = os.path.join(BASEDIR, 'media')
+MEDIA_ROOT = get_config_local('MEDIA_ROOT',
+                              os.path.join(BASEDIR, 'media'))
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -130,7 +143,8 @@ MEDIA_URL = '/media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = os.path.join(BASEDIR, 'collected_static')
+STATIC_ROOT = get_config_local('STATIC_ROOT',
+                               os.path.join(BASEDIR, 'collected_static'))
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -345,14 +359,14 @@ GOOGLE_ANALYTICS_CODE = ''
 GRAVATAR_URL_PREFIX = '//www.gravatar.com/'
 
 MOOCNG_THEME = {
-#    'logo': u'',
-#    'subtitle': u'',
-#    'top_banner': u'',
-#    'right_banner1': u'',
-#    'right_banner2': u'',
-#    'bootstrap_css': u'',
-#    'moocng_css': u'',
-#    'cert_banner': u'',
+    #'logo': u'',
+    #'subtitle': u'',
+    #'top_banner': u'',
+    #'right_banner1': u'',
+    #'right_banner2': u'',
+    #'bootstrap_css': u'',
+    #'moocng_css': u'',
+    #'cert_banner': u'',
 }
 
 ENABLED_COMUNICATIONS = (
@@ -365,7 +379,8 @@ ENABLED_COMUNICATIONS = (
 
 #SHOW_TOS = True
 
-FFMPEG = '/usr/bin/ffmpeg'
+FFMPEG = get_config_local('FFMPEG',
+                          '/usr/bin/ffmpeg')
 
 # Let authenticated users create their own courses
 ALLOW_PUBLIC_COURSE_CREATION = False
@@ -411,8 +426,6 @@ PROFILE_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/r
 CHANGEPW_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/changePassword.php'
 
 AUTH_PROFILE_MODULE = 'profile.UserProfile'
-
-from .saml_settings import *
 
 ### Example config for moocng.auth_handlers.handlers.DBAuth Auth Handler
 # INSTALLED_APPS.append('moocng.auth_handlers.dbauth')

@@ -1,5 +1,8 @@
-import saml2
+from .common import *
+
 import os
+import saml2
+
 
 BASEDIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
@@ -9,7 +12,7 @@ SAML_ATTRIBUTE_MAPPING = {
     'cn': ('first_name', ),
     'sn': ('last_name', ),
     'eduPersonAffiliation': ('groups', ),
-    }
+}
 
 SAML_CONFIG = {
     # full path to the xmlsec1 binary programm
@@ -24,20 +27,20 @@ SAML_CONFIG = {
     # this block states what services we provide
     'service': {
         # we are just a lonely SP
-        'sp' : {
+        'sp': {
             'name': 'Moocng SP',
             'endpoints': {
                 # url and binding to the assetion consumer service view
                 # do not change the binding or service name
                 'assertion_consumer_service': [
                     ('https://moocng.example.com/auth/saml2/acs/', saml2.BINDING_HTTP_POST),
-                    ],
+                ],
                 # url and binding to the single logout service view
                 # do not change the binding or service name
                 'single_logout_service': [
                     ('https://moocng.example.com/auth/saml2/ls/', saml2.BINDING_HTTP_REDIRECT),
-                    ],
-                },
+                ],
+            },
 
             # in this section the list of IdPs we talk to are defined
             'idp': {
@@ -49,19 +52,19 @@ SAML_CONFIG = {
                 'https://idp.example.com/simplesaml/saml2/idp/metadata.php': {
                     'single_sign_on_service': {
                         saml2.BINDING_HTTP_REDIRECT: 'https://idp.example.com/simplesaml/saml2/idp/SSOService.php',
-                        },
+                    },
                     'single_logout_service': {
                         saml2.BINDING_HTTP_REDIRECT: 'https://idp.example.com/simplesaml/saml2/idp/SingleLogoutService.php',
-                        },
                     },
                 },
             },
         },
+    },
 
     # where the remote metadata is stored
     'metadata': {
         'local': [os.path.join(BASEDIR, 'remote_metadata.xml')],
-        },
+    },
 
     # set to 1 to output debugging information
     'debug': 1,
@@ -82,11 +85,11 @@ SAML_CONFIG = {
          'company': 'Example CO',
          'email_address': 'admin@example.com',
          'contact_type': 'administrative'},
-        ],
+    ],
     # you can set multilanguage information here
     'organization': {
         'name': [('Example CO', 'es'), ('Example CO', 'en')],
         'display_name': [('Example', 'es'), ('Example', 'en')],
         'url': [('http://www.example.com', 'es'), ('http://www.example.com', 'en')],
-        },
-    }
+    },
+}

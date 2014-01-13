@@ -3,18 +3,17 @@
 %define platform openmooc
 %define component moocng
 %define version 0.1.0
-%define release 1
+%define release 2
 
 Name: %{platform}-%{component}
 Version: %{version}
 Release: %{release}
 Source0: %{name}-%{version}.tar.gz
 Source1: %{name}-moocng.py
-Source2: %{name}-common.py
+Source2: %{name}-config.py
 Source3: %{name}-celeryd
-Source4: %{name}-saml_settings.py
-Source5: %{name}-nginx.conf
-Source6: %{name}-supervisor.conf
+Source4: %{name}-nginx.conf
+Source5: %{name}-supervisor.conf
 Summary: Engine for MOOC applications (OpenMOOC core)
 
 License: Apache Software License 2.0
@@ -142,15 +141,14 @@ install -m 755 %{SOURCE3} %{buildroot}%{_sysconfdir}/init.d/celeryd
 cp -R %{component}/settings/* %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/
 
 # Copy a modified version of common.py and saml_settings
-install -m 755 %{SOURCE2} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/common.py
-install -m 755 %{SOURCE4} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/saml_settings.py
+install -m 755 %{SOURCE2} %{buildroot}%{_sysconfdir}/%{platform}/%{component}/moocngsettings/config_local.py
 
 # Create the manage file
 install -m 755 %{SOURCE1} %{buildroot}%{_bindir}/%{platform}-%{component}-admin
 
 # Copy the nginx and supervisor configurations
-install -m 755 %{SOURCE5} %{buildroot}%{_sysconfdir}/nginx/conf.d/%{component}.conf
-install -m 755 %{SOURCE6} %{buildroot}%{_sysconfdir}/supervisord.d/%{name}-supervisord.conf
+install -m 755 %{SOURCE4} %{buildroot}%{_sysconfdir}/nginx/conf.d/%{component}.conf
+install -m 755 %{SOURCE5} %{buildroot}%{_sysconfdir}/supervisord.d/%{name}-supervisord.conf
 
 
 %pre
@@ -188,7 +186,14 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %doc CHANGES COPYING README.rst manuals/
-%attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/%{platform}/%{component}/moocngsettings/*
+%attr(644,root,%{name}) %config %{_sysconfdir}/%{platform}/%{component}/moocngsettings/common.py
+%attr(644,root,%{name}) %config %{_sysconfdir}/%{platform}/%{component}/moocngsettings/config_local.py
+%attr(644,root,%{name}) %config %{_sysconfdir}/%{platform}/%{component}/moocngsettings/__init__.py
+%attr(644,root,%{name}) %config %{_sysconfdir}/%{platform}/%{component}/moocngsettings/devel.py
+%attr(644,root,%{name}) %config %{_sysconfdir}/%{platform}/%{component}/moocngsettings/local.py.example
+%attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/%{platform}/%{component}/moocngsettings/local.py
+%attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/%{platform}/%{component}/moocngsettings/saml_settings.py
+
 %attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/supervisord.d/%{name}-supervisord.conf
 %attr(644,root,%{name}) %config(noreplace) %{_sysconfdir}/nginx/conf.d/%{component}.conf
 

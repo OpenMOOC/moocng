@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .common import *
+from .saml_settings import *
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG

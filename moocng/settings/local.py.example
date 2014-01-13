@@ -1,3 +1,3 @@
-from .common import *
+from .saml_settings import *
 
 DEBUG = False
