@@ -30,6 +30,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 
 from moocng import mongodb
+from moocng.api.tasks import update_kq_mark, update_unit_mark, update_course_mark
 from moocng.badges.models import Badge
 from moocng.courses.models import Course, Unit, KnowledgeQuantum, Question, Option, Attachment, CourseStudent
 from moocng.courses.serializer import (CourseClone, UnitClone, KnowledgeQuantumClone,
@@ -310,4 +311,28 @@ def clone_activity_user_course(user, copy_course, original_course=None, force_em
             course_student_relation.save()
         if not settings.DEBUG:
             send_cloned_activity_email(original_course, copy_course, user)
+        update_course_mark_by_user(copy_course, user)
     return (new_act_docs, insert_answer_docs, update_answer_docs)
+
+
+def update_passed(db, collection, passed_now, data):
+    if not passed_now:
+        return
+    stats_collection = db.get_collection(collection)
+    stats_collection.update(
+        data,
+        {'$inc': {'passed': 1}},
+        safe=True
+    )
+
+
+def update_course_mark_by_user(course, user):
+    db = mongodb.get_db()
+    for unit in course.unit_set.scorables():
+        for kq in unit.knowledgequantum_set.all():
+            updated_kq, passed_kq_now = update_kq_mark(db, kq, user, course.threshold)
+            update_passed(db, 'stats_kq', passed_kq_now, {'kq_id': kq.pk})
+        updated_unit, passed_unit_now = update_unit_mark(db, unit, user, course.threshold)
+        update_passed(db, 'stats_unit', passed_unit_now, {'unit_id': unit.pk})
+    updated_course, passed_course_now = update_course_mark(db, course, user)
+    update_passed(db, 'stats_course', passed_course_now, {'course_id': course.pk})

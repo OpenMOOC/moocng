@@ -22,8 +22,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.mail import send_mail
 from django.db.models import Max
 
-from moocng.api.tasks import update_kq_mark, update_unit_mark, update_course_mark
-from moocng.mongodb import get_db
+from moocng.courses.utils import update_course_mark_by_user
 
 
 class Command(BaseCommand):
@@ -52,16 +51,6 @@ class Command(BaseCommand):
 
     def message(self, message):
         self.stdout.write("%s\n" % message.encode("ascii", "replace"))
-
-    def update_passed(self, db, collection, passed_now, data):
-        if not passed_now:
-            return
-        stats_collection = db.get_collection(collection)
-        stats_collection.update(
-            data,
-            {'$inc': {'passed': 1}},
-            safe=True
-        )
 
     def get_courses(self, user, courses_pks=None, courses_actives=False):
         courses_as_student = user.courses_as_student.all()
@@ -99,14 +88,6 @@ class Command(BaseCommand):
                           email_list.split(','))
         courses_pks = options["courses_pks"]
         courses_actives = options["courses_actives"]
-        db = get_db()
         for user in users:
             for course in self.get_courses(user, courses_pks, courses_actives):
-                for unit in course.unit_set.scorables():
-                    for kq in unit.knowledgequantum_set.all():
-                        updated_kq, passed_kq_now = update_kq_mark(db, kq, user, course.threshold)
-                        self.update_passed(db, 'stats_kq', passed_kq_now, {'kq_id': kq.pk})
-                    updated_unit, passed_unit_now = update_unit_mark(db, unit, user, course.threshold)
-                    self.update_passed(db, 'stats_unit', passed_unit_now, {'unit_id': unit.pk})
-                updated_course, passed_course_now = update_course_mark(db, course, user)
-                self.update_passed(db, 'stats_course', passed_course_now, {'course_id': course.pk})
+                update_course_mark_by_user(course, user)
