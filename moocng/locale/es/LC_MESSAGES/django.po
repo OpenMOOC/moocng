@@ -2488,7 +2488,7 @@ msgstr "Puedes probar matriculándote en otro curso"
 
 #: portal/templates/portal/inc.announcement.html:6
 msgid "Permanent link"
-msgstr "Enlace permanent"
+msgstr "Enlace permanente"
 
 #: profile/models.py:28
 msgid "Last announcement viewed"
