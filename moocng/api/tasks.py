@@ -118,28 +118,29 @@ def to_decimal(float_price):
     return decimal.Decimal('%.2f' % float_price)
 
 
-def has_passed_now(mark, mark_item, threshold):
+def has_passed_now(new_mark, mark_item, threshold):
+    current_mark = mark_item and mark_item['mark'] or None
+    if current_mark is None:
+        current_mark = 0
+
     if threshold is None:
         return False
-    if mark_item and to_decimal(mark_item['mark']) >= threshold:
+    elif to_decimal(current_mark) >= threshold:
         return False
-    return to_decimal(mark) >= threshold
+    elif new_mark is None:
+        return False
+    return to_decimal(new_mark) >= threshold
 
 
 def update_kq_mark(db, kq, user, threshold, new_mark_kq=None, new_mark_normalized_kq=None):
     from moocng.courses.marks import calculate_kq_mark
     if not new_mark_kq or not new_mark_normalized_kq:
-        from moocng.courses.marks_old import calculate_kq_mark_old
-        calculate_kq_mark_old(kq, user)
-        new_mark_kq, new_mark_normalized_kq, use_in_total = calculate_kq_mark(kq, user)
-        if not use_in_total:
-            return (False, False)
+        new_mark_kq, new_mark_normalized_kq = calculate_kq_mark(kq, user)
     data_kq = {}
     data_kq['user_id'] = user.pk
     data_kq['course_id'] = kq.unit.course.pk
     data_kq['unit_id'] = kq.unit.pk
     data_kq['kq_id'] = kq.pk
-
     marks_kq = db.get_collection('marks_kq')
     mark_kq_item = marks_kq.find_one(data_kq)
     if mark_kq_item:
@@ -163,9 +164,7 @@ def update_kq_mark(db, kq, user, threshold, new_mark_kq=None, new_mark_normalize
 def update_unit_mark(db, unit, user, threshold, new_mark_unit=None, new_mark_normalized_unit=None):
     from moocng.courses.marks import calculate_unit_mark
     if not new_mark_unit or not new_mark_normalized_unit:
-        new_mark_unit, new_mark_normalized_unit, use_unit_in_total = calculate_unit_mark(unit, user)
-        if not use_unit_in_total:
-            return (False, False)
+        new_mark_unit, new_mark_normalized_unit = calculate_unit_mark(unit, user)
     data_unit = {}
     data_unit['user_id'] = user.pk
     data_unit['course_id'] = unit.course_id
@@ -223,10 +222,7 @@ def update_mark(submitted):
     unit = kq.unit
     course = kq.unit.course
     user = User.objects.get(pk=submitted['user_id'])
-    mark_kq, mark_normalized_kq, use_kq_in_total = calculate_kq_mark(kq, user)
-    if not use_kq_in_total:
-        return (updated_kq_mark, updated_unit_mark, updated_course_mark,
-                passed_kq, passed_unit, passed_course)
+    mark_kq, mark_normalized_kq = calculate_kq_mark(kq, user)
 
     db = get_db()
 
@@ -240,13 +236,13 @@ def update_mark(submitted):
         return (updated_kq_mark, updated_unit_mark, updated_course_mark,
                 passed_kq, passed_unit, passed_course)
 
-    mark_unit, mark_normalized_unit, use_unit_in_total = calculate_unit_mark(kq.unit, user)
+    mark_unit, mark_normalized_unit = calculate_unit_mark(kq.unit, user)
     updated_unit_mark, passed_unit = update_unit_mark(db, unit, user, course.threshold,
                                                       new_mark_unit=mark_unit,
                                                       new_mark_normalized_unit=mark_normalized_unit)
 
     # COURSE
-    if not updated_unit_mark or not use_unit_in_total:
+    if not updated_unit_mark:
         return (updated_kq_mark, updated_unit_mark, updated_course_mark,
                 passed_kq, passed_unit, passed_course)
     mark_course, units_info = calculate_course_mark(unit.course, user)

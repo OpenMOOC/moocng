@@ -28,7 +28,6 @@ from tastypie.resources import ModelResource, Resource
 from django.conf import settings
 from django.conf.urls import url
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q, Count
 from django.db.models.fields.files import ImageFieldFile
 from django.http import HttpResponse
@@ -162,10 +161,7 @@ class KnowledgeQuantumResource(ModelResource):
                                                bundle.obj.media_content_id)
 
     def dehydrate_peer_review_score(self, bundle):
-        try:
-            return kq_get_peer_review_score(bundle.obj, bundle.request.user)
-        except ObjectDoesNotExist:
-            return None
+        return kq_get_peer_review_score(bundle.obj, bundle.request.user)
 
     def dehydrate_correct(self, bundle):
         questions = bundle.obj.question_set.all()

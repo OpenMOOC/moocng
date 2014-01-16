@@ -147,12 +147,12 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
         score_obj = this.model.get('peer_review_score');
 
-        if (score_obj[0]  === null || score_obj[1] === false) {
+        if (_.isNull(score_obj)) {
             score_text = '';
             badge_class = 'important';
         } else {
-            score_text = score_obj[0];
-            badge_class = (score_obj[0] >= 2.5) ? 'success' : 'important';
+            score_text = score_obj;
+            badge_class = (score_obj >= 5) ? 'success' : 'important';
         }
 
         return '<span class="badge badge-' + badge_class + ' pull-right"' + title_attr + '>' + icon + score_text + '</span>';

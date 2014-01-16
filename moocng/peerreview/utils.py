@@ -52,26 +52,23 @@ def kq_get_peer_review_score(kq, author, pra=None):
 
         Return a tuple with (score, scorable)
         * If this kq isn't peer_review type:
-            return (None, false)
+            return None
         * If there is no submission:
-            return (0, True)
+            return 0
         * If I haven't reviewed enough submissions of other students:
-            return (0, True)
+            return 0
         * If nobody reviewed my submission:
-            return (None, False)
-        * If there are some reviews from other students to my submission but
-          less than the minimum the teacher wants:
-            return (Average, False)
+            return None
         * If I got enough reviews of my submission and I have reviewed enough
           reviews of other students' submissions:
-            rerturn (Average, True)
+            rerturn Average
     """
 
     if not pra:
         try:
             pra = kq.peerreviewassignment
         except PeerReviewAssignment.DoesNotExist:
-            return (None, False)
+            return None
 
     db = get_db()
 
@@ -83,13 +80,13 @@ def kq_get_peer_review_score(kq, author, pra=None):
     })
 
     if not submission:
-        return (0, True)
+        return 0
 
-    if (submission.get("author_reviews", 0) < pra.minimum_reviewers):
-        return (0, True)
+    if submission.get("author_reviews", 0) < pra.minimum_reviewers:
+        return 0
 
-    if (submission["reviews"] == 0):
-        return (None, False)
+    if submission["reviews"] == 0:
+        return None
 
     ppr_collection = db.get_collection("peer_review_reviews")
 
@@ -104,14 +101,7 @@ def kq_get_peer_review_score(kq, author, pra=None):
     for review in reviews:
         sum_average += float(get_peer_review_review_score(review))
 
-    average = sum_average / reviews_count
-
-    if (submission["reviews"] > 0 and
-            submission.get("author_reviews", 0) < pra.minimum_reviewers):
-        return (average, False)
-
-    else:
-        return (average, True)
+    return (sum_average / reviews_count) * 2  # * 2 due peer_review range is 1-5
 
 
 def save_review(kq, reviewer, user_reviewed, criteria, comment):

@@ -34,11 +34,8 @@ def calculate_question_mark(kq, question, user):
     })
     if user_answer:
         if user_answer and question.is_correct(user_answer):
-            return (10.0, True)
-        else:
-            return (0.0, True)
-
-    return (0.0, True)
+            return 10.0
+    return 0.0
 
 
 def calculate_peer_review_mark(kq, peer_review_assignment, user):
@@ -51,12 +48,8 @@ def calculate_peer_review_mark(kq, peer_review_assignment, user):
     """
     from moocng.peerreview.utils import kq_get_peer_review_score
 
-    mark, use_in_total = kq_get_peer_review_score(kq, user,
-                                                  peer_review_assignment)
-    if mark is not None:
-        return (mark * 2.0, use_in_total)  # * 2 due peer_review range is 1-5
-    else:
-        return (None, False)
+    return kq_get_peer_review_score(kq, user,
+                                    peer_review_assignment)
 
 
 def calculate_kq_video_mark(kq, user):
@@ -67,9 +60,8 @@ def calculate_kq_video_mark(kq, user):
     .. versionadded:: 0.1
     """
     if kq.kq_visited_by(user):
-        return (10.0, True)
-    else:
-        return (0, True)
+        return 10.0
+    return 0.0
 
 
 def calculate_kq_mark(kq, user):
@@ -84,23 +76,22 @@ def calculate_kq_mark(kq, user):
     """
     from moocng.peerreview.models import PeerReviewAssignment
     mark = None
+    relative_mark = 0
     try:
         question = kq.question_set.get()
         # KQ has a question
-        mark, use_in_total = calculate_question_mark(kq, question, user)
+        mark = calculate_question_mark(kq, question, user)
     except kq.question_set.model.DoesNotExist:
-        pass
-    else:
         try:
             # KQ has a peer review
             pra = kq.peerreviewassignment
-            mark, use_in_total = calculate_peer_review_mark(kq, pra, user)
+            mark = calculate_peer_review_mark(kq, pra, user)
         except PeerReviewAssignment.DoesNotExist:
-            pass
-    if mark is None:
-        # KQ hasn't a question or peer review
-        mark, use_in_total = calculate_kq_video_mark(kq, user)
-    return (mark, normalize_kq_weight(kq) * mark / 100.0, use_in_total)
+            # KQ hasn't a question or peer review
+            mark = calculate_kq_video_mark(kq, user)
+    if mark is not None:
+        relative_mark = normalize_kq_weight(kq) * mark / 100.0
+    return (mark, relative_mark)
 
 
 def normalize_kq_weight(kq, unit_kq_counter=None, total_weight_unnormalized=None):
@@ -129,11 +120,9 @@ def calculate_unit_mark(unit, user, normalized_unit_weight=None):
         normalized_unit_weight = normalize_unit_weight(unit, unit_course_counter, total_weight_unnormalized)
     unit_mark = 0
     kqs = get_kq_info_from_course(unit, user)
-    kq_unit_counter = len(kqs)
-    use_unit_in_total = kq_unit_counter > 0
     for kq in kqs:
         unit_mark += kq['relative_mark']
-    return (unit_mark, (normalized_unit_weight * unit_mark) / 100.0, use_unit_in_total)
+    return (unit_mark, (normalized_unit_weight * unit_mark) / 100.0)
 
 
 def get_kq_info_from_course(unit, user, db=None):

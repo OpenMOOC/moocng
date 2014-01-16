@@ -35,7 +35,6 @@ from moocng.courses.models import Course, CourseTeacher, Announcement
 from moocng.courses.utils import (get_unit_badge_class, is_course_ready,
                                   is_teacher as is_teacher_test,
                                   send_mail_wrapper)
-from moocng.courses.marks_old import calculate_course_mark_old
 from moocng.courses.marks import get_course_mark, get_course_intermediate_calculations, normalize_unit_weight
 from moocng.courses.security import (get_course_if_user_can_view_or_404,
                                      get_courses_available_for_user,
@@ -350,57 +349,6 @@ def announcement_detail(request, course_slug, announcement_id, announcement_slug
         'course': course,
         'announcement': announcement,
         'template_base': 'courses/base_course.html'
-    }, context_instance=RequestContext(request))
-
-
-@login_required
-def transcript_v1(request, course_slug=None):
-    # This function should be removed when we are sure that the new transcript function works
-    course_list = request.user.courses_as_student.all()
-    course_transcript = None
-    template_name = 'courses/transcript.html'
-    if course_slug:
-        template_name = 'courses/transcript_course.html'
-        course_transcript = get_object_or_404(Course, slug=course_slug)
-        course_list = course_list.filter(slug=course_slug)
-    courses_info = []
-    cert_url = ''
-    for course in course_list:
-        use_old_calculus = settings.COURSES_USING_OLD_TRANSCRIPT
-        total_mark, units_info = calculate_course_mark_old(course, request.user)
-        award = None
-        passed = False
-        if course.threshold is not None and float(course.threshold) <= total_mark:
-            passed = True
-            cert_url = settings.CERTIFICATE_URL % {
-                'courseid': course.id,
-                'email': request.user.email.lower()
-            }
-            badge = course.completion_badge
-            if badge is not None:
-                try:
-                    award = Award.objects.get(badge=badge, user=request.user)
-                except Award.DoesNotExist:
-                    award = Award(badge=badge, user=request.user)
-                    award.save()
-        for idx, uinfo in enumerate(units_info):
-            unit_class = get_unit_badge_class(uinfo['unit'])
-            units_info[idx]['badge_class'] = unit_class
-            if (not use_old_calculus and uinfo['unit'].unittype == 'n') or \
-                    not units_info[idx]['use_unit_in_total']:
-                units_info[idx]['hide'] = True
-        courses_info.append({
-            'course': course,
-            'units_info': units_info,
-            'mark': total_mark,
-            'award': award,
-            'passed': passed,
-            'cert_url': cert_url,
-            'use_old_calculus': use_old_calculus,
-        })
-    return render_to_response(template_name, {
-        'courses_info': courses_info,
-        'course_transcript': course_transcript,
     }, context_instance=RequestContext(request))
 
 
