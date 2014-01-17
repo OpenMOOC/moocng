@@ -2,8 +2,8 @@
 
 %define platform openmooc
 %define component moocng
-%define version 0.1.0
-%define release 2
+%define version 0.1.1
+%define release 1
 
 Name: %{platform}-%{component}
 Version: %{version}
@@ -241,6 +241,10 @@ rm -rf %{buildroot}
 %{python_sitelib}/%{component}/static/js/libs/mathjax/
 
 %changelog
+* Fri Jan 17 2014 Pablo Martin <pmartin@yaco.es> - 0.1.0-1
+- Fix peerreview calculate
+* Wed Jan 15 2014 Pablo Martin <pmartin@yaco.es> - 0.1.0-1
+- Refactor the settings
 * Fri Aug 9 2013 Oscar Carballal Prego <ocarballal@yaco.es> - 0.1.0-1
 - Fixed paths, local.py file. Changed location of the config files. Added mathjax
   variable to avoid excessive compulation times when testing. Added mathjax subpackage
