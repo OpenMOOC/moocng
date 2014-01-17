@@ -79,24 +79,18 @@ def kq_get_peer_review_score(kq, author, pra=None):
         "author": author.id
     })
 
-    if not submission:
+    if (not submission or
+       submission.get("author_reviews", 0) < pra.minimum_reviewers):
         return 0
-
-    if submission.get("author_reviews", 0) < pra.minimum_reviewers:
-        return 0
-
-    if submission["reviews"] == 0:
+    elif submission["reviews"] == 0:
         return None
 
     ppr_collection = db.get_collection("peer_review_reviews")
-
     reviews = ppr_collection.find({
         "kq": kq.id,
         "author": author.id
     })
-
     reviews_count = reviews.count()
-
     sum_average = 0
     for review in reviews:
         sum_average += float(get_peer_review_review_score(review))

@@ -48,8 +48,11 @@ def calculate_peer_review_mark(kq, peer_review_assignment, user):
     """
     from moocng.peerreview.utils import kq_get_peer_review_score
 
-    return kq_get_peer_review_score(kq, user,
+    mark = kq_get_peer_review_score(kq, user,
                                     peer_review_assignment)
+    if mark is None:
+        mark = 0
+    return mark
 
 
 def calculate_kq_video_mark(kq, user):
@@ -75,8 +78,7 @@ def calculate_kq_mark(kq, user):
     .. versionadded:: 0.1
     """
     from moocng.peerreview.models import PeerReviewAssignment
-    mark = None
-    relative_mark = 0
+    mark = relative_mark = 0
     try:
         question = kq.question_set.get()
         # KQ has a question
@@ -89,8 +91,7 @@ def calculate_kq_mark(kq, user):
         except PeerReviewAssignment.DoesNotExist:
             # KQ hasn't a question or peer review
             mark = calculate_kq_video_mark(kq, user)
-    if mark is not None:
-        relative_mark = normalize_kq_weight(kq) * mark / 100.0
+    relative_mark = normalize_kq_weight(kq) * mark / 100.0
     return (mark, relative_mark)
 
 
