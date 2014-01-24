@@ -115,5 +115,14 @@
       ga('send', 'pageview');
     </script>
   {% endif %}
+  <script type="text/javascript">
+    (function($){
+        $(document).ready(function () {
+            $('body').on('touchstart.dropdown', '.dropdown-menu', function (e) {
+                e.stopPropagation();
+            });
+        });
+    })(jQuery);
+  </script>
 </body>
 </html>
