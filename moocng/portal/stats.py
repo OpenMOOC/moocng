@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import decimal
 import gc
 
 from django.contrib.auth.models import User
@@ -160,6 +161,7 @@ def calculate_all_stats(user_objects=User.objects,
                     stats[cid]['u'][uid]['completed'] += 1
 
                 # Student nugget stats
+                threshold = stats[cid]['threshold']
                 stats[cid]['u'][uid]['n'][nid]['viewed'] += 1
                 if nugget_type == 'PeerReviewAssignment':
                     submitted = submissions.find({
@@ -177,6 +179,8 @@ def calculate_all_stats(user_objects=User.objects,
                         stats[cid]['u'][uid]['n'][nid]['reviewers'] += 1
                         stats[cid]['u'][uid]['n'][nid]['reviews'] += revs.count()
 
+                    threshold = decimal.Decimal(5.0)  # P2P is a special case
+
                 elif nugget_type == 'Question':
                     submitted = answers.find({
                         'kq_id': nid,
@@ -191,7 +195,7 @@ def calculate_all_stats(user_objects=User.objects,
                     'unit_id': uid,
                     'kq_id': nid
                 })
-                if mark and has_passed_now(mark['mark'], False, stats[cid]['threshold']):
+                if mark and has_passed_now(mark['mark'], False, threshold):
                     stats[cid]['u'][uid]['n'][nid]['passed'] += 1
 
             counter += 1
