@@ -179,7 +179,7 @@ def calculate_all_stats(user_objects=User.objects,
                         stats[cid]['u'][uid]['n'][nid]['reviewers'] += 1
                         stats[cid]['u'][uid]['n'][nid]['reviews'] += revs.count()
 
-                    threshold = decimal.Decimal(5.0)  # P2P is a special case
+                    threshold = decimal.Decimal('5.0')  # P2P is a special case
 
                 elif nugget_type == 'Question':
                     submitted = answers.find({
