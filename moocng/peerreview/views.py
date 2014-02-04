@@ -33,7 +33,7 @@ from django.utils.translation import ugettext as _
 
 from moocng.api.mongodb import get_db
 from moocng.api.tasks import on_peerreviewreview_created_task
-from moocng.courses.models import Course, KnowledgeQuantum
+from moocng.courses.models import KnowledgeQuantum
 from moocng.courses.utils import send_mail_wrapper, is_course_ready
 from moocng.courses.security import get_course_if_user_can_view_or_404
 from moocng.peerreview.forms import ReviewSubmissionForm, EvalutionCriteriaResponseForm
@@ -348,7 +348,6 @@ def course_review_upload(request, course_slug):
             "course": course.id,
             "unit": unit.id,
             "kq": kq.id,
-            "assigned_to": None,
         }
         db = get_db()
         submissions = db.get_collection("peer_review_submissions")
