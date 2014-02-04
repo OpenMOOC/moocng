@@ -158,6 +158,8 @@ def update_kq_mark(db, kq, user, threshold, new_mark_kq=None, new_mark_normalize
         data_kq['mark'] = new_mark_kq
         data_kq['relative_mark'] = new_mark_normalized_kq
         marks_kq.insert(data_kq)
+    if kq.kq_type() == 'PeerReviewAssignment':
+        threshold = threshold is not None and decimal.Decimal('5.0')  # P2P is a special case
     return updated_kq_mark, has_passed_now(new_mark_kq, mark_kq_item, threshold)
 
 
