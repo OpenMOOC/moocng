@@ -34,7 +34,7 @@ def recursive_include(directory, patterns):
 
 # be careful with the syntax of this line since it is parsed from
 # the docs/conf.py file
-VERSION = '0.1.1'
+VERSION = '0.1.2'
 
 
 setup(

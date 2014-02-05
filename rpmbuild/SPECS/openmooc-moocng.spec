@@ -2,7 +2,7 @@
 
 %define platform openmooc
 %define component moocng
-%define version 0.1.1
+%define version 0.1.2
 %define release 1
 
 Name: %{platform}-%{component}
@@ -241,6 +241,9 @@ rm -rf %{buildroot}
 %{python_sitelib}/%{component}/static/js/libs/mathjax/
 
 %changelog
+* Fri Jan 17 2014 Pablo Martin <pmartin@yaco.es> - 0.1.2-1
+- Fix dropmenu in tables devices and phone devices
+- Fix peerreview calculate (details)
 * Fri Jan 17 2014 Pablo Martin <pmartin@yaco.es> - 0.1.1-1
 - Fix peerreview calculate
 * Wed Jan 15 2014 Pablo Martin <pmartin@yaco.es> - 0.1.0-2
