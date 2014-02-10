@@ -2,7 +2,7 @@
 
 Name:           python-%{srcname}
 Version:        2.5.12
-Release:        1%{?dist}
+Release:        4%{?dist}
 Summary:        AMQP Messaging Framework for Python
 
 Group:          Development/Languages
@@ -18,6 +18,9 @@ BuildRequires:  python-nose
 BuildRequires:  python-anyjson >= 0.3.3
 BuildRequires:  python-amqplib
 BuildRequires:  python-msgpack
+
+Requires:       python-amqp = 1.0.13
+
 # For documentation
 #BuildRequires:  pymongo python-sphinx
 #This causes tests error, needs fixing upstream. Incompatible with python > 2.7
