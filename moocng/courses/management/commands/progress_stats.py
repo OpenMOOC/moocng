@@ -28,8 +28,9 @@ from moocng.mongodb import get_db
 
 class Command(BaseCommand):
 
-    help = ("create a zip bundle with csv files with progress stats (unit_title, "
-            "kq_title", "kq_viewed, kq_answered, kq_submited, kq_reviewed,)")
+    help = ("create a zip bundle with csv files with progress stats "
+            "(unit_title, unit_passed, kq_title, kq_viewed, kq_answered, "
+            "kq_submited, kq_reviewed, kq_passed)")
 
     option_list = BaseCommand.option_list + (
         make_option('-c', '--course',
@@ -79,26 +80,56 @@ class Command(BaseCommand):
 
         course_csv = csv.writer(course_file, quoting=csv.QUOTE_ALL)
 
+        threshold = float(course.threshold)
+
         units = Unit.objects.filter(course=course)
-        kq_headers = ["unit_title", "kq_title", "kq_viewed", "kq_answered", "kq_submited", "kq_reviewed"]
+        kq_headers = ["unit_title", "unit_passed" "kq_title", "kq_viewed",
+                      "kq_answered", "kq_submited", "kq_reviewed", "kq_passed"]
         course_csv.writerow(kq_headers)
+
         db = get_db()
         answers = db.get_collection('answers')
         activities = db.get_collection('activity')
         peer_review_submissions = db.get_collection('peer_review_submissions')
         peer_review_reviews = db.get_collection('peer_review_reviews')
-        for unit in units:
+
+        for i, unit in enumerate(units):
+            self.message('Unit %d (%d of %d) -> "%s"' % (unit.id, i, len(units), unit.title))
+
             unit_title = h.unescape(unit.title.encode("ascii", "ignore"))
+            unit_passed = ''
+            if threshold is not None:
+                unit_passed = db.database.command(
+                    'count', 'marks_unit', query={
+                        'unit_id': unit.id,
+                        'mark': {'$gt': threshold}
+                    })
+                unit_passed = int(unit_passed.get('n', -1))
+
             kqs = KnowledgeQuantum.objects.filter(unit=unit)
-            for kq in kqs:
+            for j, kq in enumerate(kqs):
+                self.message('Nugget %d (%d of %d) -> "%s"' % (kq.id, j, len(kqs), kq.title))
+
                 kq_title = h.unescape(kq.title.encode("ascii", "ignore"))
                 kq_type = kq.kq_type()
                 kq_answered = ''
                 kq_submited = ''
                 kq_reviewed = ''
+
                 kq_viewed = activities.find({
                     'kq_id': kq.id
                 }).count()
+                kq_passed = kq_viewed
+
+                if threshold is not None and (kq_type == "Question" or
+                                              kq_type == "PeerReviewAssignment"):
+                    kq_passed = db.database.command(
+                        'count', 'marks_kq', query={
+                            'kq_id': kq.id,
+                            'mark': {'$gt': threshold}
+                        })
+                    kq_passed = int(kq_passed.get('n', -1))
+
                 if kq_type == "Question":
                     answered = 0
                     questions = Question.objects.filter(kq=kq)
@@ -114,18 +145,18 @@ class Command(BaseCommand):
                     kq_reviewed = peer_review_reviews.find({
                         'kq': kq.id
                     }).count()
-                elif kq_type == "Video":
-                    pass
-                else:
-                    pass
+
                 row = []
                 row.append(unit_title)
+                row.append(unit_passed)
                 row.append(kq_title)
                 row.append(kq_viewed)
                 row.append(kq_answered)
                 row.append(kq_submited)
                 row.append(kq_reviewed)
+                row.append(kq_passed)
                 course_csv.writerow(row)
+
         course_fileinfo = ZipInfo("%s.csv" % course.slug)
 
         course_file.seek(0)
