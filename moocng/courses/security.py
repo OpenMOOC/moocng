@@ -16,6 +16,7 @@
 from datetime import date
 
 from django.contrib import messages
+from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -83,7 +84,11 @@ def check_user_can_view_course(course, request):
         if reason == 'not_active_yet':
             raise Http404()
         else:
-            raise Http410(_("We're sorry, but the course has finished"))
+            user = request.user
+            msg = _("We're sorry, but the course has finished. ")
+            if not user.is_anonymous():
+                msg += _("You could see your transcript <a href=\"%s\">here</a>") % reverse('transcript', args=(course.slug,))
+            raise Http410(msg)
 
 
 def get_course_if_user_can_view_or_404(course_slug, request):
