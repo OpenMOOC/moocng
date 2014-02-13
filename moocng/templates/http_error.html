@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="media-box">
+        <a href="#">
+            <img src="{{ theme.top_banner }}" alt="" />
+        </a>
+    </div>
+    <div class="row">
+        <section class="span8">
+            <h1>{{ title }}</h1>
+            <p>{{ message_exception }}</p>
+        </section>
+        <div class="span4">
+            <div class="media-box">
+                <img src="{{ theme.right_banner1 }}" alt="" />
+            </div>
+            <div class="media-box">
+                <img src="{{ theme.right_banner2 }}" alt="" />
+            </div>
+        </div>
+    </div>
+{% endblock %}

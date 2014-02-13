@@ -23,6 +23,7 @@ from django.utils.translation import ugettext as _
 
 
 from moocng.courses.models import Course, Unit, CourseTeacher
+from moocng.http import Http410
 
 
 def can_user_view_course(course, user):
@@ -54,7 +55,9 @@ def can_user_view_course(course, user):
             pass
 
     # at this point you don't have permissions to see a course
-    return False, 'not_active'
+    if course.is_public:
+        return False, 'not_active_outdated'
+    return False, 'not_active_yet'
 
 
 def check_user_can_view_course(course, request):
@@ -77,7 +80,10 @@ def check_user_can_view_course(course, request):
             }
             messages.warning(request, msg_table[reason])
     else:
-        raise Http404()
+        if reason == 'not_active_yet':
+            raise Http404()
+        else:
+            raise Http410(_("We're sorry, but the course has finished"))
 
 
 def get_course_if_user_can_view_or_404(course_slug, request):
