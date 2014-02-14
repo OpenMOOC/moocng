@@ -83,7 +83,7 @@ class Command(BaseCommand):
         threshold = float(course.threshold)
 
         units = Unit.objects.filter(course=course)
-        kq_headers = ["unit_title", "unit_passed" "kq_title", "kq_viewed",
+        kq_headers = ["unit_title", "unit_passed", "kq_title", "kq_viewed",
                       "kq_answered", "kq_submited", "kq_reviewed", "kq_passed"]
         course_csv.writerow(kq_headers)
 
