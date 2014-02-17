@@ -319,7 +319,6 @@ def s3_upload(user_id, kq_id, filename, file_obj):
 def course_review_upload(request, course_slug):
     if request.method == "POST":
         course = get_course_if_user_can_view_or_404(course_slug, request)
-
         file_to_upload = request.FILES.get('pr_file', None)
         submission_text = request.POST.get('pr-submission', '')
 
@@ -336,14 +335,12 @@ def course_review_upload(request, course_slug):
 
         s3_upload(request.user.id, kq.id, file_to_upload.name, file_to_upload)
         file_url = s3_url(request.user.id, file_to_upload.name, kq.id)
-
         submission = {
             "author": request.user.id,
             "author_reviews": 0,
             "text": request.POST.get('pr-submission', ''),
             "file": file_url,
-            "created": datetime.now(),
-            "reviewers": [],
+            "created": datetime.utcnow(),
             "reviews": 0,
             "course": course.id,
             "unit": unit.id,
