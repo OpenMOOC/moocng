@@ -17,6 +17,7 @@ from django.contrib.sites.models import Site, RequestSite
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
+from django.utils.translation import ugettext as _
 
 
 def site(request):
@@ -39,11 +40,15 @@ def theme(request):
             'logo': settings.STATIC_URL + u'img/logo.png',
             'subtitle': u'Knowledge for the masses',
             'top_banner': settings.STATIC_URL + u'img/top_banner.jpg',
+            'top_banner_alt': _('decorative landscape of seville'),
             'right_banner1': settings.STATIC_URL + u'img/right_banner1.jpg',
+            'right_banner1_alt': _('decorative book stack'),
             'right_banner2': settings.STATIC_URL + u'img/right_banner2.jpg',
+            'right_banner2_alt': _('decorative laptop'),
             'bootstrap_css': settings.STATIC_URL + u'css/bootstrap.min.css',
             'moocng_css': settings.STATIC_URL + u'css/moocng.css',
             'cert_banner': settings.STATIC_URL + u'img/cert_banner.png',
+            'cert_banner_alt': _('link to get a certification in this course'),
         }
     }
 

@@ -6,7 +6,7 @@
     <div class="media-box">
         {% if theme.top_banner %}
             <a href="#">
-                <img src="{{ theme.top_banner }}" alt="" />
+                <img src="{{ theme.top_banner }}" alt="{{ theme.top_banner_alt }}" />
             </a>
         {% endif %}
     </div>
@@ -21,9 +21,9 @@
                             <div class="span4 {% if not course.is_public %}draft{% endif %}">
                             <h3>
                                 {% if course.thumbnail %}
-                                    <a href="{{ course.get_absolute_url }}"><img src="{{ MEDIA_URL }}{{ course.thumbnail }}"></a>
+                                    <a href="{{ course.get_absolute_url }}"><img src="{{ MEDIA_URL }}{{ course.thumbnail }}" alt="{% if course.thumbnail_alt %}{{ course.thumbnail_alt }}{% else %}{% trans 'decorative classroom image' %}{% endif %}"></a>
                                 {% else %}
-                                    <a href="{{ course.get_absolute_url }}"><img src="{{ STATIC_URL }}img/classroom.png"></a>
+                                    <a href="{{ course.get_absolute_url }}"><img src="{{ STATIC_URL }}img/classroom.png" alt="{% trans 'decorative classroom image' %}"></a>
                                 {% endif %}
                                 <a href="{{ course.get_absolute_url }}">{{ course.name }}</a>
                             </h3>

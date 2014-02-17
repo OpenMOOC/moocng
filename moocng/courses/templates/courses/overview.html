@@ -74,7 +74,7 @@
                 {% if user.is_authenticated %}
                     <a href="{% url transcript %}#{{ course.slug }}">
                         {% if course.certification_banner %}
-                        <img class="mb20" src="{{ course.certification_banner.url }}" width="300" title="{% trans "Get a certification in this course" %}" alt="{% trans "Get a certification in this course" %}" />
+                        <img class="mb20" src="{{ course.certification_banner.url }}" width="300" title="{% trans "Get a certification in this course" %}" alt="{% if certification_alt %}{{ course.certification_alt }}{% else %}}{% trans "Get a certification in this course" %}{% endif %}" />
                         {% else %}
                         <img class="mb20" src="{{ theme.cert_banner }}" width="300" title="{% trans "Get a certification in this course" %}" alt="{% trans "Get a certification in this course" %}" />
                         {% endif %}

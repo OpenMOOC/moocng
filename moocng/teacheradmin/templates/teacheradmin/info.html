@@ -160,11 +160,23 @@
         {{ form.certification_banner }}
         {% if form.certification_banner.help_text %}<span class="help-inline">{{ form.certification_banner.help_text }}</span>{% endif %}
     </p>
+        <p>
+        {{ form.certification_alt.errors }}
+        {{ form.certification_alt.label_tag }}
+        {{ form.certification_alt }}
+        {% if form.certification_alt.help_text %}<span class="help-inline">{{ form.certification_alt.help_text }}</span>{% endif %}
+    </p>
     <p>
         {{ form.thumbnail.errors }}
         {{ form.thumbnail.label_tag }}
         {{ form.thumbnail }}
         {% if form.thumbnail.help_text %}<span class="help-inline">{{ form.thumbnail.help_text }}</span>{% endif %}
+    </p>
+    <p>
+        {{ form.thumbnail_alt.errors }}
+        {{ form.thumbnail_alt.label_tag }}
+        {{ form.thumbnail_alt }}
+        {% if form.thumbnail_alt.help_text %}<span class="help-inline">{{ form.thumbnail_alt.help_text }}</span>{% endif %}
     </p>
     <p class="form-actions">
       <input type="submit" class="btn btn-primary" value="{% trans "Save" %}" />

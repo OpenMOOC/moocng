@@ -16,6 +16,8 @@
 
 import os
 
+#from django.utils.translation import ugettext as _
+
 gettext = lambda s: s
 
 
@@ -363,11 +365,15 @@ MOOCNG_THEME = {
     #'logo': u'',
     #'subtitle': u'',
     #'top_banner': u'',
+    #'top_banner_alt': _(''),
     #'right_banner1': u'',
+    #'right_banner1_alt': _(''),
     #'right_banner2': u'',
+    #'right_banner2_alt': _(''),
     #'bootstrap_css': u'',
     #'moocng_css': u'',
     #'cert_banner': u'',
+    #'cert_banner_alt': _(''),
 }
 
 ENABLED_COMUNICATIONS = (

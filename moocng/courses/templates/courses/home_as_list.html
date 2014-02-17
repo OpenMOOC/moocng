@@ -6,7 +6,7 @@
     <div class="media-box">
         {% if theme.top_banner %}
             <a href="#">
-                <img src="{{ theme.top_banner }}" alt="" />
+                <img src="{{ theme.top_banner }}" alt="{{ theme.top_banner_alt }}" />
             </a>
         {% endif %}
     </div>
@@ -31,12 +31,12 @@
         <div class="span3">
             {% if theme.right_banner1 %}
                 <div class="media-box">
-                    <img src="{{ theme.right_banner1 }}" alt="" />
+                    <img src="{{ theme.right_banner1 }}" alt="{{ theme.right_banner1_alt }}" />
                 </div>
             {% endif %}
             {% if theme.right_banner2 %}
                 <div class="media-box">
-                    <img src="{{ theme.right_banner2 }}" alt="" />
+                    <img src="{{ theme.right_banner2 }}" alt="{{ theme.right_banner2_alt }}" />
                 </div>
             {% endif %}
         </div>

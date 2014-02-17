@@ -104,6 +104,11 @@ class Course(Sortable):
     certification_banner = models.ImageField(
         verbose_name=_(u'Certification banner'),
         upload_to='certification_banners', blank=True, null=True)
+    certification_alt = models.CharField(verbose_name=_('Certification image alternative text'), max_length=200,
+                                                 null=True, blank=True,
+                                                 help_text=_('This text is used to describe the certification image. '
+                                                             'It is necessary for accessibility ')
+                                                 )
     completion_badge = models.ForeignKey(
         Badge, blank=True, null=True, verbose_name=_(u'Completion badge'),
         related_name='course')
@@ -131,6 +136,11 @@ class Course(Sortable):
         blank=True,
         null=True
     )
+    thumbnail_alt = models.CharField(verbose_name=_('thumbnail image alternative text'), max_length=200,
+                                                 null=True, blank=True,
+                                                 help_text=_('This text is used to describe the thumbnail image. '
+                                                     'It is necessary for accessibility ')
+                                                 )
     static_page = models.OneToOneField(
         'StaticPage',
         verbose_name=_(u'Static page'),
