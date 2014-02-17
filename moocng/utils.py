@@ -16,5 +16,5 @@
 
 def use_cache(user):
     from moocng.courses.models import CourseTeacher
-    return (user.is_superuser or user.is_staff or
-            CourseTeacher.objects.filter(teacher=user.id).exists())
+    return not (user.is_superuser or user.is_staff or
+                CourseTeacher.objects.filter(teacher=user.id).exists())

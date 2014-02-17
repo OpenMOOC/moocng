@@ -24,7 +24,6 @@ from django.views import i18n
 from django.views.decorators.cache import cache_page
 
 from moocng.courses.models import Announcement
-from moocng.utils import use_cache
 
 
 def set_language(request):
@@ -55,7 +54,6 @@ def announcements(request):
     return render_to_response('portal/announcements.html', {
         'announcements': announcements,
         'view_announcement': view_announcement,
-        'use_cache': use_cache(request.user)
     }, context_instance=RequestContext(request))
 
 
@@ -64,7 +62,6 @@ def announcement_detail(request, announcement_id, announcement_slug):
     return render_to_response('portal/announcement.html', {
         'announcement': announcement,
         'view_announcement': announcement,
-        'use_cache': use_cache(request.user)
     }, context_instance=RequestContext(request))
 
 

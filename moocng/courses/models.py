@@ -37,7 +37,7 @@ from adminsortable.fields import SortableForeignKey
 from tinymce.models import HTMLField
 
 from moocng.badges.models import Badge
-from moocng.courses.cache import invalidate_template_fragment
+from moocng.courses.cache import invalidate_template_fragment_i18n
 from moocng.courses.managers import (CourseManager, UnitManager,
                                      KnowledgeQuantumManager, QuestionManager,
                                      OptionManager, AttachmentManager,
@@ -248,9 +248,9 @@ class Course(Sortable):
 
 
 def course_invalidate_cache(sender, instance, **kwargs):
-    invalidate_template_fragment('course_list')
-    invalidate_template_fragment('course_overview_main_info', instance.id)
-    invalidate_template_fragment('course_overview_secondary_info', instance.id)
+    invalidate_template_fragment_i18n('course_list')
+    invalidate_template_fragment_i18n('course_overview_main_info', instance.id)
+    invalidate_template_fragment_i18n('course_overview_secondary_info', instance.id)
 
 
 def course_stats(sender, instance, created, **kwargs):
@@ -304,8 +304,8 @@ class CourseTeacher(Sortable):
 
 def courseteacher_invalidate_cache(sender, instance, **kwargs):
     try:
-        invalidate_template_fragment('course_overview_secondary_info',
-                                     instance.course.id)
+        invalidate_template_fragment_i18n('course_overview_secondary_info',
+                                          instance.course.id)
     except Course.DoesNotExist:
         # The course is being deleted, nothing to invalidate
         pass
@@ -371,7 +371,8 @@ class Announcement(models.Model):
 def announcement_invalidate_cache(sender, instance, **kwargs):
     try:
         if instance.course:  # else: globals announcements
-            invalidate_template_fragment('course_overview_secondary_info', instance.course.id)
+            invalidate_template_fragment_i18n('course_overview_secondary_info',
+                                              instance.course.id)
     except Course.DoesNotExist:
         logger.error('Saving/removing announcement. Can\'t invalidate course '
                      'sidebar html, not valid reference to course object, '
@@ -443,8 +444,8 @@ class Unit(Sortable):
 
 def unit_invalidate_cache(sender, instance, **kwargs):
     try:
-        invalidate_template_fragment('course_overview_secondary_info',
-                                     instance.course.id)
+        invalidate_template_fragment_i18n('course_overview_secondary_info',
+                                          instance.course.id)
     except Course.DoesNotExist:
         # The course is being deleted, nothing to invalidate
         pass
