@@ -16,22 +16,30 @@
 
 from datetime import datetime, date, timedelta
 import logging
+import sys
 
 from bson import ObjectId
 from bson.errors import InvalidId
 
 from tastypie import fields
+from tastypie import http
 from tastypie.authorization import DjangoAuthorization
 from tastypie.exceptions import NotFound, BadRequest
 from tastypie.resources import ModelResource, Resource
+from tastypie.utils.mime import build_content_type
+
 
 from django.conf import settings
 from django.conf.urls import url
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db.models import Q, Count
 from django.db.models.fields.files import ImageFieldFile
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.utils import timezone
+from django.utils.cache import patch_cache_control
+from django.utils.translation import ugettext as _
+from django.views.decorators.csrf import csrf_exempt
 
 from moocng.api.authentication import (DjangoAuthentication,
                                        TeacherAuthentication,
@@ -63,7 +71,86 @@ from moocng.peerreview.utils import (kq_get_peer_review_score,
 STATS_QUEUE = 'stats'
 
 
-class CourseResource(ModelResource):
+class HandleErrorProvider(object):
+
+    def wrap_view(self, view):
+        """
+        Wraps methods so they can be called in a more functional way as well
+        as handling exceptions better.
+        """
+        @csrf_exempt
+        def wrapper(request, *args, **kwargs):
+            response_class_error = None
+            message_error = None
+            message_error_default = _('Sorry, this request could not be processed. Please try again later.')
+            try:
+                callback = getattr(self, view)
+                response = callback(request, *args, **kwargs)
+
+                if request.is_ajax():
+                    # IE excessively caches XMLHttpRequests, so we're disabling
+                    # the browser cache here.
+                    # See http://www.enhanceie.com/ie/bugs.asp for details.
+                    patch_cache_control(response, no_cache=True)
+
+                return response
+            except (BadRequest, fields.ApiFieldError), e:
+                response_class_error = http.HttpBadRequest
+            except ValidationError, e:
+                response_class_error = http.HttpBadRequest
+                message_error = ', '.join(e.messages)
+            except (NotFound, ObjectDoesNotExist), e:
+                response_class_error = HttpResponseNotFound
+            except Exception, e:
+                # This exception could be an error with sensitive information
+                message_error = message_error_default
+            if hasattr(e, 'response'):
+                return e.response
+            if message_error is None:
+                message_error = e.message
+                if not message_error:
+                    message_error = message_error_default
+            if response_class_error is None:
+                response_class_error = http.HttpApplicationError
+            data = {
+                "error_message": message_error,
+            }
+            if response_class_error != HttpResponseNotFound:
+                log = logging.getLogger('moocng.api.resources')
+                log.error('Internal Server Error: %s' % request.path, exc_info=sys.exc_info(),
+                          extra={'status_code': 500, 'request': request})
+            desired_format = self.determine_format(request)
+            serialized = self.serialize(request, data, desired_format)
+            return response_class_error(content=serialized, content_type=build_content_type(desired_format))
+
+        return wrapper
+
+
+class BaseResource(Resource, HandleErrorProvider):
+
+    def wrap_view(self, view):
+        return HandleErrorProvider.wrap_view(self, view)
+
+
+class BaseModelResource(ModelResource, HandleErrorProvider):
+
+    def wrap_view(self, view):
+        return HandleErrorProvider.wrap_view(self, view)
+
+
+class BaseMongoResource(MongoResource, HandleErrorProvider):
+
+    def wrap_view(self, view):
+        return HandleErrorProvider.wrap_view(self, view)
+
+
+class BaseMongoUserResource(MongoUserResource, HandleErrorProvider):
+
+    def wrap_view(self, view):
+        return HandleErrorProvider.wrap_view(self, view)
+
+
+class CourseResource(BaseModelResource):
 
     class Meta:
         queryset = Course.objects.all()
@@ -75,7 +162,7 @@ class CourseResource(ModelResource):
         authorization = DjangoAuthorization()
 
 
-class UnitResource(ModelResource):
+class UnitResource(BaseModelResource):
     course = fields.ToOneField(CourseResource, 'course')
 
     class Meta:
@@ -94,7 +181,7 @@ class UnitResource(ModelResource):
         return data
 
 
-class KnowledgeQuantumResource(ModelResource):
+class KnowledgeQuantumResource(BaseModelResource):
     unit = fields.ToOneField(UnitResource, 'unit')
     question = fields.ToManyField('moocng.api.resources.QuestionResource',
                                   'question_set', related_name='kq',
@@ -187,7 +274,7 @@ class KnowledgeQuantumResource(ModelResource):
         return bundle.obj.is_completed(bundle.request.user)
 
 
-class PrivateKnowledgeQuantumResource(ModelResource):
+class PrivateKnowledgeQuantumResource(BaseModelResource):
     unit = fields.ToOneField(UnitResource, 'unit')
     question = fields.ToManyField('moocng.api.resources.QuestionResource',
                                   'question_set', related_name='kq',
@@ -238,7 +325,7 @@ class PrivateKnowledgeQuantumResource(ModelResource):
         return media_content_get_thumbnail_url(bundle.obj.media_content_type, bundle.obj.media_content_id)
 
 
-class AttachmentResource(ModelResource):
+class AttachmentResource(BaseModelResource):
     kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
 
     class Meta:
@@ -254,7 +341,7 @@ class AttachmentResource(ModelResource):
         return bundle.obj.attachment.url
 
 
-class PeerReviewAssignmentResource(ModelResource):
+class PeerReviewAssignmentResource(BaseModelResource):
     kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
 
     class Meta:
@@ -282,7 +369,7 @@ class PeerReviewAssignmentResource(ModelResource):
         )
 
 
-class PrivatePeerReviewAssignmentResource(ModelResource):
+class PrivatePeerReviewAssignmentResource(BaseModelResource):
     kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
 
     class Meta:
@@ -295,7 +382,7 @@ class PrivatePeerReviewAssignmentResource(ModelResource):
         }
 
 
-class EvaluationCriterionResource(ModelResource):
+class EvaluationCriterionResource(BaseModelResource):
     assignment = fields.ToOneField(PeerReviewAssignmentResource, 'assignment')
 
     class Meta:
@@ -328,7 +415,7 @@ class EvaluationCriterionResource(ModelResource):
         )
 
 
-class PrivateEvaluationCriterionResource(ModelResource):
+class PrivateEvaluationCriterionResource(BaseModelResource):
     assignment = fields.ToOneField(PeerReviewAssignmentResource, 'assignment')
 
     class Meta:
@@ -362,7 +449,7 @@ class PrivateEvaluationCriterionResource(ModelResource):
         return results
 
 
-class PeerReviewSubmissionsResource(MongoResource):
+class PeerReviewSubmissionsResource(BaseMongoResource):
     class Meta:
         resource_name = 'peer_review_submissions'
         collection = 'peer_review_submissions'
@@ -437,8 +524,8 @@ class PeerReviewSubmissionsResource(MongoResource):
         bundle.data["reviews"] = 0
         bundle.data["author_reviews"] = 0
         bundle.data["author"] = request.user.id
-
-        _id = self._collection.insert(bundle.data, safe=True)
+        from moocng.peerreview.utils import insert_p2p_if_does_not_exists_or_raise
+        _id = insert_p2p_if_does_not_exists_or_raise(bundle.data, self._collection)
 
         bundle.obj = MongoObj(bundle.data)
         self.send_created_signal(request.user.id, bundle.obj)
@@ -449,7 +536,7 @@ class PeerReviewSubmissionsResource(MongoResource):
         return bundle
 
 
-class PeerReviewReviewsResource(MongoResource):
+class PeerReviewReviewsResource(BaseMongoResource):
     score = fields.IntegerField(readonly=True)
 
     class Meta:
@@ -511,7 +598,7 @@ class PeerReviewReviewsResource(MongoResource):
         return get_peer_review_review_score(bundle.obj.to_dict())
 
 
-class QuestionResource(ModelResource):
+class QuestionResource(BaseModelResource):
     kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
     iframe_code = fields.CharField(readonly=True)
     thumbnail_url = fields.CharField(readonly=True)
@@ -580,7 +667,7 @@ class QuestionResource(ModelResource):
         )
 
 
-class PrivateQuestionResource(ModelResource):
+class PrivateQuestionResource(BaseModelResource):
     kq = fields.ToOneField(PrivateKnowledgeQuantumResource, 'kq')
 
     class Meta:
@@ -609,7 +696,7 @@ class PrivateQuestionResource(ModelResource):
         return bundle
 
 
-class OptionResource(ModelResource):
+class OptionResource(BaseModelResource):
     question = fields.ToOneField(QuestionResource, 'question')
 
     class Meta:
@@ -662,7 +749,7 @@ class OptionResource(ModelResource):
             return bundle.obj.feedback
 
 
-class AnswerResource(MongoUserResource):
+class AnswerResource(BaseMongoUserResource):
 
     course_id = fields.IntegerField(null=False)
     unit_id = fields.IntegerField(null=False)
@@ -722,7 +809,7 @@ class AnswerResource(MongoUserResource):
         return bundle
 
 
-class ActivityResource(MongoUserResource):
+class ActivityResource(BaseMongoUserResource):
 
     course_id = fields.IntegerField(null=False)
     unit_id = fields.IntegerField(null=False)
@@ -758,7 +845,7 @@ class ActivityResource(MongoUserResource):
         }
 
 
-class UserResource(ModelResource):
+class UserResource(BaseModelResource):
 
     class Meta:
         resource_name = 'user'
@@ -854,7 +941,7 @@ class UserResource(ModelResource):
         return self.alt_get_list(request, passed_courses)
 
 
-class AssetResource(ModelResource):
+class AssetResource(BaseModelResource):
     available_in = fields.ToManyField('moocng.api.resources.AssetAvailabilityResource', 'available_in')
 
     class Meta:
@@ -887,7 +974,7 @@ class AssetResource(ModelResource):
         return results
 
 
-class PrivateAssetResource(ModelResource):
+class PrivateAssetResource(BaseModelResource):
     available_in = fields.ToManyField('moocng.api.resources.AssetAvailabilityResource', 'available_in')
 
     class Meta:
@@ -920,7 +1007,7 @@ class PrivateAssetResource(ModelResource):
         return results
 
 
-class AssetAvailabilityResource(ModelResource):
+class AssetAvailabilityResource(BaseModelResource):
 
     kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
     assets = fields.ToManyField(AssetResource, 'assets')
@@ -968,7 +1055,7 @@ class AssetAvailabilityResource(ModelResource):
         return results
 
 
-class PrivateAssetAvailabilityResource(ModelResource):
+class PrivateAssetAvailabilityResource(BaseModelResource):
 
     kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
     assets = fields.ToManyField(AssetResource, 'assets')
@@ -1018,7 +1105,7 @@ class PrivateAssetAvailabilityResource(ModelResource):
         return results
 
 
-class ReservationResource(ModelResource):
+class ReservationResource(BaseModelResource):
     user = fields.ToOneField(UserResource, 'user')
     asset = fields.ToOneField(AssetResource, 'asset')
     reserved_from = fields.ToOneField(AssetAvailabilityResource, 'reserved_from')
@@ -1070,7 +1157,7 @@ class ReservationResource(ModelResource):
         return results
 
 
-class ReservationCount(Resource):
+class ReservationCount(BaseResource):
     count = fields.IntegerField(readonly=True)
     reservation_begins = fields.DateTimeField(readonly=True)
 
@@ -1105,7 +1192,7 @@ class ReservationCount(Resource):
         return ret
 
 
-class OccupationInformation(Resource):
+class OccupationInformation(BaseResource):
     day = fields.IntegerField(readonly=True)
     occupation = fields.DecimalField(readonly=True)
 

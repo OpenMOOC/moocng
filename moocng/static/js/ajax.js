@@ -40,16 +40,20 @@ MOOC.ajax.getAbsoluteUrl = function (path) {
 
 MOOC.ajax.genericError = function (jqXHR, textStatus, errorThrown) {
     "use strict";
-    var message;
-    if (!_.isNull(textStatus)) {
+    var message,
+        responseText;
+    responseText = JSON.parse(jqXHR.responseText);
+    if (_.isString(responseText.error_message) && responseText.error_message.length > 0) {
+        message = responseText.error_message;
+    } else if (!_.isNull(textStatus)) {
         message = gettext("Error") + ": " + textStatus;
     } else {
         message = gettext("Unknown error with ajax petition");
     }
-    if (!_.isNull(errorThrown)) {
-        message += " - " + errorThrown;
+    if (jqXHR.status >= 500) {
+        message = errorThrown;
     }
-    MOOC.alerts.show(MOOC.alerts.ERROR, "AJAX " + gettext("error"), message);
+    MOOC.alerts.show(MOOC.alerts.ERROR, gettext("Error"), message);
 };
 
 MOOC.ajax.getResource = function (uri, callback) {

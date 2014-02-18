@@ -38,7 +38,7 @@ from moocng.courses.utils import send_mail_wrapper, is_course_ready
 from moocng.courses.security import get_course_if_user_can_view_or_404
 from moocng.peerreview.forms import ReviewSubmissionForm, EvalutionCriteriaResponseForm
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
-from moocng.peerreview.utils import course_get_visible_peer_review_assignments, save_review
+from moocng.peerreview.utils import course_get_visible_peer_review_assignments, save_review, insert_p2p_if_does_not_exists_or_raise
 
 
 @login_required
@@ -346,8 +346,5 @@ def course_review_upload(request, course_slug):
             "unit": unit.id,
             "kq": kq.id,
         }
-        db = get_db()
-        submissions = db.get_collection("peer_review_submissions")
-        submissions.insert(submission)
-
+        insert_p2p_if_does_not_exists_or_raise(submission)
         return HttpResponseRedirect(reverse('course_classroom', args=[course_slug]) + "#unit%d/kq%d/p" % (unit.id, kq.id))

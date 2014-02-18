@@ -16,6 +16,9 @@
 from datetime import datetime
 
 from django.db import IntegrityError
+from django.utils.translation import ugettext as _
+
+from tastypie.exceptions import BadRequest
 
 from moocng.mongodb import get_db
 from moocng.peerreview import cache
@@ -160,3 +163,12 @@ def save_review(kq, reviewer, user_reviewed, criteria, comment):
     })
 
     return peer_review_review
+
+
+def insert_p2p_if_does_not_exists_or_raise(p2p_submission, submissions=None):
+    if submissions is None:
+        db = get_db()
+        submissions = db.get_collection("peer_review_submissions")
+    if submissions.find({'kq': p2p_submission['kq'], 'author': p2p_submission['author']}).count() > 0:
+        raise BadRequest(_('You have already sent a submission. Please reload the page'))
+    return submissions.insert(p2p_submission)
