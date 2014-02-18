@@ -55,8 +55,8 @@
         {% for course_teacher in course_teachers %}
         <tr>
             <td class="hide">{{ course_teacher.id }}</td>
-            <td class="cell-drag-handle"><i class="icon-th"></i></td>
-            <td><img src="{% gravatar_for_email course_teacher.teacher.email %}" width="20" height="20" /></td>
+            <td class="cell-drag-handle"><span class="icon-th"></span></td>
+            <td><img src="{% gravatar_for_email course_teacher.teacher.email %}" width="20" height="20" alt="{% trans 'Profile image of' %} {% firstof course_teacher.teacher.get_full_name course_teacher.teacher.username %}"/></td>
             <td>{% firstof course_teacher.teacher.get_full_name course_teacher.teacher.username %}</td>
             <td class="ownership">
             {% if course_teacher.teacher.id == course.owner.id %}
@@ -69,7 +69,7 @@
             </td>
             <td class="align-right">
                 {% if course_teacher.teacher.id != course.owner.id %}
-                <i class="icon-remove pointer"></i>
+                <span class="icon-remove pointer"></span>
                 {% endif %}
             </td>
         </tr>
@@ -85,7 +85,7 @@
             <td>{% gravatar_img_for_email invitation.email 20 %}</td>
             <td>{{ invitation.email }}</td>
             <td class="align-right">
-                <i class="icon-remove pointer"></i>
+                <span class="icon-remove pointer"></span>
             </td>
         </tr>
         {% endfor %}
@@ -96,6 +96,7 @@
 <form action="" method="post" class="form-inline">
     <fieldset>
         <div class="input-append">
+            <label for="invite-teacher" class="hide">{% trans "Name or email" %}</label>
             <input id="invite-teacher" class="input-xlarge" type="text" autocomplete="off" placeholder="{% trans "Name or email" %}" />
             <input type="submit" class="btn" value="{% trans "Add" %}" />
         </div>

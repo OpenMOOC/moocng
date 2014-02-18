@@ -131,11 +131,11 @@ jQuery(document).ready(function () {
                     if (data.pending === false) {
                         html = "<tr>" +
                             "<td class='hide'>" + data.id + "</td>" +
-                            "<td class='cell-drag-handle'><i class='icon-th'></i></td>" +
+                            "<td class='cell-drag-handle'><span class='icon-th'></span></td>" +
                             "<td>" + data.gravatar + "</td>" +
                             "<td>" + data.name + "</td>" +
                             "<td class='ownership'></td>" +
-                            "<td class='align-right'><i class='icon-remove pointer'></i></td>" +
+                            "<td class='align-right'><span class='icon-remove pointer'></span></td>" +
                             "</tr>";
                         $("table#teachers > tbody").append(html);
                         $("table#teachers .icon-remove").off("click").click(removeTeacher);
@@ -143,7 +143,7 @@ jQuery(document).ready(function () {
                         html = "<tr>" +
                             "<td>" + data.gravatar + "</td>" +
                             "<td>" + data.name + "</td>" +
-                            "<td class='align-right'><i class='icon-remove pointer'></i></td>" +
+                            "<td class='align-right'><span class='icon-remove pointer'></span></td>" +
                             "</tr>";
                         $("table#invitations > tbody").append(html);
                         $("table#invitations .icon-remove").off("click").click(removeTeacher);
@@ -182,7 +182,7 @@ jQuery(document).ready(function () {
                     td.html("<span class='label label-info owner'>" + MOOC.owner +
                             "</span>");
                     td.parent().find("td:last-child").html("");
-                    originalOwner.find("td:last-child").html("<i class='icon-remove pointer'></i>");
+                    originalOwner.find("td:last-child").html("<span class='icon-remove pointer'></span>");
                     originalOwner.find(".icon-remove").click(removeTeacher);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {

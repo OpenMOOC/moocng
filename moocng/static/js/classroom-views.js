@@ -897,7 +897,7 @@ MOOC.views.Option = Backbone.View.extend({
             }
 
             if (!correct && this.model.has("feedback") && this.model.get("feedback") !== "") {
-                feedbackBtn = $("<button class='btn btn-warning' id='" + attributes.id + "-fb'><i class='icon-info-sign'></i></button>");
+                feedbackBtn = $("<button class='btn btn-warning' id='" + attributes.id + "-fb'><span class='icon-info-sign'></span></button>");
                 feedbackBtn.css("top", (top - 4) + "px");
                 feedbackBtn.css("left", (left - 32) + "px");
                 feedbackBtn.popover({

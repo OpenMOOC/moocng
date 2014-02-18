@@ -141,7 +141,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         var icon = '', badge_class = '', title_attr = '', score_obj = null, score_text = '';
 
         if (this.reviews.length < minimum_reviewers) {
-            icon = '<i class="icon-exclamation-sign icon-white"></i> ';
+            icon = '<span class="icon-exclamation-sign icon-white"></span> ';
             title_attr = ' title="' + gettext('This score will not be applied to your final score until you get the minimum number of reviews') + '"';
         }
 
@@ -168,9 +168,9 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         var html = [];
         if (this.model.get('completed')) {
             if (this.model.get("correct")) {
-                html.push('<span class="badge badge-success pull-right"><i class="icon-ok icon-white"></i> ' + MOOC.views.capitalize(gettext('correct')) + '</span>');
+                html.push('<span class="badge badge-success pull-right"><span class="icon-ok icon-white"></span> ' + MOOC.views.capitalize(gettext('correct')) + '</span>');
             } else {
-                html.push('<span class="badge badge-important pull-right"><i class="icon-remove icon-white"></i> ' + MOOC.views.capitalize(gettext('incorrect')) + '</span>');
+                html.push('<span class="badge badge-important pull-right"><span class="icon-remove icon-white"></span> ' + MOOC.views.capitalize(gettext('incorrect')) + '</span>');
             }
         } else {
             html.push(this.render_pending_badge());
@@ -273,7 +273,7 @@ MOOC.views.PeerReviewReview = Backbone.View.extend({
 
         html.push('<td>' + (this.index + 1)  + '</td>');
         html.push('<td>' + this.model.get('created').format('LLLL')  + '</td>');
-        html.push('<td><a class="btn btn-small pull-right" href="#"><i class="icon-eye-open"></i> ' + gettext('View details') + '</a>' + this.model.get('score')  + '</td>');
+        html.push('<td><a class="btn btn-small pull-right" href="#"><span class="icon-eye-open"></span> ' + gettext('View details') + '</a>' + this.model.get('score')  + '</td>');
 
         this.$el.html(html.join(""));
         return this;

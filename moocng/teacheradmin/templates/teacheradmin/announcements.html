@@ -14,10 +14,10 @@
         <td>{{ announcement.datetime }}</td>
         <td><a class="btn btn-small pull-right"
               href="{% url teacheradmin_announcements_delete course_slug=course.slug announ_id=announcement.id announ_slug=announcement.slug %}">
-            <i class="icon-remove"></i></a>
+            <span class="icon-remove"></span></a>
             <a class="btn btn-small pull-right"
               href="{% url teacheradmin_announcements_edit course_slug=course.slug announ_id=announcement.id announ_slug=announcement.slug %}">
-            <i class="icon-edit"></i></a>
+            <span class="icon-edit"></span></a>
         </td>
       </tr>
       {% endfor %}
@@ -29,6 +29,6 @@
     </div>
   {% endif %}
   <div>
-  <a class="btn" href="{% url teacheradmin_announcements_add course_slug=course.slug %}"><i class="icon-plus"></i> {% trans "Add announcement" %}</a>
+  <a class="btn" href="{% url teacheradmin_announcements_add course_slug=course.slug %}"><span class="icon-plus"></span> {% trans "Add announcement" %}</a>
 </div>
 {% endblock %}

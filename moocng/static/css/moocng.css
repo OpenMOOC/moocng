@@ -27,7 +27,7 @@ header {
 header h2 {
     margin-bottom: 0;
     padding-top: 0.5em;
-    font-size: 12pt;
+    font-size: 1.15em;
 }
 
 h1.logo a {
@@ -45,6 +45,14 @@ a.hide-text {
 
 a.hide-text:hover {
     text-decoration: none;
+}
+
+a.externallink {
+    display: block;
+    width: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #language-selector,

@@ -14,7 +14,7 @@
         <td>  {{ asset.description|safe }}</td>
         <td><a class="btn btn-small pull-right"
               href="{% url teacheradmin_assets_edit course_slug=course.slug asset_id=asset.id %}">
-            <i class="icon-edit"></i></a>
+            <span class="icon-edit"></span></a>
         </td>
       </tr>
       {% endfor %}

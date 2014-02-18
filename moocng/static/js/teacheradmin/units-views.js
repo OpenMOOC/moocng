@@ -279,7 +279,7 @@ if (_.isUndefined(window.MOOC)) {
                     });
                 }
                 node.append(block("<button id='addUnit' class='btn'>" +
-                    "<i class='icon-plus'></i> " + MOOC.trans.add + " " +
+                    "<span class='icon-plus'></span> " + MOOC.trans.add + " " +
                     MOOC.trans.unit.unit + "</button>",
                     { classes: "mb20 align-right" }));
                 $("#unit-list-container").off("sortstop")
@@ -374,10 +374,10 @@ if (_.isUndefined(window.MOOC)) {
                     header.push("<h3>" + this.model.get("title") + "</h3>");
                 }
                 header.push("<button class='btn pull-right edit' title='" + MOOC.trans.edit +
-                    " " + MOOC.trans.unit.unit + "'><i class='icon-edit'></i> " +
+                    " " + MOOC.trans.unit.unit + "'><span class='icon-edit'></span> " +
                     MOOC.trans.edit + "</button>");
                 header = header.join("");
-                add = "<button class='btn pull-right add'><i class='icon-plus'></i> " +
+                add = "<button class='btn pull-right add'><span class='icon-plus'></span> " +
                     MOOC.trans.add + " " + MOOC.trans.kq.kq + "</button>";
                 html = inlineb({ classes: "drag-handle" });
                 html += inlineb(block(header, { classes: "header" }),
@@ -515,13 +515,13 @@ if (_.isUndefined(window.MOOC)) {
 
                 header = "<h4>" + this.model.get("title") + "</h4><button " +
                     "class='btn kqedit pull-right' title='" + MOOC.trans.edit + " " +
-                    MOOC.trans.kq.kq + "'><i class='icon-edit'></i> " +
+                    MOOC.trans.kq.kq + "'><span class='icon-edit'></span> " +
                     MOOC.trans.edit + "</button>";
                 if (this.model.has("question")) {
                     header += "<span class='badge badge-inverse question " +
                         "pull-right' title='" + MOOC.trans.kq.question +
-                        "'><i class='icon-white icon-question-sign'>" +
-                        "</i></span>";
+                        "'><span class='icon-white icon-question-sign'>" +
+                        "</span></span>";
                 }
                 if (this.model.has("peer_review_assignment")) {
                     header += "<span class='badge badge-inverse peerreview " +
@@ -1822,7 +1822,7 @@ if (_.isUndefined(window.MOOC)) {
 
         Attachment: Backbone.View.extend({
             events: {
-                "click i.icon-remove": "remove"
+                "click span.icon-remove": "remove"
             },
 
             initialize: function () {
@@ -1833,7 +1833,7 @@ if (_.isUndefined(window.MOOC)) {
                 var html = "<tr id='attachment-" + this.model.get("id") + "'><td><a href='" + this.model.get("url") + "' target='_blank'>",
                     parts = this.model.get("url").split('/');
                 html += parts[parts.length - 1];
-                html += "</a></td><td class='center'><i class='icon-remove pointer'></i></td></tr>";
+                html += "</a></td><td class='center'><span class='icon-remove pointer'></span></td></tr>";
                 this.$el.append(html);
                 return this;
             },

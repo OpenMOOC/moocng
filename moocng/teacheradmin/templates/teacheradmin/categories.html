@@ -8,8 +8,9 @@
 
 {% block section %}
 {% if categories %}
+<form method="POST">{% csrf_token %}
 {% for cat_list in categories %}
-<div class="row"><form method="POST">{% csrf_token %}
+<div class="row">
     {% for category in cat_list %}
         <div class="span2">
             {% if category.cat.icon %}
@@ -24,9 +25,12 @@
     {% endfor %}
 </div>
 {% endfor %}
-<div class="row"><div class="span10 form-actions">
-    <input type="submit" class="btn btn-primary" value="{% trans "Save" %}" />
-</div></div></form>
+<div class="row">
+    <div class="span10 form-actions">
+        <input type="submit" class="btn btn-primary" value="{% trans "Save" %}" />
+    </div>
+</div>
+</form>
 {% else %}
 <div class="alert alert-info">
     <h4>{% trans "Empty" %}</h4>

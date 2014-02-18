@@ -25,7 +25,7 @@
   <input type="submit" class="btn btn-primary" value='{% trans "Review another submission" %}' />
 </form>
 {% else %}
-<p><i class="icon-warning-sign"></i> {% trans "You must send your submission before reviewing your classmates' ones" %}</p>
+<p><span class="icon-warning-sign"></span> {% trans "You must send your submission before reviewing your classmates' ones" %}</p>
 {% endif %}
 
 {% endif %}
@@ -44,7 +44,7 @@
 
 {% if pending > 0 %}
 
-<p><i class="icon-warning-sign"></i> {% blocktrans count counter=pending %}You still need to review {{ pending }} more submission.{% plural %}You still need to review {{ pending }} more submissions.{% endblocktrans %}
+<p><span class="icon-warning-sign"></span> {% blocktrans count counter=pending %}You still need to review {{ pending }} more submission.{% plural %}You still need to review {{ pending }} more submissions.{% endblocktrans %}
 </p>
 
 {% endif %}

@@ -16,14 +16,14 @@
                         <td class='span1'>{{ external_app.get_visibility_display }}</td>
                         <td class='span2'>{{ external_app.url_link|safe }}
                         </td>
-                        <td class='span2'><i class="{% get_icon_for_status external_app %}"></i> {{ external_app.get_status_display }}</td>
+                        <td class='span2'><span class="{% get_icon_for_status external_app %}"></span> {{ external_app.get_status_display }}</td>
                         <td class='span2'>
                             <a class="btn btn-small pull-right"
                               href="{% url externalapps_delete course_slug=course.slug external_app_id=external_app.id %}">
-                            <i class="icon-remove"></i></a>
+                            <span class="icon-remove"></span></a>
                             <a class="btn btn-small pull-right"
                               href="{% url externalapps_edit course_slug=course.slug external_app_id=external_app.id %}">
-                            <i class="icon-edit"></i></a>
+                            <span class="icon-edit"></span></a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -36,6 +36,6 @@
     {% endif %}
 
     <div>
-      <a class="btn" href="{% url externalapps_add course_slug=course.slug %}"><i class="icon-plus"></i> {% trans "Add external app" %}</a>
+      <a class="btn" href="{% url externalapps_add course_slug=course.slug %}"><span class="icon-plus"></span> {% trans "Add external app" %}</a>
     </div>
 {% endblock %}

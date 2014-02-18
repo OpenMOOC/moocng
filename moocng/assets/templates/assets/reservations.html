@@ -77,7 +77,7 @@
 </div>
 {% endif %}
 
-<h2>{% trans "Pending Reservations" %}</h2> 
+<h2>{% trans "Pending Reservations" %}</h2>
 {% if pending_reservations %}
 <div id="course-pending-reservations" class="well">
     {% for reservation in pending_reservations %}
@@ -108,7 +108,7 @@
 <h2>{% trans "Past Reservations" %}</h2>
 <div id="past-reservations-message">
     <button class="btn" id="past-message-btn">
-    <i class="icon-info-sign"></i>
+    <span class="icon-info-sign"></span>
     <span id="past-message">{% trans "Display past reservations" %}</span>
     </button>
 </div>

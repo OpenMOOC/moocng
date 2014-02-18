@@ -13,7 +13,7 @@
             {% blocktrans with first_name=user.first_name last_name=user.last_name %}The user "<b>{{ first_name }} {{ last_name }}</b>" has the following awards:{% endblocktrans %}
         </big>
         <a class="pull-right btn" href="https://backpack.openbadges.org" target="_blank">
-            <i class="icon-openbadges"></i> {% trans "Open Mozilla Backpack" %}
+            <span class="icon-openbadges"></span> {% trans "Open Mozilla Backpack" %}
         </a>
     </p>
     <div class="alert alert-info">
@@ -27,8 +27,8 @@
             </div>
             <div class="span10">
                 <p>
-                    <a class="btn" href="{{ award.get_image_url }}"><i class="icon-download-alt"></i> {% trans "Download Badge" %}</a>
-                    <a href="#" class="btn publish-badge" rel="{{ award.get_absolute_url }}"><i class="icon-share"></i> {% trans "Send to Mozilla Backpack" %}</a>
+                    <a class="btn" href="{{ award.get_image_url }}"><span class="icon-download-alt"></span> {% trans "Download Badge" %}</a>
+                    <a href="#" class="btn publish-badge" rel="{{ award.get_absolute_url }}"><span class="icon-share"></span> {% trans "Send to Mozilla Backpack" %}</a>
                 </p>
 
                 {% if award.badge.description %}

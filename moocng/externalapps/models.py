@@ -18,6 +18,7 @@ EXTERNAL_APPS_QUEUE = 'externalapps'
 
 externalapps = ExternalAppRegistry()
 
+
 def get_instance_types():
     return [(key, key) for key in settings.MOOCNG_EXTERNALAPPS.keys()]
 
@@ -129,7 +130,7 @@ class ExternalApp(models.Model):
         if not self.instance_ready():
             url = _('url not available')
         else:
-            url = '<a href="%s" target="_blank">%s</a>' % (self.url(), self.url())
+            url = '<a href="%s" target="_blank" title="%s" class="externallink">%s</a>' % (self.url(), self.url(), self.url())
         return url
     url_link.allow_tags = True
     url_link.short_description = _('Url')

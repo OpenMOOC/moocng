@@ -113,7 +113,7 @@
                     <pre style="height: 100px; overflow: auto;"><small>{{ criterion.evaluation_criterion_id.value|get_criterion_description|escape }}</small></pre>
                     <div class="btn-group pull-right" data-toggle="buttons-radio">
                         <button type="button" data-name="{{ criterion.value.html_name }}" data-value="" class="btn btn-warning criterion_value disabled">
-                            <i class="icon-minus"></i>
+                            <span class="icon-minus"></span>
                         </button>
                         {% for choice in criterion.value %}
                             <button type="button" data-name="{{ criterion.value.html_name }}" data-value="{{ choice.choice_value }}" class="btn criterion_value">
@@ -122,7 +122,7 @@
                         {% endfor %}
                         <input type="hidden" class="criterion_value" name="{{ criterion.value.html_name }}" value="{% if criterion.value.value %}{{ criterion.value.value }}{% endif %}">
                         <button type="button" data-name="{{ criterion.value.html_name }}" data-value="" class="btn btn-success criterion_value disabled">
-                            <i class="icon-plus"></i>
+                            <span class="icon-plus"></span>
                         </button>
                     </div>
                     {{ criterion.value.errors }}

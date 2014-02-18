@@ -23,7 +23,7 @@
         <div id='pr-description' class="mathjax"></div>
 
         <p class="align-right">
-            <button class='btn' id='pr-view-criteria'><i class="icon-info-sign"></i> {% trans "View the evaluation criteria" %}</button>
+            <button class='btn' id='pr-view-criteria'><span class="icon-info-sign"></span> {% trans "View the evaluation criteria" %}</button>
         </p>
 
         <div class="alert">
@@ -34,16 +34,16 @@
         <p>{% blocktrans with max=peer_review.text_max_size %}The max length of the text is {{ max }} characters.{% endblocktrans %}</p>
         <textarea id='pr-submission' name='pr-submission' maxlength='{{ peer_review.text_max_size }}'></textarea>
 
-        <label for='pr_file'><strong>{% trans "Attach a file to your submission:" %}</strong></label>
+        <label for='id_pr_file'><strong>{% trans "Attach a file to your submission:" %}</strong></label>
         <div class='fileupload fileupload-new' data-provides='fileupload'>
             <div class='input-append'>
                 <div class='uneditable-input span3'>
-                    <i class='icon-file fileupload-exists'></i> <span class='fileupload-preview'></span>
+                    <span class='icon-file fileupload-exists'></span> <span class='fileupload-preview'></span>
                 </div>
                 <span class='btn btn-file'>
                 <span class='fileupload-new'>{% trans "Select file" %}</span>
                 <span class='fileupload-exists'>{% trans "Change" %}</span>
-                    <input type='file' name='pr_file' />
+                    <input type='file' name='pr_file' id="id_pr_file" />
                 </span>
                 <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'>{% trans "Remove" %}</a>
             </div>
