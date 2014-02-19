@@ -364,9 +364,9 @@ def transcript(request, course_slug=None):
         course_transcript = get_object_or_404(Course, slug=course_slug)
         course_list = course_list.filter(slug=course_slug)
     courses_info = []
-    cert_url = ''
     use_old_calculus = settings.COURSES_USING_OLD_TRANSCRIPT
     for course in course_list:
+        cert_url = ''
         total_mark, units_info = get_course_mark(course, user)
         award = None
         passed = False
