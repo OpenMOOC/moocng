@@ -13,11 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from django.utils.translation import activate
+
 from celery import task
 
 from moocng.courses.utils import clone_activity_user_course
 
 
 @task
-def clone_activity_user_course_task(user, course):
+def clone_activity_user_course_task(user, course, language):
+    activate(language)
     clone_activity_user_course(user, course, force_email=True)

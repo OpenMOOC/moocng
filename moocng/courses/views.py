@@ -28,6 +28,7 @@ from django.core.validators import validate_email
 from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
+from django.utils.translation import get_language
 from django.utils.translation import ugettext as _
 
 from moocng.badges.models import Award
@@ -419,10 +420,10 @@ def clone_activity(request, course_slug):
     course = get_course_if_user_can_view_or_404(course_slug, request)
     course_student_relation = get_object_or_404(user.coursestudent_set, course=course)
     if not course_student_relation.can_clone_activity():
-        raise HttpResponseBadRequest
+        return HttpResponseBadRequest()
     course_student_relation.old_course_status = 'c'
     course_student_relation.save()
-    clone_activity_user_course_task.apply_async(args=[user, course],
+    clone_activity_user_course_task.apply_async(args=[user, course, get_language()],
                                                 queue='courses')
     message = _(u'We are cloning the activity from %(course)s. You will receive an email soon')
     messages.success(request,
