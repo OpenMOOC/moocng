@@ -6,10 +6,10 @@
 
 {% block section %}
 
-<a class="btn btn-small pull-right" href="{% url teacheradmin_announcements_edit course_slug=course.slug announ_id=announcement.id announ_slug=announcement.slug %}"><i class="icon-edit"></i>Edit</a>
+<a class="btn btn-small pull-right" href="{% url teacheradmin_announcements_edit course_slug=course.slug announ_id=announcement.id announ_slug=announcement.slug %}"><span class="icon-edit"></span>Edit</a>
 <h3>{{ announcement.title }}</h3>
 
-<strong>{% trans "Date" %}:</strong>  {{ announcement.datetime }} </li>
+<strong>{% trans "Date" %}:</strong>  {{ announcement.datetime }}
 
 <div>
   {{ announcement.content|safe }}

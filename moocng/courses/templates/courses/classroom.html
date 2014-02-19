@@ -48,6 +48,7 @@
                 <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'>{% trans "Remove" %}</a>
             </div>
         </div>
+        <input type="submit" class="hide" value="submit"/> <!-- this submit is not used is here for accesibility -->
     </form></div>
 </script>
 
@@ -89,6 +90,7 @@
         <form action="" method="post" id="new-asset-reservation-form">
             {% csrf_token %}
             <div id="new-asset-reservation-form-content"></div>
+            <input type="submit" class="hide" value="submit"/> <!-- this submit is not used is here for accesibility -->
         </form>
     </div>
     <div class="modal-footer">

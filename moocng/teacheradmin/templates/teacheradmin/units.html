@@ -51,6 +51,7 @@
                 prTooltip: "{% trans 'Peer review' %}",
                 asset: "{% trans 'AS' %}",
                 assetTip: "{% trans 'Asset Availability' %}",
+                screenshot: "{% trans 'Screenshot of ' %}",
             },
             evaluationCriterion: {
                 description: "{% trans 'Description:' %}",
@@ -75,16 +76,19 @@
     <legend>{% trans "Unit" %}</legend>
     <div class="row">
         <div class="span10 mb10">
-            <label class="required">{% trans "Status" %}</label>
-            <label for="status-published" class="radio inline pointer">
-                <input type="radio" name="status" id="status-published" /> {% trans "Published" %}
-            </label>
-            <label for="status-listable" class="radio inline pointer">
-                <input type="radio" name="status" id="status-listable" /> {% trans "Listable" %}
-            </label>
-            <label for="status-draft" class="radio inline pointer">
-                <input type="radio" name="status" id="status-draft" /> {% trans "Draft" %}
-            </label>
+            <fieldset>
+                <legend class="hide"></legend>
+                <label for="status" class="required">{% trans "Status" %}</label>
+                <label for="status-published" class="radio inline pointer">
+                    <input type="radio" name="status" id="status-published" /> {% trans "Published" %}
+                </label>
+                <label for="status-listable" class="radio inline pointer">
+                    <input type="radio" name="status" id="status-listable" /> {% trans "Listable" %}
+                </label>
+                <label for="status-draft" class="radio inline pointer">
+                    <input type="radio" name="status" id="status-draft" /> {% trans "Draft" %}
+                </label>
+            </fieldset>
         </div>
     </div>
     <div class="row">
@@ -173,17 +177,17 @@
     </div>
     <div id="noquestion" class="row mb20">
         <div class="span10 align-right">
-            <button id="addquestion" class="btn btn-primary">{% trans "Save changes and add a question to this nugget" %}</button>
+            <button id="addquestion" type="submit" class="btn btn-primary">{% trans "Save changes and add a question to this nugget" %}</button>
         </div>
     </div>
     <div id="nopeerreviewassignment" class="row mb20">
         <div class="span10 align-right">
-            <button id="addpeerreviewassignment" class="btn btn-primary">{% trans "Save changes and add a peer review assignment to this nugget" %}</button>
+            <button id="addpeerreviewassignment" class="btn btn-primary" type="submit">{% trans "Save changes and add a peer review assignment to this nugget" %}</button>
         </div>
     </div>
     <div id="noassetavailability" class="row mb20">
         <div class="span10 align-right">
-            <button id="addassetavailability" class="btn btn-primary">{% trans "Save changes and add an asset availability to this nugget" %}</button>
+            <button id="addassetavailability" class="btn btn-primary" type="submit">{% trans "Save changes and add an asset availability to this nugget" %}</button>
         </div>
     </div>
     </fieldset>
@@ -270,7 +274,7 @@
     </div>
     <div class="row">
         <div class="align-right span10">
-            <button id="go2options" class="btn btn-primary">{% trans "Save changes and edit question's options" %}</button>
+            <button id="go2options" class="btn btn-primary" type="submit">{% trans "Save changes and edit question's options" %}</button>
             <button id="delete-question" class="btn btn-danger">{% trans "Remove the question from this nugget" %}</button>
         </div>
     </div>
@@ -295,7 +299,7 @@
         </div>
         <div class="row">
             <div class="align-right">
-                <button id="addcriterion" class="btn btn-primary">{% trans "Save changes and add an evaluation criterion" %}</button>
+                <button id="addcriterion" class="btn btn-primary" type="submit">{% trans "Save changes and add an evaluation criterion" %}</button>
             </div>
         </div>
       </div>
@@ -326,12 +330,10 @@
         <div class="span4">
             <div id="assetsforadd">
             </div>
-            </br>
-            <button id="addasset" class="btn btn-primary">{% trans "Save changes and add an asset" %}</button>
+            <button id="addasset" type="submit" class="btn btn-primary mb10">{% trans "Save changes and add an asset" %}</button>
         </div>
       </div>
     </div>
-    </br>
     <div class="row">
         <div class="mb10 align-right span10">
             <button id="delete-asset-availability" class="btn btn-danger">{% trans "Remove the asset availability" %}</button>
@@ -342,7 +344,7 @@
     </div>
     <fieldset>
     <div class="row"><div class="span10 align-right"><div class="form-actions">
-        <button id="save-kq" class="btn btn-primary"><span class="icon icon-white icon-ok"></span> {% trans "Save" %}</button>
+        <button id="save-kq" type="submit" class="btn btn-primary"><span class="icon icon-white icon-ok"></span> {% trans "Save" %}</button>
         <button id="delete-kq" class="btn btn-danger"><span class="icon icon-white icon-remove"></span> {% trans "Delete" %}</button>
         <button class="btn back"><span class="icon icon-arrow-left"></span> {% trans "Back" %}</button>
     </div></div></div>

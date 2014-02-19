@@ -14,12 +14,12 @@
     {% for category in cat_list %}
         <div class="span2">
             {% if category.cat.icon %}
-            <p><img src="{{category.cat.icon.url}}" alt="{% trans "Category's icon" %}" /></p>
+            <p><img src="{{category.cat.icon.url}}" alt="{% trans "Category's icon" %}: {{ cat.name }}" /></p>
             {% else %}
             <p><img src="{{ STATIC_URL }}/img/no-image.png" alt="{% trans "This category doesn't have an icon" %}" title="{% trans "This category doesn't have an icon" %}" /></p>
             {% endif %}
             <p><label for="cat-{{ category.cat.slug }}" class="pointer">
-                <input type="checkbox" name="cat-{{ category.cat.slug }}" id="cat-{{ category.cat.slug }}" {% if category.checked %} checked {% endif %} /> {{ category.cat.name }}
+                <input type="checkbox" name="cat-{{ category.cat.slug }}" id="cat-{{ category.cat.slug }}" {% if category.checked %} checked="checked" {% endif %} /> {{ category.cat.name }}
             </label></p>
         </div>
     {% endfor %}

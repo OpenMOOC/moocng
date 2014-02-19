@@ -9,7 +9,7 @@
                 <div class="banner"><img src="{{ first_category.banner.url }}" alt="{% trans "Category's background banner" %}" /></div>
             {% endif %}
             {% if first_category.icon %}
-                <img class="icon {% if first_category.banner %}center{% endif %}" src="{{first_category.icon.url}}" alt="{% trans "Category's icon" %}" />
+                <img class="icon {% if first_category.banner %}center{% endif %}" src="{{first_category.icon.url}}" alt="{% trans "Category's icon" %}: {{ cat.name }}" />
             {% endif %}
             <h1>{{ first_category.name }}{% if other_categories %}, {% for cat in other_categories %}{{ cat.name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% endif %}</h1>
         </div>

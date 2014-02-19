@@ -229,7 +229,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
     render: function () {
         "use strict";
-        var html = ["<b>" + this.model.truncateTitle(40) + "</b>"];
+        var html = ["<strong>" + this.model.truncateTitle(40) + "</strong>"];
 
         this.$el.attr("title", this.model.get('title'));
 

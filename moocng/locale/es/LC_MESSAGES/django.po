@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-17 12:22+0100\n"
+"POT-Creation-Date: 2014-02-19 10:00+0100\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Pablo Martin <goinnn@gmail.com>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -118,7 +118,7 @@ msgstr "Píldora"
 
 #: assets/models.py:61
 #: teacheradmin/templates/teacheradmin/base_teacheradmin.html:17
-#: teacheradmin/templates/teacheradmin/units.html:322
+#: teacheradmin/templates/teacheradmin/units.html:324
 msgid "Assets"
 msgstr "Recursos"
 
@@ -308,8 +308,8 @@ msgstr ""
 "se puede deshacer."
 
 #: assets/templates/assets/reservations.html:49
-#: teacheradmin/templates/teacheradmin/units.html:125
-#: teacheradmin/templates/teacheradmin/units.html:346
+#: teacheradmin/templates/teacheradmin/units.html:126
+#: teacheradmin/templates/teacheradmin/units.html:348
 msgid "Back"
 msgstr "Atrás"
 
@@ -359,8 +359,8 @@ msgstr "Reservas Pendientes"
 #: courses/templates/admin/courses/question/options.html:163
 #: courses/templates/courses/classroom.html:48
 #: teacheradmin/templates/teacheradmin/question.html:112
-#: teacheradmin/templates/teacheradmin/units.html:201
-#: teacheradmin/templates/teacheradmin/units.html:206
+#: teacheradmin/templates/teacheradmin/units.html:203
+#: teacheradmin/templates/teacheradmin/units.html:208
 msgid "Remove"
 msgstr "Eliminar"
 
@@ -596,7 +596,7 @@ msgstr "lista de revocación"
 msgid "revocations list"
 msgstr "lista de revocaciones"
 
-#: badges/models.py:238 externalapps/models.py:125 externalapps/models.py:135
+#: badges/models.py:238 externalapps/models.py:126 externalapps/models.py:136
 msgid "Url"
 msgstr "Url"
 
@@ -646,7 +646,7 @@ msgid "You haven't earned badges yet."
 msgstr "Aún no has obtenido ninguna medalla."
 
 #: categories/admin.py:11
-#: teacheradmin/templates/teacheradmin/categories.html:18
+#: teacheradmin/templates/teacheradmin/categories.html:19
 msgid "This category doesn't have an icon"
 msgstr "Esta categoría no tiene un icono asociado"
 
@@ -655,7 +655,7 @@ msgid "Slug"
 msgstr "Slug"
 
 #: categories/models.py:14 categories/templates/categories/category.html:12
-#: teacheradmin/templates/teacheradmin/categories.html:16
+#: teacheradmin/templates/teacheradmin/categories.html:17
 msgid "Category's icon"
 msgstr "Icono de la categoría"
 
@@ -703,7 +703,7 @@ msgid "Classes End"
 msgstr "Final de las Clases"
 
 #: categories/templates/categories/category.html:43
-#: teacheradmin/templates/teacheradmin/categories.html:32
+#: teacheradmin/templates/teacheradmin/categories.html:36
 msgid "Empty"
 msgstr "Vacío"
 
@@ -713,7 +713,7 @@ msgstr "No hay cursos aún que tengan esta categoría o categorías asociada."
 
 #: contact/email.py:29 contact/forms.py:37 courses/models.py:308
 #: courses/models.py:331 courses/models.py:356 courses/models.py:397
-#: externalapps/models.py:49 teacheradmin/models.py:38
+#: externalapps/models.py:50 teacheradmin/models.py:38
 #: teacheradmin/models.py:59 teacheradmin/models.py:65
 #: teacheradmin/templates/teacheradmin/stats.html:51
 #: teacheradmin/templates/teacheradmin/stats.html:92
@@ -755,8 +755,8 @@ msgstr "Otro"
 
 #: contact/models.py:23 courses/models.py:285 courses/models.py:353
 #: courses/models.py:396 courses/models.py:487 peerreview/models.py:90
-#: teacheradmin/templates/teacheradmin/units.html:92
-#: teacheradmin/templates/teacheradmin/units.html:141
+#: teacheradmin/templates/teacheradmin/units.html:93
+#: teacheradmin/templates/teacheradmin/units.html:142
 msgid "Title"
 msgstr "Título"
 
@@ -782,7 +782,7 @@ msgstr ""
 "será enviada al responsable apropiado. Pronto contactaremos con usted para "
 "informarle del estado de su petición."
 
-#: contact/templates/contact/contact.html:6 templates/base.html:101
+#: contact/templates/contact/contact.html:6 templates/base.html:97
 msgid "Contact"
 msgstr "Contacto"
 
@@ -873,11 +873,11 @@ msgstr "Público objetivo"
 msgid "Estimated effort"
 msgstr "Esfuerzo estimado"
 
-#: courses/models.py:70 teacheradmin/templates/teacheradmin/units.html:113
+#: courses/models.py:70 teacheradmin/templates/teacheradmin/units.html:114
 msgid "Start date"
 msgstr "Fecha de inicio"
 
-#: courses/models.py:72 teacheradmin/templates/teacheradmin/units.html:117
+#: courses/models.py:72 teacheradmin/templates/teacheradmin/units.html:118
 msgid "End date"
 msgstr "Fecha de fin"
 
@@ -895,8 +895,8 @@ msgid "Students"
 msgstr "Alumnos"
 
 #: courses/models.py:84 courses/models.py:493 courses/models.py:628
-#: teacheradmin/templates/teacheradmin/units.html:145
-#: teacheradmin/templates/teacheradmin/units.html:250
+#: teacheradmin/templates/teacheradmin/units.html:146
+#: teacheradmin/templates/teacheradmin/units.html:252
 msgid "Content type"
 msgstr "Tipo de contenido"
 
@@ -916,7 +916,7 @@ msgstr "Total de reservas permitidas:"
 msgid "Pass threshold"
 msgstr "Nota de corte (Umbral)"
 
-#: courses/models.py:103 teacheradmin/templates/teacheradmin/info.html:153
+#: courses/models.py:103 teacheradmin/templates/teacheradmin/info.html:156
 msgid "Certification available"
 msgstr "Certificación disponible"
 
@@ -948,13 +948,13 @@ msgstr "Método de matriculación"
 #: courses/templates/courses/home_as_grid.html:33
 #: courses/templates/courses/home_as_list.html:22
 #: teacheradmin/templates/teacheradmin/units.html:38
-#: teacheradmin/templates/teacheradmin/units.html:86
+#: teacheradmin/templates/teacheradmin/units.html:87
 msgid "Draft"
 msgstr "Borrador"
 
 #: courses/models.py:123 courses/models.py:425
 #: teacheradmin/templates/teacheradmin/units.html:40
-#: teacheradmin/templates/teacheradmin/units.html:80
+#: teacheradmin/templates/teacheradmin/units.html:81
 msgid "Published"
 msgstr "Publicado"
 
@@ -963,7 +963,7 @@ msgid "Hidden"
 msgstr "Oculto"
 
 #: courses/models.py:128 courses/models.py:429
-#: teacheradmin/templates/teacheradmin/units.html:78
+#: teacheradmin/templates/teacheradmin/units.html:79
 msgid "Status"
 msgstr "Estado"
 
@@ -1079,24 +1079,24 @@ msgid "announcements"
 msgstr "comunicados"
 
 #: courses/models.py:400 teacheradmin/templates/teacheradmin/units.html:41
-#: teacheradmin/templates/teacheradmin/units.html:98
+#: teacheradmin/templates/teacheradmin/units.html:99
 msgid "Normal"
 msgstr "Normal"
 
 #: courses/models.py:401 teacheradmin/templates/teacheradmin/units.html:42
-#: teacheradmin/templates/teacheradmin/units.html:99
+#: teacheradmin/templates/teacheradmin/units.html:100
 msgid "Homework"
 msgstr "Tareas"
 
 #: courses/models.py:402 teacheradmin/templates/teacheradmin/units.html:43
-#: teacheradmin/templates/teacheradmin/units.html:100
+#: teacheradmin/templates/teacheradmin/units.html:101
 msgid "Exam"
 msgstr "Examen"
 
 #: courses/models.py:404 courses/models.py:726
 #: courses/templates/admin/courses/question/options.html:122
 #: teacheradmin/templates/teacheradmin/question.html:71
-#: teacheradmin/templates/teacheradmin/units.html:96
+#: teacheradmin/templates/teacheradmin/units.html:97
 msgid "Type"
 msgstr "Tipo"
 
@@ -1125,13 +1125,13 @@ msgstr ""
 "respuestas, pero no ver las soluciones."
 
 #: courses/models.py:417 courses/models.py:489
-#: teacheradmin/templates/teacheradmin/units.html:104
-#: teacheradmin/templates/teacheradmin/units.html:157
+#: teacheradmin/templates/teacheradmin/units.html:105
+#: teacheradmin/templates/teacheradmin/units.html:158
 msgid "Weight"
 msgstr "Peso"
 
 #: courses/models.py:424 teacheradmin/templates/teacheradmin/units.html:39
-#: teacheradmin/templates/teacheradmin/units.html:83
+#: teacheradmin/templates/teacheradmin/units.html:84
 msgid "Listable"
 msgstr "Listable"
 
@@ -1147,19 +1147,19 @@ msgstr "módulos"
 #: teacheradmin/templates/teacheradmin/stats.html:93
 #: teacheradmin/templates/teacheradmin/stats.html:95
 #: teacheradmin/templates/teacheradmin/stats.html:131
-#: teacheradmin/templates/teacheradmin/units.html:75
+#: teacheradmin/templates/teacheradmin/units.html:76
 msgid "Unit"
 msgstr "Módulo"
 
 #: courses/models.py:502 courses/templates/courses/classroom.html:154
 #: teacheradmin/templates/teacheradmin/units.html:46
-#: teacheradmin/templates/teacheradmin/units.html:170
+#: teacheradmin/templates/teacheradmin/units.html:171
 msgid "Instructor's comments"
 msgstr "Comentarios del profesor"
 
 #: courses/models.py:505 courses/templates/courses/classroom.html:155
 #: teacheradmin/templates/teacheradmin/units.html:47
-#: teacheradmin/templates/teacheradmin/units.html:166
+#: teacheradmin/templates/teacheradmin/units.html:167
 msgid "Supplementary material"
 msgstr "Material suplementario"
 
@@ -1175,7 +1175,7 @@ msgstr "píldoras"
 #: teacheradmin/templates/teacheradmin/stats.html:42
 #: teacheradmin/templates/teacheradmin/stats.html:132
 #: teacheradmin/templates/teacheradmin/stats.html:134
-#: teacheradmin/templates/teacheradmin/units.html:132
+#: teacheradmin/templates/teacheradmin/units.html:133
 msgid "Nugget"
 msgstr "Píldora"
 
@@ -1191,7 +1191,7 @@ msgstr "adjunto"
 msgid "attachments"
 msgstr "adjuntos"
 
-#: courses/models.py:638 teacheradmin/templates/teacheradmin/units.html:264
+#: courses/models.py:638 teacheradmin/templates/teacheradmin/units.html:266
 msgid "Solution text"
 msgstr "Texto con la solución"
 
@@ -1228,7 +1228,7 @@ msgid "{0} - Question {1}"
 msgstr "{0} - Pregunta {1}"
 
 #: courses/models.py:714 courses/templates/courses/classroom.html:187
-#: teacheradmin/templates/teacheradmin/units.html:134
+#: teacheradmin/templates/teacheradmin/units.html:135
 msgid "Question"
 msgstr "Pregunta"
 
@@ -1347,7 +1347,7 @@ msgstr "Error desconocido"
 
 #: courses/templates/admin/courses/course/clone_form.html:24
 #: courses/templates/admin/courses/question/options.html:56
-#: templates/base.html:63 templates/admin/massive_global_form.html:12
+#: templates/base.html:59 templates/admin/massive_global_form.html:12
 msgid "Home"
 msgstr "Inicio"
 
@@ -1370,7 +1370,7 @@ msgstr "Opciones"
 #: courses/templates/admin/courses/question/options.html:59
 #: courses/templates/admin/courses/question/options.html:83
 #: teacheradmin/templates/teacheradmin/question.html:44
-#: teacheradmin/templates/teacheradmin/teachers.html:100
+#: teacheradmin/templates/teacheradmin/teachers.html:101
 #: teacheradmin/templates/teacheradmin/units.html:32
 msgid "Add"
 msgstr "Añadir"
@@ -1466,6 +1466,7 @@ msgstr "Nombre del curso"
 
 #: courses/templates/courses/add.html:39
 #: teacheradmin/templates/teacheradmin/teachers.html:99
+#: teacheradmin/templates/teacheradmin/teachers.html:100
 msgid "Name or email"
 msgstr "Nombre o correo electrónico"
 
@@ -1480,8 +1481,8 @@ msgstr "Enviar"
 #: courses/templates/courses/classroom.html:76
 #: courses/templates/courses/classroom.html:95
 #: peerreview/templates/peerreview/review_review.html:55
-#: teacheradmin/templates/teacheradmin/units.html:398
-#: teacheradmin/templates/teacheradmin/units.html:413
+#: teacheradmin/templates/teacheradmin/units.html:400
+#: teacheradmin/templates/teacheradmin/units.html:415
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -1550,12 +1551,12 @@ msgid "Attach a file to your submission:"
 msgstr "Adjunte un fichero a su entrega:"
 
 #: courses/templates/courses/classroom.html:44
-#: teacheradmin/templates/teacheradmin/units.html:197
+#: teacheradmin/templates/teacheradmin/units.html:199
 msgid "Select file"
 msgstr "Seleccione un fichero"
 
 #: courses/templates/courses/classroom.html:45
-#: teacheradmin/templates/teacheradmin/units.html:198
+#: teacheradmin/templates/teacheradmin/units.html:200
 msgid "Change"
 msgstr "Cambie"
 
@@ -1592,8 +1593,8 @@ msgid "New reservation"
 msgstr "Nueva reserva"
 
 #: courses/templates/courses/classroom.html:96
-#: teacheradmin/templates/teacheradmin/units.html:399
-#: teacheradmin/templates/teacheradmin/units.html:414
+#: teacheradmin/templates/teacheradmin/units.html:401
+#: teacheradmin/templates/teacheradmin/units.html:416
 msgid "Confirm"
 msgstr "Confirmar"
 
@@ -1981,7 +1982,7 @@ msgstr "Esfuerzo Estimado"
 #: portal/templates/portal/announcements.html:10
 #: portal/templates/portal/announcements.html:16
 #: teacheradmin/templates/teacheradmin/base_teacheradmin.html:22
-#: templates/base.html:76
+#: templates/base.html:72
 msgid "Announcements"
 msgstr "Comunicados"
 
@@ -2134,88 +2135,88 @@ msgid "Oops! It might seem you have tried tampering the object status..."
 msgstr ""
 "Oops! Parece ser que alguien ha intentado cambiar el estado del objeto..."
 
-#: externalapps/models.py:36
+#: externalapps/models.py:37
 msgid "Created"
 msgstr "Creada"
 
-#: externalapps/models.py:37
+#: externalapps/models.py:38
 msgid "Not Created"
 msgstr "No creada"
 
-#: externalapps/models.py:38
+#: externalapps/models.py:39
 msgid "In Progress"
 msgstr "En progreso"
 
-#: externalapps/models.py:39
+#: externalapps/models.py:40
 #: peerreview/templates/peerreview/review_review.html:62
 #: teacheradmin/templates/teacheradmin/stats.html:162
 #: teacheradmin/templates/teacheradmin/teachers.html:41
 #: teacheradmin/templates/teacheradmin/teachers.html:45
 #: teacheradmin/templates/teacheradmin/teachers.html:49
-#: teacheradmin/templates/teacheradmin/units.html:373
-#: teacheradmin/templates/teacheradmin/units.html:377
-#: teacheradmin/templates/teacheradmin/units.html:381
-#: teacheradmin/templates/teacheradmin/units.html:385
+#: teacheradmin/templates/teacheradmin/units.html:375
+#: teacheradmin/templates/teacheradmin/units.html:379
+#: teacheradmin/templates/teacheradmin/units.html:383
+#: teacheradmin/templates/teacheradmin/units.html:387
 msgid "Error"
 msgstr "Error"
 
-#: externalapps/models.py:43
+#: externalapps/models.py:44
 msgid "Just me"
 msgstr "Sólo yo"
 
-#: externalapps/models.py:44
+#: externalapps/models.py:45
 msgid "Everybody"
 msgstr "Todo el mundo"
 
-#: externalapps/models.py:55
+#: externalapps/models.py:56
 msgid "Visible app name"
 msgstr "Nombre visible en la web"
 
-#: externalapps/models.py:62
+#: externalapps/models.py:63
 msgid "Base url of the instance"
 msgstr "Url base de la instancia"
 
-#: externalapps/models.py:68
+#: externalapps/models.py:69
 msgid "IP address of the instance"
 msgstr "Dirección ip de la instancia"
 
-#: externalapps/models.py:74
+#: externalapps/models.py:75
 msgid "Slug for the instance"
 msgstr "Slug de la instancia"
 
-#: externalapps/models.py:81
+#: externalapps/models.py:82
 msgid "Creation status of the instance"
 msgstr "Estado de la instancia"
 
-#: externalapps/models.py:89
+#: externalapps/models.py:90
 msgid "Type of instance"
 msgstr "Tipo de instancia"
 
-#: externalapps/models.py:98
+#: externalapps/models.py:99
 msgid "Execute task on save"
 msgstr "Ejecutar tarea al guardar (sólo admin)"
 
-#: externalapps/models.py:104
+#: externalapps/models.py:105
 msgid "Visibility of the instance"
 msgstr "Visibilidad de la instancia"
 
-#: externalapps/models.py:115
+#: externalapps/models.py:116
 msgid "external app"
 msgstr "aplicación externa"
 
-#: externalapps/models.py:116
+#: externalapps/models.py:117
 msgid "external apps"
 msgstr "aplicaciones externas"
 
-#: externalapps/models.py:123 externalapps/models.py:130
+#: externalapps/models.py:124 externalapps/models.py:131
 msgid "url not available"
 msgstr "Url no disponible"
 
-#: externalapps/models.py:154
+#: externalapps/models.py:155
 msgid "There are no instances available"
 msgstr "No hay instancias disponibles"
 
-#: externalapps/models.py:156
+#: externalapps/models.py:157
 #, python-format
 msgid "There is no registered class to manage \"%s\" external app"
 msgstr ""
@@ -2259,6 +2260,15 @@ msgstr "Guardar cambios"
 #: externalapps/templates/external_app_add_or_edit.html:16
 msgid "Create external app"
 msgstr "Crear aplicación auxiliar"
+
+#: externalapps/templates/externalapps_list.html:23
+#, fuzzy
+msgid "remove"
+msgstr "Eliminar"
+
+#: externalapps/templates/externalapps_list.html:26
+msgid "edit"
+msgstr ""
 
 #: externalapps/templates/externalapps_list.html:34
 msgid "There isn't external apps yet"
@@ -2584,7 +2594,7 @@ msgid "Image must be {0}px x {1}px"
 msgstr "La imagen debe tener {0}px x {1}px"
 
 #: teacheradmin/forms.py:76 teacheradmin/forms.py:78
-#: teacheradmin/templates/teacheradmin/units.html:382
+#: teacheradmin/templates/teacheradmin/units.html:384
 msgid "Invalid content id or url"
 msgstr "Id o url del contenido inválido"
 
@@ -2818,14 +2828,14 @@ msgstr "Lo sentimos"
 msgid "But this section is not available yet."
 msgstr "Pero esta sección aún no está disponible."
 
-#: teacheradmin/templates/teacheradmin/categories.html:28
-#: teacheradmin/templates/teacheradmin/info.html:182
-#: teacheradmin/templates/teacheradmin/units.html:123
-#: teacheradmin/templates/teacheradmin/units.html:344
+#: teacheradmin/templates/teacheradmin/categories.html:30
+#: teacheradmin/templates/teacheradmin/info.html:185
+#: teacheradmin/templates/teacheradmin/units.html:124
+#: teacheradmin/templates/teacheradmin/units.html:346
 msgid "Save"
 msgstr "Guardar"
 
-#: teacheradmin/templates/teacheradmin/categories.html:33
+#: teacheradmin/templates/teacheradmin/categories.html:37
 msgid "There aren't categories defined yet, please contact an administrator."
 msgstr ""
 "No hay aún ninguna categoría definida, por favor, contacte con un "
@@ -2912,13 +2922,13 @@ msgstr "No se ha enviado aún ningún correo electrónico masivo."
 msgid "Sent at"
 msgstr "Enviado el"
 
-#: teacheradmin/templates/teacheradmin/info.html:39
-#: teacheradmin/templates/teacheradmin/units.html:153
-#: teacheradmin/templates/teacheradmin/units.html:258
+#: teacheradmin/templates/teacheradmin/info.html:42
+#: teacheradmin/templates/teacheradmin/units.html:154
+#: teacheradmin/templates/teacheradmin/units.html:260
 msgid "Content id or url"
 msgstr "Id o url del contenido"
 
-#: teacheradmin/templates/teacheradmin/info.html:106
+#: teacheradmin/templates/teacheradmin/info.html:109
 msgid "Extra info"
 msgstr "Información extra"
 
@@ -3053,7 +3063,7 @@ msgstr "Revisiones totales enviadas por los estudiantes"
 
 #: teacheradmin/templates/teacheradmin/stats.html:163
 #: teacheradmin/templates/teacheradmin/teachers.html:50
-#: teacheradmin/templates/teacheradmin/units.html:374
+#: teacheradmin/templates/teacheradmin/units.html:376
 msgid "Something went wrong, please try again later."
 msgstr "Algo ha ido mal, por favor pruebe de nuevo más tarde."
 
@@ -3069,8 +3079,8 @@ msgstr "Propietario"
 #: teacheradmin/templates/teacheradmin/teachers.html:29
 #: teacheradmin/templates/teacheradmin/teachers.html:33
 #: teacheradmin/templates/teacheradmin/teachers.html:37
-#: teacheradmin/templates/teacheradmin/units.html:365
-#: teacheradmin/templates/teacheradmin/units.html:369
+#: teacheradmin/templates/teacheradmin/units.html:367
+#: teacheradmin/templates/teacheradmin/units.html:371
 msgid "Success"
 msgstr "Éxito"
 
@@ -3100,6 +3110,11 @@ msgstr "El email introducido ya ha sido invitado a este curso."
 #: teacheradmin/templates/teacheradmin/teachers.html:53
 msgid "Current teachers"
 msgstr "Profesores actuales"
+
+#: teacheradmin/templates/teacheradmin/teachers.html:59
+#, fuzzy
+msgid "Profile image of"
+msgstr "Preferencias del perfil"
 
 #: teacheradmin/templates/teacheradmin/teachers.html:66
 msgid "Transfer ownership"
@@ -3131,98 +3146,107 @@ msgid "It has a question"
 msgstr "Tiene una pregunta"
 
 #: teacheradmin/templates/teacheradmin/units.html:51
-#: teacheradmin/templates/teacheradmin/units.html:135
+#: teacheradmin/templates/teacheradmin/units.html:136
 msgid "Peer review"
 msgstr "Actividad revisada por compañeros"
 
 #: teacheradmin/templates/teacheradmin/units.html:53
-#: teacheradmin/templates/teacheradmin/units.html:136
+#: teacheradmin/templates/teacheradmin/units.html:137
 msgid "Asset Availability"
 msgstr "Disponibilidad de Recursos"
 
-#: teacheradmin/templates/teacheradmin/units.html:56
-#: teacheradmin/templates/teacheradmin/units.html:61
+#: teacheradmin/templates/teacheradmin/units.html:54
+msgid "Screenshot of "
+msgstr "Captura de "
+
+#: teacheradmin/templates/teacheradmin/units.html:57
+#: teacheradmin/templates/teacheradmin/units.html:62
 msgid "Description:"
 msgstr "Descripción:"
 
-#: teacheradmin/templates/teacheradmin/units.html:57
+#: teacheradmin/templates/teacheradmin/units.html:58
 msgid "Remove criterion"
 msgstr "Eliminar criterio"
 
-#: teacheradmin/templates/teacheradmin/units.html:58
+#: teacheradmin/templates/teacheradmin/units.html:59
 msgid "Title:"
 msgstr "Título:"
 
-#: teacheradmin/templates/teacheradmin/units.html:62
+#: teacheradmin/templates/teacheradmin/units.html:63
 msgid "Remove Asset"
 msgstr "Eliminar Recurso"
 
-#: teacheradmin/templates/teacheradmin/units.html:63
+#: teacheradmin/templates/teacheradmin/units.html:64
 msgid "Name:"
 msgstr "Nombre:"
 
-#: teacheradmin/templates/teacheradmin/units.html:64
+#: teacheradmin/templates/teacheradmin/units.html:65
 msgid "Add an asset:"
 msgstr "Añadir un recurso:"
 
-#: teacheradmin/templates/teacheradmin/units.html:124
-#: teacheradmin/templates/teacheradmin/units.html:345
+#: teacheradmin/templates/teacheradmin/units.html:125
+#: teacheradmin/templates/teacheradmin/units.html:347
 msgid "Delete"
 msgstr "Borrar"
 
-#: teacheradmin/templates/teacheradmin/units.html:133
+#: teacheradmin/templates/teacheradmin/units.html:134
 msgid "Attachments"
 msgstr "Adjuntos"
 
-#: teacheradmin/templates/teacheradmin/units.html:176
+#: teacheradmin/templates/teacheradmin/units.html:177
 msgid "Save changes and add a question to this nugget"
 msgstr "Guardar cambios y añadir una pregunta a esta píldora"
 
 # No se añade "to this nugget", por considerar que si no quedaría muy largo el botón.
-#: teacheradmin/templates/teacheradmin/units.html:181
+#: teacheradmin/templates/teacheradmin/units.html:182
 msgid "Save changes and add a peer review assignment to this nugget"
 msgstr "Guardar cambios y añadir una actividad revisada por compañeros"
 
-#: teacheradmin/templates/teacheradmin/units.html:186
+#: teacheradmin/templates/teacheradmin/units.html:187
 msgid "Save changes and add an asset availability to this nugget"
 msgstr "Guardar cambios y añadir disponibilidad de recursos a esta píldora"
 
-#: teacheradmin/templates/teacheradmin/units.html:206
+#: teacheradmin/templates/teacheradmin/units.html:192
+#, fuzzy
+msgid "File"
+msgstr "Nombre del fichero adjunto"
+
+#: teacheradmin/templates/teacheradmin/units.html:208
 msgid "File name"
 msgstr "Nombre del fichero adjunto"
 
-#: teacheradmin/templates/teacheradmin/units.html:210
+#: teacheradmin/templates/teacheradmin/units.html:212
 msgid "There are no attachments yet."
 msgstr "No hay aún ningún fichero adjunto."
 
-#: teacheradmin/templates/teacheradmin/units.html:215
+#: teacheradmin/templates/teacheradmin/units.html:217
 msgid "Question's background"
 msgstr "Fondo de la pregunta"
 
-#: teacheradmin/templates/teacheradmin/units.html:217
-#: teacheradmin/templates/teacheradmin/units.html:218
+#: teacheradmin/templates/teacheradmin/units.html:219
+#: teacheradmin/templates/teacheradmin/units.html:220
 msgid "Nugget's video last frame"
 msgstr "Último fotograma del vídeo de la píldora"
 
-#: teacheradmin/templates/teacheradmin/units.html:219
+#: teacheradmin/templates/teacheradmin/units.html:221
 msgid "Use a blank canvas instead"
 msgstr "Usar en su lugar un lienzo blanco"
 
-#: teacheradmin/templates/teacheradmin/units.html:219
+#: teacheradmin/templates/teacheradmin/units.html:221
 msgid "Don't use the last frame"
 msgstr "No usar la última imagen"
 
-#: teacheradmin/templates/teacheradmin/units.html:220
+#: teacheradmin/templates/teacheradmin/units.html:222
 msgid "Force processing the nugget's video"
 msgstr "Forzar el procesado del vídeo de la píldora"
 
-#: teacheradmin/templates/teacheradmin/units.html:224
-#: teacheradmin/templates/teacheradmin/units.html:231
+#: teacheradmin/templates/teacheradmin/units.html:226
+#: teacheradmin/templates/teacheradmin/units.html:233
 msgid "Using blank canvas"
 msgstr "Se está usando un lienzo blanco"
 
-#: teacheradmin/templates/teacheradmin/units.html:225
-#: teacheradmin/templates/teacheradmin/units.html:232
+#: teacheradmin/templates/teacheradmin/units.html:227
+#: teacheradmin/templates/teacheradmin/units.html:234
 msgid ""
 "You are using a blank canvas for the question instead of the last frame of "
 "the nugget's video."
@@ -3230,105 +3254,105 @@ msgstr ""
 "Estás usando un lienzo blanco para el fondo de la pregunta, en lugar de usar "
 "la última imagen del vídeo de la píldora."
 
-#: teacheradmin/templates/teacheradmin/units.html:227
+#: teacheradmin/templates/teacheradmin/units.html:229
 msgid "Use the last frame of the nugget's video"
 msgstr "Usar la última imagen del vídeo de la píldora"
 
-#: teacheradmin/templates/teacheradmin/units.html:227
+#: teacheradmin/templates/teacheradmin/units.html:229
 msgid "Use the last frame"
 msgstr "Usar la última imagen"
 
-#: teacheradmin/templates/teacheradmin/units.html:239
+#: teacheradmin/templates/teacheradmin/units.html:241
 msgid "Question's solution"
 msgstr "Solución de la pregunta"
 
-#: teacheradmin/templates/teacheradmin/units.html:243
+#: teacheradmin/templates/teacheradmin/units.html:245
 msgid "Use a media content as solution"
 msgstr "Usar un contenido multimedia como solución"
 
-#: teacheradmin/templates/teacheradmin/units.html:244
+#: teacheradmin/templates/teacheradmin/units.html:246
 msgid "Use a text as solution"
 msgstr "Usar un texto como solución"
 
-#: teacheradmin/templates/teacheradmin/units.html:272
+#: teacheradmin/templates/teacheradmin/units.html:274
 msgid "Save changes and edit question's options"
 msgstr "Guardar cambios y editar las opciones de la pregunta"
 
-#: teacheradmin/templates/teacheradmin/units.html:273
+#: teacheradmin/templates/teacheradmin/units.html:275
 msgid "Remove the question from this nugget"
 msgstr "Borrar la pregunta de esta píldora"
 
-#: teacheradmin/templates/teacheradmin/units.html:280
+#: teacheradmin/templates/teacheradmin/units.html:282
 msgid "Assignment description"
 msgstr "Descripción de la tarea"
 
-#: teacheradmin/templates/teacheradmin/units.html:284
+#: teacheradmin/templates/teacheradmin/units.html:286
 msgid "Minimun reviewers"
 msgstr "Evaluaciones mínimas"
 
-#: teacheradmin/templates/teacheradmin/units.html:292
+#: teacheradmin/templates/teacheradmin/units.html:294
 msgid "Evaluation criterions"
 msgstr "Criterio de evaluación"
 
-#: teacheradmin/templates/teacheradmin/units.html:297
+#: teacheradmin/templates/teacheradmin/units.html:299
 msgid "Save changes and add an evaluation criterion"
 msgstr "Guardar cambios y añadir un criterio de evaluación"
 
-#: teacheradmin/templates/teacheradmin/units.html:305
+#: teacheradmin/templates/teacheradmin/units.html:307
 msgid "Remove the peer review assignment"
 msgstr "Eliminar la actividad revisada por compañeros"
 
-#: teacheradmin/templates/teacheradmin/units.html:312
+#: teacheradmin/templates/teacheradmin/units.html:314
 msgid "Available from:"
 msgstr "Disponible desde:"
 
-#: teacheradmin/templates/teacheradmin/units.html:316
+#: teacheradmin/templates/teacheradmin/units.html:318
 msgid "Available to:"
 msgstr "Disponible hasta:"
 
-#: teacheradmin/templates/teacheradmin/units.html:329
+#: teacheradmin/templates/teacheradmin/units.html:331
 msgid "Save changes and add an asset"
 msgstr "Guardar cambios y añadir un recurso"
 
-#: teacheradmin/templates/teacheradmin/units.html:336
+#: teacheradmin/templates/teacheradmin/units.html:338
 msgid "Remove the asset availability"
 msgstr "Eliminar la disponibilidad de recursos"
 
-#: teacheradmin/templates/teacheradmin/units.html:366
+#: teacheradmin/templates/teacheradmin/units.html:368
 msgid "The changes were saved successfully."
 msgstr "Sus cambios han sido guardados con éxito."
 
-#: teacheradmin/templates/teacheradmin/units.html:370
+#: teacheradmin/templates/teacheradmin/units.html:372
 msgid ""
 "A task for processing the video has been queued. Refresh in a few moments."
 msgstr ""
 "Se ha encolado una tarea para procesar el vídeo. Recargue la páginas en unos "
 "minutos."
 
-#: teacheradmin/templates/teacheradmin/units.html:378
+#: teacheradmin/templates/teacheradmin/units.html:380
 msgid "A required field is empty."
 msgstr "Un campo obligatorio está vacío."
 
-#: teacheradmin/templates/teacheradmin/units.html:386
+#: teacheradmin/templates/teacheradmin/units.html:388
 msgid "This item is new and must be saved before going back."
 msgstr "Este elemento es nuevo, y debe ser guardado antes de volver."
 
-#: teacheradmin/templates/teacheradmin/units.html:392
+#: teacheradmin/templates/teacheradmin/units.html:394
 msgid "Confirm removal"
 msgstr "Confirmar borrado"
 
-#: teacheradmin/templates/teacheradmin/units.html:395
+#: teacheradmin/templates/teacheradmin/units.html:397
 msgid ""
 "Are you completely sure you want to remove this? You cannot undo this action."
 msgstr ""
 "¿Está completamente seguro de que quiere eliminarlo? Esta acción no se puede "
 "deshacer."
 
-#: teacheradmin/templates/teacheradmin/units.html:407
+#: teacheradmin/templates/teacheradmin/units.html:409
 msgid "Confirm operation"
 msgstr "Confirmar operación"
 
-#: teacheradmin/templates/teacheradmin/units.html:410
+#: teacheradmin/templates/teacheradmin/units.html:412
 msgid ""
 "Are you completely sure you want to do this operation? It is possible that "
 "some reservations are cancelled after this change "
@@ -3352,27 +3376,27 @@ msgstr "Página no encontrada"
 msgid "We're sorry, but the requested page could not be found."
 msgstr "Lo sentimos, pero la página solicitada no se pudo encontrar."
 
-#: templates/base.html:57
+#: templates/base.html:53
 msgid "Register"
 msgstr "Registrar"
 
-#: templates/base.html:58
+#: templates/base.html:54
 msgid "Log in"
 msgstr "Entrar"
 
-#: templates/base.html:71
+#: templates/base.html:67
 msgid "Methodology"
 msgstr "Metodología"
 
-#: templates/base.html:96
+#: templates/base.html:92
 msgid "Legal"
 msgstr "Condiciones legales"
 
-#: templates/base.html:97
+#: templates/base.html:93
 msgid "All rights reserved"
 msgstr "Todos los derechos reservados"
 
-#: templates/base.html:99
+#: templates/base.html:95
 msgid "Terms of Use"
 msgstr "Términos de uso"
 

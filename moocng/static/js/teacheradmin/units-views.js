@@ -539,7 +539,7 @@ if (_.isUndefined(window.MOOC)) {
                 video_thumbnail = "";
                 if (thumbnail_url) {
                     video_thumbnail = "<a class='thumbnail' data-toggle='modal' href='#player-" + this.model.id + "'>" +
-                                  "<img src='" + this.model.get("thumbnail_url") + "'/></a>";
+                        "<img src='" + this.model.get("thumbnail_url") + "' alt='" + MOOC.trans.kq.screenshot + this.model.get("title") + "' /></a>";
                 }
 
                 data = "<p>" + MOOC.trans.kq.teacher_comments + ": " +
@@ -941,7 +941,7 @@ if (_.isUndefined(window.MOOC)) {
                         view.render();
                     });
                 } else {
-                    $attachments.addClass("hide");
+                    $attachments.remove();
                     this.$el.find("#attachment-empty").removeClass("hide");
                 }
 
@@ -1855,7 +1855,8 @@ if (_.isUndefined(window.MOOC)) {
                                 MOOC.ajax.hideLoading();
                                 MOOC.ajax.showAlert("saved");
                                 if (rows === 1) {
-                                    $table.hide().parent().find("#attachment-empty").show();
+                                    $table.parent().find("#attachment-empty").show();
+                                    $table.remove();
                                 }
                             },
                             error: function () {

@@ -52,7 +52,7 @@ $(document).ready(function () {
             <div class="alert alert-error">
                 <h4>{% trans "I'm sorry!" %}</h4>
                 {% blocktrans with max_mass_emails_month=course.max_mass_emails_month %}This course has exceeded the maximum of emails that it can send this month: {{ max_mass_emails_month }}.{% endblocktrans %}
-            </div> 
+            </div>
         {% endif %}
 
         <form method="POST">{% csrf_token %}
@@ -88,9 +88,9 @@ $(document).ready(function () {
         <h3>{% trans "Sent at" %}: {{ email.datetime }}</h3>
     </div>
     <div class="modal-body">
-        <b>{% trans "Subject" %}:</b>
+        <strong>{% trans "Subject" %}:</strong>
         <div class="well well-small">{{ email.subject }}</div>
-        <b>{% trans "Content" %}:</b>
+        <strong>{% trans "Content" %}:</strong>
         <div class="well well-small">{{ email.message|safe }}</div>
     </div>
     <div class="modal-footer">

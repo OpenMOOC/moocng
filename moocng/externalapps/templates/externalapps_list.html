@@ -20,10 +20,10 @@
                         <td class='span2'>
                             <a class="btn btn-small pull-right"
                               href="{% url externalapps_delete course_slug=course.slug external_app_id=external_app.id %}">
-                            <span class="icon-remove"></span></a>
+                            <span class="icon-remove"></span><span class="hide-text">{% trans "remove" %}</span></a>
                             <a class="btn btn-small pull-right"
                               href="{% url externalapps_edit course_slug=course.slug external_app_id=external_app.id %}">
-                            <span class="icon-edit"></span></a>
+                            <span class="icon-edit"></span><span class="hide-text">{% trans "edit" %}</span></a>
                         </td>
                     </tr>
                 {% endfor %}
