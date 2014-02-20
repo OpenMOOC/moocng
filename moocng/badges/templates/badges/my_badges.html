@@ -9,9 +9,9 @@
 
 {% block content %}
     <p class="mb20">
-        <big>
-            {% blocktrans with first_name=user.first_name last_name=user.last_name %}The user "<b>{{ first_name }} {{ last_name }}</b>" has the following awards:{% endblocktrans %}
-        </big>
+        <span class="big">
+            {% blocktrans with first_name=user.first_name last_name=user.last_name %}The user "<strong>{{ first_name }} {{ last_name }}</strong>" has the following awards:{% endblocktrans %}
+        </span>
         <a class="pull-right btn" href="https://backpack.openbadges.org" target="_blank">
             <span class="icon-openbadges"></span> {% trans "Open Mozilla Backpack" %}
         </a>

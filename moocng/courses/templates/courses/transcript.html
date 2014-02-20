@@ -26,7 +26,7 @@
                             {% for unit_info in course_info.units_info %}
                                 {% if unit_info.unit.status != 'd' %}
                                     {% if not unit_info.hide %}
-                                        <li><span class="badge {{ unit_info.badge_class }}">{{ unit_info.unit.unittype|capfirst }}</span> <a href="{% url course_progress course_info.course.slug %}#unit{{ unit_info.unit.id }}">{{ unit_info.unit.title }}</a> <b> {{ unit_info.mark|floatformat:"-2" }}</b>/10   ({{ unit_info.normalized_weight|floatformat:"-2" }}% {% trans "of the final mark" %})</li>
+                                        <li><span class="badge {{ unit_info.badge_class }}">{{ unit_info.unit.unittype|capfirst }}</span> <a href="{% url course_progress course_info.course.slug %}#unit{{ unit_info.unit.id }}">{{ unit_info.unit.title }}</a> <strong> {{ unit_info.mark|floatformat:"-2" }}</strong>/10   ({{ unit_info.normalized_weight|floatformat:"-2" }}% {% trans "of the final mark" %})</li>
                                     {% endif %}
                                 {% endif %}
                             {% endfor %}
@@ -38,9 +38,9 @@
                         {% if course_info.units_info %}
                             <h4>{% trans "Final mark" %}: {{ course_info.mark|floatformat:"-2" }} / 10
                                 {% if course_info.use_old_calculus %}
-                                    <a target="_new" href="{% url oldscore %}" ><small>({% trans "Evaluation criteria" %})</small></a>
+                                    <a class="small" target="_new" href="{% url oldscore %}" >({% trans "Evaluation criteria" %})</a>
                                 {% else %}
-                                    <a target="_new" href="{% url score %}" ><small>({% trans "Evaluation criteria" %})</small></a>
+                                    <a class="small" target="_new" href="{% url score %}" >({% trans "Evaluation criteria" %})</a>
                                 {% endif %}
                             </h4>
                             {% if course_info.course.threshold %}
@@ -60,7 +60,7 @@
                         {% if course_info.course.certification_available %}
                             {% if course_info.passed %}
                                 <p><a target="_new" href="{{ course_info.cert_url }}" class="btn btn-success">{% trans "I want a certificate of completion for this course" %}</a>
-                                    <a target="_new" href="{% url cert %}" ><small>{% trans "Read more" %}</small></a>
+                                    <a class="small" target="_new" href="{% url cert %}" >{% trans "Read more" %}</a>
                                 </p>
                             {% else %}
                                 <p>{% trans "You need to complete the course before asking for a certificate of completion." %}</p>
@@ -71,11 +71,11 @@
                     </div>
                 {% empty %}
                 <p>
-                    <b>
+                    <strong>
                         {% block message-empty %}
                             {% trans "You are not enrolled in any course" %}
                         {% endblock %}
-                    </b>
+                    </strong>
                 </p>
             {% endfor %}
         </section>

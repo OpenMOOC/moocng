@@ -607,3 +607,16 @@ td.orange a.ui-state-default {
 td.green a.ui-state-default {
     background: #00ff00;
 }
+
+.big {
+    font-size: 1.2em;
+}
+
+.small {
+    font-size: 85%;
+}
+
+.criterion {
+    height: 100px;
+    overflow: auto;
+}

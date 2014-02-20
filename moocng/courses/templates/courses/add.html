@@ -32,11 +32,11 @@
             <form method="POST">{% csrf_token %}
                 <fieldset>
                     <legend>{% trans "Create course" %}</legend>
-                    <label>{% trans "Course name" %}</label>
-                    <input name="course_name" class="input-xlarge" type="text" />
+                    <label for="course_name">{% trans "Course name" %}</label>
+                    <input id="course_name" name="course_name" class="input-xlarge" type="text" />
                     {% if not sandbox %}
-                    <label>{% trans "Teacher owner" %}</label>
-                    <input name="course_owner" class="input-xlarge" type="text" autocomplete="off" placeholder="{% trans "Name or email" %}" />
+                    <label for="course_owner">{% trans "Teacher owner" %}</label>
+                    <input id="course_owner" name="course_owner" class="input-xlarge" type="text" autocomplete="off" placeholder="{% trans "Name or email" %}" />
                     {% endif %}
                     <div class="form-actions">
                         <input type="submit" class="btn btn-primary" value="{% trans "Send" %}" />

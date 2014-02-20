@@ -27,7 +27,7 @@
                                 {% endif %}
                                 <a href="{{ course.get_absolute_url }}">{{ course.name }}</a>
                             </h3>
-                            <p>{{ course.description|safe|truncatewords_html:60 }}</p>
+                            <div>{{ course.description|safe|truncatewords_html:60 }}</div>
                             <p class="box-footer"><a href="{{ course.get_absolute_url }}">{% trans "More information about this course" %}</a></p>
                             {% if not course.is_public %}
                                 <p class="label pull-right">{% trans "Draft" %}</p>
