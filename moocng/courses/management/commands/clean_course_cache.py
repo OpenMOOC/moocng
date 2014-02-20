@@ -15,7 +15,7 @@
 
 from django.core.management.base import BaseCommand, CommandError
 
-from moocng.courses.cache import invalidate_template_fragment
+from moocng.courses.cache import invalidate_template_fragment_i18n
 from moocng.courses.models import Course
 
 
@@ -41,6 +41,6 @@ class Command(BaseCommand):
     def _invalidate_course_cache(self, course):
         self.stdout.write('Invalidating cache for %s\n' % course)
 
-        invalidate_template_fragment('course_list')
-        invalidate_template_fragment('course_overview_main_info', course.id)
-        invalidate_template_fragment('course_overview_secondary_info', course.id)
+        invalidate_template_fragment_i18n('course_list')
+        invalidate_template_fragment_i18n('course_overview_main_info', course.id)
+        invalidate_template_fragment_i18n('course_overview_secondary_info', course.id)

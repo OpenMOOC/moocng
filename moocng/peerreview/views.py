@@ -38,7 +38,7 @@ from moocng.courses.utils import send_mail_wrapper, is_course_ready
 from moocng.courses.security import get_course_if_user_can_view_or_404
 from moocng.peerreview.forms import ReviewSubmissionForm, EvalutionCriteriaResponseForm
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
-from moocng.peerreview.utils import course_get_visible_peer_review_assignments, save_review
+from moocng.peerreview.utils import course_get_visible_peer_review_assignments, save_review, insert_p2p_if_does_not_exists_or_raise
 
 
 @login_required
@@ -319,7 +319,6 @@ def s3_upload(user_id, kq_id, filename, file_obj):
 def course_review_upload(request, course_slug):
     if request.method == "POST":
         course = get_course_if_user_can_view_or_404(course_slug, request)
-
         file_to_upload = request.FILES.get('pr_file', None)
         submission_text = request.POST.get('pr-submission', '')
 
@@ -336,21 +335,16 @@ def course_review_upload(request, course_slug):
 
         s3_upload(request.user.id, kq.id, file_to_upload.name, file_to_upload)
         file_url = s3_url(request.user.id, file_to_upload.name, kq.id)
-
         submission = {
             "author": request.user.id,
             "author_reviews": 0,
             "text": request.POST.get('pr-submission', ''),
             "file": file_url,
-            "created": datetime.now(),
-            "reviewers": [],
+            "created": datetime.utcnow(),
             "reviews": 0,
             "course": course.id,
             "unit": unit.id,
             "kq": kq.id,
         }
-        db = get_db()
-        submissions = db.get_collection("peer_review_submissions")
-        submissions.insert(submission)
-
+        insert_p2p_if_does_not_exists_or_raise(submission)
         return HttpResponseRedirect(reverse('course_classroom', args=[course_slug]) + "#unit%d/kq%d/p" % (unit.id, kq.id))

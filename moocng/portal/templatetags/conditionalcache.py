@@ -15,7 +15,6 @@
 from django.template import Library, TemplateSyntaxError, resolve_variable
 from django.templatetags.cache import CacheNode
 
-
 register = Library()
 
 
@@ -26,14 +25,9 @@ class ConditionalCacheNode(CacheNode):
         super(ConditionalCacheNode, self).__init__(nodelist, expire_time_var, fragment_name, vary_on)
 
     def render(self, context):
-        if self.condition != u'True' and self.condition != u'False':
-            use_cache = resolve_variable(self.condition, context)
-        else:
-            use_cache = self.condition == u'True'
-
+        use_cache = resolve_variable(self.condition, context)
         if not use_cache:
             return self.nodelist.render(context)
-
         return super(ConditionalCacheNode, self).render(context)
 
 

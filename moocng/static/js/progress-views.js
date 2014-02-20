@@ -151,7 +151,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             score_text = '';
             badge_class = 'important';
         } else {
-            score_text = score_obj;
+            score_text = score_obj.toFixed(2);
             badge_class = (score_obj >= 5) ? 'success' : 'important';
         }
 

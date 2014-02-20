@@ -21,18 +21,21 @@
                         {{ course_info.course.name }} ({% trans "closed" %})
                     {% endif %}
                     </h2>
+
+                    {% if course_info.course.is_active %}
                         {% if course_info.units_info %}
                             <ul>
-                            {% for unit_info in course_info.units_info %}
-                                {% if unit_info.unit.status != 'd' %}
-                                    {% if not unit_info.hide %}
-                                        <li><span class="badge {{ unit_info.badge_class }}">{{ unit_info.unit.unittype|capfirst }}</span> <a href="{% url course_progress course_info.course.slug %}#unit{{ unit_info.unit.id }}">{{ unit_info.unit.title }}</a> <strong> {{ unit_info.mark|floatformat:"-2" }}</strong>/10   ({{ unit_info.normalized_weight|floatformat:"-2" }}% {% trans "of the final mark" %})</li>
+                                {% for unit_info in course_info.units_info %}
+                                    {% if unit_info.unit.status != 'd' %}
+                                        {% if not unit_info.hide %}
+                                            <li><span class="badge {{ unit_info.badge_class }}">{{ unit_info.unit.unittype|capfirst }}</span> <a href="{% url course_progress course_info.course.slug %}#unit{{ unit_info.unit.id }}">{{ unit_info.unit.title }}</a> <strong> {{ unit_info.mark|floatformat:"-2" }}</strong>/10   ({{ unit_info.normalized_weight|floatformat:"-2" }}% {% trans "of the final mark" %})</li>
+                                        {% endif %}
                                     {% endif %}
-                                {% endif %}
-                            {% endfor %}
+                                {% endfor %}
                             </ul>
-                        {% else %}
-                            <p>{% trans "No scoring units" %}</p>
+                            {% else %}
+                                <p>{% trans "No scoring units" %}</p>
+                            {% endif%}
                         {% endif%}
                         <hr>
                         {% if course_info.units_info %}

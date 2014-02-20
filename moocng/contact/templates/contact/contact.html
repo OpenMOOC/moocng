@@ -4,6 +4,10 @@
 
 {% block content %}
     <h1>{% trans "Contact" %}</h1>
+    <div class="alert alert-info">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        {% blocktrans %}Please, before asking, check if the answer is in the FAQ or in the DISCUSSION course. Our FAQ frequently updated thanks to your inquiries.{% endblocktrans %}
+    </div>
     <form action="" method="post">
         {% csrf_token %}
         {{ form.as_bootstrap }}

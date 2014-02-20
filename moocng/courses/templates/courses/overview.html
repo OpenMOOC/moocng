@@ -12,8 +12,7 @@
 <h1>{{ course.name }}</h1>
 
 <div class="row">
-    {% cache 3600 course_overview_main_info course.id %}
-
+    {% cache 3600 course_overview_main_info LANGUAGE_CODE course.id %}
     <div class="span8">
 
         {% if course.promotion_media_content_type and course.promotion_media_content_id %}
@@ -85,7 +84,7 @@
             </div>
         {% endif %}
 
-        {% cache 3600 course_overview_secondary_info course.id %}
+        {% cache 3600 course_overview_secondary_info LANGUAGE_CODE course.id %}
         <div class="box">
             <h2>{% trans "Teachers" %}</h2>
             <ul class="unstyled clearfix">

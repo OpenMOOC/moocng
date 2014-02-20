@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from django.conf import settings
 from django.core.cache import cache
 from django.utils.hashcompat import md5_constructor
 from django.utils.http import urlquote
@@ -27,3 +28,9 @@ def invalidate_template_fragment(fragment, *variables):
     cache_key = get_template_fragment_key(fragment, *variables)
     if cache_key in cache:
         cache.delete(cache_key)
+
+
+def invalidate_template_fragment_i18n(fragment, *variables):
+    for lang_code, lang_text in settings.LANGUAGES:
+        i18n_variables = (lang_code,) + variables
+        invalidate_template_fragment(fragment, *i18n_variables)

@@ -13,7 +13,7 @@
     <div class="row">
         <section class="span9">
             <h1 class="content-title">{% trans "Courses" %}</h1>
-            {% conditionalcache use_cache 3600 course_list %}
+            {% conditionalcache use_cache 3600 course_list LANGUAGE_CODE %}
                 {% for course in courses %}
                     {% if course.is_public %}
                         <div class="box published">
