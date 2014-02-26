@@ -620,3 +620,10 @@ td.green a.ui-state-default {
     height: 100px;
     overflow: auto;
 }
+
+.mce-content-body {
+    border: 1px dotted #333;
+    outline: none !important;
+    background-color: white;
+    min-height: 100px;
+}

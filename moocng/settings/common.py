@@ -350,12 +350,21 @@ FIXTURE_DIRS = (
 )
 
 TINYMCE_DEFAULT_CONFIG = {
-    'theme': 'advanced',
-    'theme_advanced_toolbar_location': 'top',
-    'theme_advanced_buttons1': 'bold,italic,underline,strikethrough,separator,link,unlink,separator,undo,redo,copy,paste,separator,cleanup,separator,bullist,numlist',
-    'theme_advanced_buttons2': '',
-    'theme_advanced_buttons3': '',
+    'plugins': ['advlist',
+                'autolink',
+                'lists',
+                'link',
+                'charmap',
+                'searchreplace',
+                'insertdatetime',
+                'contextmenu',
+                'paste'],
+    'menubar': 'file edit insert format',
+    'inline': True
 }
+
+TINYMCE_DEFAULT_ADMIN_CONFIG = TINYMCE_DEFAULT_CONFIG.copy()
+TINYMCE_DEFAULT_ADMIN_CONFIG['inline'] = False
 
 GOOGLE_ANALYTICS_CODE = ''
 
