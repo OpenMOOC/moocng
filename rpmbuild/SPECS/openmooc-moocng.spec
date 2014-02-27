@@ -32,6 +32,7 @@ BuildRequires: libjpeg-turbo-devel
 BuildRequires: libpng-devel
 
 Requires: openmooc-tastypie = 0.9.11
+Requires: openmooc-python-django-tinymce = 2.0
 
 Requires: pymongo = 2.4.2
 Requires: python-amqp = 1.0.13
@@ -54,7 +55,6 @@ Requires: python-django-compressor = 1.2
 Requires: python-django-grappelli = 2.4.4
 Requires: python-django-pagination = 1.0.7
 Requires: python-djangosaml2 = 0.10.0
-Requires: python-django-tinymce = 1.5.1b4
 
 Requires: memcached = 1.4.4
 Requires: mongo-10gen-server >= 2.4.5
