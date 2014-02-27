@@ -82,7 +82,8 @@ setup(
         'requests==1.2.0',
         'django-deep-serializer==0.1.0',
         'fabric==1.7.0',
-        'django-pagination==1.0.7'
+        'django-pagination==1.0.7',
+        'xml==2.2.3'
     ],
     entry_points = """
         [moocng.externalapp]
