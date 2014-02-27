@@ -8,7 +8,7 @@ Summary:            A Django application that contains a widget to render a form
 Group:              Development/Libraries
 License:            MIT
 URL:                https://github.com/OpenMOOC/django-tinymce
-Source0:            https://github.com/OpenMOOC/django-tinymce/archive/${version}.tar.gz
+Source0:            https://github.com/OpenMOOC/django-tinymce/archive/release-%{version}-openmooc.tar.gz
 
 BuildArch:          noarch
 Conflicts:          python-django-tinymce
