@@ -65,6 +65,7 @@ Requires: rabbitmq-server >= 2.6.1
 Requires: supervisor = 3.0
 Requires: xmlsec1 >= 1.2.16
 Requires: xmlsec1-openssl >= 1.2.16
+Requires: lxml == 2.2.3
 
 
 %description
