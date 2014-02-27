@@ -1,7 +1,7 @@
 %global modname tinymce
 
 Name:               openmooc-python-django-tinymce
-Version:            2.0.0-openmooc
+Version:            2.0.0
 Release:            1%{?dist}
 Summary:            A Django application that contains a widget to render a form field as a TinyMCE editor.
 

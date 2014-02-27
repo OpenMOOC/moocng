@@ -32,7 +32,7 @@ BuildRequires: libjpeg-turbo-devel
 BuildRequires: libpng-devel
 
 Requires: openmooc-tastypie = 0.9.11
-Requires: openmooc-python-django-tinymce = 2.0
+Requires: openmooc-python-django-tinymce = 2.0.0
 
 Requires: pymongo = 2.4.2
 Requires: python-amqp = 1.0.13
