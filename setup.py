@@ -83,7 +83,8 @@ setup(
         'django-deep-serializer==0.1.0',
         'fabric==1.7.0',
         'django-pagination==1.0.7',
-        'lxml==2.2.3'
+        'lxml==2.2.3',
+        'BeautifulSoup==3.0.8.1', #http://www.crummy.com/software/BeautifulSoup/bs3/download/3.x/BeautifulSoup-3.0.8.1.tar.gz
     ],
     entry_points = """
         [moocng.externalapp]
