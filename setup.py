@@ -68,7 +68,7 @@ setup(
         'Django==1.4.8',
         'django-admin-sortable==1.4.9',
         'django-celery==3.0.17',
-        'django-tinymce==1.5.1b4',
+        'django-tinymce==2.0.0-openmooc',
         'django-tastypie==0.9.11-openmooc',
         'South==0.7.5',
         'psycopg2==2.4.2',
@@ -83,7 +83,7 @@ setup(
         'django-deep-serializer==0.1.0',
         'fabric==1.7.0',
         'django-pagination==1.0.7',
-        'xml==2.2.3'
+        'lxml==2.2.3'
     ],
     entry_points = """
         [moocng.externalapp]
