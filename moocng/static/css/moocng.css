@@ -627,3 +627,7 @@ td.green a.ui-state-default {
     background-color: white;
     min-height: 100px;
 }
+
+.tab-content-no-overflow {
+    overflow: hidden;
+}

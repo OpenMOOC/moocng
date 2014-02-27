@@ -360,11 +360,28 @@ TINYMCE_DEFAULT_CONFIG = {
                 'contextmenu',
                 'paste'],
     'menubar': 'file edit insert format',
-    'inline': True
+    'inline': True,
 }
 
 TINYMCE_DEFAULT_ADMIN_CONFIG = TINYMCE_DEFAULT_CONFIG.copy()
 TINYMCE_DEFAULT_ADMIN_CONFIG['inline'] = False
+
+TINYMCE_CLEAN_HTML = {
+    'scripts': True,
+    'javascript': True,
+    'comments': True,
+    'style': True,
+    'links': True,
+    'meta': True,
+    'page_structure': False,
+    'processing_instructions': True,
+    'embedded': True,
+    'frames': True,
+    'forms': True,
+    'annoying_tags': True,
+    'remove_unknown_tags': True,
+    'safe_attrs_only': False,
+}
 
 GOOGLE_ANALYTICS_CODE = ''
 
