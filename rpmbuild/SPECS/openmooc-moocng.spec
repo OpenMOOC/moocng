@@ -2,8 +2,8 @@
 
 %define platform openmooc
 %define component moocng
-%define version 0.1.2
-%define release 1
+%define version 0.1.3
+%define release 5
 
 Name: %{platform}-%{component}
 Version: %{version}
@@ -44,6 +44,8 @@ Requires: python-memcached = 1.48
 Requires: python-psycopg2 = 2.4.2
 Requires: python-requests = 1.2.0
 Requires: python-gunicorn = 18.0
+Requires: python-lxml = 2.2.3
+Requires: python-BeautifulSoup = 1:3.0.8.1
 
 Requires: Django14
 Requires: django-celery = 3.0.17
@@ -65,7 +67,6 @@ Requires: rabbitmq-server >= 2.6.1
 Requires: supervisor = 3.0
 Requires: xmlsec1 >= 1.2.16
 Requires: xmlsec1-openssl >= 1.2.16
-Requires: lxml == 2.2.3
 
 
 %description
@@ -222,6 +223,7 @@ rm -rf %{buildroot}
 %{python_sitelib}/%{component}/templates/
 %{python_sitelib}/%{component}/videos/
 %{python_sitelib}/%{component}/profile/
+%{python_sitelib}/%{component}/http/
 
 # We do this so we don't duplicate the validation of mathjax files
 %{python_sitelib}/%{component}/static/crossdomain.xml
@@ -242,6 +244,9 @@ rm -rf %{buildroot}
 %{python_sitelib}/%{component}/static/js/libs/mathjax/
 
 %changelog
+* Fri Feb 27 2014 Pablo Martin <pmartin@yaco.es> - 0.1.3-1
+- Accessibility
+- TinyMCE 4
 * Fri Jan 17 2014 Pablo Martin <pmartin@yaco.es> - 0.1.2-1
 - Fix dropmenu in tables devices and phone devices
 - Fix peerreview calculate (details)
