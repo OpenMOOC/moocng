@@ -1,9 +1,9 @@
 {% load i18n %}
 
-{% blocktrans %}
+{% blocktrans with nugget_title=nugget.title unit_title=nugget.unit.title course_name=nugget.unit.course.name %}
 Congratulations {{ user }}
 
-The exercise you sent on {{ date }} belonging the nugget "{{ nugget }}" has been reviewed by a classmate.
+The exercise you sent on {{ date }} belonging the nugget "{{ nugget_title }}" ({{ unit_title }} - {{ course_name }}) has been reviewed by a classmate.
 
 Evaluation criteria:
 {% endblocktrans %}
