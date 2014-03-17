@@ -15,14 +15,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-03 14:23+0100\n"
+"POT-Creation-Date: 2014-03-17 09:35+0100\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Pablo Martin <goinnn@gmail.com>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
+"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es_ES\n"
 
 #: context_processors.py:43
 msgid "decorative landscape of seville"
@@ -66,6 +66,7 @@ msgid "User Apis"
 msgstr "User Apis"
 
 #: api/models.py:40
+#, python-brace-format
 msgid "Apikey of {0}  :::  {1}"
 msgstr "Apikey de {0}  :::  {1}"
 
@@ -145,6 +146,7 @@ msgid "asset availabilities"
 msgstr "disponibilidades de recursos"
 
 #: assets/models.py:73
+#, python-brace-format
 msgid "Assets availables for {0}"
 msgstr "Recursos disponibles para {0}"
 
@@ -169,6 +171,7 @@ msgid "reservations"
 msgstr "reservas"
 
 #: assets/models.py:96
+#, python-brace-format
 msgid "Reservation of {0}, made by {1}"
 msgstr "Reserva de {0}, hecha por {1}"
 
@@ -472,6 +475,7 @@ msgid "identities"
 msgstr "identidades"
 
 #: badges/models.py:69
+#, python-brace-format
 msgid "Identity of {0}"
 msgstr "Identidad de {0}"
 
@@ -584,6 +588,7 @@ msgid "awards"
 msgstr "premios"
 
 #: badges/models.py:179
+#, python-brace-format
 msgid "{0} awarded to {1}"
 msgstr "{0} otorgado a {1}"
 
@@ -854,11 +859,11 @@ msgstr "Comunicados del %(title)s"
 #: courses/feeds.py:55
 #, python-format
 msgid ""
-"Announcements of the online course \"%(course_title)s\" on the platform \"%"
-"(site_name)s\"."
+"Announcements of the online course \"%(course_title)s\" on the platform "
+"\"%(site_name)s\"."
 msgstr ""
-"Comunicados del curso online \"%(course_title)s\" en la plataforma \"%"
-"(site_name)s\"."
+"Comunicados del curso online \"%(course_title)s\" en la plataforma "
+"\"%(site_name)s\"."
 
 #: courses/feeds.py:80
 #, python-format
@@ -990,13 +995,15 @@ msgstr "Imagen para mostrar en vista de grid"
 
 #: courses/models.py:139
 msgid "thumbnail image alternative text"
-msgstr ""
+msgstr "texto alternativo para la miniatura de la imagen"
 
 #: courses/models.py:141
 msgid ""
 "This text is used to describe the thumbnail image. It is necessary for "
 "accessibility "
 msgstr ""
+"Este texto se utiliza para describir la miniatura de la imagen. Es necesario "
+"por motivos de accesibilidad "
 
 #: courses/models.py:146 courses/models.py:298
 msgid "Static page"
@@ -1240,6 +1247,7 @@ msgid "questions"
 msgstr "preguntas"
 
 #: courses/models.py:668
+#, python-brace-format
 msgid "{0} - Question {1}"
 msgstr "{0} - Pregunta {1}"
 
@@ -1271,6 +1279,7 @@ msgid "options"
 msgstr "opciones"
 
 #: courses/models.py:744
+#, python-brace-format
 msgid "{0} at {1} x {2}"
 msgstr "{0} en {1} x {2}"
 
@@ -1708,12 +1717,12 @@ msgstr "Entrega enviada"
 
 #: courses/templates/courses/classroom.html:205
 msgid ""
-"Thank you for sending this submission. You have now to review #"
-"(minimum_reviewers)s submissions from other students in order to get your "
+"Thank you for sending this submission. You have now to review "
+"#(minimum_reviewers)s submissions from other students in order to get your "
 "submission scored."
 msgstr ""
-"Gracias por enviar esta entrega. Ahora tienes que revisar #"
-"(minimum_reviewers)s entregas de otros estudiantes para que tu entrega se "
+"Gracias por enviar esta entrega. Ahora tienes que revisar "
+"#(minimum_reviewers)s entregas de otros estudiantes para que tu entrega se "
 "evalúe."
 
 #: courses/templates/courses/classroom.html:206
@@ -1836,8 +1845,8 @@ msgid ""
 "\n"
 "Dear %(user)s,\n"
 "\n"
-"Your activity in \"%(original_course)s\" has been clonated to \"%"
-"(copy_course)s\"\n"
+"Your activity in \"%(original_course)s\" has been clonated to "
+"\"%(copy_course)s\"\n"
 "\n"
 "Best regards, %(site)s's team\n"
 msgstr ""
@@ -2318,6 +2327,7 @@ msgid "evaluation criteria"
 msgstr "Criterios de evaluación"
 
 #: peerreview/models.py:105
+#, python-brace-format
 msgid "{0} - EvaluationCriterion {1}"
 msgstr "{0} - Criterio de evaluación {1}"
 
@@ -2395,9 +2405,9 @@ msgstr ""
 "\n"
 "Enhorabuena %(user)s\n"
 "\n"
-"El ejercicio que entregaste el %(date)s que pertenece a la píldora \"%"
-"(nugget_title)s\" (%(unit_title)s - %(course_name)s) ha sido revisado por un "
-"compañero.\n"
+"El ejercicio que entregaste el %(date)s que pertenece a la píldora "
+"\"%(nugget_title)s\" (%(unit_title)s - %(course_name)s) ha sido revisado por "
+"un compañero.\n"
 "\n"
 "Criterios de evaluación:\n"
 
@@ -2416,8 +2426,8 @@ msgstr ""
 "\n"
 "%(comment)s\n"
 "\n"
-"Saludos cordiales y agradecerte que aprendas con  %(site)s. El equipo de %"
-"(site)s.\n"
+"Saludos cordiales y agradecerte que aprendas con  %(site)s. El equipo de "
+"%(site)s.\n"
 
 #: peerreview/templates/peerreview/pending_reviews.html:5
 msgid ""
@@ -2509,8 +2519,8 @@ msgstr "¡Atención!"
 #, python-format
 msgid ""
 "\n"
-"                You should scan this file with your antivirus software. %"
-"(site)s\n"
+"                You should scan this file with your antivirus software. "
+"%(site)s\n"
 "                is not responsible for any harm this may cause to your "
 "computer.\n"
 "            "
@@ -2610,6 +2620,7 @@ msgid "The email has been queued. The emails will be sent soon"
 msgstr "El correo ha sido encolado, los correos se enviarán pronto"
 
 #: teacheradmin/forms.py:45
+#, python-brace-format
 msgid "Image must be {0}px x {1}px"
 msgstr "La imagen debe tener {0}px x {1}px"
 
@@ -2760,17 +2771,17 @@ msgid ""
 "If you send this announcement via email, you will be about to send an email "
 "to <strong>%(students)s students</strong>."
 msgstr ""
-"Si envia este comunicado via email, va a mandar un email a <strong>%"
-"(students)s estudiantes</strong>."
+"Si envia este comunicado via email, va a mandar un email a <strong>"
+"%(students)s estudiantes</strong>."
 
 #: teacheradmin/templates/teacheradmin/announcement_edit.html:16
 #, python-format
 msgid ""
-"This course can send <strong>%(remain_send_emails)s</strong> (of %"
-"(max_mass_emails_month)s) announcements via email this month still."
+"This course can send <strong>%(remain_send_emails)s</strong> (of "
+"%(max_mass_emails_month)s) announcements via email this month still."
 msgstr ""
-"Este curso puede enviar todavía <strong>%(remain_send_emails)s</strong> (de %"
-"(max_mass_emails_month)s) comunicados via email este mes."
+"Este curso puede enviar todavía <strong>%(remain_send_emails)s</strong> (de "
+"%(max_mass_emails_month)s) comunicados via email este mes."
 
 #: teacheradmin/templates/teacheradmin/announcement_edit.html:20
 #: teacheradmin/templates/teacheradmin/emails.html:53
@@ -2780,12 +2791,12 @@ msgstr "¡Lo sentimos!"
 #: teacheradmin/templates/teacheradmin/announcement_edit.html:21
 #, python-format
 msgid ""
-"This course has exceeded the maximum of emails that it can send this month: %"
-"(max_mass_emails_month)s. You have not the option to send this announcement "
+"This course has exceeded the maximum of emails that it can send this month: "
+"%(max_mass_emails_month)s. You have not the option to send this announcement "
 "via email "
 msgstr ""
-"Este curso ha excedido el máximo de correos que se puede enviar por mes: %"
-"(max_mass_emails_month)s. Por eso no está la opción de mandar el comunicado "
+"Este curso ha excedido el máximo de correos que se puede enviar por mes: "
+"%(max_mass_emails_month)s. Por eso no está la opción de mandar el comunicado "
 "via email "
 
 #: teacheradmin/templates/teacheradmin/announcement_edit.html:32
@@ -2872,8 +2883,8 @@ msgid ""
 "\n"
 "Hello,\n"
 "\n"
-"you have been invited to be a teacher in the course \"%(course)s\" by %(host)"
-"s. After your registration in the platform is complete, you will be "
+"you have been invited to be a teacher in the course \"%(course)s\" by "
+"%(host)s. After your registration in the platform is complete, you will be "
 "automatically assigned as a teacher to the course.\n"
 "\n"
 "You can register here: %(register)s\n"
@@ -2896,8 +2907,8 @@ msgid ""
 "\n"
 "Hello,\n"
 "\n"
-"you have been removed as teacher from the course \"%(course)s\" by %(host)"
-"s.\n"
+"you have been removed as teacher from the course \"%(course)s\" by "
+"%(host)s.\n"
 "\n"
 "Best regards, %(site)s's team\n"
 msgstr ""
@@ -2920,20 +2931,20 @@ msgstr ""
 #: teacheradmin/templates/teacheradmin/emails.html:49
 #, python-format
 msgid ""
-"This course can send <strong>%(remain_send_emails)s</strong> (of %"
-"(max_mass_emails_month)s) e-mails this month still."
+"This course can send <strong>%(remain_send_emails)s</strong> (of "
+"%(max_mass_emails_month)s) e-mails this month still."
 msgstr ""
-"Este curso puede enviar todavía <strong>%(remain_send_emails)s</strong> (de %"
-"(max_mass_emails_month)s) correos este mes."
+"Este curso puede enviar todavía <strong>%(remain_send_emails)s</strong> (de "
+"%(max_mass_emails_month)s) correos este mes."
 
 #: teacheradmin/templates/teacheradmin/emails.html:54
 #, python-format
 msgid ""
-"This course has exceeded the maximum of emails that it can send this month: %"
-"(max_mass_emails_month)s."
+"This course has exceeded the maximum of emails that it can send this month: "
+"%(max_mass_emails_month)s."
 msgstr ""
-"Este curso ha excedido el máximo de emails que puede enviar por mes: %"
-"(max_mass_emails_month)s."
+"Este curso ha excedido el máximo de emails que puede enviar por mes: "
+"%(max_mass_emails_month)s."
 
 #: teacheradmin/templates/teacheradmin/emails.html:73
 msgid "Previous emails"
