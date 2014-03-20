@@ -160,7 +160,7 @@ getent group %{name} >/dev/null || groupadd -r %{name}
 getent passwd %{component} >/dev/null || \
     useradd -r -g %{name} -s /sbin/nologin \
     -c "This is the main user for the MOOC Engine, it will handle all the permissions." %{component}
-exit 0
+# exit 0
 
 # If the nginx user is not on the openmooc-moocng group, add it.
 if ! /usr/bin/groups nginx | grep -q %{name} ; then
