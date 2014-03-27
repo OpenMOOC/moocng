@@ -1,7 +1,7 @@
 /*jslint vars: false, browser: true */
 /*global $, OpenBadges */
 
-// Copyright 2013 Rooter Analysis S.L.
+// Copyright 2013 UNED
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.

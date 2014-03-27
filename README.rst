@@ -17,7 +17,7 @@ You can find the whole
 Legal
 =====
 
-Copyright 2012-2013 Rooter Analysis S.L.
+Copyright 2012-2013 UNED
 
 Licensed under the `Apache License <http://www.apache.org/licenses/LICENSE-2.0>`_,
 Version 2.0.
