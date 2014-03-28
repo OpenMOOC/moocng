@@ -20,7 +20,7 @@ License: Apache Software License 2.0
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Prefix: %{_prefix}
 BuildArch: noarch
-Vendor: Rooter Analysis <info@rooter.es>
+Vendor: UNED <infouned@adm.uned.es>
 URL: https://github.com/OpenMOOC/moocng
 
 BuildRequires: python-devel

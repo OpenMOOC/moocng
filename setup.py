@@ -44,7 +44,7 @@ setup(
     license='Apache 2.0 Software License',
     description=('MOOC web tool'),
     long_description=(read('README.rst') + '\n\n' + read('CHANGES')),
-    author='Rooter',
+    author='UNED',
     classifiers=[
         'Development Status :: 6 - Development',
         'Environment :: Web Environment',
