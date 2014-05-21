@@ -2,8 +2,8 @@
 
 %define platform openmooc
 %define component moocng
-%define version 0.1.2
-%define release 1
+%define version 0.1.3
+%define release 5
 
 Name: %{platform}-%{component}
 Version: %{version}
@@ -20,7 +20,7 @@ License: Apache Software License 2.0
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Prefix: %{_prefix}
 BuildArch: noarch
-Vendor: Rooter Analysis <info@rooter.es>
+Vendor: UNED <infouned@adm.uned.es>
 URL: https://github.com/OpenMOOC/moocng
 
 BuildRequires: python-devel
@@ -32,6 +32,7 @@ BuildRequires: libjpeg-turbo-devel
 BuildRequires: libpng-devel
 
 Requires: openmooc-tastypie = 0.9.11
+Requires: openmooc-python-django-tinymce = 2.0.0
 
 Requires: pymongo = 2.4.2
 Requires: python-amqp = 1.0.13
@@ -43,6 +44,8 @@ Requires: python-memcached = 1.48
 Requires: python-psycopg2 = 2.4.2
 Requires: python-requests = 1.2.0
 Requires: python-gunicorn = 18.0
+Requires: python-lxml = 2.2.3
+Requires: python-BeautifulSoup = 1:3.0.8.1
 
 Requires: Django14
 Requires: django-celery = 3.0.17
@@ -54,7 +57,6 @@ Requires: python-django-compressor = 1.2
 Requires: python-django-grappelli = 2.4.4
 Requires: python-django-pagination = 1.0.7
 Requires: python-djangosaml2 = 0.10.0
-Requires: python-django-tinymce = 1.5.1b4
 
 Requires: memcached = 1.4.4
 Requires: mongo-10gen-server >= 2.4.5
@@ -158,7 +160,7 @@ getent group %{name} >/dev/null || groupadd -r %{name}
 getent passwd %{component} >/dev/null || \
     useradd -r -g %{name} -s /sbin/nologin \
     -c "This is the main user for the MOOC Engine, it will handle all the permissions." %{component}
-exit 0
+# exit 0
 
 # If the nginx user is not on the openmooc-moocng group, add it.
 if ! /usr/bin/groups nginx | grep -q %{name} ; then
@@ -221,6 +223,7 @@ rm -rf %{buildroot}
 %{python_sitelib}/%{component}/templates/
 %{python_sitelib}/%{component}/videos/
 %{python_sitelib}/%{component}/profile/
+%{python_sitelib}/%{component}/http/
 
 # We do this so we don't duplicate the validation of mathjax files
 %{python_sitelib}/%{component}/static/crossdomain.xml
@@ -241,6 +244,9 @@ rm -rf %{buildroot}
 %{python_sitelib}/%{component}/static/js/libs/mathjax/
 
 %changelog
+* Fri Feb 27 2014 Pablo Martin <pmartin@yaco.es> - 0.1.3-1
+- Accessibility
+- TinyMCE 4
 * Fri Jan 17 2014 Pablo Martin <pmartin@yaco.es> - 0.1.2-1
 - Fix dropmenu in tables devices and phone devices
 - Fix peerreview calculate (details)

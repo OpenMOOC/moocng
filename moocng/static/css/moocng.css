@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Rooter Analysis S.L.
+ * Copyright 2012 UNED
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -619,4 +619,15 @@ td.green a.ui-state-default {
 .criterion {
     height: 100px;
     overflow: auto;
+}
+
+.mce-content-body {
+    border: 1px dotted #333;
+    outline: none !important;
+    background-color: white;
+    min-height: 100px;
+}
+
+.tab-content-no-overflow {
+    overflow: hidden;
 }

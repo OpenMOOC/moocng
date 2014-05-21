@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2012-2013 Rooter Analysis S.L.
+# Copyright 2012-2013 UNED
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ def recursive_include(directory, patterns):
 
 # be careful with the syntax of this line since it is parsed from
 # the docs/conf.py file
-VERSION = '0.1.2'
+VERSION = '0.1.3'
 
 
 setup(
@@ -44,7 +44,7 @@ setup(
     license='Apache 2.0 Software License',
     description=('MOOC web tool'),
     long_description=(read('README.rst') + '\n\n' + read('CHANGES')),
-    author='Rooter',
+    author='UNED',
     classifiers=[
         'Development Status :: 6 - Development',
         'Environment :: Web Environment',
@@ -68,7 +68,7 @@ setup(
         'Django==1.4.8',
         'django-admin-sortable==1.4.9',
         'django-celery==3.0.17',
-        'django-tinymce==1.5.1b4',
+        'django-tinymce==2.0.0-openmooc',
         'django-tastypie==0.9.11-openmooc',
         'South==0.7.5',
         'psycopg2==2.4.2',
@@ -82,7 +82,9 @@ setup(
         'requests==1.2.0',
         'django-deep-serializer==0.1.0',
         'fabric==1.7.0',
-        'django-pagination==1.0.7'
+        'django-pagination==1.0.7',
+        'lxml==2.2.3',
+        'BeautifulSoup==3.0.8.1', #http://www.crummy.com/software/BeautifulSoup/bs3/download/3.x/BeautifulSoup-3.0.8.1.tar.gz
     ],
     entry_points = """
         [moocng.externalapp]

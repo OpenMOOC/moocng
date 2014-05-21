@@ -1,4 +1,4 @@
-# Copyright 2012 Rooter Analysis S.L.
+# Copyright 2012 UNED
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moocng 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-20 11:46+0100\n"
+"POT-Creation-Date: 2014-03-17 09:35+0100\n"
 "PO-Revision-Date: 2013-03-22 10:42+0100\n"
 "Last-Translator: Pablo Martin <goinnn@gmail.com>\n"
 "Language-Team: es_ES <es_ES@li.org>\n"
@@ -66,6 +66,7 @@ msgid "User Apis"
 msgstr "User Apis"
 
 #: api/models.py:40
+#, python-brace-format
 msgid "Apikey of {0}  :::  {1}"
 msgstr "Apikey de {0}  :::  {1}"
 
@@ -145,6 +146,7 @@ msgid "asset availabilities"
 msgstr "disponibilidades de recursos"
 
 #: assets/models.py:73
+#, python-brace-format
 msgid "Assets availables for {0}"
 msgstr "Recursos disponibles para {0}"
 
@@ -169,6 +171,7 @@ msgid "reservations"
 msgstr "reservas"
 
 #: assets/models.py:96
+#, python-brace-format
 msgid "Reservation of {0}, made by {1}"
 msgstr "Reserva de {0}, hecha por {1}"
 
@@ -472,6 +475,7 @@ msgid "identities"
 msgstr "identidades"
 
 #: badges/models.py:69
+#, python-brace-format
 msgid "Identity of {0}"
 msgstr "Identidad de {0}"
 
@@ -584,6 +588,7 @@ msgid "awards"
 msgstr "premios"
 
 #: badges/models.py:179
+#, python-brace-format
 msgid "{0} awarded to {1}"
 msgstr "{0} otorgado a {1}"
 
@@ -990,13 +995,15 @@ msgstr "Imagen para mostrar en vista de grid"
 
 #: courses/models.py:139
 msgid "thumbnail image alternative text"
-msgstr ""
+msgstr "texto alternativo para la miniatura de la imagen"
 
 #: courses/models.py:141
 msgid ""
 "This text is used to describe the thumbnail image. It is necessary for "
 "accessibility "
 msgstr ""
+"Este texto se utiliza para describir la miniatura de la imagen. Es necesario "
+"por motivos de accesibilidad "
 
 #: courses/models.py:146 courses/models.py:298
 msgid "Static page"
@@ -1240,6 +1247,7 @@ msgid "questions"
 msgstr "preguntas"
 
 #: courses/models.py:668
+#, python-brace-format
 msgid "{0} - Question {1}"
 msgstr "{0} - Pregunta {1}"
 
@@ -1271,6 +1279,7 @@ msgid "options"
 msgstr "opciones"
 
 #: courses/models.py:744
+#, python-brace-format
 msgid "{0} at {1} x {2}"
 msgstr "{0} en {1} x {2}"
 
@@ -1708,12 +1717,12 @@ msgstr "Entrega enviada"
 
 #: courses/templates/courses/classroom.html:205
 msgid ""
-"Thank you for sending this submission. You have now to review #"
-"(minimum_reviewers)s submissions from other students in order to get your "
+"Thank you for sending this submission. You have now to review "
+"#(minimum_reviewers)s submissions from other students in order to get your "
 "submission scored."
 msgstr ""
-"Gracias por enviar esta entrega. Ahora tienes que revisar #"
-"(minimum_reviewers)s entregas de otros estudiantes para que tu entrega se "
+"Gracias por enviar esta entrega. Ahora tienes que revisar "
+"#(minimum_reviewers)s entregas de otros estudiantes para que tu entrega se "
 "evalúe."
 
 #: courses/templates/courses/classroom.html:206
@@ -2318,6 +2327,7 @@ msgid "evaluation criteria"
 msgstr "Criterios de evaluación"
 
 #: peerreview/models.py:105
+#, python-brace-format
 msgid "{0} - EvaluationCriterion {1}"
 msgstr "{0} - Criterio de evaluación {1}"
 
@@ -2371,12 +2381,12 @@ msgstr "Su trabajo \"%(nugget)s\" ha sido revisado"
 msgid "Undefined"
 msgstr "Indefinido"
 
-#: peerreview/views.py:329
+#: peerreview/views.py:330
 #, python-format
 msgid "Your file is greater than the max allowed size (%d MB)."
 msgstr "Tu fichero es mayor del tamaño máximo permitido (%d MB)."
 
-#: peerreview/views.py:333
+#: peerreview/views.py:334
 #, python-format
 msgid "Your text is greater than the max allowed size (%d characters)."
 msgstr "Tu texto es mayor del tamaño máximo permitod (%d caracteres)."
@@ -2387,8 +2397,8 @@ msgid ""
 "\n"
 "Congratulations %(user)s\n"
 "\n"
-"The exercise you sent on %(date)s belonging the nugget \"%(nugget)s\" has "
-"been reviewed by a classmate.\n"
+"The exercise you sent on %(date)s belonging the nugget \"%(nugget_title)s"
+"\" (%(unit_title)s - %(course_name)s) has been reviewed by a classmate.\n"
 "\n"
 "Evaluation criteria:\n"
 msgstr ""
@@ -2396,7 +2406,8 @@ msgstr ""
 "Enhorabuena %(user)s\n"
 "\n"
 "El ejercicio que entregaste el %(date)s que pertenece a la píldora "
-"\"%(nugget)s\" ha sido revisado por un compañero.\n"
+"\"%(nugget_title)s\" (%(unit_title)s - %(course_name)s) ha sido revisado por "
+"un compañero.\n"
 "\n"
 "Criterios de evaluación:\n"
 
@@ -2609,6 +2620,7 @@ msgid "The email has been queued. The emails will be sent soon"
 msgstr "El correo ha sido encolado, los correos se enviarán pronto"
 
 #: teacheradmin/forms.py:45
+#, python-brace-format
 msgid "Image must be {0}px x {1}px"
 msgstr "La imagen debe tener {0}px x {1}px"
 
@@ -3422,7 +3434,7 @@ msgstr "Términos de uso"
 msgid "moocng site admin"
 msgstr "Sitio de administración de moocng"
 
-#: templates/admin/base_site.html:7
+#: templates/admin/base_site.html:17
 msgid "moocng administration"
 msgstr "Administración de moocng"
 

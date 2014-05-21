@@ -3,6 +3,16 @@
 
 {% block title %}{{ title }} | {% trans 'moocng site admin' %}{% endblock %}
 
+{% block extrahead %}
+    {{ block.super }}
+    <style type="text/css">
+        .mce-widget button {
+            border: none;
+            background-color: none;
+        }
+    </style>
+{% endblock %}
+
 {% block branding %}
 <h1 id="site-name">{% trans 'moocng administration' %}</h1>
 {% endblock %}

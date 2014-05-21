@@ -1,4 +1,4 @@
-# Copyright 2013 Rooter Analysis S.L.
+# Copyright 2013 UNED
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -252,11 +252,12 @@ def send_mail_to_submission_owner(current_site_name, assignment, review, submitt
     context = {
         'user': submitter,
         'date': review['created'].strftime('%d/%m/%Y'),
-        'nugget': assignment.kq.title,
+        'nugget': assignment.kq,
         'review_criteria': review_criteria,
         'comment': review['comment'],
         'site': current_site_name
     }
+
     to = [submitter.email]
 
     send_mail_wrapper(subject, template, context, to)

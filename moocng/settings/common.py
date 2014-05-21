@@ -1,4 +1,4 @@
-# Copyright 2012 Rooter Analysis S.L.
+# Copyright 2012 UNED
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -350,11 +350,37 @@ FIXTURE_DIRS = (
 )
 
 TINYMCE_DEFAULT_CONFIG = {
-    'theme': 'advanced',
-    'theme_advanced_toolbar_location': 'top',
-    'theme_advanced_buttons1': 'bold,italic,underline,strikethrough,separator,link,unlink,separator,undo,redo,copy,paste,separator,cleanup,separator,bullist,numlist',
-    'theme_advanced_buttons2': '',
-    'theme_advanced_buttons3': '',
+    'plugins': ['advlist',
+                'autolink',
+                'lists',
+                'link',
+                'charmap',
+                'searchreplace',
+                'insertdatetime',
+                'contextmenu',
+                'paste'],
+    'menubar': 'file edit insert format',
+    'inline': True,
+}
+
+TINYMCE_DEFAULT_ADMIN_CONFIG = TINYMCE_DEFAULT_CONFIG.copy()
+TINYMCE_DEFAULT_ADMIN_CONFIG['inline'] = False
+
+TINYMCE_CLEAN_HTML = {
+    'scripts': True,
+    'javascript': True,
+    'comments': True,
+    'style': True,
+    'links': True,
+    'meta': True,
+    'page_structure': False,
+    'processing_instructions': True,
+    'embedded': True,
+    'frames': True,
+    'forms': True,
+    'annoying_tags': True,
+    'remove_unknown_tags': True,
+    'safe_attrs_only': False,
 }
 
 GOOGLE_ANALYTICS_CODE = ''
