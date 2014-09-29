@@ -25,6 +25,7 @@ class Migration(SchemaMigration):
         db.create_table('courses_course', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('order', self.gf('django.db.models.fields.PositiveIntegerField')(default=1, db_index=True)),
+            ('ects', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=8)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=200)),
             ('slug', self.gf('django.db.models.fields.SlugField')(max_length=50)),
             ('description', self.gf('tinymce.models.HTMLField')()),

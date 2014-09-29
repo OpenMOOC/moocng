@@ -1,0 +1,102 @@
+{% extends "courses/base_course.html" %}
+{% load i18n %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-16 col-md-12 col-sm-8 col-mob-4 syllabus">
+            <h3>{% trans "Syllabus" %}</h3>
+            <ol>
+            {% for unit in unit_list %}
+                <li>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-8 col-sm-5 col-mob-4">
+                            <a href="{{unit.url}}" class="unit {% if unit.complete %}done{% endif %}"><span class="num"></span>{{unit.title}}</a>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-3 col-mob-4">
+                            <div class="social">
+                                <a class="fblike"><img src="{{ STATIC_URL }}img/ECO_icon_gusta_fb.svg"><span></span></a>
+                                <a class="gplusone"><img src="{{ STATIC_URL }}img/ECO_icon_gusta_google.svg"><span></span></a>
+                            </div>
+                        </div>
+                    </div>
+                {% if unit.questions %}
+                    <ol>
+                        {% for q in unit.questions %}
+                        <li class="{% if q.current %}current{% endif %}{% if q.completed %}done{% endif %}">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-8 col-sm-5 col-mob-4">
+                                    <a class="kq" href="{{q.url}}">{{q.title}}</a>
+                                    {% if q.has_video %}
+                                        <span><img src="{{ STATIC_URL }}img/ECO_icon_contenido_video.svg">{% trans "Video" %}</span>
+                                    {% endif %} 
+
+                                    {% if q.has_presentation %}
+                                        <span><img src="{{ STATIC_URL }}img/ECO_icon_contenido_presentacion.svg">{% trans "Presentation" %}</span>
+                                    {% endif %} 
+
+                                    {% if q.has_attachments %}
+                                        <span><img src="{{ STATIC_URL }}img/ECO_icon_contenido_fichero.svg">{% trans "Attachments" %}</span>
+                                    {% endif %} 
+
+                                    {% if q.has_test %}
+                                        <span><img src="{{ STATIC_URL }}img/ECO_icon_contenido_tarea-test.svg">{% trans "Test" %}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-3 col-mob-4">
+                                    <div class="social">
+                                        <a class="fblike"><img src="{{ STATIC_URL }}img/ECO_icon_gusta_fb.svg"><span></span></a>
+                                        <a class="gplusone"><img src="{{ STATIC_URL }}img/ECO_icon_gusta_google.svg"><span></span></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ol>
+                {% endif %}
+                </li>
+            {% endfor %}
+            </ol>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+    <script type="text/javascript">
+        $(function(){
+            var host = window.location.origin;
+            $('.syllabus a.unit').each(function(){
+                var $fb = $(this).parent().parent().find('.fblike').first();
+                var $gplus = $(this).parent().parent().find('.gplusone').first();
+                var url = $(this).attr('href');
+                url = url.replace('#!','?_escaped_fragment=')
+                /* FB */
+                $.getJSON('http://graph.facebook.com/'+host+url,function(data){
+                    //console.log(data);
+                    $fb.attr("href","http://www.facebook.com/sharer/sharer.php?u="+host+url);
+                    $fb.children('span').html(data.shares);
+                });
+                /* GPLUS */
+                /*$.ajax({
+                    cache: false,
+                    type: 'GET',
+                    url: 'https://plusone.google.com/_/+1/fastbutton?url='+host+url,
+                    crossDomain: true,
+                    jsonp: true,
+                    timeout: 5000,
+                    dataType: 'jsonp',
+                    contentType: 'application/javascript; charset=utf-8',
+                    success: function(data){
+                        console.log('YEAH!');
+                        var count = data.match('/window.__SSR');
+                        console.log(count);
+                    },
+                    allways: function(data){
+                        console.log(data);
+                    }
+                });*/
+            });
+        });
+
+    </script>
+{% endblock %}

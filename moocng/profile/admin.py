@@ -15,11 +15,12 @@
 
 
 from django.contrib import admin
+from django import forms
+from django.contrib.auth.forms import UserChangeForm 
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from moocng.profile.models import UserProfile
-
+from moocng.profile.models import UserProfile,Organization
 
 class UserProfileInline(admin.StackedInline):
     model = UserProfile
@@ -28,10 +29,11 @@ class UserProfileInline(admin.StackedInline):
     raw_id_fields = ('last_announcement',)
     autocomplete_lookup_fields = {'fk': ['last_announcement'], }
 
-
 class UserAdmin(UserAdmin):
     inlines = (UserProfileInline, )
 
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
+admin.site.register(Organization)
+

@@ -1,4 +1,4 @@
-{% extends "courses/base_course.html" %}
+{% extends "courses/base_course_oldcss.html" %}
 
 {% load i18n %}
 
@@ -7,14 +7,13 @@
 {% block content %}
 <h1>{{ course.name }}</h1>
 <div class="row">
-    <div class="span2">
+    <div class="col-lg-2 col-md-2 col-sm-2 col-mob-4">
         <ul class="nav nav-list">
             <li class="nav-header">{% trans "Course edition" %}</li>
             <li class="{% block nav-teacheradmin-info %}{% endblock %}"><a href="{% url teacheradmin_info course.slug %}">{% trans "Information" %}</a></li>
             <li class="{% block nav-teacheradmin-teachers %}{% endblock %}"><a href="{% url teacheradmin_teachers course.slug %}">{% trans "Teachers" %}</a></li>
             <li class="{% block nav-teacheradmin-units %}{% endblock %}"><a href="{% url teacheradmin_units course.slug %}">{% trans "Units" %}</a></li>
             <li class="{% block nav-teacheradmin-categories %}{% endblock %}"><a href="{% url teacheradmin_categories course.slug %}">{% trans "Categories" %}</a></li>
-            <li class="{% block nav-teacheradmin-assets %}{% endblock %}"><a href="{% url teacheradmin_assets course.slug %}">{% trans "Assets" %}</a></li>
             <li class="{% block nav-teacheradmin-externalapps %}{% endblock %}"><a href="{% url externalapps_list course.slug %}">{% trans "External applications" %}</a></li>
 
             <li class="nav-header">{% trans "Extra" %}</li>
@@ -24,7 +23,7 @@
         </ul>
     </div>
 
-    <div class="span10">
+    <div class="col-lg-14 col-md-10 col-sm-6 col-mob-4">
         {% block section %}
         <div class="alert">
             <h4>{% trans "We are sorry" %}</h4>

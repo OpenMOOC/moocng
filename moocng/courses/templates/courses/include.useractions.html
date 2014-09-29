@@ -1,40 +1,52 @@
-{% load i18n usercourses %}
+{% load i18n usercourses gravatar %}
 <div class="btn-toolbar pull-right">
-  <div class="btn-group">
-    <a class="btn dropdown-toggle" data-toggle="dropdown">
-      {% trans "My courses" %}
-      <span class="caret"></span>
-    </a>
-    <ul class="dropdown-menu">
-      {% usercourses %}
-      <li class="divider"></li>
-      <li><a href="{% url home %}">{% trans "See all courses" %}</a></li>
-    </ul>
-  </div>
-  <div class="btn-group">
-    <a class="btn dropdown-toggle" data-toggle="dropdown">
-      {% trans "Welcome" %}, {% firstof user.get_full_name user.username %}
-      <span class="caret"></span>
-    </a>
-    <ul class="dropdown-menu">
-      <li><a href="{% url transcript %}">{% trans "My transcript" %}</a></li>
-      <li><a href="{% url my_badges %}">{% trans "My badges" %}</a></li>
-      <li><a href="{% url profile %}">{% trans "Profile settings" %}</a></li>
-      <li><a href="{% url changepw %}">{% trans "Change Password" %}</a></li>
-      {% if user.is_staff %}
-      <li class="divider"></li>
-      <li>
-        <a href="/admin">{% trans "Admin interface" %}</a>
-      </li>
-      {% endif %}
-      {% if user.is_staff or sandbox %}
-      {% if sandbox %}<li class="divider"></li>{% endif %}
-      <li>
-        <a href="{% url course_add %}">{% trans "Create course" %}</a>
-      </li>
-      {% endif %}
-      <li class="divider"></li>
-      <li><a href="{% url logout %}">{% trans "Log out" %}</a></li>
-    </ul>
-  </div>
+	<div class="btn-group">
+		<a class="dropdown-toggle" href="#">
+			<img src="{{ STATIC_URL }}img/icon_microblog.png">
+		</a>
+		<div class="dropdown-menu">
+			<input type="text" placeholder="Write a message...">
+		</div>
+	</div>
+	<div class="btn-group">
+		<a class="btn" href="#">
+			<img src="{{ STATIC_URL }}img/icon_forum.png">
+		</a>
+	</div>
+	<div class="btn-group">
+		<a class="dropdown-toggle notifications" href="#">
+			<img src="{{ STATIC_URL }}img/icon_notification.png">
+			<span class="unread">2</span>
+		</a>
+		<ul class="dropdown-menu">
+			<li>Notificación 1</li>
+			<li>Notificación 2</li>
+			<li>Notificación 3</li>
+		</ul>
+	</div>
+	<div class="vruler"></div>
+	<div class="btn-group">
+		<a class="dropdown-toggle usermenu" data-toggle="dropdown">
+			<img src="{% gravatar_for_email user.email %}?s=48" alt="{% firstof user.get_full_name user.username %}">      
+		</a>
+		<ul class="dropdown-menu">
+			<li><a href="{% url profile_timeline %}">{% trans "Profile" %}</a></li>
+			<li><a href="{% url home %}">{% trans "See all courses" %}</a></li>
+			<li><a href="{% url transcript %}">{% trans "My transcript" %}</a></li>
+			<li><a href="{% url my_badges %}">{% trans "My badges" %}</a></li>
+			<li><a href="{% url changepw %}">{% trans "Change Password" %}</a></li>
+			{% if user.is_staff %}
+			<li class="divider"></li>
+			<li><a href="/admin">{% trans "Admin interface" %}</a></li>
+			{% endif %}
+			{% if user.is_staff or sandbox %}
+				{% if sandbox %}
+					<li class="divider"></li>
+				{% endif %}
+				<li><a href="{% url course_add %}">{% trans "Create course" %}</a></li>
+			{% endif %}
+			<li class="divider"></li>
+			<li><a href="{% url logout %}">{% trans "Log out" %}</a></li>
+		</ul>
+	</div>
 </div>

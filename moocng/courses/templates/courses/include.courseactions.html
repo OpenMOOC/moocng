@@ -1,0 +1,131 @@
+{% load i18n usercourses peer_review_tags %}
+<div class="course-toolbar">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12 col-md-8 col-sm-5 col-mob-4">
+				<h1>{{ course.name }}</h1>
+				{% if course.hashtag %}
+				<h3 class="noLowRes"><span>Hashtag: </span>{{ course.hashtag }}</h3>
+				{% endif %}
+			</div>
+			{% if is_ready %}
+			<div class="col-lg-4 col-md-4 col-sm-3 col-mob-4 alt-column top">
+				<div class="progress-fraction">
+					<img src="{{ STATIC_URL }}img/ECO_icon_creditos_white.svg">
+					<p>2<span>/10</span></p>
+					<h4 class="noLowRes">{% trans "Credits" %}</h4>
+				</div>
+				{% if task_list %}
+				<div class="progress-fraction">
+					<img src="{{ STATIC_URL }}img/ECO_icon_tareas.svg">
+					<p>{{ tasks_done }}<span>/{{ task_list|length }}</span></p>					
+					<h4 class="noLowRes">{% trans "Total Tasks" %}</h4>
+				</div>
+				{% endif %}
+			</div>
+			{% endif %}
+		</div>
+		<div class="row bottom-row">
+			<div class="col-lg-12 col-md-8 col-sm-5 col-mob-4">
+				<ul class="menu">
+					<li>
+						{% url course_dashboard course.slug as url_dashboard %}
+						<a href="{{ url_dashboard }}" {% if request.path == url_dashboard %} class="selected"{% endif %}>
+							<img src="{{ STATIC_URL }}img/ECO_icon_dashboard.svg" alt="{% trans "Dashboard" %}">
+						</a>
+					</li>
+					<li>
+						{% url course_syllabus course.slug as url_syllabus %}
+						<a href="{{ url_syllabus }}" {% if request.path == url_syllabus %} class="selected"{% endif %}>
+							{% trans "Syllabus" %}
+						</a>
+					</li>
+					{% if_has_peer_review_assignments course %}
+                	<li {% block nav-course-reviews %}{% endblock %}>
+                		{% url course_reviews course.slug as url_reviews %}
+                    	<a href="{% url course_reviews course.slug %}" {% if request.path == url_reviews %} class="selected"{% endif %}>{% trans "Reviews" %}</a>
+                	</li>
+            		{% endif_has_peer_review_assignments %}
+					<li class="noLowRes">
+						{% url course_calendar course.slug as url_calendar %}
+						<a href="{{ url_calendar }}" {% if request.path == url_calendar %} class="selected"{% endif %}>
+							{% trans "Calendar" %}
+						</a>
+					</li>
+					<li class="noLowRes">
+						{% url course_team course.slug as url_team %}
+						<a href="{{ url_team }}" {% if request.path == url_team %} class="selected"{% endif %}>
+							{% trans "Team" %}
+						</a>
+					</li>
+					<li class="noLowRes">
+						{% url course_forum course.slug as url_forum %}
+						<a href="{{ url_forum }}" {% if request.path == url_forum %} class="selected"{% endif %}>
+							{% trans "Forum" %}
+						</a>
+					</li>
+					<!-- <li class="noLowRes"><a href="#">{% trans "Blog" %}</a></li>
+					<li class="noLowRes"><a href="#">{% trans "Wiki" %}</a></li> -->
+					<li class="btn-group">
+						<a href="#" class="dropdown-btn">
+							{% trans "More" %}
+							<svg height="10px" width="14px">
+								<path fill="#FFFFFF" d="M0.586,2.414L2,1l5,5.172L12,1l1.414,1.414L7,9L0.586,2.414z"/>
+							</svg>
+						</a>
+						<ul class="dropdown-menu">
+							<li class="onlyLowRes">
+								{% url course_calendar course.slug as url_calendar %}
+								<a href="{{ url_calendar }}" {% if request.path == url_calendar %} class="selected"{% endif %}>
+									{% trans "Calendar" %}
+								</a>
+							</li>
+							<li class="onlyLowRes">
+								{% url course_team course.slug as url_team %}
+								<a href="{{ url_team }}" {% if request.path == url_team %} class="selected"{% endif %}>
+									{% trans "Team" %}
+								</a>
+							</li>
+							<li class="onlyLowRes">
+								{% url course_forum course.slug as url_forum %}
+								<a href="{{ url_forum }}" {% if request.path == url_forum %} class="selected"{% endif %}>
+									{% trans "Forum" %}
+								</a>
+							</li>
+							<li>
+								{% url course_teachers course.slug as url_teachers %}
+								<a href="{{ url_teachers }}" {% if request.path == url_teachers %} class="selected"{% endif %}>
+									{% trans "Teachers" %}
+								</a>
+							</li>
+							<li>
+								{% url course_overview course.slug as url_overview %}
+								<a href="{{ url_overview }}" {% if request.path == url_overview %} class="selected"{% endif %}>
+									{% trans "General information" %}
+								</a>
+							</li>
+							<li>
+								{% if is_teacher %}
+								{% url teacheradmin_info course.slug as url_course_admin %}
+								<a href="{{ url_course_admin }}" {% if request.path == url_course_admin %} class="selected"{% endif %}>
+									{% trans "Admin course" %}
+								</a>
+								{% endif %}
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+			{% if is_ready %}
+			<div class="col-lg-4 col-md-4 col-sm-3 col-mob-4 alt-column bottom">
+				<div class="progress-bar">
+					<h4>{% trans "Your progress" %}</h4>
+					<p>{{ progress }}%</p>
+					<div class="clearfix"></div>
+					<div class="progress"><span style="width: {{ progress }}%;"></span></div>
+				</div>
+			</div>
+			{% endif %}
+		</div>
+	</div>
+</div>

@@ -23,7 +23,9 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 
-from moocng.courses.models import Course, Unit, CourseTeacher
+from moocng.courses.models import Course, Unit, CourseTeacher, CourseStudent, KnowledgeQuantum
+from moocng.peerreview.models import PeerReviewAssignment
+from moocng.categories.models import Category
 from moocng.http import Http410
 
 
@@ -72,6 +74,9 @@ def check_user_can_view_course(course, request):
     """
     can_view, reason = can_user_view_course(course, request.user)
 
+    import pprint
+    pprint.pprint(reason)
+
     if can_view:
         if reason != 'active':
             msg_table = {
@@ -117,6 +122,49 @@ def get_courses_available_for_user(user):
         return Course.objects.exclude(end_date__lt=date.today()).filter(Q(status='p') | Q(status='d', courseteacher__teacher=user)).distinct()
 
 
+def get_related_courses_available_for_user(course, user):
+    """
+    Filter in a list of courses what courses related to one are available for the user
+    
+    :returns: Object list
+    
+    .. versionadded:: 0.2
+    """
+    
+    # Get categories from selected course
+    if(len(course.categories.filter()) > 0):
+        category = course.categories.all()[0].name
+        
+        if user.is_superuser or user.is_staff:
+        # Return every course that hasn't finished
+            return Course.objects.exclude(end_date__lt=date.today()).filter(categories__name__contains=category).distinct()
+        elif user.is_anonymous() or not CourseTeacher.objects.filter(teacher=user).exists():
+            # Regular user, return only the published courses
+            return Course.objects.exclude(end_date__lt=date.today()).filter(status='p').filter(categories__name__contains=category).distinct()
+        else:
+            # Is a teacher, return draft courses if he is one of its teachers
+            return Course.objects.exclude(end_date__lt=date.today()).filter(Q(status='p') | Q(status='d', courseteacher__teacher=user)).distinct().filter(categories__name__contains=category)
+    else:
+        return []
+
+def get_courses_user_is_enrolled(user):
+
+    """
+    Filter in a list of courses what user is enrolled in.
+
+    :returns: Object list
+
+    .. versionadded:: 0.1
+    """
+    if user.is_anonymous() or not CourseTeacher.objects.filter(teacher=user).exists():
+        # Regular user, return only the published courses
+        return Course.objects.filter(Q(coursestudent__student=user)).distinct()
+
+    else:
+        # Is a teacher, return draft courses if he is one of its teachers
+        return Course.objects.exclude(end_date__lt=date.today()).filter(Q(status='p', coursestudent__student=user) | Q(status='d', courseteacher__teacher=user)).distinct()
+
+
 def get_units_available_for_user(course, user, is_overview=False):
 
     """
@@ -144,3 +192,49 @@ def get_units_available_for_user(course, user, is_overview=False):
                 Q(status='p', course=course) |
                 Q(status='l', course=course, course__courseteacher__teacher=user, course__courseteacher__course=course) |
                 Q(status='d', course=course, course__courseteacher__teacher=user, course__courseteacher__course=course)).distinct()
+
+
+def get_tasks_available_for_user(course, user, is_overview=False):
+    tasks = []
+    numdone = 0
+
+    for u in get_units_available_for_user(course, user):
+        for q in KnowledgeQuantum.objects.filter(unit_id=u.id):
+            t = None
+            ttype = None;
+            if (len(q.question_set.filter()) > 0):
+                t = q.question_set.all()[0]
+                ttype = 'q';
+            else:
+                pr = PeerReviewAssignment.objects.filter(kq=q)
+                if (len(pr) > 0):
+                    t = pr.all()[0]
+                    ttype = 'p'
+            
+            if t is not None:
+                done = q.is_completed(user)
+                task = {
+					'title': q.title,
+					'type': ttype,
+					'item': t,
+					'done': done
+                }
+                if done:
+                    numdone += 1
+                tasks.append(task)
+                
+    return tasks, numdone
+
+def get_course_progress_for_user(course, user):
+    kq_passed = 0
+    kq_total = 0
+
+    for u in get_units_available_for_user(course, user):
+        for q in KnowledgeQuantum.objects.filter(unit_id=u.id):
+            kq_total += 1
+            if q.is_completed(user):
+                kq_passed += 1
+    if kq_total != 0:
+        return kq_passed*100/kq_total
+    else:
+        return 0

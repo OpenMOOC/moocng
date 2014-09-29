@@ -1,0 +1,38 @@
+{% extends "base_orig.html" %}
+
+{% load i18n peer_review_tags asset_tags externalapps %}
+
+{% block nav %}
+    {% if is_enrolled or is_teacher or user.is_staff %}
+        <ul class="nav nav-pills">
+            <li {% block nav-course-overview %}{% endblock %}>
+                <a href="{% url course_overview course.slug %}">{% trans "Overview" %}</a>
+            </li>
+            <li {% block nav-course-classroom %}{% endblock %}>
+                <a href="{% url course_classroom course.slug %}">{% trans "Classes" %}</a>
+            </li>
+            <!--<li {% block nav-course-externalapps %}{% endblock %}>
+                {% externalapps_list %}
+            </li>
+            {% if_has_peer_review_assignments course %}
+                <li {% block nav-course-reviews %}{% endblock %}>
+                    <a href="{% url course_reviews course.slug %}">{% trans "Reviews" %}</a>
+                </li>
+            {% endif_has_peer_review_assignments %}
+            {% if_has_assets course %}
+                <li {% block nav-course-reservations %}{% endblock %}>
+                    <a href="{% url course_reservations course.slug %}">{% trans "Reservations" %}</a>
+                </li>
+            {% endif_has_assets %}
+
+            <li {% block nav-course-progress %}{% endblock %}>
+                <a href="{% url course_progress course.slug %}">{% trans "Progress" %}</a>
+            </li>-->
+            {% if is_teacher or user.is_staff %}
+                <li class="pull-right{% block nav-course-admin %}{% endblock %}">
+                    <a href="{% url teacheradmin_index course.slug %}">{% trans "Course administration" %}</a>
+                </li>
+            {% endif %}
+        </ul>
+    {% endif %}
+{% endblock %}

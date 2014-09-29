@@ -48,6 +48,8 @@ from moocng.assets.utils import course_get_assets
 from moocng.assets.models import Asset
 from moocng.externalapps.models import externalapps
 
+import pprint
+
 
 @is_teacher_or_staff
 def teacheradmin_stats(request, course_slug):

@@ -2,8 +2,10 @@ build/
 dist/
 moocng/media
 moocng/settings/local.py
+moocng/settings/common.py
+moocng/settings/saml_settings.py
 docs/build
-
+*.DS_Store
 *.pyc
 *.egg-info
 *~

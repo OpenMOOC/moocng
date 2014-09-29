@@ -74,8 +74,8 @@
 <form>
     <fieldset>
     <legend>{% trans "Unit" %}</legend>
-    <div class="row">
-        <div class="span10 mb10">
+    <div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
+        <div>
             <fieldset>
                 <legend class="hide"></legend>
                 <label for="status" class="required">{% trans "Status" %}</label>
@@ -91,12 +91,12 @@
             </fieldset>
         </div>
     </div>
-    <div class="row">
-        <div class="span4">
+    <div>
+        <div class="col-lg-6 col-md-5 col-sm-8 col-mob-4">
             <label for="title" class="required">{% trans "Title" %}</label>
-            <input id="title" type="text" name="title" maxlength="200" class="input-xlarge" required="required" />
+            <input id="title" type="text" name="title" maxlength="200" class="" required="required" />
         </div>
-        <div class="span4">
+        <div class="col-lg-6 col-md-5 col-sm-3 col-mob-4">
             <label for="type" class="required">{% trans "Type" %}</label>
             <select name="type" id="type">
                 <option value="n" selected="selected">{% trans "Normal" %}</option>
@@ -104,7 +104,7 @@
                 <option value="e">{% trans "Exam" %}</option>
             </select>
         </div>
-        <div class="span2">
+        <div class="col-lg-4 col-md-2 col-sm-2 col-mob-4">
             <label for="weight" class="required">{% trans "Weight" %}</label>
             <div class="input-append">
                 <input type="number" min="0" max="100" step="1" name="weight" id="weight" class="input-mini" required="required" />
@@ -113,22 +113,23 @@
         </div>
     </div>
     <div id="dates" class="row hide">
-        <div class="span4">
+        <div>
             <label for="start_date">{% trans "Start date" %}</label>
             <input type="date" name="start_date" id="start_date" placeholder="YYYY-MM-DD" class="input-xlarge" />
         </div>
-        <div class="span4">
+        <div>
             <label for="end_date">{% trans "End date" %}</label>
             <input type="date" name="end_date" id="end_date" placeholder="YYYY-MM-DD" class="input-xlarge" />
         </div>
     </div>
     </fieldset>
-    <div class="row"><div class="span10 align-right">
+    <div class="col-lg-16 col-md-12 col-sm-8 col-mob-4"><div class="align-right">
         <button id="save-unit" class="btn btn-primary"><span class="icon icon-white icon-ok"></span> {% trans "Save" %}</button>
         <button id="delete-unit" class="btn btn-danger"><span class="icon icon-white icon-remove"></span> {% trans "Delete" %}</button>
         <button class="btn back"><span class="icon icon-arrow-left"></span> {% trans "Back" %}</button>
     </div></div>
 </form>
+</div>
 </script>
 <script id="edit-kq-tpl" type="text/template">
 <form>
@@ -215,8 +216,8 @@
         <div class="alert alert-info hide" id="attachment-empty">{% trans "There are no attachments yet." %}</div>
     </fieldset>
     <fieldset class="tab-pane" id="question">
-    <div class="row">
-        <div class="span10">
+    <div>
+        <div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
             <legend>{% trans "Question's background" %}</legend>
             <div id="last-frame">
                 <p>{% trans "Nugget's video last frame" %}</p>
@@ -239,33 +240,33 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="span10">
+    <div class="">
+        <div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
             <legend>{% trans "Question's solution" %}</legend>
-            <div class="row mb10">
-                <div class="span10">
+            <div class="mb10">
+                <div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
                     <div class="btn-group">
                         <button class="btn active" id="use-solution-video-btn">{% trans "Use a media content as solution" %}</button>
                         <button class="btn" id="use-solution-text-btn">{% trans "Use a text as solution" %}</button>
                     </div>
                 </div>
             </div>
-            <div class="row mb20" id="use-solution-video">
-                <div class="span10">
+            <div class="mb20" id="use-solution-video">
+                <div class="col-lg-4 col-md-4 col-sm-4 col-mob-4">
                     <label for="questionmedia_content_type" class="required">{% trans "Content type" %}</label>
-                    <select id="questionmedia_content_type" name="questionmedia_content_type" class="input-xlarge" required="required">
+                    <select id="questionmedia_content_type" name="questionmedia_content_type" required="required">
                         {% for media_content_type in media_content_type_choices %}
                             <option value='{{ media_content_type.0}}'>{{ media_content_type.1}}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <div class="span10">
+                <div class="col-lg-4 col-md-4 col-sm-4 col-mob-4">
                     <label for="questionmedia_content_id" class="required">{% trans "Content id or url" %}</label>
                     <input id="questionmedia_content_id" type="text" name="questionmedia_content_id" maxlength="200" class="input-xlarge" required="required" />
                 </div>
             </div>
-            <div class="row mb20 hide" id="use-solution-text">
-                <div class="span10">
+            <div class="mb20 hide" id="use-solution-text">
+                <div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
                     <label for="solution-text" class="required">{% trans "Solution text" %}</label>
                     <textarea name="solution-text" id="solution-text" class="span10" rows="10"></textarea>
                 </div>
@@ -273,7 +274,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="align-right span10">
+        <div class="align-right col-lg-16 col-md-12 col-sm-8 col-mob-4">
             <button id="go2options" class="btn btn-primary" type="submit">{% trans "Save changes and edit question's options" %}</button>
             <button id="delete-question" class="btn btn-danger">{% trans "Remove the question from this nugget" %}</button>
         </div>
@@ -281,11 +282,11 @@
     </fieldset>
     <fieldset class="tab-pane" id="peer-review-assignment">
     <div class="row">
-        <div class="span5">
+        <div class="col-lg-8 col-md-6 col-sm-4 col-mob-4">
             <label for="reviewdescription" class="required">{% trans "Assignment description" %}</label>
             <textarea id="reviewdescription" name="reviewdescription" class="span5" rows="5"></textarea>
         </div>
-        <div class="span5">
+        <div class="col-lg-8 col-md-6 col-sm-4 col-mob-4">
             <label for="reviewminreviews" class="required">{% trans "Minimun reviewers" %}</label>
             <div class="input-append">
                 <input type="number" min="0" max="100" step="1" name="reviewminreviews" id="reviewminreviews" class="input-mini" required="required" />
@@ -293,7 +294,7 @@
         </div>
     </div>
     <div class="row">
-      <div class="span10">
+      <div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
         <legend>{% trans "Evaluation criterions" %}</legend>
         <div id="reviewcriterions">
         </div>
@@ -313,17 +314,17 @@
     </fieldset>
     <fieldset class="tab-pane" id="asset-availability">
     <div class="row">
-        <div class="span5">
+        <div class="col-lg-8 col-md-6 col-sm-4 col-mob-4">
             <label for="availablefrom" class="required"> {% trans "Available from:" %}</label>
             <input type="date" id="availablefrom" name="availablefrom" placeholder="YYYY-MM-DD" class="input-medium" ></input>
         </div>
-        <div class="span5">
+        <div class="col-lg-8 col-md-6 col-sm-4 col-mob-4">
             <label for="availableto" class="required"> {% trans "Available to:" %}</label>
             <input type="date" id="availableto" name="availableto" placeholder="YYYY-MM-DD" class="input-medium" ></input>
         </div>
     </div>
     <div class="row">
-      <div class="span10">
+      <div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
         <legend>{% trans "Assets" %}</legend>
         <div id="assets" class="span5">
         </div>
@@ -335,7 +336,7 @@
       </div>
     </div>
     <div class="row">
-        <div class="mb10 align-right span10">
+        <div class="align-right col-lg-16 col-md-12 col-sm-8 col-mob-4">
             <button id="delete-asset-availability" class="btn btn-danger">{% trans "Remove the asset availability" %}</button>
         </div>
     </div>
@@ -343,7 +344,7 @@
     </div>
     </div>
     <fieldset>
-    <div class="row"><div class="span10 align-right"><div class="form-actions">
+    <div class="row"><div class="col-lg-16 col-md-12 col-sm-8 col-mob-4 align-right"><div class="form-actions">
         <button id="save-kq" type="submit" class="btn btn-primary"><span class="icon icon-white icon-ok"></span> {% trans "Save" %}</button>
         <button id="delete-kq" class="btn btn-danger"><span class="icon icon-white icon-remove"></span> {% trans "Delete" %}</button>
         <button class="btn back"><span class="icon icon-arrow-left"></span> {% trans "Back" %}</button>

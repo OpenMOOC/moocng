@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+{% include "profile/include.userheader.html" %}
+<div class="userprofile white">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-4 col-md-4 col-sm-8 col-mob-4">
+				<dl class="info">
+					{% if profile.location %}
+					<div class="row separator_h">
+						<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4 element">
+							<img class="icon" src="{{ STATIC_URL }}img/ECO_icon_info_localizacion.svg">
+							<dt>{% trans "Location" %}</dt>
+							<dd>{{ profile.location }}</dd>
+						</div>
+					</div>
+					{% endif %}
+					{% if profile.languages %}
+					<div class="row separator_h">
+						<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4 element">
+							<img class="icon" src="{{ STATIC_URL }}img/ECO_icon_info_idioma.svg">
+							<dt>{% trans "Languages" %}</dt>
+							{% for language in profile.languages %}
+							<dd>{{ language }}</dd>
+							{% endfor %}
+						</div>
+					</div>
+					{% endif %}
+					{% if user.get_profile.gender %}
+					<div class="row separator_h">
+						<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4 element">
+							<img class="icon" src="{{ STATIC_URL }}img/ECO_icon_info_sexo-{{user.get_profile.gender}}.svg">
+							<dt>{% trans "Gender" %}</dt>
+							{% if user.get_profile.gender == 'm' %}
+							<dd>{% trans "Male" %}</dd>
+							{% else %}
+							<dd>{% trans "Female" %}</dd>
+							{% endif %}
+						</div>
+					</div>
+					{% endif %}
+					{% if user.get_profile.birthdate %}
+					<div class="row separator_h">
+						<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4 element">
+							<img class="icon" src="{{ STATIC_URL }}img/ECO_icon_info_edad.svg">
+							<dt>{% trans "Age" %}</dt>
+							<dd>{{ user.get_profile.birthdate|timesince }}</dd>
+						</div>
+					</div>
+					{% endif %}
+				</dl>
+			</div>
+			<div class="col-lg-12 col-md-8 col-sm-8 col-mob-4">
+				<div class="profile">
+					<div class="links-bar">
+						{% if user.get_profile.personalweb %}
+						<a class="pull-left" href="{{ profile.personalweb }}">
+							<img src="{{ STATIC_URL }}img/ECO_icon_info_enlace.svg">
+							<span>{{ user.get_profile.personalweb }}</span>
+						</a>
+						{% endif %}
+						{% if user.email %}
+						<a class="pull-left" href="mailto:{{ user.email }}">
+							<img src="{{ STATIC_URL }}img/ECO_icon_info_email.svg">
+							<span>{{ user.email }}</span>
+						</a>
+						{% endif %}
+						{% if is_user %}
+						<a class="pull-right" href="#">
+							<span>{% trans "Edit profile" %}</span>
+						</a>
+						{% endif %}
+					</div>
+					{% if user.get_profile.bio %}
+					<div class="bio">{{ user.get_profile.bio|safe }}</div>
+					{% endif %}
+					{% if profile.socialmedia|length > 0 %}
+					<div class="social separator_h">
+						<h5>{% trans "Social profiles" %}</h5>
+						{% for social in profile.socialmedia %}
+							<a class="hide-text" href="{{ social.url }}">
+								<object data="{{ STATIC_URL }}img/ECO_icon_seguir_{{ social.name }}.svg?#55555d" type="image/svg+xml"></object>
+								{{ social.name }}
+							</a>
+						{% endfor %}
+					</div>
+					{% endif %}
+					{% if profile.interests|length > 0 %}
+					<div class="interests">
+						<h5>{% trans "Interests areas" %}</h5>
+						<ul class="tags">
+							{% for interest in profile.interests %}
+							<li><a href="#">{{ interest }}</a></li>
+							{% endfor %}
+						</ul>
+					</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

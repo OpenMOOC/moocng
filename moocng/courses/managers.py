@@ -5,7 +5,6 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.query import QuerySet
 
-
 class CourseQuerySet(QuerySet):
 
     def by_status(self, status):

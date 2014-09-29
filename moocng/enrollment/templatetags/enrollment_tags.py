@@ -4,7 +4,6 @@ from moocng.enrollment import enrollment_methods
 
 register = template.Library()
 
-
 class BaseButtonNode(template.Node):
 
     def __init__(self, course):

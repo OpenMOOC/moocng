@@ -10,3 +10,10 @@ class Askbot(ExternalApp):
         model = 'externalapps.ExternalApp'
         instance_type = 'askbot'
         instances = settings.MOOCNG_EXTERNALAPPS['askbot']['instances']
+
+class NodeBB(ExternalApp):
+
+    class Meta:
+        model = 'externalapps.ExternalApp'
+        instance_type = 'nodebb'
+        instances = settings.MOOCNG_EXTERNALAPPS['nodebb']['instances']

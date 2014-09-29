@@ -14,14 +14,173 @@
  * limitations under the License.
  */
 
+/* SWATCHES */
+@highlight: #002595;
+@comp: #fedd00;
+@black: #000;
+@neutral_intense: #27272e;
+@neutral_medium_1: #55555d;
+@neutral_medium_2: #808086;
+@neutral_light_1: #ccccce;
+@neutral_light_2: #dddddf;
+@neutral_light_3: #eeeeee;
+@white: #fff;
+@alerts: #ff0000;
+@ok: #008833;
+
+@facebook: #3b59b4;
+@twitter: #55acee;
+@gplus: #dd4b39;
+@youtube: #cd201f;
+
+.btn-group{
+    position: relative;
+    float: left;
+    
+    .dropdown-toggle, .btn {
+        display: block;
+        text-align: center;
+        margin: 0 5px;
+        transition: background-color 0.1s ease;
+        
+        &:hover {
+            background-color: @neutral_light_3;
+        }
+    }
+    
+    .dropdown-menu{
+        visibility: hidden;
+        opacity: 0;
+        display: block;
+        position: absolute;
+        top: 48px;
+        left: auto;
+        right: 5px;
+        margin: 0;
+        background: @neutral_light_3;
+        border: none;
+        border-bottom: 1px solid @neutral_light_1;
+        border-radius: 0;
+        min-width: 200px;
+        padding: 20px;
+        z-index: 2;
+        transition: visibility 0s linear, opacity .1s ease;
+        
+        & > li {
+            display: block;
+            opacity: 1;
+
+            a {
+                font-size: 16px;
+                padding: 2px 0;
+                color: @highlight;
+
+                &:hover {
+                    background: none;
+                }
+            }
+            
+            &.divider {
+                height: 1px;
+                width: 100%;
+                background: @neutral_light_1;
+                margin: 10px 0;
+                border: none;
+            }
+        }
+    }
+    
+    &:hover > .dropdown-toggle {
+        background-color: @neutral_light_3;
+    }
+    
+    &:hover > .dropdown-menu {
+        visibility: visible;
+        opacity: 1;
+    }
+}
+
 body {
-    background-color: #f1f1f1;
+    background-color: #ffffff;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    padding-top: 115px;
 }
 
 header {
-    border-bottom: 1px solid #dddddd;
-    margin-bottom: 1em;
-    position: relative;
+    color: @highlight;
+    min-height: 88px;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: @white;
+    z-index: 1;
+    
+    .main-bar {
+        padding: 10px 30px;
+        max-height: 86px;
+        transition: max-height .2s ease;
+    }
+    
+    h1.logo, .logo-mini {
+        float: left;
+        margin: 0;
+        margin-right: 25px;
+        height: 70px;
+        position: absolute;
+        left: 30px;
+        top: 10px;
+        opacity: 1;
+        transition: opacity .2s linear, top .2s ease;
+    }
+    
+    .logo-mini {
+        opacity: 0;
+        height: 55px;
+        padding-top: 10px;
+        top: 30px;
+    }
+    
+    #meta-buttons {
+        position: absolute;
+        opacity: 1;
+        top: 10px;
+        left: 180px;
+        transition: opacity .2s linear, top .2s ease;
+    }
+    
+    .btn-link {
+        color: inherit;
+        font-size: 18px;
+    }
+    
+    .course-title {
+        opacity: 0;
+        font-size: 18px;
+        font-weight: 400;
+        color: @neutral_intense;
+        padding: 20px 0;
+        position: absolute;
+        top: 50px;
+        left: 94px;
+        transition: opacity .2s linear, top .2s ease;
+    }
+    
+    ul > li {
+        display: inline-block;
+        margin-right: 18px;
+    }
+    
+    .btn-toolbar {
+        .btn-group {
+            display: none;
+
+            &:last-child {
+                display: block;
+            }
+        }
+    }
 }
 
 header h2 {
@@ -458,15 +617,23 @@ code {
 }
 
 .teacheradmin-units .unit-right {
-    width: 728px;
+    width: calc(~'100% - 40px');
     vertical-align: top;
     margin-left: 30px;
 }
 
 .teacheradmin-units .kq-right {
-    width: 556px;
+    width: calc(~'100% - 150px');
     margin-left: 10px;
     vertical-align: top;
+
+    h4 {
+        display: block;
+    }
+
+    & > div:last-child {
+        display: block;
+    }
 }
 
 .teacheradmin-units .unit .header span.badge,
@@ -503,7 +670,7 @@ code {
 
 .teacheradmin-units .kq .badge {
     position: relative;
-    top: 8px;
+    /*top: 8px;*/
     margin-right: 10px;
 }
 
@@ -531,8 +698,8 @@ code {
     width: 106px;
 }
 
-.teacheradmin-units select#type {
-    width: 284px;
+.teacheradmin-units select#type, .teacheradmin-units input[type="text"] {
+    width: 100%;
 }
 
 #media-player {
@@ -630,4 +797,57 @@ td.green a.ui-state-default {
 
 .tab-content-no-overflow {
     overflow: hidden;
+}
+
+.nav-pills>.active>a, .nav-pills>.active>a:hover {
+    background-color: @highlight;
+}
+
+.nav-list>.active>a, .nav-list>.active>a:hover {
+    background-color: @highlight;
+}
+
+a {
+    color: @highlight;
+}
+
+input[type="text"], input[type="number"], input[type="date"], select {
+    height: 2em;
+
+    & + span.add-on {
+        height: 2em;
+    }
+}
+
+.ui-draggable {
+    height: auto !important;
+
+    input[type="text"] {
+        height: 1.5em !important;
+    }
+}
+
+.uneditable-input, .btn {
+    height: 2em;
+}
+
+.help-inline {
+    font-size: 0.8em;
+}
+
+input[type="checkbox"] {
+    vertical-align: top;
+
+    & + label {
+        display: inline-block;
+    }
+}
+
+.btn-primary {
+    background-color: @highlight;
+    background-image: linear-gradient(to bottom,lighten(@highlight, 10%),@highlight);
+
+    &:hover {
+        background-color: @highlight;
+    }
 }

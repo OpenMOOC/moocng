@@ -50,6 +50,13 @@ from moocng.media_contents import get_media_content_types_choices, media_content
 logger = logging.getLogger(__name__)
 
 
+class Language(models.Model):
+    name = models.CharField(verbose_name=_(u'Name'), max_length=200)
+    
+    def __unicode__(self):
+        return self.name
+
+
 class Course(Sortable):
     THUMBNAIL_WIDTH = 300
     THUMBNAIL_HEIGHT = 185
@@ -71,16 +78,43 @@ class Course(Sortable):
                                   blank=True, null=True)
     end_date = models.DateField(verbose_name=_(u'End date'),
                                 blank=True, null=True)
+    
+    ects = models.PositiveSmallIntegerField(verbose_name=_(u'ECTS:'),
+                                                              default=8)
+    
     teachers = models.ManyToManyField(User, verbose_name=_(u'Teachers'),
                                       through='CourseTeacher',
                                       related_name='courses_as_teacher')
+    
     owner = models.ForeignKey(User, verbose_name=_(u'Teacher owner'),
                               related_name='courses_as_owner', blank=False,
                               null=False)
+
     students = models.ManyToManyField(User, verbose_name=_(u'Students'),
                                       through='CourseStudent',
                                       related_name='courses_as_student',
                                       blank=True)
+
+    languages = models.ManyToManyField(Language, verbose_name=_(u'Languages'),
+                                      through='CourseLanguage',
+                                      related_name='courses_as_language')
+
+    estimated_effort = models.CharField(verbose_name=_(u'Estimated effort'),
+                                 null = True,
+                                 blank=True,
+                                 max_length=128)
+
+    hashtag = models.CharField(verbose_name=_(u'Hashtag'),
+                                default='Hashtag',
+                                max_length=128)
+
+    ects = models.PositiveSmallIntegerField(verbose_name=_(u'ECTS:'),
+                                                              default=8)
+
+    user_score = models.PositiveSmallIntegerField(verbose_name=_(u'User score'),
+                                            null=True,
+                                            blank = True)
+
     promotion_media_content_type = models.CharField(verbose_name=_(u'Content type'),
                                                     max_length=20,
                                                     null=True,
@@ -141,6 +175,14 @@ class Course(Sortable):
                                                  help_text=_('This text is used to describe the thumbnail image. '
                                                      'It is necessary for accessibility ')
                                                  )
+
+    background = models.ImageField(
+        verbose_name=_(u'Background'),
+        upload_to='course_backgrounds',
+        blank=True,
+        null=True
+    )
+
     static_page = models.OneToOneField(
         'StaticPage',
         verbose_name=_(u'Static page'),
@@ -161,6 +203,9 @@ class Course(Sortable):
         verbose_name=_('Maximum of massive emails that a course can send per month'),
         default=settings.DEFAULT_MAX_EMAILS_PER_MONTH)
 
+
+    highlight = models.BooleanField(default=False)
+
     objects = CourseManager()
 
     class Meta(Sortable.Meta):
@@ -173,6 +218,21 @@ class Course(Sortable):
 
     def natural_key(self):
         return (self.slug,)
+
+    def get_user_mark(self,user):
+        db = get_db()
+        activity = db.get_collection("activity")
+
+        mark = activity.find_one({
+            "user_id": user.id,
+            "course_id": self.id,
+            "current" : True
+        })
+
+        if mark:
+            return KnowledgeQuantum.objects.get(pk=mark["kq_id"])
+        else:
+            return None
 
     def save(self, *args, **kwargs):
         if self.promotion_media_content_type and self.promotion_media_content_id:
@@ -339,6 +399,8 @@ class CourseStudent(models.Model):
                                          choices=COURSE_STATUSES,
                                          default='f',
                                          max_length=1)
+    progress = models.IntegerField(verbose_name=_(u'Progress'),
+                                        default=0)
 
     class Meta:
         verbose_name = _(u'course student')
@@ -346,6 +408,12 @@ class CourseStudent(models.Model):
 
     def can_clone_activity(self):
         return self.course.can_clone_activity() and self.old_course_status == 'n'
+
+
+
+class CourseLanguage(models.Model):
+    course = models.ForeignKey(Course, verbose_name=_(u'Course'))
+    language = models.ForeignKey(Language, verbose_name=_(u'Language'))
 
 
 class Announcement(models.Model):
@@ -551,6 +619,29 @@ class KnowledgeQuantum(Sortable):
         })
 
         return user_activity_exists.count() > 0
+
+    def set_as_current(self,user):
+        db = get_db()
+        activity = db.get_collection("activity")
+
+        activity.update({
+                "user_id": user.id,
+                "course_id": self.unit.course.id,
+                "current" : True
+            },
+            {
+                "$unset": { "current": "" },  
+            }
+        )
+
+        activity.update({
+            "user_id": user.id,
+            "kq_id": self.id
+            },
+            {
+                "$set": { "current": True },
+            }
+        )
 
     def natural_key(self):
         return self.unit.natural_key() + (self.title, )
