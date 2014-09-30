@@ -116,8 +116,8 @@ class HandleErrorProvider(object):
                 "error_message": message_error,
             }
             if response_class_error != HttpResponseNotFound:
-                log = logging.getLogger('moocng.api.resources')
-                log.error('Internal Server Error: %s' % request.path, exc_info=sys.exc_info(),
+                #log = logging.getLogger('moocng.api.resources')
+                logging.error('Internal Server Error: %s' % request.path, exc_info=sys.exc_info(),
                           extra={'status_code': 500, 'request': request})
             desired_format = self.determine_format(request)
             serialized = self.serialize(request, data, desired_format)
@@ -151,6 +151,7 @@ class BaseMongoUserResource(MongoUserResource, HandleErrorProvider):
 
 
 class CourseResource(BaseModelResource):
+    unit = fields.ToManyField('moocng.api.resources.UnitResource', 'unit_set')
 
     class Meta:
         queryset = Course.objects.all()
@@ -273,6 +274,30 @@ class KnowledgeQuantumResource(BaseModelResource):
     def dehydrate_completed(self, bundle):
         return bundle.obj.is_completed(bundle.request.user)
 
+    def dehydrate_course(self, bundle):
+        return bundle.obj.unit.course.id
+
+    def build_filters(self, filters=None):
+        if filters is None: #if you don't pass any filters at all
+            filters = {}
+            
+        orm_filters = super(KnowledgeQuantumResource, self).build_filters(filters)
+        if('course' in filters):
+            query = filters['course']
+            qset = (
+               Q(unit__course__id=query)
+            )
+            orm_filters['course'] = qset
+            
+        return orm_filters
+
+    def apply_filters(self, request, applicable_filters):
+        if 'course' in applicable_filters:
+            course = applicable_filters.pop('course')
+        else:
+            course = None
+        semi_filtered = super(KnowledgeQuantumResource, self).apply_filters(request, applicable_filters)
+        return semi_filtered.filter(course) if course else semi_filtered
 
 class PrivateKnowledgeQuantumResource(BaseModelResource):
     unit = fields.ToOneField(UnitResource, 'unit')

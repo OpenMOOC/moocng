@@ -50,6 +50,8 @@ urlpatterns = patterns('',
     url(r'^category/', include('moocng.categories.urls')),
 
     url(r'^auth/', include('moocng.auth_handlers.urls')),
+
+    url(r'^', include('moocng.profile.urls')),
 )
 
 if settings.DEBUG:

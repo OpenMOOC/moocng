@@ -1,4 +1,4 @@
-{% extends "courses/base_course.html" %}
+{% extends "base.html" %}
 
 {% load cache gravatar i18n enrollment_tags media_contents usercourses %}
 
@@ -9,168 +9,372 @@
 {% endblock %}
 
 {% block content %}
-<h1>{{ course.name }}</h1>
+{% if messages %}{% for message in messages %}
+	<div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
+		<div class="container">
+			<object type="image/svg+xml" class="ok" data="{{ STATIC_URL }}img/ECO_icon_check.svg?#008833"></object>
+			<!--<button class="close" data-dismiss="alert">×</button>-->
+			{{ message }}
+		</div>
+	</div>
+{% endfor %}{% endif %}
+<div class="course">
+	{% if not is_enrolled or not course_has_started %}
+		{% if course.background %}
+		<div class="course-header" style="background-image: url('{{ MEDIA_URL }}{{ course.background }}');">
+		{% else %}
+		<div class="course-header" style="background-image: url('{{ STATIC_URL }}img/course_bck.jpg');">
+		{% endif %}
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-12 col-md-8 col-sm-8 col-mob-4 title">
+						<h1>{{ course.name }}</h1>
+						
+						{% if course.promotion_media_content_type and course.promotion_media_content_id %}
+						<div class="media-box">
+							<a class="play" href="#"><img src="{{ STATIC_URL }}img/ECO_icon_play_xl_white.svg">Video</a>
+							<div class="background"></div>
+							<div class="iframe">
+								{% media_content_iframe_code course.promotion_media_content_type course.promotion_media_content_id height="349px" width="620px" allowfullscreen="1" controls="1" %}
+							</div>
+						</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+	<div class="bottom-line">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12 col-md-8 col-sm-8 col-mob-4">
+					<div class="social_links pull-left">
+						Share
+						<ul class="icons">
+							<li class="facebook"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}">
+								<svg>
+									<g>
+										<path d="M44.547,310.009h-3.563c0,5.373,0,11.991,0,11.991H36c0,0,0-6.551,0-11.991L33,310v-4h3v-2.97
+											c0-1.963,0.932-5.03,5.029-5.03H45v4c0,0-2.564,0-3,0c-0.437,0-1,0.062-1,1v3h4L44.547,310.009z"/>
+										<rect x="15" y="286" fill="none" width="48" height="48"/>
+									</g>
+									<g>
+										<path d="M29.547,24.009h-3.563c0,5.373,0,11.991,0,11.991H21c0,0,0-6.551,0-11.991L18,24v-4h3v-2.97c0-1.963,0.932-5.03,5.029-5.03
+											H30v4c0,0-2.564,0-3,0c-0.437,0-1,0.062-1,1v3h4L29.547,24.009z"/>
+									</g>
+								</svg>
+							</a></li>
+							<li class="twitter"><a target="_blank" href="https://twitter.com/home?status={{ request.build_absolute_uri }}" >
+								<svg>
+									<path d="M33.543,19.107c0.011,0.211,0.016,0.422,0.016,0.636c0,6.507-4.953,14.01-14.01,14.01c-2.782,0-5.369-0.814-7.549-2.212
+									c0.387,0.044,0.777,0.067,1.175,0.067c2.309,0,4.43-0.785,6.114-2.106c-2.153-0.041-3.973-1.465-4.598-3.419
+									c0.3,0.056,0.607,0.088,0.926,0.088c0.449,0,0.885-0.062,1.296-0.173c-2.25-0.454-3.949-2.443-3.949-4.828c0-0.021,0-0.041,0-0.062
+									c0.665,0.369,1.424,0.589,2.231,0.615c-1.322-0.882-2.19-2.391-2.19-4.099c0-0.902,0.243-1.749,0.667-2.476
+									c2.427,2.979,6.057,4.939,10.148,5.145c-0.084-0.36-0.128-0.735-0.128-1.122c0-2.719,2.204-4.922,4.925-4.922
+									c1.415,0,2.695,0.598,3.594,1.553c1.12-0.22,2.175-0.63,3.127-1.195c-0.369,1.151-1.148,2.115-2.165,2.725
+									c0.996-0.117,1.945-0.384,2.827-0.773C35.341,17.546,34.506,18.413,33.543,19.107z"/>
+								</svg>
+							</a></li>
+							<li class="gplus"><a target="_blank"  href="https://plus.google.com/share?url={{ request.build_absolute_uri }}">
+								<svg><g>
+									<g>
+										<path d="M24.407,25.734c-0.656-0.492-2.083-1.5-2.083-2.177c0-0.794,0.226-1.184,1.421-2.118c1.223-0.955,2.089-2.215,2.089-3.779
+											c0-1.705-0.696-3.249-2.007-3.999h1.857L27.265,12c0,0-5.223,0-7.073,0c-3.589,0-6.581,2.648-6.581,5.561
+											c0,2.974,1.965,5.347,5.342,5.347c0.234,0,0.463-0.015,0.686-0.029c-0.22,0.419-0.375,0.888-0.375,1.38
+											c0,0.826,0.454,1.298,1.017,1.843c-0.425,0-0.835,0.012-1.283,0.012c-4.11,0-6.987,2.83-6.987,5.543
+											c0,2.675,3.469,4.345,7.579,4.345c4.685,0,7.565-2.657,7.565-5.332C27.153,28.526,26.69,27.448,24.407,25.734z M16.271,17.514
+											c-0.331-2.502,0.949-4.418,2.854-4.362c1.906,0.059,3.538,2.112,3.866,4.614c0.328,2.505-0.768,4.116-2.673,4.061
+											C18.411,21.768,16.6,20.019,16.271,17.514z M19.571,34.819c-2.84,0-4.893-1.799-4.893-3.958c0-2.118,2.407-3.943,5.249-3.911
+											c0.662,0.006,1.28,0.111,1.84,0.293c1.544,1.072,2.786,1.743,3.1,2.965c0.059,0.246,0.091,0.501,0.091,0.762
+											C24.958,33.132,23.566,34.819,19.571,34.819z"/>
+									</g>
+									<polygon points="35.998,15 32.998,15 32.998,12 30.998,12 30.998,15 27.998,15 27.998,17 30.998,17 30.998,20 32.998,20 32.998,17 
+										35.998,17 	"/>
+								</g></svg>
+							</a></li>
+						</ul>
+					</div>
+					{% if course.certification_available %}
+						<div class="pull-right cert">
+							<img src="{{ STATIC_URL }}img/ECO_icon_certificado.svg" alt="{% trans 'certificated course' %}">
+							Certificado
+						</div>
+					{% endif %}
+				</div>
+				<div class="col-lg-4 col-md-4 col-sm-2 col-mob-4">
+					{% if is_enrolled %}
+						<a class="button" href="{% url course_dashboard course.slug %}">
+							{% trans "Go to course" %}
+							<svg width="16px" height="28px">
+								<path d="M2,1L1,2l12,12L1,26l1,1l13-13L2,1z"/>
+							</svg>
+						</a>
+						{% clone_activity course user %}
+					{% else %}
+						{% if user.is_authenticated %}
+							{% enroll_button course %}
+						{% else %}
+						<div class="box action-box">
+							<a href="{% url register %}" class="button">{% blocktrans with site_name=site.name %}Register in {{ site_name }} to enroll in this course{% endblocktrans %}</a>
+						</div>
+						{% endif %}
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
 
-<div class="row">
-    {% cache 3600 course_overview_main_info LANGUAGE_CODE course.id %}
-    <div class="span8">
+	<!-- COURSE INFO -->
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12 col-md-8 col-sm-8 col-mob-4">
+				{% cache 3600 course_overview_main_info LANGUAGE_CODE course.id %}
+				
+				{% if course.description %}
+					<div class="description">
+						{{ course.description|safe }}
+					</div>
+				{% endif %}
+				
+				<div class="row">
+					<div class="col-lg-4 col-md-4 col-sm-2 col-mob-2 summary">
+						{% cache 3600 course_overview_secondary_info LANGUAGE_CODE course.id %}
+						<dl>
+							{% if course.start_date %}
+								<img src="{{ STATIC_URL }}img/ECO_icon_info_fecha.svg"><dt>{% trans "Classes Start" %}</dt><dd>{{ course.start_date|date:"d / M / Y" }}</dd>
+							{% endif %}
+							{% if course.end_date %}
+								<img src="{{ STATIC_URL }}img/ECO_icon_info_tiempo.svg"><dt>{% trans "Duration" %}</dt><dd>{{ course.start_date|timesince:course.end_date }}</dd>
+							{% endif %}
+							{% if course.estimated_effort %}
+								<img src="{{ STATIC_URL }}img/ECO_icon_info_esfuerzo.svg"><dt>{% trans "Estimated Effort" %}</dt><dd>{{ course.estimated_effort|safe }}{% trans "h/week" %}</dd>
+							{% endif %}
+							{% if course.languages%}
+								<img src="{{ STATIC_URL }}img/ECO_icon_info_idioma.svg"><dt>{% trans "Languages" %}</dt>
+								<dd><ul>
+								{% for lang in course.languages.all %}
+									<li>{{ lang }}</li>
+								{% endfor %}
+								</ul></dd>
+							{% endif %}
+							{% if course.ects > 0 %}
+								<img src="{{ STATIC_URL }}img/ECO_icon_info_creditos.svg"><dt>{% trans "Certified Credits" %}</dt><dd>{{ course.ects|safe }}</dd>
+							{% endif %}
+							{% if course.static_page %}
+								<dt><a href="{% url course_extra_info course.slug %}">{{ course.static_page.title }}</a></dt>
+							{% endif %}
+							{% if use_old_calculus %}
+								<dt><a target="_new" href="{% url oldscore %}" >{% trans "Evaluation criteria" %}</a></dt>
+							{% else %}
+								<dt><a target="_new" href="{% url score %}" >{% trans "Evaluation criteria" %}</a></dt>
+							{% endif %}
+							<dt><a href="{% url transcript course.slug %}" >{% trans "My transcript" %}</a></dt>
+						</dl>
+						{% endcache %}
+					</div>
+					<div class="col-lg-12 col-md-8 col-sm-6 col-mob-2 info">						
+						{% if course.learning_goals %}
+							<h2>{% trans "Learning goals" %}</h2>
+							{{ course.learning_goals|safe }}
+						{% endif %}
 
-        {% if course.promotion_media_content_type and course.promotion_media_content_id %}
-            <div class="media-box">
-                {% media_content_iframe_code course.promotion_media_content_type course.promotion_media_content_id height="349px" width="620px" allowfullscreen="1" controls="1" %}
-            </div>
-        {% endif %}
+						{% if course.requirements %}
+							<h2>{% trans "Recommended requirements" %}</h2>
+							{{ course.requirements|safe }}
+						{% endif %}
 
-        <div class="box">
-            <h2>{% trans "Course summary" %}</h2>
-            {{ course.description|safe }}
-        </div>
+						{% if course.intended_audience %}
+							<h2>{% trans "Intended audience" %}</h2>
+							{{ course.intended_audience|safe }}
+						{% endif %}
 
-        {% if course.learning_goals %}
-            <div class="box">
-                <h2>{% trans "Learning goals" %}</h2>
-                {{ course.learning_goals|safe }}
-            </div>
-        {% endif %}
+						{% if course.learning_goals %}
+							<h2>{% trans "Learning goals" %}</h2>
+							{{ course.learning_goals|safe }}
+						{% endif %}
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-lg-4 col-md-4 col-sm-2 col-mob-4">
+				{% if course.user_score %}
+					<div class="box">
+						<h2 class="inline">{% trans "Rating" %}</h2>
+						<ul class="rating inline">
+							{% for i in rating.rating_loop %}
+								<li class="full">{{i}}</li>
+							{% endfor %}
+							{% for i in rating.empty_loop %}
+								<li>{{i}}</li>
+							{% endfor %}
+						</ul>
+					</div>
+				{% endif %}
+			
+				{% if organizers %}
+					<div class="box">
+						<h2>{% trans "Organizers" %}</h2>
+						<ul>
+							{% for organizer in organizers %}
+								<li>
+									<a href="#">
+										<img src="{{ organizer.logo.url }}"/>
+										<span>{{ organizer.name }}</span>
+									</a>
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+				{% endif %}
+				
+				{% if course.categories.all %}
+					<div class="box tags">
+						<h2>{% trans "Categories" %}</h2>
+						<ul>
+							{% for category in course.categories.all %}
+								<li><a href="{% url category categories=category.slug %}">{{ category.name }}</a></li>
+							{% endfor %}
+						</ul>
+					</div>
+				{% endif %}
+        
+				<div class="box transparent">
+					<h2>{% trans "Teachers" %}</h2>
+					<ul class="unstyled clearfix">
+					{% for course_teacher in course_teachers %}
+						<li class="teacher">
+						<img src="{% gravatar_for_email course_teacher.teacher.email %}?s=48" alt="{% trans 'Profile image of' %} {% firstof course_teacher.teacher.get_full_name course_teacher.teacher.username %" />
+						<p>{% firstof course_teacher.teacher.get_full_name course_teacher.teacher.username %}</p>
+						{% if course_teacher.teacher.get_profile.organization %}
+							{% for org in course_teacher.teacher.get_profile.organization.all%}
+							<span>{{ org }}</span>
+							{% endfor %}
+						{% endif %}
+						</li>
+					{% endfor %}
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
 
-        {% if course.requirements %}
-            <div class="box">
-                <h2>{% trans "Recommended requirements" %}</h2>
-                {{ course.requirements|safe }}
-            </div>
-        {% endif %}
+		<div class="bck_grey">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
+						<h1>{% trans "Related courses" %}</h1>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
+						{% for ncourse in relatedcourses %}
+							{% if ncourse.is_public %}
+							<div url="{{ ncourse.get_absolute_url }}" class="course box col-lg-4 col-md-4 col-sm-4 col-mob-2 published">
+							{% else %}
+							<div url="{{ ncourse.get_absolute_url }}" class="course box col-lg-4 col-md-4 col-sm-4 col-mob-2 draft">
+								<span class="label pull-right">{% trans "Draft" %}</span>
+							{% endif %}
+								<div class="front_face">
+									<div class="images">
+									{% if ncourse.thumbnail %}
+										<a href="{{ ncourse.get_absolute_url }}" style="background-image: url('{{ MEDIA_URL }}{{ ncourse.thumbnail }}');" class="hide-text">{% if ncourse.thumbnail_alt %}{{ ncourse.thumbnail_alt }}{% else %}{% trans 'decorative classroom image' %}{% endif %}</a>
+									{% else %}
+										<a href="{{ ncourse.get_absolute_url }}" style="background-image: url('{{ STATIC_URL }}img/classroom.jpg');" class="hide-text">{% trans 'decorative classroom image' %}</a>
+									{% endif %}
+									{% if ncourse.certification_available %}
+										<img class="cert" src="{{ STATIC_URL }}img/ECO_icon_certificado.svg" alt="{% trans 'certificated course' %}">
+									{% endif %}
+									</div>
+									<div class="content">
+										<h3><a href="#">{{ ncourse.owner }}</a></h3>
+										<h2 class="line-clamp">{{ ncourse.name }}</h2>
+										<span class="date">{{ ncourse.start_date }}</span>
+									</div>
+								</div>
+								<div class="back_face">
+									<div class="content">
+										<h3><a href="#">{{ ncourse.owner }}</a></h3>
+										<h2><a href="{{ ncourse.get_absolute_url }}">{{ ncourse.name }}</a></h2>
+										<span class="date">{{ ncourse.start_date }}</span>
+										{% if ncourse.ects > 0 %}
+										<span class="ects"><img src="{{ STATIC_URL }}img/ECO_icon_creditos_white.svg">{{ ncourse.ects }}
+											{% if ncourse.ects > 1 %}
+											credits
+											{% else %}
+											credit
+											{% endif %}
+										</span>
+										{% endif %}
+										<div class="desc line-clamp">{{ ncourse.description|safe|truncatewords_html:60 }}</div>
+									</div>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+		
+<!--    <div class="container">
+			<div class="span4">
+			{% if announcements %}
+			<div class="box">
+				<h2>
+					{% trans "Announcements" %}
+					<a class="pull-right" href="{% url announcements_feed course.slug %}"><img src="{{ STATIC_URL }}img/share_icons/rss.png" alt="{% trans "Subscribe to Announcements RSS" %}" /></a>
+				</h2>
+				<dl>
+					{% for announcement in announcements %}
+						<dt>{{ announcement.datetime|date:"d / M / Y - H:i" }}</dt>
+						<dd><a href="{% url announcement_detail course.slug announcement.id announcement.slug %}">{{ announcement.title|truncatewords:8 }}</a></dd>
+					{% endfor %}
+				</dl>
+			</div>
+			{% endif %}
 
-        {% if course.intended_audience %}
-            <div class="box">
-                <h2>{% trans "Intended audience" %}</h2>
-                {{ course.intended_audience|safe }}
-            </div>
-        {% endif %}
-    </div>
-    {% endcache %}
+			<div class="box">
+				<h2>{% trans "Syllabus" %}</h2>
+				<ul>
+					{% for unit in units %}
+					{% if unit.status == 'l' %}
+						<li>{{ unit.title }}</li>
+					{% else %}
+						<li><a href="{% url course_overview course.slug %}classroom/#unit{{ unit.id }}">{{ unit.title }}</a></li>
+					{% endif %}
+					{% endfor %}
+				</ul>
+			</div>
 
-    <div class="span4">
-        {% if is_enrolled %}
-        <div class="box action-box">
-            <div class="alert alert-success">
-                <strong>{% trans "You are enrolled in this course" %}</strong>
-                {% unenroll_button course %}
-                {% clone_activity course user %}
-            </div>
-        </div>
-        {% else %}
-          {% if user.is_authenticated %}
-            {% enroll_button course %}
-          {% else %}
-          <div class="box action-box">
-              <a href="{% url register %}" class="btn btn-large btn-primary">{% blocktrans with site_name=site.name %}Register in {{ site_name }} to enroll in this course{% endblocktrans %}</a>
-          </div>
-          {% endif %}
-        {% endif %}
-
-        {% if course.certification_available %}
-            <div style="text-align: center">
-                {% if user.is_authenticated %}
-                    <a href="{% url transcript %}#{{ course.slug }}">
-                        {% if course.certification_banner %}
-                        <img class="mb20" src="{{ course.certification_banner.url }}" width="300" title="{% trans "Get a certification in this course" %}" alt="{% if certification_alt %}{{ course.certification_alt }}{% else %}}{% trans "Get a certification in this course" %}{% endif %}" />
-                        {% else %}
-                        <img class="mb20" src="{{ theme.cert_banner }}" width="300" title="{% trans "Get a certification in this course" %}" alt="{% trans "Get a certification in this course" %}" />
-                        {% endif %}
-                    </a>
-                {% else %}
-                    <a href="{% url register %}" class="btn btn-large btn-primary mb20">{% blocktrans with site_name=site.name %}Register in {{ site_name }} to get a certification in this course{% endblocktrans %}</a>
-                {% endif %}
-            </div>
-        {% endif %}
-
-        {% cache 3600 course_overview_secondary_info LANGUAGE_CODE course.id %}
-        <div class="box">
-            <h2>{% trans "Teachers" %}</h2>
-            <ul class="unstyled clearfix">
-            {% for course_teacher in course_teachers %}
-                <li class="teacher">
-                  <img src="{% gravatar_for_email course_teacher.teacher.email %}" width="50" height="50" alt="{% trans 'Profile image of' %} {% firstof course_teacher.teacher.get_full_name course_teacher.teacher.username %" />
-                  <strong>{% firstof course_teacher.teacher.get_full_name course_teacher.teacher.username %}</strong>
-                </li>
-            {% endfor %}
-            </ul>
-        </div>
-
-        <div class="box">
-            <h2>{% trans "Information" %}</h2>
-            <dl>
-                <dt>{% trans "Course Code" %}</dt><dd>{{ course.slug }}</dd>
-                {% if course.start_date %}
-                    <dt>{% trans "Classes Start" %}</dt><dd>{{ course.start_date|date:"d / M / Y" }}</dd>
-                {% endif %}
-                {% if course.end_date %}
-                    <dt>{% trans "Classes End" %}</dt><dd>{{ course.end_date|date:"d / M / Y" }}</dd>
-                {% endif %}
-                {% if course.estimated_effort %}
-                    <dt>{% trans "Estimated Effort" %}</dt><dd>{{ course.estimated_effort|safe }}</dd>
-                {% endif %}
-                {% if course.static_page %}
-                    <dt><a href="{% url course_extra_info course.slug %}">{{ course.static_page.title }}</a></dt>
-                {% endif %}
-                {% if use_old_calculus %}
-                    <dt><a target="_new" href="{% url oldscore %}" >{% trans "Evaluation criteria" %}</a></dt>
-                {% else %}
-                    <dt><a target="_new" href="{% url score %}" >{% trans "Evaluation criteria" %}</a></dt>
-                {% endif %}
-                <dt><a href="{% url transcript course.slug %}" >{% trans "My transcript" %}</a></dt>
-            </dl>
-        </div>
-
-        {% if announcements %}
-        <div class="box">
-            <h2>
-                {% trans "Announcements" %}
-                <a class="pull-right" href="{% url announcements_feed course.slug %}"><img src="{{ STATIC_URL }}img/share_icons/rss.png" alt="{% trans "Subscribe to Announcements RSS" %}" /></a>
-            </h2>
-            <dl>
-                {% for announcement in announcements %}
-                    <dt>{{ announcement.datetime|date:"d / M / Y - H:i" }}</dt>
-                    <dd><a href="{% url announcement_detail course.slug announcement.id announcement.slug %}">{{ announcement.title|truncatewords:8 }}</a></dd>
-                {% endfor %}
-            </dl>
-        </div>
-        {% endif %}
-
-        <div class="box">
-            <h2>{% trans "Syllabus" %}</h2>
-            <ul>
-                {% for unit in units %}
-                {% if unit.status == 'l' %}
-                    <li>{{ unit.title }}</li>
-                {% else %}
-                    <li><a href="{% url course_overview course.slug %}classroom/#unit{{ unit.id }}">{{ unit.title }}</a></li>
-                {% endif %}
-                {% endfor %}
-            </ul>
-        </div>
-
-        {% if course.categories.all %}
-        <div class="box">
-            <h2>{% trans "Categories" %}</h2>
-            <ul>{% for category in course.categories.all %}
-                <li><a href="{% url category categories=category.slug %}">{{ category.name }}</a></li>
-            {% endfor %}</ul>
-        </div>
-        {% endif %}
-
-        <div class="box">
-            <h2>{% trans "Share" %}</h2>
-            <ul id="share">
-                <li class="pull-left"><a href="https://twitter.com/share" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/twitter.png" alt="Share in Twitter" /></a></li>
-                <li class="pull-left"><a href="http://www.facebook.com/sharer.php?u={{ request.build_absolute_uri }}" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/facebook.png" alt="Share in Facebook" /></a></li>
-                <li class="pull-left"><a href="https://plus.google.com/share?url={{ request.build_absolute_uri }}" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/googleplus.png" alt="Share in Google Plus" /></a></li>
-                <li class="pull-left"><a href="http://www.linkedin.com/shareArticle?mini=true&amp;url={{ request.build_absolute_uri }}" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/linkedin.png" alt="Share in LinkedIn" /></a></li>
-                <li class="pull-left"><a href="http://reddit.com/submit?url={{ request.build_absolute_uri }}" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/reddit.png" alt="Share in Reddit" /></a></li>
-                <li class="pull-left"><a href="mailto:?subject=Look at this great course&amp;body={{ request.build_absolute_uri }}" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/email.png" alt="Share through email" /></a></li>
-            </ul>
-        </div>
-        {% endcache %}
-    </div>
+			<div class="box">
+				<h2>{% trans "Share" %}</h2>
+				<ul id="share">
+					<li class="pull-left"><a href="https://twitter.com/share" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/twitter.png" alt="Share in Twitter" /></a></li>
+					<li class="pull-left"><a href="http://www.facebook.com/sharer.php?u={{ request.build_absolute_uri }}" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/facebook.png" alt="Share in Facebook" /></a></li>
+					<li class="pull-left"><a href="https://plus.google.com/share?url={{ request.build_absolute_uri }}" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/googleplus.png" alt="Share in Google Plus" /></a></li>
+					<li class="pull-left"><a href="http://www.linkedin.com/shareArticle?mini=true&amp;url={{ request.build_absolute_uri }}" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/linkedin.png" alt="Share in LinkedIn" /></a></li>
+					<li class="pull-left"><a href="http://reddit.com/submit?url={{ request.build_absolute_uri }}" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/reddit.png" alt="Share in Reddit" /></a></li>
+					<li class="pull-left"><a href="mailto:?subject=Look at this great course&amp;body={{ request.build_absolute_uri }}" target='_blank'><img src="{{ STATIC_URL }}img/share_icons/email.png" alt="Share through email" /></a></li>
+				</ul>
+			</div>
+			{% endcache %}
+		</div>
+		</div>-->
+	</div>
 </div>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+	$('.course-header .title .media-box a.play').click(function(){
+		$(this).parent().toggleClass('show');
+	});
+
+	$('.course-header .title .media-box .background').click(function(){
+		$(this).parent().toggleClass('show');
+	});
+	$('.course .back_face').click(function(e){
+		e.preventDefault();
+		window.location.href = $(this).parent().attr('url');
+	});
+</script>
 {% endblock %}

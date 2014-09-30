@@ -11,8 +11,8 @@
 {% block section %}
 <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
     {{ form.non_field_errors }}
-    <div class="row">
-        <div class="span10">
+    <div class="">
+        <div>
             <fieldset>
                 <legend></legend>
                 <p>
@@ -26,11 +26,25 @@
     </div>
     <div class="row">
         <div class="span5">
+
             <p>
                 {{ form.name.errors }}
                 {{ form.name.label_tag }}
                 {{ form.name }}
                 {% if form.name.help_text %}<span class="help-inline">{{ form.name.help_text }}</span>{% endif %}
+            </p>
+            <p>
+                {{ form.hashtag.errors }}
+                {{ form.hashtag.label_tag }}
+                {{ form.hashtag }}
+                {% if form.hashtag.help_text %}<span class="help-inline">{{ form.hashtag.help_text }}</span>{% endif %}
+            </p>
+            <p>
+                {{ form.languages.errors }}
+                {{ form.languages.label_tag }}
+                {{ form.languages }}
+                {% if form.languages.help_text %}<span class="help-inline">{{ form.languages.help_text }}</span>{% endif %}
+            </p>
             <p>
                 {{ form.promotion_media_content_type.errors }}
                 {{ form.promotion_media_content_type.label_tag }}
@@ -42,12 +56,6 @@
                 <label for="id_promotion_media_content_id">{% trans "Content id or url" %}</label>
                 {{ form.promotion_media_content_id }}
                 {% if form.promotion_media_content_id.help_text %}<span class="help-inline">{{ form.promotion_media_content_id.help_text }}</span>{% endif %}
-            </p>
-            <p>
-                {{ form.max_reservations_pending.errors }}
-                {{ form.max_reservations_pending.label_tag }}
-                {{ form.max_reservations_pending }}
-                {% if form.max_reservations_pending.help_text %}<span class="help-inline">{{ form.max_reservations_pending.help_text }}</span>{% endif %}
             </p>
             <p>
                 {{ form.enrollment_method.errors }}
@@ -76,16 +84,28 @@
                 {% if form.threshold.help_text %}<span class="help-inline">{{ form.threshold.help_text }}</span>{% endif %}
             </p>
             <p>
-                {{ form.max_reservations_total.errors }}
-                {{ form.max_reservations_total.label_tag }}
-                {{ form.max_reservations_total }}
-                {% if form.max_reservations_total.help_text %}<span class="help-inline">{{ form.max_reservations_total.help_text }}</span>{% endif %}
+                {{ form.highlight.errors }}
+                {{ form.highlight }}
+                {{ form.highlight.label_tag }}
+                {% if form.highlight.help_text %}<span class="help-inline">{{ form.highlight.help_text }}</span>{% endif %}
+            </p>
+             <p>
+                {{ form.estimated_effort.errors }}
+                {{ form.estimated_effort.label_tag }}
+                {{ form.estimated_effort }}
+                {% if form.estimated_effort.help_text %}<span class="help-inline">{{ form.estimated_effort.help_text }}</span>{% endif %}
             </p>
             <p>
                 {{ form.completion_badge.errors }}
                 {{ form.completion_badge.label_tag }}
                 {{ form.completion_badge }}
                 {% if form.completion_badge.help_text %}<span class="help-inline">{{ form.completion_badge.help_text }}</span>{% endif %}
+            </p>
+            <p>
+                {{ form.ects.errors }}
+                {{ form.ects.label_tag }}
+                {{ form.ects }}
+                {% if form.ects.help_text %}<span class="help-inline">{{ form.ects.help_text }}</span>{% endif %}
             </p>
         </div>
     </div>
@@ -100,14 +120,12 @@
             <a href="#tab-intended_audience" data-toggle="tab">{{ form.intended_audience.label }}</a>
         </li>
         <li>
-            <a href="#tab-estimated_effort" data-toggle="tab">{{ form.estimated_effort.label }}</a>
-        </li>
-        <li>
             <a href="#tab-learning_goals" data-toggle="tab">{{ form.learning_goals.label }}</a>
         </li>
         <li>
             <a href="#tab-extra_info" data-toggle="tab">{% trans "Extra info" %}</a>
         </li>
+        
     </ul>
     <div class="tab-content tab-content-no-overflow">
         <div class="tab-pane active" id="tab-description">
@@ -127,12 +145,6 @@
             {{ form.intended_audience.label_tag }}
             {{ form.intended_audience }}
             {% if form.intended_audience.help_text %}<span class="help-block">{{ form.intended_audience.help_text }}</span>{% endif %}
-        </div>
-        <div class="tab-pane" id="tab-estimated_effort">
-            {{ form.estimated_effort.errors }}
-            {{ form.estimated_effort.label_tag }}
-            {{ form.estimated_effort }}
-            {% if form.estimated_effort.help_text %}<span class="help-block">{{ form.estimated_effort.help_text }}</span>{% endif %}
         </div>
         <div class="tab-pane" id="tab-learning_goals">
             {{ form.learning_goals.errors }}

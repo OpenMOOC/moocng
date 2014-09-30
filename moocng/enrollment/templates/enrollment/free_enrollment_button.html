@@ -1,6 +1,9 @@
 {% load i18n %}
-<div class="box action-box">
+<div class="button">
   <form method="post" action="{% url free_enrollment course.slug %}">{% csrf_token %}
-    <input type="submit" class="btn btn-large btn-primary" value="{% trans "Enroll me in this course" %}" />
+    <input type="submit" value="{% trans "Enroll me" %}" />
+    <svg width="26px" height="26px">
+		<path fill="#000000" d="M25,14H14v11h-2V14H1v-2h11V1h2v11h11V14z"/>
+    </svg>
   </form>
 </div>

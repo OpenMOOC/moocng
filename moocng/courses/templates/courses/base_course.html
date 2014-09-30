@@ -4,7 +4,7 @@
 
 {% block nav %}
     {% if is_enrolled or is_teacher or user.is_staff %}
-        <ul class="nav nav-pills">
+        <!--<ul class="nav nav-pills">
             <li {% block nav-course-overview %}{% endblock %}>
                 <a href="{% url course_overview course.slug %}">{% trans "Overview" %}</a>
             </li>
@@ -33,6 +33,6 @@
                     <a href="{% url teacheradmin_index course.slug %}">{% trans "Course administration" %}</a>
                 </li>
             {% endif %}
-        </ul>
+        </ul>-->
     {% endif %}
 {% endblock %}

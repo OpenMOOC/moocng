@@ -1,0 +1,73 @@
+{% load i18n gravatar %}
+
+<div class="userprofile-header">
+	{% if profile.background %}
+	<div class="profile-header" style="background-image: url('{{ MEDIA_URL }}{{ profile.background }}');">
+	{% else %}
+	<div class="profile-header" style="background-image: url('{{ STATIC_URL }}img/user_bck.jpg');">
+	{% endif %}
+		<div class="user-header">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-12 col-md-8 col-sm-5 col-mob-4 user-bar">
+						<img class="avatar" src="{% gravatar_for_email user.email %}?s=128" alt="{% firstof user.get_full_name user.username %}">
+						<h1>{{ user.get_full_name }}</h1>
+						<h2>@{{ user.username }}</h2>
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-3 col-mob-4 data-bar">
+						<div class="profile-data">
+							<h4 class="noLowRes">{% trans "Badges" %}</h4>
+							<img src="{{ STATIC_URL }}img/ECO_icon_medallas_white.svg">
+							<p>{{ profile.badges|length }}</p>
+						</div>
+						<div class="profile-data">
+							<h4 class="noLowRes">{% trans "Karma" %}</h4>
+							<img src="{{ STATIC_URL }}img/ECO_icon_karma_white.svg">
+							<p>{{ user.get_profile.karma }}</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="menu">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
+					<ul class="menu">
+						<li>
+							{% url profile_timeline as url_timeline %}
+							<a href="{{ url_timeline }}" {% if request.path == url_timeline %} class="selected" {% endif %}>
+								{% trans "Timeline" %}
+							</a>
+						</li>
+						<li>
+							{% url profile_groups as url_groups %}
+							<a href="{{ url_groups }}" {% if request.path == url_groups %} class="selected" {% endif %}>
+								{% trans "Groups" %}
+							</a>
+						</li>
+						<li>
+							{% url profile_courses as url_courses %}
+							<a href="{{ url_courses }}" {% if request.path == url_courses %} class="selected" {% endif %}>
+								{% trans "Courses" %}
+							</a>
+						</li>
+						<li>
+							{% url profile_calendar as url_calendar %}
+							<a href="{{ url_calendar }}" {% if request.path == url_calendar %} class="selected" {% endif %}>
+								{% trans "Calendar" %}
+							</a>
+						</li>
+						<li>
+							{% url profile_user as url_profile %}
+							<a href="{{ url_profile }}" {% if request.path == url_profile %} class="selected" {% endif %}>
+								{% trans "Profile" %}
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

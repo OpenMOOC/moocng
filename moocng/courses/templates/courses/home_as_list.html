@@ -1,44 +1,93 @@
-{% extends "base.html" %}
+{% extends "base_bigheader.html" %}
 
 {% load conditionalcache i18n %}
 
 {% block content %}
     <div class="media-box">
         {% if theme.top_banner %}
-            <a href="#">
-                <img src="{{ theme.top_banner }}" alt="{{ theme.top_banner_alt }}" />
-            </a>
+            <div class="main_banner" style="background-image: url('{{ theme.top_banner }}');">
+		<h2><strong>UNED</strong> + Open<em>MOOC</em></h2>
+		<h1>Una plataforma creada para facilitar la búsqueda de contenidos educativos abiertos</h1>
+		<a class="button" href="{% url register %}">Register now</a>
+            </div>
         {% endif %}
     </div>
-    <div class="row">
-        <section class="span9">
-            <h1 class="content-title">{% trans "Courses" %}</h1>
-            {% conditionalcache use_cache 3600 course_list LANGUAGE_CODE %}
-                {% for course in courses %}
-                    {% if course.is_public %}
-                        <div class="box published">
-                    {% else %}
-                        <div class="box draft">
-                            <span class="label pull-right">{% trans "Draft" %}</span>
-                    {% endif %}
-                            <h2><a href="{{ course.get_absolute_url }}">{{ course.name }}</a></h2>
-                            {{ course.description|safe|truncatewords_html:60 }}
-                            <p class="box-footer"><a href="{{ course.get_absolute_url }}">{% trans "More information about this course" %}</a></p>
-                        </div>
-                {% endfor %}
-            {% endconditionalcache %}
-        </section>
-        <div class="span3">
-            {% if theme.right_banner1 %}
-                <div class="media-box">
-                    <img src="{{ theme.right_banner1 }}" alt="{{ theme.right_banner1_alt }}" />
-                </div>
-            {% endif %}
-            {% if theme.right_banner2 %}
-                <div class="media-box">
-                    <img src="{{ theme.right_banner2 }}" alt="{{ theme.right_banner2_alt }}" />
-                </div>
-            {% endif %}
-        </div>
+    <div class="container filter_bar">
+      <div class="row">
+	<div class="filter pull-left col-lg-6 col-md-6 col-sm-4 col-mob-2">
+	    <span class="col-lg-6 col-md-4 col-sm-2 col-mob-1">Filter<span class="noLowRes"> courses by</span>:</span>
+	    <div class="col-lg-10 col-md-8 col-sm-6 col-mob-2">
+	      <a href="#" class="selected col-lg-8 col-md-6 col-sm-4 col-mob-2">Featured</a>
+	      <a href="#" class="col-lg-8 col-md-6 col-sm-4 col-mob-2">Oncoming</a>
+	    </div>
+	</div>
+	<a class="pull-right grey_squared col-lg-4 col-md-4 col-sm-4 col-mob-2" href="#"><span><span class="noLowRes">Explore the full </span>catalogue</span> <img src="{{ STATIC_URL }}img/ECO_icon_flecha-xl.svg"></a> 
+      </div>
     </div>
+    <div class="content">
+      <div class="container course_list">
+	  <section class="row">
+	      {% conditionalcache use_cache 3600 course_list LANGUAGE_CODE %}
+		  {% for course in courses %}
+		      {% if course.is_public %}
+			  <div url="{{ course.get_absolute_url }}" class="course box col-lg-4 col-md-4 col-sm-4 col-mob-2 published">
+		      {% else %}
+			  <div url="{{ course.get_absolute_url }}" class="course box col-lg-4 col-md-4 col-sm-4 col-mob-2 draft">
+			      <span class="label pull-right">{% trans "Draft" %}</span>
+		      {% endif %}
+			      <div class="front_face">
+					<div class="images">
+					{% if course.thumbnail %}
+					    <a href="{{ course.get_absolute_url }}" style="background-image: url('{{ MEDIA_URL }}{{ course.thumbnail }}');" class="hide-text">{% if course.thumbnail_alt %}{{ course.thumbnail_alt }}{% else %}{% trans 'decorative classroom image' %}{% endif %}</a>
+					{% else %}
+					    <a href="{{ course.get_absolute_url }}" style="background-image: url('{{ STATIC_URL }}img/classroom.jpg');" class="hide-text">{% trans 'decorative classroom image' %}</a>
+					{% endif %}
+					{% if course.certification_available %}
+					    <img class="cert" src="{{ STATIC_URL }}img/ECO_icon_certificado.svg" alt="{% trans 'certificated course' %}">
+					{% endif %}
+					</div>
+					<div class="content">
+					  <h3><a href="#">{{ course.owner }}</a></h3>
+					  <h2 class="line-clamp">{{ course.name }}</h2>
+					  {% if course.start_date %}
+					  <span class="date">{{ course.start_date }}</span>
+					  {% endif %}
+					</div>
+			      </div>
+			      <div class="back_face">
+					<div class="content">
+					  <h3><a href="#">{{ course.owner }}</a></h3>
+					  <h2><a href="{{ course.get_absolute_url }}">{{ course.name }}</a></h2>
+					  {% if course.start_date %}
+					  	<span class="date">{{ course.start_date }}</span>
+					  {% endif %}
+					  {% if course.ects > 0 %}
+					  <span class="ects"><img src="{{ STATIC_URL }}img/ECO_icon_creditos_white.svg">{{ course.ects }}
+					    {% if course.ects > 1 %}
+					     credits
+					    {% else %}
+					     credit
+					    {% endif %}
+					  </span>
+					  {% endif %}
+					  <div class="desc line-clamp">{{ course.description|safe|truncatewords_html:60 }}</div>
+					</div>
+			      </div>
+			  </div>
+		  {% endfor %}
+	      {% endconditionalcache %}
+	  </section>
+	  <div class="row">
+	    <a class="pull-right grey_squared col-lg-4 col-md-4 col-sm-4 col-mob-4" href="#"><span>Explore the full catalogue</span> <img src="{{ STATIC_URL }}img/ECO_icon_flecha-xl.svg"></a> 
+	   </div>
+      </div>
+    </div>
+{% endblock %}
+{% block extrajs %}
+	<script>
+		$('.course .back_face').click(function(e){
+			e.preventDefault();
+			window.location.href = $(this).parent().attr('url');
+		});
+	</script>
 {% endblock %}

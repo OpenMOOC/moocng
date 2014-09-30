@@ -179,13 +179,13 @@ if (_.isUndefined(window.MOOC)) {
 
         tinyMCEOptions = {
             mode: "exact",
-            plugins: "paste,searchreplace",
-            theme: "advanced",
+            //plugins: "paste,searchreplace",
+            /*theme: "advanced",
             theme_advanced_resizing : true,
             theme_advanced_toolbar_location: "top",
             theme_advanced_buttons1: "bold,italic,underline,strikethrough,separator,link,unlink,separator,undo,redo,copy,paste,separator,cleanup,separator,bullist,numlist",
             theme_advanced_buttons2: "",
-            theme_advanced_buttons3: ""
+            theme_advanced_buttons3: ""*/
         },
 
         invert = function (obj) {
@@ -542,9 +542,9 @@ if (_.isUndefined(window.MOOC)) {
                         "<img src='" + this.model.get("thumbnail_url") + "' alt='" + MOOC.trans.kq.screenshot + this.model.get("title") + "' /></a>";
                 }
 
-                data = "<p>" + MOOC.trans.kq.teacher_comments + ": " +
+                data = "<p class='noLowRes'>" + MOOC.trans.kq.teacher_comments + ": " +
                     truncate(_.escape(stripTags(this.model.get("teacher_comments")))) + "</p>" +
-                    "<p>" + MOOC.trans.kq.supplementary_material + ": " +
+                    "<p class='noLowRes'>" + MOOC.trans.kq.supplementary_material + ": " +
                     truncate(_.escape(stripTags(this.model.get("supplementary_material")))) + "<p/>";
 
 
@@ -856,13 +856,13 @@ if (_.isUndefined(window.MOOC)) {
 
                         titleInput = "<input type=\"text\" name=\"" + titleInputId + "\" id=\"" + titleInputId + "\" maxlength=\"100\" class=\"input-large\" required=\"required\" />";
                         titleLabel = "<label for=\"" + titleInputId + "\" class=\"required\">" + MOOC.trans.evaluationCriterion.title + "</label>";
-                        descriptionInput = "<input type=\"text\" name=\"" + descriptionInputId + "\" id=\"" + descriptionInputId + "\" maxlength=\"200\" class=\"input-xlarge\" required=\"required\" />";
+                        descriptionInput = "<input type=\"text\" name=\"" + descriptionInputId + "\" id=\"" + descriptionInputId + "\" maxlength=\"200\" class=\"input\" required=\"required\" />";
                         descriptionLabel = "<label for=\"" + descriptionInputId + "\" class=\"required\">" + MOOC.trans.evaluationCriterion.description + "</label>";
                         removeBtn = "<button id=\"" + removeBtnId + "\" class=\"removecriterion btn btn-danger\">" + MOOC.trans.evaluationCriterion.remove + "</button>";
                         criterionDiv = "<div id=\"" + criterionDivId + "\">"
-                                       + "<div class=\"row mb10\"> <div class=\"span3\">" + titleLabel + titleInput + "</div>"
-                                       + "<div class=\"span4\">" + descriptionLabel + descriptionInput + "</div></div>"
-                                       + "<div class=\"row mb20\"><div class=\"align-right span10\">" + removeBtn + "</div></div></divZ";
+                                       + "<div class=\"\"> <div>" + titleLabel + titleInput + "</div>"
+                                       + "<div class=\"\">" + descriptionLabel + descriptionInput + "</div></div>"
+                                       + "<div class=\"\"><div class=\"align-right\">" + removeBtn + "</div></div></divZ";
 
                         criterionListDiv.append(criterionDiv);
                         criterionListDiv.find("#" + titleInputId).val(criterion.get("title"));
@@ -951,6 +951,7 @@ if (_.isUndefined(window.MOOC)) {
                     width: "380", // bootstrap span5
                     elements: "kqsupplementary, kqcomments, reviewdescription"
                 });
+				tinyMCE.baseURL = '/static/tiny_mce';
                 tinyMCE.init(options);
                 options = _.extend(_.clone(tinyMCEOptions), {
                     width: "780", // bootstrap span10

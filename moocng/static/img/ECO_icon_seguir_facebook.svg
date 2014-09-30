@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="48px" height="48px" viewBox="0 0 48 48" enable-background="new 0 0 48 48" xml:space="preserve">
+<g>
+	<path d="M44.547,310.009h-3.563c0,5.373,0,11.991,0,11.991H36c0,0,0-6.551,0-11.991L33,310v-4h3v-2.97
+		c0-1.963,0.932-5.03,5.029-5.03H45v4c0,0-2.564,0-3,0c-0.437,0-1,0.062-1,1v3h4L44.547,310.009z"/>
+	<rect x="15" y="286" fill="none" width="48" height="48"/>
+	</g>
+<g>
+	<path d="M29.547,24.009h-3.563c0,5.373,0,11.991,0,11.991H21c0,0,0-6.551,0-11.991L18,24v-4h3v-2.97c0-1.963,0.932-5.03,5.029-5.03
+	H30v4c0,0-2.564,0-3,0c-0.437,0-1,0.062-1,1v3h4L29.547,24.009z"/>
+</g>
+<script>document.getElementsByTagName("path")[1].setAttribute("fill", location.hash);</script>
+</svg>

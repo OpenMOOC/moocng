@@ -62,3 +62,11 @@ def get_media_content_types_choices():
     for handler_dict in settings.MEDIA_CONTENT_TYPES:
         choices.append((handler_dict['id'], handler_dict.get('name', handler_dict['id'])))
     return choices
+
+
+def get_media_type(mediaid):
+    if not mediaid:
+        return None
+    for media in settings.MEDIA_CONTENT_TYPES:
+        if media["id"] == mediaid:
+            return media["type"]

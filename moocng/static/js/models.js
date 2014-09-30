@@ -658,6 +658,11 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
 MOOC.models.KnowledgeQuantumList  = MOOC.models.TastyPieCollection.extend({
     model: MOOC.models.KnowledgeQuantum,
 
+	url: function () {
+        "use strict";
+        return MOOC.ajax.getAbsoluteUrl("kq/") + this.get("id") + "/";
+	},
+	
     comparator: function (kq) {
         "use strict";
         return kq.get("order");
@@ -744,7 +749,7 @@ MOOC.models.Unit = Backbone.Model.extend({
 
     url: function () {
         "use strict";
-        return MOOC.ajax.getAbsoluteUrl("unit/") + this.get("id") + "/";
+        return MOOC.ajax.getAbsoluteUrl("unit/") + this.get("id") + "/?format=json&";
     },
 
     parse: function (resp, xhr) {

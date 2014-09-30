@@ -398,6 +398,8 @@ MOOC.init = function (course_id, KQRoute) {
     if (path.lastIndexOf('/') < path.length - 1) {
         path += '/';
     }
+
+    window.location.hash = window.location.hash.replace(/#!/, '#');
     Backbone.history.start({ root: path });
 
     if (window.location.hash.length > 1) {

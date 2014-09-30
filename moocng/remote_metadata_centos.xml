@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="https://idp.devopenmooc.com/simplesaml/saml2/idp/metadata.php">
+  <md:IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+    <md:KeyDescriptor use="signing">
+      <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <ds:X509Data>
+          <ds:X509Certificate>MIICLzCCAZgCCQDVcEBfdP2MGzANBgkqhkiG9w0BAQUFADBcMQswCQYDVQQGEwJFUzEQMA4GA1UECAwHU2V2aWxsZTEQMA4GA1UEBwwHU2V2aWxsZTEUMBIGA1UECgwLR2VvZ3JhcGhpY2ExEzARBgNVBAMMCmlkcCBDZW50T1MwHhcNMTQwNzIyMTQwNzU2WhcNMTUwNzIyMTQwNzU2WjBcMQswCQYDVQQGEwJFUzEQMA4GA1UECAwHU2V2aWxsZTEQMA4GA1UEBwwHU2V2aWxsZTEUMBIGA1UECgwLR2VvZ3JhcGhpY2ExEzARBgNVBAMMCmlkcCBDZW50T1MwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBANWectDwuBmohEDKpIhetu9fN9sxAAOpU9L0kgNQfY0AjfG0IkCwKZdC8vwTIMYKohSfi+pQpbPOGJ/0V2cx7qy9U6Frfu16Ja2IJe8e84Y2ihZS6rb5LUCffZn/yPojgv7+HFsbSLo5clN5PAe/3pBMQEVW0wrgGpapucYj4f9PAgMBAAEwDQYJKoZIhvcNAQEFBQADgYEAQy3h37HI6YYBmkHzwheDI1Opv9TxODNCq9zABK3qcTeGcAPDChNDsL293i6j5VIERDCD67l1CfAM3KLWA/CMLY6UqeaqkiqT+S7jNAKRggZnKeqeIk9Dx6PnCxsxeiwqteCrswPCgOcz/wKN0IImnJIaXVzWsHJwsPBxupdZYhU=</ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </md:KeyDescriptor>
+    <md:KeyDescriptor use="encryption">
+      <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <ds:X509Data>
+          <ds:X509Certificate>MIICLzCCAZgCCQDVcEBfdP2MGzANBgkqhkiG9w0BAQUFADBcMQswCQYDVQQGEwJFUzEQMA4GA1UECAwHU2V2aWxsZTEQMA4GA1UEBwwHU2V2aWxsZTEUMBIGA1UECgwLR2VvZ3JhcGhpY2ExEzARBgNVBAMMCmlkcCBDZW50T1MwHhcNMTQwNzIyMTQwNzU2WhcNMTUwNzIyMTQwNzU2WjBcMQswCQYDVQQGEwJFUzEQMA4GA1UECAwHU2V2aWxsZTEQMA4GA1UEBwwHU2V2aWxsZTEUMBIGA1UECgwLR2VvZ3JhcGhpY2ExEzARBgNVBAMMCmlkcCBDZW50T1MwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBANWectDwuBmohEDKpIhetu9fN9sxAAOpU9L0kgNQfY0AjfG0IkCwKZdC8vwTIMYKohSfi+pQpbPOGJ/0V2cx7qy9U6Frfu16Ja2IJe8e84Y2ihZS6rb5LUCffZn/yPojgv7+HFsbSLo5clN5PAe/3pBMQEVW0wrgGpapucYj4f9PAgMBAAEwDQYJKoZIhvcNAQEFBQADgYEAQy3h37HI6YYBmkHzwheDI1Opv9TxODNCq9zABK3qcTeGcAPDChNDsL293i6j5VIERDCD67l1CfAM3KLWA/CMLY6UqeaqkiqT+S7jNAKRggZnKeqeIk9Dx6PnCxsxeiwqteCrswPCgOcz/wKN0IImnJIaXVzWsHJwsPBxupdZYhU=</ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </md:KeyDescriptor>
+    <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://idp.devopenmooc.com/simplesaml/saml2/idp/SingleLogoutService.php"/>
+    <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+    <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://idp.devopenmooc.com/simplesaml/saml2/idp/SSOService.php"/>
+  </md:IDPSSODescriptor>
+  <md:ContactPerson contactType="technical">
+    <md:SurName>Administrator</md:SurName>
+    <md:EmailAddress>na@devopenmooc.com</md:EmailAddress>
+  </md:ContactPerson>
+</md:EntityDescriptor>

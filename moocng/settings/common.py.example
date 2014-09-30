@@ -39,7 +39,7 @@ TEMPLATE_DEBUG = DEBUG
 FFMPEG_DEBUG = DEBUG
 
 ADMINS = (
-    ('Admin', 'admin@example.com'),
+    ('Admin', 'admin@devopenmooc.com'),
 )
 
 MANAGERS = ADMINS
@@ -51,7 +51,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'moocng',                # Or path to database file if using sqlite3.
         'USER': 'moocng',                # Not used with sqlite3.
-        'PASSWORD': 'moocng',            # Not used with sqlite3.
+        'PASSWORD': 'password',            # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
@@ -61,7 +61,7 @@ MONGODB_URI = 'mongodb://localhost:27017/moocng'
 
 BADGES_SERVICE_URL = "backpack.openbadges.org"
 BADGES_ISSUER_NAME = "OpenMOOC"
-BADGES_ISSUER_URL = "http://openmooc.org"
+BADGES_ISSUER_URL = "http://devopenmooc.com"
 BADGES_ISSUER_DESCRIPTION = ""
 BADGES_ISSUER_IMAGE = ""
 BADGES_ISSUER_EMAIL = ""
@@ -70,9 +70,9 @@ BADGES_ISSUER_EMAIL = ""
 API_LIMIT_PER_PAGE = 0
 
 #SMTP server
-EMAIL_HOST = 'idp.openmooc.org'
-SERVER_EMAIL = 'idp.openmooc.org'
-DEFAULT_FROM_EMAIL = 'info@openmooc.org'
+EMAIL_HOST = 'idp.devopenmooc.com'
+SERVER_EMAIL = 'idp.devopenmooc.com'
+DEFAULT_FROM_EMAIL = 'info@openmooc.com'
 EMAIL_PORT = 25
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
@@ -170,7 +170,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'r$=%l$j4(#5a%$rd*g+q5o7!m3z&amp;b@z1+n*d!n2im-hf0n%730'
+SECRET_KEY = 'set secret key here'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -434,7 +434,7 @@ CELERY_CREATE_MISSING_QUEUES = True
 
 BROKER_URL = 'amqp://moocng:moocngpassword@localhost:5672/moocng'
 
-CERTIFICATE_URL = 'http://example.com/idcourse/%(courseid)s/email/%(email)s'  # Example, to be overwritten in local settings
+CERTIFICATE_URL = 'http://devopenmooc.com/idcourse/%(courseid)s/email/%(email)s'  # Example, to be overwritten in local settings
 
 MASSIVE_EMAIL_BATCH_SIZE = 30
 
@@ -454,9 +454,9 @@ FREE_ENROLLMENT_CONSISTENT = False
 
 AUTH_HANDLER = "moocng.auth_handlers.handlers.SAML2"
 INSTALLED_APPS.append('djangosaml2')
-REGISTRY_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/newUser.php'
-PROFILE_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/reviewUser.php'
-CHANGEPW_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/changePassword.php'
+REGISTRY_URL = 'https://idp.devopenmooc.com/simplesaml/module.php/userregistration/newUser.php'
+PROFILE_URL = 'https://idp.devopenmooc.com/simplesaml/module.php/userregistration/reviewUser.php'
+CHANGEPW_URL = 'https://idp.devopenmooc.com/simplesaml/module.php/userregistration/changePassword.php'
 
 AUTH_PROFILE_MODULE = 'profile.UserProfile'
 
@@ -540,12 +540,6 @@ SERIALIZATION_MODULES = {
 #     }
 # }
 
-MOOCNG_EXTERNALAPPS = {
-    'askbot': {
-        'instances': ()
-    },
-}
-
 # This settting is a tuple of strings that are not allowed for the slug in the
 # external apps. For example:
 #
@@ -562,6 +556,9 @@ FABRIC_ASKBOT_INSTANCES_PATH = '/etc/openmooc/askbot/instances'
 # Path to the ssh key to use to connect to the machines where the external apps
 # are going to be deployed
 FABRIC_SSH_KEY_PATH = '/root/.ssh/id_rsa'
+
+# Fabric parameters for NodeBB
+#FABRIC_NODEBB_INSTANCES_PATH = '/etc/openmooc/nodebb/instances'
 
 # Show courses as a list (classic behaviour) or as a grid
 COURSE_SHOW_AS_LIST = True

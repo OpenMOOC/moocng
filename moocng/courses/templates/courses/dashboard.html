@@ -1,0 +1,270 @@
+{% extends "courses/base_course.html" %}
+
+{% load cache gravatar i18n enrollment_tags media_contents usercourses %}
+
+{% block nav-course-overview %}class="active"{% endblock %}
+
+{% block extraheader %}
+<link rel="alternate" type="application/rss+xml" href="{% url announcements_feed course.slug %}" />
+{% endblock %}
+
+{% block content %}
+	<div class="container pb-100">
+		<div class="row">
+			<div class="col-lg-8 col-md-6 col-sm-8 col-mob-4">
+				<div class="dash-box">
+					<div class="title">
+						<h3>{% trans "Syllabus" %}</h3>
+					</div>
+					<div class="content">
+						<ol start="2">
+							<!-- <li class="done"><span>Conceptos básicos</span></li>
+							<li class="done"><span>Principios básicos</span>
+								<ol>
+									<li class="current"><span>Base del mapa geológico: mapa topográfico</span></li>
+									<li><span>Intersección de capas geológicas planas para topografía</span></li>
+									<li><span>Capas plegadas. Intersección de los pliegues con la topografía</span></li>
+								</ol>
+							</li> -->
+							{% for unit in unit_list %}
+								<li class="{% if unit.complete %}done{% endif %}"><span>{{unit.title}}</span>
+								{% if unit.questions %}
+									<ol>
+										{% for q in unit.questions %}
+										<li class="{% if q.current %} current {% endif %}"><span>{{q.title}}</span></li>
+										{% endfor %}
+									</ol>
+								{% endif %}
+								</li>
+							{% endfor %}
+						</ol>
+						<div class="bottom-bar">
+							<a href="{% url course_syllabus course.slug %}" class="button pull-right"><img src="{{ STATIC_URL }}/img/ECO_icon_toc.svg">{% trans "Syllabus" %}</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-8 col-md-6 col-sm-8 col-mob-4">
+				<div class="dash-box">
+					<div class="title">
+						<h3>{% trans "Tasks" %}</h3>
+					</div>
+					<div class="content">
+						<ul class="tabs">
+							<li class="selected">
+								<h4>{% trans "Personal" %}<span><strong>{{ tasks_done }}</strong>/{{ task_list|length}}</span></h4>
+								<div class="content">
+									<ol>
+										{% for task in task_list %}
+										<li class="{% if task.done %} done {% endif %}"><a href="{% url course_classroom course.slug %}#unit{{ task.item.kq.unit_id }}/kq{{ task.item.kq.id }}/{{task.type}}">{{ task.title }}</a></li>
+										{% endfor %}
+									</ol>
+								</div>
+							</li>
+							<li>
+								<h4>{% trans "Team" %}<span><strong>0</strong>/3</span></h4>
+								<div class="content">
+									<ol>
+										<li><span>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae.</span></li>
+										<li><span>Nam egestas commodo velit a porta.</span></li>
+										<li><span>Mauris vestibulum leo at pellentesque sagittis.</span></li>
+									</ol>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<!--<div class="col-lg-8 col-md-6 col-sm-8 col-mob-4">
+				<div class="dash-box">
+					<div class="title">
+						<h3>{% trans "News feed" %}</h3>
+					</div>
+					<div class="content">
+						<ul class="tabs">
+							<li class="selected">
+								<h4>{% trans "Microblogging" %}</h4>
+								<div class="content feed">
+									<ul>
+										<li class="read">
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Héctor García <span>@hectorg</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent tincidunt ligula sit amet enim tristique, malesuada iaculis erat vulputate.<span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+										<li>
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Héctor García <span>@hectorg</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent tincidunt ligula sit amet enim tristique, malesuada iaculis erat vulputate.<span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+										<li>
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Héctor García <span>@hectorg</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.<span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</li>
+							<li>
+								<h4>{% trans "Forum" %}</h4>
+								<div class="content feed">
+									<ul>
+										<li class="read">
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Héctor García <span>@hectorg</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent tincidunt ligula sit amet enim tristique, malesuada iaculis erat vulputate.<span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+										<li>
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Héctor García <span>@hectorg</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent tincidunt ligula sit amet enim tristique, malesuada iaculis erat vulputate.<span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+										<li>
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Héctor García <span>@hectorg</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.<span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</li>
+						</ul>
+						<div class="bottom-bar">
+							<a href="#" class="button pull-right">@raul.yeguas<img src="{{ STATIC_URL }}/img/icon_goto.png"></a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-8 col-md-6 col-sm-8 col-mob-4">
+				<div class="dash-box">
+					<div class="title">
+						<h3>{% trans "Notifications" %}</h3>
+					</div>
+					<div class="content">
+						<ul class="tabs">
+							<li class="selected">
+								<h4>{% trans "General" %}</h4>
+								<div class="content feed">
+									<ul>
+										<li class="wiki">
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Juan Pedro Pérez <span>@juanpp</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Ha añadido un término nuevo en la wiki: <a href="#">"Cartografía"</a><span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+										<li class="comment">
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Prof. Eduardo Ruiz <span>@edu.ruiz</span></h5>
+												<p class="date">19 jul 2014</p>
+												<p class="text">Ha comentado la tarea <a href="#">"Nunc iaculis velit sed..."</a><span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+										<li class="like">
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Paula Juliá <span>@paulajulia</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Le gusta el tema <a href="#">"3.1 Base del mapa..."</a><span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+										<li class="like">
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Paula Juliá <span>@paulajulia</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Le gusta el tema <a href="#">"3.1 Base del mapa..."</a><span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</li>
+							<li>
+								<h4>{% trans "Team" %}</h4>
+								<div class="content feed">
+									<ul>
+										<li class="wiki">
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Juan Pedro Pérez <span>@juanpp</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Ha añadido un término nuevo en la wiki: <a href="#">"Cartografía"</a><span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+										<li class="comment">
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Prof. Eduardo Ruiz <span>@edu.ruiz</span></h5>
+												<p class="date">19 jul 2014</p>
+												<p class="text">Ha comentado la tarea <a href="#">"Nunc iaculis velit sed..."</a><span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+										<li class="like">
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Paula Juliá <span>@paulajulia</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Le gusta el tema <a href="#">"3.1 Base del mapa..."</a><span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+										<li class="like">
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Paula Juliá <span>@paulajulia</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Le gusta el tema <a href="#">"3.1 Base del mapa..."</a><span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</li>
+						</ul>
+						<div class="bottom-bar">
+							<a href="#" class="button pull-right">Ver todas las notificaciones<img src="{{ STATIC_URL }}/img/icon_notification.png"></a>
+						</div>
+					</div>
+				</div>
+			</div>-->
+		</div>		
+	</div>
+{% endblock %}
+
+{% block extrajs %}
+	<script>
+		function resizeDashboard(){
+			var width = $('.dash-box .content').outerWidth();
+			$('.dash-box .content .tabs .content').width(width);
+		}
+		
+		$(function(){
+			resizeDashboard();
+		});
+		
+		$( window ).resize(resizeDashboard);
+		
+		$('.dash-box .content .tabs > li').click(function(){
+			$(this).parent().find('.selected').removeClass('selected');
+			$(this).addClass('selected');
+		});
+	</script>
+{% endblock %}

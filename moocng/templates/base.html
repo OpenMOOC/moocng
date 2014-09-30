@@ -1,4 +1,5 @@
 {% load i18n %}<!DOCTYPE html>
+
 <html class="no-js" lang="{{ LANGUAGE_CODE }}">
 <head>
   <meta charset="utf-8">
@@ -11,93 +12,136 @@
   <meta name="viewport" content="width=device-width">
 
   <link rel="icon" href="/favicon.ico"/>
-  <link rel="stylesheet" href="{{ theme.bootstrap_css }}">
-  <link rel="stylesheet" href="{{ theme.moocng_css }}">
+  <!--<link rel="stylesheet" href="{{ theme.bootstrap_css }}">-->
+  <!--<link rel="stylesheet" href="{{ theme.moocng_css }}">-->
+  
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400italic,400,700,800' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet/less" type="text/css" href="{{ STATIC_URL }}css/grid.less" />
+  <link rel="stylesheet/less" type="text/css" href="{{ STATIC_URL }}css/moocng.less" />
 
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-1.7.2.min.js"><&#47;script>');</script>
   <script src="{{ STATIC_URL }}js/libs/modernizr-2.5.3.min.js"></script>
-  <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
+  <!--<script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>-->
+  <script src="{{ STATIC_URL }}js/modal.js"></script>
+  <script src="{{ STATIC_URL }}js/libs/less-1.7.3.min.js"></script>
   {% block extraheader %}{% endblock %}
 </head>
+{% if user.is_authenticated %}
+	{% if is_enrolled and not is_overview %}
+	<body class="course">
+	{% else %}
+	<body>
+	{% endif %}
+{% else %}
 <body>
-  <div class="container">
+{% endif %}
     <header>
-      {% get_language_info_list for LANGUAGES as languages %}
-      {% if languages|length > 1 %}
-        <ul class="unstyled pull-right" id="language-selector">
-          {% for language in languages %}
-            {% if LANGUAGE_CODE == language.name_local %}
-              <li>{{ language.name_local|capfirst }}</li>
-            {% else %}
-              <li><form action="{% url set_language %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="language" value="{{ language.code }}" />
-                <input class="btn btn-link{% if LANGUAGE_CODE == language.code %} disabled{% endif %}" type="submit" value="{{ language.name_local|capfirst }}" {% if LANGUAGE_CODE == language.code %}disabled="disabled"{% endif %}/>
-              </form></li>
-            {% endif %}
-            {% if not forloop.last %}|{% endif %}
-          {% endfor %}
-        </ul>
-      {% endif %}
-      <hgroup>
-        <h1 class="logo"><a href="{% url home %}" class="hide-text"><img src="{{ theme.logo }}" alt="logo {{ site.name }}" />{{ site.name }}</a></h1>
-        <h2 class="small pull-left">{{ theme.subtitle }}</h2>
-      </hgroup>
+    <div class="row main-bar">
+      <h1 class="logo"><a href="{% url home %}" class="hide-text"><img src="{{ theme.logo }}" alt="logo {{ site.name }}" />{{ site.name }}</a></h1>
+      <img class="logo-mini" src="{{ STATIC_URL }}img/logo_mini.png" alt="logo {{ site.name }}" />
+      <ul class="btn-link pull-left" id="meta-buttons">
+        <li><a href="{% url home %}" class="btn btn-link">{% trans "Catalogue"%}</a></li>
+        <li><a href="#" class="btn btn-link">Groups</a></li>
+        <li><a href="#" class="btn btn-link">{% trans "About" %}</a></li>
+        <li class="noLowRes"><a href="#" class="btn btn-link">
+	  {% trans "How it works" %}<strong id="announcements-dont-viewed">{% if announcements_dont_viewed %} ({{ announcements_dont_viewed }}){% endif %}</strong>
+        </a></li>
+      </ul>
       {% if user.is_authenticated %}
+		{% if is_enrolled and not is_overview%}
+			<h2 class="course-title pull-left">{{ course.name }}</h2>
+		{% endif %}
+		
         {% block useractions %}
             {% include "courses/include.useractions.html" %}
         {% endblock %}
+    </div>
+
+        {% block courseactions %}
+			{% if is_enrolled and not is_overview %}
+				{% include "courses/include.courseactions.html" %}
+			{% endif %}
+		{% endblock %}
       {% else %}
-      <div class="btn-toolbar pull-right">
-        <a class="btn" href="{% url register %}">{% trans "Register" %}</a>
-        <a class="btn" href="{% url login %}">{% trans "Log in" %}</a>
-      </div>
+        <a class="btn-link pull-right" href="{% url login %}">{% trans "Log in" %}</a>
       {% endif %}
-      <ul class="unstyled pull-right" id="meta-buttons">
-        <li><a href="{% url home %}" class="btn btn-link">
-            {% trans "Home"%}
-        </a></li>
-        |
-        <li>
-            <a href="{% url faq %}" class="btn btn-link">FAQ</a>
-        </li>
-        |
-        <li>
-            <a href="{% url methodology %}" class="btn btn-link">{% trans "Methodology" %}</a>
-        </li>
-        |
-        <li>
-            <a href="{% url portal_announcements %}" class="btn btn-link">
-                {% trans "Announcements" %}<strong id="announcements-dont-viewed">{% if announcements_dont_viewed %} ({{ announcements_dont_viewed }}){% endif %}</strong>
-            </a>
-        </li>
-      </ul>
       <div class="clearfix"></div>
     </header>
+    
     <div role="main" class="{% block mainclass %}{% endblock %}">
-      {% if messages %}{% for message in messages %}
-      <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
-        <button class="close" data-dismiss="alert">×</button>
-        {{ message }}
-      </div>
-      {% endfor %}{% endif %}
-
       {% block nav %}{% endblock %}
 
       {% block content %}{% endblock %}
     </div>
+    
     <footer>
-      <ul>
-        <li><a href="{% url legal %}">{% trans "Legal" %}</a></li>
-        <li><a href="{% url copyright %}">&copy; {% now "Y" %} {{ site.name }}. {% trans "All rights reserved" %}</a></li>
-        {% if show_tos %}
-        <li><a href="{% url tos %}">{% trans "Terms of Use" %}</a></li>
-        {% endif %}
-        <li><a href="{% url contact %}">{% trans "Contact" %}</a></li>
-      </ul>
+      <div class="prefoot">
+		<div class="container">
+		<div class="row">
+			<div class="col-lg-7 col-md-5 col-sm-4 col-mob-2">
+			<p class="text-normal"><span class="grey"><strong>ECO</strong> + Open<em>MOOC</em></span> es una plataforma creada por la <a href="#" target="_blank">UNED</a> y las Universidades de <a href="#">Cantabria</a>, <a href="#">Oviedo</a> y <a href="#">Zaragoza</a> para fomentar la participación gratuita en los Cursos Online Masivos de Acceso Libre.</p>
+			</div>
+			<div class="col-lg-3 col-md-3 col-sm-2 col-mob-1 col-lg-push-1 col-md-push-1">
+			<ul class="nobullet">
+			<li><a href="#">Catalogue of courses</a></li>
+			<li><a href="#">Groups</a></li>
+			<li><a href="#">About</a></li>
+			<li><a href="#">How it works</a></li>
+			</ul>
+			</div>
+			<div class="col-lg-2 col-md-2 col-sm-2 col-mob-1 col-lg-push-1 col-md-push-1">
+			<ul class="nobullet">
+			<li><a href="#">Staff</a></li>
+			<li><a href="#">FAQ</a></li>
+			<li><a href="#">Contact</a></li>
+			</ul>
+			</div>
+		</div>
+		<div class="row mt-20">
+			<div class="col-lg-7 col-md-5 col-sm-4 col-mob-2">
+			<ul class="logos stretch inlineblock">
+			<li><a href="#"><img src="{{ STATIC_URL }}img/logo_uned.png" alt="Universidad Nacional de Educación a Distancia"></a></li>
+			<li><a href="#"><img src="{{ STATIC_URL }}img/logo_uc.png" alt="Universidad de Cantabria"></a></li>
+			<li><a href="#"><img src="{{ STATIC_URL }}img/logo_uo.png" alt="Universidad de Oviedo"></a></li>
+			<li><a href="#"><img src="{{ STATIC_URL }}img/logo_uz.png" alt="Universidad de Zaragoza"></a></li>
+			</ul>
+			</div>
+			<div class="col-lg-7 col-md-5 col-sm-4 col-mob-2 col-lg-push-1 col-md-push-1">
+			<ul class="logos inlineblock">
+			<li><a href="#"><img src="{{ STATIC_URL }}img/logo-eco.png" alt="ECO"></a></li>
+			<li class="noBorder"><a href="#"><img src="{{ STATIC_URL }}img/logo-cip.png" alt="CIP"></a></li>
+			<li><a href="#"><img src="{{ STATIC_URL }}img/logo-ec.png" alt="European Commission"></a></li>
+			</ul>
+			</div>
+		</div>
+		<div class="row mt-20">
+			<div class="col-lg-7 col-md-5 col-sm-4 col-mob-2">
+			<p class="text-small">Plataforma integrada en el Proyecto<br><a href="#" target="_blank"><strong>ECO: Elearning, Communication and Open-data</strong></a></p>
+			</div>
+			<div class="col-lg-7 col-md-5 col-sm-4 col-mob-2 col-lg-push-1 col-md-push-1">
+			<p class="text-tiny">Project funded from the European Community's CIP (Programme under grant agreement nº 21127)</p>
+			</div>
+		</div>
+		</div>
+      </div>
+      <div class="footer">
+	<div class="row">
+	  <p class="pull-left">
+	    <a href="{% url copyright %}">&copy; {% now "Y" %} {{ site.name }}. {% trans "All rights reserved" %}</a>
+	  </p>
+	  <div class="pull-right">
+	    <ul class="inline">
+	      <li><a href="{% url legal %}">{% trans "Privacy Policy" %}</a></li>
+	      {% if show_tos %}
+	      <li><a href="{% url tos %}">{% trans "Terms of Service" %}</a></li>
+	      {% endif %}
+	      <li>Powered by <a href="{% url contact %}">{% trans "Open" %}{% trans "MOOC" %}</a></li>
+	    </ul>
+	  </div>
+	</div>
+      </div>
     </footer>
-  </div>
 
   {% block extrajs %}{% endblock %}
   {% if google_analytics %}
@@ -119,6 +163,16 @@
             });
         });
     })(jQuery);
+  </script>
+  <script>
+	$(window).scroll(function (event) {
+		var scroll = $(window).scrollTop();
+		if(scroll > 0){
+			$('body').addClass('collapsed');
+		}else{
+			$('body').removeClass('collapsed');
+		}
+	});
   </script>
 </body>
 </html>
