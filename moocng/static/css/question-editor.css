@@ -33,30 +33,75 @@ fieldset {
     background-size: 540px 324px;
 }
 
-fieldset,
-fieldset img {
+fieldset.use-last-frame,
+fieldset.use-last-frame img {
     border: 1px solid black;
     width: 540px;
     height: 324px;
 }
 
 fieldset .option {
+    position: static;
+    display: block;
+    margin: 5px 0;
+    background-color: #AAA;
+    border: 2px solid #DDD;
+}
+
+fieldset .option.selected {
+    border: 2px solid #EAAF31;
+}
+
+fieldset.use-last-frame .option {
     position: absolute;
     background-color: #888888;
     opacity: 0.7;
     display: block;
     cursor: pointer;
+    min-width: 150px;
 }
 
-fieldset .option input {
+fieldset.use-last-frame .option input {
     margin: 0;
 }
 
-fieldset .selected {
+fieldset .option input {
+    vertical-align: middle;
+}
+
+    fieldset .option input[type=text] + input[type=text] {
+        vertical-align: top;
+        width: 50%;
+        margin-left: 1%;
+    }
+
+fieldset .option .label{
+    display: inline-block;
+}
+
+    fieldset .option .label:first-child {
+        width: 49%;
+    }
+
+    fieldset .option .label:not(:first-child) {
+        width: calc(100% - 30px);
+        margin: 0 5px;
+    }
+
+    fieldset .option fieldset {
+        background-color: #DDD;
+        padding: 5px;
+    }
+
+        fieldset .option fieldset .option {
+            padding: 5px 20px 5px 5px;
+        }
+
+fieldset.use-last-frame .selected {
     background-color: #8888ff;
 }
 
-fieldset .out {
+fieldset.use-last-frame .out {
     background-color: #ff8888;
 }
 

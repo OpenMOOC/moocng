@@ -1,0 +1,114 @@
+{% load i18n %}<!DOCTYPE html>
+<html class="no-js" lang="{{ LANGUAGE_CODE }}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>{{ site.name }}</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <meta name="viewport" content="width=device-width">
+
+  <link rel="apple-touch-icon" sizes="57x57" href="{{ theme.favicon_dir }}apple-touch-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="{{ theme.favicon_dir }}apple-touch-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="{{ theme.favicon_dir }}apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="{{ theme.favicon_dir }}apple-touch-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="{{ theme.favicon_dir }}apple-touch-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="{{ theme.favicon_dir }}apple-touch-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="{{ theme.favicon_dir }}apple-touch-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="{{ theme.favicon_dir }}apple-touch-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ theme.favicon_dir }}apple-touch-icon-180x180.png">
+  <link rel="icon" type="image/png" href="{{ theme.favicon_dir }}favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="{{ theme.favicon_dir }}android-chrome-192x192.png" sizes="192x192">
+  <link rel="icon" type="image/png" href="{{ theme.favicon_dir }}favicon-96x96.png" sizes="96x96">
+  <link rel="icon" type="image/png" href="{{ theme.favicon_dir }}favicon-16x16.png" sizes="16x16">
+  <link rel="icon" type="image/x-icon" href="{{ theme.favicon_dir }}favicon.ico">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-TileImage" content="{{ theme.favicon_dir }}mstile-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+
+  <link rel="stylesheet" href="{{ theme.bootstrap_css }}">
+  <!--<link rel="stylesheet" href="{{ theme.moocng_css }}">-->
+  <link href='//fonts.googleapis.com/css?family=Open+Sans:300,400italic,400,700,800' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/grid.css" />
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/moocng_teacheradmin.css" />
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-1.7.2.min.js"><&#47;script>');</script>
+  <script src="{{ STATIC_URL }}js/libs/modernizr-2.5.3.min.js"></script>
+  <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
+  {% block extraheader %}{% endblock %}
+  {% if google_analytics %}
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', '{{ google_analytics }}', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+  {% endif %}
+</head>
+<body>
+  <div class="container full-width">
+    <header>
+    <div class="row main-bar">
+      <h1 class="logo"><a href="{{ theme.link_home }}" class="hide-text"><img src="{{ theme.logo }}" alt="logo {{ site.name }}" />{{ site.name }}</a></h1>
+      <img class="logo-mini" src="{{ STATIC_URL }}img/logo_mini.png" alt="logo {{ site.name }}" />
+      <div class="btn-link pull-left" id="meta-buttons">
+        {% if course.slug %}
+        <a class="btn btn-link" href="{% url course_dashboard course.slug %}" target="_blank">{{ course.name }}</a>
+        {% endif %}
+      </div>
+      {% if user.is_authenticated %}
+
+        {% block useractions %}
+            {% include "courses/include.useractions.html" %}
+        {% endblock %}
+    </div>
+      {% else %}
+        <a class="btn-link pull-right" href="{% url login %}">{% trans "Log in" %}</a>
+      {% endif %}
+      <div class="clearfix"></div>
+    </header>
+    <div role="main" class="{% block mainclass %}{% endblock %}">
+      {% if messages %}{% for message in messages %}
+      <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
+        <button class="close" data-dismiss="alert">×</button>
+        {{ message }}
+      </div>
+      {% endfor %}{% endif %}
+
+      {% block nav %}{% endblock %}
+
+      {% block content %}{% endblock %}
+    </div>
+    <a id="help_button" href="https://ecolearninghelp.zendesk.com/hc/es/requests/new" target="_blank"><img src="{{ STATIC_URL }}img/ECO_icon_ayudame.svg" alt="{% trans "Get help" %}"></a>
+  </div>
+
+  {% block extrajs %}{% endblock %}
+  {% if google_analytics %}
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', '{{ google_analytics }}', '{{ site.domain }}');
+      ga('send', 'pageview');
+    </script>
+  {% endif %}
+  <script type="text/javascript">
+    (function($){
+        $(document).ready(function () {
+            $('body').on('touchstart.dropdown', '.dropdown-menu', function (e) {
+                e.stopPropagation();
+            });
+        });
+    })(jQuery);
+  </script>
+</body>
+</html>

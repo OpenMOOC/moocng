@@ -34,16 +34,26 @@ if (_.isUndefined(window.MOOC)) {
                 var chart = nv.models.pieChart()
                         .x(function (d) { return d.key; }) // label
                         .y(function (d) { return d.y; }) // value
-                        .values(function(d) { return d; })
                         .showLegend(true)
-                        .showLabels(false);
+                        .showLabels(true)
+                        .labelType("percent")
+                        .pieLabelsOutside(false)
+                        .labelThreshold(.02);
 
                 d3.select(viewport).append("svg")
-                    .datum([data])
+                    .datum(data)
                     .transition().duration(1200)
                     .call(chart);
 
                 nv.utils.windowResize(chart.update);
+
+                chart.pie.dispatch.on("elementClick", function(e) {
+                    var label = e.label.replace(' ','-').toLowerCase();
+                    var href = $('#'+label).attr('href');
+                    if (href)
+                        window.location.href=href;
+                });
+
                 return chart;
             });
         },
@@ -96,7 +106,7 @@ if (_.isUndefined(window.MOOC)) {
     MOOC.views.Course = Backbone.View.extend({
         initialize: function () {
             _.bindAll(this, "render", "destroy");
-            this.template = $("#course-tpl").text();
+            this.template = _.template($("#course-tpl").text());
         },
 
         render: function () {
@@ -104,7 +114,7 @@ if (_.isUndefined(window.MOOC)) {
                 chartData,
                 unitsNav,
                 aux;
-            this.$el.html(this.template);
+            this.$el.html(this.template(this.model.toJSON()));
 
             if (!_.isUndefined(data.passed)) {
                 this.$el.find("#passed").removeClass("hide");
@@ -135,21 +145,22 @@ if (_.isUndefined(window.MOOC)) {
                 key: MOOC.trans.evolution,
                 values: [
                     { x: 0, y: data.enrolled },
-                    { x: 1, y: data.started },
-                    { x: 2, y: data.completed }
+                    { x: 1, y: data.started }
                 ]
             }];
 
             // If the course has no threshold then there is no passed field
             if (!_.isUndefined(data.passed)) {
-                chartData[0].values.push({ x: 3, y: data.passed });
+                chartData[0].values.push({ x: 2, y: data.passed });
             }
+
+            chartData[0].values.push({ x: 3, y: data.completed });
 
             aux = {
                 0: MOOC.trans.enrolled,
                 1: MOOC.trans.started,
-                2: MOOC.trans.completed,
-                3: MOOC.trans.passed
+                2: MOOC.trans.passed,
+                3: MOOC.trans.completed
             };
 
             renderLine(
@@ -226,6 +237,160 @@ if (_.isUndefined(window.MOOC)) {
                     });
                     return chart;
                 }
+            );
+        },
+
+        destroy: function () {
+            this.$el.html("");
+        }
+    });
+
+    MOOC.views.Students = Backbone.View.extend({
+        initialize: function () {
+            _.bindAll(this, "render", "destroy");
+            this.template = _.template($("#students-tpl").text());
+        },
+
+        render: function () {
+            var data = this.model.getData(),
+                chartData,
+                unitsNav,
+                aux;
+            this.$el.html(this.template(this.model.toJSON()));
+
+            if (!_.isUndefined(data.passed)) {
+                this.$el.find("#passed").removeClass("hide");
+                renderPie(
+                    this.$el.find("#passed .viewport")[0],
+                    [MOOC.trans.notPassed, MOOC.trans.passed],
+                    [data.enrolled - data.passed, data.passed]
+                );
+            } else {
+                // Just two pies
+                this.$el.find("#started").removeClass("span3").addClass("span5");
+                this.$el.find("#completed").removeClass("span3").addClass("span5");
+            }
+
+            renderPie(
+                this.$el.find("#started .viewport")[0],
+                [MOOC.trans.notStarted, MOOC.trans.started],
+                [data.enrolled - data.started, data.started]
+            );
+
+            renderPie(
+                this.$el.find("#completed .viewport")[0],
+                [MOOC.trans.notCompleted, MOOC.trans.completed],
+                [data.enrolled - data.completed, data.completed]
+            );
+
+            var countryValues = Object.keys(data.byCountry).map(function (key) {
+                return data.byCountry[key];
+            });
+            renderPie(
+                this.$el.find("#country .viewport")[0],
+                Object.keys(data.byCountry),
+                countryValues
+            );
+
+            var languageValues = Object.keys(data.byLanguage).map(function (key) {
+                return data.byLanguage[key];
+            });
+            renderPie(
+                this.$el.find("#language .viewport")[0],
+                Object.keys(data.byLanguage),
+                languageValues
+            );
+
+            var genderValues = Object.keys(data.byGender).map(function (key) {
+                return data.byGender[key];
+            });
+            renderPie(
+                this.$el.find("#gender .viewport")[0],
+                Object.keys(data.byGender),
+                genderValues
+            );
+
+            var ageValues = Object.keys(data.byAge).map(function (key) {
+                return data.byAge[key];
+            });
+            renderPie(
+                this.$el.find("#age .viewport")[0],
+                Object.keys(data.byAge),
+                ageValues
+            );
+
+            var map = L.map('map').setView([50, 0], 3);
+            var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+            var osmAttrib='Map data © <a href="http://openstreetmap.org" target="_blank">OpenStreetMap</a> contributors';
+            L.tileLayer(osmUrl, {minZoom: 1, maxZoom: 14, attribution: osmAttrib}).addTo(map);
+            var markers = new L.MarkerClusterGroup();
+            for (var i in data.byLocations){
+                markers.addLayer(new L.Marker(new L.LatLng(data.byLocations[i].lat, data.byLocations[i].lon)));
+            }
+            map.addLayer(markers);
+        },
+
+        destroy: function () {
+            this.$el.html("");
+        }
+    });
+
+    MOOC.views.Teachers = Backbone.View.extend({
+        initialize: function () {
+            _.bindAll(this, "render", "destroy");
+            this.template = _.template($("#teachers-tpl").text());
+        },
+
+        render: function () {
+            var data = this.model.getData(),
+                chartData,
+                unitsNav,
+                aux;
+            this.$el.html(this.template(this.model.toJSON()));
+
+            var countryValues = Object.keys(data.byCountry).map(function (key) {
+                return data.byCountry[key];
+            });
+            renderPie(
+                this.$el.find("#country .viewport")[0],
+                Object.keys(data.byCountry),
+                countryValues
+            );
+
+            var languageValues = Object.keys(data.byLanguage).map(function (key) {
+                return data.byLanguage[key];
+            });
+            renderPie(
+                this.$el.find("#language .viewport")[0],
+                Object.keys(data.byLanguage),
+                languageValues
+            );
+
+            var genderValues = Object.keys(data.byGender).map(function (key) {
+                return data.byGender[key];
+            });
+            renderPie(
+                this.$el.find("#gender .viewport")[0],
+                Object.keys(data.byGender),
+                genderValues
+            );
+
+            var ageValues = Object.keys(data.byAge).map(function (key) {
+                return data.byAge[key];
+            });
+            renderPie(
+                this.$el.find("#age .viewport")[0],
+                Object.keys(data.byAge),
+                ageValues
+            );
+
+            var orgValues = Object.keys(data.byOrganization).map(function (key) {
+                return data.byOrganization[key];
+            });
+            renderPie(
+                this.$el.find("#organization .viewport")[0],
+                Object.keys(data.byOrganization),
+                orgValues
             );
         },
 

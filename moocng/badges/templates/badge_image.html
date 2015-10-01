@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+	 xmlns:openbadges="http://openbadges.org" x="0px" y="0px" width="26px" height="26px"
+	 viewBox="0 0 26 26" enable-background="new 0 0 26 26" xml:space="preserve"
+     fill="{% if badge.color %}{{ badge.color }}{% endif %}">
+    {% if assertion %}
+    <openbadges:assertion verify="https://{{ site }}/badges/assertion/{{ badge.id }}.json">
+        <![CDATA[
+            {% autoescape off %}{{ assertion }}{% endautoescape %}
+        ]]>
+    </openbadges:assertion>
+    {% endif %}
+    <g>
+    	<g>
+    		<g>
+    			<path d="M14.999,9.262V7L11,1H7.001L11,7h-0.001v2.263C7.551,10.152,5,13.274,5,17c0,4.418,3.582,8,8,8s8-3.582,8-8
+    				C21,13.273,18.448,10.151,14.999,9.262z M11.999,9V8h2v1H11.999z M13,23c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6
+    				S16.309,23,13,23z"/>
+    		</g>
+    	</g>
+    	<g>
+    		<polygon points="19,1 15.001,1 13.601,3.1 15.6,6.099"/>
+    	</g>
+    	<g>
+    		<circle cx="13" cy="17" r="4"/>
+    	</g>
+    </g>
+</svg>

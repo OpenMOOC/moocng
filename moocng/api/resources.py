@@ -52,20 +52,24 @@ from moocng.api.mongodb import (MongoObj, MongoResource, MongoUserResource,
                                 mongo_object_updated, mongo_object_created)
 from moocng.api.tasks import (on_activity_created_task, on_answer_created_task,
                               on_answer_updated_task,
-                              on_peerreviewsubmission_created_task)
+                              on_peerreviewsubmission_created_task, on_history_created_task)
 from moocng.api.validation import (AnswerValidation, answer_validate_date,
                                    PeerReviewSubmissionsResourceValidation)
 from moocng.assets.models import Asset, Reservation, AssetAvailability
 from moocng.assets.utils import get_occupation_for_month
 from moocng.courses.models import (Unit, KnowledgeQuantum, Question, Option,
-                                   Attachment, Course)
-from moocng.courses.marks import normalize_kq_weight, calculate_course_mark
+                                   Attachment, Transcription, Course, Language)
+from moocng.courses.marks import (normalize_kq_weight, calculate_course_mark, get_unit_mark,
+                                    get_kq_mark)
 from moocng.media_contents import (media_content_get_iframe_template,
                                    media_content_get_thumbnail_url)
 from moocng.mongodb import get_db
 from moocng.peerreview.models import PeerReviewAssignment, EvaluationCriterion
 from moocng.peerreview.utils import (kq_get_peer_review_score,
                                      get_peer_review_review_score)
+
+from moocng.x_api.utils import (learnerSubmitsAResource)
+from django.core.urlresolvers import reverse
 
 
 STATS_QUEUE = 'stats'
@@ -116,8 +120,8 @@ class HandleErrorProvider(object):
                 "error_message": message_error,
             }
             if response_class_error != HttpResponseNotFound:
-                log = logging.getLogger('moocng.api.resources')
-                log.error('Internal Server Error: %s' % request.path, exc_info=sys.exc_info(),
+                #log = logging.getLogger('moocng.api.resources')
+                logging.error('Internal Server Error: %s' % request.path, exc_info=sys.exc_info(),
                           extra={'status_code': 500, 'request': request})
             desired_format = self.determine_format(request)
             serialized = self.serialize(request, data, desired_format)
@@ -151,6 +155,7 @@ class BaseMongoUserResource(MongoUserResource, HandleErrorProvider):
 
 
 class CourseResource(BaseModelResource):
+    unit = fields.ToManyField('moocng.api.resources.UnitResource', 'unit_set')
 
     class Meta:
         queryset = Course.objects.all()
@@ -164,6 +169,7 @@ class CourseResource(BaseModelResource):
 
 class UnitResource(BaseModelResource):
     course = fields.ToOneField(CourseResource, 'course')
+    mark = fields.DecimalField(readonly=True)
 
     class Meta:
         queryset = Unit.objects.all()
@@ -174,6 +180,14 @@ class UnitResource(BaseModelResource):
         filtering = {
             "course": ('exact'),
         }
+
+    def dehydrate_mark(self, bundle):
+        mark = 0;
+        try:
+            mark = get_unit_mark(bundle.obj, bundle.request.user)
+        except:
+            pass
+        return mark
 
     def alter_deserialized_detail_data(self, request, data):
         if u'title' in data and data[u'title'] is not None:
@@ -201,7 +215,12 @@ class KnowledgeQuantumResource(BaseModelResource):
     peer_review_score = fields.IntegerField(readonly=True)
     correct = fields.BooleanField(readonly=True)
     completed = fields.BooleanField(readonly=True)
+    marked = fields.BooleanField(readonly=True)
+    mark = fields.DecimalField(readonly=True)
     normalized_weight = fields.IntegerField(readonly=True)
+    transcriptions = fields.ToManyField('moocng.api.resources.TranscriptionResource',
+                                            'transcription_set', related_name='kq',
+                                            readonly=True, null=True)
 
     class Meta:
         queryset = KnowledgeQuantum.objects.all()
@@ -218,7 +237,7 @@ class KnowledgeQuantumResource(BaseModelResource):
         return objects.filter(
             Q(unit__unittype='n') |
             Q(unit__start__isnull=True) |
-            Q(unit__start__isnull=False, unit__start__lte=datetime.now)
+            Q(unit__start__isnull=False) #, unit__start__lte=datetime.now)
         )
 
     def dispatch(self, request_type, request, **kwargs):
@@ -241,7 +260,8 @@ class KnowledgeQuantumResource(BaseModelResource):
 
     def dehydrate_iframe_code(self, bundle):
         return media_content_get_iframe_template(bundle.obj.media_content_type,
-                                                 bundle.obj.media_content_id)
+                                                 bundle.obj.media_content_id,
+                                                 **{'transcriptions': bundle.obj.transcription_set.all()})
 
     def dehydrate_thumbnail_url(self, bundle):
         return media_content_get_thumbnail_url(bundle.obj.media_content_type,
@@ -273,6 +293,40 @@ class KnowledgeQuantumResource(BaseModelResource):
     def dehydrate_completed(self, bundle):
         return bundle.obj.is_completed(bundle.request.user)
 
+    def dehydrate_marked(self, bundle):
+        current_mark = bundle.obj.unit.course.get_user_mark(bundle.request.user)
+        if current_mark is None:
+            return False
+        else:
+            return current_mark.id == bundle.obj.id
+
+    def dehydrate_mark(self, bundle):
+        return get_kq_mark(bundle.obj, bundle.request.user)
+
+    def dehydrate_course(self, bundle):
+        return bundle.obj.unit.course.id
+
+    def build_filters(self, filters=None):
+        if filters is None: #if you don't pass any filters at all
+            filters = {}
+
+        orm_filters = super(KnowledgeQuantumResource, self).build_filters(filters)
+        if('course' in filters):
+            query = filters['course']
+            qset = (
+               Q(unit__course__id=query)
+            )
+            orm_filters['course'] = qset
+
+        return orm_filters
+
+    def apply_filters(self, request, applicable_filters):
+        if 'course' in applicable_filters:
+            course = applicable_filters.pop('course')
+        else:
+            course = None
+        semi_filtered = super(KnowledgeQuantumResource, self).apply_filters(request, applicable_filters)
+        return semi_filtered.filter(course) if course else semi_filtered
 
 class PrivateKnowledgeQuantumResource(BaseModelResource):
     unit = fields.ToOneField(UnitResource, 'unit')
@@ -292,6 +346,9 @@ class PrivateKnowledgeQuantumResource(BaseModelResource):
         related_name='asset_availability',
         readonly=True, null=True)
     normalized_weight = fields.IntegerField()
+    transcriptions = fields.ToManyField('moocng.api.resources.TranscriptionResource',
+                                            'transcription_set', related_name='kq',
+                                            readonly=True, null=True)
 
     class Meta:
         queryset = KnowledgeQuantum.objects.all()
@@ -324,6 +381,15 @@ class PrivateKnowledgeQuantumResource(BaseModelResource):
     def dehydrate_thumbnail_url(self, bundle):
         return media_content_get_thumbnail_url(bundle.obj.media_content_type, bundle.obj.media_content_id)
 
+class LanguageResource(BaseModelResource):
+    class Meta:
+        queryset = Language.objects.all()
+        resource_name = 'language'
+        authentication = DjangoAuthentication()
+        authorization = PublicReadTeachersModifyAuthorization()
+        filtering = {
+            "name": ('exact'),
+        }
 
 class AttachmentResource(BaseModelResource):
     kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
@@ -339,6 +405,22 @@ class AttachmentResource(BaseModelResource):
 
     def dehydrate_attachment(self, bundle):
         return bundle.obj.attachment.url
+
+class TranscriptionResource(BaseModelResource):
+    kq = fields.ToOneField(KnowledgeQuantumResource, 'kq')
+    language = fields.ToOneField(LanguageResource, 'language')
+
+    class Meta:
+        queryset = Transcription.objects.all()
+        resource_name = 'transcription'
+        authentication = DjangoAuthentication()
+        authorization = PublicReadTeachersModifyAuthorization()
+        filtering = {
+            "kq": ('exact'),
+        }
+
+    def dehydrate_transcription(self, bundle):
+        return bundle.obj.transcription.url
 
 
 class PeerReviewAssignmentResource(BaseModelResource):
@@ -524,11 +606,27 @@ class PeerReviewSubmissionsResource(BaseMongoResource):
         bundle.data["reviews"] = 0
         bundle.data["author_reviews"] = 0
         bundle.data["author"] = request.user.id
+        bundle.data["language"] = request.user.get_profile().language
         from moocng.peerreview.utils import insert_p2p_if_does_not_exists_or_raise
         _id = insert_p2p_if_does_not_exists_or_raise(bundle.data, self._collection)
 
         bundle.obj = MongoObj(bundle.data)
-        self.send_created_signal(request.user.id, bundle.obj)
+
+        try:
+            geolocation = {
+                'lat': float(request.META['HTTP_GEO_LAT']),
+                'lon': float(request.META['HTTP_GEO_LON'])
+            }
+        except:
+            geolocation = {
+                'lat': 0.0,
+                'lon': 0.0
+            }
+        bundle.extra = {
+            'geolocation': geolocation
+        }
+
+        self.send_created_signal(request.user.id, bundle)
         bundle.obj.uuid = str(_id)
 
         bundle.uuid = bundle.obj.uuid
@@ -785,13 +883,31 @@ class AnswerResource(BaseMongoUserResource):
 
     def obj_create(self, bundle, request=None, **kwargs):
         bundle.data["date"] = datetime.utcnow()
+
+        # xAPI
+        try:
+            geolocation = {
+                'lat': float(request.META['HTTP_GEO_LAT']),
+                'lon': float(request.META['HTTP_GEO_LON'])
+            }
+        except:
+            geolocation = {
+                'lat': 0.0,
+                'lon': 0.0
+            }
+        bundle.extra = {
+            'geolocation': geolocation
+        }
+
         bundle = super(AnswerResource, self).obj_create(bundle, request)
         bundle.uuid = bundle.obj.question_id
+
         return bundle
 
     def obj_update(self, bundle, request=None, **kwargs):
 
         answer_validate_date(bundle, request)
+        print "Validando..."
         question_id = int(kwargs.get("pk"))
         if (len(bundle.data.get("replyList", [])) > 0):
             newobj = self._collection.find_and_modify({
@@ -805,7 +921,24 @@ class AnswerResource(BaseMongoUserResource):
             }, safe=True, new=True)
 
         bundle.obj = newobj
-        self.send_updated_signal(request.user.id, bundle.obj)
+
+        # xAPI
+        try:
+            geolocation = {
+                'lat': float(request.META['HTTP_GEO_LAT']),
+                'lon': float(request.META['HTTP_GEO_LON'])
+            }
+        except:
+            geolocation = {
+                'lat': 0.0,
+                'lon': 0.0
+            }
+        bundle.extra = {
+            'geolocation': geolocation
+        }
+
+        self.send_updated_signal(request.user.id, bundle)
+
         return bundle
 
 
@@ -814,6 +947,9 @@ class ActivityResource(BaseMongoUserResource):
     course_id = fields.IntegerField(null=False)
     unit_id = fields.IntegerField(null=False)
     kq_id = fields.IntegerField(null=False)
+    timestamp = fields.IntegerField(null=False)
+    lat = fields.FloatField()
+    lon = fields.FloatField()
 
     class Meta:
         resource_name = 'activity'
@@ -832,7 +968,10 @@ class ActivityResource(BaseMongoUserResource):
             "course_id": 1,
             "unit_id": 1,
             "kq_id": 1,
-            "user_id": 1
+            "user_id": 1,
+            "timestamp": 1,
+            "lat": 0.0,
+            "lon": 0.0
         }
 
     def _initial(self, request, **kwargs):
@@ -842,6 +981,63 @@ class ActivityResource(BaseMongoUserResource):
             "unit_id": -1,
             "kq_id": -1,
             "user_id": -1,
+            "timestamp": -1,
+            "lat": 0.0,
+            "lon": 0.0
+        }
+
+class HistoryResource(BaseMongoUserResource):
+
+    url = fields.CharField(null=False)
+    timestamp = fields.IntegerField(null=False)
+    lat = fields.FloatField()
+    lon = fields.FloatField()
+    dev_type = fields.CharField(null=False)
+    dev_os = fields.CharField(null=False)
+    dev_orientation = fields.CharField(null=False)
+    course_id = fields.CharField(null=False)
+
+    class Meta:
+        resource_name = 'history'
+        collection = 'history'
+        datakey = '_id'
+        object_class = MongoObj
+        authentication = DjangoAuthentication()
+        authorization = DjangoAuthorization()
+        allowed_methods = ['get', 'post']
+        filtering = {
+            "user_id": ('exact'),
+            "url": ('exact'),
+            "dev_type": ('exact'),
+            "dev_os": ('exact'),
+            "dev_orientation": ('exact'),
+        }
+        input_schema = {
+            "user_id": 1,
+            "url": "",
+            "timestamp": 1,
+            "lat": 1.0,
+            "lon": 1.0,
+            "dev_type": "",
+            "dev_os": "",
+            "dev_orientation": "",
+            "course_id": ""
+        }
+
+    def _initial(self, request, **kwargs):
+        print request
+        print kwargs
+        user_id = kwargs['pk']
+        return {
+            "user_id": -1,
+            "url": "",
+            "timestamp": -1,
+            "lat": 0.0,
+            "lon": 0.0,
+            "dev_type": "",
+            "dev_os": "",
+            "dev_orientation": "",
+            "course_id": "",
         }
 
 
@@ -924,6 +1120,7 @@ class UserResource(BaseModelResource):
         # Authentication/Authorization
         self.is_authenticated(request)
         self.is_authorized(request)
+
         obj = self.get_object(request, kwargs)
         if isinstance(obj, HttpResponse):
             return obj
@@ -1228,7 +1425,7 @@ api_task_logger = logging.getLogger("api_tasks")
 def on_activity_created(sender, user_id, mongo_object, **kwargs):
     api_task_logger.debug("activity created")
 
-    data = mongo_object.to_dict()
+    data = mongo_object.obj.to_dict()
     activity = get_db().get_collection('activity')
     unit_activity = activity.find({
         'user_id': data['user_id'],
@@ -1249,7 +1446,7 @@ def on_answer_created(sender, user_id, mongo_object, **kwargs):
     api_task_logger.debug("answer created")
 
     on_answer_created_task.apply_async(
-        args=[mongo_object.to_dict()],
+        args=[mongo_object.obj.to_dict(), mongo_object.extra],
         queue=STATS_QUEUE,
     )
 
@@ -1258,7 +1455,7 @@ def on_answer_updated(sender, user_id, mongo_object, **kwargs):
     api_task_logger.debug("answer updated")
 
     on_answer_updated_task.apply_async(
-        args=[mongo_object],  # it is already a dict
+        args=[mongo_object.obj, mongo_object.extra],  # mongo_object.obj is already a dict
         queue=STATS_QUEUE,
     )
 
@@ -1267,10 +1464,17 @@ def on_peerreviewsubmission_created(sender, user_id, mongo_object, **kwargs):
     api_task_logger.debug("peer review submission created")
 
     on_peerreviewsubmission_created_task.apply_async(
-        args=[mongo_object.to_dict()],
+        args=[mongo_object.obj.to_dict(), mongo_object.extra],
         queue=STATS_QUEUE,
     )
 
+def on_history_created(sender, user_id, mongo_object, **kwargs):
+    api_task_logger.debug("history created")
+
+    on_history_created_task.apply_async(
+        args=[mongo_object.obj.to_dict()],
+        queue=STATS_QUEUE,
+    )
 
 mongo_object_created.connect(on_activity_created, sender=ActivityResource,
                              dispatch_uid="activity_created")
@@ -1281,3 +1485,5 @@ mongo_object_updated.connect(on_answer_updated, sender=AnswerResource,
 mongo_object_created.connect(on_peerreviewsubmission_created,
                              sender=PeerReviewSubmissionsResource,
                              dispatch_uid="peerreviewsubmission_created")
+mongo_object_created.connect(on_history_created, sender=HistoryResource,
+                             dispatch_uid="history_created")

@@ -75,3 +75,7 @@ def get_db(force_connect=False):
         _mongodb_connection = MongoDB(db_uri)
 
     return _mongodb_connection
+
+def get_micro_blog_db(force_connect=False):
+
+    return get_db()

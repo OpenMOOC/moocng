@@ -19,12 +19,17 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseGone
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
+from django.template.loader import render_to_string
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ImproperlyConfigured
+from django.contrib.sites.models import Site, RequestSite
 
-from moocng.badges.models import Badge, Award, Revocation, build_absolute_url
+from moocng.badges.models import Badge, Award, Revocation, build_absolute_url, BadgeByCourse
 import json
-
+from moocng.mongodb import get_db
+from bson.objectid import ObjectId
+import hashlib
 
 @login_required
 def my_badges(request):
@@ -35,19 +40,6 @@ def my_badges(request):
             'user': request.user,
             'openbadges_service_url': settings.BADGES_SERVICE_URL,
         }, context_instance=RequestContext(request))
-    except Award.DoesNotExist:
-        return HttpResponse(status=404)
-
-
-def badge_image(request, badge_slug, user_pk, mode):
-    badge = get_object_or_404(Badge, slug=badge_slug)
-    if mode == 'email':
-        user = get_object_or_404(User, email=user_pk)
-    else:
-        user = get_object_or_404(User, id=user_pk)
-    try:
-        Award.objects.filter(user=user).get(badge=badge)
-        return HttpResponse(badge.image.read(), content_type="image/png")
     except Award.DoesNotExist:
         return HttpResponse(status=404)
 
@@ -80,3 +72,88 @@ def assertion(request, assertion_uuid):
         return HttpResponseGone(json.dumps({'revoked': True}))
 
     return HttpResponse(json.dumps(assertion.to_dict()))
+
+def badge_assertion(request, assertion_uuid):
+    try:
+        site = Site.objects.get_current()
+    except ImproperlyConfigured:
+        site = RequestSite(request)
+
+    try:
+        badge = get_db().get_collection('badge').find({"_id": ObjectId(assertion_uuid)})[0]
+        user = get_object_or_404(User, pk=badge['id_user'])
+        hashed_email = hashlib.sha256(user.email + settings.BADGES_HASH_SALT).hexdigest()
+        if hasattr(badge, 'date'):
+            date = badge['date']
+        else:
+            badge_def = BadgeByCourse.objects.get(pk=badge['id_badge'])
+            date = badge_def.course.end_date.isoformat()
+
+        assertion = {
+            "uid": str(badge['_id']),
+            "badge": "https://%s/badges/badge/%s.json" % (site, badge['id_badge']),
+            "recipient": {
+                "identity": "sha256$%s" % ( hashed_email ),
+                "type": "email",
+                "hashed": True,
+                "salt": settings.BADGES_HASH_SALT
+            },
+            "verify": {
+                "type": "hosted",
+                "url": "https://%s/badges/assertion/%s.json" % (site, str(badge['_id']))
+            },
+            "issuedOn": date
+        }
+    except:
+        assertion = {
+            'error': 'error'
+        }
+
+    return HttpResponse(json.dumps(assertion), mimetype='application/json')
+
+def badge_badge(request, id):
+    badge = get_object_or_404(BadgeByCourse, pk=id)
+    return HttpResponse(json.dumps(badge.to_dict()), mimetype='application/json')
+
+def badge_image(request, id=None, assertion_uuid=None):
+    try:
+        if id:
+            badge = get_object_or_404(BadgeByCourse, pk=id)
+            badge_assert = badge
+        else:
+            badge_assert = get_db().get_collection('badge').find({"_id": ObjectId(assertion_uuid)})[0]
+            badge = get_object_or_404(BadgeByCourse, pk=badge_assert['id_badge'])
+
+        try:
+            site = Site.objects.get_current()
+        except ImproperlyConfigured:
+            site = RequestSite(request)
+
+        if badge.image:
+            image = badge.image.read()
+            content_type = "image/png"
+            # Bake image
+        else:
+            if assertion_uuid:
+                assertion = badge_assertion(request, assertion_uuid).content
+                badge_assert['id'] = badge_assert['_id']
+            else:
+                assertion = None
+
+            if not hasattr(settings, 'BADGES_DEFAULT_IMAGE_MIMETYPE'):
+                image = render_to_string('badge_image.html', {
+                    'site': site,
+                    'badge': badge_assert,
+                    'assertion': assertion
+                })
+                content_type = 'image/svg+xml'
+            else:
+                image_path = '%s/img/%s' % (settings.STATIC_ROOT, settings.BADGES_DEFAULT_IMAGE_FILE)
+                handle=open(image_path,'r+')
+                image = handle.read()
+                content_type = settings.BADGES_DEFAULT_IMAGE_MIMETYPE
+                # Bake image
+
+            return HttpResponse(image, content_type=content_type)
+    except:
+        return HttpResponse(status=404)

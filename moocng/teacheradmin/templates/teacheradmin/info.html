@@ -11,26 +11,187 @@
 {% block section %}
 <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
     {{ form.non_field_errors }}
-    <div class="row">
-        <div class="span10">
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a href="#tab-generalinfo" data-toggle="tab">{% trans 'General Info' %}</a>
+        </li>
+        <li>
+            <a href="#tab-extrainfo" data-toggle="tab">{% trans 'Extra info' %}</a>
+        </li>
+        <li>
+            <a href="#tab-appearance" data-toggle="tab">{% trans 'Course appearance' %}</a>
+        </li>
+        <li>
+            <a href="#tab-diploma" data-toggle="tab">{% trans 'Credits and diploma' %}</a>
+        </li>
+    </ul>
+    <div class="tab-content tab-content-no-overflow mb20">
+        <div class="tab-pane active" id="tab-generalinfo">
+
+            <div {% if not user.is_staff %}class="hide"{% endif %}>
+                <div>
+                    <fieldset>
+                        <legend>{% trans 'Status' %}</legend>
+                        <p>
+                        {{ form.status.errors }}
+                        {{ form.status.label_tag }}
+                        {{ form.status }}
+                        {% if form.status.help_text %}<span class="help-inline">{{ form.status.help_text }}</span>{% endif %}
+                        </p>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="">
+                <div>
+                    <fieldset>
+                        <legend>{% trans 'General info' %}</legend>
+                        <div class="row">
+                            <div class="span5">
+                                <p>
+                                    {{ form.name.errors }}
+                                    {{ form.name.label_tag }}
+                                    {{ form.name }}
+                                    {% if form.name.help_text %}<span class="help-inline">{{ form.name.help_text }}</span>{% endif %}
+                                </p>
+                                <p>
+                                    {{ form.hashtag.errors }}
+                                    {{ form.hashtag.label_tag }}
+                                    {{ form.hashtag }}
+                                    {% if form.hashtag.help_text %}<span class="help-inline">{{ form.hashtag.help_text }}</span>{% endif %}
+                                </p>
+                                <p>
+                                    {{ form.languages.errors }}
+                                    {{ form.languages.label_tag }}
+                                    {{ form.languages }}
+                                    {% if form.languages.help_text %}<span class="help-inline">{{ form.languages.help_text }}</span>{% endif %}
+                                </p>
+                            </div>
+                            <div class="span5">
+                                <p>
+                                    {{ form.start_date.errors }}
+                                    {{ form.start_date.label_tag }}
+                                    <input type="date" name="start_date" id="id_start_date" value="{{ form.start_date.value|date:'Y-m-d' }}" class="input-xlarge" />
+                                    {% if form.start_date.help_text %}<span class="help-inline">{{ form.start_date.help_text }}</span>{% endif %}
+                                </p>
+                                <p>
+                                    {{ form.end_date.errors }}
+                                    {{ form.end_date.label_tag }}
+                                    <input type="date" name="end_date" id="id_end_date" value="{{ form.end_date.value|date:'Y-m-d' }}" class="input-xlarge" />
+                                    {% if form.end_date.help_text %}<span class="help-inline">{{ form.end_date.help_text }}</span>{% endif %}
+                                </p>
+                                <p class="hide">
+                                    {{ form.enrollment_method.errors }}
+                                    {{ form.enrollment_method.label_tag }}
+                                    {{ form.enrollment_method }}
+                                    {% if form.enrollment_method.help_text %}<span class="help-inline">{{ form.enrollment_method.help_text }}</span>{% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="tab-extrainfo">
             <fieldset>
-                <legend></legend>
+                {{ form.description.errors }}
+                <legend>{{ form.description.label_tag }}</legend>
+                {{ form.description }}
+                {% if form.description.help_text %}<span class="help-block">{{ form.description.help_text }}</span>{% endif %}
+            </fieldset>
+
+            <fieldset>
+            {{ form.requirements.errors }}
+            <legend>{{ form.requirements.label_tag }}</legend>
+            {{ form.requirements }}
+            {% if form.requirements.help_text %}<span class="help-block">{{ form.requirements.help_text }}</span>{% endif %}
+            </fieldset>
+
+            <fieldset>
+            {{ form.intended_audience.errors }}
+            <legend>{{ form.intended_audience.label_tag }}</legend>
+            {{ form.intended_audience }}
+            {% if form.intended_audience.help_text %}<span class="help-block">{{ form.intended_audience.help_text }}</span>{% endif %}
+            </fieldset>
+
+            <fieldset>
+            {{ form.learning_goals.errors }}
+            <legend>{{ form.learning_goals.label_tag }}</legend>
+            {{ form.learning_goals }}
+            {% if form.learning_goals.help_text %}<span class="help-block">{{ form.learning_goals.help_text }}</span>{% endif %}
+            </fieldset>
+
+            <fieldset>
+            <legend>{% trans 'Extra field' %}</legend>
+            {{ static_page_form.errors }}
+            {{ static_page_form.title.label_tag }}
+            {{ static_page_form.title }}
+            {{ static_page_form.body.label_tag }}
+            {{ static_page_form.body }}
+            {% if static_page_form.help_text %}<span class="help-block">{{ static_page_form.help_text }}</span>{% endif %}
+            </fieldset>
+        </div>
+        <div class="tab-pane" id="tab-diploma">
+            <p>Diploma</p>
+            <p>
+                {{ form.threshold.errors }}
+                {{ form.threshold.label_tag }}
+                {{ form.threshold }}
+                {% if form.threshold.help_text %}<span class="help-inline">{{ form.threshold.help_text }}</span>{% endif %}
+            </p>
+            <p>
+                {{ form.estimated_effort.errors }}
+                {{ form.estimated_effort.label_tag }}
+                {{ form.estimated_effort }}
+                {% if form.estimated_effort.help_text %}<span class="help-inline">{{ form.estimated_effort.help_text }}</span>{% endif %}
+            </p>
+            <p class="hide">
+                {{ form.completion_badge.errors }}
+                {{ form.completion_badge.label_tag }}
+                {{ form.completion_badge }}
+                {% if form.completion_badge.help_text %}<span class="help-inline">{{ form.completion_badge.help_text }}</span>{% endif %}
+            </p>
+            <p>
+                {{ form.ects.errors }}
+                {{ form.ects.label_tag }}
+                {{ form.ects }}
+                {% if form.ects.help_text %}<span class="help-inline">{{ form.ects.help_text }}</span>{% endif %}
+            </p>
+            <fieldset>
+                <legend>
+                    <p>
+                        {{ form.certification_available.errors }}
+                        <label for="id_certification_available">
+                          {{ form.certification_available }}
+                          {% trans "Certification available" %}
+                        </label>
+                        {% if form.certification_available.help_text %}<span class="help-inline">{{ form.certification_available.help_text }}</span>{% endif %}
+                    </p>
+                </legend>
                 <p>
-                {{ form.status.errors }}
-                {{ form.status.label_tag }}
-                {{ form.status }}
-                {% if form.status.help_text %}<span class="help-inline">{{ form.status.help_text }}</span>{% endif %}
+                    {{ form.external_certification_available.errors }}
+                    <label for="id_external_certification_available" style="margin: 32px 0;">
+                      {{ form.external_certification_available }}
+                      {% trans "External certification available" %}
+                    </label>
+                    {% if form.external_certification_available.help_text %}<span class="help-inline">{{ form.external_certification_available.help_text }}</span>{% endif %}
+                </p>
+                <p>
+                    {{ form.certification_file.errors }}
+                    <h4>{{ form.certification_file.label_tag }}</h4>
+                    {{ form.certification_file }}
+                    {% if form.certification_file.help_text %}<span class="help-inline">{{ form.certification_file.help_text }}</span>{% endif %}
+                    <span class="help-inline">{% trans "Max file size" %}: {{ max_file_size }}Mb</span>
                 </p>
             </fieldset>
         </div>
-    </div>
-    <div class="row">
-        <div class="span5">
-            <p>
-                {{ form.name.errors }}
-                {{ form.name.label_tag }}
-                {{ form.name }}
-                {% if form.name.help_text %}<span class="help-inline">{{ form.name.help_text }}</span>{% endif %}
+        <div class="tab-pane" id="tab-appearance">
+            <p>Appearance</p>
+            <p class="hide">
+                {{ form.highlight.errors }}
+                {{ form.highlight }}
+                {{ form.highlight.label_tag }}
+                {% if form.highlight.help_text %}<span class="help-inline">{{ form.highlight.help_text }}</span>{% endif %}
+            </p>
             <p>
                 {{ form.promotion_media_content_type.errors }}
                 {{ form.promotion_media_content_type.label_tag }}
@@ -43,144 +204,41 @@
                 {{ form.promotion_media_content_id }}
                 {% if form.promotion_media_content_id.help_text %}<span class="help-inline">{{ form.promotion_media_content_id.help_text }}</span>{% endif %}
             </p>
-            <p>
-                {{ form.max_reservations_pending.errors }}
-                {{ form.max_reservations_pending.label_tag }}
-                {{ form.max_reservations_pending }}
-                {% if form.max_reservations_pending.help_text %}<span class="help-inline">{{ form.max_reservations_pending.help_text }}</span>{% endif %}
-            </p>
-            <p>
-                {{ form.enrollment_method.errors }}
-                {{ form.enrollment_method.label_tag }}
-                {{ form.enrollment_method }}
-                {% if form.enrollment_method.help_text %}<span class="help-inline">{{ form.enrollment_method.help_text }}</span>{% endif %}
-            </p>
-        </div>
-        <div class="span5">
-            <p>
-                {{ form.start_date.errors }}
-                {{ form.start_date.label_tag }}
-                <input type="date" name="start_date" id="id_start_date" value="{{ form.start_date.value|date:'Y-m-d' }}" class="input-xlarge" />
-                {% if form.start_date.help_text %}<span class="help-inline">{{ form.start_date.help_text }}</span>{% endif %}
-            </p>
-            <p>
-                {{ form.end_date.errors }}
-                {{ form.end_date.label_tag }}
-                <input type="date" name="end_date" id="id_end_date" value="{{ form.end_date.value|date:'Y-m-d' }}" class="input-xlarge" />
-                {% if form.end_date.help_text %}<span class="help-inline">{{ form.end_date.help_text }}</span>{% endif %}
-            </p>
-            <p>
-                {{ form.threshold.errors }}
-                {{ form.threshold.label_tag }}
-                {{ form.threshold }}
-                {% if form.threshold.help_text %}<span class="help-inline">{{ form.threshold.help_text }}</span>{% endif %}
-            </p>
-            <p>
-                {{ form.max_reservations_total.errors }}
-                {{ form.max_reservations_total.label_tag }}
-                {{ form.max_reservations_total }}
-                {% if form.max_reservations_total.help_text %}<span class="help-inline">{{ form.max_reservations_total.help_text }}</span>{% endif %}
-            </p>
-            <p>
-                {{ form.completion_badge.errors }}
-                {{ form.completion_badge.label_tag }}
-                {{ form.completion_badge }}
-                {% if form.completion_badge.help_text %}<span class="help-inline">{{ form.completion_badge.help_text }}</span>{% endif %}
-            </p>
+            <fieldset>
+                <legend>{% trans 'Course images' %}</legend>
+                <p>
+                    {{ form.thumbnail.errors }}
+                    <h4>{{ form.thumbnail.label_tag }}</h4>
+                    {{ form.thumbnail }}
+                    {% if form.thumbnail.help_text %}<span class="help-inline">{{ form.thumbnail.help_text }}</span>{% endif %}
+                    <span class="help-inline">{% trans "Max file size" %}: {{ max_file_size }}Mb. {% trans "Recommended image size" %}: {{ thumb_rec_height }} x {{ thumb_rec_width }}px.</span>
+                </p>
+                <p>
+                    {{ form.thumbnail_alt.errors }}
+                    <h4>{{ form.thumbnail_alt.label_tag }}</h4>
+                    {{ form.thumbnail_alt }}
+                    {% if form.thumbnail_alt.help_text %}<span class="help-inline">{{ form.thumbnail_alt.help_text }}</span>{% endif %}
+                </p>
+                <p>
+                    {{ form.background.errors }}
+                    <h4>{{ form.background.label_tag }}</h4>
+                    {{ form.background }}
+                    {% if form.background.help_text %}<span class="help-inline">{{ form.background.help_text }}</span>{% endif %}
+                    <span class="help-inline">{% trans "Max file size" %}: {{ max_file_size }}Mb. {% trans "Recommended image size" %}: {{ back_rec_height }} x {{ back_rec_width }}px.</span>
+                </p>
+            </fieldset>
         </div>
     </div>
-    <ul class="nav nav-tabs">
-        <li class="active">
-            <a href="#tab-description" data-toggle="tab">{{ form.description.label }}</a>
-        </li>
-        <li>
-            <a href="#tab-requirements" data-toggle="tab">{{ form.requirements.label }}</a>
-        </li>
-        <li>
-            <a href="#tab-intended_audience" data-toggle="tab">{{ form.intended_audience.label }}</a>
-        </li>
-        <li>
-            <a href="#tab-estimated_effort" data-toggle="tab">{{ form.estimated_effort.label }}</a>
-        </li>
-        <li>
-            <a href="#tab-learning_goals" data-toggle="tab">{{ form.learning_goals.label }}</a>
-        </li>
-        <li>
-            <a href="#tab-extra_info" data-toggle="tab">{% trans "Extra info" %}</a>
-        </li>
-    </ul>
-    <div class="tab-content tab-content-no-overflow">
-        <div class="tab-pane active" id="tab-description">
-            {{ form.description.errors }}
-            {{ form.description.label_tag }}
-            {{ form.description }}
-            {% if form.description.help_text %}<span class="help-block">{{ form.description.help_text }}</span>{% endif %}
-        </div>
-        <div class="tab-pane" id="tab-requirements">
-            {{ form.requirements.errors }}
-            {{ form.requirements.label_tag }}
-            {{ form.requirements }}
-            {% if form.requirements.help_text %}<span class="help-block">{{ form.requirements.help_text }}</span>{% endif %}
-        </div>
-        <div class="tab-pane" id="tab-intended_audience">
-            {{ form.intended_audience.errors }}
-            {{ form.intended_audience.label_tag }}
-            {{ form.intended_audience }}
-            {% if form.intended_audience.help_text %}<span class="help-block">{{ form.intended_audience.help_text }}</span>{% endif %}
-        </div>
-        <div class="tab-pane" id="tab-estimated_effort">
-            {{ form.estimated_effort.errors }}
-            {{ form.estimated_effort.label_tag }}
-            {{ form.estimated_effort }}
-            {% if form.estimated_effort.help_text %}<span class="help-block">{{ form.estimated_effort.help_text }}</span>{% endif %}
-        </div>
-        <div class="tab-pane" id="tab-learning_goals">
-            {{ form.learning_goals.errors }}
-            {{ form.learning_goals.label_tag }}
-            {{ form.learning_goals }}
-            {% if form.learning_goals.help_text %}<span class="help-block">{{ form.learning_goals.help_text }}</span>{% endif %}
-        </div>
-        <div class="tab-pane" id="tab-extra_info">
-            {{ static_page_form.errors }}
-            {{ static_page_form.title.label_tag }}
-            {{ static_page_form.title }}
-            {{ static_page_form.body.label_tag }}
-            {{ static_page_form.body }}
-            {% if static_page_form.help_text %}<span class="help-block">{{ static_page_form.help_text }}</span>{% endif %}
-        </div>
+
+    <div>
+
+
+            </div>
+
+        </fieldset>
     </div>
-    <p>
-        {{ form.certification_available.errors }}
-        <label for="id_certification_available" style="margin: 32px 0;">
-          {{ form.certification_available }}
-          {% trans "Certification available" %}
-        </label>
-        {% if form.certification_available.help_text %}<span class="help-inline">{{ form.certification_available.help_text }}</span>{% endif %}
-    </p>
-    <p>
-        {{ form.certification_banner.errors }}
-        {{ form.certification_banner.label_tag }}
-        {{ form.certification_banner }}
-        {% if form.certification_banner.help_text %}<span class="help-inline">{{ form.certification_banner.help_text }}</span>{% endif %}
-    </p>
-        <p>
-        {{ form.certification_alt.errors }}
-        {{ form.certification_alt.label_tag }}
-        {{ form.certification_alt }}
-        {% if form.certification_alt.help_text %}<span class="help-inline">{{ form.certification_alt.help_text }}</span>{% endif %}
-    </p>
-    <p>
-        {{ form.thumbnail.errors }}
-        {{ form.thumbnail.label_tag }}
-        {{ form.thumbnail }}
-        {% if form.thumbnail.help_text %}<span class="help-inline">{{ form.thumbnail.help_text }}</span>{% endif %}
-    </p>
-    <p>
-        {{ form.thumbnail_alt.errors }}
-        {{ form.thumbnail_alt.label_tag }}
-        {{ form.thumbnail_alt }}
-        {% if form.thumbnail_alt.help_text %}<span class="help-inline">{{ form.thumbnail_alt.help_text }}</span>{% endif %}
-    </p>
+
+
     <p class="form-actions">
       <input type="submit" class="btn btn-primary" value="{% trans "Save" %}" />
     </p>

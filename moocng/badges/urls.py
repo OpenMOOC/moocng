@@ -18,12 +18,24 @@ urlpatterns = patterns(
     'moocng.badges.views',
     url(r'^revoked/$', 'revocation_list',
         name='revocation_list'),
-    url(r'^organization/$', 'issuer',
-        name='issuer'),
+    # url(r'^organization/$', 'issuer',
+    #   name='issuer'),
     url(r'^assertion/(?P<assertion_uuid>[-\w]+)/$', 'assertion',
         name='assertion'),
     url(r'^badge/(?P<badge_slug>[-\w]+)/$', 'badge',
         name='badge'),
 
     url(r'^my_badges/$', 'my_badges', name='my_badges'),
+
+    # New badges
+    url(r'^assertion/(?P<assertion_uuid>[-\w]+).json$', 'badge_assertion',
+        name='badge_assertion'),
+    url(r'^badge/(?P<id>[\d]+).json$', 'badge_badge',
+        name='badge_badge'),
+    url(r'^badge/(?P<id>[\d]+)/image.svg$', 'badge_image',
+        name='badge_image'),
+    url(r'^assertion/(?P<assertion_uuid>[-\w]+)/image.svg$', 'badge_image',
+        name='badge_assertion_image'),
+    url(r'^organization/$', 'issuer',
+        name='issuer'),
 )

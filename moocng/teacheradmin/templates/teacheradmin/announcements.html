@@ -5,6 +5,7 @@
 {% block nav-teacheradmin-announcements %}active{% endblock %}
 
 {% block section %}
+  <legend>{% trans "Announcements" %}</legend>
   {% if announcements %}
     <table class="table table-striped">
     <tbody>
@@ -24,7 +25,7 @@
       </tbody>
     </table>
   {% else %}
-    <div class="alert">
+    <div class="alert notfixed">
       {% trans "There isn't announcements yet" %}
     </div>
   {% endif %}

@@ -1,0 +1,24 @@
+{% extends "teacheradmin/base_teacheradmin.html" %}
+
+{% load i18n %}
+
+{% block nav-teacheradmin-lists %}active{% endblock %}
+
+{% block mainclass %}teacheradmin-list{% endblock %}
+
+{% block extraheader %}
+    {{ form.media }}
+{% endblock %}
+
+{% block extrajs %}
+
+{% endblock %}
+
+{% block section %}
+<legend>{% trans "Lists" %}</legend>
+<section>
+	<p>{% trans "Students list" %} <br><a href="{% url teacheradmin_lists_coursestudents course.slug %}" class="btn">{% trans 'View table' %}</a><a href="{% url teacheradmin_lists_coursestudents_csv course.slug %}" class="btn">{% trans 'Download CSV' %}</a></p>
+	<p>{% trans "Student marks list" %} <br><a href="{% url teacheradmin_lists_coursestudentsmarks course.slug %}" class="btn">{% trans 'View table' %}</a><a href="{% url teacheradmin_lists_coursestudentsmarks_csv course.slug %}" class="btn">{% trans 'Download CSV' %}</a></p>
+	<p>{% trans "Teachers list" %} <br><a href="{% url teacheradmin_lists_courseteachers course.slug %}" class="btn">{% trans 'View table' %}</a><a href="{% url teacheradmin_lists_courseteachers_csv course.slug %}" class="btn">{% trans 'Download CSV' %}</a></p>
+</section>
+{% endblock %}

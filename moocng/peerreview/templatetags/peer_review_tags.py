@@ -94,6 +94,20 @@ def get_criterion_description(criterion_id):
     except EvaluationCriterion.DoesNotExist:
         return ''
 
+@register.filter
+def get_criterion_score_descriptions(criterion_id):
+    try:
+        criterion = EvaluationCriterion.objects.get(id=criterion_id)
+        score_descriptions = []
+        if criterion.description_score_1:
+            score_descriptions.append(criterion.description_score_1)
+            score_descriptions.append(criterion.description_score_2)
+            score_descriptions.append(criterion.description_score_3)
+            score_descriptions.append(criterion.description_score_4)
+            score_descriptions.append(criterion.description_score_5)
+        return score_descriptions
+    except EvaluationCriterion.DoesNotExist:
+        return ''
 
 @register.filter
 def get_criterion_title(criterion_id):

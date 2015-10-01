@@ -87,13 +87,18 @@ MOOC.models.EvaluationCriterion = Backbone.Model.extend({
     defaults: {
         title: "",
         description: "",
+        description_score_1: "",
+        description_score_2: "",
+        description_score_3: "",
+        description_score_4: "",
+        description_score_5: "",
         assignment: null
     },
 
     parse: function (resp, xhr) {
         "use strict";
         if (resp !== null) {
-            return _.pick(resp, "id", "order", "description", "assignment", "title");
+            return _.pick(resp, "id", "order", "description", "assignment", "title","description_score_1","description_score_2","description_score_3","description_score_4","description_score_5");
         }
         return resp;
     },
@@ -296,8 +301,13 @@ MOOC.models.ActivityCollection = MOOC.models.TastyPieCollection.extend({
                 activity = new MOOC.models.Activity({
                     course_id: MOOC.models.course.courseId,
                     unit_id: unit,
-                    kq_id: kq
+                    kq_id: kq,
+                    timestamp: new Date().getTime(),
                 });
+            if(geolocation){
+                activity.set({  'lon': geolocation.coords.longitude,
+                                'lat': geolocation.coords.latitude    });
+            }
             this.add(activity);
             if (_.isUndefined(callback)) {
                 activity.save();
@@ -324,7 +334,9 @@ MOOC.models.Option = Backbone.Model.extend({
         height: 12,
         solution: null,
         text: "",
-        feedback: null
+        feedback: null,
+        order: 0,
+        name: ""
     },
 
     /**
@@ -366,7 +378,13 @@ MOOC.models.Option = Backbone.Model.extend({
 });
 
 MOOC.models.OptionList  = MOOC.models.TastyPieCollection.extend({
-    model: MOOC.models.Option
+    model: MOOC.models.Option,
+    initialize: function(){
+        this.sort({reset: true});
+    },
+    comparator: function(model){
+        return model.get('order');
+    }
 });
 
 MOOC.models.Question = Backbone.Model.extend({
@@ -556,8 +574,20 @@ MOOC.models.Attachment = Backbone.Model.extend({
     }
 });
 
+MOOC.models.Transcription = Backbone.Model.extend({
+    defaults: {
+        id: -1,
+        url: null,
+        type: null
+    }
+});
+
 MOOC.models.AttachmentList = MOOC.models.TastyPieCollection.extend({
     model: MOOC.models.Attachment
+});
+
+MOOC.models.TranscriptionList = MOOC.models.TastyPieCollection.extend({
+    model: MOOC.models.Transcription
 });
 
 MOOC.models.PeerReviewReview  = Backbone.Model.extend({
@@ -605,8 +635,10 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
         peer_review_assignment: null, // Optional
         asset_availability: null,
         peer_review_score: null,
-
+        marked: false,
+        mark: 0,
         attachmentList: null,
+        transcriptionList: null,
         questionInstance: null,
         assetAvailabilityInstance: null,
         peerReviewAssignmentInstance: null,
@@ -636,8 +668,11 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
         model2send.unset("normalized_weight");
         model2send.unset("completed");
         model2send.unset("correct");
+        model2send.unset("marked");
+        model2send.unset("mark");
         model2send.unset("questionInstance");
         model2send.unset("attachmentList");
+        model2send.unset("transcriptionList");
         model2send.unset("peerReviewAssignmentInstance");
         model2send.unset("assetAvailabilityInstance");
         if (model.get("order") < 0) {
@@ -658,6 +693,11 @@ MOOC.models.KnowledgeQuantum = Backbone.Model.extend({
 MOOC.models.KnowledgeQuantumList  = MOOC.models.TastyPieCollection.extend({
     model: MOOC.models.KnowledgeQuantum,
 
+	url: function () {
+        "use strict";
+        return MOOC.ajax.getAbsoluteUrl("kq/") + this.get("id") + "/";
+	},
+	
     comparator: function (kq) {
         "use strict";
         return kq.get("order");
@@ -739,12 +779,13 @@ MOOC.models.Unit = Backbone.Model.extend({
     statuses: {
         p: "published",
         l: "listable",
-        d: "draft"
+        d: "draft",
+        h: "hidden"
     },
 
     url: function () {
         "use strict";
-        return MOOC.ajax.getAbsoluteUrl("unit/") + this.get("id") + "/";
+        return MOOC.ajax.getAbsoluteUrl("unit/") + this.get("id") + "/?format=json&";
     },
 
     parse: function (resp, xhr) {

@@ -16,11 +16,7 @@
 import datetime
 import logging
 
-try:
-    import Image
-    import ImageOps
-except ImportError:
-    from PIL import Image, ImageOps
+from PIL import Image, ImageOps
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -40,19 +36,31 @@ from moocng.badges.models import Badge
 from moocng.courses.cache import invalidate_template_fragment_i18n
 from moocng.courses.managers import (CourseManager, UnitManager,
                                      KnowledgeQuantumManager, QuestionManager,
-                                     OptionManager, AttachmentManager,
-                                     AnnouncementManager)
+                                     OptionManager, TranscriptionManager,
+                                     AttachmentManager, AnnouncementManager)
 from moocng.enrollment import enrollment_methods
 from moocng.mongodb import get_db
 from moocng.videos.tasks import process_video_task
 from moocng.media_contents import get_media_content_types_choices, media_content_extract_id
 
+from itertools import groupby
+
 logger = logging.getLogger(__name__)
+
+
+class Language(models.Model):
+    name = models.CharField(verbose_name=_(u'Name'), max_length=200)
+    abbr = models.CharField(verbose_name=_(u'Abbr'), max_length=2, null=True)
+
+    def __unicode__(self):
+        return self.name
 
 
 class Course(Sortable):
     THUMBNAIL_WIDTH = 300
-    THUMBNAIL_HEIGHT = 185
+    THUMBNAIL_HEIGHT = 200
+    BACKGROUND_WIDTH = 1920
+    BACKGROUND_HEIGHT = 400
 
     name = models.CharField(verbose_name=_(u'Name'), max_length=200)
     slug = models.SlugField(verbose_name=_(u'Slug'), unique=True, db_index=True)
@@ -71,16 +79,36 @@ class Course(Sortable):
                                   blank=True, null=True)
     end_date = models.DateField(verbose_name=_(u'End date'),
                                 blank=True, null=True)
+
+    ects = models.PositiveSmallIntegerField(verbose_name=_(u'ECTS:'),
+                                                              default=8)
+
     teachers = models.ManyToManyField(User, verbose_name=_(u'Teachers'),
                                       through='CourseTeacher',
                                       related_name='courses_as_teacher')
+
     owner = models.ForeignKey(User, verbose_name=_(u'Teacher owner'),
                               related_name='courses_as_owner', blank=False,
                               null=False)
+
     students = models.ManyToManyField(User, verbose_name=_(u'Students'),
                                       through='CourseStudent',
                                       related_name='courses_as_student',
                                       blank=True)
+
+    languages = models.ManyToManyField(Language,
+                                       verbose_name=_(u'Language')
+                                       )
+
+    estimated_effort = models.CharField(verbose_name=_(u'Estimated effort'),
+                                 null = True,
+                                 blank=True,
+                                 max_length=128)
+
+    hashtag = models.CharField(verbose_name=_(u'Hashtag'),
+                                default='Hashtag',
+                                max_length=128)
+
     promotion_media_content_type = models.CharField(verbose_name=_(u'Content type'),
                                                     max_length=20,
                                                     null=True,
@@ -90,10 +118,12 @@ class Course(Sortable):
                                                   null=True,
                                                   blank=True,
                                                   max_length=200)
-    max_reservations_pending = models.PositiveSmallIntegerField(verbose_name=_(u'Pending reservations allowed:'),
-                                                                default=8)
-    max_reservations_total = models.PositiveSmallIntegerField(verbose_name=_(u'Total reservations allowed:'),
-                                                              default=8)
+
+    forum_slug = models.CharField(verbose_name=_(u'Forum slug'),
+                                    null=True,
+                                    blank=True,
+                                    max_length=350)
+
     threshold = models.DecimalField(
         verbose_name=_(u'Pass threshold'),
         max_digits=4, decimal_places=2,
@@ -101,14 +131,13 @@ class Course(Sortable):
     certification_available = models.BooleanField(
         default=False,
         verbose_name=_(u'Certification available'))
-    certification_banner = models.ImageField(
-        verbose_name=_(u'Certification banner'),
-        upload_to='certification_banners', blank=True, null=True)
-    certification_alt = models.CharField(verbose_name=_('Certification image alternative text'), max_length=200,
-                                                 null=True, blank=True,
-                                                 help_text=_('This text is used to describe the certification image. '
-                                                             'It is necessary for accessibility ')
-                                                 )
+    external_certification_available = models.BooleanField(
+        default=False,
+        verbose_name=_(u'External certification available'))
+    certification_file = models.FileField(verbose_name=_(u'Certification file'),
+        upload_to='certifications',
+        null=True,
+        blank=True)
     completion_badge = models.ForeignKey(
         Badge, blank=True, null=True, verbose_name=_(u'Completion badge'),
         related_name='course')
@@ -122,6 +151,7 @@ class Course(Sortable):
         ('d', _(u'Draft')),
         ('p', _(u'Published')),
         ('h', _(u'Hidden')),
+        ('o', _(u'Always Open')),
     )
 
     status = models.CharField(
@@ -141,6 +171,14 @@ class Course(Sortable):
                                                  help_text=_('This text is used to describe the thumbnail image. '
                                                      'It is necessary for accessibility ')
                                                  )
+
+    background = models.ImageField(
+        verbose_name=_(u'Background'),
+        upload_to='course_backgrounds',
+        blank=True,
+        null=True
+    )
+
     static_page = models.OneToOneField(
         'StaticPage',
         verbose_name=_(u'Static page'),
@@ -161,6 +199,18 @@ class Course(Sortable):
         verbose_name=_('Maximum of massive emails that a course can send per month'),
         default=settings.DEFAULT_MAX_EMAILS_PER_MONTH)
 
+
+    highlight = models.BooleanField(default=False)
+
+    has_groups = models.BooleanField(verbose_name=_('Has this course groups?'),
+                                    default=False)
+
+    group_max_size = models.PositiveSmallIntegerField(verbose_name=_('Maximum number of members allowed for each group'),
+        default=settings.DEFAULT_GROUP_MAX_SIZE)
+
+    official_course = models.BooleanField(verbose_name=_('Is this course official?'),
+                                          default=False)
+
     objects = CourseManager()
 
     class Meta(Sortable.Meta):
@@ -174,6 +224,37 @@ class Course(Sortable):
     def natural_key(self):
         return (self.slug,)
 
+    def get_user_mark(self,user):
+        db = get_db()
+        activity = db.get_collection("activity")
+
+        mark = activity.find_one({
+            "user_id": user.id,
+            "course_id": self.id,
+            "current" : True
+        })
+
+        kq = None
+        if mark:
+            try:
+                kq = KnowledgeQuantum.objects.get(pk=mark["kq_id"])
+            except KnowledgeQuantum.DoesNotExist:
+                pass
+        return kq
+
+    def get_rating(self):
+        course_student_set = CourseStudent.objects.filter(course=self)
+        rating = 0
+        num_students = len(course_student_set)
+        if num_students > 0:
+            for course_student in course_student_set:
+                if course_student.rate is not None:
+                    rating += course_student.rate
+
+            rating = rating/num_students
+        return rating
+
+
     def save(self, *args, **kwargs):
         if self.promotion_media_content_type and self.promotion_media_content_id:
             self.promotion_media_content_id = media_content_extract_id(self.promotion_media_content_type, self.promotion_media_content_id)
@@ -185,6 +266,15 @@ class Course(Sortable):
                 'force': True
             }
             image_path = self.thumbnail.path
+            self._resize_image(image_path, metadata)
+
+        if self.background:
+            metadata = {
+                'width': self.BACKGROUND_WIDTH,
+                'height': self.BACKGROUND_HEIGHT,
+                'force': True
+            }
+            image_path = self.background.path
             self._resize_image(image_path, metadata)
 
     def __unicode__(self):
@@ -200,7 +290,11 @@ class Course(Sortable):
     @property
     def is_public(self):
         # If you change it, you should change the public method in CourseQuerySet class
-        return self.status in ['p', 'h']
+        return self.status in ['p', 'o', 'h']
+
+    @property
+    def is_always_open(self):
+        return self.status == 'o'
 
     @property
     def is_active(self):
@@ -210,6 +304,21 @@ class Course(Sortable):
                 (not self.end_date or
                  not self.start_date and self.end_date >= today or
                  self.start_date and self.start_date <= today and self.end_date >= today))
+
+    @property
+    def is_deactivated(self):
+        today = datetime.date.today()
+        return not (self.is_public and
+                    (self.status == 'o' or
+                    not self.end_date or
+                    self.end_date >= today))
+
+    @property
+    def is_outdated(self):
+        today = datetime.date.today()
+        return (self.is_public and
+                self.end_date < today and
+                self.status != 'o')
 
     def _resize_image(self, filename, size):
         """
@@ -252,7 +361,7 @@ class Course(Sortable):
             else:
                 img.thumbnail((size['width'], size['height']), Image.ANTIALIAS)
             try:
-                img.save(filename, optimize=1)
+                img.save(filename, optimize=1, quality=60)
             except IOError:
                 img.save(filename)
 
@@ -339,6 +448,16 @@ class CourseStudent(models.Model):
                                          choices=COURSE_STATUSES,
                                          default='f',
                                          max_length=1)
+    progress = models.IntegerField(verbose_name=_(u'Progress'),
+                                        default=0)
+    rate = models.PositiveSmallIntegerField(verbose_name=_(u'Rate'),
+                                            null=True)
+    timestamp = models.BigIntegerField(verbose_name=_(u'Enrollment timestamp'),
+                                    null=True)
+    pos_lat = models.FloatField(verbose_name=_(u'Latitude'),
+                                default=0.0)
+    pos_lon = models.FloatField(verbose_name=_(u'Longitude'),
+                                default=0.0)
 
     class Meta:
         verbose_name = _(u'course student')
@@ -422,8 +541,9 @@ class Unit(Sortable):
 
     UNIT_STATUSES = (
         ('d', _(u'Draft')),
-        ('l', _(u'Listable')),
+        ('h', _(u'Hidden')),
         ('p', _(u'Published')),
+        ('l', _(u'Listable')),
     )
 
     status = models.CharField(
@@ -450,6 +570,12 @@ class Unit(Sortable):
 
     def natural_key(self):
         return self.course.natural_key() + (self.title, )
+
+    def is_scorable(self):
+        if not settings.COURSES_USING_OLD_TRANSCRIPT:
+            return self.unittype != 'n'
+        else:
+            return True
 
 
 def unit_invalidate_cache(sender, instance, **kwargs):
@@ -552,6 +678,29 @@ class KnowledgeQuantum(Sortable):
 
         return user_activity_exists.count() > 0
 
+    def set_as_current(self,user):
+        db = get_db()
+        activity = db.get_collection("activity")
+
+        activity.update({
+                "user_id": user.id,
+                "course_id": self.unit.course.id,
+                "current" : True
+            },
+            {
+                "$unset": { "current": "" },
+            }
+        )
+
+        activity.update({
+            "user_id": user.id,
+            "kq_id": self.id
+            },
+            {
+                "$set": { "current": True },
+            }
+        )
+
     def natural_key(self):
         return self.unit.natural_key() + (self.title, )
 
@@ -601,13 +750,45 @@ def kq_stats(sender, instance, created, **kwargs):
 signals.post_save.connect(handle_kq_post_save, sender=KnowledgeQuantum)
 signals.post_save.connect(kq_stats, sender=KnowledgeQuantum)
 
+def get_transcription_types_choices():
+    choices = []
+    for handler_dict in settings.TRANSCRIPTION_TYPES:
+        choices.append((handler_dict['id'], handler_dict.get('name', handler_dict['id'])))
+    return choices
+
+class Transcription(models.Model):
+    kq = models.ForeignKey(KnowledgeQuantum,
+                           verbose_name=_(u'Nugget'))
+
+    filename = models.FileField(verbose_name=_(u'VTT file'),
+                                upload_to='transcriptions')
+    transcription_type = models.CharField(verbose_name=_(u'Transcription type'),
+                                          max_length=20,
+                                          null=True,
+                                          blank=False,
+                                          choices=get_transcription_types_choices())
+    language = models.ForeignKey(Language,
+                                   verbose_name=_(u'Language'))
+
+    objects = TranscriptionManager()
+
+    class Meta:
+        verbose_name = _(u'transcription')
+        verbose_name_plural = _(u'transcriptions')
+
+    def __unicode__(self):
+        return self.filename.name
+
+    def natural_key(self):
+        return self.kq.natural_key() + (self.filename.name,)
 
 class Attachment(models.Model):
 
     kq = models.ForeignKey(KnowledgeQuantum,
                            verbose_name=_(u'Nugget'))
     attachment = models.FileField(verbose_name=_(u'Attachment'),
-                                  upload_to='attachments')
+                                  upload_to='attachments',
+                                  max_length=200)
 
     objects = AttachmentManager()
 
@@ -668,21 +849,36 @@ class Question(models.Model):
         return ugettext(u'{0} - Question {1}').format(self.kq, self.id)
 
     def is_correct(self, answer):
-        correct = True
+        result = 0.0
         if answer['replyList'] is not None:
             replies = dict([(int(r['option']), r['value'])
                             for r in answer['replyList']])
         else:
             replies = {}
 
-        for option in self.option_set.all():
-            reply = replies.get(option.id, None)
-            if reply is None:
-                return False
+        options_dict = {}
+        results_dict = {}
+        for k, g in groupby(self.option_set.all(), lambda x: x.name):
+            opt_list = list(g)
+            if k in options_dict:
+                options_dict[k] = options_dict[k] + opt_list
+            else:
+                options_dict[k] = opt_list
+            results_dict[k] = 0.0
 
-            correct = correct and option.is_correct(reply)
+        for key, value in options_dict.iteritems():
+            correct_q = True
+            for option in value:
+                reply = replies.get(option.id, None)
+                if reply is None:
+                    return False
+                correct_q = correct_q and option.is_correct(reply)
 
-        return correct
+            result_q = 10.0/len(options_dict) if correct_q else 0.0
+            results_dict[key] = result_q
+            result += result_q
+
+        return result
 
     def is_completed(self, user, visited=None):
         db = get_db()
@@ -733,6 +929,10 @@ class Option(models.Model):
     feedback = models.CharField(
         verbose_name=_(u'Solution feedback for the student'), max_length=200,
         blank=True, null=False)
+    order = models.PositiveSmallIntegerField(verbose_name=_(u'Order'),
+                                            null=True)
+    name = models.CharField(verbose_name=_(u'Group name'), max_length=100,
+        blank=True, null=False)
     objects = OptionManager()
 
     class Meta:
@@ -741,13 +941,13 @@ class Option(models.Model):
         unique_together = ('question', 'x', 'y')
 
     def __unicode__(self):
-        return ugettext(u'{0} at {1} x {2}').format(self.optiontype, self.x, self.y)
+        return ugettext(u'{0}.{1} ({2}: {3}) at {4} x {5}').format(self.id, self.optiontype, self.name, self.text, self.x, self.y)
 
     def natural_key(self):
         return self.question.natural_key() + (self.x, self.y)
 
     def is_correct(self, reply):
-        if self.optiontype == 'l':
+        if self.optiontype == 'l' or self.optiontype == 'q':
             return True
         elif self.optiontype == 't':
             if not hasattr(reply, 'lower'):

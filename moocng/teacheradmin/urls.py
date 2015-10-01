@@ -22,6 +22,9 @@ urlpatterns = patterns('moocng.teacheradmin.views',
 
     url(r'^stats/$', 'teacheradmin_stats', name='teacheradmin_stats'),
 
+    url(r'^stats/students/$', 'teacheradmin_stats_students', name='teacheradmin_stats_students'),
+    url(r'^stats/teachers/$', 'teacheradmin_stats_teachers', name='teacheradmin_stats_teachers'),
+
     url(r'^stats/units/$', 'teacheradmin_stats_units',
         name='teacheradmin_stats_units'),
 
@@ -35,6 +38,12 @@ urlpatterns = patterns('moocng.teacheradmin.views',
 
     url(r'^units/attachment/$', 'teacheradmin_units_attachment',
         name='teacheradmin_units_attachment'),
+
+    url(r'^units/transcription/$', 'teacheradmin_units_transcription',
+        name='teacheradmin_units_transcription'),
+
+    url(r'^units/s3upload/$', 'teacheradmin_units_s3upload',
+        name='teacheradmin_units_s3upload'),
 
     url(r'^units/question/(?P<kq_id>\d+)/$', 'teacheradmin_units_question',
         name='teacheradmin_units_question'),
@@ -58,8 +67,17 @@ urlpatterns = patterns('moocng.teacheradmin.views',
 
     url(r'^info/$', 'teacheradmin_info', name='teacheradmin_info'),
 
+    url(r'^groups/$', 'teacheradmin_groups', name='teacheradmin_groups'),
+
+
     url(r'^categories/$', 'teacheradmin_categories',
         name='teacheradmin_categories'),
+
+    url(r'^badges/(?P<badge_id>\d+)$', 'teacheradmin_badges',
+        name='teacheradmin_badges'),
+
+    url(r'^badges/$', 'teacheradmin_badges',
+        name='teacheradmin_badges'),
 
     url(r'^announcements/$', 'teacheradmin_announcements',
         name='teacheradmin_announcements'),
@@ -89,6 +107,26 @@ urlpatterns = patterns('moocng.teacheradmin.views',
         'teacheradmin_assets_edit',
         name='teacheradmin_assets_edit'),
 
+
+
+    url(r'^badges/reloadPills/(?P<id>\d+)/$', 'reload_pills',
+        name='reload_pills'),
+
+    url(r'^badges/deleteBadge/(?P<id>\d+)/$', 'delete_badge',
+        name='delete_badge'),
+
     # Course's external apps admin
     url(r'^externalapps/', include('moocng.externalapps.urls')),
+
+    url(r'^lists/$', 'teacheradmin_lists', name='teacheradmin_lists'),
+    url(r'^lists/coursestudents/$', 'teacheradmin_lists_coursestudents', name='teacheradmin_lists_coursestudents'),
+    url(r'^lists/coursestudents/csv$', 'teacheradmin_lists_coursestudents', {'format':'csv'}, name='teacheradmin_lists_coursestudents_csv'),
+    url(r'^lists/coursestudentsmarks/$', 'teacheradmin_lists_coursestudentsmarks', name='teacheradmin_lists_coursestudentsmarks'),
+    url(r'^lists/coursestudentsmarks/csv$', 'teacheradmin_lists_coursestudentsmarks', {'format':'csv'}, name='teacheradmin_lists_coursestudentsmarks_csv'),
+    url(r'^lists/coursestudentsmarks/(?P<filter>[\w]*)/$', 'teacheradmin_lists_coursestudentsmarks', name='teacheradmin_lists_coursestudentsmarks_filter'),
+    url(r'^lists/coursestudentsmarks/(?P<filter>[\w]*)/csv$', 'teacheradmin_lists_coursestudentsmarks', {'format':'csv'}, name='teacheradmin_lists_coursestudentsmarks_filter_csv'),
+    url(r'^lists/courseteachers$', 'teacheradmin_lists_courseteachers', name='teacheradmin_lists_courseteachers'),
+    url(r'^lists/courseteachers/csv$', 'teacheradmin_lists_courseteachers', {'format':'csv'}, name='teacheradmin_lists_courseteachers_csv'),
+
+    url(r'^lists/coursestudents/(?P<username>[-\+@\w.]*)/$', 'teacheradmin_lists_coursestudents_detail', name='teacheradmin_lists_coursestudents_detail'),
 )

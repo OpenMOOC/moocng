@@ -20,15 +20,18 @@ from moocng.api import resources
 
 
 v1_api = Api(api_name='v1')
+v1_api.register(resources.LanguageResource())
 v1_api.register(resources.UnitResource())
 v1_api.register(resources.KnowledgeQuantumResource())
 v1_api.register(resources.PrivateKnowledgeQuantumResource())
 v1_api.register(resources.AttachmentResource())
+v1_api.register(resources.TranscriptionResource())
 v1_api.register(resources.QuestionResource())
 v1_api.register(resources.PrivateQuestionResource())
 v1_api.register(resources.OptionResource())
 v1_api.register(resources.AnswerResource())
 v1_api.register(resources.ActivityResource())
+v1_api.register(resources.HistoryResource())
 v1_api.register(resources.CourseResource())
 v1_api.register(resources.UserResource())
 v1_api.register(resources.PeerReviewAssignmentResource())

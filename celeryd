@@ -21,7 +21,7 @@
 prog="$(basename $0)"
 
 # Source the centos stuff
-. /etc/init.d/functions
+#. /var/www/moocng/bin/activate
 
 # Also look at sysconfig; this is where environmental variables should be set
 # on RHEL systems.
@@ -73,11 +73,11 @@ start_workers () {
                                $CELERYD_OPTS
     RETVAL=$?
 
-    if [ "$RETVAL" == "0" ]; then
-        touch /var/lock/subsys/$prog
-        success
+    if [ "$RETVAL" = 0 ]; then
+        touch /var/lock/$prog
+        echo "OK" 
     else
-        failure
+        echo "FAIL"
     fi
     echo
 }
@@ -115,11 +115,11 @@ start_foreground () {
 
     RETVAL=$?
 
-    if [ "$RETVAL" == "0" ]; then
-        touch /var/lock/subsys/$prog
-        success
+    if [ "$RETVAL" = "0" ]; then
+        touch /var/lock/$prog
+        return 0 
     else
-        failure
+        return 1
     fi
     echo
 }
@@ -131,7 +131,7 @@ stop_workers () {
 
     # If we haven't ended, explicitly kill it!
     if [ ! -f $CELERYD_PID_FILE ] || [ ! -e /proc/$(cat $CELERYD_PID_FILE) ]; then
-        failure
+        echo "Already ended"
     echo
         return
     fi
@@ -150,11 +150,11 @@ stop_workers () {
         $PYTHON $MOOCNG/manage.py celery multi stop worker -KILL --pidfile=$CELERYD_PID_FILE --quiet
     fi
 
-    if [ "$RETVAL" == "0" ]; then
-        rm -f /var/lock/subsys/$prog
-        success
+    if [ "$RETVAL" = "0" ]; then
+        rm -f /var/lock/$prog
+        echo "OK"
     else
-        failure
+        echo "Fail"
     fi
     echo
 }

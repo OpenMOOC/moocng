@@ -28,7 +28,6 @@ from urlparse import urlparse, parse_qs
 
 import re
 
-
 YT_BASE_URL = 'http://www.youtube.com/get_video_info'
 
 #YouTube quality and codecs id map.
@@ -116,6 +115,7 @@ class Video(object):
 
         path = (normpath(path) + '/' if path else '')
         response = urlopen(self.url)
+
         with open(path + self.filename, 'wb') as dst_file:
             meta_data = response.info()
             file_size = int(meta_data.getheaders("Content-Length")[0])
@@ -250,15 +250,21 @@ class YouTube(object):
         path -- A tuple representing a path to a node within a tree.
         data -- The data containing the tree.
         """
+
         elem = path[0]
         #Get first element in tuple, and check if it contains a list.
         if type(data) is list:
             # Pop it, and let's continue..
             return self._fetch(path, data.pop())
+        
         #Parse the url encoded data
         data = parse_qs(data)
+        
         #Get the element in our path
+        #if type(data) is list:
+        #    data = parse_qs(data[0])
         data = data.get(elem, None)
+
         #Offset the tuple by 1.
         path = path[1::1]
         #Check if the path has reached the end OR the element return
@@ -299,21 +305,10 @@ class YouTube(object):
             path = ('url_encoded_fmt_stream_map', 'url')
             video_urls = self._fetch(path, content)
             #Get the video signatures, YouTube require them as an url component
-            path = ('url_encoded_fmt_stream_map', 'sig')
-            video_signatures = self._fetch(path, content)
             self.title = self._fetch(('title',), content)
 
             for idx in range(len(video_urls)):
                 url = video_urls[idx]
-                if isinstance(video_signatures, basestring):
-                    signature = video_signatures
-                else:
-                    signature = video_signatures[idx]
-                signature = self._signature_re.search(signature)
-                if signature is not None:
-                    signature = signature.group(0)
-                else:
-                    continue
                 try:
                     fmt, data = self._extract_fmt(url)
                     filename = "%s.%s" % (self.filename, data['extension'])
@@ -321,7 +316,6 @@ class YouTube(object):
                     pass
                 else:
                     #Add video signature to url
-                    url = "%s&signature=%s" % (url, signature)
                     v = Video(url, filename, **data)
                     self.videos.append(v)
                     self._fmt_values.append(fmt)

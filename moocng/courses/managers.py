@@ -4,9 +4,9 @@ from django.conf import settings
 from django.db import models
 from django.db.models import Q
 from django.db.models.query import QuerySet
+from modeltranslation.manager import MultilingualQuerySet
 
-
-class CourseQuerySet(QuerySet):
+class CourseQuerySet(MultilingualQuerySet):
 
     def by_status(self, status):
         return self.filter(status=status)
@@ -60,12 +60,12 @@ class CourseManager(models.Manager):
         return self.get(slug=slug)
 
 
-class UnitQuerySet(QuerySet):
+class UnitQuerySet(MultilingualQuerySet):
 
     def scorables(self):
         if not settings.COURSES_USING_OLD_TRANSCRIPT:
-            return self.exclude(unittype='n')
-        return self.all()
+            return self.filter(~Q(unittype='n') | ~Q(weight=0) | ~Q(status='d'))
+        return self.filter(~Q(status='d'))
 
 
 class UnitManager(models.Manager):
@@ -74,7 +74,10 @@ class UnitManager(models.Manager):
         return UnitQuerySet(self.model, using=self._db)
 
     def scorables(self):
-        return self.get_query_set().scorables()
+        #return self.get_query_set().scorables()
+        if not settings.COURSES_USING_OLD_TRANSCRIPT:
+            return self.filter(~Q(unittype='n') | ~Q(weight=0) | ~Q(status='d'))
+        return self.filter(~Q(status='d'))
 
     def get_by_natural_key(self, course_slug, title):
         return self.get(title=title, course__slug=course_slug)
@@ -85,6 +88,10 @@ class KnowledgeQuantumManager(models.Manager):
     def get_by_natural_key(self, course_slug, unit_title, title):
         return self.get(title=title, unit__title=unit_title, unit__course__slug=course_slug)
 
+class TranscriptionManager(models.Manager):
+
+    def get_by_natural_key(self, course_slug, unit_title, kq_title, filename_name):
+        return self.get(kq__title=kq_title, kq__unit__title=unit_title, kq__unit__course__slug=course_slug, filename=filename_name)
 
 class AttachmentManager(models.Manager):
 

@@ -1,0 +1,99 @@
+{% load i18n %}
+<div class="replyPost {% if not forloop.last or reply.replies|length %}children{% endif %} {% if forloop.last %}last{% endif%} {% if reply.flaggers %}flagged{% endif %}">
+	<div class="bookmarkHandler" id="{{reply.id}}"></div>
+	<div class="cell">
+		<img class="gravatar" src={{ reply.avatar }}>
+	</div>
+	<div class="cell">
+		<div class="message">
+			{% if reply.id_original_post %}
+			<img class="sharedImage" src="/static/img/ECO_icon_republicado.svg">
+			<a href="{{reply.id_user}}"><span class="shared">{% trans "Shared by"%} {{reply.shared_by}}</span></a>
+			<div class="clearfix"></div>
+			{% endif %}
+			{% url profile_user reply.username as reply_profile_url %}
+			{% url profile_user_byid reply.id_user as reply_profile_url_byid %}
+			<a href="{% if show_username %}{{ reply_profile_url }}{% else %}{{ reply_profile_url_byid }}{% endif %}"><span class="namePost">{{reply.first_name}} {{reply.last_name}}</span></a>
+			{% if show_username %}<span class="emailPost">@{{reply.username}}</span>{% endif %}
+
+			<span class="datePost">[{{reply.date}}]</span>
+			{% autoescape off %}
+			<div class="postText">{{reply.text|linebreaks}}</div>
+			{% endautoescape %}
+			<div class="tools" data-id="{{reply.id}}">
+				<span class="reply">{% trans "Reply" %}</span>
+				<form class="postReply" method="post" action="{% url course_forum_reply course.slug post.id reply.id %}">
+					{% csrf_token %}
+					{{ formReply }}
+					<input type="hidden" name="context_geo_lat" value="0.0"/>
+					<input type="hidden" name="context_geo_lon" value="0.0"/>
+					<input class="postButton" type="submit" value="{% trans "Send" %}">
+					<span class="cancelReply">{% trans "Cancel" %}</span>
+				</form>
+
+				<!-- <span class="favourite">0</span> -->
+				<span class="karma
+						{% if reply.user_vote > 0 %}
+							upvoted
+						{% elif reply.user_vote < 0 %}
+							downvoted
+						{% endif %}
+					">
+					<span>
+						{% if reply.votes %}
+							{{ reply.votes }}
+						{% else %}
+							0
+						{% endif %}
+					</span>
+					{% if reply.id_user != user.id %}
+						<a href="/course/{{ course.slug }}/forum/{{ post.id }}/upvote/{{ reply.id}}" data-vote="1"><img src="{{ STATIC_URL }}img/ECO_icon_flecha_selector_up_black.svg" alt="{% trans "Vote +1" %}"  title="{% trans "Vote +1" %}"></a>
+						<a href="/course/{{ course.slug }}/forum/{{ post.id }}/downvote/{{ reply.id}}" data-vote="-1"><img src="{{ STATIC_URL }}img/ECO_icon_flecha_selector_down_black.svg" alt="{% trans "Vote -1" %}" title="{% trans "Vote -1" %}"></a>
+					{% endif %}
+				</span>
+				<span class="flag">
+					<a href="{% url course_forum_post_flag course.slug reply.id %}">
+						{% trans "Flag" %}
+					</a>
+				</span>
+				{% if reply.id_user == user.id or is_teacher or user.is_staff or user.is_superuser %}
+					<span class="edit">{% trans "Edit" %}</span>
+					<form class="postEdit" method="post" action="{% url course_forum_post_edit course.slug post.id reply.id %}">
+						{% csrf_token %}
+						{{ formEdit }}
+						<input class="postButton" type="submit" value="{% trans "Edit" %}">
+						<span class="cancelEdit">{% trans "Cancel" %}</span>
+					</form>
+				{% endif %}
+				{% if reply.id_user == user.id or is_teacher or user.is_staff or user.is_superuser %}
+					<span class="delete">
+						<a href="{% url course_forum_post_delete course.slug reply.id %}">
+							{% trans "Delete" %}
+						</a>
+					</span>
+				{% endif %}
+				<span class="permalink">
+					<a href="/course/{{ course.slug }}/forum/{{ post.id }}#{{ reply.id }}">
+						{% trans "Permalink" %}
+					</a>
+				</span>
+			</div>
+			{% if reply.replies|length %}
+			<div class="repliesToggle">
+				<img src="{{ STATIC_URL }}img/ECO_icon_comentar_foro.svg" alt="{% trans 'Toggle comments' %}" title="{% trans 'Toggle comments' %}">
+			</div>
+			{% endif %}
+		</div>
+		{% if reply.replies|length %}
+		<div class="subreplies">
+			{% for subreply in reply.replies %}
+				{% with "courses/forum_reply.html" as filename %}
+					{% with subreply as reply %}
+						{% include filename %}
+					{% endwith %}
+				{% endwith %}
+			{% endfor %}
+		</div>
+		{% endif %}
+	</div>
+</div>

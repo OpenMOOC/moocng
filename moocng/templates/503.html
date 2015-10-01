@@ -1,61 +1,18 @@
-<!DOCTYPE html>
-<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7 ie" lang="en"> <![endif]-->
-<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8 ie" lang="en"> <![endif]-->
-<!--[if IE 8]>    <html class="no-js lt-ie9 ie" lang="en"> <![endif]-->
-<!--[if gt IE 8]> <html class="no-js ie" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+{% extends "base.html" %}
 
-  <title>Maintenance</title>
-  <meta name="description" content="">
-  <meta name="author" content="">
+{% load i18n %}
 
-  <meta name="viewport" content="width=device-width">
+{% block title %}{% trans 'Maintenance' %}{% endblock %}
 
-  <link rel="icon" href="/favicon.ico"/>
-  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/static/css/moocng.css">
-
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-  <script>window.jQuery || document.write('<script src="/static/js/libs/jquery-1.7.2.min.js"><\/script>')</script>
-  <script src="/static/js/libs/modernizr-2.5.3.min.js"></script>
-  <script src="/static/js/libs/bootstrap.min.js"></script>
-</head>
-  <body>
+{% block content %}
     <div class="container">
-      <header>
-        <hgroup>
-          <h1 class="logo"><a href="/" class="hide-text"><img src="/static/img/logo.png" alt="Example.com" />Example.com</a></h1>
-          <h2 class="small pull-left">Knowledge for the masses</h2>
-        </hgroup>
-        <ul class="unstyled pull-right" id="meta-buttons">
-          <li><a href="/" class="btn btn-link">Home</a></li>
-          |
-          <li><a href="/faq/" class="btn btn-link">FAQ</a></li>
-          |
-          <li><a href="/methodology/" class="btn btn-link">Methodology</a></li>
-        </ul>
-        <div class="clearfix"></div>
-      </header>
-      <div role="main">
-        <h1>Maintenance</h1>
-        <p>The platform is under maintenance.</p>
-
-        <p>Sorry for the inconvenience.</p>
-
-        <p>The platform will be available shortly.</p>
-
-        <p>Thank you for your patience.</p>
-      </div>
-      <footer>
-        <ul>
-          <li><a href="/legal/">Legal</a></li>
-          <li><a href="/copyright/">&copy; Example.com. All rights reserved</a></li>
-          <li><a href="/contact/">Contact</a></li>
-        </ul>
-      </footer>
+    <div class="row">
+        <section class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
+            <h1>{% trans 'Maintenance</h1>
+            <p>{% trans 'The platform is under maintenance' %}.</p>
+            <p>{% trans 'Sorry for the inconvenience' %}.</p>
+            <p>{% trans 'The platform will be available shortly' %}.</p>
+            <p>{% trans 'Thank you for your patience' %}.</p>
+        </section>
     </div>
-  </body>
-</html>
+{% endblock %}

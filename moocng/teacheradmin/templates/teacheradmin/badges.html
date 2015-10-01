@@ -1,0 +1,222 @@
+{% extends "teacheradmin/base_teacheradmin.html" %}
+
+{% load i18n %}
+
+{% block nav-teacheradmin-badges %}active{% endblock %}
+
+{% block mainclass %}teacheradmin-badges{% endblock %}
+
+{% block section %}
+<legend>{% trans "Badges" %}</legend>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".unit").change(function(){
+
+            $.ajax({
+                url : "reloadPills/" + $(this).val(),
+                dataType: 'json',
+                // type : "json",
+                success: function(response) {
+                    var pills = response.result;
+                    var options = "";
+                    if(pills.length){
+                        for(var i=0; i<pills.length; i++){
+                            options += "<option value=" + pills[i].id + ">" + pills[i].title + "</option>"
+                        }
+                    }else{
+                        options += "<option value=''>{% trans 'This unit has no Peer Reviews' %}</option>"
+                    }
+                    $(".pills").html(options);
+                }
+            });
+
+        });
+
+        $("input[type='radio']").click(function(){
+            if($(this).val() != 1){
+                $(".divPills").fadeOut();
+            }else{
+                $(".divPills").fadeIn();
+            }
+        });
+
+        $(".colorBadge").change(function(){
+            $(".imageBadge").css({"fill":$(this).val()});
+        });
+
+        $(".addPill").click(function(){
+            if ($(".pills :selected").val()){
+                if($("input[name='pillsBadge']").filter(function(){return this.value==$(".pills").val()}).length == 0){
+
+                    $(".pillAdded").append("<span style='cursor:pointer'>" +  $(".pills :selected").text() + "</span><input type='hidden' name='pillsBadge' value= " + $(".pills").val() + " /><div class='clearfix'></div>");
+
+                     $(".pillAdded").find("span").unbind().bind("click",function(){
+                        $(this).next().remove();
+                        $(this).remove();
+                     })
+
+                }
+            }else{
+                alert('{% trans 'As long as this unit has no Peer Reviews, you cannot add it to this badge.\nPlease select another Unit and try again' %}');
+            }
+        });
+
+        $(".pillAdded").find("span").unbind().bind("click",function(){
+            $(this).next().remove();
+            $(this).remove();
+        });
+
+        $(".deleteBadge").click(function() {
+            var $this = $(this);
+            $.ajax({
+                url : "deleteBadge/" + $this.data("idbadge"),
+                success: function(response) {
+                    self.parent().parent().remove()
+                }
+            });
+        });
+
+        $("form").submit(function(ev){
+            if($('input[name=criteriaType]:checked').val() === '1'){
+              var pillsBadge = $("input[name=pillsBadge]");
+              if (pillsBadge.length > 0){
+                  return true;
+              }else{
+                  ev.stopPropagation();
+                  ev.preventDefault();
+                  alert('{% trans 'Please, add a pill to the list using the "Add peer review" button' %}');
+                  return false;
+              }
+            }else{
+              return true;
+            }
+        });
+
+    });
+</script>
+
+<form method="POST">{% csrf_token %}
+    <div class="row nomargin">
+        <div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
+            <input type="hidden" name="badgeId" value="{{ badge.id }}">
+            <label>{% trans 'Badge title' %}</label>
+            <input type="text" name="badgeTitle" required="required" maxlength="200" value="{{ badge.title }}">
+
+            <label>{% trans 'Description' %}</label>
+            <textarea name="badgeDescription">{{ badge.description }}</textarea>
+
+             <label>{% trans 'Criteria' %}</label>
+
+            <label>
+                <input {% if badge.criteria_type == 0 or not badge %}checked="checked"{% endif %} type="radio" value="0" name="criteriaType">
+                {% trans 'Units' %}
+            </label>
+
+            <label>
+                <input {% if badge.criteria_type == 1 %} checked="checked" {% endif %} type="radio" value="1" name="criteriaType">
+                {% trans 'Peer review' %}
+            </label>
+
+            <label>
+                <input {% if badge.criteria_type == 2 %} checked="checked" {% endif %} type="radio" value="2" name="criteriaType">
+                {% trans 'Unique unit' %}
+            </label>
+
+
+
+            <label style="margin-top: 10px;">{% trans 'Select unit' %}</label>
+           <select name="unitBadge" class="unit">
+                {% for unit in units %}
+                    <option value={{unit.id}} {% ifequal unit.id|slugify badge.criteria %} selected="selected" {% endifequal %}>{{unit.title}}</option>
+                {% endfor %}
+            </select>
+
+            <div class="divPills" {% if badge.criteria_type == 1 %} style="display: block" {% endif %}>
+                <label style="margin-top: -25px;margin-left: 230px;">
+                    {% trans 'Select peer review' %}
+                </label>
+                <select class="pills">
+                    {% for pill in pills %}
+                        <option value={{pill.id}}>{{pill.title}}</option>
+                    {% empty %}
+                        <option value=''>{% trans 'This unit has no Peer Reviews' %}</option>
+                    {% endfor %}
+                </select>
+                <img class="addPill" title="{%trans 'Add peer review'%}" src="/static/img/ECO_icon_seguir.svg">
+
+
+                <label style="margin-top: 10px;">{% trans 'Peer review added (click on the peer review to remove):' %}</label>
+                <div class="pillAdded">
+                    {% if badge.criteria_type == 1 %}
+                        {% for criteria in badge.criteria %}
+                        <span>{{ criteria.title }}</span>
+                        <input type="hidden" name="pillsBadge" value="{{ criteria.id }}">
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="clearfix"></div>
+            <label style="margin-top:20px;">{% trans 'Score' %}</label>
+            <input name="noteBadge" required="required" type="number" value="{{ badge.note }}">
+
+            <label class="pull-left" style="margin-top: 8px;">{% trans 'Choose a color for the badge' %}</label>
+            <input name="colorBadge" class="colorBadge" type="color" value="{{ badge.color }}">
+
+            <svg class="imageBadge" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" x="0px" y="0px" width="26px" height="26px" viewBox="0 0 26 26" enable-background="new 0 0 26 26" xml:space="preserve" {% if badge %} fill="{{badge.color}}" {% endif %}>
+                <g>
+                    <g>
+                        <g>
+                            <path d="M14.999,9.262V7L11,1H7.001L11,7h-0.001v2.263C7.551,10.152,5,13.274,5,17c0,4.418,3.582,8,8,8s8-3.582,8-8     C21,13.273,18.448,10.151,14.999,9.262z M11.999,9V8h2v1H11.999z M13,23c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6     S16.309,23,13,23z"/>
+                        </g>
+                    </g>
+                    <g>
+                        <polygon points="19,1 15.001,1 13.601,3.1 15.6,6.099   "/>
+                    </g>
+                    <g>
+                        <circle cx="13" cy="17" r="4"/>
+                    </g>
+                </g>
+            </svg>
+
+            <div><input type="submit" class="btn btn-primary" value={%trans 'Save'%}></div>
+        </div>
+    </div>
+
+</form>
+
+<table>
+<tbody class="ui-sortable">
+    {% for badge in badges %}
+        <tr>
+            <td>
+                <svg style="fill:{{badge.color}}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" x="0px" y="0px" width="26px" height="26px" viewBox="0 0 26 26" enable-background="new 0 0 26 26" xml:space="preserve">
+                    <g>
+                        <g>
+                            <g>
+                                <path d="M14.999,9.262V7L11,1H7.001L11,7h-0.001v2.263C7.551,10.152,5,13.274,5,17c0,4.418,3.582,8,8,8s8-3.582,8-8     C21,13.273,18.448,10.151,14.999,9.262z M11.999,9V8h2v1H11.999z M13,23c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6     S16.309,23,13,23z"/>
+                            </g>
+                        </g>
+                        <g>
+                            <polygon points="19,1 15.001,1 13.601,3.1 15.6,6.099   "/>
+                        </g>
+                        <g>
+                            <circle cx="13" cy="17" r="4"/>
+                        </g>
+                    </g>
+                </svg>
+                <span>{{badge.title}}</span>
+            </td>
+            <td>
+                <a href="{% url teacheradmin_badges course.slug badge.id %}"><img class="editBadge" title={% trans 'Edit badge' %} src="{{ STATIC_URL }}img/ECO_icon_publicacion_nuevo_black.svg"></a>
+            </td>
+            <td>
+                <img data-idbadge="{{badge.id}}" class="deleteBadge" title={% trans 'Delete badge' %} src="{{ STATIC_URL }}img/ECO_icon_seguir.svg">
+            </td>
+
+            <!-- <td>{{badge.title}}</td> -->
+        </tr>
+    {% endfor %}
+</tbody>
+</table>
+{% endblock %}

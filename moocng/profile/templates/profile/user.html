@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+{% include "profile/include.userheader.html" %}
+<div class="userprofile white">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-4 col-md-4 col-sm-8 col-mob-4">
+				<dl class="info">
+					{% if user_view_profile.get_profile.city or user_view_profile.get_profile.country %}
+					<div class="row separator_h">
+						<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4 element">
+							<img class="icon" src="{{ STATIC_URL }}img/ECO_icon_info_localizacion.svg">
+							<dt>{% trans "Location" %}</dt>
+							{% if user_view_profile.get_profile.city %}
+							<dd>{{ user_view_profile.get_profile.city }}</dd>
+							{% endif %}
+							{% if user_view_profile.get_profile.country %}
+							<dd>{{ user_view_profile.get_profile.country }}</dd>
+							{% endif %}
+						</div>
+					</div>
+					{% endif %}
+					{% if user_view_profile.get_profile.language %}
+					<div class="row separator_h">
+						<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4 element">
+							<img class="icon" src="{{ STATIC_URL }}img/ECO_icon_info_idioma.svg">
+							<dt>{% trans "Language" %}</dt>
+							<dd>{{ user_view_profile.get_profile.get_language_display }}</dd>
+						</div>
+					</div>
+					{% endif %}
+					{% if user_view_profile.get_profile.gender %}
+					<div class="row separator_h">
+						<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4 element">
+							<img class="icon" src="{{ STATIC_URL }}img/ECO_icon_info_sexo-{{user_view_profile.get_profile.gender}}.svg">
+							{% with user_view_profile.get_profile.gender|title as gender %}
+							<dt>{% trans "Gender" %}</dt>
+							<dd>{% trans gender %}</dd>
+							{% endwith %}
+						</div>
+					</div>
+					{% endif %}
+					{% if user_view_profile.get_profile.birthdate %}
+					<div class="row separator_h">
+						<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4 element">
+							<img class="icon" src="{{ STATIC_URL }}img/ECO_icon_info_edad.svg">
+							<dt>{% trans "Age" %}</dt>
+							<dd>{{ user_view_profile.get_profile.birthdate|timesince }}</dd>
+						</div>
+					</div>
+					{% endif %}
+				</dl>
+			</div>
+			<div class="col-lg-12 col-md-8 col-sm-8 col-mob-4">
+				<div class="profile">
+					<div class="links-bar">
+						{% if user_view_profile.get_profile.personalweb %}
+						<a class="pull-left" href="{{ user_view_profile.personalweb }}">
+							<img src="{{ STATIC_URL }}img/ECO_icon_info_enlace.svg">
+							<span>{{ user_view_profile.get_profile.personalweb }}</span>
+						</a>
+						{% endif %}
+						{% if user_view_profile.get_profile.email and show_email %}
+						<a class="pull-left" href="mailto:{{ user_view_profile.email }}">
+							<img src="{{ STATIC_URL }}img/ECO_icon_info_email.svg">
+							<span>{{ user_view_profile.get_profile.email }}</span>
+						</a>
+						{% endif %}
+						{% if is_user %}
+						<!--<a class="pull-right" href="#">
+							<span>{% trans "Edit profile" %}</span>
+						</a>-->
+						{% endif %}
+					</div>
+					{% if user_view_profile.get_profile.bio %}
+					<div class="bio">{{ user_view_profile.get_profile.bio|safe }}</div>
+					{% endif %}
+					{% if user_view_profile.get_profile.twitter or user_view_profile.get_profile.facebook or user_view_profile.get_profile.linkedin %}
+					<div class="social separator_h">
+						<h5>{% trans "Social profiles" %}</h5>
+						{% if user_view_profile.get_profile.twitter %}
+							<a class="hide-text" href="{{ user_view_profile.get_profile.twitter }}" target="_blank">
+								<object data="{{ STATIC_URL }}img/ECO_icon_seguir_twitter.svg?#55555d" type="image/svg+xml"></object>
+								{{ user_view_profile.get_profile.twitter }}
+							</a>
+						{% endif %}
+						{% if user_view_profile.get_profile.facebook %}
+							<a class="hide-text" href="{{ user_view_profile.get_profile.facebook }}" target="_blank">
+								<object data="{{ STATIC_URL }}img/ECO_icon_seguir_facebook.svg?#55555d" type="image/svg+xml"></object>
+								{{ user_view_profile.get_profile.facebook }}
+							</a>
+						{% endif %}
+						{% if user_view_profile.get_profile.linkedin %}
+							<a class="hide-text" href="{{ user_view_profile.get_profile.linkedin }}" target="_blank">
+								<object data="{{ STATIC_URL }}img/ECO_icon_seguir_linkedin.svg?#55555d" type="image/svg+xml"></object>
+								{{ user_view_profile.get_profile.linkedin }}
+							</a>
+						{% endif %}
+					</div>
+					{% endif %}
+					{% if user_view_profile.get_profile.interests|length > 0 %}
+					<div class="interests">
+						<h5>{% trans "Interests areas" %}</h5>
+						<ul class="tags">
+							{% with user_view_profile.get_profile.interests_name_as_list as arr_interests %}
+							{% for interest in arr_interests %}
+							<li><a href="#">{% trans interest %}</a></li>
+							{% endfor %}
+							{% endwith %}
+						</ul>
+					</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% if case == 1 %}
+<script>
+	sendHistoryEntry(-1);
+</script>
+{% endif %}
+{% endblock %}

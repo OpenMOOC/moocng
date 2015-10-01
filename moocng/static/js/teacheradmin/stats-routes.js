@@ -44,9 +44,15 @@ if (_.isUndefined(window.MOOC)) {
             var alert = $("#" + id);
             alert.removeClass("hide");
             $("body").animate({ scrollTop: alert.offset().top }, 500);
-            setTimeout(function () {
-                $("#" + id).addClass("hide");
-            }, MOOC.alertTime);
+            if(!alert.hasClass('alert-dismissible')){
+                setTimeout(function () {
+                    alert.addClass("hide");
+                }, MOOC.alertTime);
+            }else{
+                alert.find('.close').click(function(){
+                    alert.addClass("hide");
+                });
+            }
         }
     };
 
@@ -85,6 +91,34 @@ if (_.isUndefined(window.MOOC)) {
             MOOC.course.get("units").fetch({
                 success: function (units, response, options) {
                     successHandler(MOOC.views.Course, MOOC.course);
+                },
+                error: function (units, xhr, options) {
+                    cleanView();
+                    MOOC.ajax.hideLoading();
+                    MOOC.ajax.showAlert("generic");
+                }
+            });
+        },
+
+        students: function () {
+            MOOC.ajax.showLoading();
+            MOOC.students.fetch({
+                success: function (units, response, options) {
+                    successHandler(MOOC.views.Students, MOOC.students);
+                },
+                error: function (units, xhr, options) {
+                    cleanView();
+                    MOOC.ajax.hideLoading();
+                    MOOC.ajax.showAlert("generic");
+                }
+            });
+        },
+
+        teachers: function () {
+            MOOC.ajax.showLoading();
+            MOOC.teachers.fetch({
+                success: function (units, response, options) {
+                    successHandler(MOOC.views.Teachers, MOOC.teachers);
                 },
                 error: function (units, xhr, options) {
                     cleanView();
@@ -179,10 +213,15 @@ if (_.isUndefined(window.MOOC)) {
         MOOC.alertTime = 4000;
         initialData.slug = courseSlug;
         MOOC.course = new MOOC.models.Course(initialData);
+        MOOC.students = new MOOC.models.Students(initialData);
+        MOOC.teachers = new MOOC.models.Teachers(initialData);
         MOOC.viewport = $("#viewport")[0];
 
         MOOC.router = new MOOC.App();
         MOOC.router.route("", "course");
+        MOOC.router.route("course", "course");
+        MOOC.router.route("students", "students");
+        MOOC.router.route("teachers", "teachers");
         MOOC.router.route("unit:unit", "unit");
         MOOC.router.route("unit:unit/kq:kq", "kq");
 

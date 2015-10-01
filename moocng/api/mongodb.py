@@ -141,15 +141,15 @@ class MongoResource(Resource):
 
         _id = self._collection.insert(bundle.obj.to_dict(), safe=True)
 
-        self.send_created_signal(request.user.id, bundle.obj)
+        self.send_created_signal(request.user.id, bundle)
         bundle.obj.uuid = str(_id)
         return bundle
 
-    def send_created_signal(self, user_id, obj):
+    def send_created_signal(self, user_id, obj, **kwargs):
         mongo_object_created.send(self.__class__, user_id=user_id,
                                   mongo_object=obj)
 
-    def send_updated_signal(self, user_id, obj):
+    def send_updated_signal(self, user_id, obj, **kwargs):
         mongo_object_updated.send(self.__class__, user_id=user_id,
                                   mongo_object=obj)
 

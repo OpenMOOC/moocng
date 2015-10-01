@@ -1,8 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>{{ flatpage.title }}</h1>
-    <div class="mb20">
-        {{ flatpage.content }}
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4 mt-20 mb-60">
+    			<h1>{{ flatpage.title }}</h1>
+    			<div class="mb20">
+        			{{ flatpage.content }}
+    			</div>
+    		</div>
+    	</div>
     </div>
 {% endblock %}

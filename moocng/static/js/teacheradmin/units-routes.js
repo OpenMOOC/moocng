@@ -149,6 +149,23 @@ if (_.isUndefined(window.MOOC)) {
                 }));
             }
 
+            if (!kq.has("transcriptionList")) {
+                promises.push($.ajax(MOOC.ajax.host + "transcription/?format=json&kq=" + kq.get("id"), {
+                    success: function (data, textStatus, jqXHR) {
+                        var transcriptionList = new MOOC.models.TranscriptionList(
+                            _.map(data.objects, function (transcription) {
+                                return {
+                                    id: parseInt(transcription.id, 10),
+                                    url: transcription.filename,
+                                    type: transcription.transcription_type
+                                };
+                            })
+                        );
+                        kq.set("transcriptionList", transcriptionList);
+                    }
+                }));
+            }
+
             $.when.apply(null, promises).done(callback).fail(errorHandler);
         };
 
@@ -170,10 +187,15 @@ if (_.isUndefined(window.MOOC)) {
         showAlert: function (id) {
             var alert = $("#" + id);
             alert.removeClass("hide");
-            $("body").animate({ scrollTop: alert.offset().top }, 500);
-            setTimeout(function () {
-                $("#" + id).addClass("hide");
-            }, MOOC.alertTime);
+            if(!alert.hasClass('alert-dismissible')){
+                setTimeout(function () {
+                    alert.addClass("hide");
+                }, MOOC.alertTime);
+            }else{
+                alert.find('.close').click(function(){
+                    alert.addClass("hide");
+                });
+            }
         }
     };
 

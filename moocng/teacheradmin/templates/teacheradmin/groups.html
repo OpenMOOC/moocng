@@ -1,0 +1,90 @@
+{% extends "teacheradmin/base_teacheradmin.html" %}
+
+{% load i18n %}
+
+{% block extraheader %}
+{{ form.media }}
+{% endblock %}
+
+{% block nav-teacheradmin-groups %}active{% endblock %}
+
+{% block section %}
+
+<script type="text/javascript">
+	$(document).ready(function () {
+		function setGroupStatus(){
+			if($("#id_has_groups").is(":checked")){
+				$("#createGroupForm").find('input:not(#id_has_groups)').removeAttr('disabled');
+			}else{
+				$("#createGroupForm").find('input:not(#id_has_groups)').attr('disabled','disabled');
+			}
+		}
+
+		$("#createGroups").click(function () {
+	        $("#confirm-creation").modal('show');
+	    });
+
+		$("#accept-createGroups").click(function(){
+			$.ajax({
+		           type: "POST",
+		           url: "{% url teacheradmin_groups course.slug %}",
+		           data: $("#createGroupForm").serialize(),
+		           success: function(data)
+		           {
+		               $.ajax({
+							url : "/createCourse/" + {{course.id}},
+						   	success: function(response) {
+						   		window.location="{% url teacheradmin_groups course.slug %}";
+						   	}
+						});
+		           }
+	         });
+		});
+
+		$("#cancel-createGroups").click(function(){
+			$("#confirm-creation").modal('hide');
+		});
+
+		$("#id_has_groups").change(function(){
+			setGroupStatus();
+		});
+
+		setGroupStatus();
+	});
+</script>
+<legend>{% trans "Groups" %}</legend>
+<div id="confirm-creation" class="modal fade hide">
+	<h2>{% trans "Warning" %}</h2>
+	<p>{% trans "The groups generation action <strong>cannot be undone</strong>. Please, ensure that your current values are the ones you want." %}</p>
+	<p>{% trans "If your are sure of the current configuration and want to generate the groups now, click on Accept; if not, click Cancel." %}</p>
+	<input type="button" id="accept-createGroups" class="btn btn-primary" value="{% trans "Accept" %}" />
+	<input type="button" id="cancel-createGroups" class="btn btn-primary" value="{% trans "Cancel" %}" />
+</div>
+<form id="createGroupForm" method="POST">{% csrf_token %}
+	<div class="row nomargin">
+		<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
+			<p>
+				{{ form.has_groups.errors }}
+				{{ form.has_groups }}
+				{{ form.has_groups.label_tag }}
+				{% if form.has_groups.help_text %}<span class="help-inline">{{ form.has_groups.help_text }}</span>{% endif %}
+			</p>
+			<p>
+				{{ form.group_max_size.errors }}
+				{{ form.group_max_size.label_tag }}
+				{{ form.group_max_size }}
+				{% if form.group_max_size.help_text %}<span class="help-inline">{{ form.group_max_size.help_text }}</span>{% endif %}
+			</p>
+		</div>
+	</div>
+
+	<p class="form-actions">
+      <!-- <input type="submit" class="btn btn-primary" value="{% trans "Save" %}" /> -->
+      {% if disabled %}
+      <input type="button" id="createGroups" class="btn btn-primary" value="{% trans "Create groups" %}" />
+      {%else%}
+      <span id="groupExist">{%trans 'Groups already exist for this course'%}</span>
+      {% endif %}
+    </p>
+</form>
+{% endblock %}

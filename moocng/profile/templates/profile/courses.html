@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% load i18n enrollment_tags %}
+
+{% block content %}
+{% include "profile/include.userheader.html" %}
+<div class="userprofile">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-4 col-md-4 col-sm-8 col-mob-4">
+				<dl class="info">
+					<div class="row separator_h">
+						<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
+							<dt>{% trans "Enrolled" %}</dt>
+							<dd>{{ courses|length }}</dd>
+						</div>
+					</div>
+					<div class="row separator_h">
+						<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
+							<dt>{% trans "Completed" %}</dt>
+							<dd>{{ courses_completed }}</dd>
+						</div>
+					</div>
+					<!--<div class="row separator_h">
+						<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
+							<dt>{% trans "Interested in" %}</dt>
+							<dd>987</dd>
+						</div>
+					</div>-->
+				</dl>
+			</div>
+			<div class="col-lg-12 col-md-8 col-sm-8 col-mob-4">
+				<div class="panel">
+					<div class="header">
+						<h3>{% trans "Enrolled courses" %}</h3>
+					</div>
+					<div class="content">
+						<ul class="courses">
+							{% for course in courses %}
+							<li>
+								<div class="row">
+									<div class="col-lg-12 col-md-12 col-sm-8 col-mob-8">
+										<div class="cell">
+										{% if course.thumbnail %}
+											<div class="thumb hide-text" style="background-image: url('{{ MEDIA_URL }}{{ course.thumbnail }}');">
+												{% if course.thumbnail_alt %}
+													{{course.thumbnail_alt}}
+												{% endif %}
+											</div>
+										{% else %}
+											<div class="thumb hide-text" style="background-image: url('{{ STATIC_URL }}img/classroom.jpg');">	{% trans 'decorative classroom image' %}
+											</div>
+										{% endif %}
+										</div>
+										<div class="cell">
+											<span>{{ course.organization }}</span>
+											<h4><a href="{% url course_dashboard course.slug %}">{{ course.name }}</a></h4>
+											<p class="line-clamp">{{ course.description|safe }}</p>
+										</div>
+									</div>
+									{% if case == 0 %}
+									<div class="col-lg-4 col-md-12 col-sm-8 col-mob-4">
+										<div class="col-lg-16 col-md-6 col-sm-4 col-mob-2">
+											<div class="spacer"></div>
+											<div class="progress-bar">
+												<h5>{% trans "Your progress" %}</h5>
+												<p>{{ course.progress }}%</p>
+												<div class="clearfix"></div>
+												<div class="progress"><span style="width: {{ course.progress }}%;"></span></div>
+											</div>
+										</div>
+										<div class="col-lg-16 col-md-6 col-sm-4 col-mob-2">
+											<div class="spacer"></div>											
+											{% unenroll_button course %}
+										</div>
+									</div>
+									{% endif %}
+								</div>
+							</li>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

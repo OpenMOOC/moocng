@@ -7,6 +7,7 @@ NETSCAPE_LDAP = "urn:oid:2.16.840.1.113730.3.1."
 UCL_DIR_PILOT = 'urn:oid:0.9.2342.19200300.100.1.'
 PKCS_9 = "urn:oid:1.2.840.113549.1.9.1."
 UMICH = "urn:oid:1.3.6.1.4.1.250.1.57."
+OPENMOOC = "urn:oid:1.3.6.1.4.1.256.1."     #TEMPORAL_NO_COMPROBADO
 
 MAP = {
     "identifier": "urn:oasis:names:tc:SAML:2.0:attrname-format:uri",
@@ -48,6 +49,7 @@ MAP = {
         X500ATTR_OID+'30': 'supportedApplicationContext',
         X500ATTR_OID+'33': 'roleOccupant',
         X500ATTR_OID+'32': 'owner',
+        X500ATTR_OID+'13': 'description',
         NETSCAPE_LDAP+'1': 'carLicense',
         PKCS_9+'1': 'email',
         NETSCAPE_LDAP+'3': 'employeeNumber',
@@ -94,6 +96,9 @@ MAP = {
         NOREDUPERSON_OID+'3': 'norEduPersonBirthDate',
         UMICH+'57': 'labeledURI',
         UCL_DIR_PILOT+'1': 'uid',
+        OPENMOOC+'1': 'twitterURI',
+        OPENMOOC+'2': 'facebookURI',
+        OPENMOOC+'3': 'linkedinURI'
     },
     "to": {
         'roleOccupant': X500ATTR_OID+'33',
@@ -151,6 +156,7 @@ MAP = {
         'edupersonprincipalname': EDUPERSON_OID+'6',
         'localityName': X500ATTR_OID+'7',
         'owner': X500ATTR_OID+'32',
+        'description': X500ATTR_OID+'13',
         'norEduOrgUnitUniqueNumber': NOREDUPERSON_OID+'2',
         'searchGuide': X500ATTR_OID+'14',
         'certificateRevocationList': X500ATTR_OID+'39',
@@ -194,6 +200,9 @@ MAP = {
         'sn': X500ATTR_OID+'4',
         'domainComponent': UCL_DIR_PILOT+'25',
         'labeledURI': UMICH+'57',
-        'uid': UCL_DIR_PILOT+'1'
+        'uid': UCL_DIR_PILOT+'1',
+        'twitterURI': OPENMOOC+'1',
+        'facebookURI': OPENMOOC+'2',
+        'linkedinURI': OPENMOOC+'3'
     }
 }  

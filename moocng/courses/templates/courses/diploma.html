@@ -1,0 +1,162 @@
+{% load i18n %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>
+{%block title%}	
+{%endblock%}
+</title>
+<style type="text/css">
+{% block style %}
+  @font-face {
+    font-family: 'Open Sans Light';
+    src: url('{{ STATIC_URL }}fonts/opensans/OpenSans-Light.ttf');
+  }
+  @font-face {
+    font-family: 'Open Sans';
+    src: url('{{ STATIC_URL }}fonts/opensans/OpenSans-Regular.ttf');
+  }
+  @font-face {
+    font-family: 'Open Sans Bold';
+    src: url('{{ STATIC_URL }}fonts/opensans/OpenSans-Bold.ttf');
+  }
+  @font-face {
+    font-family: 'Open Sans ExtraBold';
+    src: url('{{ STATIC_URL }}fonts/opensans/OpenSans-ExtraBold.ttf');
+  }
+  @font-face {
+    font-family: 'Open Sans Light Italic';
+    src: url('{{ STATIC_URL }}fonts/opensans/OpenSans-LightItalic.ttf');
+  }
+
+  body {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 18px;
+  }
+
+  #backimg {
+    display: block;
+    margin: 10px;
+    /*border: 1px solid #0F0;*/
+  }
+
+  .date {
+    font-family: 'Open Sans Bold', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1em;
+    padding: 5px 5px 3px 5px;
+    width: 5px;
+    height: 5px;
+    display: inline-block;block;
+    overflow: hidden;
+  }
+
+  .user {
+    font-family: 'Open Sans ExtraBold', sans-serif;
+    font-weight: 800;
+    font-size: 40px;
+    line-height: 1em;
+    color: #006f8e;
+    display: block;
+    padding: 0;
+    margin: 0;
+  }
+
+  .course {
+    font-family: 'Open Sans Light Italic', sans-serif;
+    font-weight: 300;
+    font-size: 40px;
+    font-style: italic;
+    line-height: 1em;
+    color: #006f8e;
+    display: block;
+  }
+
+  .lightText {
+    font-family: 'Open Sans Light', sans-serif;
+    font-size: 22px;
+    display: block;
+  }
+
+  strong {
+    font-family: 'Open Sans Bold', sans-serif;
+  }
+
+	@page {
+		size: {{pagesize}} landscape;
+		margin: 1cm;
+    @frame background {
+        -pdf-frame-content: background_content;
+        left: .2cm; width: 30cm; top: .5cm; height: 21cm;
+    }
+
+    @frame date {
+        -pdf-frame-content: date_content;
+        left: 2.5cm; width: 6cm; top: 8.2cm; height: 1.5cm;
+    }
+
+    @frame header {
+        -pdf-frame-content: header_content;
+        top: 2.5cm;
+        left: 2.5cm;
+        height: 5cm;
+    }
+
+		@frame footer {
+    		-pdf-frame-content: footer_content;
+    		bottom: 1cm;
+    		margin-left: 1cm;
+    		margin-right: 1cm;
+    		height: 1cm;
+		}
+
+    @frame content_frame {          /* Content Frame */
+        top: 9cm;
+        left: 2.5cm;
+        width: 25cm;
+        height: 12cm;
+    }
+	}
+
+  @page backside {
+    @frame content_frame {          /* Content Frame */
+        top: 2.5cm;
+        left: 2.5cm;
+        width: 25cm;
+        height: 20cm;
+    }
+  }
+{%endblock%}	
+</style>
+</head>
+<body>
+<div id="background_content">
+    <img id="backimg" src="{{ STATIC_URL }}img/diploma_bck.png" />
+</div>
+{%block page_header%}
+  <div id="header_content">
+    <img src="{{ theme.logo }}" />
+  </div>
+{%endblock%}
+{%block page_foot%}
+  <div id="footer_content"></div>
+{%endblock%}
+{%block content%}
+    <div id="date_content" class="date">{{ course.end_date }}</div>
+    <p><span class="user">{{ user.get_full_name }}</span>
+    <span class="lightText">{% trans 'has succesfully completed' %} <strong>{% trans 'with a score of' %} {{ course_mark }}</strong></span>
+    <span class="course">{{ course.name }}</span>
+    {% trans 'an online course of' %} {{ course.start_date|timesince:course.end_date }} {% trans 'authorized by' %} {{ course.owner.get_profile.organization.all|first }} {% trans 'and featured by' %} {{ site.name }}.</p>
+    <p>{% trans 'And therefore, this diploma is issued' %}.</p>
+    <pdf:nexttemplate name="backside">
+    <div><pdf:nextpage /></div>
+    <h1>{% trans 'Syllabus' %}</h1>
+    <ol>
+      {% for unit in course_units %}
+      <li>{{ unit.title }}</li>
+      {% endfor %}
+    </ol>
+{%endblock%}
+</body>
+</html>

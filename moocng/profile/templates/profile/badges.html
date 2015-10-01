@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% load i18n enrollment_tags %}
+
+{% block extracss %}
+	<link rel="stylesheet/less" type="text/css" href="{{ STATIC_URL }}css/print.less" media="print" />
+{% endblock %}
+
+{% block content %}
+{% include "profile/include.userheader.html" %}
+<div class="userprofile">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
+				<div class="panel">
+					<div class="header">
+						<h3>{% trans "Achieved badges" %}</h3>
+						<a class="print" href="javascript:window.print()"><img src="{{ STATIC_URL }}img/ECO_icon_contenido_scribd.svg"></a>
+					</div>
+					<div class="content">
+						<ul class="courses">
+							{% for course_id, course in courses.items %}
+							<li>
+								<div class="row">
+									<div class="col-lg-16 col-md-12 col-sm-8 col-mob-8">
+										<div class="cell">
+										{% if course.thumbnail %}
+											<div class="thumb hide-text" style="background-image: url('{{ MEDIA_URL }}{{ course.thumbnail }}');">
+												{% if course.thumbnail_alt %}
+													{{ course.thumbnail_alt }}
+												{% endif %}
+											</div>
+										{% else %}
+											<div class="thumb hide-text" style="background-image: url('{{ STATIC_URL }}img/classroom.jpg');">
+												{% trans 'decorative classroom image' %}
+											</div>
+										{% endif %}
+										</div>
+										<div class="cell">
+											<span>{{ course.organization }}</span>
+											<h4><a href="{% url course_dashboard course.slug %}">{{ course.name }}</a></h4>
+											<ul class="badges">
+												{% for badge in course.badges %}
+													<li title="{% if badge.definition.description %}{{ badge.definition.description }}{% else %}{{ badge.description }}{% endif %}">
+														<a href="{% url profile_badge user_view_profile.username badge.definition.id %}">
+															<svg fill="{% if badge.definition.color %}{{ badge.definition.color }}{% else%}{{ badge.color }}{% endif %}">
+																<g><g><g><path d="M14.999,9.262V7L11,1H7.001L11,7h-0.001v2.263C7.551,10.152,5,13.274,5,17c0,4.418,3.582,8,8,8s8-3.582,8-8     C21,13.273,18.448,10.151,14.999,9.262z M11.999,9V8h2v1H11.999z M13,23c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6 S16.309,23,13,23z"></path></g></g><g><polygon points="19,1 15.001,1 13.601,3.1 15.6,6.099"></polygon></g><g><circle cx="13" cy="17" r="4"></circle></g></g>
+															</svg>
+															{% if badge.definition.title %}{{ badge.definition.title }}{% else %}{{ badge.title }}{% endif %}
+															<p class="hide-text printable">{{ badge.description }}</p>
+														</a>
+													</li>
+												{% endfor %}
+											</ul>
+										</div>
+									</div>
+								</div>
+							</li>
+							{% empty %}
+							<li>{{ user_view_profile.get_full_name }} {% trans 'has no badges' %}.</li>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

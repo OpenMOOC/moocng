@@ -14,12 +14,14 @@
 
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
 
 from moocng.contact.forms import ContactForm
-from moocng.contact.email import send_contact_message
+from moocng.contact.email import send_contact_message, send_support_message
+
+import time
 
 
 def contact(request):
@@ -59,3 +61,24 @@ def contact(request):
     return render(request, 'contact/contact.html', {
         'form': form,
     })
+
+def support(request):
+    if request.method != 'POST':
+        raise HttpResponseBadRequest
+    subject = request.POST['subject']
+    body = request.POST['body']
+    url = request.POST['url']
+    user = request.user
+    timezone = request.POST['timezone']
+    device = {
+        'type': request.POST['device'],
+        'orientation': request.POST['orientation'],
+        'os': request.POST['os'],
+        'browser': request.POST['browser'],
+    }
+    location = request.POST['location']
+    position = { 'latitude': request.POST['lat'], 'longitude': request.POST['lon'], 'location': location }
+    date = time.strftime("%d/%m/%Y %H:%M:%S")
+
+    send_support_message(subject, body, url, user, device, position, date, timezone)
+    return HttpResponse('True')

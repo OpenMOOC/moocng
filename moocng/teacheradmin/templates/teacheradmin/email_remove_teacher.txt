@@ -1,9 +1,6 @@
 {% load i18n %}
 
-{% blocktrans %}
-Hello,
-
-you have been removed as teacher from the course "{{ course }}" by {{ host }}.
+{% blocktrans %}Hello, you have been removed as teacher from the course "{{ course }}" by {{ host }}.
 
 Best regards, {{ site }}'s team
 {% endblocktrans %}

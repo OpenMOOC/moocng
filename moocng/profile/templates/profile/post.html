@@ -1,0 +1,68 @@
+{% load i18n enrollment_tags %}
+
+{% for post in posts %}
+
+
+	<div class="post">
+		<div class="cell">
+			<img class="gravatar" src={{ post.avatar}}>
+		</div>
+		<div class="cell" style="padding-top: 15px; ">
+			{% if post.id_original_post %}
+			<img class="sharedImage" src="/static/img/ECO_icon_republicado.svg">
+			<a href="{% if show_username %}{% url profile_posts post.shared_by|slice:'1:' %}{% else %}{% url profile_posts_byid post.id_author %}{% endif %}">
+				{% if show_username %}
+				<span class="shared">{% trans "Shared by" %} {{post.shared_by}}</span>
+				{% else %}
+				<span class="shared">{% trans "Reshared" %}</span>
+				{% endif %}
+			</a>
+			<div class="clearfix"></div>
+			{% endif %}
+			<a href="{% if show_username %}{% url profile_posts post.username|slice:'1:' %}{% else %}{% url profile_posts_byid post.id_user %}{% endif %}"><span class="namePost">{{post.first_name}} {{post.last_name}}</span> {% if show_username %}<span class="emailPost">{{post.username}}</span>{% endif %}</a>
+
+
+			<span class="datePost">[
+				{% if post.original_date %}
+					{{post.original_date}}
+				{% else %}
+					{{post.date}}
+				{% endif %}
+			]</span>
+			{% autoescape off %}
+			<p class="postText">{{post.text}}</p>
+			{% endautoescape %}
+
+			{% if post.id_original_post %}
+			<div class="tools" id={{post.id_original_post}}>
+			{% else %}
+			<div class="tools" id={{post.id}}>
+			{% endif %}
+				<span class="reply">{% trans "Reply" %}</span>
+				<form class="postReply" method="post" action="/user/reply/{{post.id}}">
+					{% csrf_token %}
+					{{ form }}
+					<input type="hidden" name="context_geo_lat" value="0.0" />
+					<input type="hidden" name="context_geo_lon" value="0.0" />
+					<input class="postButton" type="submit" value="{% trans "Send" %}">
+					<span class="cancelPost">{% trans "Cancel" %}</span>
+				</form>
+				{% if post.id_user != request.user.id %}
+						<span title="Retweet" class="retweet">{{post.shared}}</span>
+				{% else %}
+					<span title="Retweet" class="noRetweet" style="cursor: inherit;">{{post.shared}}</span>
+				{% endif %}
+
+				<!-- <span class="favourite">0</span> -->
+			</div>
+		</div>
+		{% if post.replies|length > 0 %}
+		<div class="replies">
+			{% for reply in post.replies %}
+				{% include "profile/reply.html" %}
+			{% endfor %}
+		</div>
+		{% endif %}
+	</div>
+<div class="clearfix"></div>
+{% endfor %}

@@ -99,6 +99,15 @@ if (_.isUndefined(window.MOOC)) {
                     /gdata\.youtube\.com\/feeds\/api\/videos\/([\w\-]+)/,
                     /^([\w\-]+)$/
                 ],
+                'ytaccesible': [
+                    /youtube\.com\/watch\?v=([\w\-]+).*/,
+                    /youtube\.com\/embed\/([\w\-]+)/,
+                    /youtube\.com\/v\/([\w\-]+)/,
+                    /youtube\.com\/\?v=([\w\-]+)/,
+                    /youtu\.be\/([\w\-]+)/,
+                    /gdata\.youtube\.com\/feeds\/api\/videos\/([\w\-]+)/,
+                    /^([\w\-]+)$/
+                ],
                 'vimeo': [
                     /vimeo\.com\/(\d+)/,
                     /vimeo\.com\/video\/(\d+)/,
@@ -111,8 +120,11 @@ if (_.isUndefined(window.MOOC)) {
                     /^(\d+)$/
                 ],
                 'prezi': [
-                    /prezi\.com\/([a-zA-Z\d\-]+)\/.*/,
-                    /^([a-zA-Z\d\-]+)$/ // Can't use \w because can't accept the _ char
+                    /prezi\.com\/([a-zA-Z\d\-\_]+)\/.*/,
+                    /^([a-zA-Z\d\-\_]+)$/ // Can't use \w because can't accept the _ char
+                ],
+                's3video': [
+                    /^(http(s)?:\/\/[A-zA-Z0-9:\/\-\_.]+)$/
                 ]
             };
 
@@ -179,13 +191,16 @@ if (_.isUndefined(window.MOOC)) {
 
         tinyMCEOptions = {
             mode: "exact",
-            plugins: "paste,searchreplace",
-            theme: "advanced",
+            plugins: "link, paste, searchreplace",
+            paste_retain_style_properties: "color font-size",
+            relative_urls: false,
+            remove_script_host: false
+            /*theme: "advanced",
             theme_advanced_resizing : true,
             theme_advanced_toolbar_location: "top",
             theme_advanced_buttons1: "bold,italic,underline,strikethrough,separator,link,unlink,separator,undo,redo,copy,paste,separator,cleanup,separator,bullist,numlist",
-            theme_advanced_buttons2: "",
-            theme_advanced_buttons3: ""
+            theme_advanced_buttons2: "link",
+            theme_advanced_buttons3: ""*/
         },
 
         invert = function (obj) {
@@ -373,16 +388,18 @@ if (_.isUndefined(window.MOOC)) {
                 } else {
                     header.push("<h3>" + this.model.get("title") + "</h3>");
                 }
+                header.push("<button class='btn ml10 pull-right add'><span class='icon-plus'></span> " +
+                    MOOC.trans.add + " " + MOOC.trans.kq.kq + "</button>");
                 header.push("<button class='btn pull-right edit' title='" + MOOC.trans.edit +
                     " " + MOOC.trans.unit.unit + "'><span class='icon-edit'></span> " +
                     MOOC.trans.edit + "</button>");
                 header = header.join("");
-                add = "<button class='btn pull-right add'><span class='icon-plus'></span> " +
-                    MOOC.trans.add + " " + MOOC.trans.kq.kq + "</button>";
+                // add = "<button class='btn pull-right add'><span class='icon-plus'></span> " +
+                //     MOOC.trans.add + " " + MOOC.trans.kq.kq + "</button>";
                 html = inlineb({ classes: "drag-handle" });
                 html += inlineb(block(header, { classes: "header" }),
                                 block("", { classes: "kq-container" }),
-                                block(add),
+                                // block(add),
                                 { classes: "unit-right" });
                 node.html(html);
 
@@ -498,7 +515,7 @@ if (_.isUndefined(window.MOOC)) {
         KQ: Backbone.View.extend({
             events: {
                 "click button.kqedit": "toKQEditor",
-                "click a.thumbnail": "openVideoPlayer"
+                "click .thumbnail": "openVideoPlayer"
             },
 
             initialize: function () {
@@ -538,19 +555,20 @@ if (_.isUndefined(window.MOOC)) {
 
                 video_thumbnail = "";
                 if (thumbnail_url) {
-                    video_thumbnail = "<a class='thumbnail' data-toggle='modal' href='#player-" + this.model.id + "'>" +
+                    video_thumbnail = "<a data-toggle='modal' href='#player-" + this.model.id + "'>" +
                         "<img src='" + this.model.get("thumbnail_url") + "' alt='" + MOOC.trans.kq.screenshot + this.model.get("title") + "' /></a>";
                 }
 
-                data = "<p>" + MOOC.trans.kq.teacher_comments + ": " +
-                    truncate(_.escape(stripTags(this.model.get("teacher_comments")))) + "</p>" +
-                    "<p>" + MOOC.trans.kq.supplementary_material + ": " +
-                    truncate(_.escape(stripTags(this.model.get("supplementary_material")))) + "<p/>";
+                // data = "<p class='noLowRes'>" + MOOC.trans.kq.teacher_comments + ": " +
+                //     truncate(stripTags(this.model.get("teacher_comments"))) + "</p>" +
+                //     "<p class='noLowRes'>" + MOOC.trans.kq.supplementary_material + ": " +
+                //     truncate(stripTags(this.model.get("supplementary_material"))) + "<p/>";
 
 
                 html = inlineb({ classes: "drag-handle" }) +
-                    inlineb(video_thumbnail, { style: "margin-left: 30px;" }) +
-                    inlineb(block(header), block(data), { classes: "kq-right" });
+                    inlineb(video_thumbnail, { classes: "thumbnail" }) +
+                    inlineb(block(header), { classes: "kq-right" });
+                    // inlineb(block(header), block(data), { classes: "kq-right" });
 
                 this.$el.html(html);
             },
@@ -569,7 +587,7 @@ if (_.isUndefined(window.MOOC)) {
 
                 modal_template = _.template($("#modal-video-player-tpl").html());
                 iframe_template = _.template(this.model.get("iframe_code"));
-                iframe = iframe_template({ width: '620px', height: '372px', allowfullscreen: false, controls: false, origin: MOOC.host });
+                iframe = iframe_template({ width: '620px', height: '372px', allowfullscreen: false, controls: true, origin: MOOC.host });
 
                 context = {
                     title: this.model.get("title"),
@@ -654,11 +672,22 @@ if (_.isUndefined(window.MOOC)) {
                 return checkRequiredAux(this.$el);
             },
 
+            checkDates: function() {
+                var start_date = new Date(this.$el.find("input#start_date").val());
+                var deadline = new Date(this.$el.find("input#end_date").val());
+                return start_date.getTime() < deadline.getTime();
+            },
+
             save: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
                 if (!this.checkRequired()) {
                     MOOC.ajax.showAlert("required");
+                    return;
+                }
+                var unit_type = this.$el.find("select#type").val();
+                if (unit_type != 'n' && !this.checkDates()){
+                    MOOC.ajax.showAlert("wrong_dates");
                     return;
                 }
                 MOOC.ajax.showLoading();
@@ -677,7 +706,7 @@ if (_.isUndefined(window.MOOC)) {
                         MOOC.ajax.hideLoading();
                         MOOC.ajax.showAlert("saved");
                     },
-                    error: function () {
+                    error: function (err) {
                         MOOC.ajax.hideLoading();
                         MOOC.ajax.showAlert("generic");
                     }
@@ -727,6 +756,7 @@ if (_.isUndefined(window.MOOC)) {
                 "click button#use-last-frame": "useLastFrame",
                 "click button#delete-question": "removeQuestion",
                 "click button#delete-peer-review-assignment": "removePeerReviewAssignment",
+                "click button#use-no-solution-btn": "toggleSolution",
                 "click button#use-solution-video-btn": "toggleSolution",
                 "click button#use-solution-text-btn": "toggleSolution",
                 "click button#go2options": "go2options",
@@ -737,9 +767,11 @@ if (_.isUndefined(window.MOOC)) {
                 "click button#addassetavailability": "addAssetAvailability",
                 "click button#delete-asset-availability": "removeAssetAvailability",
                 "change select#kqmedia_content_type": "redrawCanGetLastFrame",
+                "change select#kqmedia_content_type": "changeKqMediaContentType",
                 "click button.removeasset": "removeAssetOfAvailability",
                 "click button#addasset": "addAssetToAvailability",
-                "show a[data-toggle='tab']": "checkBeforeToggleTab"
+                "show a[data-toggle='tab']": "checkBeforeToggleTab",
+                "click button#s3_upload_btn": "uploadVideoToS3",
             },
 
             initialize: function () {
@@ -748,11 +780,14 @@ if (_.isUndefined(window.MOOC)) {
                     "toggleSolution", "addQuestion", "addPeerReviewAssignment",
                     "addCriterion", "forceProcess", "removeQuestion",
                     "removePeerReviewAssignment", "go2options", "addAssetAvailability",
-                    "removeAssetAvailability", "checkBeforeToggleTab");
+                    "removeAssetAvailability", "checkBeforeToggleTab", "uploadVideoToS3", "changeKqMediaContentType");
+
+                this.addingCriterion = false;
             },
 
             render: function () {
                 var $attachments,
+                    $transcriptions,
                     question,
                     options,
                     assignment,
@@ -772,12 +807,30 @@ if (_.isUndefined(window.MOOC)) {
                 while (tinyMCE.editors.length > 0) {
                     tinyMCE.editors[0].remove();
                 }
-                this.$el.html($("#edit-kq-tpl").text());
+
+                this.$el.html(_.template($("#edit-kq-tpl").html())(this.model.toJSON()));
 
                 this.$el.find("input#kqtitle").val(this.model.get("title"));
                 this.$el.find("select#kqmedia_content_type").val(this.model.get("media_content_type"));
                 this.$el.find("input#kqmedia_content_id").val(this.model.get("media_content_id"));
                 this.$el.find("input#kqweight").val(this.model.get("weight"));
+
+                var can_upload = false;
+                var showTransTab = false;
+                if(this.model.get("media_content_type")){
+                    can_upload = MEDIA_CONTENT_TYPES[this.model.get("media_content_type")].can_upload_media || false;
+                    showTransTab = MEDIA_CONTENT_TYPES[this.model.get("media_content_type")].need_captions || false;
+                }
+                if (can_upload) {
+                    $("#s3_upload_form").css({'display': 'block'});
+                }else{
+                    $("#s3_upload_form").css({'display': 'none'});
+                }
+                if (showTransTab) {
+                    $("#transcriptions-tab").show();
+                }else{
+                    $("#transcriptions-tab").hide();
+                }
 
                 if (this.model.has("questionInstance")) {
                     question = this.model.get("questionInstance");
@@ -795,7 +848,7 @@ if (_.isUndefined(window.MOOC)) {
                         this.$el.find("button#use-solution-text-btn").trigger("click");
                     } else {
                         // Default
-                        this.$el.find("button#use-solution-video-btn").trigger("click");
+                        this.$el.find("button#use-no-solution-btn").trigger("click");
                     }
                     if (question.has("solution_media_content_type") && question.get("solution_media_content_type") !== "") {
                         this.$el.find("#questionmedia_content_type").val(question.get("solution_media_content_type"));
@@ -841,6 +894,7 @@ if (_.isUndefined(window.MOOC)) {
                         var criterionDivId,
                             titleInputId,
                             descriptionInputId,
+                            scoreInputs,
                             removeBtnId,
                             titleInput,
                             titleLabel,
@@ -854,19 +908,36 @@ if (_.isUndefined(window.MOOC)) {
                         descriptionInputId = "criteriondescription-" + criterion.get("id");
                         removeBtnId = "criterionremove-" + criterion.get("id");
 
+                        scoreInputs = [];
+                        for(var i=1; i<=5; i++){
+                            var scoreId = "criterionscore" + i + "-" + criterion.get("id");
+                            var model = {'scoreId': scoreId,
+                                        'scoreLabel': '<label for="' + scoreId + '">' + MOOC.trans.evaluationCriterion.scoreDescription + ' ' + i + '</label>',
+                                        'scoreInput': '<input type="text" name="' + scoreId + '" id="' + scoreId + '" maxlength="200" class="input" />'}
+                            scoreInputs.push(model);
+                        }
+
+
                         titleInput = "<input type=\"text\" name=\"" + titleInputId + "\" id=\"" + titleInputId + "\" maxlength=\"100\" class=\"input-large\" required=\"required\" />";
                         titleLabel = "<label for=\"" + titleInputId + "\" class=\"required\">" + MOOC.trans.evaluationCriterion.title + "</label>";
-                        descriptionInput = "<input type=\"text\" name=\"" + descriptionInputId + "\" id=\"" + descriptionInputId + "\" maxlength=\"200\" class=\"input-xlarge\" required=\"required\" />";
+                        descriptionInput = "<input type=\"text\" name=\"" + descriptionInputId + "\" id=\"" + descriptionInputId + "\" maxlength=\"200\" class=\"input\" required=\"required\" />";
                         descriptionLabel = "<label for=\"" + descriptionInputId + "\" class=\"required\">" + MOOC.trans.evaluationCriterion.description + "</label>";
                         removeBtn = "<button id=\"" + removeBtnId + "\" class=\"removecriterion btn btn-danger\">" + MOOC.trans.evaluationCriterion.remove + "</button>";
                         criterionDiv = "<div id=\"" + criterionDivId + "\">"
-                                       + "<div class=\"row mb10\"> <div class=\"span3\">" + titleLabel + titleInput + "</div>"
-                                       + "<div class=\"span4\">" + descriptionLabel + descriptionInput + "</div></div>"
-                                       + "<div class=\"row mb20\"><div class=\"align-right span10\">" + removeBtn + "</div></div></divZ";
+                                       + "<fieldset>"
+                                       + "<div class=\"\"> <div>" + titleLabel + titleInput + "</div>"
+                                       + "<div class=\"\">" + descriptionLabel + descriptionInput + "</div>"
+                        for(var i=0;i<5;i++){
+                            criterionDiv += '<div class="">' + scoreInputs[i].scoreLabel + scoreInputs[i].scoreInput + '</div>';
+                        }
+                        criterionDiv += "<div class=\"\"><div class=\"align-right\">" + removeBtn + "</div></div></fieldset></div>";
 
                         criterionListDiv.append(criterionDiv);
                         criterionListDiv.find("#" + titleInputId).val(criterion.get("title"));
                         criterionListDiv.find("#" + descriptionInputId).val(criterion.get("description"));
+                        for(var i=0;i<5;i++){
+                            criterionListDiv.find("#" + scoreInputs[i].scoreId).val(criterion.get("description_score_"+(i+1)));
+                        }
                     });
                 }
 
@@ -945,12 +1016,27 @@ if (_.isUndefined(window.MOOC)) {
                     this.$el.find("#attachment-empty").removeClass("hide");
                 }
 
+                $transcriptions = this.$el.find("#transcription-list");
+                if (this.model.get("transcriptionList").length > 0) {
+                    this.model.get("transcriptionList").each(function (transcription) {
+                        var view = new MOOC.views.Transcription({
+                            model: transcription,
+                            el: $transcriptions.find("tbody")[0]
+                        });
+                        view.render();
+                    });
+                } else {
+                    $transcriptions.remove();
+                    this.$el.find("#transcription-empty").removeClass("hide");
+                }
+
                 this.$el.find("textarea#kqsupplementary").val(this.model.get("supplementary_material"));
                 this.$el.find("textarea#kqcomments").val(this.model.get("teacher_comments"));
                 options = _.extend(_.clone(tinyMCEOptions), {
                     width: "380", // bootstrap span5
                     elements: "kqsupplementary, kqcomments, reviewdescription"
                 });
+				        tinyMCE.baseURL = '/static/tinymce';
                 tinyMCE.init(options);
                 options = _.extend(_.clone(tinyMCEOptions), {
                     width: "780", // bootstrap span10
@@ -1040,12 +1126,16 @@ if (_.isUndefined(window.MOOC)) {
                     cb2,
                     attachCB;
 
+                var lang = $('html').attr('lang');
+
                 this.model.unset("new");
                 this.model.set("title", $.trim(this.$el.find("input#kqtitle").val()));
                 this.model.set("media_content_id", $.trim(this.$el.find("input#kqmedia_content_id").val()));
                 this.model.set("media_content_type", this.$el.find("select#kqmedia_content_type").val());
                 this.model.set("weight", parseInt(this.$el.find("input#kqweight").val(), 10));
                 this.model.set("supplementary_material", tinyMCE.get("kqsupplementary").getContent());
+                this.model.set("supplementary_material_"+lang, tinyMCE.get("kqsupplementary").getContent());
+                this.model.set("teacher_comments_"+lang, tinyMCE.get("kqcomments").getContent());
                 this.model.set("teacher_comments", tinyMCE.get("kqcomments").getContent());
 
                 if (this.model.has("questionInstance")) {
@@ -1060,10 +1150,14 @@ if (_.isUndefined(window.MOOC)) {
                         question.set("solution_media_content_type", this.$el.find("#questionmedia_content_type").val());
                         question.set("solution_media_content_id", this.$el.find("#questionmedia_content_id").val());
                         question.set("solutionText", null);
-                    } else {
+                    } else if (this.$el.find("#use-solution-text-btn").is(".active")) {
                         question.set("solution_media_content_type", null);
                         question.set("solution_media_content_id", null);
                         question.set("solutionText", tinyMCE.get("solution-text").getContent());
+                    } else {
+                        question.set("solution_media_content_type", null);
+                        question.set("solution_media_content_id", null);
+                        question.set("solutionText", null);
                     }
 
                     steps.push(function (asyncCB) {
@@ -1101,6 +1195,11 @@ if (_.isUndefined(window.MOOC)) {
                     });
 
                     criterionList = assignment.get("_criterionList");
+                    if (criterionList.length === 0 && assignment.get('description') != "" && !this.addingCriterion){
+                        alert("You must include almost one criterion on your peer review assignment");
+                        MOOC.ajax.hideLoading();
+                        return;
+                    }
                     criterionList.each(function (criterion) {
                         var titleInputId,
                             descriptionInputId;
@@ -1109,6 +1208,10 @@ if (_.isUndefined(window.MOOC)) {
                         descriptionInputId = "criteriondescription-" + criterion.get("id");
                         criterion.set("title", $.trim(self.$el.find("#" + titleInputId).val()));
                         criterion.set("description", $.trim(self.$el.find("#" + descriptionInputId).val()));
+                        // Save rubric
+                        for(var i=1;i<=5;i++){
+                            criterion.set("description_score_"+i, $.trim(self.$el.find("#criterionscore"+i+"-"+criterion.get("id")).val()));
+                        }
 
                         criterionListSaveTasks.push(function (asyncCB) {
                             criterion.save(null, {
@@ -1158,24 +1261,29 @@ if (_.isUndefined(window.MOOC)) {
                 }
 
                 // Look for attachments
-                if (this.$el.find("div.fileupload input[type='file']").val() !== "") {
+                if (this.$el.find("div.fileupload input[type='file']#id_file").val() !== "") {
                     steps.push(function (asyncCB) {
-                        var input = self.$el.find("div.fileupload input[type='file']")[0],
+                        var input = self.$el.find("div.fileupload input[type='file']#id_file")[0],
                             fakeForm;
                         if (input.files) {
-                            fakeForm = new FormData();
-                            fakeForm.append("attachment", input.files[0]);
-                            $.ajax(window.location.pathname + "attachment/?kq=" + self.model.get("id"), {
-                                type: "POST",
-                                headers: {
-                                    "X-CSRFToken": csrftoken
-                                },
-                                data: fakeForm,
-                                processData: false,
-                                contentType: false,
-                                success: function () { asyncCB(); },
-                                error: function () { asyncCB("Error saving attachment"); }
-                            });
+                            // Check file size
+                            if(input.files[0].size > MOOC.vars.max_file_size * 1024 * 1024){
+                                asyncCB({message: "File size must be less than " + MOOC.vars.max_file_size + "Mb", type: "FileTooBig", max_file_size: MOOC.vars.max_file_size});
+                            }else{
+                                fakeForm = new FormData();
+                                fakeForm.append("attachment", input.files[0]);
+                                $.ajax(window.location.pathname + "attachment/?kq=" + self.model.get("id"), {
+                                    type: "POST",
+                                    headers: {
+                                        "X-CSRFToken": csrftoken
+                                    },
+                                    data: fakeForm,
+                                    processData: false,
+                                    contentType: false,
+                                    success: function () { asyncCB(); },
+                                    error: function () { asyncCB("Error saving attachment"); }
+                                });
+                            }
                         } else {
                             asyncCB("Error with attachment, FileAPI not supported");
                         }
@@ -1205,6 +1313,64 @@ if (_.isUndefined(window.MOOC)) {
                     };
                 }
 
+                // Look for transcriptions
+                if (this.$el.find("#transcriptions input[type='file']").val() !== "") {
+                    steps.push(function (asyncCB) {
+                        var input = self.$el.find("#transcriptions input[type='file']")[0],
+                            type = self.$el.find("#transcriptions #id_type").val(),
+                            language = self.$el.find("#transcriptions #id_language").val(),
+                            fakeForm;
+                        if (input.files) {
+                            // Check file size
+                            if(input.files[0].size > MOOC.vars.max_file_size * 1024 * 1024){
+                                asyncCB({message: "File size must be less than " + MOOC.vars.max_file_size + "Mb", type: "FileTooBig", max_file_size: MOOC.vars.max_file_size});
+                            }else{
+                                fakeForm = new FormData();
+                                fakeForm.append("transcription", input.files[0]);
+                                fakeForm.append("type", type);
+                                fakeForm.append("language", language);
+                                $.ajax(window.location.pathname + "transcription/?kq=" + self.model.get("id"), {
+                                    type: "POST",
+                                    headers: {
+                                        "X-CSRFToken": csrftoken
+                                    },
+                                    data: fakeForm,
+                                    processData: false,
+                                    contentType: false,
+                                    success: function () { asyncCB(); },
+                                    error: function () { asyncCB("Error saving transcription"); }
+                                });
+                            }
+                        } else {
+                            asyncCB("Error with transcription, FileAPI not supported");
+                        }
+                    });
+
+                    steps.push(function (asyncCB) {
+                        $.ajax(MOOC.ajax.host + "transcription/?format=json&kq=" + self.model.get("id"), {
+                            success: function (data, textStatus, jqXHR) {
+                                var transcriptionList = new MOOC.models.TranscriptionList(
+                                    _.map(data.objects, function (transcription) {
+                                        return {
+                                            id: parseInt(transcription.id, 10),
+                                            url: transcription.filename,
+                                            type: transcription.transcription_type
+                                        };
+                                    })
+                                );
+                                self.model.set("transcriptionList", transcriptionList);
+                                asyncCB();
+                            },
+                            error: function () { asyncCB("Error saving transcription"); }
+                        });
+                    });
+
+                    attachCB = function () {
+                        self.render();
+                        self.$el.find("#transcriptions-tab a").trigger("click");
+                    };
+                }
+
                 cb = function () {
                     async.series(steps, function (err, results) {
 
@@ -1212,7 +1378,11 @@ if (_.isUndefined(window.MOOC)) {
                             callback();
                         } else {
                             if (err) {
-                                MOOC.ajax.showAlert("generic");
+                                switch(err.type){
+                                    case "FileTooBig":  MOOC.ajax.showAlert("FileTooBig");
+                                                        break;
+                                    default: MOOC.ajax.showAlert("generic");
+                                }
                             } else {
                                 MOOC.ajax.showAlert("saved");
                             }
@@ -1269,6 +1439,63 @@ if (_.isUndefined(window.MOOC)) {
                 showConfirmationModal(cb);
             },
 
+            uploadVideoToS3: function(evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
+
+                var $progress = this.$el.find("#s3_upload_form progress");
+                $progress.css({'display': 'inline'});
+
+                var input = this.$el.find("#s3_upload_form input[type='file']")[0],
+                fakeForm = new FormData();
+                fakeForm.append("file", input.files[0]);
+                $.ajax("s3upload/?kq=" + this.model.get("id"), {
+                    type: "POST",
+                    headers: {
+                        "X-CSRFToken": csrftoken
+                    },
+                    data: fakeForm,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        console.log("Toma!");
+                        $("#kqmedia_content_id").val(data.url);
+                        $progress.css({'display': 'none'});
+                    },
+                    error: function () {
+                        alert('Error uploading video');
+                        $progress.css({'display': 'none'});
+                    }
+                });
+            },
+
+            changeKqMediaContentType: function(evt) {
+                this.showTranscriptionsTab(evt);
+                this.showUploadFileForm(evt);
+            },
+
+            showUploadFileForm: function(evt){
+                var target = $(evt.currentTarget);
+                var content_type = target.val();
+                var can_upload = MEDIA_CONTENT_TYPES[content_type].can_upload_media || false;
+                if (can_upload) {
+                    $("#s3_upload_form").slideDown();
+                }else{
+                    $("#s3_upload_form").slideUp();
+                }
+            },
+
+            showTranscriptionsTab: function(evt){
+                var target = $(evt.currentTarget);
+                var content_type = target.val();
+                var showTransTab = MEDIA_CONTENT_TYPES[content_type].need_captions || false;
+                if (showTransTab) {
+                    $("#transcriptions-tab").show();
+                }else{
+                    $("#transcriptions-tab").hide();
+                }
+            },
+
             addQuestion: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
@@ -1314,7 +1541,7 @@ if (_.isUndefined(window.MOOC)) {
                 assignment = this.model.get("peerReviewAssignmentInstance");
                 assignmentUrl = assignment.url();
                 newCriterion = new MOOC.models.EvaluationCriterion();
-
+                this.addingCriterion = true;
                 this.save(evt, function () {
                     newCriterion.set("assignment", assignmentUrl);
                     newCriterion.save(null, {
@@ -1335,17 +1562,21 @@ if (_.isUndefined(window.MOOC)) {
                                     self.$el.find("form fieldset.active").removeClass("active");
                                     self.$el.find("#peer-review-assignment-tab").addClass("active");
                                     self.$el.find("#peer-review-assignment").addClass("active");
+                                    $('html,body').animate({scrollTop: $('#reviewcriterions > div:last-child').position().top - $('header').outerHeight() - 10}, 750);
+                                    self.addingCriterion = false;
                                     MOOC.ajax.hideLoading();
                                 },
                                 error: function () {
                                     MOOC.ajax.hideLoading();
                                     MOOC.ajax.showAlert("generic");
+                                    self.addingCriterion = false;
                                 }
                             });
                         },
                         error: function () {
                             MOOC.ajax.hideLoading();
                             MOOC.ajax.showAlert("generic");
+                            self.addingCriterion = false;
                         }
                     });
 
@@ -1504,15 +1735,16 @@ if (_.isUndefined(window.MOOC)) {
                 evt.preventDefault();
                 evt.stopPropagation();
                 var id = evt.target.id,
-                    toShow = id.split("-btn")[0],
-                    toHide = "use-solution-video";
-                if (toShow.indexOf("video") > 0) {
-                    toHide = "use-solution-text";
-                }
+                    toShow = id.split("-btn")[0];
+
+                this.$el.find("#use-no-solution-btn").removeClass("active");
+                this.$el.find("#use-solution-video-btn").removeClass("active");
+                this.$el.find("#use-solution-text-btn").removeClass("active");
+                this.$el.find("#use-solution-video").addClass("hide");
+                this.$el.find("#use-solution-text").addClass("hide");
+
                 this.$el.find("#" + toShow).removeClass("hide");
                 this.$el.find("#" + toShow + "-btn").addClass("active");
-                this.$el.find("#" + toHide).addClass("hide");
-                this.$el.find("#" + toHide + "-btn").removeClass("active");
             },
 
             removeQuestion: function (evt) {
@@ -1794,16 +2026,15 @@ if (_.isUndefined(window.MOOC)) {
                 } else {
                     cb();
                 }
-
             },
 
             go2options: function (evt) {
                 evt.preventDefault();
                 evt.stopPropagation();
                 var model = this.model,
-                    callback = function () {
-                        window.open("question/" + model.get("id"), "_self");
-                    };
+                callback = function () {
+                    window.open("question/" + model.get("id"), "_self");
+                };
                 this.save(evt, callback);
             },
 
@@ -1856,6 +2087,55 @@ if (_.isUndefined(window.MOOC)) {
                                 MOOC.ajax.showAlert("saved");
                                 if (rows === 1) {
                                     $table.parent().find("#attachment-empty").show();
+                                    $table.remove();
+                                }
+                            },
+                            error: function (err) {
+                                MOOC.ajax.hideLoading();
+                                MOOC.ajax.showAlert("generic");
+                            }
+                        });
+                    };
+                showConfirmationModal(cb);
+            }
+        }),
+
+        Transcription: Backbone.View.extend({
+            events: {
+                "click span.icon-remove": "remove"
+            },
+
+            initialize: function () {
+                _.bindAll(this, "render", "remove");
+            },
+
+            render: function () {
+                var html = "<tr id='transcription-" + this.model.get("id") + "'><td><a href='" + this.model.get("url") + "' target='_blank'>",
+                    parts = this.model.get("url").split('/');
+                html += parts[parts.length - 1];
+                html += "</a></td><td class='center'><span class='icon-remove pointer'></span></td></tr>";
+                this.$el.append(html);
+                return this;
+            },
+
+            remove: function (evt) {
+                var $el = $(evt.target).parent().parent(),
+                    cb = function () {
+                        var id = $el.attr("id").split('-')[1],
+                            rows = $el.parent().find("tr").length;
+                        MOOC.ajax.showLoading();
+                        $.ajax(window.location.pathname + "transcription/?transcription=" + id, {
+                            type: "DELETE",
+                            headers: {
+                                "X-CSRFToken": csrftoken
+                            },
+                            success: function () {
+                                var $table = $el.parent().parent();
+                                $el.fadeOut().remove();
+                                MOOC.ajax.hideLoading();
+                                MOOC.ajax.showAlert("saved");
+                                if (rows === 1) {
+                                    $table.parent().find("#transcription-empty").show();
                                     $table.remove();
                                 }
                             },

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% load i18n enrollment_tags %}
+
+{% block extracss %}
+	<link rel="stylesheet/less" type="text/css" href="{{ STATIC_URL }}css/print.less" media="print" />
+{% endblock %}
+
+{% block extrajs %}
+    <script src="//{{ openbadges_service_url }}/issuer.js"></script>
+    <script src="{{ STATIC_URL }}js/badges.js"></script>
+{% endblock %}
+
+{% block content %}
+{% include "profile/include.userheader.html" %}
+<div class="userprofile">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
+				<div class="panel">
+					<div class="header">
+						<h3>{% trans "Earned badge" %}</h3>
+						<a class="print" href="javascript:window.print()"><img src="{{ STATIC_URL }}img/ECO_icon_contenido_scribd.svg"></a>
+					</div>
+					<div class="content">
+						<ul class="courses">
+							<li>
+								<ul class="badges">
+									<li title="{% if badge.description %}{{ badge.description }}{% endif %}">
+										<a href="{% url badge_assertion_image badge.id %}">
+											<img class="big" src="{% url badge_assertion_image badge.id %}" />
+										</a>
+										<h4>{% if badge.title %}{{ badge.title }}{% endif %}</h4>
+										<p>{{ badge.description }}</p>
+										<a href="#" class="button squared publish-badge" rel="https://{{ site }}{% url badge_assertion badge.id %}"><span class="icon-share"></span> {% trans "Send to Mozilla Backpack" %}</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

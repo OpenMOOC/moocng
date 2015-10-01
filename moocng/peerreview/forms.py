@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
 from django import forms
+from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 
 EVALUTION_CRITERIA_CHOICES = [
     (1, 1),
@@ -10,7 +13,7 @@ EVALUTION_CRITERIA_CHOICES = [
 
 
 class ReviewSubmissionForm(forms.Form):
-    comments = forms.CharField(widget=forms.widgets.Textarea(attrs={'class': 'input-block-level'}), required=False)
+    comments = forms.CharField(widget=forms.widgets.Textarea(attrs={'class': 'input-block-level', 'rows': 7, 'placeholder': _(u'Type here your comments about this review')}), required=False)
 
 
 class EvalutionCriteriaResponseForm(forms.Form):

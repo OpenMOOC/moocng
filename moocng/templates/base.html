@@ -5,81 +5,172 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
   <title>{{ site.name }}</title>
-  <meta name="description" content="">
-  <meta name="author" content="">
-
+  {% block extraheader %}{% endblock %}
   <meta name="viewport" content="width=device-width">
 
-  <link rel="icon" href="/favicon.ico"/>
-  <link rel="stylesheet" href="{{ theme.bootstrap_css }}">
-  <link rel="stylesheet" href="{{ theme.moocng_css }}">
+  <link rel="apple-touch-icon" sizes="57x57" href="{{ theme.favicon_dir }}apple-touch-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="{{ theme.favicon_dir }}apple-touch-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="{{ theme.favicon_dir }}apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="{{ theme.favicon_dir }}apple-touch-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="{{ theme.favicon_dir }}apple-touch-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="{{ theme.favicon_dir }}apple-touch-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="{{ theme.favicon_dir }}apple-touch-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="{{ theme.favicon_dir }}apple-touch-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ theme.favicon_dir }}apple-touch-icon-180x180.png">
+  <link rel="icon" type="image/png" href="{{ theme.favicon_dir }}favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="{{ theme.favicon_dir }}android-chrome-192x192.png" sizes="192x192">
+  <link rel="icon" type="image/png" href="{{ theme.favicon_dir }}favicon-96x96.png" sizes="96x96">
+  <link rel="icon" type="image/png" href="{{ theme.favicon_dir }}favicon-16x16.png" sizes="16x16">
+  <link rel="icon" type="image/x-icon" href="{{ theme.favicon_dir }}favicon.ico">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-TileImage" content="{{ theme.favicon_dir }}mstile-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+
+  <!--<link rel="stylesheet" href="{{ theme.bootstrap_css }}">-->
+  <!--<link rel="stylesheet" href="{{ theme.moocng_css }}">-->
+
+  <link href='//fonts.googleapis.com/css?family=Open+Sans:300,400italic,400,700,800' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/grid.css" />
+  <link rel="stylesheet" type="text/css" href="{{ theme.moocng_css }}"/>
+  {% block extracss %}{% endblock %}
 
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-1.7.2.min.js"><&#47;script>');</script>
   <script src="{{ STATIC_URL }}js/libs/modernizr-2.5.3.min.js"></script>
-  <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
-  {% block extraheader %}{% endblock %}
+  <script src="{{ STATIC_URL }}js/modal.js"></script>
+  <script src="{{ STATIC_URL }}js/libs/device.min.js"></script>
+  <script>
+    var helpForm_translate = {
+      "ok": "{% trans 'Got it' %}",
+      "greeting": "{% trans 'Need help?' %}",
+      "greeting_2": "{% trans 'let us help you' %}",
+      "subject": "{% trans 'Subject' %}",
+      "body": "{% trans 'Body' %}",
+      "send_button": "{% trans 'Send' %}",
+      "cancel_button": "{% trans 'Cancel' %}",
+      "sending": "{%trans 'Sending' %}",
+      "error": "{% trans 'There was an error sending your message. Please, try again.' %}",
+      "disclaimer": "{% trans 'For a better support, we will automatically collect some navigation information like your user name, email, the platform section you are visiting, the device and browser you are using and your geographic location. If you do not agree this, do not click on the send button and send us an email to support@ecolearning.eu to get help without giving this information automatically. Thank you.' %}",
+      "please_login": "{% trans 'Please, log into ECO to send us a message' %}"
+    };
+    var geoadvice_translate = {
+      "ok": "{% trans 'Got it' %}",
+      "greeting": "{% trans 'Hello! Active your location' %}",
+      "greeting_2": "{% trans 'for a better educational experience' %}",
+      "video_label": "{% trans 'Location permission in' %}",
+      "more_info": "{% trans 'More information' %}",
+      "browser_details": "{% trans 'Your browser is' %}",
+      "browser_guide": {
+        "chrome": "{% blocktrans %}Active location tracking by clicking on <strong>Allow</strong> in the bar that will appear above{% endblocktrans %}",
+        "chrome-ios": "{% blocktrans %}Active location tracking by clicking on <strong>Allow</strong> in the bar that will appear below{% endblocktrans %}",
+        "chrome-android": "{% blocktrans %}Active location tracking by clicking on <strong>Allow</strong> in the bar that will appear below{% endblocktrans %}",
+        "firefox": "{% blocktrans %}Active location tracking by selecting <strong>Share Location</strong> on the dialog that will appear above{% endblocktrans %}",
+        "opera": "{% blocktrans %}Active location tracking by clicking on <strong>Allow</strong> in the dialog that will appear above{% endblocktrans %}",
+        "msie": "{% blocktrans %}Active location tracking by selecting  <strong>Always allow</strong> on the <strong>Options for this site</strong> dropdown that will appear in the bar that will appear below{% endblocktrans %}",
+        "safari": "{% blocktrans %}Active location tracking by clicking on <strong>Allow</strong> in the dialog that will appear above{% endblocktrans %}",
+        "safari-ios": "{% blocktrans %}Active location tracking by clicking on <strong>OK</strong> in the dialog that will appear{% endblocktrans %}"
+      },
+      "browser_help_link": {
+        "chrome": "https://support.google.com/chrome/answer/142065",
+        "chrome-ios": "https://support.google.com/chrome/answer/2392971",
+        "chrome-android": "https://support.google.com/chrome/answer/2392971",
+        "firefox": "https://www.mozilla.org/firefox/geolocation/",
+        "opera": "http://help.opera.com/Linux/12.10/en/geolocation.html",
+        "msie": "http://windows.microsoft.com/en-gb/internet-explorer/ie-security-privacy-settings#ie=ie-11",
+        "safari": "http://support.apple.com/HT5403",
+        "safari-ios": "http://support.apple.com/HT5594"
+      },
+      "whylocation": "{% trans 'Why tracking my location is important?' %}",
+      "whylocation_explain": "{% trans 'Allowing us to know where you are is useful for you. Why?, because we use this information to suggest you courses and user groups to enhance your learning experience. ECO are massive and open online courses with emphasis on the location and importance of networked learning. Your geographic location helps us improve your learning experience, thank you' %}",
+      "readmore": "{% trans 'Read more' %}"
+    };
+
+    var alwaysopen_translate = {
+      'ok': "{% trans 'Got it' %}",
+      "greeting": "{% trans 'Always open course' %}",
+      "greeting_2": "{% trans 'Important information' %}",
+      "info": "{% trans 'This course is always open so you can access to all contents anytime but, as the edition has been ended, there could be less people participating.' %}",
+      "footer":  "{% trans 'Come on, enter and learn more!' %}",
+    };
+  </script>
+  <script>
+    var noGeolocation = {% if not feature_geolocation %}true{% else %}false{% endif %};
+  </script>
+  <script src="{{ STATIC_URL }}js/userinfo.js"></script>
+  {% if google_analytics %}
+    <script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', '{{ google_analytics }}', 'auto');
+	  ga('send', 'pageview');
+
+	</script>
+  {% endif %}
 </head>
+{% if user.is_authenticated %}
+	{% if is_enrolled and not is_overview %}
+	<body class="course">
+	{% else %}
+	<body>
+	{% endif %}
+{% else %}
 <body>
-  <div class="container">
+{% endif %}
     <header>
-      {% get_language_info_list for LANGUAGES as languages %}
-      {% if languages|length > 1 %}
-        <ul class="unstyled pull-right" id="language-selector">
-          {% for language in languages %}
-            {% if LANGUAGE_CODE == language.name_local %}
-              <li>{{ language.name_local|capfirst }}</li>
-            {% else %}
-              <li><form action="{% url set_language %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="language" value="{{ language.code }}" />
-                <input class="btn btn-link{% if LANGUAGE_CODE == language.code %} disabled{% endif %}" type="submit" value="{{ language.name_local|capfirst }}" {% if LANGUAGE_CODE == language.code %}disabled="disabled"{% endif %}/>
-              </form></li>
-            {% endif %}
-            {% if not forloop.last %}|{% endif %}
-          {% endfor %}
-        </ul>
+    <div class="row main-bar">
+      <h1 class="logo"><a href="{{ theme.link_home }}" class="hide-text"><img src="{{ theme.logo }}" alt="logo {{ site.name }}" />{{ site.name }}. {% trans theme.subtitle %}</a></h1>
+      <img class="logo-mini" src="{{ theme.logo_mini }}" alt="logo {{ site.name }}" />
+      <ul class="btn-link pull-left" id="meta-buttons">
+        <li><a href="{{ theme.link_catalogue }}" class="btn btn-link">{% trans "Catalogue"%}</a></li>
+        {% if feature_teams %}
+        	<li><a href="#" class="btn btn-link">{% trans "Teams" %}</a></li>
+        {% endif %}
+        {% if feature_sec_about %}
+        	<li><a href="#" class="btn btn-link">{% trans "About" %}</a></li>
+        {% endif %}
+        {% if feature_sec_howitworks %}
+        	<li class="noLowRes"><a href="#" class="btn btn-link">
+	  			{% trans "How it works" %}<strong id="announcements-dont-viewed">{% if announcements_dont_viewed %} ({{ announcements_dont_viewed }}){% endif %}</strong>
+        	</a></li>
+        {% endif %}
+      </ul>
+      {%if theme.header_right_logo %}
+      <div class="extra-logo pull-right">
+        <img src="{{ theme.header_right_logo }}">
+      </div>
       {% endif %}
-      <hgroup>
-        <h1 class="logo"><a href="{% url home %}" class="hide-text"><img src="{{ theme.logo }}" alt="logo {{ site.name }}" />{{ site.name }}</a></h1>
-        <h2 class="small pull-left">{{ theme.subtitle }}</h2>
-      </hgroup>
       {% if user.is_authenticated %}
+    		{% if is_enrolled and not is_overview%}
+    			<h2 class="course-title pull-left">{{ course.name }}</h2>
+    		{% endif %}
+
         {% block useractions %}
             {% include "courses/include.useractions.html" %}
         {% endblock %}
+        </div>
+
+        {% block courseactions %}
+			     {% if is_enrolled and not is_overview %}
+				      {% include "courses/include.courseactions.html" %}
+			     {% endif %}
+		    {% endblock %}
       {% else %}
-      <div class="btn-toolbar pull-right">
-        <a class="btn" href="{% url register %}">{% trans "Register" %}</a>
-        <a class="btn" href="{% url login %}">{% trans "Log in" %}</a>
-      </div>
+        <a class="btn-link pull-right" href="{% url login %}">{% trans "Log in" %}</a>
       {% endif %}
-      <ul class="unstyled pull-right" id="meta-buttons">
-        <li><a href="{% url home %}" class="btn btn-link">
-            {% trans "Home"%}
-        </a></li>
-        |
-        <li>
-            <a href="{% url faq %}" class="btn btn-link">FAQ</a>
-        </li>
-        |
-        <li>
-            <a href="{% url methodology %}" class="btn btn-link">{% trans "Methodology" %}</a>
-        </li>
-        |
-        <li>
-            <a href="{% url portal_announcements %}" class="btn btn-link">
-                {% trans "Announcements" %}<strong id="announcements-dont-viewed">{% if announcements_dont_viewed %} ({{ announcements_dont_viewed }}){% endif %}</strong>
-            </a>
-        </li>
-      </ul>
       <div class="clearfix"></div>
     </header>
+
     <div role="main" class="{% block mainclass %}{% endblock %}">
       {% if messages %}{% for message in messages %}
-      <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
-        <button class="close" data-dismiss="alert">×</button>
-        {{ message }}
+      <div class="alert {% if message.tags %} alert-{{ message.tags }} {% endif %}">
+        <div class="container">
+          <object type="image/svg+xml" class="ok" data="{{ STATIC_URL }}img/ECO_icon_check.svg?#008833"></object>
+          <!--<button class="close" data-dismiss="alert">×</button>-->
+          {{ message|safe }}
+        </div>
       </div>
       {% endfor %}{% endif %}
 
@@ -87,30 +178,39 @@
 
       {% block content %}{% endblock %}
     </div>
-    <footer>
-      <ul>
-        <li><a href="{% url legal %}">{% trans "Legal" %}</a></li>
-        <li><a href="{% url copyright %}">&copy; {% now "Y" %} {{ site.name }}. {% trans "All rights reserved" %}</a></li>
-        {% if show_tos %}
-        <li><a href="{% url tos %}">{% trans "Terms of Use" %}</a></li>
+    <div class="expandable_lateral_bar">
+      <div class="handler">
+        <img src="{{ STATIC_URL }}img/ECO_icon_ayudame.svg" alt="{% trans "Get help" %}">
+      </div>
+      <div class="content">
+        {% if user.is_authenticated %}
+        <a id="help_button" href="#">{% trans "Support" %}</a>
+        {% else %}
+        <a id="help_button_noAuth" href="#">{% trans "Support" %}</a>
         {% endif %}
-        <li><a href="{% url contact %}">{% trans "Contact" %}</a></li>
-      </ul>
+      </div>
+    </div>
+    <footer>
+      <div class="footer">
+		<div class="row">
+	  		<p class="pull-left">
+	    		<a href="{% url copyright %}">&copy; {% now "Y" %} {{ site.name }}. {% trans "All rights reserved" %}</a>
+	  		</p>
+	  		<div class="pull-right">
+			    <ul class="inline">
+			      <li><a href="{{ theme.link_privacy }}">{% trans "Privacy Policy" %}</a></li>
+			      {% if show_tos %}
+			      <li><a href="{{ theme.link_tos }}">{% trans "Terms of Service" %}</a></li>
+			      {% endif %}
+			      <li>Powered by <a>{% trans "Open" %}{% trans "MOOC" %}</a></li>
+			    </ul>
+	  		</div>
+		</div>
+      </div>
     </footer>
-  </div>
 
   {% block extrajs %}{% endblock %}
-  {% if google_analytics %}
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      ga('create', '{{ google_analytics }}', '{{ site.domain }}');
-      ga('send', 'pageview');
-    </script>
-  {% endif %}
+  <script src="{{ STATIC_URL }}js/opencoursepopup.js"></script>
   <script type="text/javascript">
     (function($){
         $(document).ready(function () {
@@ -120,5 +220,17 @@
         });
     })(jQuery);
   </script>
+  <script>
+	$(window).scroll(function (event) {
+		var scroll = $(window).scrollTop();
+		if(scroll > 0){
+			$('body').addClass('collapsed');
+		}else{
+			$('body').removeClass('collapsed');
+		}
+	});
+  </script>
+  <script src="{{ STATIC_URL }}js/csrf-ajax.js"></script>
+  <script src="{{ STATIC_URL }}js/helppopup.js"></script>
 </body>
 </html>

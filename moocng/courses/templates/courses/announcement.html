@@ -1,12 +1,25 @@
 {% extends 'courses/base_course.html' %}
 
-{% load i18n %}
+{% load cache gravatar i18n enrollment_tags media_contents usercourses %}
 
 {% block mainclass %}announcement{% endblock %}
 
 {% block content %}
-    <h1>{{ announcement.title }}</h1>
-    <em>{% trans "Published on:" %} {{ announcement.datetime|date:"d / F / Y - H:i" }}</em>
-    <div class="content">{{ announcement.content|safe }}</div>
-    <a class="btn btn-small mb20" href="{% url course_overview course.slug %}">{% trans "Go back to Course Overview" %}</a>
+<section class="course_announcement">
+<div class="container">
+    <div class="row">
+        <div class="col-lg-16 col-md-12 col-sm-8 col-mob-4 bottom-line">
+            <h3>{% trans "Announcement" %}</h3>
+        </div>
+    </div>
+    <div class="row">
+    	<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4 announcement">
+    		<h4>{{ announcement.title }}</h4>
+    		<em class="bottom-line">{% trans "Published on:" %} {{ announcement.datetime|date:"d / F / Y - H:i" }}</em>
+    		<div class="body">{{ announcement.content|safe }}</div>
+		</div>
+    </div>
+</div>
+</section>
+    
 {% endblock %}

@@ -16,7 +16,6 @@
 from optparse import make_option
 from django.core.management.base import BaseCommand, CommandError
 
-from moocng.courses.models import Course
 from moocng.courses.utils import clone_course
 
 
@@ -33,6 +32,7 @@ class Command(BaseCommand):
         self.stdout.write("%s\n" % message.encode("ascii", "replace"))
 
     def handle(self, *args, **options):
+        from moocng.courses.models import Course
         if not options["course"]:
             raise CommandError("--course / -c param is required")
 

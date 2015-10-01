@@ -1,0 +1,68 @@
+##
+# You should look at the following URL's in order to grasp a solid understanding
+# of Nginx configuration files in order to fully unleash the power of Nginx.
+# http://wiki.nginx.org/Pitfalls
+# http://wiki.nginx.org/QuickStart
+# http://wiki.nginx.org/Configuration
+#
+# Generally, you will want to move this file somewhere, and start with a clean
+# file but keep this around for reference. Or just disable in sites-enabled.
+#
+# Please see /usr/share/doc/nginx-doc/examples/ for more detailed examples.
+##
+
+upstream moocnghubX {
+    server unix:///tmp/hubX.sock; # for a file socket
+}
+
+server {
+        listen 80;
+
+        # Make site accessible from http://localhost/
+        server_name hubX.ecolearning.eu;
+
+        access_log /home/hubX/log/access.log;
+        error_log /home/hubX/log/error.log;
+
+         # Finally, send all non-media requests to the Django server.
+        location / {
+                uwsgi_pass  moocnghubX;
+                include     /home/hubX/moocng/moocng/uwsgi_params; # the uwsgi_params file you installed
+        }
+
+        location /static {
+                alias /home/hubX/moocng/moocng/collected_static;
+        }
+
+        location /media {
+                alias /home/hubX/moocng/moocng/media;
+        }
+}
+
+# HTTPS server
+#
+server {
+        listen 443;
+        server_name hubX.ecolearning.eu;
+
+        access_log /home/hubX/log/access-ssl.log;
+        error_log /home/hubX/log/error-ssl.log;
+
+        ssl on;
+        ssl_certificate /etc/nginx/ssl/ecolearning.eu.crt;
+        ssl_certificate_key /etc/nginx/ssl/ecolearning.eu.key;
+
+        location / {
+                uwsgi_pass  moocnghubX;
+                include     /home/hubX/moocng/moocng/uwsgi_params; # the uwsgi_params file you installed
+        }
+
+        location /static {
+                alias /home/hubX/moocng/moocng/collected_static;
+        }
+
+        location /media {
+                alias /home/hubX/moocng/moocng/media;
+        }
+
+}

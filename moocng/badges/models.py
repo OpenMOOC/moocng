@@ -134,6 +134,64 @@ class Badge(models.Model):
         }
 
 
+class BadgeByCourse(models.Model):
+    CRITERIA_TYPE_CHOICES = (
+        (0, _(u'Units checkpoint')),
+        (1, _(u'Peer review')),
+        (2, _(u'Unique unit'))
+    )
+
+    title = models.CharField(verbose_name=_(u'Name'),
+                             blank=False, null=False, unique=False,
+                             max_length=255)
+
+    description = models.TextField(verbose_name=_(u'Description'),
+                             blank=False, null=True)
+
+    criteria = models.TextField(verbose_name=_(u'Criteria'),
+                               blank=False, null=False)
+
+    criteria_type = models.IntegerField(verbose_name=_(u'Criteria_type'),
+                               blank=False, null=False, choices=CRITERIA_TYPE_CHOICES)
+
+    note = models.IntegerField(verbose_name=_(u'Note'),
+                               blank=False, null=False)
+
+    color = models.TextField(verbose_name=_('Color'),
+                                   blank=False, null=False)
+
+    course = models.ForeignKey('courses.Course', verbose_name=_(u'Course'))
+
+    # New fields
+    image = models.ImageField(verbose_name=_(u'Badge image'),
+                              blank=True, null=True, upload_to='badges',
+                              validators=[validate_png_image],
+                              help_text=_(u'Upload an image to represent the '
+                                          u'badge, it must be png'))
+
+
+    @classmethod
+    def create(cls, title, description, criteria, criteria_type, note, color, course):
+        badgeByCourse = cls(title=title, description=description, criteria=criteria,criteria_type=criteria_type,note=note,color=color,course=course)
+        return badgeByCourse
+
+    class Meta:
+        verbose_name = _(u'badges_badgebycourse')
+        verbose_name_plural = _(u'badges_badgebycourse')
+
+    def __unicode__(self):
+        return self.title
+
+    def to_dict(self):
+        return {
+            'name': self.title,
+            'description': self.description,
+            'image': build_absolute_url(reverse('badge_image', args=(self.id, ) )),
+            'criteria': build_absolute_url('/'+settings.BADGES_CRITERIA_URL),
+            'issuer': build_absolute_url(reverse('issuer')),
+        }
+
+
 class Award(models.Model):
     """
     Only available verification type 'hosted' by design decision.

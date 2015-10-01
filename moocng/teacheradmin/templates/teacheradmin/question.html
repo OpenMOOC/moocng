@@ -29,13 +29,25 @@
             });
         }(jQuery));
     </script>
+    <script>
+        MOOC.trans = {
+            'saving': '{% trans "Saving changes has no finished yet" %}',
+            'delete_prompt': '{% trans "Are you sure you want to delete the item \"{0}\" in question {1}?" %}',
+            'question': '{% trans "Question" %}',
+            'label': '{% trans "Label" %}',
+            'input_text': '{% trans "Input text" %}',
+            'radio': '{% trans "Radiobutton" %}',
+            'checkbox': '{% trans "Checkbox" %}',
+        }
+    </script>
 {% endblock %}
 
 {% block section %}
 <div id="content-main">
-
+<legend>{{ kq.title }}</legend>
 <div>
   <select class="input-medium" id="option-optiontype-creation">
+    <option value="q">{% trans "Question" %}</option>
     <option value="l">{% trans "Label" %}</option>
     <option value="t">{% trans "Input text" %}</option>
     <option value="c">{% trans "Checkbox" %}</option>
@@ -44,20 +56,55 @@
   <button id="add-option" class="btn">{% trans "Add" %}</button>
 </div>
 
-<form action="{{ form_url }}" method="post">{% csrf_token %}{% block form_top %}{% endblock %}
-<fieldset>
+<form action="{{ form_url }}" method="post" {% if original.use_last_frame %}class="col-lg-16 col-md-12 col-sm-8 col-mob-4"{% else %}class="col-lg-8 col-md-6 col-sm-6 col-mob-4"{% endif %}>{% csrf_token %}{% block form_top %}{% endblock %}
 {%if original.use_last_frame %}
+<fieldset class="use-last-frame">
     {% if original.last_frame %}
         <img class="last-frame" src="{{ original.last_frame.url }}" />
     {% else %}
-        <img class="last-frame" src="{{ STATIC_URL }}img/no-image.png" />
+        <div class="last-frame" src="{{ STATIC_URL }}img/no-image.png" />
     {% endif %}
+{% else %}
+<fieldset>
 {% endif %}
 </fieldset>
 </form>
 
-<div class="span7 no-margin">
-<table id="option-properties" class="table table-bordered table-striped table-condensed">
+<div class="col-lg-8 col-md-6 col-sm-2 col-mob-4" id="option-properties">
+    <p><label for="option-name">{% trans 'Question' %}</label>
+        <input class="input-xlarge" type="text" id="option-name" disabled/></p>
+    <p><label for="option-solution">{% trans 'Solution' %}</label>
+        <input type="text" class="input-xlarge" id="option-solution" disabled/></p>
+    <p><label for="option-feedback">{% trans 'Feedback' %}</label>
+        <input type="text" class="input-xlarge" id="option-feedback" maxlength="200" disabled/></p>
+    <div class="spoiler">
+        <div class="header">
+            <a id="spoiler-toggle" href="#">{% trans 'Advanced' %}</a>
+        </div>
+        <div class="content">
+            <p><label for="option-id">{% trans "Id" %}</label>
+                <span id="option-id"></span></p>
+            <p><label for="option-optiontype">{% trans 'Type' %}</label>
+                <select class="input-medium" id="option-optiontype">
+                    <option value="l">{% trans "Label" %}</option>
+                    <option value="t">{% trans "Input text" %}</option>
+                    <option value="c">{% trans "Checkbox" %}</option>
+                    <option value="r">{% trans "Radio" %}</option>
+                </select></p>
+            <p><label for="option-x">{% trans 'Coord. X' %}</label>
+                <input class="input-small" type="number" min="0" id="option-x" /></p>
+            <p><label for="option-y">{% trans 'Coord. Y' %}</label>
+                <input class="input-small" type="number" min="0" id="option-y" /></p>
+            <p><label for="option-width">{% trans 'Width' %}</label>
+                <input class="input-small" type="number" min="1" id="option-width" /></p>
+            <p><label for="option-height">{% trans 'Height' %}</label>
+                <input class="input-small" type="number" min="1" id="option-height" /></p>
+        </div>
+    </div>
+
+    <button id="remove-option" class="btn btn-danger">{% trans "Remove" %}</button>
+
+<!--<table id="option-properties" class="table table-bordered table-striped table-condensed">
     <thead>
         <th>{% trans "Property" %}</th>
         <th>{% trans "Value" %}</th>
@@ -95,6 +142,10 @@
             <th colspan="3">{% trans "Value" %}</th>
         </thead>
         <tr>
+            <td>Group</td>
+            <td colspan="3"><input class="input-xlarge" type="text" id="option-name" /></td>
+        </tr>
+        <tr>
             <td>
                 <span id="solution-title">{% trans "Solution" %}</span>
                 <span id="content-title" class="hide">{% trans "Content" %}</span>
@@ -113,13 +164,13 @@
             </td>
         </tr>
     </tfooter>
-</table>
+</table>-->
 </div>
 
 </div>
 
 {% if goback %}
-<div class="row"><div class="span10 align-right">
+<div class="row"><div class="col-lg-16 col-md-12 col-sm-8 col-mob-8 align-right">
     <a class="btn mb20" href="{{ goback }}"><span class="icon icon-arrow-left"></span> {% trans "Go back"%}</a>
 </div></div>
 {% endif %}

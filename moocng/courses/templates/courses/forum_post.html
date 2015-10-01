@@ -1,0 +1,125 @@
+{% extends "courses/base_course.html" %}
+{% load i18n enrollment_tags %}
+{% block content %}
+
+<div class="userposts">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
+				<div class="panel">
+					<div class="header">
+						<h3>{{ post.title }}</h3>
+					</div>
+					<div class="content">
+						<div class="posts">
+							<div class="post {% if post.flaggers %}flagged{% endif %}" id="{{post.id}}">
+								<div class="cell">
+									<img class="gravatar" src={{ post.avatar}}>
+								</div>
+								<div class="cell">
+									<div class="message">
+										{% url profile_user post.username as post_profile_url %}
+										{% url profile_user_byid post.id_user as post_profile_url_byid %}
+										<a href="{% if show_username %}{{ post_profile_url }}{% else %}{{ post_profile_url_byid }}{% endif %}"><span class="namePost">{{post.first_name}} {{post.last_name}}</span></a>
+										{% if show_username %}<span class="emailPost">@{{post.username}}</span>{% endif %}
+
+										<span class="datePost">[{{post.date}}]</span>
+										{% autoescape off %}
+										<p class="postText">{{post.text|linebreaks}}</p>
+										{% endautoescape %}
+
+										<div class="tools" data-id="{{post.id}}">
+											<span class="reply">{% trans "Reply" %}</span>
+											<form class="postReply" method="post" action="{% url course_forum_reply course.slug post.id post.id %}">
+												{% csrf_token %}
+												{{ formReply }}
+												<input type="hidden" name="context_geo_lat" value="0.0"/>
+												<input type="hidden" name="context_geo_lon" value="0.0"/>
+												<input class="postButton" type="submit" value="{% trans "Send" %}">
+												<span class="cancelReply">{% trans "Cancel" %}</span>
+											</form>
+											<!-- <span class="favourite">0</span> -->
+											<span class="karma
+													{% if post.user_vote > 0 %}
+														upvoted
+													{% elif post.user_vote < 0 %}
+														downvoted
+													{% endif %}
+												">
+												<span>
+													{% if post.votes %}
+														{{ post.votes }}
+													{% else %}
+														0
+													{% endif %}
+												</span>
+												{% if post.user_id != user.id %}
+													<a href="/course/{{ course.slug }}/forum/{{ post.id }}/upvote/{{ post.id }}" data-vote="1"><img src="{{ STATIC_URL }}img/ECO_icon_flecha_selector_up_black.svg" alt="{% trans "Vote +1" %}"  title="{% trans "Vote +1" %}"></a>
+													<a href="/course/{{ course.slug }}/forum/{{ post.id }}/downvote/{{ post.id }}" data-vote="-1"><img src="{{ STATIC_URL }}img/ECO_icon_flecha_selector_down_black.svg" alt="{% trans "Vote -1" %}" title="{% trans "Vote -1" %}"></a>
+												{% endif %}
+											</span>
+											<span class="flag">
+												<a href="{% url course_forum_post_flag course.slug post.id %}">
+													{% trans "Flag" %}
+												</a>
+											</span>
+											{% if post.user_id == user.id or is_teacher or user.is_staff or user.is_superuser %}
+												<span class="edit">{% trans "Edit" %}</span>
+												<form class="postEdit" method="post" action="{% url course_forum_post_edit course.slug post.id post.id %}">
+													{% csrf_token %}
+													{{ formEdit }}
+													<input type="hidden" name="context_geo_lat" value="0.0"/>
+						 						 	<input type="hidden" name="context_geo_lon" value="0.0"/>
+													<input class="postButton" type="submit" value="{% trans "Edit" %}">
+													<span class="cancelEdit">{% trans "Cancel" %}</span>
+												</form>
+											{% endif %}
+											{% if post.user_id == user.id or is_teacher or user.is_staff or user.is_superuser %}
+												<span class="delete">
+													<a href="{% url course_forum_post_delete course.slug post.id %}">
+														{% trans "Delete" %}
+													</a>
+												</span>
+											{% endif %}
+											<span class="permalink">
+												<a href="/course/{{ course.slug }}/forum/{{ post.id }}#{{ post.id }}">
+													{% trans "Permalink" %}
+												</a>
+											</span>
+										</div>
+									</div>
+								</div>
+								{% if post.replies|length > 0 %}
+								<div class="replies">
+									{% for reply in post.replies %}
+										{% include "courses/forum_reply.html" %}
+									{% endfor %}
+								</div>
+								{% endif %}
+							</div>
+							<div class="clearfix"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	var course_slug = '{{ course.slug }}';
+	var forum_trans = {
+		'confirm_flag': '{% trans "Are you sure you want to flag this post?" %}',
+		'confirm_delete': '{% trans "Are you sure you want to delete this post?" %}',
+		'cant_delete_children': '{% trans "Sorry, you cannot delete this post as long as it contains replies" %}'
+	}
+	window.setTimeout(function(){
+		if(geolocation){
+			$("input[name=context_geo_lat]").val(geolocation.coords.latitude);
+			$("input[name=context_geo_lon]").val(geolocation.coords.longitude);
+		}
+	}, 2500);
+</script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/forum.js"></script>
+
+{% endblock %}

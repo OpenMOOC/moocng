@@ -91,6 +91,16 @@ class EvaluationCriterion(Sortable):
                              blank=False, null=False)
     description = models.TextField(verbose_name=_(u'Description'),
                                    blank=True, null=False)
+    description_score_1 = models.TextField(verbose_name=_(u'Description for score 1'),
+                                        blank=True, null=False)
+    description_score_2 = models.TextField(verbose_name=_(u'Description for score 2'),
+                                        blank=True, null=False)
+    description_score_3 = models.TextField(verbose_name=_(u'Description for score 3'),
+                                        blank=True, null=False)
+    description_score_4 = models.TextField(verbose_name=_(u'Description for score 4'),
+                                        blank=True, null=False)
+    description_score_5 = models.TextField(verbose_name=_(u'Description for score 5'),
+                                        blank=True, null=False)
     objects = EvaluationCriterionManager()
 
     class Meta(Sortable.Meta):

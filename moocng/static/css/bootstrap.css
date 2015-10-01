@@ -3206,8 +3206,8 @@ input[type="button"].btn-block {
 .btn-primary.disabled,
 .btn-primary[disabled] {
   color: #ffffff;
-  background-color: #0044cc;
-  *background-color: #003bb3;
+  background-color: #d0d0d0;
+  *background-color: #d0d0d0;
 }
 
 .btn-primary:active,

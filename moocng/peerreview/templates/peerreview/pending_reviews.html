@@ -8,7 +8,7 @@
 
 {% if assigned.count > 0 %}
 
-<p>{% trans "You are currently reviewing the following submissions:" %}</p>
+<h6>{% trans "You are currently reviewing the following submissions:" %}</h6>
 
 <ul>
   {% for assign in assigned %}
@@ -22,7 +22,13 @@
 
 {% if has_sent_submission %}
 <form action="{% url course_review_assign course_slug peer_review_assignment_id %}" method="post">{% csrf_token %}
-  <input type="submit" class="btn btn-primary" value='{% trans "Review another submission" %}' />
+  <input type="submit" class="btn btn-primary" 
+  {% if reviewed.count == 0 %}
+  	value='{% trans "Review a submission" %}'
+  {% else %}
+  	value='{% trans "Review another submission" %}'
+  {% endif %}
+   />
 </form>
 {% else %}
 <p><span class="icon-warning-sign"></span> {% trans "You must send your submission before reviewing your classmates' ones" %}</p>
@@ -32,7 +38,7 @@
 
 
 {% if reviewed.count > 0 %}
-<h5>{% trans "Submissions already reviewed" %}</h5>
+<h6>{% trans "Submissions already reviewed" %}:</h6>
 
 <ul>
   {% for review in reviewed %}
@@ -44,7 +50,7 @@
 
 {% if pending > 0 %}
 
-<p><span class="icon-warning-sign"></span> {% blocktrans count counter=pending %}You still need to review {{ pending }} more submission.{% plural %}You still need to review {{ pending }} more submissions.{% endblocktrans %}
+<p><span class="icon-warning-sign"></span> {% blocktrans count counter=pending %}You still need to review <strong>{{ pending }}</strong> more submission.{% plural %}You still need to review <strong>{{ pending }}</strong> more submissions.{% endblocktrans %}
 </p>
 
 {% endif %}

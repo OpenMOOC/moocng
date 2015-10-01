@@ -27,6 +27,8 @@ handler500 = 'django.views.defaults.server_error'
 
 urlpatterns = patterns('',
 
+    url(r'^', include('moocng.eco_api.urls')),
+
     url(r'^', include('moocng.courses.urls')),
 
     url(r'^', include('moocng.peerreview.urls')),
@@ -50,6 +52,8 @@ urlpatterns = patterns('',
     url(r'^category/', include('moocng.categories.urls')),
 
     url(r'^auth/', include('moocng.auth_handlers.urls')),
+
+    url(r'^', include('moocng.profile.urls')),
 )
 
 if settings.DEBUG:

@@ -7,34 +7,73 @@
 {% block mainclass %}classroom{% endblock %}
 
 {% block extraheader %}
+    <meta name="twitter:card" value="summary">
+    {% if course.thumbnail %}
+    <meta property="og:image" content="http://{{ site }}{{ MEDIA_URL }}{{ course.thumbnail }}"/>
+    <meta itemprop="image" content="http://{{ site }}{{ MEDIA_URL }}{{ course.thumbnail }}">
+    <meta name="twitter:image" content="http://{{ site }}{{ MEDIA_URL }}{{ course.thumbnail }}">
+    {% else %}
+    <meta property="og:image" content="http://{{ site }}{{ STATIC_URL }}img/classroom.jpg"/>
+    <meta itemprop="image" content="http://{{ site }}{{ STATIC_URL }}img/classroom.jpg">
+    <meta name="twitter:image" content="http://{{ site }}{{ STATIC_URL }}img/classroom.jpg">
+    {% endif %}
+    <meta property="og:title" content="{{ course.name }} - {{ site.name }}"/>
+    <meta itemprop="name" content="{{ course.name }} - {{ site.name }}">
+    <meta name="twitter:title" content="{{ course.name }} - {{ site.name }}">
+    <meta name="description" content="{{ course.description|removetags:"p" }}">
+    <meta property="og:description" content="{{ course.description|removetags:"p" }}"/>
+    <meta itemprop="description" content="{{ course.description|removetags:"p" }}">
+    <meta name="twitter:description" content="{{ course.description|removetags:"p" }}">
+
     <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui-1.9.2.custom.min.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-datepicker.css">
     <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-fileupload.2.3.1-j6.min.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/ableplayer.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/ableplayer-transcript.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/popover.css">
     {% if mathjax_enabled %}
       {% mathjax_scripts %}
     {% endif %}
 {% endblock %}
 
 {% block content %}
+<div class="alerts">
+    <div class="alert alert-block alert-error hide">
+        <div class="container">
+            <h4 class="alert-heading">title</h4>
+            <p>message</p>
+        </div>
+    </div>
+    <div class="alert alert-block alert-success hide">
+        <div class="container">
+            <h4 class="alert-heading">title</h4>
+            <p>message</p>
+        </div>
+    </div>
+    <div class="alert alert-block alert-info hide">
+        <div class="container">
+            <h4 class="alert-heading">title</h4>
+            <p>message</p>
+        </div>
+    </div>
+</div>
 <script id="peer-review-tpl" type="text/template">
     <div class='solution-wrapper white'><form method='post' action='{% url course_review_upload course_slug=course.slug %}' enctype='multipart/form-data'>
         {% csrf_token %}
-        <h4>{% trans "Peer review assignment" %}</h4>
+        <h4>
+			{% trans "Peer review assignment" %}
+			<a href="#" class='btn' id='pr-view-criteria'><span class="icon-info-sign"></span> ({% trans "Evaluation criteria" %})</a>
+		</h4>
         <div id='pr-description' class="mathjax"></div>
-
-        <p class="align-right">
-            <button class='btn' id='pr-view-criteria'><span class="icon-info-sign"></span> {% trans "View the evaluation criteria" %}</button>
-        </p>
 
         <div class="alert">
             <strong>{% trans "Remember!" %}</strong> {% trans "At least one, the text or the file, must be present in the submission." %}
         </div>
 
         <label for='pr-submission'><strong>{% trans "Write your submission here:" %}</strong></label>
-        <p>{% blocktrans with max=peer_review.text_max_size %}The max length of the text is {{ max }} characters.{% endblocktrans %}</p>
-        <textarea id='pr-submission' name='pr-submission' maxlength='{{ peer_review.text_max_size }}'></textarea>
+        <textarea id='pr-submission' name='pr-submission' maxlength='{{ peer_review.text_max_size }}' placeholder='{% blocktrans with max=peer_review.text_max_size %}The max length of the text is {{ max }} characters.{% endblocktrans %}'></textarea>
 
-        <label for='id_pr_file'><strong>{% trans "Attach a file to your submission:" %}</strong></label>
+        <label for='id_pr_file'><strong>{% trans "Or attach a file to your submission:" %}</strong></label>
         <div class='fileupload fileupload-new' data-provides='fileupload'>
             <div class='input-append'>
                 <div class='uneditable-input span3'>
@@ -57,7 +96,6 @@
 
 <div id="evaluation-criteria" class="modal hide fade">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h3>{% trans "Evaluation criteria" %}</h3>
     </div>
     <div class="modal-body mathjax"></div>
@@ -75,7 +113,10 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn" data-dismiss="modal">{% trans "Cancel" %}</button>
-        <button type="button" class="btn btn-danger" id="pr-confirm">{% trans "Send" %}</button>
+        <button type="button" class="btn squared" id="pr-confirm">
+            {% trans "Send" %}
+            <svg width="16px" height="14px" viewBox="0 0 16 14"><polygon points="7,2 11.113,6 1,6 1,8 11.138,8 7,12 8.414,13.414 15,7 8.414,0.586   "/></svg>
+        </button>
     </div>
 </div>
 
@@ -99,69 +140,173 @@
     </div>
 </div>
 
-<div class="row"><div class="span8">
-    <h2 id="kq-title"></h2>
-</div></div>
-<div class="row mb20">
-    <section class="span8">
-        <div class="row">
-            <div class="span8" id="kq-video"></div>
-        </div>
-        <div class="row">
-            <div class="span2">
-                <button class="btn" id="kq-previous">{% trans "Previous" %}</button>
-            </div>
-            <div class="span4 hide" id="kq-q-buttons">
-                <button class="btn" id="kq-q-showkq">{% trans "Show lecture" %}</button>
-                <button class="btn" id="kq-q-submit">{% trans "Submit" %}</button>
-            </div>
-            <div class="span2 offset4" id="kq-next-container">
-                <button class="btn pull-right" id="kq-next">{% trans "Next" %}</button>
-            </div>
-        </div>
-        <div class="row alerts">
-            <div class="span4 offset2">
-                <div class="alert alert-block alert-error hide">
-                    <h4 class="alert-heading">title</h4>
-                    <p>message</p>
-                </div>
-                <div class="alert alert-block alert-success hide">
-                    <h4 class="alert-heading">title</h4>
-                    <p>message</p>
-                </div>
-                <div class="alert alert-block alert-info hide">
-                    <h4 class="alert-heading">title</h4>
-                    <p>message</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <div class="span4" id="unit-selector">
-        {% for unit in unit_list %}
-        <div class="accordion-group">
-            <div class="accordion-heading">
-                <a class="accordion-toggle" href="#unit{{ unit.id }}" data-target="#unit{{ unit.id }}-container" data-parent="#unit-selector"><span class="badge {{ unit.badge_class }}" title="{{ unit.badge_tooltip }}">{{ unit.unittype|capfirst }}</span> - {{ unit.title }}</a>
-            </div>
-            <div id="unit{{ unit.id }}-container" class="collapse accordion-body" unit-type="{{ unit.unittype }}">
-                <div class="accordion-inner"></div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
+<!-- NUGGET VIEW -->
+<div class="container nugget-view">
+	<div class="row kq-header">
+		<div class="col-lg-12 col-md-8 col-sm-5 col-mob-4">
+			<h2 id="kq-title" class="pull-left">{{ course.title }}</h2>
+			<a class="bookmark pull-right" id="bookmark_btn" href="#"><img src="{{ STATIC_URL }}img/ECO_icon_marcador_0.svg" alt="{% trans 'Bookmark' %}"></a>
+		</div>
+		<div class="col-lg-4 col-md-4 col-sm-3 col-mob-4 pull-right pull-up">
+            {% if feature_social %}
+			<a class="hide-text social_like facebook selected" href="#">{% trans 'Like this on Facebook' %} <span>10</span></a>
+			<a class="hide-text social_like gplus" href="#">{% trans '+1 on Google+' %} <span>10</span></a>
+            {% endif %}
+            <a class="hide-text social_share_btn" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" id="share_fb">
+                <svg width="48" height="36">
+                    <g>
+                        <path d="M44.547,310.009h-3.563c0,5.373,0,11.991,0,11.991H36c0,0,0-6.551,0-11.991L33,310v-4h3v-2.97
+                            c0-1.963,0.932-5.03,5.029-5.03H45v4c0,0-2.564,0-3,0c-0.437,0-1,0.062-1,1v3h4L44.547,310.009z"/>
+                        <rect x="15" y="286" fill="none" width="48" height="48"/>
+                    </g>
+                    <g>
+                        <path d="M29.547,24.009h-3.563c0,5.373,0,11.991,0,11.991H21c0,0,0-6.551,0-11.991L18,24v-4h3v-2.97c0-1.963,0.932-5.03,5.029-5.03
+                            H30v4c0,0-2.564,0-3,0c-0.437,0-1,0.062-1,1v3h4L29.547,24.009z"/>
+                    </g>
+                </svg>
+            </a>
+            <a class="hide-text social_share_btn" target="_blank" href="https://twitter.com/home?status={{ request.build_absolute_uri }}" id="share_tw">
+                <svg width="48" height="36">
+                    <path d="M33.543,19.107c0.011,0.211,0.016,0.422,0.016,0.636c0,6.507-4.953,14.01-14.01,14.01c-2.782,0-5.369-0.814-7.549-2.212
+                    c0.387,0.044,0.777,0.067,1.175,0.067c2.309,0,4.43-0.785,6.114-2.106c-2.153-0.041-3.973-1.465-4.598-3.419
+                    c0.3,0.056,0.607,0.088,0.926,0.088c0.449,0,0.885-0.062,1.296-0.173c-2.25-0.454-3.949-2.443-3.949-4.828c0-0.021,0-0.041,0-0.062
+                    c0.665,0.369,1.424,0.589,2.231,0.615c-1.322-0.882-2.19-2.391-2.19-4.099c0-0.902,0.243-1.749,0.667-2.476
+                    c2.427,2.979,6.057,4.939,10.148,5.145c-0.084-0.36-0.128-0.735-0.128-1.122c0-2.719,2.204-4.922,4.925-4.922
+                    c1.415,0,2.695,0.598,3.594,1.553c1.12-0.22,2.175-0.63,3.127-1.195c-0.369,1.151-1.148,2.115-2.165,2.725
+                    c0.996-0.117,1.945-0.384,2.827-0.773C35.341,17.546,34.506,18.413,33.543,19.107z"/>
+                </svg>
+            </a>
+            <a class="hide-text social_share_btn" target="_blank"  href="https://plus.google.com/share?url={{ request.build_absolute_uri }}" id="share_gplus">
+                <svg width="48" height="36"><g>
+                    <g>
+                        <path d="M24.407,25.734c-0.656-0.492-2.083-1.5-2.083-2.177c0-0.794,0.226-1.184,1.421-2.118c1.223-0.955,2.089-2.215,2.089-3.779
+                            c0-1.705-0.696-3.249-2.007-3.999h1.857L27.265,12c0,0-5.223,0-7.073,0c-3.589,0-6.581,2.648-6.581,5.561
+                            c0,2.974,1.965,5.347,5.342,5.347c0.234,0,0.463-0.015,0.686-0.029c-0.22,0.419-0.375,0.888-0.375,1.38
+                            c0,0.826,0.454,1.298,1.017,1.843c-0.425,0-0.835,0.012-1.283,0.012c-4.11,0-6.987,2.83-6.987,5.543
+                            c0,2.675,3.469,4.345,7.579,4.345c4.685,0,7.565-2.657,7.565-5.332C27.153,28.526,26.69,27.448,24.407,25.734z M16.271,17.514
+                            c-0.331-2.502,0.949-4.418,2.854-4.362c1.906,0.059,3.538,2.112,3.866,4.614c0.328,2.505-0.768,4.116-2.673,4.061
+                            C18.411,21.768,16.6,20.019,16.271,17.514z M19.571,34.819c-2.84,0-4.893-1.799-4.893-3.958c0-2.118,2.407-3.943,5.249-3.911
+                            c0.662,0.006,1.28,0.111,1.84,0.293c1.544,1.072,2.786,1.743,3.1,2.965c0.059,0.246,0.091,0.501,0.091,0.762
+                            C24.958,33.132,23.566,34.819,19.571,34.819z"/>
+                    </g>
+                    <polygon points="35.998,15 32.998,15 32.998,12 30.998,12 30.998,15 27.998,15 27.998,17 30.998,17 30.998,20 32.998,20 32.998,17
+                        35.998,17   "/>
+                </g></svg>
+            </a>
+            <a class="hide-text share" id="course-share" href="#">{% trans 'Share' %}</a>
+		</div>
+	</div>
+	<div class="row kq">
+		<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
+			<div id="kq-video"></div>
+			<div class="row">
+				<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
+					<div id="kq-q-buttons">
+						<a class="btn pull-left" id="kq-q-showkq"><img src="{{ STATIC_URL }}img/ECO_icon_contenido_video.svg"><span>{% trans "Show lecture" %}</span></a>
+						<a class="btn squared" id="kq-q-submit">
+                            <span>{% trans "Submit answer" %}</span>
+                            <svg width="16px" height="14px">
+                                <polygon points="7,2 11.113,6 1,6 1,8 11.138,8 7,12 8.414,13.414 15,7 8.414,0.586   "/>
+                            </svg>
+                        </a>
+						<a class="btn pull-right" id="kq-q-showq"><span>{% trans "Do activity" %}</span><img src="{{ STATIC_URL }}img/ECO_icon_contenido_tarea-test.svg"></a>
+						<a class="btn pull-right" id="kq-q-showa"><span>{% trans "Show result" %}</span></a>
+					</div>
+				</div>
+			</div>
+			<div class="row kq-extrainfo">
+				<ul>
+					<li>
+						<h4>{% trans "Instructor's comments" %}</h4>
+						<div class="mathjax" id="comments"></div>
+					</li>
+					<li>
+						<h4>{% trans "Supplementary material" %}</h4>
+						<div class="mathjax" id="supplementary"></div>
+					</li>
+					<li>
+						<h4>{% trans "Attachments" %}</h4>
+						<div id="attachments"><ul></ul></div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<!--<div class="col-lg-4 col-md-4 col-sm-8 col-mob-4">
+			<div class="dash-box">
+				<div class="title">
+					<h3>{% trans "Class forum" %}</h3>
+				</div>
+				<div class="content">
+					<div class="feed">
+						<ul>
+							<li>
+								<div>
+									<h5>Héctor García <span>@hectorg</span></h5>
+									<p class="date">20 jul 2014</p>
+									<p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent tincidunt ligula sit amet enim tristique, malesuada iaculis erat vulputate.</p>
+								</div>
+							</li>
+							<li>
+								<div>
+									<h5>Héctor García <span>@hectorg</span></h5>
+									<p class="date">20 jul 2014</p>
+									<p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent tincidunt ligula sit amet enim tristique, malesuada iaculis erat vulputate.</p>
+								</div>
+							</li>
+							<li class="read">
+								<div>
+									<h5>Héctor García <span>@hectorg</span></h5>
+									<p class="date">20 jul 2014</p>
+									<p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div class="bottom-bar">
+						<a href="#" class="button pull-right">{% trans "Post in the forum" %}<img src="{{ STATIC_URL }}/img/ECO_icon_comentar_foro.svg"></a>
+					</div>
+				</div>
+			</div>
+		</div>-->
+	</div>
 </div>
+<div class="kq-navigation">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4 wrapper">
+				<a id="kq-previous">
+					<span class="label">{% trans "Previous" %}</span>
+					<span class="title"></span>
+				</a>
+				<a id="kq-next">
+					<span class="label">{% trans "Next" %}</span>
+					<span class="title"></span>
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="unit-selector">
+	<a class="handle"><img src="{{ STATIC_URL }}img/ECO_icon_toc.svg"></a>
 
-<div class="row">
-    <section class="span12">
-        <ul class="nav nav-tabs">
-            <li class="active"><a href="#comments" data-toggle="tab">{% trans "Instructor's comments" %}</a></li>
-            <li><a href="#supplementary" data-toggle="tab">{% trans "Supplementary material" %}</a></li>
-        </ul>
-
-        <div class="tab-content">
-            <div class="tab-pane active mathjax" id="comments"></div>
-            <div class="tab-pane mathjax" id="supplementary"></div>
-        </div>
-    </section>
+	<div class="unit-menu">
+		<div class="heading">
+			<a class="title" href="#"><img src="{{ STATIC_URL }}img/ECO_icon_toc.svg">{% trans "Index" %}</a>
+			<a class="syllabus-link" href="#">{% trans "Syllabus" %}</a>
+		</div>
+		<ol>
+			{% for unit in unit_list %}
+			<li class="accordion-group">
+				<div class="accordion-heading">
+                    <a class="accordion-toggle" href="{% if unit.status = 'p' %}#unit{{ unit.id }}{% else %}#{% endif %}" data-target="#unit{{ unit.id }}-container" data-parent="#unit-selector"><span class="badge {{ unit.badge_class }}" title="{{ unit.badge_tooltip }}">{{ unit.unittype|capfirst }}</span> - {{ unit.title }}</a>
+				</div>
+				<div id="unit{{ unit.id }}-container" class="collapse accordion-body" unit-type="{{ unit.unittype }}">
+					<div class="accordion-inner"></div>
+				</div>
+			</li>
+			{% endfor %}
+		</ol>
+	</div>
 </div>
 {% endblock %}
 
@@ -172,6 +317,7 @@
     <script src="{{ STATIC_URL }}js/libs/backbone-0.9.2.min.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/libs/async.min.js" type="text/javascript"></script>
     <script src="{% url jsi18n %}" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/popover.js"></script>
     {% media_contents_javascripts course=course %}
     {% compress js %}
     <script src="{{ STATIC_URL }}js/ajax.js" type="text/javascript"></script>
@@ -224,7 +370,12 @@
                 asMinutes: "{% trans "minutes" %}",
                 asRequisites: "{% trans "Requisites for making a reservation:" %}",
                 asReservations: "{% trans "Reservations: " %}",
-                asSlotLength:  "{% trans "Slot length: " %}"
+                asSlotLength:  "{% trans "Slot length: " %}",
+                video: "{% trans "Video" %}",
+                videoTooltip: "{% trans "Video" %}",
+                presentation: "{% trans "Presentación" %}",
+                presentationTooltip: "{% trans "Presentación" %}",
+                clue: "{% trans "Clue" %}"
             },
             peerreview: {
                 prFileMaxSize: "{% trans "Your file is too big" %}",
@@ -254,6 +405,9 @@
                 file_max_size: {{ peer_review.file_max_size }}
             }
         };
+        MOOC.vars = MOOC.vars || {};
+        MOOC.vars.user_id = '{{ user.get_profile.sub }}';
+        MOOC.vars.course_name = '{{ course.name }}';
         MOOC.init({{ course.id }}, true);
     </script>
 {% endblock %}

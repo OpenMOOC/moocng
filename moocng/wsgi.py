@@ -18,8 +18,8 @@ import os
 import sys
 
 
-sys.path.insert(0, '/etc/openmooc/moocng/')
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "moocngsettings")
+#sys.path.insert(0, '/etc/openmooc/moocng/')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "moocng.settings")
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
@@ -27,8 +27,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "moocngsettings")
 #from django.core.wsgi import get_wsgi_application
 #application = get_wsgi_application()
 
-import warnings
-warnings.simplefilter("ignore")
+#import warnings
+#warnings.simplefilter("ignore")
 
 
 # Apply WSGI middleware here.

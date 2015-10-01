@@ -38,18 +38,19 @@ $(document).ready(function () {
 {% endblock %}
 
 {% block section %}
+<legend>{% trans "Send mail" %}</legend>
 <div class="row">
     <div class="span10">
         <h2>{% trans "Send an email to every student"%}</h2>
 
         {% if remain_send_emails > 0 %}
-            <div class="alert alert-block">
+            <div class="alert alert-block notfixed">
                 <h4>{% trans "Be aware!" %}</h4>
                 {% blocktrans %}You are about to send an email to <strong>{{ students }} students</strong>.{% endblocktrans %}
                 {% blocktrans with max_mass_emails_month=course.max_mass_emails_month %}This course can send <strong>{{ remain_send_emails }}</strong> (of {{ max_mass_emails_month }}) e-mails this month still.{% endblocktrans %}
             </div>
         {% else %}
-            <div class="alert alert-error">
+            <div class="alert alert-error notfixed">
                 <h4>{% trans "I'm sorry!" %}</h4>
                 {% blocktrans with max_mass_emails_month=course.max_mass_emails_month %}This course has exceeded the maximum of emails that it can send this month: {{ max_mass_emails_month }}.{% endblocktrans %}
             </div>

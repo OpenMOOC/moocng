@@ -1,6 +1,32 @@
 {% load i18n %}
-<div class="box action-box">
+<div class="button">
   <form method="post" action="{% url free_enrollment course.slug %}">{% csrf_token %}
-    <input type="submit" class="btn btn-large btn-primary" value="{% trans "Enroll me in this course" %}" />
+    <input id="enrollment_btn" type="submit" value="{% trans "Enroll me" %}" />
+    <svg width="26px" height="26px">
+		<path fill="#000000" d="M25,14H14v11h-2V14H1v-2h11V1h2v11h11V14z"/>
+    </svg>
   </form>
 </div>
+<script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.cookie.js"></script>
+<script>
+	$("#enrollment_btn").click(function(e){
+		e.preventDefault();
+		latitude = 0.0;
+		longitude = 0.0;
+		if(geolocation){
+			latitude = geolocation.coords.latitude;
+			longitude = geolocation.coords.longitude;
+		}
+		$.ajax({
+			url: '{% url free_enrollment course.slug %}',
+			type: 'POST',
+			data: {
+				latitude: latitude,
+				longitude: longitude
+			},
+			headers: {
+				"X-CSRFToken": $.cookie('csrftoken')
+			}
+		}).done(function(){ window.location.href='{% url course_dashboard course.slug %}'; });
+	});
+</script>

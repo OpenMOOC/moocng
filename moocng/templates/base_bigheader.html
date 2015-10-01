@@ -1,0 +1,201 @@
+{% load i18n %}<!DOCTYPE html>
+<html class="no-js" lang="{{ LANGUAGE_CODE }}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>{{ site.name }}</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <meta name="viewport" content="width=device-width">
+
+  <link rel="apple-touch-icon" sizes="57x57" href="{{ theme.favicon_dir }}apple-touch-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="{{ theme.favicon_dir }}apple-touch-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="{{ theme.favicon_dir }}apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="{{ theme.favicon_dir }}apple-touch-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="{{ theme.favicon_dir }}apple-touch-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="{{ theme.favicon_dir }}apple-touch-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="{{ theme.favicon_dir }}apple-touch-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="{{ theme.favicon_dir }}apple-touch-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ theme.favicon_dir }}apple-touch-icon-180x180.png">
+  <link rel="icon" type="image/png" href="{{ theme.favicon_dir }}favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="{{ theme.favicon_dir }}android-chrome-192x192.png" sizes="192x192">
+  <link rel="icon" type="image/png" href="{{ theme.favicon_dir }}favicon-96x96.png" sizes="96x96">
+  <link rel="icon" type="image/png" href="{{ theme.favicon_dir }}favicon-16x16.png" sizes="16x16">
+  <link rel="icon" type="image/x-icon" href="{{ theme.favicon_dir }}favicon.ico">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-TileImage" content="{{ theme.favicon_dir }}mstile-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+
+  <!--<link rel="stylesheet" href="{{ theme.bootstrap_css }}">-->
+  <!--<link rel="stylesheet" href="{{ theme.moocng_css }}">-->
+
+  <link href='//fonts.googleapis.com/css?family=Open+Sans:300,400italic,400,700,800' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/grid.css" />
+  <link rel="stylesheet" type="text/css" href="{{ theme.moocng_css }}" />
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-1.7.2.min.js"><&#47;script>');</script>
+  <script src="{{ STATIC_URL }}js/libs/modernizr-2.5.3.min.js"></script>
+  <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
+  {% block extraheader %}{% endblock %}
+  {% if google_analytics %}
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', '{{ google_analytics }}', 'auto');
+      ga('send', 'pageview');
+    </script>
+  {% endif %}
+</head>
+<body>
+    <header class="big">
+		<div class="row main-bar">
+			<h1 class="logo"><a href="{{ theme.link_home }}" class="hide-text"><img src="{{ theme.logo_big }}" alt="logo {{ site.name }}" />{{ site.name }}. {% trans theme.subtitle %}</a></h1>
+			<ul class="btn-link pull-left" id="meta-buttons">
+				<li><a href="{{ theme.link_catalogue }}" class="btn btn-link smooth-link">{% trans "Catalogue"%}</a></li>
+				{% if feature_teams %}
+		        	<li><a href="#" class="btn btn-link">{% trans "Teams" %}</a></li>
+		        {% endif %}
+		        {% if feature_sec_about %}
+		        	<li><a href="#" class="btn btn-link">{% trans "About" %}</a></li>
+		        {% endif %}
+		        {% if feature_sec_howitworks %}
+		        	<li class="noLowRes"><a href="#" class="btn btn-link">
+			  			{% trans "How it works" %}<strong id="announcements-dont-viewed">{% if announcements_dont_viewed %} ({{ announcements_dont_viewed }}){% endif %}</strong>
+		        	</a></li>
+		        {% endif %}
+			</ul>
+			{%if theme.header_right_logo %}
+			<div class="extra-logo pull-right">
+				<img src="{{ theme.header_right_logo }}">
+			</div>
+			{% endif %}
+			{% if user.is_authenticated %}
+				{% block useractions %}
+					{% include "courses/include.useractions.html" %}
+				{% endblock %}
+			{% else %}
+				<a class="btn-link pull-right" href="{% url login %}">{% trans "Log in" %}</a>
+			{% endif %}
+		</div>
+		<div class="clearfix"></div>
+    </header>
+
+    <div role="main" class="{% block mainclass %}{% endblock %}">
+      {% if messages %}{% for message in messages %}
+      <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
+        <button class="close" data-dismiss="alert">×</button>
+        {{ message }}
+      </div>
+      {% endfor %}{% endif %}
+
+      {% block nav %}{% endblock %}
+
+      {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+    	{% if feature_social %}
+      <div class="social_links">
+		<div class="container">
+		  {% trans "Follow us" %}
+		  <ul class="icons">
+		    <li class="facebook"><a target="_blank" href="#">
+				<svg>
+					<g>
+						<path d="M44.547,310.009h-3.563c0,5.373,0,11.991,0,11.991H36c0,0,0-6.551,0-11.991L33,310v-4h3v-2.97
+							c0-1.963,0.932-5.03,5.029-5.03H45v4c0,0-2.564,0-3,0c-0.437,0-1,0.062-1,1v3h4L44.547,310.009z"/>
+						<rect x="15" y="286" fill="none" width="48" height="48"/>
+					</g>
+					<g>
+						<path d="M29.547,24.009h-3.563c0,5.373,0,11.991,0,11.991H21c0,0,0-6.551,0-11.991L18,24v-4h3v-2.97c0-1.963,0.932-5.03,5.029-5.03
+							H30v4c0,0-2.564,0-3,0c-0.437,0-1,0.062-1,1v3h4L29.547,24.009z"/>
+					</g>
+				</svg>
+			</a></li>
+		    <li class="twitter"><a target="_blank" href="#" >
+				<svg>
+					<path d="M33.543,19.107c0.011,0.211,0.016,0.422,0.016,0.636c0,6.507-4.953,14.01-14.01,14.01c-2.782,0-5.369-0.814-7.549-2.212
+					c0.387,0.044,0.777,0.067,1.175,0.067c2.309,0,4.43-0.785,6.114-2.106c-2.153-0.041-3.973-1.465-4.598-3.419
+					c0.3,0.056,0.607,0.088,0.926,0.088c0.449,0,0.885-0.062,1.296-0.173c-2.25-0.454-3.949-2.443-3.949-4.828c0-0.021,0-0.041,0-0.062
+					c0.665,0.369,1.424,0.589,2.231,0.615c-1.322-0.882-2.19-2.391-2.19-4.099c0-0.902,0.243-1.749,0.667-2.476
+					c2.427,2.979,6.057,4.939,10.148,5.145c-0.084-0.36-0.128-0.735-0.128-1.122c0-2.719,2.204-4.922,4.925-4.922
+					c1.415,0,2.695,0.598,3.594,1.553c1.12-0.22,2.175-0.63,3.127-1.195c-0.369,1.151-1.148,2.115-2.165,2.725
+					c0.996-0.117,1.945-0.384,2.827-0.773C35.341,17.546,34.506,18.413,33.543,19.107z"/>
+				</svg>
+			</a></li>
+		    <li class="gplus"><a target="_blank"  href="#">
+				<svg><g>
+					<g>
+						<path d="M24.407,25.734c-0.656-0.492-2.083-1.5-2.083-2.177c0-0.794,0.226-1.184,1.421-2.118c1.223-0.955,2.089-2.215,2.089-3.779
+							c0-1.705-0.696-3.249-2.007-3.999h1.857L27.265,12c0,0-5.223,0-7.073,0c-3.589,0-6.581,2.648-6.581,5.561
+							c0,2.974,1.965,5.347,5.342,5.347c0.234,0,0.463-0.015,0.686-0.029c-0.22,0.419-0.375,0.888-0.375,1.38
+							c0,0.826,0.454,1.298,1.017,1.843c-0.425,0-0.835,0.012-1.283,0.012c-4.11,0-6.987,2.83-6.987,5.543
+							c0,2.675,3.469,4.345,7.579,4.345c4.685,0,7.565-2.657,7.565-5.332C27.153,28.526,26.69,27.448,24.407,25.734z M16.271,17.514
+							c-0.331-2.502,0.949-4.418,2.854-4.362c1.906,0.059,3.538,2.112,3.866,4.614c0.328,2.505-0.768,4.116-2.673,4.061
+							C18.411,21.768,16.6,20.019,16.271,17.514z M19.571,34.819c-2.84,0-4.893-1.799-4.893-3.958c0-2.118,2.407-3.943,5.249-3.911
+							c0.662,0.006,1.28,0.111,1.84,0.293c1.544,1.072,2.786,1.743,3.1,2.965c0.059,0.246,0.091,0.501,0.091,0.762
+							C24.958,33.132,23.566,34.819,19.571,34.819z"/>
+					</g>
+					<polygon points="35.998,15 32.998,15 32.998,12 30.998,12 30.998,15 27.998,15 27.998,17 30.998,17 30.998,20 32.998,20 32.998,17
+						35.998,17 	"/>
+				</g></svg>
+			</a></li>
+		    <li class="youtube"><a target="_blank"  href="https://plus.google.com/share?url={{ request.build_absolute_uri }}">
+				<svg>
+					<path d="M38.121,14.379C37.502,13.5,31.5,12,24,12s-13.498,1.5-14.121,2.379C9.336,14.921,9,15.671,9,16.5v15
+			c0,0.829,0.336,1.579,0.879,2.121C10.498,34.5,16.5,36,24,36s13.498-1.5,14.121-2.379C38.664,33.079,39,32.329,39,31.5v-15
+			C39,15.671,38.664,14.921,38.121,14.379z M19.5,28.5v-9L30,24L19.5,28.5z"/>
+				</svg>
+			</a></li>
+		  </ul>
+		 </div>
+      </div>
+      {% endif %}
+      {% if theme.prefoot_template %}
+      	{% include theme.prefoot_template %}
+      {% endif %}
+      <a id="help_button" href="https://ecolearninghelp.zendesk.com/hc/requests/new" target="_blank"><img src="{{ STATIC_URL }}img/ECO_icon_ayudame.svg" alt="{% trans "Get help" %}"></a>
+    <div class="footer">
+	<div class="row">
+	  <p class="pull-left">
+	    <a href="{% url copyright %}">&copy; {% now "Y" %} {{ site.name }}. {% trans "All rights reserved" %}</a>
+	  </p>
+	  <div class="pull-right">
+	    <ul class="inline">
+	      <li><a href="{{ theme.link_privacy }}">{% trans "Privacy Policy" %}</a></li>
+	      {% if show_tos %}
+	      <li><a href="{{ theme.link_tos }}">{% trans "Terms of Service" %}</a></li>
+	      {% endif %}
+	      <li>{% trans "Powered by" %} <a>OpenMOOC</a></li>
+	    </ul>
+	  </div>
+	</div>
+      </div>
+    </footer>
+
+  {% block extrajs %}{% endblock %}
+  <script type="text/javascript">
+    (function($){
+        $(document).ready(function () {
+            $('body').on('touchstart.dropdown', '.dropdown-menu', function (e) {
+                e.stopPropagation();
+            });
+        });
+
+        $('.smooth-link').click(function(e){
+        	e.preventDefault();
+        	var $target = $($(e.target).attr('href'));
+        	$('html, body').animate({
+        		scrollTop: $target.offset().top
+    		}, 500);
+        });
+    })(jQuery);
+  </script>
+</body>
+</html>

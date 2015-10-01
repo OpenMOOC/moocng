@@ -1,0 +1,128 @@
+{% load i18n gravatar %}
+
+<div class="userprofile-header">
+	{% if profile.background %}
+	<div class="profile-header" style="background-image: url('{{ MEDIA_URL }}{{ profile.background }}');">
+	{% else %}
+	<div class="profile-header" style="background-image: url('{{ STATIC_URL }}img/user_bck.jpg');">
+	{% endif %}
+		<div class="user-header">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-12 col-md-8 col-sm-5 col-mob-4 user-bar">
+						<img class="avatar" src="{% gravatar_for_email user_view_profile.email %}&s=128" alt="{% firstof user_view_profile.get_full_name user_view_profile.username %}">
+						<h1>{{ user_view_profile.get_full_name }}</h1>
+						<h2>{% if show_username %}@{{ user_view_profile.username }}{% else %}&nbsp;{% endif %}</h2>
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-3 col-mob-4 data-bar">
+						<div class="profile-data">
+							<h4 class="noLowRes">{% trans "Badges" %}</h4>
+							<svg class="imageBadge" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" x="0px" y="0px" width="26px" height="26px" viewBox="0 0 26 26" enable-background="new 0 0 26 26" xml:space="preserve">
+				                <g>
+				                    <g>
+				                        <g>
+				                            <path d="M14.999,9.262V7L11,1H7.001L11,7h-0.001v2.263C7.551,10.152,5,13.274,5,17c0,4.418,3.582,8,8,8s8-3.582,8-8     C21,13.273,18.448,10.151,14.999,9.262z M11.999,9V8h2v1H11.999z M13,23c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6     S16.309,23,13,23z"/>
+				                        </g>
+				                    </g>
+				                    <g>
+				                        <polygon points="19,1 15.001,1 13.601,3.1 15.6,6.099   "/>
+				                    </g>
+				                    <g>
+				                        <circle cx="13" cy="17" r="4"/>
+				                    </g>
+				                </g>
+				            </svg>
+							<p>{{ badges_count }}</p>
+						</div>
+						<div class="profile-data no-print">
+							<h4 class="noLowRes">{% trans "Karma" %}</h4>
+							<img src="{{ STATIC_URL }}img/ECO_icon_karma_white.svg">
+							<p id="user-karma">{{ user_view_profile.get_profile.karma }}</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="menu">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
+					<ul class="menu">
+
+						<li>
+							{% url profile_posts user_view_profile.username as url_posts %}
+							{% url profile_posts_byid user_view_profile.id as url_posts_byid %}
+							{% url profile_posts as url_posts2 %}
+							{% url profile_posts_search query as url_post_search %}
+							{% url profile_posts_hashtag query as url_post_hashtag %}
+							<a href="{% if show_username %} {{ url_posts }} {% else %} {{ url_posts_byid }} {% endif %}" {% if request.path == url_posts or request.path == url_posts_byid or request.path == url_posts2 or request.path == url_post_search or request.path == url_post_hashtag %} class="selected" {% endif %}>
+								{% trans "Posts" %}
+							</a>
+						</li>
+
+						<li>
+							{% url profile_user user_view_profile.username as url_profile %}
+							{% url profile_user_byid user_view_profile.id as url_profile_byid %}
+							{% url profile_user as url_profile2 %}
+							<a href="{% if show_username %} {{ url_profile }} {% else %} {{ url_profile_byid }} {% endif %}" {% if request.path == url_profile or request.path == url_profile_byid or request.path == url_profile2 %} class="selected" {% endif %}>
+								{% trans "Profile" %}
+							</a>
+						</li>
+						<!--<li>
+							{% url profile_timeline as url_timeline %}
+							<a href="{{ url_timeline }}" {% if request.path == url_timeline %} class="selected" {% endif %}>
+								{% trans "Timeline" %}
+							</a>
+						</li>-->
+						<!--<li>
+							{% url profile_groups as url_groups %}
+							<a href="{{ url_groups }}" {% if request.path == url_groups %} class="selected" {% endif %}>
+								{% trans "Groups" %}
+							</a>
+						</li>-->
+						<li>
+							{% url profile_courses user_view_profile.username as url_courses %}
+							{% url profile_courses_byid user_view_profile.id as url_courses_byid %}
+							{% url profile_courses as url_courses2 %}
+							<a href="{% if show_username %} {{ url_courses }} {% else %} {{ url_courses_byid }} {% endif %}" {% if request.path == url_courses or request.path == url_courses_byid or request.path == url_courses2 %} class="selected" {% endif %}>
+								{% trans "Courses" %}
+							</a>
+						</li>
+						<li>
+							{% url profile_badges user_view_profile.username as url_badges %}
+							{% url profile_badges_byid user_view_profile.id as url_badges_byid %}
+							{% url profile_badges as url_badges2 %}
+							{% url profile_badge badge.id_badge as url_badges3 %}
+							{% url profile_badge user_view_profile.username badge.id_badge as url_badges4 %}
+							<a href="{{ url_badges }}" {% if request.path == url_badges or request.path == url_badges2 or request.path == url_badges3 or request.path == url_badges4 %} class="selected" {% endif %}>
+								{% trans "Badges" %}
+							</a>
+						</li>
+						<!--<li>
+							{% url profile_calendar as url_calendar %}
+							<a href="{{ url_calendar }}" {% if request.path == url_calendar %} class="selected" {% endif %}>
+								{% trans "Calendar" %}
+							</a>
+						</li>-->
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+$(function(){
+	var user = '{{ user_view_profile.username }}';
+	user = user.replace('.','-');
+	$.ajax({
+	    url: '{{ forum_url }}/api2/users/'+user,
+	    type: 'GET',
+	    //dataType: 'jsonp',
+	    //jsonpCallback: 'callback',
+	    success: function(result) { $('#user-karma').html(result.reputation); },
+	    error: function() { console.log('Unable to request Karma.') },
+	});
+});
+</script>

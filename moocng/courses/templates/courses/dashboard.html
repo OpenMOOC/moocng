@@ -1,0 +1,326 @@
+{% extends "courses/base_course.html" %}
+
+{% load cache gravatar i18n enrollment_tags media_contents usercourses %}
+
+{% block nav-course-overview %}class="active"{% endblock %}
+
+{% block extraheader %}
+<link rel="alternate" type="application/rss+xml" title="{% trans 'Announcements feed' %}" href="{% url announcements_feed course.slug %}" />
+{% endblock %}
+
+{% block content %}
+	<div class="container pb-100 pt-20">
+		<div class="row">
+			<div class="col-lg-8 col-md-6 col-sm-8 col-mob-4">
+				<div class="dash-box">
+					<div class="title">
+						<h3>{% trans "Syllabus" %}</h3>
+					</div>
+					<div class="content">
+						<ol start="2">
+							{% for unit in unit_list %}
+								<li class="{% if unit.complete %}done{% endif %} {% if unit.status != 'p' %}not_available{% endif %}">
+									<a {% if unit.status == 'p' or is_teacher or user.is_staff %}href="{{ unit.url }}"{% else %} title="{% trans 'Not available yet' %}"{% endif %}>{{unit.title}}</a>
+									{% if unit.questions %}
+									<ol>
+										{% for q in unit.questions %}
+										<li class="{% if q.completed %}done{% endif %} {% if q.current %} current {% endif %}">
+											<a {% if unit.status == 'p' or is_teacher or user.is_staff %}href="{{ q.url }}"{% else %} title="{% trans 'Not published yet' %}"{% endif %}>{{q.title}}</a>
+										</li>
+										{% endfor %}
+									</ol>
+									{% endif %}
+								</li>
+							{% empty %}
+								<li class="empty">{% trans "There is no course content yet" %}</li>
+							{% endfor %}
+						</ol>
+						{% if unit_list|length > 0 %}
+						<div class="bottom-bar">
+							<a href="{% url course_syllabus course.slug %}" class="button pull-right"><img src="{{ STATIC_URL }}/img/ECO_icon_toc.svg">{% trans "View full syllabus" %}</a>
+						</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-8 col-md-6 col-sm-8 col-mob-4">
+				<div class="dash-box">
+					<div class="title">
+						<h3>{% trans "Tasks" %}</h3>
+					</div>
+					<div class="content">
+						<ul class="tabs">
+							<li class="selected">
+								<h4>{% trans "Personal" %}<span><strong>{{ tasks_done }}</strong>/{{ task_list|length }}</span></h4>
+								<div class="content feed">
+									<ol>
+										{% for task in task_list %}
+										<li class="{% if task.done %} done {% endif %}"><a href="{% url course_classroom course.slug %}#unit{{ task.item.kq.unit_id }}/kq{{ task.item.kq.id }}/{{task.type}}">{{ task.title }}</a></li>
+										{% empty %}
+										<li class="empty">{% trans "There is no tasks yet" %}</li>
+										{% endfor %}
+									</ol>
+								</div>
+							</li>
+							<!--<li>
+								<h4>{% trans "Team" %}<span><strong>0</strong>/3</span></h4>
+								<div class="content">
+									<ol>
+										<li><span>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae.</span></li>
+										<li><span>Nam egestas commodo velit a porta.</span></li>
+										<li><span>Mauris vestibulum leo at pellentesque sagittis.</span></li>
+									</ol>
+								</div>
+							</li>-->
+						</ul>
+						{% with task_list|length as tasks_num %}
+						{% if tasks_num > 0 %}
+						<div class="bottom-bar">
+							{% if tasks_done == 0 %}
+								{% if next_task %}
+									<a class="button pull-right" href="{% url course_classroom course.slug %}#unit{{ next_task.item.kq.unit_id }}/kq{{ next_task.item.kq.id }}/{{next_task.type}}">{% trans "Do my first task" %}<img src="{{ STATIC_URL }}/img/ECO_icon_flecha_enlace.svg"></a>
+								{% else %}
+									<a class="button pull-right" >{% trans "You have not completed any task yet" %}.</a>
+								{% endif %}
+							{% elif tasks_done < tasks_num %}
+								{% if next_task %}
+									<a class="button pull-right" href="{% url course_classroom course.slug %}#unit{{ next_task.item.kq.unit_id }}/kq{{ next_task.item.kq.id }}/{{next_task.type}}">{% trans "Do the next task" %}<img src="{{ STATIC_URL }}/img/ECO_icon_flecha_enlace.svg"></a>
+								{% else %}
+									<a class="button pull-right" >{% blocktrans %}You have done {{ tasks_done }} tasks of {{ tasks_num }}{% endblocktrans %}.</a>
+								{% endif %}
+							{% else %}
+								<a class="button pull-right" >{% trans "Congratulations, you have completed all your current tasks!" %}</a>
+							{% endif %}
+						</div>
+						{% endif %}
+						{% endwith %}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-8 col-md-6 col-sm-8 col-mob-4">
+				<div class="dash-box">
+					<div class="title">
+						<h3>{% trans "News feed" %}</h3>
+					</div>
+					<div class="content">
+						<ul class="tabs">
+							<li class="selected">
+								<h4>{% trans "Microblogging" %}</h4>
+								<div class="content feed">
+									<ul>
+										{% for post in posts_list %}
+										<li>
+											{% url profile_posts post.username|cut:"@" as author_profile_url %}
+											{% url profile_posts_byid post.id_user as author_profile_url_byid %}
+											<a href="{% if show_username %}{{ author_profile_url }}{% else %}{{ author_profile_url_byid }}{% endif %}"><img src="{{ post.avatar }}"></a>
+											<div>
+												<a href="{% if show_username %}{{ author_profile_url }}{% else %}{{ author_profile_url_byid }}{% endif %}">
+													<h5>{{ post.first_name }} {{ post.last_name }}
+														{% if show_username %}<span>{{ post.username }}</span>{% endif %}
+													</h5>
+												</a>
+												<p class="date">
+													{% if post.original_date %}
+														{{post.original_date}}
+													{% else %}
+														{{post.date}}
+													{% endif %}
+												</p>
+												<br>
+												{% autoescape off %}
+												<p class="text">{{ post.text }}</p>
+												{% endautoescape %}
+											</div>
+										</li>
+										{% empty %}
+										<li class="empty">{% trans "There is no posts yet" %}</li>
+										{% endfor %}
+									</ul>
+								</div>
+							</li>
+							<!--<li>
+								<h4>{% trans "Forum" %}</h4>
+								<div class="content feed">
+									<ul>
+										<li class="read">
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Héctor García <span>@hectorg</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent tincidunt ligula sit amet enim tristique, malesuada iaculis erat vulputate.<span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+										<li>
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Héctor García <span>@hectorg</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent tincidunt ligula sit amet enim tristique, malesuada iaculis erat vulputate.<span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+										<li>
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Héctor García <span>@hectorg</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.<span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</li>-->
+						</ul>
+						<div class="bottom-bar">
+							<a href="{% url profile_posts %}" class="button pull-right">
+								{% trans "Go to my timeline" %}
+								<img src="{{ STATIC_URL }}/img/ECO_icon_flecha_enlace.svg">
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-8 col-md-6 col-sm-8 col-mob-4">
+				<div class="dash-box">
+					<div class="title">
+						<h3>{% trans "Notifications" %}</h3>
+					</div>
+					<div class="content">
+						<ul class="tabs">
+							<li class="selected">
+								<h4>{% trans "General" %}</h4>
+								<div class="content feed">
+									<ul>
+										{% for announcement in announcements %}
+										<li class="comment">
+											<div>
+												<h5><a href="{% url announcement_detail course.slug announcement.id announcement.slug %}">{{announcement.title}}</a></h5>
+												<p class="date">{{announcement.datetime|date:'d-m-Y H:i'}}</p>
+												<!--{% autoescape off %}
+												<div class="text block">{{ announcement.content }}</div>
+												{% endautoescape %}-->
+											</div>
+										</li>
+										{% endfor %}
+										<!--<li class="wiki">
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Juan Pedro Pérez <span>@juanpp</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Ha añadido un término nuevo en la wiki: <a href="#">"Cartografía"</a><span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+										<li class="comment">
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Prof. Eduardo Ruiz <span>@edu.ruiz</span></h5>
+												<p class="date">19 jul 2014</p>
+												<p class="text">Ha comentado la tarea <a href="#">"Nunc iaculis velit sed..."</a><span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+										<li class="like">
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Paula Juliá <span>@paulajulia</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Le gusta el tema <a href="#">"3.1 Base del mapa..."</a><span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+										<li class="like">
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Paula Juliá <span>@paulajulia</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Le gusta el tema <a href="#">"3.1 Base del mapa..."</a><span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>-->
+									</ul>
+								</div>
+							</li>
+							<!--<li>
+								<h4>{% trans "Team" %}</h4>
+								<div class="content feed">
+									<ul>
+										<li class="wiki">
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Juan Pedro Pérez <span>@juanpp</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Ha añadido un término nuevo en la wiki: <a href="#">"Cartografía"</a><span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+										<li class="comment">
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Prof. Eduardo Ruiz <span>@edu.ruiz</span></h5>
+												<p class="date">19 jul 2014</p>
+												<p class="text">Ha comentado la tarea <a href="#">"Nunc iaculis velit sed..."</a><span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+										<li class="like">
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Paula Juliá <span>@paulajulia</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Le gusta el tema <a href="#">"3.1 Base del mapa..."</a><span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+										<li class="like">
+											<img src="{{ STATIC_URL }}img/profile_hector.png">
+											<div>
+												<h5>Paula Juliá <span>@paulajulia</span></h5>
+												<p class="date">20 jul 2014</p>
+												<p class="text">Le gusta el tema <a href="#">"3.1 Base del mapa..."</a><span class="hashtag">#UNED_geocart01</span></p>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</li>-->
+						</ul>
+						<!--<div class="bottom-bar">
+							<a href="#" class="button pull-right">Ver todas las notificaciones<img src="{{ STATIC_URL }}/img/icon_notification.png"></a>
+						</div>-->
+					</div>
+				</div>
+			</div>
+		</div>		
+	</div>
+	<!--<div class="popup">
+		{% if progress > 60 and not rating %}
+			<p>Rate me!</p>
+			{{ rating_form }}
+		{% endif %}
+	</div>-->
+{% endblock %}
+
+{% block extrajs %}
+	<script>
+		function resizeDashboard(){
+			$('.dash-box').each(function(index, value){
+				var $dash = $(value);
+				var width = $dash.children('.content').first().outerWidth();
+				$dash.find('.content .tabs .content').width(width);
+				//var $heightElement = $dash.find('.content ol')[0] || $dash.find('.content ul')[0]
+				//var height = $heightElement.scrollHeight;
+				var bottombar = $dash.find('.bottom-bar');
+				/*if (bottombar.length > 0){
+					height += bottombar.outerHeight() + 5;
+				}
+				$dash.children('.content').first().height(height);
+				$dash.find('.content .tabs .content').first().height(height);*/
+			});
+		}
+		
+		$(function(){
+			resizeDashboard();
+		});
+		
+		$( window ).resize(resizeDashboard);
+		
+		$('.dash-box .content .tabs > li').click(function(){
+			$(this).parent().find('.selected').removeClass('selected');
+			$(this).addClass('selected');
+		});
+	</script>
+{% endblock %}

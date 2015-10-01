@@ -36,7 +36,7 @@ def answer_validate_date(bundle, request=None):
     question = Question.objects.get(id=question_id)
     unit = question.kq.unit
 
-    if (unit.unittype != 'n' and unit.deadline and
+    if (unit.unittype != 'n' and unit.course.status != 'o' and unit.deadline and
             datetime.now(unit.deadline.tzinfo) > unit.deadline):
         raise ValidationError("Unit's deadline is exceed")
     return {}

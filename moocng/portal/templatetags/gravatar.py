@@ -29,7 +29,7 @@ register = template.Library()
 
 @register.simple_tag
 def gravatar_for_email(email):
-    url = "%savatar/%s/" % (GRAVATAR_URL_PREFIX, md5_constructor(email).hexdigest())
+    url = "%savatar/%s?d=mm" % (GRAVATAR_URL_PREFIX, md5_constructor(email).hexdigest())
     if GRAVATAR_DEFAULT_IMAGE is not None:
         url += "?%s" % urllib.urlencode({"default": GRAVATAR_DEFAULT_IMAGE})
     return mark_safe(url)

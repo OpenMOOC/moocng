@@ -5,23 +5,11 @@
 {% block title %}{% trans 'Page not found' %}{% endblock %}
 
 {% block content %}
-    <div class="media-box">
-        <a href="#">
-            <img src="{{ theme.top_banner }}" alt="" />
-        </a>
-    </div>
+    <div class="container">
     <div class="row">
-        <section class="span8">
+        <section class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
             <h1>{% trans 'Page not found' %}</h1>
             <p>{% trans "We're sorry, but the requested page could not be found." %}</p>
         </section>
-        <div class="span4">
-            <div class="media-box">
-                <img src="{{ theme.right_banner1 }}" alt="" />
-            </div>
-            <div class="media-box">
-                <img src="{{ theme.right_banner2 }}" alt="" />
-            </div>
-        </div>
     </div>
 {% endblock %}

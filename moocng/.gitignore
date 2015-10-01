@@ -1,0 +1,10 @@
+*.pyc
+collected_static/
+settings/common.py
+settings/saml_settings.py
+moocngserver.crt
+moocngserver.csr
+moocngserver.key
+moocngserver.key.org
+moocngserverpublic.pem
+remote_metadata.xml

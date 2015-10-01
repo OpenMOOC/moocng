@@ -5,20 +5,35 @@
 {% block nav-course-reviews %}class="active"{% endblock %}
 
 {% block content %}
-    <h2>{% trans "Reviews" %}</h2>
-    {% if assignments %}
-        {% regroup assignments by kq.unit as unit_list %}
-        {% for unit in unit_list %}
-            <h3 id="unit{{ unit.grouper.id }}">{{ unit.grouper.title }}</h3>
-            {% for pra in unit.list %}
-            <div class="well">
-                <h4 id="kq{{ pra.kq.id }}">{{ pra.kq.title }}</h4>
-                {% pending_reviews pra user course user_submissions %}
+<div class="peerreview mb-60">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
+                <h3>{% trans "Reviews" %}</h3>
+                {% if assignments %}
+                    {% regroup assignments by kq.unit as unit_list %}
+                    {% for unit in unit_list %}
+                        <h4 id="unit{{ unit.grouper.id }}">{{ unit.grouper.title }}</h4>
+                        <div class="kq-list">
+                            {% for pra in unit.list %}
+                            <div class="well">
+                                <h5 id="kq{{ pra.kq.id }}">{{ pra.kq.title }}</h5>
+                                {% pending_reviews pra user course user_submissions %}
+                                {%if ignore_langs and kq_id == pra.kq.id|slugify %}
+                                    <p><a href="">
+                                        {% trans "Unfortunately there is no submissions available for your language, click here to try again with other languages" %}
+                                    </a>.</p>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>{% trans "This course does not have any Peer Review Assignment" %}.</p>
+                    <p><a href="{% url home %}">{% trans "You can try enrolling in another course" %}.</a></p>
+                {% endif %}
             </div>
-            {% endfor %}
-        {% endfor %}
-    {% else %}
-        <p>{% trans "This course does not have any Peer Review Assignment" %}.<p>
-        <p><a href="{% url home %}">{% trans "You can try enrolling in another course" %}.</a></p>
-    {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}

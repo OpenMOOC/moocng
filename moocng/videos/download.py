@@ -83,7 +83,7 @@ def duration(filename):
 
 
 def last_frame(filename, time):
-    command = [settings.FFMPEG, "-i", filename, "-y", "-sameq", "-ss", time,
+    command = [settings.FFMPEG, "-i", filename, "-y", "-ss", time,
                "-vframes", "1", "-vcodec", "png", "%s.png" % filename]
     execute_command(command)
     return "%s.png" % filename

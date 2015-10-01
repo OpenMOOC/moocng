@@ -78,11 +78,11 @@ MOOC.views.Unit = Backbone.View.extend({
 
         $("#unit-title").html(this.model.get("title"));
 
-        html = '<div class="progress progress-info" title="' + gettext('completed') + '"><div class="bar completed" style="width: 0%;"></div></div>';
+        html = '<div class="progress progress-info" title="' + gettext('completed') + '"><span class="bar completed" style="width: 0%;"></span></div>';
         $("#unit-progress-bar").html(html);
         progress = this.model.calculateProgress({ completed: true });
         helpText = "<div><span>" + Math.round(progress) + "% " + gettext('completed') + "</span></div>";
-        $("#unit-progress-bar").find("div.bar.completed").css("width", progress + "%");
+        $("#unit-progress-bar").find(".bar.completed").css("width", progress + "%");
 
         $("#unit-progress-text").html(helpText);
 
@@ -168,9 +168,9 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
         var html = [];
         if (this.model.get('completed')) {
             if (this.model.get("correct")) {
-                html.push('<span class="badge badge-success pull-right"><span class="icon-ok icon-white"></span> ' + MOOC.views.capitalize(gettext('correct')) + '</span>');
+                html.push('<span class="badge badge-success pull-right tag correct"><span class="icon-ok icon-white"></span> ' + MOOC.views.capitalize(gettext('correct')) + '</span>');
             } else {
-                html.push('<span class="badge badge-important pull-right"><span class="icon-remove icon-white"></span> ' + MOOC.views.capitalize(gettext('incorrect')) + '</span>');
+                html.push('<span class="badge badge-important pull-right tag incorrect"><span class="icon-remove icon-white"></span> ' + MOOC.views.capitalize(gettext('incorrect')) + '</span>');
             }
         } else {
             html.push(this.render_pending_badge());
@@ -200,19 +200,19 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
             if (this.reviews.length > 0) {
                 html.push('<table class="table table-stripped table-bordered">');
-                html.push('<caption>' + gettext('Reviews of your submission') + '</caption>');
+                /*html.push('<caption>' + gettext('Reviews of your submission') + '</caption>');
                 html.push('<thead><tr>');
                 html.push('<th>#</th>');
                 html.push('<th>' + gettext('Date') + '</th>');
                 html.push('<th>' + gettext('Score') + ' </th>');
-                html.push('</tr></thead>');
+                html.push('</tr></thead>');*/
                 html.push('<tbody></tbody>');
                 html.push('</table>');
             } else {
-                html.push('<p>' + gettext('You have not received any review yet') + '</p>');
+                html.push('<p class="note">' + gettext('You have not received any review yet') + '</p>');
             }
 
-            html.push("<p>");
+            html.push('<p class="note">');
             html.push(interpolate(gettext("You have sent %(sent_reviews)s reviews of the %(mandatory_reviews)s mandatory reviews."), {
                 sent_reviews: author_reviews,
                 mandatory_reviews: minimum_reviewers
@@ -220,7 +220,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
             html.push("</p>");
 
             if (author_reviews < minimum_reviewers) {
-                html.push("<p><a href='" + MOOC.peerReview.urls.prReview + "#kq" + this.model.get("id") + "'>" + gettext('Do more reviews') + "</a>.</p>");
+                html.push("<p><a class=\"button squared\" href='" + MOOC.peerReview.urls.prReview + "#kq" + this.model.get("id") + "'>" + gettext('Do more reviews') + "</a></p>");
             }
 
         }
@@ -229,7 +229,7 @@ MOOC.views.KnowledgeQuantum = Backbone.View.extend({
 
     render: function () {
         "use strict";
-        var html = ["<strong>" + this.model.truncateTitle(40) + "</strong>"];
+        var html = ["<p class='kq pull-left'>" + this.model.truncateTitle(40) + "</p>"];
 
         this.$el.attr("title", this.model.get('title'));
 
@@ -271,9 +271,9 @@ MOOC.views.PeerReviewReview = Backbone.View.extend({
         "use strict";
         var html = [];
 
-        html.push('<td>' + (this.index + 1)  + '</td>');
-        html.push('<td>' + this.model.get('created').format('LLLL')  + '</td>');
-        html.push('<td><a class="btn btn-small pull-right" href="#"><span class="icon-eye-open"></span> ' + gettext('View details') + '</a>' + this.model.get('score')  + '</td>');
+        html.push('<td>' +gettext('Review ') + (this.index + 1)  + '</td>');
+        html.push('<td><strong>' + this.model.get('created').format('LLLL')  + '</strong></td>');
+        html.push('<td><a class="btn btn-small pull-right" href="#"><span class="icon-eye-open"></span> ' + gettext('View details') + '</a>' + gettext('Score') + ': ' + this.model.get('score')  + '/5</td>');
 
         this.$el.html(html.join(""));
         return this;
@@ -290,20 +290,27 @@ MOOC.views.PeerReviewReview = Backbone.View.extend({
             criterionObj = this.peerReviewAssignment.get('_criterionList').at(index);
             description = MOOC.models.truncateText(criterionObj.get('description'), MOOC.views.PRR_DESCRIPTION_MAX_LENGTH);
 
-            html.push("<td>" + (index + 1) + "</td>");
-            html.push("<td><p>" + criterionObj.get('title') + "</p>");
+            html.push("<td>" + (index + 1) + ". " + criterionObj.get('title'));
             html.push("<p><small>" + description + "</small></p></td>");
-            html.push("<td>" + criterion[1] + "</td>");
+            html.push("<td>" + criterion[1] + "/5</td>");
             html.push("</tr>");
             return html.join("");
         }, this);
 
-        $("#review-details-modal")
+        var $details = $("#review-details-modal");
+        var comment = this.model.get('comment');
+        $details
             .find("time").text(this.model.get('created').format('LLLL')).end()
             .find("tbody").html(criteria.join("")).end()
-            .find(".final-score").text(this.model.get('score')).end()
-            .find("blockquote pre").text(this.model.get('comment')).end()
-            .modal('show');
+            .find(".final-score").text(this.model.get('score') + '/5').end();
+
+        console.log('Comment = ' + comment);
+        if(comment){
+            $details.find("blockquote").text(comment).end();
+        }else{
+            $('#comments').remove();
+        }
+            $details.modal('show');
     }
 });
 

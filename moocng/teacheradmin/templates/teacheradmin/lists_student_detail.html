@@ -1,0 +1,74 @@
+{% extends "teacheradmin/base_teacheradmin.html" %}
+
+{% load i18n %}
+
+{% block nav-teacheradmin-lists %}active{% endblock %}
+
+{% block mainclass %}teacheradmin-list{% endblock %}
+
+{% block extraheader %}
+    {{ form.media }}
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
+{% endblock %}
+
+{% block extrajs %}
+
+{% endblock %}
+
+{% block section %}
+<section>
+	<h3 class="fleft">{{ student.first_name }} {{ student.last_name }}</h3>
+	<a class="fright" href="{% url profile_user student.username %}">{% trans "Go to student's profile" %}</a>
+	<div class="cleaner"></div>
+	<h4 class="fleft">{{ student.email }}</h4>
+	<p class="fright">{% trans 'Course mark' %}: {{ course_mark }}</p>
+	<div class="cleaner"></div>
+	<table id="table">
+		<thead>
+			<tr>
+				{% for header in headers %}
+				<th>{{ header }}</th>
+				{% endfor %}
+			</tr>
+		</thead>
+		<tfoot>
+			<tr>
+				{% for header in headers %}
+				<th>{{ header }}</th>
+				{% endfor %}
+			</tr>
+		</tfoot>
+		<tbody>
+			{% for element in elements %}
+			<tr>
+				<td>{{ element.title }}</td>
+				<td>{{ element.mark }}</td>
+				<td>{{ element.relative_mark }}</td>
+			</tr>
+				{% for kq in element.kqs %}
+				<tr class="indented">
+					<td>{{ kq.title }}</td>
+					<td>{{ kq.mark }}</td>
+					<td>{{ kq.relative_mark }}</td>
+				</tr>
+				{% endfor %}
+			{% endfor %}
+		</tbody>
+	</table>
+  {% if accumulative_students %}
+  <p>{% trans "Cumulative total of students" %}: {% accumulative_students %}</p>
+  {% endif %}
+</section>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+<script type="text/javascript" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.7/sorting/datetime-moment.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$.fn.dataTable.moment( 'DD/MM/YYYY' );
+    	$('#table').DataTable({
+    		'ordering': false,
+    		'pageLength': 50,
+    	});
+	} );
+</script>
+{% endblock %}

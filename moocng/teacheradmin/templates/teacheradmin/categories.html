@@ -7,6 +7,7 @@
 {% block mainclass %}teacheradmin-categories{% endblock %}
 
 {% block section %}
+<legend>{% trans "Categories" %}</legend>
 {% if categories %}
 <form method="POST">{% csrf_token %}
 {% for cat_list in categories %}

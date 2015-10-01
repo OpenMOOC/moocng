@@ -1,0 +1,11 @@
+<video
+    id="ytaccesibleplayer"
+    data-able-player
+    preload="auto"
+    width='{{ width }}'
+    height='{{ height }}'
+    data-youtube-id="{{content_id}}">
+    {% for transcription in transcriptions %}
+  	<track kind="{{transcription.transcription_type}}" src="/media/{{ transcription.filename }}" srclang="{{ transcription.language.abbr }}" {% if transcription.transcription_type == "captions" %}label="{{ transcription.language.name }}"{% endif %}/>
+  	{% endfor %}
+</video>

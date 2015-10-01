@@ -139,6 +139,24 @@ MOOC.App = Backbone.Router.extend({
                     callback();
                 });
             }
+
+            if (kqObj.has("transcriptionList")) {
+                callback();
+            } else {
+                MOOC.ajax.getTranscriptionsByKQ(kqObj.get("id"), function (data, textStatus, jqXHR) {
+                    kqObj.set("transcriptionList", (new MOOC.models.TranscriptionList()).reset(_.map(data.objects, function (transcription) {
+                        var data = _.pick(transcription, "id", "filename", "language", "transcription_type");
+                        return {
+                            id : parseInt(data.id, 10),
+                            url: data.filename,
+                            language: data.language,
+                            type: data.transcription_type
+                        };
+                    })));
+
+                    callback();
+                });
+            }
         });
 
         steps.push(function (callback) {
@@ -398,6 +416,8 @@ MOOC.init = function (course_id, KQRoute) {
     if (path.lastIndexOf('/') < path.length - 1) {
         path += '/';
     }
+
+    window.location.hash = window.location.hash.replace(/#!/, '#');
     Backbone.history.start({ root: path });
 
     if (window.location.hash.length > 1) {

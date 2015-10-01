@@ -1,0 +1,64 @@
+{% extends "teacheradmin/base_teacheradmin.html" %}
+
+{% load i18n %}
+
+{% block nav-teacheradmin-lists %}active{% endblock %}
+
+{% block mainclass %}teacheradmin-list{% endblock %}
+
+{% block extraheader %}
+    {{ form.media }}
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
+{% endblock %}
+
+{% block extrajs %}
+
+{% endblock %}
+
+{% block section %}
+<section>
+    <a class="btn fright mb20" href="csv">{% trans 'Download CSV file' %}</a>
+	<table id="table">
+		<thead>
+			<tr>
+				{% for header in headers %}
+				<th>{{ header }}</th>
+				{% endfor %}
+			</tr>
+		</thead>
+		<tfoot>
+			<tr>
+				{% for header in headers %}
+				<th>{{ header }}</th>
+				{% endfor %}
+			</tr>
+		</tfoot>
+		<tbody>
+			{% for element in elements %}
+			<tr>
+				{% for item in element %}
+				{% if item.link %}
+					<td><a href="{{ item.link }}">{{item.caption}}</a></td>
+				{% else %}
+					<td>{{ item }}</td>
+				{% endif %}
+				{% endfor %}
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+  {% if accumulative_students %}
+  <p>{% trans 'Cumulative total of students' %}: {{ accumulative_students }}</p>
+  {% endif %}
+</section>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+<script type="text/javascript" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.10.7/sorting/datetime-moment.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$.fn.dataTable.moment( 'DD/MM/YYYY' );
+    	$('#table').DataTable();
+	} );
+</script>
+{% endblock %}

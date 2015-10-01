@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="http://idp.devopenmooc.com/simplesaml/saml2/idp/metadata.php">
+  <md:IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+    <md:KeyDescriptor use="signing">
+      <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <ds:X509Data>
+          <ds:X509Certificate>MIICRzCCAbACCQCRTUQ6dG9ULjANBgkqhkiG9w0BAQsFADBoMQswCQYDVQQGEwJFUzEQMA4GA1UECAwHU2V2aWxsZTEQMA4GA1UEBwwHU2V2aWxsZTEhMB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMRIwEAYDVQQDDAlEZXZlbG9wZXIwHhcNMTQwNzA4MTU0MzIwWhcNMTUwNzA4MTU0MzIwWjBoMQswCQYDVQQGEwJFUzEQMA4GA1UECAwHU2V2aWxsZTEQMA4GA1UEBwwHU2V2aWxsZTEhMB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMRIwEAYDVQQDDAlEZXZlbG9wZXIwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAM8S6fa/iMJZmicwxhrkHMTQgO+b9QKiRcIbSX8p8zOXYu849arLUze4xoO/p+NqxycacW/lpVPWK+zrwY6NB5Zsfvxv5OhSWdUnR1xUX6cxMRadX7MREU0zVWQznju9s/Eiq90H4zoIYIkgUAKq+Fi8UooGBSg12IJTYNhAfVRzAgMBAAEwDQYJKoZIhvcNAQELBQADgYEAlXIUfPiKGpR+2+269S1Q7OL5m6wXzkEueks9rlxOpayQFdb4/BqEvUiWQFDUsseVHXQIpTNT9mnvTh23gnnSJ1D+R5m1cnCNtMOb5ZdiN9neU3qPLVKhsGfSAXsWzac8/yL1SYmpAiOGrGBQ+Q1Dc4Ds8fw2nRff5KDYaJrgANA=</ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </md:KeyDescriptor>
+    <md:KeyDescriptor use="encryption">
+      <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <ds:X509Data>
+          <ds:X509Certificate>MIICRzCCAbACCQCRTUQ6dG9ULjANBgkqhkiG9w0BAQsFADBoMQswCQYDVQQGEwJFUzEQMA4GA1UECAwHU2V2aWxsZTEQMA4GA1UEBwwHU2V2aWxsZTEhMB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMRIwEAYDVQQDDAlEZXZlbG9wZXIwHhcNMTQwNzA4MTU0MzIwWhcNMTUwNzA4MTU0MzIwWjBoMQswCQYDVQQGEwJFUzEQMA4GA1UECAwHU2V2aWxsZTEQMA4GA1UEBwwHU2V2aWxsZTEhMB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMRIwEAYDVQQDDAlEZXZlbG9wZXIwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAM8S6fa/iMJZmicwxhrkHMTQgO+b9QKiRcIbSX8p8zOXYu849arLUze4xoO/p+NqxycacW/lpVPWK+zrwY6NB5Zsfvxv5OhSWdUnR1xUX6cxMRadX7MREU0zVWQznju9s/Eiq90H4zoIYIkgUAKq+Fi8UooGBSg12IJTYNhAfVRzAgMBAAEwDQYJKoZIhvcNAQELBQADgYEAlXIUfPiKGpR+2+269S1Q7OL5m6wXzkEueks9rlxOpayQFdb4/BqEvUiWQFDUsseVHXQIpTNT9mnvTh23gnnSJ1D+R5m1cnCNtMOb5ZdiN9neU3qPLVKhsGfSAXsWzac8/yL1SYmpAiOGrGBQ+Q1Dc4Ds8fw2nRff5KDYaJrgANA=</ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </md:KeyDescriptor>
+    <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://idp.devopenmooc.com/simplesaml/saml2/idp/SingleLogoutService.php"/>
+    <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+    <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://idp.devopenmooc.com/simplesaml/saml2/idp/SSOService.php"/>
+  </md:IDPSSODescriptor>
+  <md:Organization>
+    <md:OrganizationName xml:lang="en">OpenMOOC</md:OrganizationName>
+    <md:OrganizationDisplayName xml:lang="en">OpenMOOC</md:OrganizationDisplayName>
+    <md:OrganizationURL xml:lang="en">http://devopenmooc.com</md:OrganizationURL>
+  </md:Organization>
+  <md:ContactPerson contactType="technical">
+    <md:SurName>Administrator</md:SurName>
+    <md:EmailAddress>admin@devopenmooc.dev</md:EmailAddress>
+  </md:ContactPerson>
+</md:EntityDescriptor>

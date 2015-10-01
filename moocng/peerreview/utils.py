@@ -98,7 +98,10 @@ def kq_get_peer_review_score(kq, author, pra=None):
     for review in reviews:
         sum_average += float(get_peer_review_review_score(review))
 
-    return (sum_average / reviews_count) * 2  # * 2 due peer_review range is 1-5
+    if(reviews_count > 0):
+        return (sum_average / reviews_count) * 2  # * 2 due peer_review range is 1-5
+    else:
+        return 10
 
 
 def save_review(kq, reviewer, user_reviewed, criteria, comment):

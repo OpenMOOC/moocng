@@ -30,6 +30,7 @@ class YoutubeMediaContentHandler(MediaContentHandlerBase):
 
     def get_javascript_code(self, **kwargs):
         template = get_template("media_contents/handlers/youtube_js.html")
+        print 'template: ' + str(template)
         context = Context(kwargs)
         return template.render(context)
 

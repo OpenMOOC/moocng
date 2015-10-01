@@ -80,6 +80,14 @@ MOOC.ajax.getAttachmentsByKQ = function (kq, callback) {
     });
 };
 
+MOOC.ajax.getTranscriptionsByKQ = function (kq, callback) {
+    "use strict";
+    $.ajax(MOOC.ajax.host + "transcription/?format=json&kq=" + kq, {
+        success: callback,
+        error: MOOC.ajax.genericError
+    });
+};
+
 MOOC.ajax.getOptionsByQuestion = function (question, callback) {
     "use strict";
     $.ajax(MOOC.ajax.host + "option/?format=json&question=" + question, {
@@ -105,8 +113,18 @@ MOOC.ajax.sendAnswer = function (answer, callback) {
         url += answer.get('question_id') + "/";
         method = "put";
     }
+
+    var headers = {};
+    if(geolocation){
+      headers = {
+        'geo_lat': geolocation.coords.latitude,
+        'geo_lon': geolocation.coords.longitude
+      }
+    }
+
     $.ajax(url, {
         type: method,
+        headers: headers,
         data: JSON.stringify(data),
         contentType: "application/json",
         success: callback,
@@ -117,8 +135,18 @@ MOOC.ajax.sendAnswer = function (answer, callback) {
 MOOC.ajax.sendPRSubmission = function (submission, callback) {
     "use strict";
     var url = MOOC.ajax.host + "peer_review_submissions/";
+
+    var headers = {};
+    if(geolocation){
+      headers = {
+        'geo_lat': geolocation.coords.latitude,
+        'geo_lon': geolocation.coords.longitude
+      }
+    }
+
     $.ajax(url, {
         type: "POST",
+        headers: headers,
         data: JSON.stringify(submission),
         contentType: "application/json",
         success: callback,
@@ -147,10 +175,16 @@ MOOC.alerts.show = function (type, title, message) {
     alert.find("h4").text(title);
     alert.find("p").text(message);
     alert.removeClass("hide");
-    $("body").animate({ scrollTop: alert.offset().top }, 500);
-    _.delay(function () {
-        MOOC.alerts.hide();
-    }, 10000);
+    $("body").animate({ scrollTop: 0 }, 500);
+    if(!alert.hasClass('alert-dismissible')){
+        setTimeout(function () {
+            alert.addClass("hide");
+        }, MOOC.alertTime);
+    }else{
+        alert.find('.close').click(function(){
+            alert.addClass("hide");
+        });
+    }
 };
 
 MOOC.alerts.hide = function () {

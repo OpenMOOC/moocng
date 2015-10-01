@@ -62,6 +62,9 @@ setup(
         ])
     },
     zip_safe=False,
+    dependency_links=[
+        'https://github.com/neokore/jsonrpc-requests/tarball/master#egg=jsonrpc-requests-0.1.1',
+    ],
     install_requires=[
         'boto>=2.8.0',
         'celery==3.0.20',
@@ -73,7 +76,7 @@ setup(
         'South==0.7.5',
         'psycopg2==2.4.2',
         'pymongo==2.4.2',
-        'djangosaml2==0.10.0',
+        'djangosaml2==0.11.0',
         'PIL>=1.1.6',
         'django_compressor==1.2',
         'python-memcached==1.48',
@@ -84,10 +87,12 @@ setup(
         'fabric==1.7.0',
         'django-pagination==1.0.7',
         'lxml==2.2.3',
-        'BeautifulSoup==3.0.8.1', #http://www.crummy.com/software/BeautifulSoup/bs3/download/3.x/BeautifulSoup-3.0.8.1.tar.gz
+        'BeautifulSoup==3.2.1', #http://www.crummy.com/software/BeautifulSoup/bs3/download/3.x/BeautifulSoup-3.0.8.1.tar.gz
+        'jsonrpc-requests',
     ],
     entry_points = """
         [moocng.externalapp]
         askbot = moocng.externalapps.apps:Askbot
+        nodebb = moocng.externalapps.apps:NodeBB
     """,
 )

@@ -1,0 +1,315 @@
+{% extends "courses/base_course.html" %}
+{% load i18n gravatar %}
+{% block content %}
+
+{% load usercourses %}
+
+<div class="course container">
+	<div class="row">
+		<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4 bottom-line">
+			<h3 class="pull-left">{{ group.name }}</h3>
+			{% if feature_forum and group.forum_slug %}
+			<!--<a class="pull-right" href="{{ forum_url }}/topic/{{group.forum_slug}}" target="_blank">
+				<img class="img_v_middle" src="{{ STATIC_URL }}img/ECO_icon_cab_foro.svg">
+				{% trans "Go to group's forum" %}
+				<img src="{{ STATIC_URL }}img/ECO_icon_flecha_enlace.svg">
+			</a>-->
+			{% endif %}
+		</div>
+	</div>
+	<div class="row">
+		<div style="position:relative" class="col-lg-8 col-md-6 col-sm-8 col-mob-4">
+			<p class="members-tag bottom-line">
+				<!-- <img src="{{STATIC_URL}}img/ECO_icon_tarea_equipo.svg"> -->
+				<span class="userCount">{{ group.members|length }}</span>
+
+				<span class="pull-left">{% trans "members" %}</span>
+
+				<span class="movGroup">{% trans "Change group" %}</span>
+				<div class="groups hide">
+					{% for group in groups %}
+					<p id_group="{{ group|mongo_id }}">{{group.name}} {%if group.lang %}({{ group.lang }}){% endif %}</p>
+					{% endfor %}
+				</div>
+			</p>
+
+
+
+
+
+
+			{% if feature_groups_video %}<a href="#" class="button squared">{% trans "Videoconference" %}</a>
+			{% endif %}
+			<ul class="userlist">
+				{% for member in group.members %}
+				<li class="bottom-line" id_user="{{member.id_user}}">
+					{% url profile_user member.username as profile_user_url %}
+					{% url profile_user_byid member.id_user as profile_user_url_byid %}
+					<a href="{% if show_username %}{{ profile_user_url }}{% else %}{{ profile_user_url_byid }}{% endif %}">
+						<img class="avatar" src="{% gravatar_for_email member.email %}&s=64" alt="{% firstof member.first_name member.username %}">
+					</a>
+					<div>
+						<h4 class="bottom-line">
+							<a href="{% if show_username %}{{ profile_user_url }}{% else %}{{ profile_user_url_byid }}{% endif %}">{{ member.first_name }} {{ member.last_name }}
+								{% if show_username %}<span>@{{ member.username }}</span>{% endif %}
+							</a>
+						</h4>
+						{% if member.countries %}
+						<p class="tag pull-left"><img src="{{ STATIC_URL }}img/ECO_icon_info_localizacion.svg" alt="{% trans "Location"%}">{{ member.countries }}</p>
+						{% endif %}
+						{% if member.languages %}
+						<p class="tag pull-left"><img src="{{ STATIC_URL }}img/ECO_icon_info_idioma.svg" alt="{% trans "Languages"%}">{% for language in member.languages %}{{ language }}{% endfor %}</p>
+						{% endif %}
+						{% if feature_forum %}
+						<p class="tag pull-right karma" data-user="{{member.username}}"><img src="{{ STATIC_URL }}img/ECO_icon_info_karma.svg" alt="{% trans "Karma"%}"></p>
+						{% endif %}
+					</div>
+				</li>
+				{% endfor %}
+			</ul>
+		</div>
+		<div class="col-lg-8 col-md-6 col-sm-8 col-mob-4">
+			<div class="dash-box tall">
+				<div class="title">
+					<h3>{% trans "Group wall" %}</h3>
+				</div>
+				<div class="content">
+					<ul class="tabs">
+						<li class="selected">
+							<h4>{% trans "Microblogging" %}</h4>
+							<div class="content feed" id="dynamicfeed">
+								<ul>
+									<li class="empty">{% trans "There is no posts yet" %}</li>
+								</ul>
+							</div>
+						</li>
+					</ul>
+					<div class="bottom-bar">
+						<input type="text" placeholder="{% trans 'Write a message' %}" id="shareGroup-txt">
+						<a href="#" class="button pull-right" id="shareGroup-btn"><img src="{{ STATIC_URL }}/img/ECO_icon_flecha_enlace.svg"></a>
+					</div>
+				</div>
+			</div>
+		</div>
+			<!--<div class="dash-box">
+				<div class="title">
+					<h3>{% trans "Tasks" %}</h3>
+				</div>
+				<div class="content">
+					<ul class="tabs">
+						<li class="selected">
+							<h4>{% trans "Team" %}<span><strong>0</strong>/3</span></h4>
+							<div class="content">
+								<ol>
+									<li><span>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae.</span></li>
+									<li><span>Nam egestas commodo velit a porta.</span></li>
+									<li><span>Mauris vestibulum leo at pellentesque sagittis.</span></li>
+								</ol>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-8 col-md-6 col-sm-8 col-mob-4">
+			<div class="dash-box">
+				<div class="title">
+					<h3>{% trans "Notifications" %}</h3>
+				</div>
+				<div class="content">
+					<ul class="tabs">
+						<li class="selected">
+							<h4>{% trans "Team" %}</h4>
+							<div class="content feed">
+								<ul>
+									<li class="wiki">
+										<img src="{{ STATIC_URL }}img/profile_hector.png">
+										<div>
+											<h5>Juan Pedro Pérez <span>@juanpp</span></h5>
+											<p class="date">20 jul 2014</p>
+											<p class="text">Ha añadido un término nuevo en la wiki: <a href="#">"Cartografía"</a><span class="hashtag">#UNED_geocart01</span></p>
+										</div>
+									</li>
+									<li class="comment">
+										<img src="{{ STATIC_URL }}img/profile_hector.png">
+										<div>
+											<h5>Prof. Eduardo Ruiz <span>@edu.ruiz</span></h5>
+											<p class="date">19 jul 2014</p>
+											<p class="text">Ha comentado la tarea <a href="#">"Nunc iaculis velit sed..."</a><span class="hashtag">#UNED_geocart01</span></p>
+										</div>
+									</li>
+									<li class="like">
+										<img src="{{ STATIC_URL }}img/profile_hector.png">
+										<div>
+											<h5>Paula Juliá <span>@paulajulia</span></h5>
+											<p class="date">20 jul 2014</p>
+											<p class="text">Le gusta el tema <a href="#">"3.1 Base del mapa..."</a><span class="hashtag">#UNED_geocart01</span></p>
+										</div>
+									</li>
+									<li class="like">
+										<img src="{{ STATIC_URL }}img/profile_hector.png">
+										<div>
+											<h5>Paula Juliá <span>@paulajulia</span></h5>
+											<p class="date">20 jul 2014</p>
+											<p class="text">Le gusta el tema <a href="#">"3.1 Base del mapa..."</a><span class="hashtag">#UNED_geocart01</span></p>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</li>
+					</ul>
+					<div class="bottom-bar">
+						<a href="#" class="button pull-right">Ver todas las notificaciones<img src="{{ STATIC_URL }}/img/icon_notification.png"></a>
+					</div>
+				</div>
+			</div>
+		</div>-->
+	</div>
+</div>
+
+{% endblock %}
+
+{% block extrajs %}
+	<script>
+		function getCookie(name) {
+		    var cookieValue = null;
+		    if (document.cookie && document.cookie != '') {
+		        var cookies = document.cookie.split(';');
+		        for (var i = 0; i < cookies.length; i++) {
+		            var cookie = jQuery.trim(cookies[i]);
+		            // Does this cookie string begin with the name we want?
+		            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+		                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+		                break;
+		            }
+		        }
+		    }
+		    return cookieValue;
+		}
+
+		function resizeDashboard(){
+			$('.dash-box').each(function(index, value){
+				var $dash = $(value);
+				var width = $dash.children('.content').first().outerWidth();
+				$dash.find('.content .tabs .content').width(width);
+			});
+		}
+
+		$( window ).resize(resizeDashboard);
+
+		$('.dash-box .content .tabs > li').click(function(){
+			$(this).parent().find('.selected').removeClass('selected');
+			$(this).addClass('selected');
+		});
+
+		$(".movGroup").click(function(){
+			$(".userlist").toggleClass('opacity');
+			$(".groups").toggleClass("hide");
+		})
+
+		$(".groups").find("p").click(function(){
+
+			var id_group = $(this).attr("id_group")
+			var lat = 0.0;
+			var lon = 0.0;
+			if(geolocation){
+				lat = geolocation.coords.latitude;
+				lon = geolocation.coords.longitude;
+			}
+			$.ajax({
+				type: "POST",
+				data: {
+					"latitude": lat,
+					"longitude": lon
+				},
+				beforeSend: function(xhr, settings) {
+			        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+			    },
+				url : "/changeGroup/{{ group|mongo_id }}" + "/" + id_group,
+			   	success: function(response) {
+			   		location.reload();
+			   	}
+			});
+		})
+
+	    $('#shareGroup-btn').click(function(e){
+			e.preventDefault();
+			var text = $('#shareGroup-txt').val();
+			var hashtag = "#{{ group.hashtag }}";
+			if (text.trim()) {
+				$.ajax({
+					url: '/user/posts/',
+					type: 'POST',
+					data: 'postText='+text+' '+hashtag,
+					contentType: 'application/x-www-form-urlencoded',
+					beforeSend: function(xhr, settings) {
+			        	xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+			    	},
+					success: function(data){
+						$('#shareGroup-txt').val('');
+						getNewMessages();
+					}
+				});
+			}
+		});
+
+		function getNewMessages(){
+			$.ajax({
+				url: '{% url profile_posts_hashtag_api group.hashtag %}',
+				type: 'GET',
+				success: function(result){
+					var $list_container = $('#dynamicfeed ul');
+					$list_container.empty();
+					for (post of result.posts){
+						{% if show_username %}
+						var userUrl = '{% url profile_posts %}'+ post.username.substr(1);
+						{% else %}
+						var userUrl = '{% url profile_posts %}'+ post.id_user;
+						{% endif %}
+						var date;
+						if (post.original_date) {
+							date = post.original_date;
+						}else{
+							date = post.date;
+						}
+						var postEl = '<li> \
+							<a href="'+userUrl+'"><img src="'+post.avatar+'"></a> \
+							<div> \
+								<a href="'+userUrl+'"><h5>'+post.first_name+' '+post.last_name + {% if show_username %}' <span>'+post.username+'</span>' + {% endif %} '</h5></a> \
+								<p class="date">'+date+'</p><br> \
+								<p class="text">'+post.text+'</p> \
+							</div> \
+						</li>';
+						$list_container.prepend(postEl);
+					}
+					$list_container.parent().scrollTop($list_container.outerHeight());
+				}
+			});
+		}
+
+		$(function(){
+			resizeDashboard();
+
+			getNewMessages();
+
+			var teamMicroblogInterval = setInterval(function(){
+				getNewMessages();
+			}, 60000)
+
+			$('.userlist .karma').each(function(idx, elem){
+				var user = $(elem).attr('data-user');
+				user = user.replace('.','-');
+				$.ajax({
+				    url: '{{ forum_url }}/api2/users/'+user,
+				    type: 'GET',
+				    success: function(result) { if(result){
+				    								$(elem).append('<span>'+result.reputation+'</span>');
+				    							}else{
+				    								console.log('Unable to request Karma for user ' + user)
+				    							} },
+				    error: function() { console.log('Unable to request Karma for user ' + user) },
+				});
+			});
+		});
+	</script>
+{% endblock %}

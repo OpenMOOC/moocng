@@ -8,18 +8,23 @@
 
 {% block extraheader %}
     {% compress css %}
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/nv.d3.0.9.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/nv.d3-1.7.1.min.css" />
     {% endcompress %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/leaflet.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/MarkerCluster.css" />
 {% endblock %}
 
 {% block extrajs %}
     <script src="{{ STATIC_URL }}js/libs/underscore-1.3.3.min.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/libs/backbone-0.9.2.min.js" type="text/javascript"></script>
-    <script src="{{ STATIC_URL }}js/libs/d3.2.10.3.min.js" type="text/javascript"></script>
-    <script src="{{ STATIC_URL }}js/libs/nv.d3.0.9.min.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/libs/d3-3.3.13.min.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/libs/nv.d3-1.7.1.min.js" type="text/javascript"></script>
     <!-- stats-views.js is not compressed because we want to let it be
     overwritten if anyone wants to use different visualizations -->
     <script src="{{ STATIC_URL }}js/teacheradmin/stats-views.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/libs/leaflet.js"></script>
+    <script src="{{ STATIC_URL }}js/libs/leaflet.markercluster.js" type="text/javascript"></script>
 {% compress js %}
     <script src="{{ STATIC_URL }}js/teacheradmin/stats-routes.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/teacheradmin/stats-models.js" type="text/javascript"></script>
@@ -47,22 +52,42 @@
 
 {% block section %}
 <script id="course-tpl" type="text/template">
-<ul class="breadcrumb">
-  <li class="active">{% trans "Course" %}</li>
+<ul class="nav bar">
+  <li><a href="#course" class="active">{% trans "Course" %}</a></li>
+  <li><a href="#students">{% trans "Students" %}</a></li>
+  <li><a href="#teachers">{% trans "Teachers" %}</a></li>
 </ul>
 <h2>{% trans "General statistics of the course" %}</h2>
+<h4>{% trans "Number of published units" %}: <%= num_units %></h4>
+<h4>{% trans "Number of published nuggets" %}: <%= num_kqs %></h4>
+<h4>{% trans "Number of published tasks" %}: <%= num_tasks %></h4>
+<br>
+<h2>{% trans "General statistics of the students" %}</h2>
+<h4>{% trans "Total number of students" %}: <%= enrolled %></h4>
 <h3>{% trans "Students that have..." %}</h3>
 <div class="row">
     <div class="span3" id="started">
         <h4>{% trans "...started the course"%}</h4>
+        {% trans 'Started' as started %}
+        {% trans 'Not started' as notstarted %}
+        <a class="hide" id="{{ started|slugify }}" href="{% url teacheradmin_lists_coursestudentsmarks_filter course.slug 'started' %}">{{ started }}</a>
+        <a class="hide" id="{{ notstarted|slugify }}" href="{% url teacheradmin_lists_coursestudentsmarks_filter course.slug 'notstarted' %}">{{ notstarted }}</a>
         <div class="pie viewport"></div>
     </div>
     <div class="span3" id="completed">
         <h4>{% trans "...completed the course"%}</h4>
+        {% trans "Completed" as completed %}
+        {% trans "Incompleted" as notcompleted %}
+        <a class="hide" id="{{ completed|slugify }}" href="{% url teacheradmin_lists_coursestudentsmarks_filter course.slug 'completed' %}">{{ completed }}</a>
+        <a class="hide" id="{{ notcompleted|slugify }}"  href="{% url teacheradmin_lists_coursestudentsmarks_filter course.slug 'notcompleted' %}">{{ notcompleted }}</a>
         <div class="pie viewport"></div>
     </div>
     <div class="span3 hide" id="passed">
         <h4>{% trans "...passed the course"%}</h4>
+        {% trans "Passed" as passed %}
+        {% trans "Not passed" as notpassed %}
+        <a class="hide" id="{{ passed|slugify }}" href="{% url teacheradmin_lists_coursestudentsmarks_filter course.slug 'passed' %}">{{ passed }}</a>
+        <a class="hide" id="{{ notpassed|slugify }}" href="{% url teacheradmin_lists_coursestudentsmarks_filter course.slug 'notpassed' %}">{{ notpassed }}</a>
         <div class="pie viewport"></div>
     </div>
 </div>
@@ -87,7 +112,93 @@
 </div>
 </script>
 
+<script id="students-tpl" type="text/template">
+<ul class="nav bar">
+  <li><a href="#course">{% trans "Course" %}</a></li>
+  <li><a href="#students" class="active">{% trans "Students" %}</a></li>
+  <li><a href="#teachers">{% trans "Teachers" %}</a></li>
+</ul>
+<h2>{% trans "General statistics of the students" %}</h2>
+<h4>{% trans "Total number of students" %}: <%= enrolled %></h4>
+<h3>{% trans "Students that have..." %}</h3>
+<div class="row">
+    <div class="span3" id="started">
+        <h4>{% trans "...started the course"%}</h4>
+        <div class="pie viewport"></div>
+    </div>
+    <div class="span3" id="completed">
+        <h4>{% trans "...completed the course"%}</h4>
+        <div class="pie viewport"></div>
+    </div>
+    <div class="span3 hide" id="passed">
+        <h4>{% trans "...passed the course"%}</h4>
+        <div class="pie viewport"></div>
+    </div>
+</div>
+<h3>{% trans "Demographic statistics" %}</h3>
+<div class="row">
+    <div class="span3" id="country">
+        <h4>{% trans "Students by country"%}</h4>
+        <div class="pie viewport taller"></div>
+    </div>
+    <div class="span3" id="language">
+        <h4>{% trans "Students by language"%}</h4>
+        <div class="pie viewport taller"></div>
+    </div>
+    <div class="span3" id="gender">
+        <h4>{% trans "Students by gender"%}</h4>
+        <div class="pie viewport taller"></div>
+    </div>
+    <div class="span3" id="age">
+        <h4>{% trans "Students by age"%}</h4>
+        <div class="pie viewport taller"></div>
+    </div>
+</div>
+<div class="row">
+    <h4>{% trans "Students by location"%} (<%= byLocations.length %> {% trans "of" %} <%= enrolled %>)</h4>
+    <div id="map"></div>
+</div>
+</script>
+
+<script id="teachers-tpl" type="text/template">
+<ul class="nav bar">
+  <li><a href="#course">{% trans "Course" %}</a></li>
+  <li><a href="#students">{% trans "Students" %}</a></li>
+  <li><a href="#teachers" class="active">{% trans "Teachers" %}</a></li>
+</ul>
+<h2>{% trans "General statistics of the teachers" %}</h2>
+<h4>{% trans "Total number of teachers" %}: <%= total %></h4>
+<h3>{% trans "Demographic statistics" %}</h3>
+<div class="row">
+    <div class="span3" id="country">
+        <h4>{% trans "Teachers by country"%}</h4>
+        <div class="pie viewport taller"></div>
+    </div>
+    <div class="span3" id="language">
+        <h4>{% trans "Teachers by language"%}</h4>
+        <div class="pie viewport taller"></div>
+    </div>
+    <div class="span3" id="gender">
+        <h4>{% trans "Teachers by gender"%}</h4>
+        <div class="pie viewport taller"></div>
+    </div>
+    <div class="span3" id="age">
+        <h4>{% trans "Teachers by age"%}</h4>
+        <div class="pie viewport taller"></div>
+    </div>
+    <div class="span3" id="organization">
+        <h4>{% trans "Teachers by organization"%}</h4>
+        <div class="pie viewport taller"></div>
+    </div>
+</div>
+</script>
+
 <script id="unit-tpl" type="text/template">
+<ul class="nav bar">
+  <li><a href="#course" class="active">{% trans "Course" %}</a></li>
+  <li><a href="#students">{% trans "Students" %}</a></li>
+  <li><a href="#teachers">{% trans "Teachers" %}</a></li>
+</ul>
 <ul class="breadcrumb">
   <li><a href="#">{% trans "Course" %}</a> <span class="divider">/</span></li>
   <li class="active">{% trans "Unit" %}</li>
@@ -126,6 +237,11 @@
 </script>
 
 <script id="kq-tpl" type="text/template">
+<ul class="nav bar">
+  <li><a href="#course" class="active">{% trans "Course" %}</a></li>
+  <li><a href="#students">{% trans "Students" %}</a></li>
+  <li><a href="#teachers">{% trans "Teachers" %}</a></li>
+</ul>
 <ul class="breadcrumb">
   <li><a href="#">{% trans "Course" %}</a> <span class="divider">/</span></li>
   <li><a id="go-back" href="#">{% trans "Unit" %}</a> <span class="divider">/</span></li>

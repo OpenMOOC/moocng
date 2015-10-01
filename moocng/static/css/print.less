@@ -1,0 +1,91 @@
+// out: ./print.css, compress: true
+
+@foreground: #000;
+@neutral_intense: #27272e;
+
+.no-print {
+	display: none !important;
+}
+
+.printable {
+	display: block;
+	font-size: inherit;
+}
+
+body {
+	padding: 0;
+}
+
+header {
+	position: static !important;
+
+	.row > *:not(.logo){
+		.no-print;
+	}
+}
+
+.modal {
+	.no-print;
+}
+
+.userprofile-header {
+
+	.profile-header {
+		background: none !important;
+		height: 128px;
+
+		.user-header {
+			background: none;
+			color: @foreground;
+
+			.profile-data {
+
+				svg.imageBadge {
+					fill: @foreground;
+				}
+			}
+		}
+	}
+
+	.menu {
+		.no-print
+	}
+}
+
+.userprofile {
+	background: none;
+
+	.panel {
+		box-shadow: none;
+		border: @neutral_intense solid;
+		border-width: 4px 1px 1px 1px;
+
+		.content {
+
+			.courses {
+
+				.thumb {
+					.no-print;
+				}
+
+				.badges li {
+					display: block;
+					margin: 10px 0 20px 0;
+
+					p {
+						font-size: 0.9em;
+						margin-left: 33px;
+					}
+				}
+			}
+		}
+	}
+}
+
+footer {
+	.no-print
+}
+
+.expandable_lateral_bar {
+	.no-print;
+}

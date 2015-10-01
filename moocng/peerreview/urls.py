@@ -20,6 +20,8 @@ urlpatterns = patterns(
 
     url(r'^course/(?P<course_slug>[-\w]+)/reviews/$', 'course_reviews',
         name='course_reviews'),
+    url(r'^course/(?P<course_slug>[-\w]+)/reviews/kq(?P<kq_id>[-\w]+)/ignorelang/$', 'course_reviews',
+        { 'ignore_langs': True }, name='course_reviews_ignorelang'),
     url(r'^course/(?P<course_slug>[-\w]+)/reviews/(?P<assignment_id>\d+)/assign', 'course_review_assign',
         name='course_review_assign'),
     url(r'^course/(?P<course_slug>[-\w]+)/reviews/(?P<assignment_id>\d+)/review/', 'course_review_review',

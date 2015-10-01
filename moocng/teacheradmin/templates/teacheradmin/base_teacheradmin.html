@@ -1,36 +1,55 @@
-{% extends "courses/base_course.html" %}
+{% extends "courses/base_course_oldcss.html" %}
 
 {% load i18n %}
 
 {% block nav-course-admin %} active{% endblock %}
 
 {% block content %}
-<h1>{{ course.name }}</h1>
 <div class="row">
-    <div class="span2">
+    <div class="col-lg-2 col-md-2 col-sm-2 col-mob-4 mainmenu">
         <ul class="nav nav-list">
             <li class="nav-header">{% trans "Course edition" %}</li>
             <li class="{% block nav-teacheradmin-info %}{% endblock %}"><a href="{% url teacheradmin_info course.slug %}">{% trans "Information" %}</a></li>
             <li class="{% block nav-teacheradmin-teachers %}{% endblock %}"><a href="{% url teacheradmin_teachers course.slug %}">{% trans "Teachers" %}</a></li>
             <li class="{% block nav-teacheradmin-units %}{% endblock %}"><a href="{% url teacheradmin_units course.slug %}">{% trans "Units" %}</a></li>
-            <li class="{% block nav-teacheradmin-categories %}{% endblock %}"><a href="{% url teacheradmin_categories course.slug %}">{% trans "Categories" %}</a></li>
-            <li class="{% block nav-teacheradmin-assets %}{% endblock %}"><a href="{% url teacheradmin_assets course.slug %}">{% trans "Assets" %}</a></li>
-            <li class="{% block nav-teacheradmin-externalapps %}{% endblock %}"><a href="{% url externalapps_list course.slug %}">{% trans "External applications" %}</a></li>
+            {% if feature_groups %}
+            <li class="{% block nav-teacheradmin-groups %}{% endblock %}"><a href="{% url teacheradmin_groups course.slug %}">{% trans "Groups" %}</a></li>
+            {% endif %}
+            <!-- <li class="{% block nav-teacheradmin-categories %}{% endblock %}"><a href="{% url teacheradmin_categories course.slug %}">{% trans "Categories" %}</a></li> -->
 
-            <li class="nav-header">{% trans "Extra" %}</li>
+            <li class="{% block nav-teacheradmin-badges %}{% endblock %}"><a href="{% url teacheradmin_badges course.slug %}">{% trans "Badges" %}</a></li>
+            <!--<li class="{% block nav-teacheradmin-externalapps %}{% endblock %}"><a href="{% url externalapps_list course.slug %}">{% trans "External applications" %}</a></li>-->
+
+            <li class="nav-header">{% trans "Data" %}</li>
             <li class="{% block nav-teacheradmin-stats %}{% endblock %}"><a href="{% url teacheradmin_stats course.slug %}">{% trans "Statistics" %}</a></li>
+            <li class="{% block nav-teacheradmin-lists %}{% endblock %}"><a href="{% url teacheradmin_lists course.slug %}">{% trans "Lists" %}</a></li>
+
+            <li class="nav-header">{% trans "Communications" %}</li>
             <li class="{% block nav-teacheradmin-announcements %}{% endblock %}"><a href="{% url teacheradmin_announcements course.slug %}">{% trans "Announcements" %}</a></li>
             <li class="{% block nav-teacheradmin-emails %}{% endblock %}"><a href="{% url teacheradmin_emails course.slug %}">{% trans "Send mail" %}</a></li>
+
         </ul>
     </div>
 
-    <div class="span10">
-        {% block section %}
-        <div class="alert">
-            <h4>{% trans "We are sorry" %}</h4>
-            {% trans "But this section is not available yet." %}
+    <div class="col-lg-14 col-md-10 col-sm-6 col-mob-4 col-lg-push-2 col-md-push-2 col-sm-push-2">
+        <div class="maincontent">
+            {% block section %}
+            <div class="alert">
+                <h4>{% trans "We are sorry" %}</h4>
+                {% trans "But this section is not available yet." %}
+            </div>
+            {% endblock %}
         </div>
-        {% endblock %}
+        <footer>
+          <ul>
+            <li><a href="http://ecolearning.eu/privacy-policy/">{% trans "Legal" %}</a></li>
+            <li><a href="{% url copyright %}">&copy; {% now "Y" %} {{ site.name }}. {% trans "All rights reserved" %}</a></li>
+            {% if show_tos %}
+            <li><a href="http://ecolearning.eu/terms-of-use/">{% trans "Terms of Use" %}</a></li>
+            {% endif %}
+            <li><a href="{% url contact %}">{% trans "Contact" %}</a></li>
+          </ul>
+        </footer>
     </div>
 </div>
 {% endblock %}

@@ -85,7 +85,7 @@ class MultiAuthentication(object):
                     unauthorized = unauthorized or check
                 else:
                     request._authentication_backend = backend
-                    return check
+                    unauthorized = check
 
         return unauthorized
 

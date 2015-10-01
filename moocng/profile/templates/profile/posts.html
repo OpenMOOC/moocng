@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% load i18n enrollment_tags %}
+
+{% block content %}
+{% include "profile/include.userheader.html" %}
+
+
+<script type="text/javascript">
+	$(document).ready(function () {
+
+		if({{following}}){
+			$(".followButton").text("{% trans 'UNFOLLOW' %}")
+			$(".followButton").addClass("active")
+		}
+
+		$(".addButton").click(function(){
+			$(".postFrom").toggle();
+			$(this).hide();
+		});
+
+		$(".cancelPost").click(function(){
+			$(".postFrom").toggle();
+			$(".addButton").show();
+		});
+
+		$(".retweet").click(function(){
+			var id = $(this).parent().attr("id");
+			var self = $(this);
+			var header = {
+				'context_geo_lat': 0.0,
+				'context_geo_lon': 0.0
+			}
+			if (geolocation) {
+				header['context_geo_lat'] = geolocation.coords.latitude;
+				header['context_geo_lon'] = geolocation.coords.longitude;
+			}
+			$.ajax({
+				url : "/user/retweet/" + id,
+				headers: header,
+			   	success: function(response) {
+			   		if(response == "False"){
+			   			$(".modal").modal({ show: false });
+				   		$(".modal").modal("show");
+				   		$("#modal_bck").click(function(){
+							$(".modal").modal("hide");
+						});
+			   		}else{
+			   			self.text(parseInt(self.text()) + 1)
+			   		}
+			   	}
+			});
+		});
+
+		$(".reply").click(function(){
+			$(this).parent().parent().parent().toggleClass('openReply');
+		});
+
+		$(".followButton").click(function(){
+			var follow = ($(".followButton").hasClass('active') ? "1":0);
+			var header = {
+				'context_geo_lat': 0.0,
+				'context_geo_lon': 0.0
+			}
+			if (geolocation) {
+				header['context_geo_lat'] = geolocation.coords.latitude;
+				header['context_geo_lon'] = geolocation.coords.longitude;
+			}
+			$.ajax({
+				url : "/user/userFollow/" + {{id}} + "/" + follow,
+				headers: header,
+		   	success: function(response) {
+		   		if(follow == 0){
+		   			$(".followButton").text("{% trans 'UNFOLLOW' %}")
+		   			$(".followerCount").text(parseInt($(".followerCount").text()) + 1)
+
+		   		}else{
+		   			$(".followButton").text("{% trans 'FOLLOW' %}")
+		   			$(".followerCount").text(parseInt($(".followerCount").text()) -1)
+		   		}
+
+		   		$(".followButton").toggleClass("active")
+		   	}
+			});
+		});
+
+		var load = true;
+		var page = 10;
+		$(window).scroll(function() {
+		   if($(window).scrollTop() + $(window).height() == $(document).height() && load) {
+		   		load = false;
+		       $.ajax({
+					url : "/user/loadMorePosts/" + page + "/" + {{id}},
+			    	success: function(response) {
+			    		if(response.trim() != ""){
+			    			$(".posts").append(response)
+			    			page += 10;
+			    			load = true;
+			    		}
+			    	}
+				});
+		   }
+		});
+
+		window.setTimeout(function(){
+			if(geolocation){
+				$("input[name=context_geo_lat]").val(geolocation.coords.latitude);
+				$("input[name=context_geo_lon]").val(geolocation.coords.longitude);
+			}
+		}, 2500);
+	});
+</script>
+
+<div class="userposts">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-4 col-md-4 col-sm-8 col-mob-4">
+				<dl class="info">
+					<div class="row separator_h">
+						<div class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
+							<dt>{% trans "POSTS" %}</dt>
+							<dd class="totalPost">{{totalPost}}</dd>
+						</div>
+					</div>
+					<div class="row separator_h">
+						<div class="col-lg-8 col-md-6 col-sm-4 col-mob-2">
+							<dt>{% trans "FOLLOWERS" %}</dt>
+							<dd class="followerCount">{{followerCount}}</dd>
+						</div>
+						<div class="col-lg-8 col-md-6 col-sm-4 col-mob-2">
+							<dt>{% trans "FOLLOWING" %}</dt>
+							<dd>{{followingCount}}</dd>
+						</div>
+					</div>
+					<!-- <div class="row separator_h">
+						<div class="col-lg-8 col-md-6 col-sm-4 col-mob-2">
+							<dt>{% trans "FAVOURITES" %}</dt>
+							<dd>0</dd>
+						</div>
+						<div class="col-lg-8 col-md-6 col-sm-4 col-mob-2">
+							<dt>{% trans "LISTS" %}</dt>
+							<dd>0</dd>
+						</div>
+					</div> -->
+					{% if case == 1 %}
+					<span class="followButton">{% trans "FOLLOW" %}</span>
+					{% endif %}
+				</dl>
+			</div>
+			<div class="col-lg-12 col-md-8 col-sm-8 col-mob-4">
+				<div class="panel">
+					<div class="header">
+						<h3>{% trans "Posts" %}</h3>
+						{% if case == 0 %}
+						<input class="addButton pull-right" type="button" value="{% trans "NEW POST" %}">
+						{% endif %}
+					</div>
+					{% if case == 0 %}
+					<form class="postFrom" method="post">
+						{% csrf_token %}
+						 {{ form}}
+						 <input type="hidden" name="context_geo_lat" value="0.0" />
+	 					<input type="hidden" name="context_geo_lon" value="0.0" />
+						<input class="postButton" type="submit" value="{% trans "Send" %}" />
+						<span class="cancelPost">{% trans "Cancel" %}</span>
+					</form>
+					{% endif %}
+					<div class="content">
+						<div class="posts">
+							{% include "profile/post.html" %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal hide">
+		{% trans "This post has already been shared" %}
+	</div>
+
+</div>
+{% endblock %}

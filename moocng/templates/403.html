@@ -2,26 +2,14 @@
 
 {% load i18n %}
 
-{% block title %}% trans 'Access denied' %}{% endblock %}
+{% block title %}{% trans 'Access denied' %}{% endblock %}
 
 {% block content %}
-    <div class="media-box">
-        <a href="#">
-            <img src="{{ theme.top_banner }}" alt="" />
-        </a>
-    </div>
+    <div class="container">
     <div class="row">
-        <section class="span8">
+        <section class="col-lg-16 col-md-12 col-sm-8 col-mob-4">
             <h1>{% trans 'Access denied' %}</h1>
             <p>{% trans "We're sorry, but you are not authorized to view this page." %}</p>
         </section>
-        <div class="span4">
-            <div class="media-box">
-                <img src="{{ theme.right_banner1 }}" alt="" />
-            </div>
-            <div class="media-box">
-                <img src="{{ theme.right_banner2 }}" alt="" />
-            </div>
-        </div>
     </div>
 {% endblock %}
